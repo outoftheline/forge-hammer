@@ -50,8 +50,7 @@ let ExistenceConfirmed = async (varlist)=>{
 	intval = setInterval(checkForJQuery, 1);
 }
 
-let ApiURL = 'https://api.foe-rechner.de/',
-	ActiveMap = 'main',
+let ActiveMap = 'main',
 	LastMapPlayerID = null,
 	ExtPlayerID = 0,
 	ExtPlayerName = null,
@@ -785,7 +784,7 @@ GetFights = () =>{
 	function lgUpdate() {
 		const { CityMapEntity, Rankings, Bonus } = gbUpdateData;
 		gbUpdateData = null;
-		let IsPreviousLevel = false;
+		MainParser.CurrentGB.isPreviousLevel = false;
 
 		if (!Rankings) return;
 
@@ -800,7 +799,7 @@ GetFights = () =>{
 			}
 
 			if (Medals !== LGCurrentLevelMedals) {
-				IsPreviousLevel = true;
+				MainParser.CurrentGB.isPreviousLevel = true;
 			}
 		}
 		else {
@@ -816,7 +815,9 @@ GetFights = () =>{
 
 		MainParser.CurrentGB.Entity = CityMapEntity.responseData[0];
 		MainParser.CurrentGB.Rankings = Rankings;
-		Parts.IsPreviousLevel = IsPreviousLevel;
+		Parts.IsPreviousLevel = MainParser.CurrentGB.isPreviousLevel;
+		if (!MainParser.CurrentGB.isPreviousLevel) 
+			Parts.View = '';
 
 		// GB was loaded
 		$('#partCalc-Btn').removeClass('hud-btn-red');
@@ -984,7 +985,8 @@ let MainParser = {
 	CastleSystemChest: null,
 	CurrentGB: {
 		Entity: undefined,
-		Rankings: undefined
+		Rankings: undefined,
+		isPreviousLevel: false
 	},
 
 	// all buildings of the player
@@ -1027,7 +1029,7 @@ let MainParser = {
 			HTML.ShowToastMsg({
 				show: true,
 				head: i18n('Menu.NewVersion.Title'),
-				text: i18n('Menu.NewVersion.Desc') + ' <a href="https://foe-helper.com/extension/update?lang=en" target="_blank">ChangeLog</a>',
+				text: i18n('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
 				type: 'success',
 				allowToastClose: true,
 				hideAfter: 30000,
@@ -1391,7 +1393,7 @@ let MainParser = {
 		return obj2FormData;
 	})(),
 
-
+	
 	/**
 	 * Sending data "home"
 	 *
@@ -1424,7 +1426,6 @@ let MainParser = {
 				});
 		}
 	},
-
 
 	/**
 	 * Back up player data
@@ -2058,8 +2059,7 @@ let MainParser = {
 	UpdateCityMap: (Buildings) => {
 		for (let i in Buildings) {
 			if (!Buildings.hasOwnProperty(i)) continue;
-
-			if (Buildings[i]['player_id'] !== ExtPlayerID) continue; //Fremdes Gebäude (z.B. Nachbarn besuchen und LG öffnen)
+			if (Buildings[i]['player_id'] !== ExtPlayerID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
 			let ID = Buildings[i]['id'];
 			if (MainParser.CityMapData[ID]) {

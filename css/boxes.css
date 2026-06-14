@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
- */
+*/
 
 body {
 	position: absolute !important;
@@ -390,7 +391,6 @@ span.resicon.def_boost_defender-battleground {
 .simpleList { margin: 0; padding: 0; list-style: none; }
 .simpleList li { margin: 0; padding: 3px; }
 
-.clickable { cursor: url('../images/cursor_hover.cur'), auto; }
 .removable { position: relative; }
 
 .removable::before {
@@ -568,9 +568,7 @@ table.foe-table td .error {
 	display: inline-block;
 }
 
-p {
-	margin: 0 0 10px 0;
-}
+p { margin: 0 0 10px 0; }
 .hidden-text {
 	opacity: 0;
 	display: inline-block;
@@ -587,6 +585,8 @@ p {
 .flex.between { justify-content: space-between; }
 .flex.gap { gap: 2px; }
 
+.text-smaller { font-size: 90% }
+
 .p2 { padding: 2px; }
 .p5 { padding: 5px; }
 .p10 { padding: 10px; }
@@ -602,7 +602,7 @@ p {
 .text-danger, .danger { color: var(--danger-red); }
 .text-info, .info { color: var(--info-blue); }
 .text-muted { color: var(--ash); }
-.show-entity, .show-entity img, .show-all img { height: 20px; }
+.show-entity, .show-entity img, .show-all img { height: 18px; display: inline-block; }
 
 .text-bold { font-weight: 700; }
 
@@ -1204,7 +1204,7 @@ FP-Bar */
 .game-cursor option,
 .window-minimize,
 .window-settings,
-.window-map,
+.window-box,
 .window-close,
 .window-head:not(span),
 .forgehammer-overlay,
@@ -1213,9 +1213,9 @@ FP-Bar */
 .cursor-default,
 .button--lg,
 .custom-option,
-.hud-btn,
+.hud-btn, label:hover, 
 a {
-	cursor: url('../images/cursor_default.cur'), auto;
+	cursor: url('../images/cursor_default.cur'), auto !important;
 }
 
 .game-cursor:hover,
@@ -1228,8 +1228,8 @@ a {
 .button-own:hover,
 .button--lg:hover,
 .hud-btn:hover,
-a:hover, input[type="radio"] {
-	cursor: url('../images/cursor_hover.cur'), auto;
+a:hover, input[type="radio"], .clickable {
+	cursor: url('../images/cursor_hover.cur'), auto !important;
 }
 
 /*******************************************************************************/
@@ -1804,7 +1804,7 @@ a:hover, input[type="radio"] {
 }
 
 .litepicker .container__months {
-	background: linear-gradient(var(--black-50), var(--black-30)), url('../../images/hud/box-bg.png') 0 0 repeat;
+	background-color: var(--bg-dark) !important;
 	box-shadow: 0 0 5px var(--black-50) !important;
 	border: 1px solid var(--black);
 }
@@ -1821,15 +1821,15 @@ SettingsBox */
 .settingsbox-wrapper {
 	text-align: left;
 	position: absolute;
-	right: 10px;
-	top: 40px;
+	right: 5px;
+	top: 35px;
 	border: 2px solid var(--text-medium2);
 	background-color: var(--window-settings-bg);
 	color: var(--beige);
 	padding: 5px;
 	z-index: 20;
 	border-radius: 5px;
-	box-shadow: 0 0 4px 4px var(--black-50), inset 0 0 0 1px var(--window-settings-bg), inset 0 0 1px 2px var(--black-30);
+	box-shadow: 0 0 4px 4px var(--black-50);
 	min-width: 120px;
 	max-width: 280px;
 	z-index: 1000;
@@ -1839,11 +1839,11 @@ SettingsBox */
 .settingsbox-wrapper::after {
 	content: '';
 	position: absolute;
-	top: -18px;
-	right: 35px;
-	border-bottom: 18px solid var(--window-settings-bg);
-	border-left: 18px solid transparent;
-	border-right: 18px solid transparent;
+	top: -12px;
+	right: 40px;
+	border-bottom: 12px solid var(--window-settings-bg);
+	border-left: 12px solid transparent;
+	border-right: 12px solid transparent;
 }
 
 .settingsbox-wrapper input[type="text"],
@@ -2264,9 +2264,9 @@ span.activity {
     top: 1px;
 }
 
-span.activity.activity_2 { background: var(--tabs-bg-active); }
-span.activity.activity_1 { background: var(--btn-bg-active); }
-span.activity.activity_0 { background: var(--btn-bg-red); }
+span.activity.activity_2 { background: var(--activity-active); }
+span.activity.activity_1 { background: var(--activity-warning); }
+span.activity.activity_0 { background: var(--activity-inactive); }
 span.activity.activity_undefined {display:none}
 
 

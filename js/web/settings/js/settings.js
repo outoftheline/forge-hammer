@@ -99,7 +99,7 @@ let Settings = {
 					cd = $('<div />').addClass('desc'),
 					cs = $('<div />').addClass('setting');
 
-				if ("SelectedMenu" !== d['name'] && 'NotificationsPosition' !== d['name'] && 'ApiToken' !== d['name']) {
+				if ("SelectedMenu" !== d['name'] && 'NotificationsPosition' !== d['name']) {
 					let s = localStorage.getItem(d['name']);
 
 					if (s !== null) {
@@ -480,7 +480,6 @@ let Settings = {
 		let dp = [];
 
 		dp.push('<select class="setting-dropdown" id="change-lang">');
-
 		for (let iso in Languages.PossibleLanguages) {
 			if (!Languages.PossibleLanguages.hasOwnProperty(iso)) {
 				break;
@@ -488,8 +487,11 @@ let Settings = {
 
 			dp.push('<option value="' + iso + '"' + (MainParser.Language === iso ? ' selected' : '') + '>' + Languages.PossibleLanguages[iso] + '</option>');
 		}
-
 		dp.push('</select>');
+
+		if (localStorage.getItem('user-language') !== "de") {
+			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
+		}
 
 		$('#SettingsBoxBody').on('change', '#change-lang', function () {
 			let uLng = $(this).val();
@@ -509,7 +511,7 @@ let Settings = {
 		let skins = [
 			{name: "Forge Hammer", path: "themes/hammer"},
 			{name: "Oldschool", path: "variables"},
-			{name: "Grey", path: "themes/grey"},
+			{name: "Dark", path: "themes/grey"},
 			{name: "Blues", path: "themes/blues"}
 		];
 
@@ -764,47 +766,6 @@ let Settings = {
 
 			} else {
 				localStorage.removeItem('NotificationStack');
-			}
-		});
-
-		return ip;
-	},
-
-
-	ApiTokenInput: ()=> {
-		let ip = $('<input />').addClass('setting-input').attr({
-				type: 'text',
-				id: 'api-token',
-				style: 'width:20em',
-				spellcheck: 'false',
-			}),
-			token = localStorage.getItem('ApiToken');
-
-		if (token !== null) {
-			ip[0].defaultValue = ip[0].value = token;
-			ip.val(token);
-		}
-
-		$('#SettingsBox').on('keyup blur', '#api-token', function () {
-			let value = $(this).val();
-
-			if (value !== '') {
-				if(value.length !== 36) {
-					HTML.ShowToastMsg({
-						head: i18n('Boxes.Settings.ApiTokenLengthWrongHeader'),
-						text: [
-							i18n('Boxes.Settings.ApiTokenLengthWrongBody')
-						],
-						type: 'error',
-						hideAfter: 10000,
-					});
-				}
-				else {
-					localStorage.setItem('ApiToken', value);
-				}
-
-			} else {
-				localStorage.removeItem('ApiToken');
 			}
 		});
 

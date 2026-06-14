@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -18,9 +18,9 @@ let Languages = {
 		'hu': 'Magyar',
 		'it': 'Italiano',
 		'ja': '日本語',
-		'nb_NO': 'Norsk bokmål',
+		//'nb_NO': 'Norsk bokmål',
 		'nl': 'Nederlands',
-		'nn': 'Nynorsk',
+		//'nn': 'Nynorsk',
 		'pl': 'Polski',
 		'pt': 'Português',
 		'pt-br': 'Português do Brasil',
@@ -49,7 +49,7 @@ let Translation = {
 				resize: true
 			});		
 			let html = `
-				<div id="TranslationHeader">
+				<div id="TranslationHeader" class="p5">
 					<label for="ReferenceLanguage">${i18n('Boxes.Translation.ReferenceLanguage')}</label>
 					<select id="ReferenceLanguage" selected="en">
 						${["en","de"].map((code)=>`<option value="${code}">${Languages.PossibleLanguages[code]}</option>`).join('')}
@@ -74,8 +74,18 @@ let Translation = {
 					<tbody>
 					</tbody>
 				</table>
-				<div id="TranslationFooter">
-					<div class="btn btn-default" id="CopyJSON">${i18n('Boxes.Translation.CopyJSON')}</div>
+				<div id="TranslationFooter" class="flex between">
+					<div class="p5" id="CopyJSONInfo">
+						<h2>How to help translate</h2> 
+						<ul>
+							<li>You need a <a href="https://github.com" target="_blank">GitHub</a> Account</li>
+							<li>Fork the <a href="https://github.com/outoftheline/forge-hammer" target="_blank">Forge Hammer</a> repository including all branches</li>
+							<li>Use the Copy button on the right to copy the translation data</li>
+							<li>Overwrite the content of the respective language json file in your forks 'develop' branch. Path: /js/web/_i18n/ </li>
+							<li>Create a <a href="https://github.com/outoftheline/forge-hammer/pulls" target="_blank">pull request</a> into the Forge Hammer 'develop' branch to get the translation into the next release.</li>
+						</ul>
+					</div>
+					<div class="p5"><span class="btn btn-default" id="CopyJSON">${i18n('Boxes.Translation.CopyJSON')}</span></div>
 				</div>
 			`
 

@@ -301,6 +301,17 @@ let CityMap = {
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
 
+		let cssPosition = JSON.parse(localStorage.getItem('CityMapViewOffset'))||null;
+		if (cssPosition) {
+			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			if (key) {
+				$('#grid-outer').css({
+					'top': cssPosition[key].top+'px',
+					'left': cssPosition[key].left+'px'
+				});
+			}
+		}
+
 		CityMap.BuildGrid();
 
 		let buildings = CityMap.CulturalOutpost.data;
@@ -355,7 +366,16 @@ let CityMap = {
 			html: true,
 		});
 
-		$('#grid-outer').draggable();
+		$('#grid-outer').draggable({
+			stop: function( event, ui ) {
+				let mapOffsets = {
+					[ActiveMap+'_'+CityMap.map.view]: ui.position
+				}
+				let view = JSON.parse(localStorage.getItem('CityMapViewOffset'))||{};
+
+				localStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+			}
+		});
 	},
 
 
@@ -656,6 +676,17 @@ let CityMap = {
 			return;
 		}
 
+		let cssPosition = JSON.parse(localStorage.getItem('CityMapViewOffset'))||null;
+		if (cssPosition) {
+			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			if (key) {
+				$('#grid-outer').css({
+					'top': cssPosition[key].top+'px',
+					'left': cssPosition[key].left+'px'
+				});
+			}
+		}
+
 		let ActiveId = $('#grid-outer').find('.highlighted').data('entityid') || null;
 
 		// einmal komplett leer machen, wenn gewünscht
@@ -850,7 +881,16 @@ let CityMap = {
 		let StreetsUsed = CityMap.metrics.buildingAreas['street'] | 0;
 		CityMap.EfficiencyFactor = StreetsNeeded / StreetsUsed;
 
-		$('#grid-outer').draggable();
+		$('#grid-outer').draggable({
+			stop: function( event, ui ) {
+				let mapOffsets = {
+					[ActiveMap+'_'+CityMap.map.view]: ui.position
+				}
+				let view = JSON.parse(localStorage.getItem('CityMapViewOffset'))||{};
+
+				localStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+			}
+		});
 		CityMap.getAreas();
 		
 		$('[data-original-title]').tooltip({
@@ -995,6 +1035,45 @@ let CityMap = {
 
 	highlightLimitedBuildings: ()=> {
 		$('#grid-outer').toggleClass('showLimited');
+
+		if ($('#citymapExtra').length !== 0) {
+			HTML.CloseOpenBox('citymapExtra');
+			return;
+		}
+		
+		HTML.Box({
+			id: 'citymapExtra',
+			title: i18n('Boxes.CityMap.limited'),
+			dragdrop: true,
+			auto_close: true,
+			resize: true,
+		});
+		
+		let limitedBuildings = [];
+		for (let building of Object.values(MainParser.CityBuildingsData)) {
+			if (!building.isLimited) continue;
+			limitedBuildings.push(building);
+		}
+		
+		limitedBuildings.sort((a,b)=>{
+			if (a.state.decayTime < b.state.decayTime) return -1;
+			if (a.state.decayTime > b.state.decayTime) return 1;
+			return 0;
+		});
+		
+		let output = [];
+		output.push(`<ul class="foe-table text-smaller">`);
+		for (let building of limitedBuildings) {
+			output.push(`<li class="flex between">
+				<span>
+					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${extUrl}images/hud/open-eye.png"></span> 
+					${building.name}
+				</span> 
+				<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>
+			</li>`);
+		}
+		output.push(`</ul>`)
+		$('#citymapExtraBody').html(output.join(''));
 	},
 
 
@@ -1597,11 +1676,11 @@ let CityBuildings = {
 	},
 	
 	
-	setBuildTime(data) {	
+	setDecayTime(data) {	
 		if (data.type === "generic_building")
-			if (data?.state?.constructionFinishedAt !== undefined) 
-				return data?.state?.constructionFinishedAt;
-		return undefined;
+			if (data?.state?.decaysAt !== undefined) 
+				return data?.state?.decaysAt;
+		return null;
 	},
 
 	
@@ -2641,7 +2720,7 @@ let CityBuildings = {
 				connected: this.setConnection(metaData, data), // fyi: decorations are always connected
 				production: this.setCurrentProductions(data, metaData, era),
 				isExpired: this.isExpiredBuilding(data),
-				buildTime: this.setBuildTime(data),
+				decayTime: this.setDecayTime(data),
 				level: (data.type === "greatbuilding" ? data.level : null), // level also includes eraId in raw data, we do not like that
 				max_level: (data.type === "greatbuilding" ? data.max_level : null),
 				isDecayed: this.setDecayed(data)
@@ -2650,8 +2729,8 @@ let CityBuildings = {
 
 		entity.rating = Productions.rateBuilding(entity);
 		
-		//if (entity.type !== "street")
-		//	console.log('entity ', entity.name, entity, entity.allyRoom, data);
+		//if (entity.isLimited)
+		//	console.log('entity ', entity.name, entity, data);
 		return entity;
 	},
 };
