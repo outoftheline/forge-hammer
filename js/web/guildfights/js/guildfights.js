@@ -17,6 +17,10 @@ FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, p
 	GuildFights.HandlePlayerLeaderboard(data.responseData);
 });
 
+FoEproxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postData) => {
+	GuildFights.HandleGuildLeaderboard(data.responseData);
+});
+
 /*FoEproxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
 	if (data.responseData.action === "province_conquered")
 		console.log(data.responseData.provinceId);
@@ -36,6 +40,7 @@ FoEproxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data =>
 });*/
 
 FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
+	if (data.responseData.stateId === 'unsubscribed') return;
 	GuildFights.GlobalRankingTimeout = setTimeout(()=>{
 		if (data.responseData['stateId'] !== 'participating')	{
 			GuildFights.CurrentGBGRound = parseInt(data.responseData['startsAt']) - 259200;
@@ -107,14 +112,12 @@ let GuildFights = {
 	GBGRound: null,
 	GBGAllRounds: null,
 	GBGHistoryView: false,
+	GBGRoundGuilds: null,
 	LogDatePicker: null,
 	curDateFilter: null,
 	curDateEndFilter: null,
 	curDetailViewFilter: null,
 	PlayerBoxSettings: {
-		showRoundSelector: 1,
-		showLogButton: 1,
-		showProgressFilter: 1,
 		showOnlyActivePlayers: 0,
 	},
 	showGuildColumn: 0,
@@ -129,6 +132,8 @@ let GuildFights = {
 	},
 	discordCache: null,
 
+	Chart: undefined,
+
 	Tabs: [],
 	TabsContent: [],
 
@@ -137,7 +142,6 @@ let GuildFights = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-
 		const DBName = `FoeHelperDB_GuildFights_${playerID}`;
 
 		GuildFights.db = new Dexie(DBName);
@@ -145,6 +149,10 @@ let GuildFights = {
 		GuildFights.db.version(1).stores({
 			snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
 			history: '&gbground'
+		});
+
+		GuildFights.db.version(21).stores({
+			guildHistory: '[gbground+time], gbground'
 		});
 
 		GuildFights.db.open();
@@ -194,7 +202,6 @@ let GuildFights = {
 		let sumAttrition = 0;
 
 		for (let i in d) {
-
 			if (!d.hasOwnProperty(i)) break;
 
 			sumNegotiations += d[i]['negotiationsWon'] || 0;
@@ -204,7 +211,7 @@ let GuildFights = {
 			players.push({
 				gbground: GuildFights.CurrentGBGRound,
 				rank: i * 1 + 1,
-				player_id: d[i]['player']['player_id'],
+				player_id: d[i].player.player_id,
 				name: d[i]['player']['name'],
 				avatar: d[i]['player']['avatar'],
 				battlesWon: d[i]['battlesWon'] || 0,
@@ -215,6 +222,15 @@ let GuildFights = {
 
 		await GuildFights.UpdateDB('history', { participation: players, sumNegotiations: sumNegotiations, sumBattles: sumBattles });
 
+		// update history if there is guild data
+		if (GuildFights.GBGRoundGuilds) {
+			await GuildFights.db.history.update(
+				GuildFights.CurrentGBGRound,
+				{ guilds: GuildFights.GBGRoundGuilds }
+			);
+			GuildFights.GBGRoundGuilds = null;
+		}
+
 		GuildFights.GBGHistoryView = false;
 		GuildFights.NewAction = players;
 		localStorage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
@@ -222,7 +238,7 @@ let GuildFights = {
 		GuildFights.NewActionTimestamp = moment().unix();
 		localStorage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
 
-		if ($('#GildPlayers').length > 0) {
+		if ($('#GuildPlayers').length > 0) {
 			GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
 		}
 		else {
@@ -231,8 +247,160 @@ let GuildFights = {
 	},
 
 
+	HandleGuildLeaderboard: async (rankingData) => {
+		if (!GuildFights.CurrentGBGRound) return;
+
+		let participants = GuildFights.MapData?.battlegroundParticipants ?? [];
+
+		let guildHistoryData = rankingData.map(rank => {
+			let participant = participants.find(x => x.clan.id === rank.clan.id);
+			return {
+				id: rank.clan.id,
+				name: rank.clan.name,
+				flag: participant?.clan.flag ?? null,
+				points: rank.victoryPointsTotal || 0
+			}
+		});
+
+		let historyData = guildHistoryData.map(({ flag, ...data }) => data);
+
+		await GuildFights.UpdateDB('guildHistory', guildHistoryData);
+
+		GuildFights.GBGRoundGuilds = historyData;
+
+		// update history record if it already exists
+		let enrtyExists = await GuildFights.db.history.where({ gbground: GuildFights.CurrentGBGRound }).first();
+		if (enrtyExists) {
+			await GuildFights.db.history.update(
+				GuildFights.CurrentGBGRound,
+				{ guilds: historyData }
+			);
+			GuildFights.GBGRoundGuilds = null;
+		}
+	},
+
+
+	ShowGBGCharts: async () => {
+		if (!GuildFights.CurrentGBGRound) return;
+
+		if ($('#StatsGBG').length === 0) {
+			HTML.Box({
+				id: 'StatsGBG',
+				title: i18n('Boxes.GuildFights.Stats.Title'),
+				auto_close: true,
+				dragdrop: true,
+				minimize: true,
+			});
+
+			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
+				if (GuildFights.Chart) {
+					GuildFights.Chart.destroy();
+					GuildFights.Chart = null;
+				}
+			});
+		}
+		else {
+			HTML.CloseOpenBox('StatsGBG');
+			return;
+		}
+
+		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
+		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
+
+		let guildColors = {};
+		if (GuildFights.SortedColors && GuildFights.MapData?.battlegroundParticipants) {
+			for (let participant of GuildFights.MapData.battlegroundParticipants) {
+				let color = GuildFights.SortedColors.find(x => x.id === participant.participantId);
+				if (color) {
+					guildColors[participant.clan.id] = color.main;
+				}
+			}
+		}
+
+		// prepare data for chart
+		let datasets = guildNames.map(name => {
+			let guildId = entries.flatMap(e => e.guilds).find(x => x.name === name)?.id;
+			let color = guildColors[guildId] ?? null;
+
+			return {
+				label: name,
+				borderColor: color,
+				backgroundColor: color,
+				spanGaps: true,
+				data: entries.map(snapshot => {
+					let guild = snapshot.guilds.find(x => x.name === name);
+					if (!guild) return null;
+					return {
+						x: snapshot.time * 1000,
+						y: guild?.points ?? null,
+					};
+				}),
+			};
+		});
+
+		await helper.loadChartJS();
+
+		if (GuildFights.Chart) GuildFights.Chart.destroy();
+
+		let canvas = document.createElement('canvas');
+		canvas.width = 600;
+		canvas.height = 400;
+		$('#StatsGBGBody').empty().append(canvas);
+
+		GuildFights.Chart = new Chart(canvas, {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				animation: false,
+				color: '#ccc',
+				interaction: {
+					mode: 'index',
+					intersect: false,
+				},
+				pointRadius: 2,
+				pointHitRadius: 5,
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'hour',
+							displayFormats: { hour: 'dd, HH:mm' }
+						},
+						ticks: { maxRotation: 45 }
+					},
+					y: { beginAtZero: false }
+				},
+				plugins: {
+					legend: { 
+						position: 'bottom', 
+						labels: {
+							boxWidth: 15,
+							pointStyle: 'circle'
+						} 
+					},
+				},
+			}
+		});
+	},
+
 
 	UpdateDB: async (content, data) => {
+		if (!GuildFights.CurrentGBGRound) return;
+
+		if (content === 'guildHistory') {
+			let gbground = GuildFights.CurrentGBGRound;
+
+			// points changed since last snapshot?!
+			let lastEntry = await GuildFights.db.guildHistory.where('gbground').equals(gbground).last();
+			let newTotal = data.reduce((sum, g) => sum + g.points, 0);
+			let lastTotal = lastEntry?.guilds.reduce((sum, g) => sum + g.points, 0) ?? -1;
+			// no new points? no new entry
+			if (lastTotal === newTotal) return;
+
+			let time = moment().startOf('hour').unix();
+
+			await GuildFights.db.guildHistory.add({ gbground, time, guilds: data });
+		}
 
 		if (content === 'history') {
 			await GuildFights.db.history.put({ 
@@ -286,16 +454,11 @@ let GuildFights = {
 		let i = 0;
 		let PlayerBoxSettings = JSON.parse(localStorage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
-		GuildFights.PlayerBoxSettings.showRoundSelector = (PlayerBoxSettings.showRoundSelector !== undefined) ? PlayerBoxSettings.showRoundSelector : GuildFights.PlayerBoxSettings.showRoundSelector;
-		GuildFights.PlayerBoxSettings.showLogButton = (PlayerBoxSettings.showLogButton !== undefined) ? PlayerBoxSettings.showLogButton : GuildFights.PlayerBoxSettings.showLogButton;
-		GuildFights.PlayerBoxSettings.showProgressFilter = (PlayerBoxSettings.showProgressFilter !== undefined) ? PlayerBoxSettings.showProgressFilter : GuildFights.PlayerBoxSettings.showProgressFilter;
-
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
 			// get all available GBG entires
 			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).keys();
 			gbgRounds.sort(function (a, b) { return b - a });
 			GuildFights.GBGAllRounds = gbgRounds;
-
 		}
 
 		//set latest GBG round to show if available and no specific GBG round is set
@@ -308,61 +471,48 @@ let GuildFights = {
 			let previousweek = GuildFights.GBGAllRounds[index + 1] || null;
 			let nextweek = GuildFights.GBGAllRounds[index - 1] || null;
 
-			h.push(`<div id="gbg_roundswitch" class="roundswitch dark-bg">`);
+			h.push(`<div id="gbg_meta" class="flex between dark-bg p5">
+				<div>
+					<button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> 
+					<select id="gbg-select-gbground">`);
 
-			if (GuildFights.PlayerBoxSettings.showRoundSelector) {
-				h.push(`${i18n('Boxes.GuildMemberStat.GBFRound')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> `);
-				h.push(`<select id="gbg-select-gbground">`);
+					GuildFights.GBGAllRounds.forEach(week => {
+						h.push(`<option value="${week}"${gbground === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
+					});
 
-				GuildFights.GBGAllRounds.forEach(week => {
-					h.push(`<option value="${week}"${gbground === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
-				});
-
-				h.push(`</select>`);
-				h.push(`<button class="btn btn-mid btn-set-week last" data-week="${nextweek}"${nextweek === null ? ' disabled' : ''}>&gt;</button>`);
-			}
+				h.push(`</select>
+					<button class="btn btn-mid btn-set-week last" data-week="${nextweek}"${nextweek === null ? ' disabled' : ''}>&gt;</button>
+				</div>`);
 
 			if (gbground === GuildFights.CurrentGBGRound) {
-				h.push(`<div id="gbgLogFilter">`);
-				if (GuildFights.PlayerBoxSettings.showProgressFilter === 1) {
-					h.push(`<button id="gbg_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn" disabled>&#8593;</button>`);
-				}
-
-				if (GuildFights.PlayerBoxSettings.showLogButton === 1)
-				{
-					h.push(`<button id="gbg_showLog" class="btn">${i18n('Boxes.GuildFights.SnapshotLog')}</button>`);
-				}
-				h.push(`</div>`);
+				h.push(`<div id="gbgLogFilter">
+							<button class="btn btn-mid" onclick="GuildFights.ShowGBGCharts()">${i18n('Boxes.GuildFights.Stats.Open')}</button>
+							<button id="gbg_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<button id="gbg_showLog" class="btn btn-mid">${i18n('Boxes.GuildFights.SnapshotLog')}</button>
+						</div>`);
 			}
 			h.push(`</div>`);
 		}
 
 		h.push(`<div id="gbgContentWrapper"></div>`);
 
-		$('#GildPlayersBody').html(h.join('')).promise().done(function () {
+		$('#GuildPlayersBody').html(h.join('')).promise().done(function () {
 
 			$('.btn-set-week').off().on('click', function () {
 
 				GuildFights.GBGHistoryView = true;
 				let week = $(this).data('week');
 
-				if (!GuildFights.GBGAllRounds.includes(week))
-				{
-					return;
-				};
+				if (!GuildFights.GBGAllRounds.includes(week)) return;
 
 				GuildFights.BuildPlayerContent(week);
 			});
 
 			$('#gbg-select-gbground').off().on('change', function () {
-
 				GuildFights.GBGHistoryView = true;
 				let week = parseInt($(this).val());
 
-				if (!GuildFights.GBGAllRounds.includes(week) || week === GuildFights.CurrentGBGRound)
-				{
-					return;
-				};
+				if (!GuildFights.GBGAllRounds.includes(week) || week === GuildFights.CurrentGBGRound) return;
 
 				GuildFights.BuildPlayerContent(week);
 			});
@@ -385,7 +535,7 @@ let GuildFights = {
 	 */
 	ToggleProgressList: (id) => {
 
-		let elem = $('#GildPlayersTable > tbody');
+		let elem = $('#GuildPlayersTable > tbody');
 		let nelem = elem.find('tr.new');
 		let act = $('#' + id).hasClass('filtered') ? 'show' : 'hide';
 
@@ -394,7 +544,7 @@ let GuildFights = {
 				let oelem = elem.find('tr:not(.new)');
 				GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 1;
 				localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
-				$('#GildPlayersTable > thead .text-warning').hide();
+				$('#GuildPlayersTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
 			}
@@ -404,7 +554,7 @@ let GuildFights = {
 			elem.find('tr').show();
 			GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 0;
 			localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
-			$('#GildPlayersTable > thead .text-warning').show();
+			$('#GuildPlayersTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}
 	},
@@ -476,22 +626,22 @@ let GuildFights = {
 	 */
 	ShowPlayerBox: () => {
 		// Wenn die Box noch nicht da ist, neu erzeugen und in den DOM packen
-		if ($('#GildPlayers').length === 0) {
+		if ($('#GuildPlayers').length === 0) {
 			HTML.Box({
-				id: 'GildPlayers',
+				id: 'GuildPlayers',
 				title: i18n('Boxes.GuildFights.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
 				settings: 'GuildFights.ShowPlayerBoxSettings()',
-			    active_maps:"gg"
+			    active_maps:"gg",
 			});
 			HTML.AddCssFile('guildfights');
 		}
 			
 		if (Settings.GetSetting('ShowGBGPlayerInfo') == false) {
-			$('#GildPlayers').css({'display': 'none'})
+			$('#GuildPlayers').css({'display': 'none'})
 		}
 
 		GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
@@ -502,12 +652,12 @@ let GuildFights = {
 	 * Generates the snapshot detail box
 	 */
 	ShowDetailViewBox: (d) => {
-		if ($('#GildPlayersDetailView').length === 0) {
+		if ($('#GuildPlayersDetailView').length === 0) {
 			let ptop = null,
 				pright = null;
 
 			HTML.Box({
-				id: 'GildPlayersDetailView',
+				id: 'GuildPlayersDetailView',
 				title: i18n('Boxes.GuildFights.SnapshotLog'),
 				auto_close: true,
 				dragdrop: true,
@@ -515,12 +665,6 @@ let GuildFights = {
 				resize: true,
 			    active_maps:"gg"
 			});
-
-			if (localStorage.getItem('GildPlayersDetailViewCords') === null) {
-				ptop = $('#GildPlayers').length !== 0 ? $('#GildPlayers').position().top : 0;
-				pright = $('#GildPlayers').length !== 0 ? ($('#GildPlayers').position().left + $('#GildPlayers').width() + 10) : 0;
-				$('#GildPlayersDetailView').css('top', ptop + 'px').css('left', (pright * 1) + 'px');
-			}
 		}
 
 		GuildFights.BuildDetailViewContent(d);
@@ -603,22 +747,19 @@ let GuildFights = {
 				// Is there any data on this player?
 				if (playerOld !== undefined) {
 
-					if (playerOld['negotiationsWon'] < playerNew['negotiationsWon'])
-					{
+					if (playerOld['negotiationsWon'] < playerNew['negotiationsWon']) {
 						diffNegotiations = playerNew['negotiationsWon'] - playerOld['negotiationsWon'];
 						negotaionAddOn = ' <small class="text-success">&#8593; ' + diffNegotiations + '</small>';
 						change = true;
 					}
 
-					if (playerOld['battlesWon'] < playerNew['battlesWon'])
-					{
+					if (playerOld['battlesWon'] < playerNew['battlesWon']) {
 						diffBattles = playerNew['battlesWon'] - playerOld['battlesWon'];
 						fightAddOn = ' <small class="text-success">&#8593; ' + diffBattles + '</small>';
 						change = true;
 					}
 
-					if (playerOld['attrition'] < playerNew['attrition'])
-					{
+					if (playerOld['attrition'] < playerNew['attrition']) {
 						diffAttr = playerNew['attrition'] - playerOld['attrition'];
 						attritionAddOn = ' <small class="text-success">&#8593; ' + diffAttr + '</small>';
 						change = true;
@@ -626,8 +767,7 @@ let GuildFights = {
 				}
 			}
 
-			if ((change === true || newRound === true) && GuildFights.GBGHistoryView === false)
-			{
+			if ((change === true || newRound === true) && GuildFights.GBGHistoryView === false) {
 				await GuildFights.UpdateDB('player', { 
 						gbground: GuildFights.CurrentGBGRound, 
 						player_id: playerNew['player_id'], 
@@ -686,13 +826,13 @@ let GuildFights = {
 		}
 
 		// Update DetailView if there are changes and DetailView is open
-		if ($('#GildPlayersDetailView').length !== 0 && updateDetailView === true) {
+		if ($('#GuildPlayersDetailView').length !== 0 && updateDetailView === true) {
 			GuildFights.BuildDetailViewContent(GuildFights.curDetailViewFilter);
 		}
 
 		let tNF = (tN * 2) + tF;
 
-		t.push('<table id="GildPlayersTable" class="exportable foe-table' + (histView === false ? ' chevron-right' : '') + '">');
+		t.push('<table id="GuildPlayersTable" class="exportable foe-table' + (histView === false ? ' chevron-right' : '') + '">');
 
 		t.push('<thead class="sticky">');
 		t.push('<tr>');
@@ -714,13 +854,13 @@ let GuildFights = {
 
 		$('#gbgContentWrapper').html(t.join('')).promise().done(function () {
 
-			$('#GildPlayersBody tr.showdetailview').off('click').on('click', function () {
+			$('#GuildPlayersBody tr.showdetailview').off('click').on('click', function () {
 				let player_id = $(this).data('player');
 				let gbground = $(this).data('gbground');
 
 				GuildFights.curDetailViewFilter = { content: 'player', player_id: player_id, gbground: gbground };
 
-				if ($('#GildPlayersDetailView').length === 0) {
+				if ($('#GuildPlayersDetailView').length === 0) {
 					GuildFights.ShowDetailViewBox(GuildFights.curDetailViewFilter);
 				}
 				else {
@@ -728,32 +868,30 @@ let GuildFights = {
 				}
 			});
 
-			$("#GildPlayers").on("remove", function () {
-				if ($('#GildPlayersDetailView').length !== 0)
+			$("#GuildPlayers").on("remove", function () {
+				if ($('#GuildPlayersDetailView').length !== 0)
 				{
-					$('#GildPlayersDetailView').fadeOut(50, function () {
+					$('#GuildPlayersDetailView').fadeOut(50, function () {
 						$(this).remove();
 					});
 				}
 			});
 
 			// check if member has a new progress
-			let newPlayer = $('#GildPlayersTable tbody').find('tr.new').length;
-			if (newPlayer > 0)
-			{
+			let newPlayer = $('#GuildPlayersTable tbody').find('tr.new').length;
+			if (newPlayer > 0) {
 				$('button#gbg_filterProgressList').html('&#8593; ' + newPlayer);
 				$('button#gbg_filterProgressList').attr("disabled", false);
 
-				if (GuildFights.PlayerBoxSettings.showOnlyActivePlayers === 1)
-				{
+				if (GuildFights.PlayerBoxSettings.showOnlyActivePlayers === 1) {
 					GuildFights.ToggleProgressList('gbg_filterProgressList');
 				}
 			}
 		});
 
-		if ($('#GildPlayersHeader .title').find('.time-diff').length === 0)
+		if ($('#GuildPlayersHeader .title').find('.time-diff').length === 0)
 		{
-			$('#GildPlayersHeader .title').append($('<small />').addClass('time-diff'));
+			$('#GuildPlayersHeader .title').append($('<small />').addClass('time-diff'));
 		}
 
 		// es gibt schon einen Snapshot vorher
@@ -790,20 +928,17 @@ let GuildFights = {
 
 		if (player_id === null && content === "player") return;
 
-		if (content === "player")
-		{
+		if (content === "player") {
 			detaildata = await GuildFights.db.snapshots.where({ gbground: gbground, player_id: player_id }).toArray();
 
 			playerName = detaildata[0].name;
 			dailyFights = detaildata.reduce(function (res, obj) {
 				let date = moment.unix(obj.time).format('YYYYMMDD');
 
-				if (!(date in res))
-				{
+				if (!(date in res)) {
 					res.__array.push(res[date] = { date: date, time: obj.time, battles: obj.battles, negotiations: obj.negotiations });
 				}
-				else
-				{
+				else {
 					res[date].battles += +obj.battles;
 					res[date].negotiations += +obj.negotiations;
 				}
@@ -825,19 +960,17 @@ let GuildFights = {
 			dailyFights.forEach(day => {
 				let id = moment.unix(day.time).format(i18n('DateTime'));
 				let sum = (day.battles + day.negotiations * 2);
-				h.push('<tr id="gbgdetail_' + id + '" data-gbground="' + gbground + '" data-player="' + player_id + '" data-id="' + id + '">');
+				h.push(`<tr id="gbgdetail_${id}" data-gbground="${gbground}" data-player="${player_id}" data-id="${id}">`);
 				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(i18n('Date'))}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${HTML.Format(day.negotiations)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${day.battles}">${HTML.Format(day.battles)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
 				h.push('</tr>');
-
 			});
 
 			h.push('</tbody></table>');
 		}
-		else if (content === "filter")
-		{
+		else if (content === "filter") {
 			detaildata = await GuildFights.db.snapshots.where({ gbground: gbground }).and(function (item) {
 				return (item.date >= GuildFights.curDateFilter && item.date <= GuildFights.curDateEndFilter)
 			}).toArray();
@@ -855,46 +988,44 @@ let GuildFights = {
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
 
+			let lastDataId = 0;
 			detaildata.forEach(e => {
 				sumN += e.negotiations;
 				sumF += e.battles;
 				let sum = (e.battles + e.negotiations * 2);
-				h.push('<tr data-id="' + e.time + '" id="gbgtime_' + e.time + '">');
+				h.push(`<tr  ${e.time === lastDataId ? '' : 'class="spacer"'} data-id="${e.time}" id="gbgtime_${e.time}">`);
 				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
 				h.push(`<td class="case-sensitive" data-text="${helper.str.cleanup(e.name)}">${e.name}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${HTML.Format(e.negotiations)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${e.battles}">${HTML.Format(e.battles)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
 				h.push('</tr>');
+				lastDataId = e.time;
 			});
 
 			h.push('</tbody></table>');
 		}
 
-		$('#GildPlayersDetailViewBody').html(h.join('')).promise().done(function () {
+		$('#GuildPlayersDetailViewBody').html(h.join('')).promise().done(function () {
 
-			$('#GildPlayersDetailViewBody .gbglog').tableSorter();
+			$('#GuildPlayersDetailViewBody .gbglog').tableSorter();
 
-			if ($('#gbgLogDatepicker').length !== 0)
-			{
+			if ($('#gbgLogDatepicker').length !== 0) {
 				GuildFights.intiateDatePicker();
 			}
-			$('#GildPlayersDetailViewBody tr.sorter-header').on('click', function () {
+			$('#GuildPlayersDetailViewBody tr.sorter-header').on('click', function () {
 				$(this).parents('.foe-table').find('tr.open').removeClass("open");
 
 			});
 
-			$('#GildPlayersDetailViewBody > .foe-table tr').on('click', function () {
+			$('#GuildPlayersDetailViewBody > .foe-table tr').on('click', function () {
 
-				if ($(this).next("tr.detailview").length)
-				{
+				if ($(this).next("tr.detailview").length) {
 					$(this).next("tr.detailview").remove();
 					$(this).removeClass('open');
 				}
-				else
-				{
-					if (!$(this).hasClass("hasdetail"))
-					{
+				else {
+					if (!$(this).hasClass("hasdetail")) {
 						return;
 					}
 
@@ -937,7 +1068,7 @@ let GuildFights = {
 			data.width = { a: 50, b: 20, c: 20, d: 20 }
 		}
 
-		h.push(`<tr class="detailview dark-bg"><td class="nopadding" colspan="${$('#GildPlayersDetailViewBody > .foe-table thead tr').find("th").length}"><table class="foe-table log"><body>`);
+		h.push(`<tr class="detailview dark-bg"><td class="nopadding" colspan="${$('#GuildPlayersDetailViewBody > .foe-table thead tr').find("th").length}"><table class="foe-table log"><body>`);
 
 		d.forEach(e => {
 			h.push(`<tr>`);
@@ -1297,7 +1428,11 @@ let GuildFights = {
 	 * Initatite the Litepicker object
 	 */
 	intiateDatePicker: async () => {
-
+		if (GuildFights.LogDatePicker) {
+			GuildFights.LogDatePicker.destroy();
+			GuildFights.LogDatePicker = null;
+		}
+		
 		GuildFights.LogDatePicker = new Litepicker({
 			element: document.getElementById('gbgLogDatepicker'),
 			format: 'YYYYMMDD',
@@ -1608,29 +1743,10 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
-		c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.GuildFights.Title')}</span>` +
-			`<input id="gf_showRoundSelector" name="showroundswitcher" value="1" type="checkbox" ${(Settings.showRoundSelector === 1) ? ' checked="checked"' : ''} /> <label for="gf_showRoundSelector">${i18n('Boxes.GuildFights.ShowRoundSelector')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gf_showProgressFilter" name="showprogressfilter" value="1" type="checkbox" ${(Settings.showProgressFilter === 1) ? ' checked="checked"' : ''} /> <label for="gf_showProgressFilter">${i18n('Boxes.GuildFights.ShowProgressFilter')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gf_showLogButton" name="showlogbutton" value="1" type="checkbox" ${(Settings.showLogButton === 1) ? ' checked="checked"' : ''} /> <label for="gf_showLogButton">${i18n('Boxes.GuildFights.ShowLogButton')}</label></p>`);
-		c.push(`<p><button id="save-GuildFightsPlayerBox-settings" class="btn saveSettings" onclick="GuildFights.PlayerBoxSettingsSaveValues()">${i18n('Boxes.General.Save')}</button></p>`);
-		c.push(`<hr><p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#GildPlayersTable'),'csv','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="HTML.ExportTable($('#GildPlayersTable'),'json','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
-		$('#GildPlayersSettingsBox').html(c.join(''));
-	},
-
-
-	PlayerBoxSettingsSaveValues: () => {
-		GuildFights.PlayerBoxSettings.showRoundSelector = $("#gf_showRoundSelector").is(':checked') ? 1 : 0;
-		GuildFights.PlayerBoxSettings.showProgressFilter = $("#gf_showProgressFilter").is(':checked') ? 1 : 0;
-		GuildFights.PlayerBoxSettings.showLogButton = $("#gf_showLogButton").is(':checked') ? 1 : 0;
-
-		localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
-
-		$(`#GildPlayersSettingsBox`).fadeToggle('fast', function () {
-			$(this).remove();
-			GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
-		});
+		$('#GuildPlayersSettingsBox').html(c.join(''));
 	},
 
 
@@ -1675,8 +1791,8 @@ let GuildFights = {
 		let alertOffset = parseInt( JSON.parse(localStorage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
 
 		const data = {
-			title: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
-			body:'',
+			title: prov.title,
+        	body: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
 			expires: (prov.lockedUntil - alertOffset) * 1000, // -30s * Microtime
 			repeat: -1,
 			persistent: true,

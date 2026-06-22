@@ -94,57 +94,29 @@ let GameTime = {
 	get:()=>{
 		return moment().unix()+GameTime.Offset;
 	}
-	
-
 }
 
-// Übersetzungen laden
-let i18n_loaded = false;
-const i18n_loadPromise = (async () => {
-	const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
-	const vendorsLoadedPromise = new Promise(resolve =>
-		window.addEventListener('foe-helper#vendors-loaded', resolve, { passive: true, once: true })
-	);
+let i18n = (key) => {
+	return Translation.tempData?.[key]?.s || Translation.tempData?.[key] || i18nData[key] || key;
+}
+let i18nData = null;
 
+(async () => {
 	try {
 		let languages = [];
 
-		// Englisches Fallback laden
-		if (GuiLng !== 'en') {
-			languages.push('en');
-		}
-
-		languages.push(GuiLng);
-
-		// parrallel mache:
-		const languageDatas = await Promise.all(
-			languages
-				.map(lang =>
-					// frage die Sprachdatei an
-					fetch(extUrl + 'js/web/_i18n/' + lang + '.json')
-						// lade die antwort als JSON
-						.then(response => response.text())
-						// im fehlerfall wird ein leeres Objekt zurück gegeben
-						.catch(() => ({}))
-				)
-		);
-
-		// warte dass i18n geladen ist
-		//console.log("await vendors loaded")
-		await vendorsLoadedPromise;
-		//console.log("vendors loaded");	
+		// load english fallback
+		let data = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
 		
-		for (let languageData of languageDatas) {
-			i18n.translator.add({ 'values': JSON.parse(languageData) });
-		}
+		//overload with gui language
+		if (GuiLng !== 'en') 
+			Object.assign(data, await fetch(extUrl + 'js/web/_languages/json/' + GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
 
-		i18n_loaded = true;
-
+		i18nData = data;
 	} catch (err) {
 		console.error('i18n translation loading error:', err);
 	}
 })();
-
 
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world
@@ -277,7 +249,8 @@ GetFights = () =>{
 	// --------------------------------------------------------------------------------------------------
 	// Player- und Gilden-ID setzen
 	FoEproxy.addHandler('StartupService', 'getData', (data, postData) => {
-        moment.locale(i18n('Local'));
+        	
+		moment.locale(i18n('Local'));
 		window.addEventListener("error", function (e) {
 			console.error(e.error);
 			e.preventDefault();
@@ -293,6 +266,7 @@ GetFights = () =>{
 		GexStat.checkForDB(ExtPlayerID);
 		GuildFights.checkForDB(ExtPlayerID);
 		QiProgress.checkForDB(ExtPlayerID);
+		Notes.checkForDB(ExtPlayerID);
 
 		// which tab is active in StartUp Object?
 		let vals = {
@@ -543,7 +517,7 @@ GetFights = () =>{
 		if ([901,902].includes(data.responseData.error_code)) {
 			return;
 		}
-		if (data.responseData["armyId"] === 1 || data.responseData["state"]["round"] === 1 || data.responseData["battleType"]["totalWaves"] === 1) {
+		if (data.responseData["armyId"] === 1 || data.responseData.state?.round === 1 || data.responseData.battleType?.totalWaves === 1) {
 			let units = data.responseData.state.unitsOrder;
 
 			for (let i = 0; i < units.length; i++) {
@@ -831,14 +805,14 @@ GetFights = () =>{
 
 	// player goods
 	FoEproxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
-		ResourceStock = data.responseData.resources; // Lagerbestand immer aktualisieren. Betrifft auch andere Module wie Technologies oder Negotiation
+		ResourceStock = data.responseData.resources; // Keep this updated
 		Outposts.CollectResources();
 		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 	FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
 		if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
-		ResourceStock = data.responseData.resources.resources; // Lagerbestand immer aktualisieren. Betrifft auch andere Module wie Technologies oder Negotiation
+		ResourceStock = data.responseData.resources.resources;
 		Outposts.CollectResources();
 		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
@@ -1476,12 +1450,12 @@ let MainParser = {
 		});
 
 		ExtPlayerAvatar = d.portrait_id;
-		await ExistenceConfirmed('MainParser.CityEntities||srcLinks.FileList||Infoboard||EventHandler');
+		await ExistenceConfirmed('MainParser.CityEntities||srcLinks.FileList||Infoboard||EventHandler||i18nData');
 	
 		Infoboard.Init();
 		EventHandler.Init();
 		setTimeout(MainParser.forceLoadCityEntities, 15000);
-	
+		
 		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point

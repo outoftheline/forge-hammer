@@ -46,9 +46,9 @@ let Settings = {
 
 
 	/**
-	 * Box initiieren
+	 * activeTab and activeSubTab need to be integers
 	 */
-	BuildBox: () => {
+	BuildBox: (activeTab = null, activeSubTab = null) => {
 		if ($('#SettingsBox').length < 1) {
 
 			HTML.AddCssFile('settings');
@@ -64,15 +64,11 @@ let Settings = {
 			HTML.CloseOpenBox('SettingsBox');
 		}
 
-		Settings.BuildBody();
+		Settings.BuildBody(activeTab, activeSubTab);
 	},
 
 
-	/**
-	 * Box zusammen setzen
-	 *
-	 */
-	BuildBody: () => {
+	BuildBody: (activeTab = null, activeSubTab = null) => {
 		let parentLis = [],
 			div = [],
 			content;
@@ -93,7 +89,7 @@ let Settings = {
 				let d = grps[x],
 					status = d['status'],
 					button = d['button'],
-					c = $('<div />').addClass('item'),
+					c = $('<div class="item" />'),
 					cr = $('<div />').addClass('item-row'),
 					ct = $('<h2 />'),
 					cd = $('<div />').addClass('desc'),
@@ -163,8 +159,15 @@ let Settings = {
 		// wait for html in the DOM
 		$('#SettingsBoxBody').html(content).promise().done(function () {
 			// init Tabslet
-			$('.settings').tabslet();
-			$('.settings-sub').tabslet();
+			if (activeTab) 
+				$('.settings').tabslet({active: activeTab});
+			else 
+				$('.settings').tabslet();
+			
+			if (activeSubTab) 
+				$('.settings-sub').tabslet({active: activeSubTab});
+			else 
+				$('.settings-sub').tabslet();
 		});
 
 
@@ -222,11 +225,12 @@ let Settings = {
 
 
 	VersionInfo: () => {
-		let v = '<p>';
-		v +=	extVersion.includes('beta') ? `` : `${i18n('Settings.Version.Link').replace('__version__', '')}<br />`;
-		v +=	`<a href="${extUrl}content/about.html" target="_blank">${i18n('Settings.About.Title')}</a><br />
-				<a href="${extUrl}content/help.html" target="_blank">${i18n('Settings.Help.Title')}</a>
-				</p>
+		let v = '<ul>';
+		v +=	extVersion.includes('beta') ? `` : `<li><b>${i18n('Settings.Version.Link').replace('__version__', '')}</b></li>`;
+		v +=	`<li><a href="${extUrl}content/about.html" target="_blank">${i18n('Settings.About.Title')}</a></li>
+				<li><a href="${extUrl}content/help.html" target="_blank">${i18n('Settings.Help.Title')}</a></li>
+				</ul>
+				<p>${i18n('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
 				<div class="info-box">
 					<span><b>${i18n('Boxes.General.Version')}</b> ${extVersion}</span>
 					<span><b>${i18n('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
@@ -234,7 +238,6 @@ let Settings = {
 					<span><b>${i18n('Settings.Version.World')}</b> ${ExtWorld}</span>
 				</div>`;
 		return v;
-		
 	},
 
 
@@ -264,9 +267,9 @@ let Settings = {
 		};
 
 		let v = `<ul class="gameFilters foe-table">
-			<li><span>${i18n('Boxes.Settings.GameFilters.Brightness')}</span> <input type="range" name="brightness" id="gamebrightness" min="0.1" max="1.5" step="0.02" value="${filters.brightness}" /> <output for="gamebrightness">${filters.brightness}</output></li>
-			<li><span>${i18n('Boxes.Settings.GameFilters.Contrast')}</span> <input type="range" name="contrast" id="gamecontrast" min="0.5" max="1.5" step="0.02" value="${filters.contrast}" /> <output for="gamecontrast">${filters.contrast}</output></li>
-			<li><span>${i18n('Boxes.Settings.GameFilters.Saturation')}</span> <input type="range" name="saturation" id="gamesaturation" min="0" max="1" step="0.02" value="${filters.saturation}" /> <output for="gamesaturation">${filters.saturation}</output></li>
+			<li><span>${i18n('Boxes.Settings.GameFilters.Brightness')}</span> <input type="range" name="brightness" id="gamebrightness" min="0.1" max="1.5" step="0.01" value="${filters.brightness}" /> <output for="gamebrightness">${filters.brightness}</output></li>
+			<li><span>${i18n('Boxes.Settings.GameFilters.Contrast')}</span> <input type="range" name="contrast" id="gamecontrast" min="0.5" max="1.5" step="0.01" value="${filters.contrast}" /> <output for="gamecontrast">${filters.contrast}</output></li>
+			<li><span>${i18n('Boxes.Settings.GameFilters.Saturation')}</span> <input type="range" name="saturation" id="gamesaturation" min="0" max="1.5" step="0.01" value="${filters.saturation}" /> <output for="gamesaturation">${filters.saturation}</output></li>
 			<li><span>${i18n('Boxes.Settings.GameFilters.Hue')}</span> <input type="range" name="hue" id="gamehue" min="0" max="360" step="1" value="${filters.hue}" /> <output for="gamehue">${filters.hue}</output></li>
 		</ul>
 		<button class="btn resetColors my-5">${i18n('Boxes.General.Reset')}</button>`;
@@ -380,7 +383,7 @@ let Settings = {
 				</ul>`;
 
 		$('#SettingsBoxBody')
-			.on('change.soundEffects', 'input:checked', function () {
+			.on('change.soundEffects', 'input[name="nSound"]:checked', function () {
 				localStorage.setItem('hammerSound', $(this).val());
 			});
 
@@ -649,7 +652,7 @@ let Settings = {
 					.addClass(hiddenArray.includes(name) ? 'hud-btn-red' : '');
 				let btnData = _menu.ItemsData.find(x => x.id === name);
 
-				let btn = $(`<span onclick="_menu.ToggleItemVisibility('${name}')" data-original-title='<b>${btnData?.title||""}</b><br>${btnData?.description||""}'></span>`);
+				let btn = $(`<span onclick="_menu.ToggleItemVisibility('${name}')" data-original-title="<b>${btnData?.title||""}</b><br>${btnData?.description.replace(/<[^>]+>/g, '')||""}"></span>`);
 		
 				btnBG.append(btn);
 				bl.append(btnBG);

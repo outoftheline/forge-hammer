@@ -1,11 +1,32 @@
 # Changelog
  
+## Version 1.0
+### New
+- Notes/To Dos: Create lists for your most important plans
+- GBG Stats: Guild progress is now tracked every time you open the leaderboard. It will be displayed in a chart when you click on "Stats"
+
+### Updated
+- Stats: Changed the graphs to ChartJS. You can now drag and zoom instead of selecting sections with your mouse. Data export is not a feature included with ChartJS, so this is currently gone, but will be implemented soon
+- Translations: 
+    - The reference string corresponding to a translated string is now saved - when the reference changes, this can be highlighted in the tool
+    - When changes are stored temporarily, the updated strings will be used directly in the extension - some might need a reload though
+
+### Bug fixes
+- Technologies: A game change broke it
+- GBG notifications: Work as expected again instead of sometimes doubling or just being forgotten
+- Settings: Sound settings could get lost
+- Settings: Menu tooltips were broken for some languages
+- Settings: The Motivate/polish tracker was not added to the menu if you deactivated tracking. It now works differently
+
+---
+ 
 ## Version 0.9
 ### New
 - Themes! Check the settings to choose a different skin for the addon
 - Game Filters! You can adjust some basic game colors in the settings now
 - Change notification sound! Check the settings to choose from seven different sound effects
 - Window Pop Outs: You can try an alpha version of it in the efficiency window. It will not have full functionality
+- Translations: to replace weblate, a translation tool was added - it can be accessed in the Settings' language option
 
 ### Updated
 - GB Calculator: Added a button at the top to easily switch views

@@ -401,7 +401,7 @@ let EventHandler = {
 		}
 
 		/* Filters */
-		h.push('<div class="text-center dark-bg header"><strong class="title">' + i18n('Boxes.MoppelHelper.HeaderWarning') + '</strong><br></div>');
+		h.push('<div class="text-center dark-bg header"><strong class="title">' + i18n('Boxes.MoppelHelper.HeaderWarning') + '</strong></div>');
 		h.push('<div class="dark-bg">');
 
 		// Event filter dropdown
@@ -452,6 +452,18 @@ let EventHandler = {
 
 		h.push('</ul></div></div>');
 
+
+		
+		if(!Settings.GetSetting('ShowPlayersMotivation')) {
+			h.push(`<div class="flex itemscenter" style="height: 300px">
+				<div class="text-center">Tracking is inactive! <br />
+				<button class="btn" onclick="Settings.BuildBox(4,2)">Activate it here</button></div>
+				</div>`);
+			await $('#moppelhelperBody').html(h.join(''));
+			return;
+		}
+
+
 		h.push('<table id="moppelhelperTable" class="foe-table sortable-table exportable">');		
 		h.push('</table>');	
 
@@ -469,8 +481,8 @@ let EventHandler = {
 	 */
 	CalcMoppelHelperTable: async () => {
 		let h = [];
-
 		let PlayerList = [];
+
 		if (EventHandler.CurrentPlayerGroup === 'Friends') {
 			if (!PlayerDictFriendsUpdated) {
 				h.push('<div class="text-center"><strong class="bigerror">' + i18n('Boxes.MoppelHelper.FriendsSocialTabTT') + '</strong></div>');
@@ -590,7 +602,7 @@ let EventHandler = {
 			if (EventHandler.ShowHideColumns.Era) {
 				let pTime = EventHandler.isProtected[Player['PlayerID']] | 0;
 				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > MainParser.getCurrentDateTime())) ? pImage : '';
-				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]) + pImg}</td>`);
+				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]+'.short') + pImg}</td>`);
 			}
 
 			// Player points column

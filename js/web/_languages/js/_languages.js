@@ -35,6 +35,9 @@ let Languages = {
 };
 
 let Translation = {
+	targetData: null,
+	referenceData: null,
+	tempData: JSON.parse(localStorage.getItem('Translation.Temp') || '{}'),
 	Show: ()=> {
 		if ( $('#Translation').length === 0 ) {
 
@@ -50,18 +53,22 @@ let Translation = {
 			});		
 			let html = `
 				<div id="TranslationHeader" class="p5">
-					<label for="ReferenceLanguage">${i18n('Boxes.Translation.ReferenceLanguage')}</label>
-					<select id="ReferenceLanguage" selected="en">
-						${["en","de"].map((code)=>`<option value="${code}">${Languages.PossibleLanguages[code]}</option>`).join('')}
-					</select>
 					<label for="TargetLanguage">${i18n('Boxes.Translation.TargetLanguage')}</label>
 					<select id="TargetLanguage">
 						<option value="" disabled selected>${i18n('Boxes.Translation.SelectLanguage')}...</option>
 						${Object.entries(Languages.PossibleLanguages).map(([code, name])=>`<option value="${code}">${name}</option>`).join('')}
 					</select>
+					<input type="text" id="TranslationSearch" placeholder="${i18n('Boxes.Translation.SearchPlaceholder')}" length="50"/>
+					<label for="ComparisonLanguage">${i18n('Boxes.Translation.ComparisonLanguage')}</label>
+					<select id="ComparisonLanguage">
+						${Object.entries(Languages.PossibleLanguages).map(([code, name])=>`<option value="${code}" ${code === 'de' ? 'selected' : ''}>${name}</option>`).join('')}
+					</select>
+					<br />
+					
 					<input type="checkbox" id="ShowOnlyMissing" />
 					<label for="ShowOnlyMissing">${i18n('Boxes.Translation.ShowOnlyMissing')}</label>
-					<input type="text" id="TranslationSearch" placeholder="${i18n('Boxes.Translation.SearchPlaceholder')}" length="50"/>
+					<input type="checkbox" id="ShowOnlyUpdated" />
+					<label for="ShowOnlyUpdated">${i18n('Boxes.Translation.ShowOnlyUpdated')}</label>
 				</div>
 				<table id="TranslationTable" class="foe-table">
 					<thead>
@@ -78,33 +85,44 @@ let Translation = {
 					<div class="p5" id="CopyJSONInfo">
 						<h2>How to help translate</h2> 
 						<ul>
-							<li>You need a <a href="https://github.com" target="_blank">GitHub</a> Account</li>
-							<li>Fork the <a href="https://github.com/outoftheline/forge-hammer" target="_blank">Forge Hammer</a> repository including all branches</li>
-							<li>Use the Copy button on the right to copy the translation data</li>
-							<li>Overwrite the content of the respective language json file in your forks 'develop' branch. Path: /js/web/_i18n/ </li>
-							<li>Create a <a href="https://github.com/outoftheline/forge-hammer/pulls" target="_blank">pull request</a> into the Forge Hammer 'develop' branch to get the translation into the next release.</li>
+							<li>Using a local version of the <a href="https://github.com/outoftheline/forge-hammer/develop" target="_blank">Forge Hammer develop branch</a></li> is preferred, so you have the latest changes, but optional
+							<li>Add missing translations or correct faulty ones</li>
+							<li>Confirm correctness of translations where appropriate by clicking the checkmark icon - mainly for the first pass-over after Forge Hammer release</li>
+							<li>Use the Copy JSON button on the right to copy the translation data</li>
+							<li>Submit the copied JSON data in the Translation channel on our <a href="https://discord.gg/M32xurRsQ9" target="_blank">Discord server</a></li>
+							<li>You can save your translation progress locally - it also is applied to the extension directly then, although some strings might need a reload</li>
+							<li>If you use a fork of the extension, you can also copy the JSON data into the respective language file and create a pull request on Github to get your changes merged.</li>
 						</ul>
 					</div>
-					<div class="p5"><span class="btn btn-default" id="CopyJSON">${i18n('Boxes.Translation.CopyJSON')}</span></div>
+					<div class="p5">
+						<span class="btn btn-default" id="CopyJSON">${i18n('Boxes.Translation.CopyJSON')}</span>
+						<span class="btn btn-default" id="TempStorage">${i18n('Boxes.Translation.TempStorage')}</span>
+						<span class="btn btn-default" id="ClearStorage">${i18n('Boxes.Translation.ClearStorage')}</span>
+					</div>
 				</div>
 			`
 
 			$('#TranslationBody').html(html)
 		}
 		$('#TargetLanguage').on('change', Translation.UpdateTable);
-		$('#ReferenceLanguage').on('change', Translation.UpdateTable);
+		$('#ComparisonLanguage').on('change', Translation.UpdateTable);
 		$('#ShowOnlyMissing').on('change', ()=>{
 			$('#TranslationTable')[0].classList.toggle('show-only-missing', $('#ShowOnlyMissing')[0].checked);
 		});
+		$('#ShowOnlyUpdated').on('change', ()=>{
+			$('#TranslationTable')[0].classList.toggle('show-only-updated', $('#ShowOnlyUpdated')[0].checked);
+		});
 		$('#TranslationSearch').on('input', Translation.FilterTable);
 		$('#CopyJSON').on('click', ()=>{
-			let target = {};
-			$('#TranslationTable tbody tr').each((i, row)=>{
-				let key = $(row).find('td:nth-child(1)').html();
-				let value = $(row).find('td:nth-child(3) span').html();
-				if (value.trim() !== '') target[key] = value;
-			});
-			navigator.clipboard.writeText(JSON.stringify(target, null, 2));
+			navigator.clipboard.writeText(JSON.stringify(Translation.targetData, null, 2));
+		});
+		$('#TempStorage').on('click', ()=>{
+			Translation.tempData = structuredClone(Translation.targetData);
+			localStorage.setItem('Translation.Temp', JSON.stringify(Translation.tempData));
+		});
+		$('#ClearStorage').on('click', ()=>{
+			Translation.tempData = {};
+			localStorage.removeItem('Translation.Temp');
 		});
 		$('#TranslationTable').on('click', 'td:nth-child(3)', function() {
 			let td = $(this);
@@ -115,8 +133,15 @@ let Translation = {
 			let input = td.find('textarea');
 			input.focus();
 		});
+		$('#TranslationTable').on('click', 'td:nth-child(3) b', function(e) {
+			let key = $(this).parent().siblings(':first').html();
+			Translation.targetData[key] = {s: Translation.targetData[key]?.s || Translation.targetData[key], r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
+			$(this).remove();
+			e.stopPropagation();
+		});
 		$('#TranslationTable').on('blur', 'td:nth-child(3) textarea', function() {
 			let textarea = $(this);
+			let key = textarea.parent().siblings(':first').html();
 			let originalValue = textarea.next().html();
 			let newValue = textarea.val();
 			if (newValue.trim() === '') newValue = '';
@@ -125,7 +150,12 @@ let Translation = {
 					newValue = originalValue;
 				}
 			}
-			textarea.parent().html(`<span>${newValue}</span>`);
+			
+			if (newValue != originalValue && newValue !== '') Translation.targetData[key] = {s: newValue, r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
+			let reference = Translation.referenceData[key]?.s || Translation.referenceData[key] || '';
+			let updated = !Translation.targetData[key]?.r || (reference.s || reference) !== Translation.targetData[key]?.r;
+			textarea.parent().html(`${(updated && newValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${newValue}</span>`);
+			textarea.parent().attr('title', ``);	
 		})
 
 
@@ -133,20 +163,25 @@ let Translation = {
 
 	UpdateTable: async ()=> {
 		let target = $('#TargetLanguage')[0].value;
-		let reference = $('#ReferenceLanguage')[0].value;
-		let showOnlyMissing = $('#ShowOnlyMissing')[0].checked;
+		let comparison = $('#ComparisonLanguage')[0].value;
 
-		let targetData = await fetch(extUrl + 'js/web/_i18n/'+target+'.json').then(res=>res.json());
-		let referenceData = await fetch(extUrl + 'js/web/_i18n/'+reference+'.json').then(res=>res.json());
+		Translation.targetData = await fetch(extUrl + 'js/web/_languages/json/'+target+'.json').then(res=>res.json()).catch(()=>({}));
+		Translation.referenceData = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
+		let comparisonData = await fetch(extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
 		
-		referenceData = Object.entries(referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, value])=>({key, value}));
-		let rowsHtml = referenceData.map(({key, value})=>{
-			let targetValue = targetData[key] || '';
+		localData = JSON.parse(localStorage.getItem('Translation.Temp') || '{}');	
+
+		referenceData = Object.entries(Translation.referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, reference])=>({key, reference}));
+		let rowsHtml = referenceData.map(({key, reference})=>{
+			let targetValue = Translation.targetData[key]?.s || Translation.targetData[key] || '';
+			let comparisonValue = comparisonData[key]?.s || comparisonData[key] || '';
 			let missing = targetValue.trim() === '';
-			return `<tr class="${missing ? 'missing' : ''}">
+			let updated = !Translation.targetData[key]?.r || (reference.s || reference) !== Translation.targetData[key]?.r;
+			targetValue = localData[key] || targetValue;
+			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
-				<td>${value}</td>
-				<td><span>${targetValue}</span></td>
+				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${reference.s||reference}</td>
+				<td ${updated ? `title="Old Reference: ${HTML.escapeHtml(Translation.targetData[key]?.r || '')}"` : ''}>${(updated && targetValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${targetValue}</span></td>
 			</tr>`;
 		}).join('');
 		$('#TranslationTable tbody').html(rowsHtml);
@@ -160,19 +195,20 @@ let Translation = {
 			$('#TranslationTable .found').removeClass('found');
 			return;
 		}
-		let searchRE = new RegExp(search, 'i');
-		$('#TranslationTable tbody tr').each((i, row)=>{
-			let key = $(row).find('td:nth-child(1)').html();
-			let reference = $(row).find('td:nth-child(2)').html();
-			let target = $(row).find('td:nth-child(3)').html();
-			if (!searchRE.test(key) && !searchRE.test(reference) && !searchRE.test(target)) {
-				$(row)[0].classList.remove('found');
-			} else {
-				$(row)[0].classList.add('found');
-			}
-		});
+		try {
+			let searchRE = new RegExp(search, 'i');
+			$('#TranslationTable tbody tr').each((i, row)=>{
+				let key = $(row).find('td:nth-child(1)').html();
+				let reference = $(row).find('td:nth-child(2)').html();
+				let target = $(row).find('td:nth-child(3)').html();
+				if (!searchRE.test(key) && !searchRE.test(reference) && !searchRE.test(target)) {
+					$(row)[0].classList.remove('found');
+				} else {
+					$(row)[0].classList.add('found');
+				}
+			});
+		} catch (err) {
+
+		}
 	}
-
-
-
 };
