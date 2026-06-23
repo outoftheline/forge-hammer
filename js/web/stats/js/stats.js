@@ -260,7 +260,7 @@ let Stats = {
 	isVisitingCulturalOutpost: false,
 	goodsSubTypes:[],
 	ResMap: {
-		NoAge: ['money', 'supplies', 'tavern_silver', 'medals', 'premium', 'guild_raids_medals'],
+		NoAge: ['money', 'supplies', 'tavern_silver', 'medals', 'premium', 'guild_raids_medals', 'castle_points'],
 		special: ['promethium', 'orichalcum', 'mars_ore', 'asteroid_ice', 'venus_carbon', 'unknown_dna','crystallized_hydrocarbons','dark_matter'],
 	},
 
@@ -673,7 +673,8 @@ let Stats = {
 								<ul class="horizontal">
 									${btnsRewardSelect.join('')}
 								</ul>
-							</div>`;
+							</div>` +
+							`<div class="datepicker"><button class="btn" id="StatsDatePicker">${Stats.formatRange()}</button></div>`;
 		}
 		else {
 			moreOptions = `<div class="option-era-dropdown">
@@ -704,8 +705,7 @@ let Stats = {
 					${sourceBtns.join('')}
 					</ul>
 				</div>`
-				+ moreOptions +
-				`<div class="datepicker"><button class="btn" id="StatsDatePicker">${Stats.formatRange()}</button></div>`;
+				+ moreOptions;
 	},
 
 	formatRange: ()=> {
@@ -1386,9 +1386,13 @@ let Stats = {
 
 							el.style.display = 'block';
 
-							// Flip horizontally if overflowing right edge
-							if (left + el.offsetWidth > statsRect.width) {
+							// Prevent overflowing
+							if (left + el.offsetWidth > statsRect.width) 
 								left = canvasRect.left - statsRect.left + tooltip.caretX - el.offsetWidth - 12;
+							
+							if (top + el.offsetHeight > (statsRect.height - 70)) {
+								top = top - ((top + el.offsetHeight) - (statsRect.height - 70));
+								if (top < 60) top = 60;
 							}
 
 							el.style.left = left + 'px';
@@ -1396,11 +1400,11 @@ let Stats = {
 						},
 					},
 					zoom: {
-						pan: { enabled: true, mode: 'xy' },
+						pan: { enabled: true, mode: 'x' },
 						zoom: {
 							wheel: { enabled: true },
 							pinch: { enabled: true },
-							mode: 'xy',
+							mode: 'x',
 						},
 					},
 				},
