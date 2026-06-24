@@ -9,7 +9,7 @@
 - GBG: Wenn in der Provinzliste auf eine Provinz gezeigt wird, wird diese nun in der Karte hervorgehoben
 
 ### Bug Fixes
-- Statistiken: Tooltip konnte aus dem Diagram herauslaufen
+- Statistiken: Tooltip konnte aus dem Diagramm herauslaufen
 
 ---
 

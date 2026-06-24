@@ -1,14 +1,14 @@
 # Changelog
  
 ## Version 1.1
-### Neu
+### New
 - Added a warning, when FoE Helper was detected
 
-### Update
-- Stats: Date picker only in the rewards - the other charts can be zoomed using the mouse wheel
+### Updated
+- Stats: Date picker removed for line graphs - you can zoom and drag areas instead
 - GBG: Map now shows what Province is hovered in the list
 
-### Bug Fixes
+### Bug fixes
 - Stats: Tooltip could overflow the graph
 
 ---
