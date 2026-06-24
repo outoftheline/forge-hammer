@@ -343,9 +343,9 @@ let GuildFights = {
 		if (GuildFights.Chart) GuildFights.Chart.destroy();
 
 		let canvas = document.createElement('canvas');
-		canvas.width = 600;
-		canvas.height = 400;
-		$('#StatsGBGBody').empty().append(canvas);
+		canvas.width = 850;
+		canvas.height = 500;
+		$('#StatsGBGBody').empty().append(canvas).append($('<div id="GBGStatsDiffs" />'));
 
 		GuildFights.Chart = new Chart(canvas, {
 			type: 'line',
@@ -374,7 +374,7 @@ let GuildFights = {
 					legend: { 
 						position: 'bottom', 
 						labels: {
-							boxWidth: 15,
+							boxWidth: 10,
 							pointStyle: 'circle'
 						} 
 					},
@@ -387,7 +387,38 @@ let GuildFights = {
 						},
 					},
 				},
-			}
+			},
+			plugins: [{
+				id: 'guildDiffDisplay',
+				afterTooltipDraw(chart) {
+					let tooltip = chart.tooltip;
+					if (!tooltip || tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
+						$('#GBGStatsDiffs').empty();
+						return;
+					}
+
+					let rankedGuilds = [...tooltip.dataPoints].filter(p => p.parsed.y !== null);
+					rankedGuilds.sort((a,b)=>{
+						if (a.parsed.y > b.parsed.y) return -1;
+						if (a.parsed.y < b.parsed.y) return 1;
+						return 0;
+					});
+
+					let h = [];
+					for (let i = 0; i < rankedGuilds.length; i++) {
+						let point = rankedGuilds[i];
+						let color = point.dataset.borderColor ?? '#ccc';
+						h.push(`<b style="background:${color}">${point.dataset.label.substring(0,5)}</b>`);
+
+						if (i < rankedGuilds.length - 1) {
+							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
+							h.push(`<span class="text-smaller">${HTML.Format(diff)}</span>`);
+						}
+					}
+
+					$('#GBGStatsDiffs').html(h.join(' '));
+				}
+			}]
 		});
 	},
 

@@ -411,3 +411,19 @@
 #StatsGBGBody {
 	background-color: var(--bg-chart);
 }
+
+#GBGStatsDiffs {
+	height: 30px;
+	background-color: var(--black-50);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+}
+
+#GBGStatsDiffs b {
+	padding: 1px 3px;
+	border-radius: 2px;
+	color: var(--black);
+	text-shadow: none;
+}
