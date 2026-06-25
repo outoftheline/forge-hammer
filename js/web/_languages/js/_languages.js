@@ -173,15 +173,15 @@ let Translation = {
 
 		referenceData = Object.entries(Translation.referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, reference])=>({key, reference}));
 		let rowsHtml = referenceData.map(({key, reference})=>{
-			let targetValue = Translation.targetData[key]?.s || Translation.targetData[key] || '';
-			let comparisonValue = comparisonData[key]?.s || comparisonData[key] || '';
+			let targetValue = Translation.targetData?.[key]?.s || Translation.targetData?.[key] || '';
+			let comparisonValue = comparisonData?.[key]?.s || comparisonData?.[key] || '';
 			let missing = targetValue.trim() === '';
-			let updated = !Translation.targetData[key]?.r || (reference.s || reference) !== Translation.targetData[key]?.r;
-			targetValue = localData[key] || targetValue;
+			let updated = !Translation.targetData?.[key]?.r || (reference.s || reference) !== Translation.targetData?.[key]?.r;
+			targetValue = localData?.[key]?.s || localData?.[key] || targetValue;
 			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
 				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${reference.s||reference}</td>
-				<td ${updated ? `title="Old Reference: ${HTML.escapeHtml(Translation.targetData[key]?.r || '')}"` : ''}>${(updated && targetValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${targetValue}</span></td>
+				<td ${updated ? `title="Old Reference: ${HTML.escapeHtml(Translation.targetData?.[key]?.r || '')}"` : ''}>${(updated && targetValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${targetValue}</span></td>
 			</tr>`;
 		}).join('');
 		$('#TranslationTable tbody').html(rowsHtml);
