@@ -27,7 +27,7 @@ const duplicateDetected = !!(
 );
 
 if (duplicateDetected) {
-	DuplicateWarning(!ExtbaseData.isHammer || !window.GetFights);
+	DuplicateWarning(!ExtbaseData.isHammer || !!window.GetFights);
 	return;
 }
 
