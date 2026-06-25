@@ -641,7 +641,7 @@ let Info = {
     },
 
     GuildRaidsMapService_updateNodeCurrentProgress: (d) => {
-        let nodeData = QiProgress.QiMap.nodes.find(x => x.id === d.nodeId);
+        let nodeData = QiProgress.QiMap?.nodes?.find(x => x.id === d.nodeId);
         let image = ('qi-'+nodeData.type?.type);
         if (nodeData.type?.armyType !== undefined)
             image = ('qi-'+nodeData.type?.armyType||"") + '-' + (nodeData.type?.fightType||"");
@@ -663,7 +663,7 @@ let Info = {
 
         let nodeID = d.state.nodeId;
         let PlayerLink = MainParser.GetPlayerLink(d.causingPlayerId, PlayerDict[d.causingPlayerId]?.PlayerName) || '';
-        let nodeData = QiProgress.QiMap.nodes.find(x => x.id === nodeID);
+        let nodeData = QiProgress.QiMap.nodes?.find(x => x.id === nodeID);
         let image = ('qi-'+nodeData.type?.type) || 'qi';
         if (nodeData.type?.armyType !== undefined)
             image = ('qi-'+nodeData.type?.armyType||"") + '-' + (nodeData.type?.fightType||"");
