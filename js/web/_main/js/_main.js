@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// round was won with autobattle
 		// winnerBit==1 round won, winnerBit==2 round lost
-		if (data.responseData['state']['winnerBit'] > 0) {
+		if (data.responseData.state?.winnerBit > 0) {
 			HTML.MaximizeAfterBattle();
 		}
 	});
