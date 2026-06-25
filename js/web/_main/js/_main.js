@@ -5,10 +5,10 @@
 
 (function () {
 
-let HelperWarning = () => {
+let DuplicateWarning = (helperDetected=true) => {
 	let div = document.createElement('div');
 	div.innerHTML = `<div id="HelperWarning" style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000000cc;color:white;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:2rem;text-align:center;flex-direction:column;">
-		<div><h2>FoE-Helper detected!!! </h2> Please remove or deactivate Helper for proper functionality of Forge Hammer in your extension settings!<br>
+		<div><h2>${helperDetected ? 'FoE-Helper' : 'Hammer duplicate'} detected!!! </h2> Please remove or deactivate for proper functionality of Forge Hammer in your extension settings!<br>
 		See <a href="https://github.com/outoftheline/forge-hammer/wiki/Switching-from-FoE-Helper-to-Forge-Hammer" target="_blank">here</a> for more information - see below to access extension settings:</div>
 		<div style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem;margin-top: 1rem;">
 		<span>Brave </span><span>brave://extensions/</span>
@@ -23,25 +23,22 @@ let HelperWarning = () => {
 }
 
 const duplicateDetected = !!(
-	window.ExtbaseData ||
-	window.MainParser ||
-	window.HelperBeta ||
-	window.ExistenceConfirmed ||
-	window.i18n
+	window.ExtbaseData
 );
 
 if (duplicateDetected) {
-	HelperWarning();
+	DuplicateWarning(!ExtbaseData.isHammer || !window.GetFights);
 	return;
 }
 
 setTimeout(() => {
-	if (typeof window.GetFights != "undefined" && !duplicateDetected) {
-		HelperWarning();
+	if ((typeof i18n.create != "undefined" || !!(window.GetFights)) && !duplicateDetected) {
+		DuplicateWarning();
 	}
 }, 5000);
 
 window.ExtbaseData = JSON.parse(localStorage.getItem("HelperBaseData")||"{}");
+ExtbaseData.isHammer = true;
 window.extID = ExtbaseData.extID;
 window.extUrl = ExtbaseData.extUrl;
 window.GuiLng = ExtbaseData.GuiLng;
@@ -2374,7 +2371,6 @@ window.MainParser = MainParser;
 window.HelperBeta = HelperBeta;
 window.ExistenceConfirmed = ExistenceConfirmed;
 window.i18n = i18n;
-window.HelperWarning = HelperWarning;
 window.GameTime = GameTime;
 
 console.log('Forge Hammer version ' + extVersion + ' started' + (extVersion.indexOf("beta") > -1 ? ' in Beta Mode': '') + '. ID: ' + extID);
