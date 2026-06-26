@@ -1917,20 +1917,22 @@ let Stats = {
 	 * Render the player score chart for the current GBG round into #StatsGBGTabPlayers
 	 */
 	buildGBGPlayersChart: async () => {
+		let defaultColors = ['#62a2df','#434357','#8ecf70','#db9255','#7478c7','#d35572','#d4c33e','#2b908f','#d15959','#7acfc8'];
 		let roundStart = moment(GuildFights.CurrentGBGRound * 1000).subtract(11, 'days').toDate();
+		// only display data from the current gbg season
 		let data = await IndexDB.db.statsGBGPlayers.where('date').aboveOrEqual(roundStart).sortBy('date');
 
 		let playerDB = await IndexDB.db.statsGBGPlayerCache.toArray();
 		let players = playerDB.reduce((acc, p) => { acc[p.id] = p; return acc; }, {});
 
-		let knownIds = Object.keys(data.reduce((acc, row) => {
+		// collect all player ids
+		let playerIds = Object.keys(data.reduce((acc, row) => {
 			Object.keys(row.players).forEach(p => acc[p] = true);
 			return acc;
 		}, {}));
 
-		let defaultColors = ['#62a2df','#434357','#8ecf70','#db9255','#7478c7','#d35572','#d4c33e','#2b908f','#d15959','#7acfc8'];
 
-		let datasets = knownIds.map((playerId, i) => {
+		let datasets = playerIds.map((playerId, i) => {
 			let playerInfo = players[playerId] || { name: '' + playerId };
 			let color = defaultColors[i % defaultColors.length];
 			return {
@@ -1979,7 +1981,7 @@ let Stats = {
 				});
 				container.innerHTML = items.map(item => {
 					let hidden = item.hidden ? 'stats-legend-hidden' : '';
-					let playerInfo = playerKV[knownIds[item.datasetIndex]] || {};
+					let playerInfo = players[knownIds[item.datasetIndex]] || {};
 					let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
 					let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-legend-img">` : '';
 					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
