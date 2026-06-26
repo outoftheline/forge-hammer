@@ -185,7 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	FoEproxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
-		setTimeout(()=>{MainParser.CityEntityBuilder(buildingUrls)},500);
+		const region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
+		setTimeout(()=>{MainParser.CityEntityBuilder(buildingUrls, region)},500);
 	});
 
 	// Building-Upgrades
@@ -1022,90 +1023,34 @@ let MainParser = {
 
 
 	/**
-	 * Asynchronously builds city entity metadata by fetching and processing data for each provided building URL.
-	 * The function ensures that metadata is fetched and updated only when changes are detected in the hash values
-	 * from the input URLs and existing stored metadata.
-	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values are objects containing
-	 *                                metadata with the following properties:
-	 *                                - `url` {string}: The URL from which the building metadata can be fetched.
-	 *                                - `hash` {string}: A hash representing the state of the metadata for change detection.
+	 * Requests and applies city entity metadata from the background service worker.
+	 *
+	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values contain metadata URLs and hashes.
+	 * @param {string} [region] - The region code for the current world, e.g. "de".
 	 */
-	CityEntityBuilder: async (buildingUrls) => {
-		await IndexDB.getDB();
-		let buildingsOld = await IndexDB.db.buildingMeta.toArray();
-		buildingsOld = Object.assign({}, ...buildingsOld.map(x => ({ [x.id]: x })));
-		let Metadata = {};
-		let updated = [];
-		const ids = Object.keys(buildingUrls);
-		const maxConcurrent = 10; // z.B. 10 gleichzeitige Requests
-		let active = 0;
-		let index = 0;
+	CityEntityBuilder: async (buildingUrls, region = String(ExtWorld).replace(/\d+$/, '') || 'unknown') => {
+		const urlIds = Object.keys(buildingUrls);
+		const urlCount = urlIds.length;
 
-		function fetchMeta(id, meta, retries = 3) {
-			return new Promise(resolve => {
-				const xhr = new XMLHttpRequest();
-				xhr.open("GET", meta.url, true);
+		const precheckResponse = await MainParser.sendExtMessage({
+			type: 'buildingMetaPreCheck',
+			region,
+			timeout: 1000,
+		});
+		const existingCount = (precheckResponse && typeof precheckResponse.existingCount === 'number') ? precheckResponse.existingCount : 0;
 
-				let timeout = setTimeout(() => {
-					xhr.abort();
-				}, 10000); // 10 Sekunden Timeout
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === XMLHttpRequest.DONE) {
-						clearTimeout(timeout);
-						if (xhr.status === 200) {
-							try {
-								Metadata[id] = JSON.parse(xhr.responseText);
-								updated.push({ id: id, hash: meta.hash, json: xhr.responseText });
-							} catch (e) { Metadata[id] = null; }
-							resolve();
-						} else if (retries > 0) {
-							// Bei Fehler: Retry mit Delay
-							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-						} else {
-							console.warn('Failed to load', meta.url, xhr.status);
-							resolve();
-						}
-					}
-				};
-				xhr.onerror = () => {
-					clearTimeout(timeout);
-					if (retries > 0) {
-						setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-					} else {
-						resolve();
-					}
-				};
-				xhr.send();
-			});
-		}
+		const missingCount = urlCount - existingCount;
+		const useLongTimeout = missingCount > Math.max(100, urlCount * 0.1);
+		const timeout = useLongTimeout ? 300000 : 30000;
 
-		async function runNext() {
-			while (active < maxConcurrent && index < ids.length) {
-				const id = ids[index++];
-				const meta = buildingUrls[id];
-				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
-					active++;
-					fetchMeta(id, meta).then(() => {
-						active--;
-						runNext();
-					});
-				} else {
-					try { Metadata[id] = JSON.parse(buildingsOld[id].json); } catch (e) { Metadata[id] = null; }
-				}
-			}
-		}
-
-		await new Promise(resolve => {
-			function checkDone() {
-				if (index >= ids.length && active === 0) resolve();
-				else setTimeout(checkDone, 100);
-			}
-			runNext();
-			checkDone();
+		const metadata = await MainParser.sendExtMessage({
+			type: 'buildingMeta',
+			buildingUrls,
+			region,
+			timeout,
 		});
 
-		await IndexDB.db.buildingMeta.bulkPut(updated);
-		MainParser.CityEntities = Metadata;
+		MainParser.CityEntities = metadata || {};
 		MainParser.correctBuildingType();
 		MainParser.Inactives.check();
 	},
@@ -1150,7 +1095,8 @@ let MainParser = {
 
 		const response = await new Promise((resolve, reject) => {
 			responsePromise.then(resolve, reject);
-			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), 1000)
+			const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : (data.type === 'buildingMeta' ? 120000 : 1000);
+			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), timeoutMs);
 		});
 
 		if (typeof response !== 'object' || typeof response.ok !== 'boolean') {

@@ -142,6 +142,24 @@ let IndexDB = {
         db.version(3).stores({
             buildingMeta: 'id, hash, json',
         });
+
+        db.version(4).stores({
+            players: 'id,date',
+            pvpActions: '++id,playerId,date,type',
+            greatbuildings: '++id,playerId,name,&[playerId+name],level,currentFp,bestRateNettoFp,bestRateCosts,date',
+            investhistory: '++id,playerId,entity_id,&[playerId+entity_id],name,level,max_progress,current_progress,profit,currentFp,fphistory,date',
+            forgeStats: '++id,type,amount,date',
+            statsGBGPlayers: 'date',
+            statsGBGPlayerCache: 'id, date',
+            statsRewards: 'date',
+            statsRewardTypes: 'id',
+            statsUnitsD: 'date',
+            statsUnitsH: 'date',
+            statsTreasurePlayerH: 'date',
+            statsTreasurePlayerD: 'date',
+            statsTreasureClanH: 'date, clanId',
+            statsTreasureClanD: 'date, clanId',
+        });
     },
 
     /**

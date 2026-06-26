@@ -13,10 +13,15 @@ catch {
 
 // @ts-ignore
 let alertsDB = new Dexie("Alerts");
+let buildingMetaDB = new Dexie("FoEBuildingMeta");
 
 // Define Database Schema
 alertsDB.version(1).stores({
 	alerts: "++id,[server+playerId],data.expires"
+});
+
+buildingMetaDB.version(1).stores({
+	buildingMeta: "[region+id],region,id,hash,json"
 });
 
 // separate code from global scope
@@ -397,6 +402,91 @@ alertsDB.version(1).stores({
 
 
 	/**
+	 * Fetch and cache building metadata per region in the background service worker.
+	 *
+	 * @param {string} region
+	 * @param {Record<string, {url:string, hash:string}>} buildingUrls
+	 * @returns {Promise<Record<string, any>>}
+	 */
+	async function getBuildingMetadata(region, buildingUrls) {
+		if (!buildingUrls || typeof buildingUrls !== 'object' || Array.isArray(buildingUrls)) {
+			return {};
+		}
+
+		await buildingMetaDB.open();
+		const table = buildingMetaDB.table('buildingMeta');
+		const existingEntries = await table.where('region').equals(region).toArray();
+		const buildingsOld = Object.assign({}, ...existingEntries.map(x => ({ [x.id]: x })));
+		const metadata = {};
+		const updated = [];
+		const ids = Object.keys(buildingUrls);
+		const maxConcurrent = 10;
+		let active = 0;
+		let index = 0;
+
+		function fetchMeta(id, meta, retries = 3) {
+			return new Promise(resolve => {
+				const controller = new AbortController();
+				const timeout = setTimeout(() => controller.abort(), 10000);
+
+				fetch(meta.url, { signal: controller.signal })
+					.then(async response => {
+						clearTimeout(timeout);
+						if (!response.ok) throw new Error(`HTTP ${response.status}`);
+						const text = await response.text();
+						metadata[id] = JSON.parse(text);
+						updated.push({ region, id, hash: meta.hash, json: text });
+						resolve();
+					})
+					.catch(async error => {
+						clearTimeout(timeout);
+						if (retries > 0) {
+							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
+						} else {
+							console.warn('Failed to load', meta.url, error);
+							resolve();
+						}
+					});
+			});
+		}
+
+		async function runNext() {
+			while (active < maxConcurrent && index < ids.length) {
+				const id = ids[index++];
+				const meta = buildingUrls[id];
+				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
+					active++;
+					fetchMeta(id, meta).then(() => {
+						active--;
+						runNext();
+					});
+				} else {
+					try {
+						metadata[id] = JSON.parse(buildingsOld[id].json);
+					} catch (e) {
+						metadata[id] = null;
+					}
+				}
+			}
+		}
+
+		await new Promise(resolve => {
+			function checkDone() {
+				if (index >= ids.length && active === 0) resolve();
+				else setTimeout(checkDone, 100);
+			}
+			runNext();
+			checkDone();
+		});
+
+		if (updated.length > 0) {
+			await table.bulkPut(updated);
+		}
+
+		return metadata;
+	}
+
+	/**
 	 * handles internal and external extension communication
 	 * @param {any} request 
 	 * @param {browser.runtime.MessageSender} sender 
@@ -577,6 +667,21 @@ alertsDB.version(1).stores({
 				} // end of limited alerts-API
 
 			} // end of alerts-API
+
+			case 'buildingMeta': { // type
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				const buildingUrls = request.buildingUrls;
+			
+				const metadata = await getBuildingMetadata(region, buildingUrls);
+				return APIsuccess(metadata);
+			}
+
+			case 'buildingMetaPreCheck': { // type
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+					await buildingMetaDB.open();
+					const count = await buildingMetaDB.table('buildingMeta').where('region').equals(region).count();
+					return APIsuccess({ existingCount: count });
+			}
 
 			case 'message': { // type
 				let t = request.time;
