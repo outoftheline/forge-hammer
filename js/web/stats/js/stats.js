@@ -1981,7 +1981,7 @@ let Stats = {
 				});
 				container.innerHTML = items.map(item => {
 					let hidden = item.hidden ? 'stats-legend-hidden' : '';
-					let playerInfo = players[knownIds[item.datasetIndex]] || {};
+					let playerInfo = players[playerIds[item.datasetIndex]] || {};
 					let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
 					let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-legend-img">` : '';
 					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
@@ -2041,7 +2041,7 @@ let Stats = {
 							if (!item) return;
 
 							let dataSet = item.dataset;
-							let playerInfo = playerKV[knownIds[item.datasetIndex]] || {};
+							let playerInfo = players[playerIds[item.datasetIndex]] || {};
 							let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
 							let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-tooltip-img">` : '';
 							let date = moment(item.parsed.x).format(i18n('DateTime'));
