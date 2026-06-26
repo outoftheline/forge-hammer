@@ -123,7 +123,12 @@ let Translation = {
 		});
 		$('#TranslationSearch').on('input', Translation.FilterTable);
 		$('#CopyJSON').on('click', ()=>{
-			navigator.clipboard.writeText(JSON.stringify(Translation.targetData, null, 2));
+			let data = Object.assign(Translation.targetData,localData);
+			data = Object.entries(data)
+						.sort((a, b) => a[0].localeCompare(b[0]))
+						.map(([key, value])=>({[key]: value}));
+			data = Object.assign({},...data)
+			navigator.clipboard.writeText(JSON.stringify(data, null, 2));
 		});
 		$('#TempStorage').on('click', ()=>{
 			Translation.tempData = structuredClone(Translation.targetData);
@@ -205,20 +210,21 @@ let Translation = {
 		let comparisonData = await fetch(extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
 		
 		localData = JSON.parse(localStorage.getItem('Translation.Temp') || '{}');	
-
+		
 		referenceData = Object.entries(Translation.referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, reference])=>({key, reference}));
 		let rowsHtml = referenceData.map(({key, reference})=>{
 			let targetValue = Translation.targetData?.[key]?.s || Translation.targetData?.[key] || '';
 			let comparisonValue = comparisonData?.[key]?.s || comparisonData?.[key] || '';
 			let missing = targetValue.trim() === '';
 			let updated = !Translation.targetData?.[key]?.r || (reference.s || reference) !== Translation.targetData?.[key]?.r;
-			targetValue = localData?.[key]?.s || localData?.[key] || targetValue;
 			let OldRef = HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
 			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
 				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${reference.s||reference}</td>
-				<td ${(updated && !!OldRef) ? `title="Old Reference: ${OldRef}"` : ''}>${(updated && !!targetValue) ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${targetValue}</span></td>
-			</tr>`;
+				<td ${(updated && !!OldRef) ? `title="Old Reference: ${OldRef}"` : ''}>
+					${(updated && !!targetValue) ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
+					<span>${localData?.[key]?.s || localData?.[key] || targetValue}</span>
+				</td></tr>`;
 		}).join('');
 		$('#TranslationTable tbody').html(rowsHtml);
 		Translation.FilterTable();
