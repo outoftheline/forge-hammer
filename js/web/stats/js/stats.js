@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -323,7 +324,7 @@ let Stats = {
 	treasureSources: ['statsTreasureClanH', 'statsTreasureClanD'],
 	unitSources: ['statsUnitsH', 'statsUnitsD'],
 	rewardSources: ['statsRewards'],
-	gbgSources: ['statsGBGPlayers'],
+	gbgSources: [],
 	isSelectedPlayerSources: () => Stats.playerSources.includes(Stats.state.source),
 	isSelectedTreasureSources: () => Stats.treasureSources.includes(Stats.state.source),
 	isSelectedUnitSources: () => Stats.unitSources.includes(Stats.state.source),
@@ -404,7 +405,6 @@ let Stats = {
 					const isChangedToPlayerSource = ['statsTreasurePlayerH', 'statsTreasurePlayerD'].includes(value) && !Stats.isSelectedPlayerSources();
 					const isChangedToClanTreasure = ['statsTreasureClanH', 'statsTreasureClanD'].includes(value) && !Stats.isSelectedTreasureSources();
 					const isChangedToReward = Stats.rewardSources.includes(value) && !Stats.isSelectedRewardSources();
-					const isChangedToGBG = Stats.gbgSources.includes(value) && !Stats.isSelectedGBGSources();
 
 					if (isChangedToUnit) {
 						// if Changed to units than select all eras by default
@@ -425,10 +425,6 @@ let Stats = {
 						// If changed to treasure select all playable eras
 						Stats.state.eras = {};
 						Stats.PlayableEras.forEach(era => Stats.state.eras[era] = true);
-
-					} else if (isChangedToGBG) {
-						Stats.state.chartType = 'line';
-						Stats.isGG = true;
 
 					} else if (isChangedToReward) {
 						Stats.state.rewardSource = 'battlegrounds_conquest';
@@ -478,9 +474,9 @@ let Stats = {
 								<div class="StatsRewardFilter">
 									<input type="text" id="StatsRewardFilter" placeholder="${i18n("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
 								</div>
-								<div id="statsLegend"></div>
+								<div id="statsLegend" class="chartLegend"></div>
 							</div>
-							<div id="statsTooltip" style="display:none;"></div></div>`);
+							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div></div>`);
 
 		Stats.updateOptions();
 		await helper.loadChartJS();
@@ -630,7 +626,6 @@ let Stats = {
 			'statsTreasurePlayerD',
 			'statsTreasureClanD',
 			'statsUnitsD',
-			'statsGBGPlayers',
 			'statsRewards'
 		].map(source => Stats.RenderTab({
 			name: i18n('Boxes.Stats.BtnSource.' + source),
@@ -645,7 +640,7 @@ let Stats = {
 			title: i18n('Boxes.Stats.BtnChartTypeTitle.' + it),
 			isActive: Stats.state.chartType === it,
 			dataType: 'setChartType',
-			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources() && !Stats.isSelectedGBGSources(),
+			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
 			value: it
 		}));
 
@@ -835,10 +830,6 @@ let Stats = {
 	 */
 	updateCharts: async (dates = null) => {
 		dates = {s: Stats.DatePickerFrom, e: Stats.DatePickerTo};
-		if (Stats.isSelectedGBGSources()) {
-			return await Stats.updateCommonChart(Stats.applyDeltaToSeriesIfNeed(await Stats.createGBGSeries()));
-		}
-
 		if (Stats.isSelectedUnitSources()) {
 			return await Stats.updateCommonChart(Stats.applyDeltaToSeriesIfNeed(await Stats.createUnitsSeries()));
 		}
@@ -862,53 +853,6 @@ let Stats = {
 		if (Stats.isSelectedRewardSources) {
 			return Stats.updateRewardCharts(await Stats.createRewardSeries());
 		}
-	},
-
-
-	/**
-	 * Battlegrounds series
-	 *
-	 * @param dates		Date obj with {start, end}
-	 * @returns {Promise<{series: {data, avatarUrl: (string|string), name: string}[]}>}
-	 */
-	createGBGSeries: async () => {
-		let data;
-
-		if(Stats.DatePickerFrom !== null && Stats.DatePickerTo !== null){
-			data = await IndexDB.db.statsGBGPlayers.where('date').between(Stats.DatePickerFrom, Stats.DatePickerTo).sortBy('date');
-		} else {
-			data = await IndexDB.db.statsGBGPlayers.orderBy('date').toArray();
-		}
-
-		const playerCache = await IndexDB.db.statsGBGPlayerCache.toArray();
-
-		const playerKV = playerCache.reduce((acc, it) => {
-			acc[it.id] = it;
-			return acc;
-		}, {});
-
-		const knownIds = Object.keys(data.reduce((acc, row) => {
-			Object.keys(row.players).forEach(it => acc[it] = true);
-			return acc;
-		}, {}));
-
-		const series = knownIds.map(playerId => {
-			const playerInfo = playerKV[playerId] || {name: '' + playerId};
-			const avatarUrl = srcLinks.GetPortrait(playerInfo.avatar);
-			return {
-				name: playerInfo.name,
-				avatarUrl,
-				data: data.map(({date, players}) => {
-					const player = players[playerId];
-					const score = player && (2 * (player.n || 0) + (player.b || 0))
-					return [+date, score];
-				})
-			}
-		});
-
-		return {
-			series,
-		};
 	},
 
 
@@ -1301,7 +1245,7 @@ let Stats = {
 						: meta.avatarUrl
 							? `<img src="${meta.avatarUrl}" class="stats-legend-img">`
 							: '';
-					return `<div class="stats-legend-item ${hidden}" data-index="${item.datasetIndex}">
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
 						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
 						${img}
 						<span class="stats-legend-label">${item.text}</span>
@@ -1600,7 +1544,7 @@ let Stats = {
 					const hidden = meta.data[i]?.hidden ? 'stats-legend-hidden' : '';
 					const pointImage = dataset._pointImages?.[i] || '';
 					const pct = total > 0 ? ((serieData[i].y / total) * 100).toFixed(1) : 0;
-					return `<span class="stats-legend-item ${hidden}" data-index="${i}">
+					return `<span class="stats-legend-item ${hidden} clickable" data-index="${i}">
 						<span class="stats-legend-swatch" style="background:${color};"></span>
 						${pointImage ? `<span class="stats-legend-img">${pointImage}</span>` : ''}
 						<span class="stats-legend-label">${label}: ${HTML.Format(serieData[i].y)} (${pct}%)</span>
@@ -1757,8 +1701,382 @@ let Stats = {
 				console.log(error)
 			}
 		});
-	}
+	},
+
+
+
+	// opened from the guildfights leaderboard 
+	ShowGBGCharts: async () => {
+		if (!GuildFights.CurrentGBGRound) return;
+
+		if ($('#StatsGBG').length === 0) {
+			HTML.Box({
+				id: 'StatsGBG',
+				title: i18n('Boxes.GuildFights.Stats.Title'),
+				auto_close: true,
+				dragdrop: true,
+				minimize: true,
+			});
+
+			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
+				if (GuildFights.Chart) {
+					GuildFights.Chart.destroy();
+					GuildFights.Chart = null;
+				}
+				if (Stats.gbgPlayersChart) {
+					Stats.gbgPlayersChart.destroy();
+					Stats.gbgPlayersChart = null;
+				}
+			});
+		}
+		else {
+			HTML.CloseOpenBox('StatsGBG');
+			return;
+		}
+
+		HTML.AddCssFile('stats');
+		await helper.loadChartJS();
+
+		$('#StatsGBGBody').html(`
+			<div class="tabs">
+				<ul class="horizontal dark-bg">
+					<li class="gbg-tab-guilds active" data-gbgtab="guilds"><span>${i18n('Boxes.GuildFights.Stats.TabGuilds')}</span></li>
+					<li class="gbg-tab-players" data-gbgtab="players"><span>${i18n('Boxes.GuildFights.Stats.TabPlayers')}</span></li>
+				</ul>
+			</div>
+			<div id="StatsGBGTabGuilds"></div>
+			<div id="StatsGBGTabPlayers" style="display:none;"></div>
+		`);
+
+		$('#StatsGBGBody').on('click', '[data-gbgtab]', function () {
+			$('#StatsGBGBody li').removeClass('active');
+			$('#StatsGBGTabGuilds, #StatsGBGTabPlayers').hide();
+
+			let tab = $(this).data('gbgtab');
+			$(this).addClass('active');
+
+			if (tab === 'guilds') {
+				$('#StatsGBGTabGuilds').show();
+			} else {
+				$('#StatsGBGTabPlayers').show();
+				if (!Stats.gbgPlayersChart)
+					Stats.buildGBGPlayersChart();
+			}
+		});
+
+		Stats.buildGBGGuildsChart();
+	},
+
+
+	/**
+	 * Render the guild progression chart into #StatsGBGTabGuilds
+	 */
+	buildGBGGuildsChart: async () => {
+		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
+		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
+
+		let guildColors = {};
+		if (GuildFights.SortedColors && GuildFights.MapData?.battlegroundParticipants) {
+			for (let participant of GuildFights.MapData.battlegroundParticipants) {
+				let color = GuildFights.SortedColors.find(x => x.id === participant.participantId);
+				if (color) {
+					guildColors[participant.clan.id] = color.main;
+				}
+			}
+		}
+
+		let datasets = guildNames.map(name => {
+			let guildId = entries.flatMap(e => e.guilds).find(x => x.name === name)?.id;
+			let color = guildColors[guildId] ?? null;
+
+			return {
+				label: name,
+				borderColor: color,
+				backgroundColor: color,
+				borderWidth: 1.5,
+				spanGaps: true,
+				data: entries.map(snapshot => {
+					let guild = snapshot.guilds.find(x => x.name === name);
+					if (!guild) return null;
+					return {
+						x: snapshot.time * 1000,
+						y: guild?.points ?? null,
+					};
+				}),
+			};
+		});
+
+		let canvas = document.createElement('canvas');
+		canvas.width = 850;
+		canvas.height = 450;
+		$('#StatsGBGTabGuilds').empty().append(canvas).append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />')).append($('<div id="GBGStatsDiffs" class="dark-bg" />'));
+
+		if (GuildFights.Chart) GuildFights.Chart.destroy();
+
+		let guildsHtmlLegendPlugin = {
+			id: 'htmlLegend',
+			afterUpdate(chart) {
+				let container = document.getElementById('GBGGuildsLegend');
+				if (!container) return;
+
+				let items = chart.options.plugins.legend.labels.generateLabels(chart);
+				container.innerHTML = items.map(item => {
+					let hidden = item.hidden ? 'stats-legend-hidden' : '';
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
+						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
+						<span class="stats-legend-label">${item.text}</span>
+					</div>`;
+				}).join('');
+
+				container.querySelectorAll('.stats-legend-item').forEach(el => {
+					el.addEventListener('click', () => {
+						let index = Number(el.dataset.index);
+						let meta = chart.getDatasetMeta(index);
+						meta.hidden = !meta.hidden;
+						el.classList.toggle('stats-legend-hidden');
+						chart.update();
+					});
+				});
+			}
+		};
+
+		GuildFights.Chart = new Chart(canvas, {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				animation: false,
+				color: '#ccc',
+				interaction: {
+					mode: 'index',
+					intersect: false,
+				},
+				pointRadius: 0.5,
+				pointHitRadius: 5,
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'hour',
+							displayFormats: { hour: 'dd, HH:mm' }
+						},
+						ticks: { maxRotation: 45 }
+					},
+					y: { beginAtZero: false }
+				},
+				plugins: {
+					legend: {
+						display: false,
+						labels: { }
+					},
+					zoom: {
+						pan: { enabled: true, mode: 'x' },
+						zoom: {
+							wheel: { enabled: true },
+							pinch: { enabled: true },
+							mode: 'x',
+						},
+					},
+				},
+			},
+			plugins: [guildsHtmlLegendPlugin, {
+				id: 'guildDiffDisplay',
+				afterTooltipDraw(chart) {
+					let tooltip = chart.tooltip;
+					if (!tooltip || tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
+						$('#GBGStatsDiffs').empty();
+						return;
+					}
+
+					let rankedGuilds = [...tooltip.dataPoints].filter(p => p.parsed.y !== null);
+					rankedGuilds.sort((a,b)=>{
+						if (a.parsed.y > b.parsed.y) return -1;
+						if (a.parsed.y < b.parsed.y) return 1;
+						return 0;
+					});
+
+					let h = [];
+					for (let i = 0; i < rankedGuilds.length; i++) {
+						let point = rankedGuilds[i];
+						let color = point.dataset.borderColor ?? '#ccc';
+						h.push(`<b style="background:${color}">${point.dataset.label.substring(0,5)}</b>`);
+
+						if (i < rankedGuilds.length - 1) {
+							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
+							h.push(`<span class="text-smaller">${HTML.Format(diff)}</span>`);
+						}
+					}
+
+					$('#GBGStatsDiffs').html(h.join(' '));
+				}
+			}]
+		});
+	},
+
+
+	/**
+	 * Render the player score chart for the current GBG round into #StatsGBGTabPlayers
+	 */
+	buildGBGPlayersChart: async () => {
+		let roundStart = moment(GuildFights.CurrentGBGRound * 1000).subtract(11, 'days').toDate();
+		let data = await IndexDB.db.statsGBGPlayers.where('date').aboveOrEqual(roundStart).sortBy('date');
+
+		let playerDB = await IndexDB.db.statsGBGPlayerCache.toArray();
+		let players = playerDB.reduce((acc, p) => { acc[p.id] = p; return acc; }, {});
+
+		let knownIds = Object.keys(data.reduce((acc, row) => {
+			Object.keys(row.players).forEach(p => acc[p] = true);
+			return acc;
+		}, {}));
+
+		let defaultColors = ['#62a2df','#434357','#8ecf70','#db9255','#7478c7','#d35572','#d4c33e','#2b908f','#d15959','#7acfc8'];
+
+		let datasets = knownIds.map((playerId, i) => {
+			let playerInfo = players[playerId] || { name: '' + playerId };
+			let color = defaultColors[i % defaultColors.length];
+			return {
+				label: playerInfo.name,
+				borderColor: color,
+				borderWidth: 1.5,
+				backgroundColor: color,
+				pointRadius: 0,
+				spanGaps: true,
+				data: data.map(({ date, players }) => {
+					let player = players[playerId];
+					let score = player ? (2 * (player.n || 0) + (player.b || 0)) : null;
+					return { x: +date, y: score };
+				}),
+			};
+		});
+
+		let canvas = document.createElement('canvas');
+		canvas.width = 850;
+		canvas.height = 450;
+		$('#StatsGBGTabPlayers').empty().append(canvas).append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />')).append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'));
+
+		if (Stats.gbgPlayersChart) {
+			Stats.gbgPlayersChart.destroy();
+			Stats.gbgPlayersChart = null;
+		}
+
+		let legendPlugin = {
+			id: 'htmlLegend',
+			afterUpdate(chart) {
+				let container = document.getElementById('GBGPlayersLegend');
+				if (!container) return;
+
+				let items = chart.options.plugins.legend.labels.generateLabels(chart);
+				// sort latest player data by most points
+				items.sort((a, b) => {
+					let lastY = (item) => {
+						let data = chart.data.datasets[item.datasetIndex]?.data;
+						if (!data) return -Infinity;
+						for (let i = data.length - 1; i >= 0; i--) {
+							if (data[i]?.y != null) return data[i].y;
+						}
+						return -Infinity;
+					};
+					return lastY(b) - lastY(a);
+				});
+				container.innerHTML = items.map(item => {
+					let hidden = item.hidden ? 'stats-legend-hidden' : '';
+					let playerInfo = playerKV[knownIds[item.datasetIndex]] || {};
+					let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
+					let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-legend-img">` : '';
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
+						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
+						${img}
+						<span class="stats-legend-label">${item.text}</span>
+					</div>`;
+				}).join('');
+
+				container.querySelectorAll('.stats-legend-item').forEach(el => {
+					el.addEventListener('click', () => {
+						let index = Number(el.dataset.index);
+						let meta = chart.getDatasetMeta(index);
+						meta.hidden = !meta.hidden;
+						el.classList.toggle('stats-legend-hidden');
+						chart.update();
+					});
+				});
+			}
+		};
+
+		Stats.gbgPlayersChart = new Chart(canvas, {
+			type: 'line',
+			data: { datasets },
+			options: {
+				animation: false,
+				color: '#ccc',
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'hour',
+							displayFormats: { hour: 'dd, HH:mm' }
+						},
+						ticks: { maxRotation: 45 }
+					},
+					y: { beginAtZero: true }
+				},
+				plugins: {
+					legend: {
+						display: false,
+					},
+					tooltip: {
+						enabled: false,
+						mode: 'nearest',
+						intersect: false,
+						external: ({ chart, tooltip }) => {
+							let el = document.getElementById('GBGPlayersTooltip');
+							if (!el) return;
+
+							if (tooltip.opacity === 0) {
+								el.style.display = 'none';
+								return;
+							}
+
+							let item = tooltip.dataPoints?.[0];
+							if (!item) return;
+
+							let dataSet = item.dataset;
+							let playerInfo = playerKV[knownIds[item.datasetIndex]] || {};
+							let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
+							let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-tooltip-img">` : '';
+							let date = moment(item.parsed.x).format(i18n('DateTime'));
+
+							el.innerHTML = `<div class="stats-tooltip-title">
+									<span class="stats-tooltip-swatch" style="background:${dataSet.borderColor};"></span>
+									${img} <span>${dataSet.label}:</span>
+								</div>
+								<div class="stats-tooltip-value">${date}: <b>${HTML.Format(item.parsed.y)}</b></div>`;
+
+							let canvasRect = chart.canvas.getBoundingClientRect();
+							let tabRect = document.getElementById('StatsGBGTabPlayers').getBoundingClientRect();
+							let left = canvasRect.left - tabRect.left + tooltip.caretX + 12;
+							let top  = canvasRect.top  - tabRect.top  + tooltip.caretY;
+							el.style.display = 'block';
+							if (left + el.offsetWidth > tabRect.width)
+								left = canvasRect.left - tabRect.left + tooltip.caretX - el.offsetWidth - 12;
+							el.style.left = left + 'px';
+							el.style.top  = top  + 'px';
+						},
+					},
+					zoom: {
+						pan: { enabled: true, mode: 'x' },
+						zoom: {
+							wheel: { enabled: true },
+							pinch: { enabled: true },
+							mode: 'x',
+						},
+					},
+				},
+			},
+			plugins: [legendPlugin]
+		});
+	},
 };
+
+
 let StockAlarm = {
 	Alarms: JSON.parse(localStorage.getItem('StockAlarms') || '[]'),
 	triggered: [],

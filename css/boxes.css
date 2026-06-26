@@ -831,7 +831,7 @@ Tabs */
 	box-shadow: var(--tabs-bg-shadow-active);
 }
 
-.window-body .tabs ul.horizontal li a {
+.window-body .tabs ul.horizontal li a, .window-body .tabs ul.horizontal li > span {
 	text-decoration: none;
 	display: block;
 	position: relative;
@@ -840,7 +840,8 @@ Tabs */
 }
 
 .window-body .tabs ul.horizontal li:hover a,
-.window-body .tabs ul.horizontal li.active a {
+.window-body .tabs ul.horizontal li.active a,
+.window-body .tabs ul.horizontal li.active > span {
 	color: var(--text-tab-active);
 }
 

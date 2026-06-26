@@ -138,7 +138,6 @@ let GuildFights = {
 	TabsContent: [],
 
 	/**
-	 *
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
@@ -280,149 +279,6 @@ let GuildFights = {
 	},
 
 
-	ShowGBGCharts: async () => {
-		if (!GuildFights.CurrentGBGRound) return;
-
-		if ($('#StatsGBG').length === 0) {
-			HTML.Box({
-				id: 'StatsGBG',
-				title: i18n('Boxes.GuildFights.Stats.Title'),
-				auto_close: true,
-				dragdrop: true,
-				minimize: true,
-			});
-
-			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
-				if (GuildFights.Chart) {
-					GuildFights.Chart.destroy();
-					GuildFights.Chart = null;
-				}
-			});
-		}
-		else {
-			HTML.CloseOpenBox('StatsGBG');
-			return;
-		}
-
-		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
-		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
-
-		let guildColors = {};
-		if (GuildFights.SortedColors && GuildFights.MapData?.battlegroundParticipants) {
-			for (let participant of GuildFights.MapData.battlegroundParticipants) {
-				let color = GuildFights.SortedColors.find(x => x.id === participant.participantId);
-				if (color) {
-					guildColors[participant.clan.id] = color.main;
-				}
-			}
-		}
-
-		// prepare data for chart
-		let datasets = guildNames.map(name => {
-			let guildId = entries.flatMap(e => e.guilds).find(x => x.name === name)?.id;
-			let color = guildColors[guildId] ?? null;
-
-			return {
-				label: name,
-				borderColor: color,
-				backgroundColor: color,
-				spanGaps: true,
-				data: entries.map(snapshot => {
-					let guild = snapshot.guilds.find(x => x.name === name);
-					if (!guild) return null;
-					return {
-						x: snapshot.time * 1000,
-						y: guild?.points ?? null,
-					};
-				}),
-			};
-		});
-
-		await helper.loadChartJS();
-
-		if (GuildFights.Chart) GuildFights.Chart.destroy();
-
-		let canvas = document.createElement('canvas');
-		canvas.width = 850;
-		canvas.height = 500;
-		$('#StatsGBGBody').empty().append(canvas).append($('<div id="GBGStatsDiffs" />'));
-
-		GuildFights.Chart = new Chart(canvas, {
-			type: 'line',
-			data: { datasets: datasets },
-			options: {
-				animation: false,
-				color: '#ccc',
-				interaction: {
-					mode: 'index',
-					intersect: false,
-				},
-				pointRadius: 2,
-				pointHitRadius: 5,
-				scales: {
-					x: {
-						type: 'time',
-						time: {
-							unit: 'hour',
-							displayFormats: { hour: 'dd, HH:mm' }
-						},
-						ticks: { maxRotation: 45 }
-					},
-					y: { beginAtZero: false }
-				},
-				plugins: {
-					legend: { 
-						position: 'bottom', 
-						labels: {
-							boxWidth: 10,
-							pointStyle: 'circle'
-						} 
-					},
-					zoom: {
-						pan: { enabled: true, mode: 'x' },
-						zoom: {
-							wheel: { enabled: true },
-							pinch: { enabled: true },
-							mode: 'x',
-						},
-					},
-				},
-			},
-			plugins: [{
-				id: 'guildDiffDisplay',
-				afterTooltipDraw(chart) {
-					let tooltip = chart.tooltip;
-					if (!tooltip || tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
-						$('#GBGStatsDiffs').empty();
-						return;
-					}
-
-					let rankedGuilds = [...tooltip.dataPoints].filter(p => p.parsed.y !== null);
-					rankedGuilds.sort((a,b)=>{
-						if (a.parsed.y > b.parsed.y) return -1;
-						if (a.parsed.y < b.parsed.y) return 1;
-						return 0;
-					});
-
-					let h = [];
-					for (let i = 0; i < rankedGuilds.length; i++) {
-						let point = rankedGuilds[i];
-						let color = point.dataset.borderColor ?? '#ccc';
-						h.push(`<b style="background:${color}">${point.dataset.label.substring(0,5)}</b>`);
-
-						if (i < rankedGuilds.length - 1) {
-							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
-							h.push(`<span class="text-smaller">${HTML.Format(diff)}</span>`);
-						}
-					}
-
-					$('#GBGStatsDiffs').html(h.join(' '));
-				}
-			}]
-		});
-	},
-
-
 	UpdateDB: async (content, data) => {
 		if (!GuildFights.CurrentGBGRound) return;
 
@@ -525,7 +381,7 @@ let GuildFights = {
 
 			if (gbground === GuildFights.CurrentGBGRound) {
 				h.push(`<div id="gbgLogFilter">
-							<button class="btn btn-mid" onclick="GuildFights.ShowGBGCharts()">${i18n('Boxes.GuildFights.Stats.Open')}</button>
+							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${i18n('Boxes.GuildFights.Stats.Open')}</button>
 							<button id="gbg_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 							<button id="gbg_showLog" class="btn btn-mid">${i18n('Boxes.GuildFights.SnapshotLog')}</button>
 						</div>`);
@@ -569,11 +425,7 @@ let GuildFights = {
 	},
 
 
-	/**
-	 * Filters the list for players with new progress
-	 */
 	ToggleProgressList: (id) => {
-
 		let elem = $('#GuildPlayersTable > tbody');
 		let nelem = elem.find('tr.new');
 		let act = $('#' + id).hasClass('filtered') ? 'show' : 'hide';
@@ -648,7 +500,6 @@ let GuildFights = {
 			    //active_maps:"gg"
 			});
 
-			// add css to the dom
 			HTML.AddCssFile('guildfights');
 		}
 		else if (!reload) {
@@ -664,7 +515,6 @@ let GuildFights = {
 	 * Shows the player overview
 	 */
 	ShowPlayerBox: () => {
-		// Wenn die Box noch nicht da ist, neu erzeugen und in den DOM packen
 		if ($('#GuildPlayers').length === 0) {
 			HTML.Box({
 				id: 'GuildPlayers',
@@ -715,7 +565,6 @@ let GuildFights = {
 	 * @returns {Promise<void>}
 	 */
 	BuildPlayerContent: async (gbground) => {
-
 		let newRound = false;
 		let updateDetailView = false;
 
@@ -752,13 +601,11 @@ let GuildFights = {
 		});
 
 		if (gbground && gbground !== null && gbground !== GuildFights.CurrentGBGRound) {
-
 			let d = await GuildFights.db.history.where({ gbground: gbground }).toArray();
 			GuildFights.GBGRound = d[0].participation.sort(function (a, b) {
 				return a.rank - b.rank;
 			});
 			histView = true;
-
 		}
 		else {
 			GuildFights.GBGRound = GuildFights.NewAction;

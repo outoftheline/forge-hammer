@@ -409,16 +409,21 @@
 }
 
 #StatsGBGBody {
+	width: 850px;
+	height: 547px;
+}
+
+#StatsGBGBody {
 	background-color: var(--bg-chart);
 }
 
 #GBGStatsDiffs {
 	height: 30px;
-	background-color: var(--black-50);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 7px;
+	border-top: 1px solid var(--border-table-bottom);
 }
 
 #GBGStatsDiffs b {
@@ -426,4 +431,9 @@
 	border-radius: 2px;
 	color: var(--black);
 	text-shadow: none;
+}
+
+#GBGPlayersLegend {
+	height: 48px;
+	overflow: auto;
 }

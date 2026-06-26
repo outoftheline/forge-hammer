@@ -204,7 +204,7 @@
 	height: 550px;
 }
 
-#statsTooltip {
+.chartTooltip {
 	background-color: var(--black-50);
 	backdrop-filter: blur(3px);
 	padding: 5px;
@@ -212,13 +212,13 @@
     pointer-events: none;
 }
 
-#statsTooltip li {
+.chartTooltip li {
 	align-items: center;
 	gap: 5px;
 	flex-wrap: nowrap;
 }
 
-#statsTooltip .legend {
+.chartTooltip .legend {
 	display: inline-flex;
 	align-items: center;
 	gap: 3px;
@@ -247,7 +247,7 @@
 	text-decoration: line-through;
 	opacity: 0.7;
 }
-#statsLegend img, #statsTooltip img {
+.chartLegend img, #statsTooltip img {
 	max-width: 22px;
 	max-height: 22px;
 }
