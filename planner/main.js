@@ -11,6 +11,17 @@ window.PlannerApp = window.PlannerApp || {};
     const BASE_KEY   = 'foe_planner_base';
     const LAYOUT_KEY = 'foe_planner_layout';
 
+
+
+    async function getCityEntityMetaData (region) {
+        let buildingMetaDB = new Dexie("FoEBuildingMeta");
+        await buildingMetaDB.open();
+        const table = buildingMetaDB.table('buildingMeta');
+		const existingEntries = await table.where('region').equals(region).toArray();
+		let metaData = existingEntries.map((x)=>({[x.id]:JSON.parse(x.json)}));
+        return metaData;
+    }
+
     /**
      * Strips a raw CityEntities meta object down to only the fields the app
      * actually reads, dramatically reducing localStorage usage.
