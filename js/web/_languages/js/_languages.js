@@ -38,6 +38,8 @@ let Translation = {
 	targetData: null,
 	referenceData: null,
 	tempData: JSON.parse(localStorage.getItem('Translation.Temp') || '{}'),
+	CopyReference: localStorage.getItem('Translation.CopyRef') || 'Conditional',
+	CopyRefOptions: ["No","Conditional","Once","Always"],
 	Show: ()=> {
 		if ( $('#Translation').length === 0 ) {
 
@@ -52,7 +54,7 @@ let Translation = {
 				resize: true
 			});		
 			let html = `
-				<div id="TranslationHeader" class="p5">
+				<div id="TranslationHead" class="p5">
 					<label for="TargetLanguage">${i18n('Boxes.Translation.TargetLanguage')}</label>
 					<select id="TargetLanguage">
 						<option value="" disabled selected>${i18n('Boxes.Translation.SelectLanguage')}...</option>
@@ -63,8 +65,10 @@ let Translation = {
 					<select id="ComparisonLanguage">
 						${Object.entries(Languages.PossibleLanguages).map(([code, name])=>`<option value="${code}" ${code === 'de' ? 'selected' : ''}>${name}</option>`).join('')}
 					</select>
+					<select id="CopyReference">
+						${Translation.CopyRefOptions.map((x)=>`<option value="${x}" ${Translation.CopyReference==x ? 'selected':""}>${i18n('Boxes.Translation.Reference.'+x)}</option>`).join("")}
+					</select>
 					<br />
-					
 					<input type="checkbox" id="ShowOnlyMissing" />
 					<label for="ShowOnlyMissing">${i18n('Boxes.Translation.ShowOnlyMissing')}</label>
 					<input type="checkbox" id="ShowOnlyUpdated" />
@@ -92,6 +96,11 @@ let Translation = {
 							<li>Submit the copied JSON data in the Translation channel on our <a href="https://discord.gg/M32xurRsQ9" target="_blank">Discord server</a></li>
 							<li>You can save your translation progress locally - it also is applied to the extension directly then, although some strings might need a reload</li>
 							<li>If you use a fork of the extension, you can also copy the JSON data into the respective language file and create a pull request on Github to get your changes merged.</li>
+							</br>
+							<li>Please keep __values__ that are encased by double underscores untranslated! These are parameters that are repaced with values during runtime.</li>
+							<li>Please keep &lt;HTMLCode&gt; between the angle backets as is. Those are needed for correct formatting. For &lt;someHTML&gtText&lt;someMoreHTML&gt; hwever, the Text between HTML Code sections can translated</li>
+							</br>
+							<li>You can select whether to copy the reference text into the input field on entering it. Conditional copy means, the reference is inserted only when the current translation is empty and the reference text includes HTML or place holders.</li>
 						</ul>
 					</div>
 					<div class="p5">
@@ -124,14 +133,28 @@ let Translation = {
 			Translation.tempData = {};
 			localStorage.removeItem('Translation.Temp');
 		});
-		$('#TranslationTable').on('click', 'td:nth-child(3)', function() {
-			let td = $(this);
-			let currentValue = $(this).find('span').html();
-			if (undefined === currentValue) return;
-			td.html(`<textarea></textarea><span class="hidden">${currentValue}</span>`);
-			td.find('textarea').val(currentValue);
-			let input = td.find('textarea');
-			input.focus();
+		$('#TranslationTable').on('mousedown', 'td:nth-child(3)', function() {
+			setTimeout(()=>{
+				let td = $(this);
+				if (td.find('textarea').length > 0) return;
+				let currentValue = $(this).find('span').html();
+				if (undefined === currentValue) return;
+				let ref = td.prev()
+				let refvalue = ref.html()
+				ref.html(`<textarea disabled>${refvalue}</textarea>`);
+				
+				td.html(`<textarea></textarea><span class="hidden">${currentValue}</span>`);
+				
+				if (['Once', 'Always'].includes(Translation.CopyReference) || (Translation.CopyReference == 'Conditional' && !currentValue && (/<.*?>/.test(refvalue) || /__.*?__/.test(refvalue))))
+					currentValue = refvalue;
+				td.find('textarea').val(currentValue).focus();
+
+				if (Translation.CopyReference == 'Once') {
+					Translation.CopyReference = localStorage.getItem('Translation.CopyRef') || 'Conditional'
+					$('#CopyReference')[0].value = Translation.CopyReference
+				}
+				
+			},50)
 		});
 		$('#TranslationTable').on('click', 'td:nth-child(3) b', function(e) {
 			let key = $(this).parent().siblings(':first').html();
@@ -141,6 +164,12 @@ let Translation = {
 		});
 		$('#TranslationTable').on('blur', 'td:nth-child(3) textarea', function() {
 			let textarea = $(this);
+			let td = textarea.parent();
+			
+			let ref = td.prev()
+			let refvalue = ref.find('textarea').val()
+			ref.html(refvalue);
+			
 			let key = textarea.parent().siblings(':first').html();
 			let originalValue = textarea.next().html();
 			let newValue = textarea.val();
@@ -151,11 +180,17 @@ let Translation = {
 				}
 			}
 			
-			if (newValue != originalValue && newValue !== '') Translation.targetData[key] = {s: newValue, r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
+			if (newValue != originalValue && newValue !== '') 
+				Translation.targetData[key] = {s: newValue, r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
 			let reference = Translation.referenceData[key]?.s || Translation.referenceData[key] || '';
 			let updated = !Translation.targetData[key]?.r || (reference.s || reference) !== Translation.targetData[key]?.r;
-			textarea.parent().html(`${(updated && newValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${newValue}</span>`);
-			textarea.parent().attr('title', ``);	
+			td.html(`${(updated && newValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${newValue}</span>`);
+			td.attr('title', ``);	
+
+		})
+		$('#CopyReference').on('change', function () {
+			option = Translation.CopyReference = this.value;
+			if (option != "Once") localStorage.setItem('Translation.CopyRef', option);
 		})
 
 
