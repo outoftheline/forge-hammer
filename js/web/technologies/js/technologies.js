@@ -276,9 +276,6 @@ let Technologies = {
     },
 
 
-	/**
-	 *
-	 */
     BuildBox: () => {
         Technologies.IgnorePrevEra = (localStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
         Technologies.IgnoreCurrentEraOptional = (localStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
@@ -287,9 +284,6 @@ let Technologies = {
     },
 
 
-	/**
-	 *
-	 */
     CalcBody: ()=> {
         let h = [],
             TechDict = [];
@@ -352,19 +346,19 @@ let Technologies = {
         let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, CurrentEraID),
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
-        h.push('<div class="dark-bg" style="margin-bottom: 3px">');
-	        h.push('<div class="techno-head">');
-				h.push('<button class="btn btn-switchage" data-value="' + PreviousEraID + '">' + i18n('Eras.'+PreviousEraID) + '</button>');
-				h.push('<div class="text-center"><strong>' + i18n('Eras.'+Technologies.SelectedEraID) + '</strong></div>');
-				h.push('<button class="btn btn-switchage" data-value="' + NextEraID + '">' + i18n('Eras.'+NextEraID) + '</button>');
-	        h.push('</div>');
-	        h.push('<div class="text-small">');
-            h.push('<input id="IgnorePrevEra" class="ignoreprevera game-cursor" ' + (Technologies.IgnorePrevEra ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnorePrevEra') + '<br>');
-            h.push('<input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ' + (Technologies.IgnoreCurrentEraOptional ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnoreCurrentEraOptional') + '<br>');
-        	h.push('</div>');
-        h.push('</div>');
-
-        h.push('<table class="foe-table exportable">');
+        h.push(`<div class="dark-bg" style="margin-bottom: 3px">
+                <div class="techno-head">
+                    <button class="btn btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>
+                    <div class="text-center"><strong>${i18n('Eras.'+Technologies.SelectedEraID)}</strong></div>
+				    <button class="btn btn-switchage" data-value="'${NextEraID}">${i18n('Eras.'+NextEraID)}</button>
+                </div>
+                <div class="text-small">
+                    <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>
+                    <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                </div>
+            </div>
+            
+            <table class="foe-table exportable">`);
 
         h.push('<thead class="sticky">' +
             '<tr>' +
@@ -442,9 +436,7 @@ let Technologies = {
         $('#technologiesBody').html(h.join(''));
     },
 
-    /**
-    *
-    */
+
     ShowSettingsButton: () => {
         let h = [];
         h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
