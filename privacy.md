@@ -54,14 +54,14 @@ If you have any questions about this Privacy Policy or our data practices, pleas
 Email: forgehammer@outoftheline.de
 
 ## TL;DR
-- The Extension can read all data that is transmitted within the context of the game window - including for example chat messages
-- The Extension can track e.g. your mouse movements to facilitate certain UI interactions
-- Your data remains local on your computer and is not transmitted elsewhere by the extension!
+- The extension can read all data that is transmitted within the context of the game window - including for example chat messages
+- The extension can track e.g. your mouse movements to facilitate certain UI interactions
+- **Your data remains local on your computer and is not transmitted elsewhere by the extension**!
 
 **From the chrome webstore:**
 ![Google Privacy Section](Privacy.png)
 - Personal communications: Disclosed, because the extensions can read your ingame chat messages.
 - Website content: To properly work, the extension obviously needs access to the website content - that is only the game page of course.
-- User activity: The extension can and in part does read your mouse movements and click positions to provide tooltips or the repeated building feature - that is just a functional requirement
+- User activity: The extension can and in part does read your mouse movements and click positions **within the game window** to provide tooltips or the repeated building feature - that is just a functional requirement
 
 From a privacy law perspective these categories need to be disclosed even if the data is not stored long term or sent elsewhere.
