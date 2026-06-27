@@ -160,6 +160,22 @@
   "Boxes.BoostList.guild_raids_units_start": "Start units",
   "Boxes.BoostList.open": "Boost Sources",
   "Boxes.BoostList.Title": "Boost Sources",
+
+  "Boxes.GBGActionLog.title": "GBG Action Log",
+  "Boxes.GBGActionLog.Sector": "Sector",
+  "Boxes.GBGActionLog.ActionCode": "Action",
+  "Boxes.GBGActionLog.ActionTime": "Time",
+  "Boxes.GBGActionLog.Building": "Building",
+  "Boxes.GBGActionLog.ActorType": "Actor type",
+  "Boxes.GBGActionLog.ActorName": "Actor name",
+  "Boxes.GBGActionLog.GroupIndex": "Group Index",
+
+  "Boxes.GBGActionLog.Action.province_lost": "Sector lost",
+  "Boxes.GBGActionLog.Action.province_conquered": "Sector taken",
+  "Boxes.GBGActionLog.Action.attacked_ignored": "Stop sign ignored",
+  "Boxes.GBGActionLog.Action.building_placed": "Building placed",
+  "Boxes.GBGActionLog.Action.building_destroyed": "Building destroyed",
+
   "Boxes.Calculator.ActiveRecurringQuest": "Active Recurring Quest (RQs):",
   "Boxes.Calculator.ArkBonus": "Current Arc Bonus",
   "Boxes.Calculator.AvailableFP": "Available FP Packs",
