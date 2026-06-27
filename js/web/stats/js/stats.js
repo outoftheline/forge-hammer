@@ -469,14 +469,17 @@ let Stats = {
 	Render: async () => {
 		$('#statsBody').html(`<div class="options">${Stats.RenderOptions()}</div>
 							<div class="options-2"></div>
-							<div id="statsWrapper"><div id="statsTitle"></div><canvas id="statsChart"></canvas>
+							<div id="statsWrapper">
+							<div id="statsTitle"></div>
+							<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastSeries, 'stats-${moment().format('YYYY-MM-DD')}.csv')" title="CSV">CSV</button><canvas id="statsChart"></canvas>
 							<div id="statsLegendWrapper">
 								<div class="StatsRewardFilter">
 									<input type="text" id="StatsRewardFilter" placeholder="${i18n("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
 								</div>
 								<div id="statsLegend" class="chartLegend"></div>
 							</div>
-							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div></div>`);
+							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div>
+							</div>`);
 
 		Stats.updateOptions();
 		await helper.loadChartJS();
@@ -1264,6 +1267,8 @@ let Stats = {
 			}
 		};
 
+		Stats._lastSeries = series;
+
 		Stats._chartInstance = new Chart(ctx, {
 			type: isColumn ? 'bar' : 'line',
 			data: { datasets },
@@ -1653,6 +1658,40 @@ let Stats = {
 	},
 
 
+	/**
+	 * @param {Array} series - { name, data }
+	 * @param {string} filename
+	 */
+	exportCSV: (series, filename) => {
+		if (!series || !series.length) return;
+		let normalise = (points) => Array.isArray(points) ? { x: points[0], y: points[1] } : points;
+
+		let allTimestamps = [...new Set(series.flatMap(s => s.data.map(points => normalise(points).x)))];
+		allTimestamps.sort((a, b) => a - b);
+
+		let headers = ['Date', ...series.map(s => `"${s.name || s.label || ''}"`)];
+
+		// 1 row per timestamp
+		let rows = allTimestamps.map(timestamp => {
+			let date = moment(timestamp).format('YYYY-MM-DD HH:mm');
+			let values = series.map(s => {
+				let points = s.data.find(p => normalise(p).x === timestamp);
+				return points !== undefined ? normalise(points).y : '';
+			});
+			return [date, ...values].join(';');
+		});
+
+		let csv = [headers.join(';'), ...rows].join('\n');
+		let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		let url = URL.createObjectURL(blob);
+		let a = document.createElement('a');
+		a.href = url;
+		a.download = filename || 'export.csv';
+		a.click();
+		URL.revokeObjectURL(url);
+	},
+
+
 
 
 	/* Handlers */
@@ -1809,9 +1848,13 @@ let Stats = {
 		let canvas = document.createElement('canvas');
 		canvas.width = 850;
 		canvas.height = 450;
-		$('#StatsGBGTabGuilds').empty().append(canvas).append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />')).append($('<div id="GBGStatsDiffs" class="dark-bg" />'));
+		$('#StatsGBGTabGuilds').empty().append(canvas)
+			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
+			.append($('<div id="GBGStatsDiffs" class="dark-bg" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGGuildsSeries, &apos;gbg-guilds-${moment().format('YYYY-MM-DD')}.csv&apos;)">CSV</button>`));
 
 		if (GuildFights.Chart) GuildFights.Chart.destroy();
+		Stats._lastGBGGuildsSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
 
 		let guildsHtmlLegendPlugin = {
 			id: 'htmlLegend',
@@ -1953,12 +1996,16 @@ let Stats = {
 		let canvas = document.createElement('canvas');
 		canvas.width = 850;
 		canvas.height = 450;
-		$('#StatsGBGTabPlayers').empty().append(canvas).append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />')).append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'));
+		$('#StatsGBGTabPlayers').empty().append(canvas)
+			.append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />'))
+			.append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGPlayersSeries, &apos;gbg-players-${moment().format('YYYY-MM-DD')}.csv&apos;)" title="CSV">CSV</button>`));
 
 		if (Stats.gbgPlayersChart) {
 			Stats.gbgPlayersChart.destroy();
 			Stats.gbgPlayersChart = null;
 		}
+		Stats._lastGBGPlayersSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
 
 		let legendPlugin = {
 			id: 'htmlLegend',
