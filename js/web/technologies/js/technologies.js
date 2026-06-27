@@ -216,9 +216,7 @@ let Technologies = {
     },
 
 
-	/**
-	 * Zeigt
-	 */
+
     Show: ()=> {
 		if ($('#technologies').length === 0) {
 
@@ -302,11 +300,10 @@ let Technologies = {
         }
 
         // Look up researched tech
-        for (let i = 0; i < Technologies.UnlockedTechnologies['unlockedTechnologies'].length; i++) {
-            let TechName = Technologies.UnlockedTechnologies['unlockedTechnologies'][i];
-            let Index = TechDict[TechName];
-            Technologies.AllTechnologies[Index]['isResearched'] = true;
-            Technologies.AllTechnologies[Index]['currentSP'] = Technologies.AllTechnologies[Index]['maxSP'];
+        for (let node of Technologies.UnlockedTechnologies.unlockedNodes) {
+            if (!TechDict[node]) continue;
+            Technologies.AllTechnologies[TechDict[node]].isResearched = true;
+            Technologies.AllTechnologies[TechDict[node]]['currentSP'] = Technologies.AllTechnologies[TechDict[node]]['maxSP'];
         }
 
         // Teilweise erforscht
@@ -323,6 +320,8 @@ let Technologies = {
             let Tech = Technologies.AllTechnologies[i];
             if (Tech['currentSP'] === undefined)
             	Tech['currentSP'] = 0;
+
+            //console.log(Tech.isResearched, Tech.id)
 
             if (!Tech['isResearched'] && !Tech['isTeaser']) {
                 let EraID = Technologies.Eras[Tech['era']];
