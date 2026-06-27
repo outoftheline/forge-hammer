@@ -1,5 +1,14 @@
 # Changelog
  
+## Version 1.2
+### Update
+- Statistiken: CSV Export (wieder) hinzugefügt für: Ressourcen, Gildenkasse, Einheiten, GG Siegpunkte, GG Spielerfortschritt
+- Der GG Spielerfortschritt ist nun im GG Fenster in den Statistiken zu finden und zeigt nur noch den Fortschritt der aktuellen Runde
+- GG Statistiken: Siegpunkte können jetzt auf einen Blick verglichen werden
+- Shops: Suchfeld hinzugefügt
+
+---
+ 
 ## Version 1.1
 ### Neu
 - Warnung hinzugefügt, wenn der FoE-Helfer erkannt wurde
