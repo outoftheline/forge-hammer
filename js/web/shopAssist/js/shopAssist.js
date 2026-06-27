@@ -136,8 +136,9 @@ let shopAssist = {
 		h += `<thead>
 				<tr>
 					<th colspan=5>
-						<input type="checkbox" id="shopAssistFav" class = "clickable"><label for="shopAssistFav" class = "clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyFavourites")}</label>
-						<input type="checkbox" id="shopAssistUnlock" class = "clickable"><label for="shopAssistUnlock" class = "clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyUnlocked")}</label>
+						<input type="checkbox" id="shopAssistFav" class="clickable"><label for="shopAssistFav" class="clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyFavourites")}</label>
+						<input type="checkbox" id="shopAssistUnlock" class="clickable"><label for="shopAssistUnlock" class="clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyUnlocked")}</label>
+						<input type="text" id="shopAssistSearch" placeholder="${i18n('General.Search')}">
 					</th>
 					<th colspan=3>
 						${resources}
@@ -379,6 +380,21 @@ let shopAssist = {
 			} else {
 				$(".shopAssistTable").removeClass("unlockedOnly");
 			}
+		});
+		$("#shopAssistSearch").off().on("change",function(e){
+			let searchWord = e.currentTarget.value?.toLowerCase();
+			$(".shopAssistTable").addClass("searchFilter");
+			$(".shopAssistTable tr").removeClass("searchResult");
+			if (searchWord === "") { $(".shopAssistTable").removeClass("searchFilter"); return; }
+
+			$('.shopAssistTable tr').each(function () {
+                let tr = $(this);
+   
+				let found = tr.text().toLowerCase().indexOf(searchWord)
+				if (found !== -1) {
+					tr.addClass('searchResult');
+				}
+            });
 		});
 		$(".shopFavourite").on("click",function(e){
 			let id = e.currentTarget.dataset.id;
