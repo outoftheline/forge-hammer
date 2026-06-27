@@ -1,6 +1,7 @@
 # PRIVACY POLICY
 
 Last Updated: 27.06.2026
+[TL;DR below](#tldr)
 
 ## 1. Data Controller
 The controller responsible for data processing within the meaning of the General Data Protection Regulation (GDPR/DSGVO) is:
@@ -57,12 +58,10 @@ Email: forgehammer@outoftheline.de
 - The Extension can track e.g. your mouse movements to facilitate certain UI interactions
 - Your data remains local on your computer and is not transmitted elsewhere by the extension!
 
+**From the chrome webstore:**
 ![Google Privacy Section](Privacy.png)
-
 - Personal communications: Disclosed, because the extensions can read your ingame chat messages.
-
 - Website content: To properly work, the extension obviously needs access to the website content - that is only the game page of course.
-
-- User activity: both extensions can and in part do read your mouse movements and click positions to provide tooltips or the repeated building feature - that is just a functional requirement
+- User activity: The extension can and in part does read your mouse movements and click positions to provide tooltips or the repeated building feature - that is just a functional requirement
 
 From a privacy law perspective these categories need to be disclosed even if the data is not stored long term or sent elsewhere.
