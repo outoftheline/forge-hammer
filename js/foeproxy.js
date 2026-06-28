@@ -2,7 +2,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-if (typeof globalThis.FoEproxy == 'undefined') {
+if (typeof globalThis.HammerStorage == 'undefined') {
     globalThis.HammerStorage = {
         getItem: (id) => {
             let data = localStorage.getItem('Hammer.' + id);
@@ -19,8 +19,10 @@ if (typeof globalThis.FoEproxy == 'undefined') {
             localStorage.removeItem(id)
         }
     };
+}
 
-    globalThis.FoEproxy = (function () {
+if (typeof globalThis.FoEproxy == 'undefined') {
+     globalThis.FoEproxy = (function () {
         const requestInfoHolder = new WeakMap();
         function getRequestData(xhr) {
             let data = requestInfoHolder.get(xhr);
