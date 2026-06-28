@@ -1,4 +1,4 @@
-﻿{
+{
   "_Language": "Français",
   "Boxes.Alerts.Form.Antiques.Auction": "Enchère",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Délai de l'enchère",
@@ -549,6 +549,22 @@
   "Boxes.GuildFights.ShowTileColors": "Copier la couleur des attaques",
   "Boxes.GuildFights.SnapshotLog": "Log des aperçus instantanés",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Avis de non-responsabilité : ces données sont basées sur vos données collectées. Les chiffres présentés ici ne sont probablement pas exacts à 100 %. Il faudrait ouvrir la liste à minuit pour qu'ils soient corrects.",
+  "Boxes.GuildFights.Stats.Open": {
+    "s": "Stats",
+    "r": "Stats"
+  },
+  "Boxes.GuildFights.Stats.TabGuilds": {
+    "s": "points de victoire",
+    "r": "Victory Points"
+  },
+  "Boxes.GuildFights.Stats.TabPlayers": {
+    "s": "Progression du joueur",
+    "r": "Player progress"
+  },
+  "Boxes.GuildFights.Stats.Title": {
+    "s": "Stats CbG",
+    "r": "GBG Stats"
+  },
   "Boxes.GuildFights.Switch": "Changer la vue",
   "Boxes.GuildFights.Time": "à",
   "Boxes.GuildFights.TimeZoneWarning.Desc": "Désormais, les heures sont copiées dans l'heure du serveur. Si vous souhaitez modifier vos heures affichées en heure du serveur, vérifiez les paramètres.",
@@ -822,6 +838,10 @@
   "Boxes.MergerGame.TaskReady": "Collecter la tâche !",
   "Boxes.MergerGame.useAverage": "Utilisez cette valeur au lieu du coût de réinitialisation réel (0 pour désactivé)",
   "Boxes.MergerGame.WorldChallengeOverflowWarning": "Le challenge va déborder !",
+  "Boxes.MoppelHelper.ActivateButton": {
+    "s": "Activer ici",
+    "r": "Activate here"
+  },
   "Boxes.MoppelHelper.Attacks": "Attaques",
   "Boxes.MoppelHelper.CityProtected": "La cité de ce joueur ne peut pas être attaquées",
   "Boxes.MoppelHelper.Columns": "Colonnes",
@@ -865,6 +885,22 @@
   "Boxes.Negotiation.TryContinue": "S'il vous plaît, continuez par vous-même",
   "Boxes.Negotiation.TryEnd": "Essayez de finir",
   "Boxes.Negotiation.WrongGoods": "Mauvais produits sélectionnés, veuillez terminer manuellement",
+  "Boxes.Notes.Add": {
+    "s": "Ajouter une note",
+    "r": "Add note"
+  },
+  "Boxes.Notes.NewHeadline": {
+    "s": "ajouter un titre",
+    "r": "Add a title"
+  },
+  "Boxes.Notes.NewText": {
+    "s": "Ecrire votre note ici.\n\ncommencer une ligne avec [] pour une case à cocher, [*] pour une remplie.",
+    "r": "Type your note here.&#10;&#10;Start a line with [] for a checkbox, [*] for a checked one."
+  },
+  "Boxes.Notes.Title": {
+    "s": "Notes et ToDo Liste",
+    "r": "Notes and To Dos"
+  },
   "Boxes.OtherGuildActivity.Title": "Membres actifs de la guilde",
   "Boxes.Outpost.DescInStock": "Disponible",
   "Boxes.Outpost.DescRequired": "Requis",
@@ -1223,14 +1259,38 @@
   "Boxes.Tooltip.Building.when": "Quand",
   "Boxes.Tooltip.Efficiency.description": "Les combinaisons suivantes sont possibles",
   "Boxes.Translation.ClearStorage": "Effacer le stockage",
+  "Boxes.Translation.ComparisonLanguage": {
+    "s": "Langue de comparaison (voir Tooltip)",
+    "r": "Comparison Language (see tooltip)"
+  },
   "Boxes.Translation.CopyJSON": "Copier JSON",
   "Boxes.Translation.EditValuePrompt": "La nouvelle valeur est plus courte que l'original. Voulez-vous vraiment enregistrer ?",
   "Boxes.Translation.Key": "Clé",
   "Boxes.Translation.Reference": "Référence",
+  "Boxes.Translation.Reference.Always": {
+    "s": "Toujours copier le texte de référence",
+    "r": "Always copy reference text"
+  },
+  "Boxes.Translation.Reference.Conditional": {
+    "s": "Copier conditionnellement le texte de référence",
+    "r": "Conditionally copy reference text"
+  },
+  "Boxes.Translation.Reference.No": {
+    "s": "Ne jamais copier le texte de référence",
+    "r": "Never copy reference text"
+  },
+  "Boxes.Translation.Reference.Once": {
+    "s": "Copier une fois le texte de référence",
+    "r": "Copy reference text once"
+  },
   "Boxes.Translation.ReferenceLanguage": "Langue de référence",
   "Boxes.Translation.SearchPlaceholder": "Rechercher...",
   "Boxes.Translation.SelectLanguage": "Sélectionner la langue",
   "Boxes.Translation.ShowOnlyMissing": "Afficher les manquants",
+  "Boxes.Translation.ShowOnlyUpdated": {
+    "s": "Montrer seulement les modifilés",
+    "r": "Show Only Updated"
+  },
   "Boxes.Translation.Target": "Texte",
   "Boxes.Translation.TargetLanguage": "langue cible",
   "Boxes.Translation.TempStorage": "Stockage temp.",
@@ -1330,6 +1390,14 @@
   "Eras.9": "Ère Progressiste",
   "Eras.9.short": "Prog",
   "Eras.GvGAllAge": "Toutes ères",
+  "Eras.undefined": {
+    "s": "aucun âge",
+    "r": "No age"
+  },
+  "Eras.undefined.short": {
+    "s": "aucun âge",
+    "r": "No age"
+  },
   "General.Battle": "Bataille",
   "General.Boost": "Boost",
   "General.Cancel": "Annuler",
@@ -1347,6 +1415,10 @@
   "General.Player": "Joueur",
   "General.Reset": "Réinitialiser",
   "General.Save": "Sauver",
+  "General.Search": {
+    "s": "Recherche",
+    "r": "Search"
+  },
   "General.Send": "Envoyer",
   "General.Success": "Réussi",
   "General.Unit": "Unité",
@@ -1565,10 +1637,10 @@
   "Settings.ExportSettings.Desc": "Sauvegarde et restauration des paramètres",
   "Settings.ExportSettings.OpenImportExportTool": "Ouvrir l'outil d'import / export",
   "Settings.ExportSettings.Title": "Sauvegarde et restauration",
-  "Settings.GexStockWarning.Desc": "Si à l'ouverture du dialogue de déverrouillage du niveau d'EG, l'utilisation en % des biens est supérieure au seuil indiqué ci-dessous, une boîte est générée répertoriant le pourcentage d'utilisation des biens par rapport au stock de trésorerie. « 0 » ouvrira toujours la boîte, « 100 » jamais.",
-  "Settings.GexStockWarning.Title": "EG Utilisation des ressources",
   "Settings.Filters.Desc": "Quelques changements plus ou moins utile que vous pouvez appliquer pour changer la couleur du jeu.",
   "Settings.Filters.Title": "Change l'aspect du jeu",
+  "Settings.GexStockWarning.Desc": "Si à l'ouverture du dialogue de déverrouillage du niveau d'EG, l'utilisation en % des biens est supérieure au seuil indiqué ci-dessous, une boîte est générée répertoriant le pourcentage d'utilisation des biens par rapport au stock de trésorerie. « 0 » ouvrira toujours la boîte, « 100 » jamais.",
+  "Settings.GexStockWarning.Title": "EG Utilisation des ressources",
   "Settings.GlobalSend.Desc": "Si vous souhaitez utiliser les notes ou le planificateur de cité, activez cet élément.<br>Pour une extension autonome, désactivez là simplement.",
   "Settings.GlobalSend.Title": "Envoi à foe-helper.com",
   "Settings.Help.Desc": "Il existe plusieurs façons d'obtenir de l'aide :",

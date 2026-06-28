@@ -23,7 +23,8 @@ let DuplicateWarning = (helperDetected=true) => {
 }
 
 const duplicateDetected = !!(
-	window.ExtbaseData
+	window.ExtbaseData ||
+	window.FH.Basedata
 );
 
 if (duplicateDetected) {
