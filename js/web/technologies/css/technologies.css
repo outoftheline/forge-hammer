@@ -22,10 +22,6 @@
 	padding: 5px;
 }
 
-#technologies #technologiesBody .techno-head > * {
-	width: 33.333334%;
-}
-
 #technologies #technologiesBody .techno-head strong {
 	color: var(--text-highlight);
 }
