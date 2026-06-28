@@ -350,7 +350,7 @@ let Technologies = {
                 <div class="techno-head">
                     <button class="btn btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>
                     <div class="text-center"><strong>${i18n('Eras.'+Technologies.SelectedEraID)}</strong></div>
-				    <button class="btn btn-switchage" data-value="'${NextEraID}">${i18n('Eras.'+NextEraID)}</button>
+				    <button class="btn btn-switchage" data-value="${NextEraID}">${i18n('Eras.'+NextEraID)}</button>
                 </div>
                 <div class="text-small">
                     <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>

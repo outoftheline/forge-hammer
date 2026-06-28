@@ -141,20 +141,77 @@ let GuildFights = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let hammerDBName = `ForgeHammer_GBG_${playerID}`;
+		let helperDBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let migrationKey = `ForgeHammer_GBG_Migrated_${playerID}`;
 
-		GuildFights.db = new Dexie(DBName);
+		GuildFights.db = new Dexie(hammerDBName);
 
 		GuildFights.db.version(1).stores({
 			snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
-			history: '&gbground'
-		});
-
-		GuildFights.db.version(21).stores({
+			history: '&gbground',
 			guildHistory: '[gbground+time], gbground'
 		});
 
-		GuildFights.db.open();
+		await GuildFights.db.open();
+
+		// One-time migration from FoeHelperDB_GuildFights_${playerID}
+		if (!localStorage.getItem(migrationKey)) {
+			try {
+				// Detect version of the old DB 
+				let oldDBVersion = await new Promise((resolve) => {
+					let request = indexedDB.open(helperDBName);
+					request.onsuccess = (e) => {
+						let version = e.target.result.version;
+						e.target.result.close();
+						resolve(version);
+					};
+					request.onerror = () => resolve(0);
+				});
+
+				// there was no DB - indexedDB.open() created a DB
+				if (oldDBVersion === 0) {
+					indexedDB.deleteDatabase(helperDBName);
+					localStorage.setItem(migrationKey, '1');
+					return;
+				}
+
+				let hasGuildHistory = oldDBVersion >= 21;
+				let oldDB = new Dexie(helperDBName);
+
+				oldDB.version(1).stores({
+					snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
+					history: '&gbground'
+				});
+
+				if (hasGuildHistory) {
+					oldDB.version(21).stores({
+						guildHistory: '[gbground+time], gbground'
+					});
+				}
+
+				await oldDB.open();
+
+				let [snapshots, history] = await Promise.all([
+					oldDB.snapshots.toArray(),
+					oldDB.history.toArray()
+				]);
+
+				let guildHistory = hasGuildHistory ? await oldDB.guildHistory.toArray() : [];
+
+				await Promise.all([
+					GuildFights.db.snapshots.bulkPut(snapshots),
+					GuildFights.db.history.bulkPut(history),
+					GuildFights.db.guildHistory.bulkPut(guildHistory)
+				]);
+
+				oldDB.close();
+
+				localStorage.setItem(migrationKey, '1');
+			} catch (e) {
+				console.warn('Forge Hammer GBG database migration failed:', e);
+			}
+		}
 	},
 
 	init: () => {
