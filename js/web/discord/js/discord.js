@@ -17,12 +17,12 @@ let Discord = {
 	 * Get active Webhooks
 	 */
 	init: ()=> {
-		let webhooks = JSON.parse(HammerStorage.getItem(Discord.StorageName));
+		let webhooks = JSON.parse(FH.Storage.getItem(Discord.StorageName));
 		if (webhooks) {
 			Discord.WebHooks = webhooks;
 		}
 
-		let url = JSON.parse(HammerStorage.getItem('DiscordWebHookUrls'));
+		let url = JSON.parse(FH.Storage.getItem('DiscordWebHookUrls'));
 		if (url) {
 			Discord.WebHooksUrls = url;
 		}
@@ -316,7 +316,7 @@ let Discord = {
 			name: $('#webhookUrlName').val(),
 			url: $('#webhookUrlInput').val(),
 		});
-		HammerStorage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
+		FH.Storage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
 		Discord.BuildWebhookFormContent('open');
 	},
 
@@ -413,7 +413,7 @@ let Discord = {
 		});
 
 		// save the array to localstorage
-		HammerStorage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
+		FH.Storage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
 
 		Discord.BuildWebhookFormContent('open');
 	},
@@ -431,7 +431,7 @@ let Discord = {
 
 	SaveTheData: (rebuild = true)=> {
 		// save the array to localstorage
-		HammerStorage.setItem(Discord.StorageName, JSON.stringify(Discord.WebHooks));
+		FH.Storage.setItem(Discord.StorageName, JSON.stringify(Discord.WebHooks));
 
 		if(rebuild){
 			// rebuild table

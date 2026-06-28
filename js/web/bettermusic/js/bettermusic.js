@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     //on startUp
     let first = false;
     if ($('#betterMusic1').length === 0) {
@@ -48,13 +48,13 @@ FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, post
 
 });
 
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
        
     betterMusic.setScene("map");
     
 });
 
-FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
     
     if (!data.responseData?.gridId) return;
     
@@ -69,36 +69,36 @@ FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
    
 });
 
-FoEproxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
 
     betterMusic.setScene("main");   
 
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
        
     betterMusic.setScene("gbg");
     
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
        
     betterMusic.setScene("ge");
     
 });
-FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
     if (!data.responseData.map) return;
     betterMusic.setScene("battle");
     
 });
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
        
     if (betterMusic.Settings.Pvp) betterMusic.setScene("foe_music_pvp_arena");
     
 });
 
-FoEproxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
+FH.proxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
 
     Eventname = data.responseData[0].context;
     
@@ -110,7 +110,7 @@ FoEproxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
     };
     
 });
-FoEproxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
+FH.proxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
 
     Eventname = data.responseData?.teaserPrizes?.context;
     
@@ -123,7 +123,7 @@ FoEproxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
     
 });
 
-FoEproxy.addHandler('FriendsTavernService', 'getConfig', (data, postData) => {
+FH.proxy.addHandler('FriendsTavernService', 'getConfig', (data, postData) => {
        
     if (betterMusic.Settings.Tavern) betterMusic.setScene("foe_music_tavern");
     
@@ -487,7 +487,7 @@ let betterMusic = {
     
     loadSettings: ()=> {
 
-		tempSettings = JSON.parse(HammerStorage.getItem('betterMusicSettings') || '{}');
+		tempSettings = JSON.parse(FH.Storage.getItem('betterMusicSettings') || '{}');
         if (tempSettings.Scenes) {
             for (let i of Object.keys(tempSettings.Scenes)) {
                 if (!betterMusic.Settings.Scenes[i]) delete tempSettings.Scenes[i];
@@ -497,7 +497,7 @@ let betterMusic = {
     },
     
     saveSettings: ()=> {
-        HammerStorage.setItem('betterMusicSettings', JSON.stringify(betterMusic.Settings));
+        FH.Storage.setItem('betterMusicSettings', JSON.stringify(betterMusic.Settings));
         betterMusic.buildlists();
     },
     

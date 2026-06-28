@@ -3,18 +3,18 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
+FH.proxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
 	FPCollector.currentEvent = data.responseData[0]['context'].replace(/_tournament/g,'');
 });
 
-FoEproxy.addHandler('TimedSpecialRewardService', 'getTimedSpecial', (data, postData) => {
+FH.proxy.addHandler('TimedSpecialRewardService', 'getTimedSpecial', (data, postData) => {
 	if (!FPCollector.currentEvent) {
 		FPCollector.currentEvent = data.responseData['context'].replace(/_tournament/g,'');
 	}
 });
 
 // - QI 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 	const d = data.responseData;
 	let event = null, 
 		notes = null;
@@ -35,7 +35,7 @@ FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 	}
 });
 
-FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 	const d = data.responseData[0][0];
 	let eventCheck = data.responseData[1],
 		event = data.responseData[1],
@@ -129,7 +129,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 });
 
 // - reward calendar completion
-FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
+FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 	let eventCheck = data.responseData.itemAssetName;
 
 	if (eventCheck.includes("calendar_completion")) {
@@ -162,7 +162,7 @@ FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 });
 
 // GEX FP from chest
-FoEproxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
 	const d = data['responseData'];
 
 	if (d['subType'] !== 'strategy_points') {
@@ -178,7 +178,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
 
 
 // Visit taverns (satDown)
-FoEproxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) => {
+FH.proxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) => {
 	const d = data['responseData'];
 
 	if (!d['rewardResources'] || !d['rewardResources']['resources'] || !d['rewardResources']['resources']['strategy_points'] || !postData[0] || !postData[0]['requestData'] || !postData[0]['requestData'][0]) {
@@ -197,17 +197,17 @@ FoEproxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) =
 
 
 // Plunder reward
-FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 	FPCollector.lastVisitedPlayer = data.responseData.other_player.player_id;
 });
 
-FoEproxy.addHandler('CityMapService', 'reset', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'reset', (data, postData) => {
 	for (let i = 0; i < data.responseData.length; i++) {
 		FPCollector.lastPlunderedEntity = data.responseData[i].cityentity_id;
 	}
 });
 
-FoEproxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 	setTimeout(function() {
 		for (let i = 0; i < data.responseData.length; i++) {
 			let PlunderReward = data.responseData[i];
@@ -230,7 +230,7 @@ FoEproxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 
 
 // double Collection by Blue Galaxy contains [id, type] -  old, should not get triggered anymore
-FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 	for (let i in data['responseData']) {
 		if (!data['responseData'].hasOwnProperty(i)) continue;
 
@@ -259,7 +259,7 @@ FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 });
 
 // double Collection by Blue Galaxy contains [id, type]  - NEW Version
-FoEproxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
 	let BonusId = BonusService.Bonuses.find(object => object.type === 'double_collection')?.id;
 	if (!BonusId) return;
   	for (let j in data['responseData']['bonus']) {

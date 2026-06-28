@@ -4,11 +4,11 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('RankingService', 'getRanking', (data, postData) => {
+FH.proxy.addHandler('RankingService', 'getRanking', (data, postData) => {
     if (data.responseData.category.value != "great_building" || $('#findGBDialog').length === 0) return;
     findGB.check(data.responseData.rankings);
 });
-FoEproxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
+FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
     if ($('#findGBDialog').length === 0) return;
     findGB.check(data.responseData);
 });

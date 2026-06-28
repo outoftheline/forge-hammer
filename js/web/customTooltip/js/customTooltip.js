@@ -825,15 +825,15 @@ let Tooltips = {
 
 //QI Actions
 
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	QIActions.count = ResourceStock.guild_raids_action_points || 0
 });
 
-FoEproxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
 	QIActions.setNext(data.responseData.resources.guild_raids_action_points)
 });
 
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
 	if (ActiveMap==="guild_raids") {
 		$('#QIActions').show();
 	} else {
@@ -841,7 +841,7 @@ FoEproxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
 	}
 })
 
-FoEproxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
     QIActions.hourlyBase = FHResourcesList.find(x=>x.id=="guild_raids_action_points").abilities.autoRefill.refillAmount
 });
 
@@ -890,7 +890,7 @@ let QIActions = {
 }
 
 //GBG Rewards Stream
-FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
 	if (!Settings.GetSetting("ShowGBGRewards")) return
     if (!Array.isArray(data.responseData)) return
 	var [rewards, rewardIncidentSource] = data.responseData; 

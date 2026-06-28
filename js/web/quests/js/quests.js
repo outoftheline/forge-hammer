@@ -4,21 +4,21 @@
  */
 
 // Quest is aborted?
-FoEproxy.addRequestHandler('QuestService', 'abortQuest', (postData) => {
+FH.proxy.addRequestHandler('QuestService', 'abortQuest', (postData) => {
 	if(postData['requestClass'] === 'QuestService' && postData['requestMethod'] === 'abortQuest'){
 		Quests.UpdateCounter();
 	}
 	Quests.DeactivateRival();
 });
 
-FoEproxy.addRequestHandler('GreatBuildingsService', 'getConstruction', (postData) => {
+FH.proxy.addRequestHandler('GreatBuildingsService', 'getConstruction', (postData) => {
 	Quests.DeactivateRival();
 });
-FoEproxy.addRequestHandler("ChallengeService", 'all', (postData) => {
+FH.proxy.addRequestHandler("ChallengeService", 'all', (postData) => {
 	Quests.DeactivateRival();
 });
 
-FoEproxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length > 0) return;
 	if (!Settings.GetSetting('RivalSound')) return;
 	if (Quests.RivalInActive) return;
@@ -51,7 +51,7 @@ let Quests = {
 
 	init: ()=> {
 
-		let CounterStorage = HammerStorage.getItem('QuestCounter'),
+		let CounterStorage = FH.Storage.getItem('QuestCounter'),
 			parts;
 
 		Quests.Date = moment(MainParser.getCurrentDate()).format('YYYY-MM-DD');
@@ -131,7 +131,7 @@ let Quests = {
 	 * @constructor
 	 */
 	InsertStorage:()=> {
-		HammerStorage.setItem('QuestCounter', JSON.stringify({
+		FH.Storage.setItem('QuestCounter', JSON.stringify({
 			counter: Quests.Counter,
 			date: Quests.Date
 		}));

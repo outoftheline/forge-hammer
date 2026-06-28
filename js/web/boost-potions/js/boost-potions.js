@@ -5,16 +5,16 @@
 
 
 // GEX started
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	BoostPotions.Show();
 	BoostPotions.updateList();
 });
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	BoostPotions.updateList();
 });
 
-FoEproxy.addHandler('BoostService', 'addBoost', (data)=> {
+FH.proxy.addHandler('BoostService', 'addBoost', (data)=> {
 	if (data.responseData.origin !== "inventory_item" ) return;
 	let b=data.responseData;
 	BoostPotions.activate(b.type,{expire:b.expireTime,target:b.targetedFeature||"all",value:b.value});

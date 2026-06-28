@@ -83,7 +83,7 @@ let Negotiation = {
 					id = $this.data('id'),
 					v = $this.prop('checked');
 
-				HammerStorage.setItem(id, v);
+				FH.Storage.setItem(id, v);
 
 				setTimeout(()=>{
 					Negotiation.StartNegotiation(Negotiation.StartNegotiationBackupData);
@@ -130,8 +130,8 @@ let Negotiation = {
 
 		if (Negotiation.CurrentTable !== null) {
 
-			let sceg = HammerStorage.getItem('NegotiationSaveCurrentEraGoods'),
-				sm = HammerStorage.getItem('NegotiationSaveMedals');
+			let sceg = FH.Storage.getItem('NegotiationSaveCurrentEraGoods'),
+				sm = FH.Storage.getItem('NegotiationSaveMedals');
 
 			h.push('<thead class="dark-bg">');
 
@@ -310,7 +310,7 @@ let Negotiation = {
 		let value = false;
 		if ($("#negotiationAutoOpen").is(':checked'))
 			value = true;
-		HammerStorage.setItem('AutomaticNegotiation', value);
+		FH.Storage.setItem('AutomaticNegotiation', value);
 		
 		$(`#negotiationBoxSettingsBox`).remove();
 	},
@@ -899,7 +899,7 @@ let Negotiation = {
 			Value = 50;
 		}
 		else if (GoodName === 'medals') {
-			let SaveMedalSetting = HammerStorage.getItem('NegotiationSaveMedals');
+			let SaveMedalSetting = FH.Storage.getItem('NegotiationSaveMedals');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 75;
 			}
@@ -915,7 +915,7 @@ let Negotiation = {
 			Value = 4000;
 		}
 		else {
-			let SaveMedalSetting = HammerStorage.getItem('NegotiationSaveCurrentEraGoods');
+			let SaveMedalSetting = FH.Storage.getItem('NegotiationSaveCurrentEraGoods');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 100;
 			}
@@ -986,7 +986,7 @@ let Negotiation = {
 // --------------------------------------------------------------------------------------------------
 // Negotiation
 
-FoEproxy.addHandler('all','all', (data, postData) => {
+FH.proxy.addHandler('all','all', (data, postData) => {
 	if (data.requestMethod === "startNegotiation") {
 	
 		Negotiation.tempStore = data.responseData;
@@ -1024,7 +1024,7 @@ FoEproxy.addHandler('all','all', (data, postData) => {
 		Negotiation.ExitNegotiation()
 	}
 });
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	if (Negotiation.timeout) {
 		clearTimeout(Negotiation.timeout);
 		Negotiation.timeout=null;

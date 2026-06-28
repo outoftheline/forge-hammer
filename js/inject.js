@@ -209,7 +209,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 			scriptLoaded("primed", "internal");
 
 		} catch (err) {
-			// make sure that the packet buffer in the FoEproxy does not fill up in the event of an incomplete loading.
+			// make sure that the packet buffer in the FH.proxy does not fill up in the event of an incomplete loading.
 			window.dispatchEvent(new CustomEvent('foe-helper#error-loading'));
 		}
 	}

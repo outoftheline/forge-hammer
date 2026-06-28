@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
+FH.proxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
     
     if (!data.responseData) return;
     for (let q in data.responseData) {
@@ -32,7 +32,7 @@ FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
 });
 
 let Recurring = {
-    data: JSON.parse(HammerStorage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
+    data: JSON.parse(FH.Storage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
     
 	/**
 	 * Box in den DOM
@@ -170,7 +170,7 @@ let Recurring = {
     SaveSettings: (show=Recurring.data.showCounter) => {
         Recurring.filter()
         Recurring.data.showCounter = show;
-        HammerStorage.setItem('Recurring', JSON.stringify(Recurring.data));
+        FH.Storage.setItem('Recurring', JSON.stringify(Recurring.data));
         Recurring.SetCounter();
     },
     getTasks: (groups,conditions) =>{

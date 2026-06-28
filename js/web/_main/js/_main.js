@@ -37,7 +37,7 @@ setTimeout(() => {
 	}
 }, 5000);
 
-window.ExtbaseData = JSON.parse(HammerStorage.getItem("HelperBaseData")||"{}");
+window.ExtbaseData = JSON.parse(FH.Storage.getItem("HelperBaseData")||"{}");
 ExtbaseData.isHammer = true;
 window.extID = ExtbaseData.extID;
 window.extUrl = ExtbaseData.extUrl;
@@ -154,7 +154,7 @@ let i18nData = null;
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world
 	//ExtWorld = window.location.hostname.split('.')[0];
-	HammerStorage.setItem('current_world', ExtWorld);
+	FH.Storage.setItem('current_world', ExtWorld);
 
 	// register resize functions
 	window.addEventListener('resize', () => {
@@ -176,14 +176,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	// globale Handler
 	// die Gebäudenamen übernehmen
 	/* removed as inno changed city entity loading
-	FoEproxy.addMetaHandler('city_entities', (xhr, postData) => {
+	FH.proxy.addMetaHandler('city_entities', (xhr, postData) => {
 		let EntityArray = JSON.parse(xhr.responseText);
 		MainParser.CityEntities = Object.assign({}, ...EntityArray.map((x) => ({ [x.id]: x })));
 		MainParser.correctBuildingType()
 		MainParser.Inactives.check();
 	});
 	*/
-	FoEproxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
 		const region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
@@ -191,73 +191,73 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// Building-Upgrades
-	FoEproxy.addMetaHandler('building_upgrades', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_upgrades', (xhr, postData) => {
 		let BuildingUpgradesArray = JSON.parse(xhr.responseText);
 		MainParser.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
 		if (MainParser.SelectionKits != null) Kits.CreateUpgradeSchemes();
 	});
 
 	// Building-Sets
-	FoEproxy.addMetaHandler('building_sets', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_sets', (xhr, postData) => {
 		let BuildingSetsArray = JSON.parse(xhr.responseText);
 		MainParser.BuildingSets = Object.assign({}, ...BuildingSetsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Building-Chains
-	FoEproxy.addMetaHandler('building_chains', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_chains', (xhr, postData) => {
 		let BuildingChainsArray = JSON.parse(xhr.responseText);
 		MainParser.BuildingChains = Object.assign({}, ...BuildingChainsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Selection-Kits
-	FoEproxy.addMetaHandler('selection_kits', (xhr, postData) => {
+	FH.proxy.addMetaHandler('selection_kits', (xhr, postData) => {
 		let SelectKitsArray = JSON.parse(xhr.responseText);
 		MainParser.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
 		if (MainParser.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
 	});
-	FoEproxy.addMetaHandler("building_families", (xhr,postData) => {
+	FH.proxy.addMetaHandler("building_families", (xhr,postData) => {
 		MainParser.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
 	})	
 	// Castle-System-Levels
-	FoEproxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
+	FH.proxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
 		MainParser.CastleSystemLevels = JSON.parse(xhr.responseText);
 	});
 
 	// Allies
-	FoEproxy.addMetaHandler('allies', (xhr, postData) => {
+	FH.proxy.addMetaHandler('allies', (xhr, postData) => {
 		MainParser.Allies.setMeta(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addMetaHandler('ally_rarities', (xhr, postData) => {
+	FH.proxy.addMetaHandler('ally_rarities', (xhr, postData) => {
 		MainParser.Allies.setRarities(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addMetaHandler('ally_types', (xhr, postData) => {
+	FH.proxy.addMetaHandler('ally_types', (xhr, postData) => {
 		MainParser.Allies.setTypes(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addHandler('AllyService', 'getAllies', (data, postData) => {
+	FH.proxy.addHandler('AllyService', 'getAllies', (data, postData) => {
 		MainParser.Allies.getAllies(data.responseData);
 		
 		if (!Settings.GetSetting('ShowAllyList')) return;
 		if (postData[0].requestMethod == 'getAllies') MainParser.Allies.showAllyList();
 	});
-	FoEproxy.addHandler('AllyService', 'getAssignedAllies', (data, postData) => {
+	FH.proxy.addHandler('AllyService', 'getAssignedAllies', (data, postData) => {
 		MainParser.Allies.getAllies(data.responseData);
 	});
-	FoEproxy.addHandler('AllyService', 'updateAlly', (data, postData) => {
+	FH.proxy.addHandler('AllyService', 'updateAlly', (data, postData) => {
 		MainParser.Allies.buildingBoostSums = [];
 		MainParser.Allies.updateAlly(data.responseData);
 	});
-	FoEproxy.addHandler('AllyService', 'addAlly', (data, postData) => {
+	FH.proxy.addHandler('AllyService', 'addAlly', (data, postData) => {
 		MainParser.Allies.addAlly(data.responseData);
 	});
-	FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+	FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 		MainParser.Allies.updateAllyList();
 	});
 
 	// Portrait-Mapping für Spieler Avatare
-	FoEproxy.addRawHandler((xhr, requestData) => {
+	FH.proxy.addRawHandler((xhr, requestData) => {
 		const idx = requestData.url.indexOf("/assets/shared/avatars/Portraits");
 
 		if (idx !== -1) {
@@ -274,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// --------------------------------------------------------------------------------------------------
 	// Player- und Gilden-ID setzen
-	FoEproxy.addHandler('StartupService', 'getData', (data, postData) => {
+	FH.proxy.addHandler('StartupService', 'getData', (data, postData) => {
         	
 		moment.locale(i18n('Local'));
 		window.addEventListener("error", function (e) {
@@ -351,45 +351,45 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// ResourcesList
-	FoEproxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
+	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
 		FHResourcesList = data.responseData;
 	});
 
 	//Metadata file links
-	FoEproxy.addHandler('StaticDataService', 'getMetadata', (data, postData) => {
+	FH.proxy.addHandler('StaticDataService', 'getMetadata', (data, postData) => {
 		MainParser.MetaUrls = Object.assign({},...data.responseData.map(x=>( {[x.identifier]: x.url}) ));
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Bonus notieren, enthält tägliche Rathaus FP
-	FoEproxy.addHandler('BonusService', 'getBonuses', (data, postData) => {
+	FH.proxy.addHandler('BonusService', 'getBonuses', (data, postData) => {
 		MainParser.BonusService = data.responseData;
 	});
 
 	// Limited Bonus (Archenbonus, Kraken etc.)
-	FoEproxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
+	FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
 		MainParser.SetArkBonus(data.responseData);
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Botschafter notieren, enthält Bonus FPs oder Münzen
-	FoEproxy.addHandler('EmissaryService', 'getAssigned', (data, postData) => {
+	FH.proxy.addHandler('EmissaryService', 'getAssigned', (data, postData) => {
 		MainParser.EmissaryService = data.responseData;
 	});
 
 	// QI map
-	FoEproxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
+	FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
 		QiProgress.QiMap = data.responseData;
 	})
 
 	// CastleSystem rewards
-	FoEproxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
+	FH.proxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
 		MainParser.CastleSystemChest = data.responseData;
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Karte wird gewechselt zum Außenposten
-	FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
 		MainParser.UpdateActiveMap(data.responseData.gridId);
 
 		if (ActiveMap === 'era_outpost') {
@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// Stadt wird wieder aufgerufen
-	FoEproxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
 		if (!postData.map(x=>x.requestData?.[0]).includes('main')) { 
 			return;
 		}
@@ -416,7 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		LastMapPlayerID = ExtPlayerID;
 
 		MainParser.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 		MainParser.SetArkBonus2();
 
 		if (ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
@@ -426,23 +426,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// main is entered
-	FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+	FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
 		MainParser.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 	});
 
 	// gex is entered
-	FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+	FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 		MainParser.UpdateActiveMap('gex');
 	});
 
 	// GBG is entered
-	FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+	FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 		MainParser.UpdateActiveMap('gg');
 	});
 
 	// QI is entered
-	FoEproxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
+	FH.proxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
 		if (!data.responseData?.guildRaidsType) return;
 		if (data.responseData?.__class__ != "GuildRaidsRunningState") return;
 		if (!data.responseData?.endsAt) return;
@@ -452,7 +452,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// visiting another player
-	FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 		MainParser.UpdateActiveMap('OtherPlayer');
 		LastMapPlayerID = data.responseData.other_player.player_id;
 		CityMap.OtherPlayer.name = data.responseData.other_player.name;
@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// move buildings, use self aid kits
-	FoEproxy.addHandler('CityMapService', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', (data, postData) => {
 		if (data.requestMethod === 'moveEntity' || data.requestMethod === 'moveEntities' || data.requestMethod === 'updateEntity') {
 			let Buildings = data.responseData;
 
@@ -507,11 +507,11 @@ document.addEventListener("DOMContentLoaded", function () {
 					delete MainParser.CityBuildingsData[ID];
 			}
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
 	// production is started, collected, aborted
-	FoEproxy.addHandler('CityProductionService', (data, postData) => {
+	FH.proxy.addHandler('CityProductionService', (data, postData) => {
 		if (data.requestMethod === 'pickupProduction' || data.requestMethod === 'pickupAll' || data.requestMethod === 'startProduction' || data.requestMethod === 'cancelProduction') {
 			let Buildings = data.responseData['updatedEntities'];
 			if (!Buildings) return
@@ -521,7 +521,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// remove a friend
-	FoEproxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
+	FH.proxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
 		let FriendID = data.responseData;
 		if (PlayerDict[FriendID]) {
 			PlayerDict[FriendID]['IsFriend'] = false;
@@ -533,11 +533,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// open a message
-	FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
+	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
 		MainParser.UpdatePlayerDict(data.responseData, 'Conversation');
 	});
 
-	FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
 
 		// battle finished
 		if ([901,902].includes(data.responseData.error_code)) {
@@ -556,7 +556,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	FoEproxy.addHandler('BattlefieldService', 'submitMove', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'submitMove', (data, postData) => {
 		// round was won/lost by auto-complete battle during manual turn
 		if (data.responseData['winnerBit'] > 0) {
 			HTML.MaximizeAfterBattle();
@@ -564,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// if battle was interrupted by browser refresh/server restart
-	FoEproxy.addHandler('BattlefieldService', 'continueBattle', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'continueBattle', (data, postData) => {
 		// round in progress was not auto-battle
 		if (!data.responseData["isAutoBattle"]) {
 			HTML.MinimizeBeforeBattle();
@@ -572,14 +572,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// if user surrenders
-	FoEproxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
 		if (data.responseData["surrenderBit"] == 1) {
 			HTML.MaximizeAfterBattle();
 		}
 	});
 
 	// Nachbarn/Gildenmitglieder/Freunde Tab geöffnet
-	FoEproxy.addHandler('OtherPlayerService', 'all', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'all', (data, postData) => {
 		if (data.requestMethod === 'getNeighborList' || data.requestMethod === 'getFriendsList' || data.requestMethod === 'getClanMemberList' || data.requestMethod === 'getAwaitingFriendRequestCount') {
 			MainParser.UpdatePlayerDict(data.responseData, 'PlayerList', data.requestMethod);
 		}
@@ -596,31 +596,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// --------------------------------------------------------------------------------------------------
 	// goods translations
-	FoEproxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
+	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
 		MainParser.setGoodsData(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
+	FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 		MainParser.UpdateInventoryItem(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItems', (data, postData) => {
+	FH.proxy.addHandler('InventoryService', 'getItems', (data, postData) => {
 		MainParser.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItemsByType', (data, postData) => {
+	FH.proxy.addHandler('InventoryService', 'getItemsByType', (data, postData) => {
 		MainParser.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
+	FH.proxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
 		MainParser.UpdateInventoryAmount(data.responseData);
 	});
 
@@ -630,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Es wurde das LG eines Mitspielers angeklickt, bzw davor die Übersicht
 
 	// GB overview of another player
-	FoEproxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
+	FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
 		MainParser.UpdatePlayerDict(data.responseData, 'LGOverview');
 
 		// update investments
@@ -646,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	let gbUpdateData = null;
 	let gbCityMapEntity = null;
 
-	FoEproxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
+	FH.proxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
 		let getConstruction = data.requestMethod === 'getConstruction' ? data : null;
 		let getConstructionRanking = data.requestMethod === 'getConstructionRanking' ? data : null;
 		let contributeForgePoints = data.requestMethod === 'contributeForgePoints' ? data : null;
@@ -686,12 +686,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	});
 
-	FoEproxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
+	FH.proxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
 		MainParser.UpdatePlayerDict(data.responseData, 'LGContributions');
 	});
 
 	// can be removed after game update 1.332
-	FoEproxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
 		if (!gbUpdateData || !gbUpdateData.Rankings) {
 			gbUpdateData = { Rankings: null, CityMapEntity: data };
 			// reset gbUpdateData sobald wie möglich (nachdem alle einzelnen Handler ausgeführt wurden)
@@ -710,7 +710,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	FoEproxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
 		let formattedData = { ...data, responseData: [data.responseData] };
 		gbCityMapEntity = formattedData;
 
@@ -729,21 +729,21 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	FoEproxy.addWsHandler('CityMapService', 'updateEntity', data => {
+	FH.proxy.addWsHandler('CityMapService', 'updateEntity', data => {
 		for (let b of data.responseData) {
 			MainParser.CityMapData[b.id]=b;
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
-	FoEproxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
+	FH.proxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
 		for (let b of data.responseData.updatedEntities||[]) {
 			MainParser.CityMapData[b.id]=b;
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
-	FoEproxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
+	FH.proxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
 		if (postData?.requestData?.[0]?.__class__=="UseItemOnBuildingPayload") {
 			if (MainParser.Inventory[postData?.requestData?.[0]?.itemId].itemAssetName =="store_building") {
 				let id= postData?.requestData?.[0]?.mapEntityId
@@ -803,17 +803,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// player goods
-	FoEproxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
+	FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
 		ResourceStock = data.responseData.resources; // Keep this updated
 		Outposts.CollectResources();
-		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
-	FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
+	FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
 		if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
 		ResourceStock = data.responseData.resources.resources;
 		Outposts.CollectResources();
-		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 
@@ -823,21 +823,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// Greatbuildings: LG Belohnungen von Arche in Events zählen
-	FoEproxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
 		if (data.responseData['events']) {
 			GreatBuildings.HandleEventPage(data.responseData['events']);
 		}
 	});
 
 
-	FoEproxy.addHandler('TimeService', 'updateTime', async (data, postData) => {
+	FH.proxy.addHandler('TimeService', 'updateTime', async (data, postData) => {
 		GameTime.set(data.responseData.time);
 		if (MainMenuLoaded) return;
 
 	
 		MainMenuLoaded = true;
 		await StartUpDone;	
-		let MenuSetting = HammerStorage.getItem('SelectedMenu');
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 		MainParser.SelectedMenu = MenuSetting || 'RightBar';
 		_menu.CallSelectedMenu(MainParser.SelectedMenu);
 		
@@ -848,7 +848,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// --------------------------------------------------------------------------------------------------
-	FoEproxy.addRawWsHandler((data) => {
+	FH.proxy.addRawWsHandler((data) => {
 		let Msg = data?.[0];
 		if (!Msg || !Msg.requestClass || !Msg.responseData) return;
 
@@ -859,7 +859,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		// Goods Update after accepted Trade
 		if (requestMethod === "newEvent" && responseData.type === "trade_accepted") {
 			ResourceStock[responseData.need.good_id] += responseData.need.value;
-			FoEproxy.triggerFoeHelperHandler("ResourcesUpdated");
+			FH.proxy.triggerFoeHelperHandler("ResourcesUpdated");
 		}
 		// Inventory Update, e.g. when receiving FP packages from GB leveling	
 		if (requestClass === 'InventoryService' && requestMethod === 'getItem') {
@@ -874,35 +874,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// --------------------------------------------------------------------------------------------------
 	// Quests
-	FoEproxy.addHandler('QuestService', 'getUpdates', (data, PostData) => {
+	FH.proxy.addHandler('QuestService', 'getUpdates', (data, PostData) => {
 		if (PostData[0]?.requestClass === 'QuestService' && PostData[0]?.requestMethod === 'advanceQuest') {
 			FPCollector.HandleAdvanceQuest(PostData[0]);
 		}
 
 		MainParser.Quests = data.responseData;
 
-		FoEproxy.triggerFoeHelperHandler('QuestsUpdated');
+		FH.proxy.triggerFoeHelperHandler('QuestsUpdated');
 	});
 
 	// Update unlocked features
-	FoEproxy.addHandler('UnlockableFeatureService', 'getUnlockedFeatures', (data, postData) => {
+	FH.proxy.addHandler('UnlockableFeatureService', 'getUnlockedFeatures', (data, postData) => {
 		MainParser.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
 	});
 
 	// Messages: Thread opened
-	FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
+	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
 		MainParser.OpenConversation = data.responseData;
 		Calculator.ConversationContent = data.responseData.messages[0].text;
 	});
 
 	// Messages: Thread closed
-	FoEproxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
+	FH.proxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
 		MainParser.OpenConversation = null;
 		Calculator.ConversationContent = null;
 		Calculator.ConversationContentNew = null;
 	});
 
-	FoEproxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
+	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
 		Calculator.ConversationContentNew = data.responseData.text;
 		//	Calculator.showToPay(Calculator.ConversationContent, Calculator.ConversationContentNew)
 	});
@@ -912,14 +912,14 @@ document.addEventListener("DOMContentLoaded", function () {
 let HelperBeta = {
 	load: (active) => {
 		if (active !== false) active = true;
-		HammerStorage.setItem('HelperBetaActive', active);
+		FH.Storage.setItem('HelperBetaActive', active);
 		location.reload();
 	},
 	menu: [
 		'unitsGex',
 		'marketOffers'
 	],
-	active: JSON.parse(HammerStorage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
+	active: JSON.parse(FH.Storage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
 };
 
 
@@ -975,8 +975,8 @@ let MainParser = {
 	*
 	*/
 	VersionSpecificStartupCode: () => {
-		let LastStartedVersion = HammerStorage.getItem('LastStartedVersion');
-		let LastAgreedVersion = HammerStorage.getItem('LastAgreedVersion');
+		let LastStartedVersion = FH.Storage.getItem('LastStartedVersion');
+		let LastAgreedVersion = FH.Storage.getItem('LastAgreedVersion');
 
 		if (!LastStartedVersion) {
 			MainParser.StartUpType = 'DeletedSettings';
@@ -985,7 +985,7 @@ let MainParser = {
 		}
 		else if (LastStartedVersion !== extVersion) {
 			MainParser.StartUpType = 'UpdatedVersion';
-			if (!(!isRelease)) {HammerStorage.removeItem("LoadBeta")}
+			if (!(!isRelease)) {FH.Storage.removeItem("LoadBeta")}
 
 			HTML.ShowToastMsg({
 				show: true,
@@ -1006,8 +1006,8 @@ let MainParser = {
 			/* Normal start */
 		}
 
-		HammerStorage.setItem('LastStartedVersion', extVersion);
-		HammerStorage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
+		FH.Storage.setItem('LastStartedVersion', extVersion);
+		FH.Storage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
 	},
 
 
@@ -1108,7 +1108,7 @@ let MainParser = {
 
 
 	setGameFilters: () => {
-		let filters = JSON.parse(HammerStorage.getItem('hammerGameFilters'));
+		let filters = JSON.parse(FH.Storage.getItem('hammerGameFilters'));
 		if (filters)
 			$('#game-container').css('filter',
 				`brightness(${filters.brightness}) contrast(${filters.contrast}) saturate(${filters.saturation}) hue-rotate(${filters.hue}deg)`
@@ -1211,7 +1211,7 @@ let MainParser = {
 	 * Check whether an update is necessary
 	 */
 	checkNextUpdate: (ep) => {
-		let s = HammerStorage.getItem(ep),
+		let s = FH.Storage.getItem(ep),
 			a = MainParser.getCurrentDateTime();
 
 		return MainParser.compareTime(a, s);
@@ -1227,7 +1227,7 @@ let MainParser = {
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
 			let PlayerLink = HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
-			if (HammerStorage.getItem('linkSite') === 'siteForgedb')
+			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
 				PlayerLink = HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
 
 			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
@@ -1249,7 +1249,7 @@ let MainParser = {
 
 		if (Settings.GetSetting('ShowLinks')) {
 			let GuildLink = HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
-			if (HammerStorage.getItem('linkSite') === 'siteForgedb')
+			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
 				GuildLink = HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
 
 			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
@@ -1355,7 +1355,7 @@ let MainParser = {
 			key: 'current_guild_id',
 			data: ExtGuildID
 		});
-		HammerStorage.setItem('current_guild_id', ExtGuildID);
+		FH.Storage.setItem('current_guild_id', ExtGuildID);
 
 		ExtPlayerID = d['player_id'];
 		MainParser.sendExtMessage({
@@ -1363,7 +1363,7 @@ let MainParser = {
 			key: 'current_player_id',
 			data: ExtPlayerID
 		});
-		HammerStorage.setItem('current_player_id', ExtPlayerID);
+		FH.Storage.setItem('current_player_id', ExtPlayerID);
 
 		IndexDB.Init(ExtPlayerID);
 
@@ -1372,7 +1372,7 @@ let MainParser = {
 			key: 'current_world',
 			data: ExtWorld
 		});
-		HammerStorage.setItem('current_world', ExtWorld);
+		FH.Storage.setItem('current_world', ExtWorld);
 
 		ExtPlayerName = d['user_name'];
 		MainParser.sendExtMessage({
@@ -1391,7 +1391,7 @@ let MainParser = {
 		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
-		HammerStorage.removeItem('AllProvinces');
+		FH.Storage.removeItem('AllProvinces');
 	},
 
 
@@ -1739,7 +1739,7 @@ let MainParser = {
 			let value = false;
 			if ($("#allyListAutoOpen").is(':checked'))
 				value = true;
-			HammerStorage.setItem('ShowAllyList', value);
+			FH.Storage.setItem('ShowAllyList', value);
 			
 			$(`#AllyListSettingsBox`).remove();
 		},
@@ -1925,7 +1925,7 @@ let MainParser = {
 			let ID = Items[i]['id'];
 			MainParser.Inventory[ID] = Items[i];
 		}
-		FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -1937,7 +1937,7 @@ let MainParser = {
 	UpdateInventoryItem: (Item) => {
 		let ID = Item['id'];
 		MainParser.Inventory[ID] = Item;
-		FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -1953,7 +1953,7 @@ let MainParser = {
 				MainParser.Inventory[ID].inStock = Amount;
 			} catch (e) {
 			}
-			FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+			FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -1988,7 +1988,7 @@ let MainParser = {
 		}
 
 		FPCollector.CityMapDataNew = Buildings;
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	},
 
 
@@ -2003,7 +2003,7 @@ let MainParser = {
 		// If the cache is empty, read out the memory.
 		if (MainParser.Conversations.length === 0 && refresh)
 		{
-			let StorageHeader = HammerStorage.getItem('ConversationsHeaders');
+			let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 			if (StorageHeader !== null) {
 				MainParser.Conversations = JSON.parse(StorageHeader);
 			}
@@ -2068,7 +2068,7 @@ let MainParser = {
 			}
 			// Dopplungen entfernen und Daten lokal abspeichern
 			MainParser.Conversations = [...new Set(MainParser.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
-			HammerStorage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
+			FH.Storage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
 		}
 	},
 
@@ -2164,11 +2164,11 @@ let MainParser = {
 
 	Inactives: {
 		list:[],
-		ignore: JSON.parse(HammerStorage.getItem("LimitedBuildingsIgnoreList")||'[]'),
+		ignore: JSON.parse(FH.Storage.getItem("LimitedBuildingsIgnoreList")||'[]'),
 
 		check: () => {
 			//get list of buildings for which an alert is already set
-			let LB = JSON.parse(HammerStorage.getItem("LimitedBuildingsAlertSet")||'{}')
+			let LB = JSON.parse(FH.Storage.getItem("LimitedBuildingsAlertSet")||'{}')
 			//get list of expired limited buildings in city
 			let list = Object.values(MainParser.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
 			//remove buildings that were already tracked and that should have just triggered an alert
@@ -2183,7 +2183,7 @@ let MainParser = {
 			for (let x in LB) {
 				if (!LB[x]) continue;
 				if (LB[x]<(GameTime-GameTime.Offset)*1000) delete LB[x];
-				HammerStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+				FH.Storage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 			}
 			if(!Settings.GetSetting('ShowBuildingsExpired')){
 				return;
@@ -2232,7 +2232,7 @@ let MainParser = {
 						data: data,
 					}).then((aId) => {
 						LB[building.id]=(MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
-						HammerStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+						FH.Storage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 					})
 				}
 			}
@@ -2284,7 +2284,7 @@ let MainParser = {
 					MainParser.Inactives.ignore.push(id);
 
 				};
-				HammerStorage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
+				FH.Storage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
 				MainParser.Inactives.updateSettings();
 			});
 		},
@@ -2293,7 +2293,7 @@ let MainParser = {
 
 	UpdateActiveMap: (map)=>{
 		ActiveMap = map
-		FoEproxy.triggerFoeHelperHandler("ActiveMapUpdated");
+		FH.proxy.triggerFoeHelperHandler("ActiveMapUpdated");
 	}
 };
 

@@ -96,7 +96,7 @@ let Settings = {
 					cs = $('<div />').addClass('setting');
 
 				if ("SelectedMenu" !== d['name'] && 'NotificationsPosition' !== d['name']) {
-					let s = HammerStorage.getItem(d['name']);
+					let s = FH.Storage.getItem(d['name']);
 
 					if (s !== null) {
 						status = JSON.parse(s);
@@ -189,7 +189,7 @@ let Settings = {
 		let id = $(el).data('id'),
 			v = $(el).prop('checked');
 
-		HammerStorage.setItem(id, v);
+		FH.Storage.setItem(id, v);
 
 		if (changeText === false) {
 			return;
@@ -206,7 +206,7 @@ let Settings = {
 
 
 	GetSetting: (name, is_string = false) => {
-		let s = HammerStorage.getItem(name);
+		let s = FH.Storage.getItem(name);
 
 		if (s !== null) {
 			return is_string ? s : JSON.parse(s);
@@ -249,13 +249,13 @@ let Settings = {
 			hue: 0,
 		};
 
-		let filters = JSON.parse(HammerStorage.getItem('hammerGameFilters')) ?? { ...defaultValues };
+		let filters = JSON.parse(FH.Storage.getItem('hammerGameFilters')) ?? { ...defaultValues };
 
 		const applyFilters = () => {
 			$('#game-container').css('filter',
 				`brightness(${filters.brightness}) contrast(${filters.contrast}) saturate(${filters.saturation}) hue-rotate(${filters.hue}deg)`
 			);
-			HammerStorage.setItem('hammerGameFilters', JSON.stringify(filters));
+			FH.Storage.setItem('hammerGameFilters', JSON.stringify(filters));
 		};
 
 		const syncInputs = () => {
@@ -309,7 +309,7 @@ let Settings = {
 				key.indexOf('Tone') > -1 ||
 				key.indexOf('ForderBonus') > -1
 			) {
-				settings[key] = HammerStorage.getItem(key);
+				settings[key] = FH.Storage.getItem(key);
 			}
 		});
 
@@ -338,7 +338,7 @@ let Settings = {
 		$('#SettingsBoxBody').on('change', '#change-menu', function () {
 			let selMenu = $(this).val();
 
-			HammerStorage.setItem('SelectedMenu', selMenu);
+			FH.Storage.setItem('SelectedMenu', selMenu);
 
 			location.reload();
 		});
@@ -349,7 +349,7 @@ let Settings = {
 
 
 	SoundEffects: () => {
-		let chosenSound = HammerStorage.getItem('hammerSound')||"message";
+		let chosenSound = FH.Storage.getItem('hammerSound')||"message";
 
 		let v =	`<ul class="soundEffects simpleList">
 					<li> 
@@ -384,7 +384,7 @@ let Settings = {
 
 		$('#SettingsBoxBody')
 			.on('change.soundEffects', 'input[name="nSound"]:checked', function () {
-				HammerStorage.setItem('hammerSound', $(this).val());
+				FH.Storage.setItem('hammerSound', $(this).val());
 			});
 
 		return v;
@@ -407,7 +407,7 @@ let Settings = {
 				const parts = JSON.parse(evt.target.result);
 
 				Object.keys(parts).forEach((key) => {
-					HammerStorage.setItem(key, parts[key]);
+					FH.Storage.setItem(key, parts[key]);
 				});
 
 				alert(i18n('Settings.ExportImport.Reload'));
@@ -428,7 +428,7 @@ let Settings = {
 		dp.push('<div class="p5">');
 		dp.push('<b>'+i18n('Settings.EventHelper.Advanced')+'</b>')
 		for (let [setting, value] of Object.entries(eventHelperSettings)) {
-			let savedSetting = HammerStorage.getItem(setting);
+			let savedSetting = FH.Storage.getItem(setting);
 			if (savedSetting !== null) {
 				value = JSON.parse(savedSetting);
 			}
@@ -451,7 +451,7 @@ let Settings = {
 	ResetBoxCoords: () => {
 		$.each(localStorage, function (key, value) {
 			if (key.toLowerCase().indexOf('cords') > -1) {
-				HammerStorage.removeItem(key);
+				FH.Storage.removeItem(key);
 			}
 		});
 
@@ -466,14 +466,14 @@ let Settings = {
 
 	SelectWebsite: () => {
 		let dp = [];
-		let currentSite = HammerStorage.getItem('linkSite') || "siteScoredb";
+		let currentSite = FH.Storage.getItem('linkSite') || "siteScoredb";
 		dp.push('<p>Choose your preferred website:<br />');
 		dp.push('<label for="scoredb"><input type="radio" value="siteScoredb" id="scoredb" name="website" '+(currentSite === "siteScoredb" ? 'checked' : "")+' /> foe.scoredb.io</label><br />');
 		dp.push('<label for="forgedb"><input type="radio" value="siteForgedb" id="forgedb" name="website" '+(currentSite === "siteForgedb" ? 'checked' : "")+' /> foestats.com</label></p>');
 
 		$('#SettingsBoxBody').on('change', 'input[name="website"]', function () {
 			let site = $(this).val();
-			HammerStorage.setItem('linkSite', site);
+			FH.Storage.setItem('linkSite', site);
 		});
 		return dp.join('');
 	},
@@ -492,14 +492,14 @@ let Settings = {
 		}
 		dp.push('</select>');
 
-		if (HammerStorage.getItem('user-language') !== "de") {
+		if (FH.Storage.getItem('user-language') !== "de") {
 			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
 		}
 
 		$('#SettingsBoxBody').on('change', '#change-lang', function () {
 			let uLng = $(this).val();
 
-			HammerStorage.setItem('user-language', uLng);
+			FH.Storage.setItem('user-language', uLng);
 
 			location.reload();
 		});
@@ -518,7 +518,7 @@ let Settings = {
 			{name: "Blues", path: "themes/blues"}
 		];
 
-		let currentSkin = HammerStorage.getItem('HammerSkin')||"variables";
+		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";
 
 		dp.push('<select class="setting-dropdown" id="changeSkin">');
 		for (let skin of Object.values(skins)) {
@@ -528,7 +528,7 @@ let Settings = {
 
 		$('#SettingsBoxBody').on('change', '#changeSkin', function () {
 			let skin = $(this).val();
-			HammerStorage.setItem('HammerSkin', skin);
+			FH.Storage.setItem('HammerSkin', skin);
 			HTML.ChangeSkinCssFile(skin);
 		});
 
@@ -543,7 +543,7 @@ let Settings = {
 			step: 1,
 			min: 2
 		}),
-		value = HammerStorage.getItem('MenuLength');
+		value = FH.Storage.getItem('MenuLength');
 		
 		ip[0].defaultValue = ip[0].value = value;
 
@@ -555,9 +555,9 @@ let Settings = {
 			let value = $(this).val();
 
 			if (value > 0) {
-				HammerStorage.setItem('MenuLength', value);
+				FH.Storage.setItem('MenuLength', value);
 			} else {
-				HammerStorage.removeItem('MenuLength');
+				FH.Storage.removeItem('MenuLength');
 			}
 
 			_menu.SetMenuHeight(true);
@@ -575,7 +575,7 @@ let Settings = {
 			min: 0,
 			max: 100
 		}),
-		value = JSON.parse(HammerStorage.getItem('GexStockWarningMin')||"100");
+		value = JSON.parse(FH.Storage.getItem('GexStockWarningMin')||"100");
 		
 		ip[0].defaultValue = ip[0].value = value;
 		ip.val(value);
@@ -584,9 +584,9 @@ let Settings = {
 			let value = $(this).val();
 
 			if (value >= 0 && value <= 100) {
-				HammerStorage.setItem('GexStockWarningMin', value);
+				FH.Storage.setItem('GexStockWarningMin', value);
 			} else {
-				HammerStorage.setItem('GexStockWarningMin', 100);
+				FH.Storage.setItem('GexStockWarningMin', 100);
 				$(this).val(100)
 			}
 		});
@@ -602,7 +602,7 @@ let Settings = {
 			step: 1,
 			min: 0
 		}),
-		value = HammerStorage.getItem('doubleFPtimeout');
+		value = FH.Storage.getItem('doubleFPtimeout');
 		ip[0].defaultValue = ip[0].value = value;
 
 		if (null !== value) {
@@ -612,9 +612,9 @@ let Settings = {
 		$('#SettingsBox').on('keyup', '#doubleFPtimeoutinput', function () {
 			let value = Number($(this).val());
 			if (value > 0) {
-				HammerStorage.setItem('doubleFPtimeout', value);
+				FH.Storage.setItem('doubleFPtimeout', value);
 			} else {
-				HammerStorage.removeItem('doubleFPtimeout');
+				FH.Storage.removeItem('doubleFPtimeout');
 			}
 
 		});
@@ -629,7 +629,7 @@ let Settings = {
 	MenuContent: () => {
 		let bl = $('<div />'),
 			menuItems = Array.from(_menu.Items),
-			HiddenItems = HammerStorage.getItem('MenuHiddenItems'),
+			HiddenItems = FH.Storage.getItem('MenuHiddenItems'),
 			hiddenArray = [];
 
 		// Reattach already hidden icons
@@ -675,18 +675,18 @@ let Settings = {
 			step: 1,
 			min: 1
 		}),
-		value = HammerStorage.getItem('EntryCount') || 0;
+		value = FH.Storage.getItem('EntryCount') || 0;
 		ip[0].defaultValue = ip[0].value = value;
 
-		HammerStorage.setItem('EntryCount', value);
+		FH.Storage.setItem('EntryCount', value);
 
 		$('#SettingsBox').on('keyup', '#infobox-entry-length', function () {
 			let value = $(this).val();
 
 			if (value > 0) {
-				HammerStorage.setItem('EntryCount', value);
+				FH.Storage.setItem('EntryCount', value);
 			} else {
-				HammerStorage.setItem('EntryCount', 0);
+				FH.Storage.setItem('EntryCount', 0);
 			}
 
 			Infoboard.MaxEntries = value;
@@ -698,7 +698,7 @@ let Settings = {
 
 	NotificationView: () => {
 		let elements = [],
-			settingPos = HammerStorage.getItem('NotificationsPosition'),
+			settingPos = FH.Storage.getItem('NotificationsPosition'),
 			positions = [
 				'bottom-left',
 				'bottom-right',
@@ -728,7 +728,7 @@ let Settings = {
 
 			let pos = $(this).val();
 
-			HammerStorage.setItem('NotificationsPosition', pos);
+			FH.Storage.setItem('NotificationsPosition', pos);
 
 			$.toast({
 				heading: i18n('Settings.NotificationPosition.ToastTestHeader'),
@@ -736,7 +736,7 @@ let Settings = {
 				icon: 'success',
 				hideAfter: 6000,
 				position: pos,
-				extraClass: HammerStorage.getItem('SelectedMenu') || 'RightBar',
+				extraClass: FH.Storage.getItem('SelectedMenu') || 'RightBar',
 				afterHidden: function () {
 					$('.jq-toast-wrap').remove();
 				}
@@ -754,7 +754,7 @@ let Settings = {
 				step: 1,
 				min: 1
 			}),
-			value = HammerStorage.getItem('NotificationStack');
+			value = FH.Storage.getItem('NotificationStack');
 
 		if (null !== value) {
 			ip[0].defaultValue = ip[0].value = value;
@@ -765,10 +765,10 @@ let Settings = {
 			let value = $(this).val();
 
 			if (value > 0) {
-				HammerStorage.setItem('NotificationStack', value);
+				FH.Storage.setItem('NotificationStack', value);
 
 			} else {
-				HammerStorage.removeItem('NotificationStack');
+				FH.Storage.removeItem('NotificationStack');
 			}
 		});
 

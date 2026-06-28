@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addMetaHandler('research', (xhr, postData) => {
+FH.proxy.addMetaHandler('research', (xhr, postData) => {
 	Technologies.AllTechnologies = JSON.parse(xhr.responseText);
 	//$('#technologies-Btn').removeClass('hud-btn-red');
 	//$('#technologies-Btn-closed').remove();
@@ -13,11 +13,11 @@ FoEproxy.addMetaHandler('research', (xhr, postData) => {
     //}
 });
 
-FoEproxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
 	Technologies.UnlockedTechnologies = data.responseData;
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
 	let era = data.responseData.technology.era;
     if (Technologies.Eras[era] > CurrentEraID) {
         CurrentEraID = Technologies.EraNames[era];
@@ -25,7 +25,7 @@ FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -54,7 +54,7 @@ FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -245,7 +245,7 @@ let Technologies = {
 
             Technologies.IgnorePrevEra = v;
 
-            HammerStorage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
+            FH.Storage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
 
             Technologies.CalcBody();
         });
@@ -256,7 +256,7 @@ let Technologies = {
 
             Technologies.IgnoreCurrentEraOptional = v;
 
-            HammerStorage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
+            FH.Storage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
 
             Technologies.CalcBody();
         });
@@ -277,8 +277,8 @@ let Technologies = {
 
 
     BuildBox: () => {
-        Technologies.IgnorePrevEra = (HammerStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
-        Technologies.IgnoreCurrentEraOptional = (HammerStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
+        Technologies.IgnorePrevEra = (FH.Storage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
+        Technologies.IgnoreCurrentEraOptional = (FH.Storage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
 
         Technologies.CalcBody();
     },

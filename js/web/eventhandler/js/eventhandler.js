@@ -5,13 +5,13 @@
 
 // Motivate/Polish Helper
 
-FoEproxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
     if (data.responseData['events'] && Settings.GetSetting('ShowPlayersMotivation')) {
         EventHandler.HandleEvents(data.responseData['events']);
     }
 });
 
-FoEproxy.addHandler('OtherPlayerService', 'getCityProtections', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'getCityProtections', (data, postData) => {
 	if (!Array.isArray(data.responseData)) return;
 	for (x of data.responseData) {
 		EventHandler.isProtected[x.playerId] = x.expireTime;
@@ -53,7 +53,7 @@ let EventHandler = {
 	 */
 	Init: () => {
 		// Keys not saved in the local storage are added from the attribute
-		let vShowHideColumns = JSON.parse(HammerStorage.getItem('MoppelHelper.Settings.ShowHideColumns')) || {};
+		let vShowHideColumns = JSON.parse(FH.Storage.getItem('MoppelHelper.Settings.ShowHideColumns')) || {};
 
 		for(let iColKey in EventHandler.ShowHideColumns) {
 			if (!vShowHideColumns.hasOwnProperty(iColKey)) {
@@ -69,7 +69,7 @@ let EventHandler = {
 	 * Save settings to LocalStorage
 	 */
 	SaveSettings:() => {
-		HammerStorage.setItem('MoppelHelper.Settings.ShowHideColumns', JSON.stringify(EventHandler.ShowHideColumns));
+		FH.Storage.setItem('MoppelHelper.Settings.ShowHideColumns', JSON.stringify(EventHandler.ShowHideColumns));
 	},
 
 

@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('PopGameService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'getOverview', (data, postData) => {
     //Start Minigame
     if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperPop') === undefined ? true : Settings.GetSetting('EventHelperPop'))) return;
     if (!data?.responseData?.currentGame?.config?.height) return;
@@ -24,7 +24,7 @@ FoEproxy.addHandler('PopGameService', 'getOverview', (data, postData) => {
     Popgame.Show();
 
 });
-FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data, postData) => {
+FH.proxy.addHandler('ResourceShopService', 'buyOffer', (data, postData) => {
     //buy Extra turns
     if(!Settings.GetSetting('ShowEventChest')) return;
     if (!Array.isArray(data.responseData)) return;
@@ -36,7 +36,7 @@ FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
     //hide when reward window pops up
     if ($('#Popgame').length === 0) return;
     if (data.responseData[1]!==Popgame.event+'_event') return;
@@ -55,7 +55,7 @@ mouseActions.addAction([[284, 297, 'Center'],[-312, -337, 'Center'],false],()=>{
     Popgame.clearReward()
 })
 
-FoEproxy.addHandler('PopGameService', 'popTile', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'popTile', (data, postData) => {
     if ($('#Popgame').length === 0) return;
     if (!data?.responseData?.changes) return;
     for (let change of data.responseData.changes) {
@@ -73,7 +73,7 @@ FoEproxy.addHandler('PopGameService', 'popTile', (data, postData) => {
     if (ResourceStock[`${Popgame.event}_pop_moves`] <= 0) Popgame.Close();
 });
 
-FoEproxy.addHandler('PopGameService', 'useBooster', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'useBooster', (data, postData) => {
     if ($('#Popgame').length === 0) return;
     if (!data?.responseData?.changes) return;
     for (let change of data.responseData.changes) {
@@ -160,7 +160,7 @@ let Popgame = {
             })
             let box = $('#Popgame'),
             open = box.hasClass('open');
-            Popgame.minimized = JSON.parse(HammerStorage.getItem("PopgameMinimized") || "true");
+            Popgame.minimized = JSON.parse(FH.Storage.getItem("PopgameMinimized") || "true");
             if (open === true && Popgame.minimized) {
                 box.removeClass('open');
                 box.addClass('closed');
@@ -169,7 +169,7 @@ let Popgame = {
             $('#PopgameButtons > span.window-minimize').on('click', function() {
                 Popgame.rewardactive = 0;
                 Popgame.minimized = !Popgame.minimized;
-                HammerStorage.setItem('PopgameMinimized', JSON.stringify(Popgame.minimized));
+                FH.Storage.setItem('PopgameMinimized', JSON.stringify(Popgame.minimized));
             });
         } 
     },
@@ -304,7 +304,7 @@ let Popgame = {
     tracking: null,
     trackingReset:()=>{
         Popgame.tracking = {start:{total:0,grandPrize:0},afterPop:{total:0,grandPrize:0},leftOnBoard:{grandPrize:0}};
-        HammerStorage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
+        FH.Storage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
     },
     trackingInit:()=>{
         Popgame.tracking = {
@@ -318,7 +318,7 @@ let Popgame = {
             },
             leftOnBoard:{grandPrize:0}};
         
-        let save = HammerStorage.getItem("popgameTracking");
+        let save = FH.Storage.getItem("popgameTracking");
         if (save) {
             try {
                 let x = JSON.parse(save);
@@ -330,39 +330,39 @@ let Popgame = {
 };
 Popgame.trackingInit();
 // Handlers for Tracking:
-FoEproxy.addHandler('PopGameService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'getOverview', (data, postData) => {
    
     if (postData[0].requestMethod != "startGame") return;
     
     for (let x of data.responseData.currentGame.tiles) {
         Popgame.tracking.start.total++;
         if (x.type=="grandPrize") Popgame.tracking.start.grandPrize++;
-        HammerStorage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
+        FH.Storage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
     };
 
 });
 
-FoEproxy.addHandler('PopGameService', 'popTile', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'popTile', (data, postData) => {
     for (let c of data.responseData.changes) {
         for (let x of c.newTiles) {
             Popgame.tracking.afterPop.total++;
             if (x.type=="grandPrize") Popgame.tracking.afterPop.grandPrize++;
-            HammerStorage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
+            FH.Storage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
         }
     }
 });
 
-FoEproxy.addHandler('PopGameService', 'useBooster', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'useBooster', (data, postData) => {
     for (let c of data.responseData.changes) {
         for (let x of c.newTiles) {
             Popgame.tracking.afterPop.total++;
             if (x.type=="grandPrize") Popgame.tracking.afterPop.grandPrize++;
-            HammerStorage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
+            FH.Storage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
         }
     }
 });
 
-FoEproxy.addHandler('PopGameService', 'endGame', (data, postData) => {
+FH.proxy.addHandler('PopGameService', 'endGame', (data, postData) => {
     if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperPop') === undefined ? true : Settings.GetSetting('EventHelperPop'))) return;
 
     let x = Popgame.grid.reduce((a,b) => [...a,...b]);
@@ -372,6 +372,6 @@ FoEproxy.addHandler('PopGameService', 'endGame', (data, postData) => {
             if (!Popgame.tracking?.leftOnBoard?.grandPrize) Popgame.trackingReset();
             Popgame.tracking.leftOnBoard.grandPrize++;
         }
-        HammerStorage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
+        FH.Storage.setItem("popgameTracking",JSON.stringify(Popgame.tracking));
     }
 });

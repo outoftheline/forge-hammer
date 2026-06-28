@@ -116,7 +116,7 @@ let _menu_bottom = {
 		} 
 			
 		// hat der Spieler eine Länge vorgebeben?
-		let MenuLength = HammerStorage.getItem('MenuLength');
+		let MenuLength = FH.Storage.getItem('MenuLength');
 
 		if (MenuLength !== null && MenuLength < _menu.HudCount)
 		{
@@ -217,7 +217,7 @@ let _menu_bottom = {
 					_menu.Items.push($(this).data('slug'));
 				});
 
-				HammerStorage.setItem('MenuSort', JSON.stringify(_menu.Items));
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
 
 				$('#forgehammer-hud').removeClass('is--sorting');
 				if (_menu.equalTo(storedItems)) return;

@@ -65,7 +65,7 @@ let Productions = {
 
 	fragmentsSet: new Set(),
 	efficiencySettings: Object.assign(
-		JSON.parse(HammerStorage.getItem("Productions.efficiencySettings") || 
+		JSON.parse(FH.Storage.getItem("Productions.efficiencySettings") || 
 			`{
 			"tilevalues":false,
 			"showitems":true,
@@ -154,7 +154,7 @@ let Productions = {
 
 		savePresets: () => {
 			if (!Productions.Rating.Presets) return;
-			HammerStorage.setItem(Productions.Rating.PresetStorageKey, JSON.stringify(Productions.Rating.Presets));
+			FH.Storage.setItem(Productions.Rating.PresetStorageKey, JSON.stringify(Productions.Rating.Presets));
 		},
 
 		createPreset: (data) => {
@@ -176,7 +176,7 @@ let Productions = {
 
 		ensurePresets: () => {
 			if (Productions.Rating.Presets) return;
-			let stored = HammerStorage.getItem(Productions.Rating.PresetStorageKey);
+			let stored = FH.Storage.getItem(Productions.Rating.PresetStorageKey);
 			if (stored) {
 				try {
 					Productions.Rating.Presets = JSON.parse(stored);
@@ -185,7 +185,7 @@ let Productions = {
 				}
 			}
 			if (!Productions.Rating.Presets) {
-				const legacyData = JSON.parse(HammerStorage.getItem(Productions.Rating.LegacyStorageKey)||"{}");
+				const legacyData = JSON.parse(FH.Storage.getItem(Productions.Rating.LegacyStorageKey)||"{}");
 				const presetId = 'default';
 				Productions.Rating.Presets = {
 					activePresetId: presetId,
@@ -195,7 +195,7 @@ let Productions = {
 						}
 					}
 				};
-				HammerStorage.removeItem(Productions.Rating.LegacyStorageKey);
+				FH.Storage.removeItem(Productions.Rating.LegacyStorageKey);
 				Productions.Rating.savePresets();
 			}
 			if (!Productions.Rating.Presets.presets || Object.keys(Productions.Rating.Presets.presets).length === 0) {
@@ -296,12 +296,12 @@ let Productions = {
 			}
 			Productions.Rating.updateTypes();
 
-			if (HammerStorage.getItem('ProductionRatingProdPerTiles')) {
-				let RatingProdPerTiles = Object.assign({},JSON.parse(HammerStorage.getItem('ProductionRatingProdPerTiles')||"{}"))
+			if (FH.Storage.getItem('ProductionRatingProdPerTiles')) {
+				let RatingProdPerTiles = Object.assign({},JSON.parse(FH.Storage.getItem('ProductionRatingProdPerTiles')||"{}"))
 				for (let [type,perTile] of Object.entries(RatingProdPerTiles)) {
 					if (Productions.Rating.Data[type]) Productions.Rating.Data[type].perTile = perTile
 				}
-				HammerStorage.removeItem('ProductionRatingProdPerTiles')
+				FH.Storage.removeItem('ProductionRatingProdPerTiles')
 				Productions.Rating.save()
 			}
 
@@ -960,8 +960,8 @@ let Productions = {
 					rowA.push('<td '+((type.includes('att') || type.includes('def')) ? 'colspan="3"' : '')+' data-number="'+Technologies.Eras[building.eraName]+'" exportvalue="'+i18n("Eras."+Technologies.Eras[building.eraName]+".short")+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 					if (!type.includes('att') && !type.includes('def')) {
 						let time = "-"
-						let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
-						let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
+						let showRelativeProductionTime = JSON.parse(FH.Storage.getItem('productionsShowRelativeTime')||"false")
+						let showAMPMTime = JSON.parse(FH.Storage.getItem('productionsShowAMPMTime')||"false")
 						if (building.state.times?.at) {
 							if (showRelativeProductionTime)
 								time = moment.unix(building.state.times?.at).fromNow()
@@ -1167,8 +1167,8 @@ let Productions = {
 
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			let time = "-"
-			let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
-			let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
+			let showRelativeProductionTime = JSON.parse(FH.Storage.getItem('productionsShowRelativeTime')||"false")
+			let showAMPMTime = JSON.parse(FH.Storage.getItem('productionsShowAMPMTime')||"false")
 			if (building.state.times?.at) {
 				if (showRelativeProductionTime)
 					time = moment.unix(building.state.times?.at).fromNow()
@@ -1328,8 +1328,8 @@ let Productions = {
 
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			let time = "-"
-			let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
-			let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
+			let showRelativeProductionTime = JSON.parse(FH.Storage.getItem('productionsShowRelativeTime')||"false")
+			let showAMPMTime = JSON.parse(FH.Storage.getItem('productionsShowAMPMTime')||"false")
 			if (building.state.times?.at) {
 				if (showRelativeProductionTime)
 					time = moment.unix(building.state.times?.at).fromNow()
@@ -2231,7 +2231,7 @@ let Productions = {
 			Productions.efficiencySettings[x] = $('#'+x).is(':checked')
 			if (x === "inventorybuildingscore")
 				Productions.efficiencySettings[x] = parseFloat($('#'+x).val())/100
-			HammerStorage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
+			FH.Storage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
 			if (x === "inventorybuildingscore") return;
 
 			if ($('#'+x).is(':checked')) {
@@ -2745,8 +2745,8 @@ let Productions = {
 
 
 	ShowSettings: () => {
-        let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
-        let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
+        let showRelativeProductionTime = JSON.parse(FH.Storage.getItem('productionsShowRelativeTime')||"false")
+        let showAMPMTime = JSON.parse(FH.Storage.getItem('productionsShowAMPMTime')||"false")
         let show24Time = (showAMPMTime === false && showRelativeProductionTime === false)
 
         let h = []
@@ -2773,15 +2773,15 @@ let Productions = {
 	SaveSettings: () => {
         let showRelativeProductionTime = false
 		if ($("#productionsShowRelativeTime").is(':checked')) showRelativeProductionTime = true
-		HammerStorage.setItem('productionsShowRelativeTime', showRelativeProductionTime)
+		FH.Storage.setItem('productionsShowRelativeTime', showRelativeProductionTime)
 
         let showAMPMTime = false
 		if ($("#productionsShowAMPMTime").is(':checked')) showAMPMTime = true
-		HammerStorage.setItem('productionsShowAMPMTime', showAMPMTime)
+		FH.Storage.setItem('productionsShowAMPMTime', showAMPMTime)
 
 		if ($("#productionsShow24Time").is(':checked')) {
-			HammerStorage.setItem('productionsShowAMPMTime', false)
-			HammerStorage.setItem('productionsShowRelativeTime', false)
+			FH.Storage.setItem('productionsShowAMPMTime', false)
+			FH.Storage.setItem('productionsShowRelativeTime', false)
 		}
 
 		Productions.CalcBody()
@@ -2931,7 +2931,7 @@ let Productions = {
 
 
 	ratingPopOut: ()=> {
-		let skinCss = HammerStorage.getItem('HammerSkin')||'variables';
+		let skinCss = FH.Storage.getItem('HammerSkin')||'variables';
 		let id = 'ProductionsRating',
 			content = $('#ProductionsRatingBody').html(),
 			winHtml = `<!DOCTYPE html>
@@ -2992,7 +2992,7 @@ let Productions = {
 	}
 };
 
-FoEproxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
 		setTimeout(() => {
 				Productions.CalcRatingBody();
@@ -3000,7 +3000,7 @@ FoEproxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
 	}
 });
 
-FoEproxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
 		setTimeout(() => {
 			Productions.CalcRatingBody();
@@ -3008,7 +3008,7 @@ FoEproxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
 	}
 });
 
-FoEproxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
+FH.proxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
 		setTimeout(() => {
 			Productions.CalcRatingBody();
@@ -3016,7 +3016,7 @@ FoEproxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
 	}
 });
 
-FoEproxy.addHandler('InventoryService', 'useItem', (data, postData) => {
+FH.proxy.addHandler('InventoryService', 'useItem', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
 		setTimeout(() => {
 			Productions.CalcRatingBody();

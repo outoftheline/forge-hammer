@@ -1,4 +1,4 @@
-FoEproxy.addHandler('AchievementsService','getOverview', (data, postData) => {
+FH.proxy.addHandler('AchievementsService','getOverview', (data, postData) => {
     Profile.init(data.responseData);
     
     if ($('#playerProfile-Btn').hasClass('hud-btn-red')) {
@@ -6,12 +6,12 @@ FoEproxy.addHandler('AchievementsService','getOverview', (data, postData) => {
         $('#playerProfile-Btn-closed').remove();
     }
 });
-FoEproxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
     Profile.otherPlayer = data.responseData;
     Profile.showButton();
 });
 
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	if ($('#PlayerProfileButton').length !== 0) {
         $('#PlayerProfileButton span').attr('class',ActiveMap);
 
@@ -21,7 +21,7 @@ FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
             $('#PlayerProfileButton').attr('onclick','Profile.show()');
     }
 });
-FoEproxy.addFoeHelperHandler('BoostsUpdated', () => {
+FH.proxy.addFoeHelperHandler('BoostsUpdated', () => {
     Profile.update()
 });
 
@@ -111,7 +111,7 @@ const Profile = {
 
         // actions
         $('#PlayerProfileBody').html(content.join('')).promise().done(function() {
-            let theme = HammerStorage.getItem("PlayerProfileTheme") || "default";
+            let theme = FH.Storage.getItem("PlayerProfileTheme") || "default";
             $('#PlayerProfile').addClass(theme);
             $('#PlayerProfileBody [data-original-title]').tooltip();
             if (isRebuilt) {
@@ -129,7 +129,7 @@ const Profile = {
                 $(this).attr('data-original-title', text);
             });
             $('#PlayerProfileBody').on('click', '.colorToggle',function () {
-                Profile.currentThemeNr = Profile.themes.indexOf(HammerStorage.getItem("PlayerProfileTheme")) || 0;
+                Profile.currentThemeNr = Profile.themes.indexOf(FH.Storage.getItem("PlayerProfileTheme")) || 0;
                 $('#PlayerProfile').removeClass(Profile.themes[Profile.currentThemeNr]);
                 if (Profile.themes[Profile.currentThemeNr+1] !== undefined)
                     Profile.currentThemeNr++;
@@ -137,7 +137,7 @@ const Profile = {
                     Profile.currentThemeNr = 0;
 
                 $('#PlayerProfile').addClass(Profile.themes[Profile.currentThemeNr]);
-				HammerStorage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
+				FH.Storage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
             });
             $('#PlayerProfile').on('click', '.toggleMore', function () {
                 $(this).toggleClass('active');

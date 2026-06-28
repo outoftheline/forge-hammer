@@ -5,11 +5,11 @@
 */
 
 // neues Postfach
-FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
     MainParser.setConversations(data.responseData.category, true);
 });
 
-FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
     MainParser.setConversations(data.responseData);
 });
 
@@ -30,7 +30,7 @@ let Infoboard = {
      * Setzt einen ByPass auf den WebSocket und "hört" mit
      * */
     Init: () => {
-        FoEproxy.addRawWsHandler(data => {
+        FH.proxy.addRawWsHandler(data => {
             Infoboard.HandleMessage('in', data);
         });
 
@@ -42,7 +42,7 @@ let Infoboard = {
 
 
     Show: () => {
-        let StorageHeader = HammerStorage.getItem('ConversationsHeaders');
+        let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 
         if (MainParser.Conversations.length === 0 && StorageHeader !== null) 
             MainParser.Conversations = JSON.parse(StorageHeader);
@@ -57,23 +57,23 @@ let Infoboard = {
      */
     Box: () => {
         if ($('#BackgroundInfo').length === 0) {
-            let spk = HammerStorage.getItem('infoboxTone');
+            let spk = FH.Storage.getItem('infoboxTone');
             if (spk === null) {
-                HammerStorage.setItem('infoboxTone', 'deactivated');
+                FH.Storage.setItem('infoboxTone', 'deactivated');
                 Infoboard.PlayInfoSound = false;
 
             } else 
                 Infoboard.PlayInfoSound = (spk !== 'deactivated');
             
-            if (HammerStorage.getItem("infoboxSavedFilter") === null)
-                HammerStorage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
+            if (FH.Storage.getItem("infoboxSavedFilter") === null)
+                FH.Storage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
             else
-                Infoboard.SavedFilter = JSON.parse(HammerStorage.getItem("infoboxSavedFilter"));
+                Infoboard.SavedFilter = JSON.parse(FH.Storage.getItem("infoboxSavedFilter"));
 
-            if (HammerStorage.getItem("infoboxTextFilter") === null)
-                HammerStorage.setItem("infoboxTextFilter", Infoboard.SavedTextFilter);
+            if (FH.Storage.getItem("infoboxTextFilter") === null)
+                FH.Storage.setItem("infoboxTextFilter", Infoboard.SavedTextFilter);
             else
-                Infoboard.SavedTextFilter = HammerStorage.getItem("infoboxTextFilter");
+                Infoboard.SavedTextFilter = FH.Storage.getItem("infoboxTextFilter");
 
             HTML.Box({
                 id: 'BackgroundInfo',
@@ -131,7 +131,7 @@ let Infoboard = {
             msg: i18n('Boxes.Infobox.Messages.Welcome'),
         });
 
-        Infoboard.MaxEntries = HammerStorage.getItem("EntryCount") || 0;
+        Infoboard.MaxEntries = FH.Storage.getItem("EntryCount") || 0;
 
         for (let i = 0; i < Infoboard.History.length; i++) {
             const element = Infoboard.History[i];
@@ -141,7 +141,7 @@ let Infoboard = {
         div.on('click', '#infoboxTone', function () {
             let disabled = $(this).hasClass('deactivated');
 
-            HammerStorage.setItem('infoboxTone', (disabled ? '' : 'deactivated'));
+            FH.Storage.setItem('infoboxTone', (disabled ? '' : 'deactivated'));
             Infoboard.PlayInfoSound = !!disabled;
 
             if (disabled === true) 
@@ -152,7 +152,7 @@ let Infoboard = {
 
         div.on('click', '.fav', function () {
             let id = $(this).parent().parent().data('id');
-            let favorites = JSON.parse(HammerStorage.getItem('infoboxFavs')) || [];
+            let favorites = JSON.parse(FH.Storage.getItem('infoboxFavs')) || [];
             let favFound = favorites.find(x => x == id);
             let favEl = $('[data-id="'+id+'"] .fav');
             if (favEl.hasClass('active')) {
@@ -171,7 +171,7 @@ let Infoboard = {
             else
                 favorites.splice(favorites.indexOf(id), 1);
 
-            HammerStorage.setItem('infoboxFavs', JSON.stringify(favorites));
+            FH.Storage.setItem('infoboxFavs', JSON.stringify(favorites));
         });
         $('#BackgroundInfoList [data-original-title]').tooltip({container: 'body'})
     },
@@ -220,7 +220,7 @@ let Infoboard = {
         let favActive = false;
 
         let favoritesOnly = $('input[data-type="favorites"]').prop('checked');
-        let favorites = JSON.parse(HammerStorage.getItem('infoboxFavs')) || [];
+        let favorites = JSON.parse(FH.Storage.getItem('infoboxFavs')) || [];
         let favFound = favorites.find(x => x == dataId);
         if (favFound)
             favActive = 'active';
@@ -279,9 +279,9 @@ let Infoboard = {
                 }
             });
 
-            HammerStorage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
-            HammerStorage.setItem("infoboxTextFilter", $('input[data-type="text"]').val());
-            let favorites = JSON.parse(HammerStorage.getItem("infoboxFavs")) || [];
+            FH.Storage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
+            FH.Storage.setItem("infoboxTextFilter", $('input[data-type="text"]').val());
+            let favorites = JSON.parse(FH.Storage.getItem("infoboxFavs")) || [];
 
             $('#BackgroundInfoList li').each(function () {
                 let li = $(this),
@@ -320,7 +320,7 @@ let Infoboard = {
 
 	ShowSettings: () => {
 		let autoOpen = Settings.GetSetting('AutoOpenInfoBox');
-		let messagesAmount = HammerStorage.getItem('EntryCount');
+		let messagesAmount = FH.Storage.getItem('EntryCount');
 
         let EntryCountTitle = i18n('Settings.InfoboxEntryCount.Title'); //Dummy usage. Dont mark i18n key for disposal yet. Might be useful later
 
@@ -337,8 +337,8 @@ let Infoboard = {
 
 
     SaveSettings: () => {        
-        HammerStorage.setItem('AutoOpenInfoBox', $("#autoStartInfoboard").is(':checked'));
-        HammerStorage.setItem('EntryCount', $("#infoboxentry-length").val());
+        FH.Storage.setItem('AutoOpenInfoBox', $("#autoStartInfoboard").is(':checked'));
+        FH.Storage.setItem('EntryCount', $("#infoboxentry-length").val());
 
 		$(`#BackgroundInfoSettingsBox`).remove();
     },

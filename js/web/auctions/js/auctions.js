@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addWsHandler('ItemAuctionService', 'updateBid', data => {
+FH.proxy.addWsHandler('ItemAuctionService', 'updateBid', data => {
     if (!Settings.GetSetting('Auctions')) {
         return;
     }
@@ -13,7 +13,7 @@ FoEproxy.addWsHandler('ItemAuctionService', 'updateBid', data => {
     
 });
 
-FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postdata) => {
+FH.proxy.addHandler('ItemAuctionService', 'getAuction', (data, postdata) => {
     if (!Settings.GetSetting('Auctions')) {
         return;
     }
@@ -22,7 +22,7 @@ FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postdata) => {
     Auction.updateClipboard();
 });
 
-FoEproxy.addHandler('ItemAuctionService', 'updateBid', (data, postdata) => {
+FH.proxy.addHandler('ItemAuctionService', 'updateBid', (data, postdata) => {
     if (!Settings.GetSetting('Auctions')) {
         return;
     }
@@ -30,7 +30,7 @@ FoEproxy.addHandler('ItemAuctionService', 'updateBid', (data, postdata) => {
     Auction.updateClipboard();
 });
 
-FoEproxy.addRequestHandler('ItemAuctionService', 'makeBid', (data, postdata) => {
+FH.proxy.addRequestHandler('ItemAuctionService', 'makeBid', (data, postdata) => {
     Auction.index = Math.min(Auction.index + 1, Auction.diff.length-1);
     if (Auction.timeout) clearTimeout(Auction.timeout)
     Auction.timeout = setTimeout(
@@ -40,8 +40,8 @@ FoEproxy.addRequestHandler('ItemAuctionService', 'makeBid', (data, postdata) => 
 
 
 let Auction = {
-    diff: JSON.parse(HammerStorage.getItem('AuctionDifference') || '[1,2,5,222]'),
-    fak: JSON.parse(HammerStorage.getItem('AuctionFactors') || '[1,1,1,1.1]'),
+    diff: JSON.parse(FH.Storage.getItem('AuctionDifference') || '[1,2,5,222]'),
+    fak: JSON.parse(FH.Storage.getItem('AuctionFactors') || '[1,1,1,1.1]'),
     index: 0,
     current: 0,
     timeout:null,
@@ -82,24 +82,24 @@ let Auction = {
             let elem = e.target;
             if (elem.dataset.type=="Add") {
                 Auction.diff[Number(elem.dataset.id)] = Number(elem.value);
-                HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+                FH.Storage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
             } else if (elem.dataset.type=="Mult") {
                 Auction.fak[Number(elem.dataset.id)] = Number(elem.value);
-                HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+                FH.Storage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             };
         });
         $('#AuctionAddRow').on("click", () => {
             Auction.diff.push(1);
             Auction.fak.push(1);
-            HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
-            HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+            FH.Storage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+            FH.Storage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             Auction.BuildBody();            
         });
         $('#AuctionDelRow').on("click", () => {
             let x= Auction.diff.pop();
             x = Auction.fak.pop();
-            HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
-            HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+            FH.Storage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+            FH.Storage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             Auction.BuildBody();            
         });
         $('#AuctionHelpBtn').on("click", () => {

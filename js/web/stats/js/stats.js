@@ -5,19 +5,19 @@
  */
 
 // GBG leader board log
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
 	Stats.HandlePlayerLeaderboard(data.responseData);
 });
 
 // Gildengefechte
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
 	if (data.responseData['stateId'] !== 'participating') {
 		Stats.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
 	}
 });
 
 // Reward log
-FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
 	const r = data.responseData;
 	if (!Array.isArray(r)) {
 		return;
@@ -65,7 +65,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 	}
 });
 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
 	let rewardIncidentSource = data.responseData.context;
 	if (rewardIncidentSource!='guild_raids' && rewardIncidentSource.indexOf('guild_raids')>=0) rewardIncidentSource='guild_raidsP'; //QI-Pass detection
 	if (rewardIncidentSource.indexOf('event')<0 && !["guild_raids","guild_raidsP"].includes(rewardIncidentSource)) return; //exclude Main city collection "collect all", "aid_all"
@@ -108,7 +108,7 @@ FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) 
 });
 
 //reward split for QI
-FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
 	let rewards = data.responseData?.reward?.reward?.possible_rewards
 	let nodeId = postData?.[0]?.requestData?.[0];
 	
@@ -131,16 +131,16 @@ FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, 
 	}
 }),
 
-FoEproxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
 	Stats.QI.currentNode = data.responseData.currentNode;
 }),
-FoEproxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
 	Stats.QI.currentNode = postData[0].requestData[0].pop();
 }),
 
 
 // Player treasure log
-FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -160,7 +160,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postDa
 
 	StockAlarm.checkResources();
 });
-FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -181,7 +181,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, post
 });
 
 // Clan Treasure log
-FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -204,7 +204,7 @@ FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 	StockAlarm.checkTreasury();
 });
 
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'ClanMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -227,7 +227,7 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 });
 
 // Player Army log
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
 	if (ActiveMap !== 'main') {
 		return;
 	}
@@ -2127,7 +2127,7 @@ let Stats = {
 
 
 let StockAlarm = {
-	Alarms: JSON.parse(HammerStorage.getItem('StockAlarms') || '[]'),
+	Alarms: JSON.parse(FH.Storage.getItem('StockAlarms') || '[]'),
 	triggered: [],
 	OptionsR: "",
 	OptionsT: "",
@@ -2315,7 +2315,7 @@ let StockAlarm = {
 			value: value,
 			repeat: repeat
 		})
-		HammerStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+		FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 	},
 
 	addline: (type, id, name, value, repeat)=>{
@@ -2359,7 +2359,7 @@ let StockAlarm = {
 		let i = StockAlarm.Alarms.findIndex( x => x.type==type && x.id==id && x.name == name && x.repeat == repeat && x.value == value);
 		if (i>-1) {
 			StockAlarm.Alarms.splice(i,1);
-			HammerStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+			FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 			$(`#LowStockType [data-type="${type}"]`).trigger("click");
 			$(`#LowStockRepeat [data-repeat="${repeat}"]`).trigger("click");
 			$(`#LowStockValue`).val(value);

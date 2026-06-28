@@ -148,12 +148,12 @@ const PvPArena = {
     *
     */
     SaveSettings: () => {
-        HammerStorage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
+        FH.Storage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
         $(`#PvPArenaSettingsBox`).remove();
     },
 }
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', ({ responseData }) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', ({ responseData }) => {
     if (Settings.GetSetting('ShowPvPArena') || $('#PvPArena').length > 0) {
         PvPArena.StartPvPArena((responseData));
     }

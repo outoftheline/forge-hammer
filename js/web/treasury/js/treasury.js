@@ -4,7 +4,7 @@
  */
 
 // LG Investitionen
-FoEproxy.addHandler('ClanService', 'getTreasuryLogs', (data) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryLogs', (data) => {
     if (Settings.GetSetting('ShowGuildTreasuryLogExport')) {
         Treasury.HandleNewLogs(data);
     }
@@ -123,7 +123,7 @@ let Treasury = {
 		if ($("#autoStartMarket").is(':checked'))
 			value = true;
 
-		HammerStorage.setItem('ShowGuildTreasuryLogExport', value);
+		FH.Storage.setItem('ShowGuildTreasuryLogExport', value);
 		$(`#treasurySettingsBox`).remove();
     },
 };

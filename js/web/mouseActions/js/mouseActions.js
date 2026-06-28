@@ -158,7 +158,7 @@ mouseActions.addAction([[210, -487, 'BottomLeft'],[0,0,"BottomLeft"]],(X,Y)=>{
     buildRepeat.lastBuildClick = mouseActions.calcCoords([X,Y],"BottomLeft")
 })    
 
-FoEproxy.addRequestHandler("CityMapService","placeBuilding",(data)=>{
+FH.proxy.addRequestHandler("CityMapService","placeBuilding",(data)=>{
     if (MainParser.CityEntities[data.requestData[0].cityentity_id].type != "street") buildRepeat.click()
 })
 

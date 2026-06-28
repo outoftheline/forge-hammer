@@ -12,7 +12,7 @@
  */
 
 // Get Reward From Item Shop
-FoEproxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
+FH.proxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -26,7 +26,7 @@ FoEproxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
         Castle.curShopItems.available.reward -= Castle.curCastlePointsDiff.diff;
         Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
 
-        HammerStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
+        FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.UpdateCastlePointsLog(data['requestId'], 'purchaseItem');
         Castle.ShowProgressTable();
@@ -34,13 +34,13 @@ FoEproxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
 });
 
 // Get Auction Reward
-FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
+FH.proxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
 
     if (!data || !data.responseData || !data.responseData['state']) { return; }
 
     if (data.responseData['state'] === 'collectable')
     {
-        let d = JSON.parse(HammerStorage.getItem('CastleCurAuctionWinning'));
+        let d = JSON.parse(FH.Storage.getItem('CastleCurAuctionWinning'));
         const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
 
         if (!d || d.date !== startOfDay)
@@ -50,7 +50,7 @@ FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
 
         d.rewards.push({ time: moment(MainParser.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
 
-        HammerStorage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
+        FH.Storage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
 
         Castle.curAuctionWinning = d;
 
@@ -63,7 +63,7 @@ FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
 
 
 // Read Shop Items and possible Reward
-FoEproxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
+FH.proxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -96,14 +96,14 @@ FoEproxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
         });
 
         Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
-        HammerStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
+        FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.ShowProgressTable();
     }
 });
 
 // Get Gex Encounters Battle/ First Start
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -120,13 +120,13 @@ FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) =>
     if (r['state'] && r['nextStateTime'])
     {
         let GexEnd = r['state'] === 'inactive' ? r.nextStateTime : r.nextStateTime * 1 + 86400;
-        HammerStorage.setItem('CastleGexEnd', GexEnd);
+        FH.Storage.setItem('CastleGexEnd', GexEnd);
     }
 
     if (Castle.curGexLastOfSection === undefined || Castle.curGexLastOfSection !== r.currentEntityId)
     {
         Castle.curGexLastOfSection = r.progress.currentEntityId;
-        HammerStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
+        FH.Storage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
 
         Castle.ShowProgressTable();
     }
@@ -134,7 +134,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) =>
 });
 
 // Get Gex Encounters after Battle/Negotiation
-FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
 
     if (!data || !data.responseData || !data.responseData[0]) { return; }
 
@@ -146,7 +146,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
     if (Castle.curGexLastOfSection === undefined || Castle.curGexLastOfSection < r.currentEntityId)
     {
         Castle.curGexLastOfSection = r.currentEntityId;
-        HammerStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
+        FH.Storage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
 
         if (Castle.GexLastOfSectionsIds.includes(r.currentEntityId))
         {
@@ -158,7 +158,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
 });
 
 // Get new daily challenge
-FoEproxy.addHandler('ChallengeService', 'getOptions', (data, postData) => {
+FH.proxy.addHandler('ChallengeService', 'getOptions', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -169,7 +169,7 @@ FoEproxy.addHandler('ChallengeService', 'getOptions', (data, postData) => {
     if (r.options.length === 2)
     {
         Castle.curDailyChallenge = { id: null, state: 'select_challenge' }
-        HammerStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
+        FH.Storage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
     }
 
     Castle.ShowProgressTable();
@@ -177,7 +177,7 @@ FoEproxy.addHandler('ChallengeService', 'getOptions', (data, postData) => {
 });
 
 // Get castle system data
-FoEproxy.addHandler('CastleSystemService', 'all', (data, postData) => {
+FH.proxy.addHandler('CastleSystemService', 'all', (data, postData) => {
 
     if (!data || !data.responseData || !data.requestMethod) { return; }
 
@@ -192,7 +192,7 @@ FoEproxy.addHandler('CastleSystemService', 'all', (data, postData) => {
     if (data.requestMethod === 'getOverview')
     {
         Castle.dailyPointsCollectionAvailableAt = data.responseData.dailyPointsCollectionAvailableAt;
-        HammerStorage.setItem('CastleDailyPointsCollectionAvailableAt', Castle.dailyPointsCollectionAvailableAt);
+        FH.Storage.setItem('CastleDailyPointsCollectionAvailableAt', Castle.dailyPointsCollectionAvailableAt);
 
         Castle.ShowProgressTable();
     }
@@ -200,7 +200,7 @@ FoEproxy.addHandler('CastleSystemService', 'all', (data, postData) => {
 });
 
 // Update SevenDayChallenge 
-FoEproxy.addHandler('ChallengeService', 'updateTaskProgress', (data, postData) => {
+FH.proxy.addHandler('ChallengeService', 'updateTaskProgress', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -223,13 +223,13 @@ FoEproxy.addHandler('ChallengeService', 'updateTaskProgress', (data, postData) =
 });
 
 // Collect Challenge Reward
-FoEproxy.addHandler('ChallengeService', 'collectReward', (data, postData) => {
+FH.proxy.addHandler('ChallengeService', 'collectReward', (data, postData) => {
 
     if (!data || !data.responseData || !data.responseData.__class__) { return; }
 
     if (data.responseData.__class__ === 'Success')
     {
-        const curDailyChallenge = JSON.parse(HammerStorage.getItem('CastleCurDailyChallenge'));
+        const curDailyChallenge = JSON.parse(FH.Storage.getItem('CastleCurDailyChallenge'));
 
         if (curDailyChallenge && curDailyChallenge.id)
         {
@@ -247,7 +247,7 @@ FoEproxy.addHandler('ChallengeService', 'collectReward', (data, postData) => {
 });
 
 // Get active challenges on startup
-FoEproxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) => {
+FH.proxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) => {
 
     if (!data || !data.responseData) { return; }
 
@@ -262,7 +262,7 @@ FoEproxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) 
         if (d[c].type === 'daily_challenge')
         {
             Castle.curDailyChallenge = { id: d[c].id, state: d[c].state };
-            HammerStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
+            FH.Storage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
         }
 
         if (d[c].type === 'daily_challenge_counter')
@@ -361,7 +361,7 @@ let Castle = {
             return;
         }
 
-        let Settings = JSON.parse(HammerStorage.getItem('CastleSettings'));
+        let Settings = JSON.parse(FH.Storage.getItem('CastleSettings'));
 
         if (Settings)
         {
@@ -374,7 +374,7 @@ let Castle = {
 
         if (!Castle.CastlePointLog)
         {
-            Castle.CastlePointLog = JSON.parse(HammerStorage.getItem('CastlePointLog') || '[]');
+            Castle.CastlePointLog = JSON.parse(FH.Storage.getItem('CastlePointLog') || '[]');
         }
 
         Castle.Show();
@@ -396,7 +396,7 @@ let Castle = {
 
         if (Castle.curCastlePoints === undefined)
         {
-            Castle.curCastlePoints = HammerStorage.getItem('CastleCurCastlePoints') || 0;
+            Castle.curCastlePoints = FH.Storage.getItem('CastleCurCastlePoints') || 0;
         }
 
         if (ResourceStock.castle_points)
@@ -415,7 +415,7 @@ let Castle = {
 
             if (increased)
             {
-                HammerStorage.setItem('CastleCurCastlePoints', Castle.curCastlePoints);
+                FH.Storage.setItem('CastleCurCastlePoints', Castle.curCastlePoints);
                 Castle.ShowCastlePoints(diff);
             }
         }
@@ -452,7 +452,7 @@ let Castle = {
 
             rtype = 'castlePoints';
 
-            HammerStorage.setItem('CastleCurDailyCastlePoints', JSON.stringify(Castle.curDailyCastlePoints));
+            FH.Storage.setItem('CastleCurDailyCastlePoints', JSON.stringify(Castle.curDailyCastlePoints));
         }
 
         // CastleSystemService "requestMethod": "getOverview"
@@ -514,7 +514,7 @@ let Castle = {
         if (idx >= 0)
         {
             Castle.CastlePointLog[idx].name.push(rtype);
-            HammerStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
+            FH.Storage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
 
             if (Castle.CurrentView === 'log')
             {
@@ -596,10 +596,10 @@ let Castle = {
 
         if (Castle.curDailyCastlePoints === undefined)
         {
-            Castle.curDailyCastlePoints = JSON.parse(HammerStorage.getItem('CastleCurDailyCastlePoints'));
+            Castle.curDailyCastlePoints = JSON.parse(FH.Storage.getItem('CastleCurDailyCastlePoints'));
         }
 
-        const colAvailableAt = HammerStorage.getItem('CastleDailyPointsCollectionAvailableAt') || 0;
+        const colAvailableAt = FH.Storage.getItem('CastleDailyPointsCollectionAvailableAt') || 0;
 
         if (Castle.curDailyCastlePoints)
         {
@@ -700,11 +700,11 @@ let Castle = {
         // Gex Last of sections
         if (MainParser.UnlockedFeatures.includes("guild_expedition"))
         {
-            const GexEnd = HammerStorage.getItem('CastleGexEnd');
+            const GexEnd = FH.Storage.getItem('CastleGexEnd');
 
             if (Castle.curGexLastOfSection === undefined)
             {
-                Castle.curGexLastOfSection = HammerStorage.getItem('CastleCurGexLastOfSection');
+                Castle.curGexLastOfSection = FH.Storage.getItem('CastleCurGexLastOfSection');
             }
 
             // Reset Gex if a new round started and isn't updatet atm
@@ -757,7 +757,7 @@ let Castle = {
         {
             if (Castle.curShopItems === undefined)
             {
-                Castle.curShopItems = JSON.parse(HammerStorage.getItem('CastleCurShopItems'));
+                Castle.curShopItems = JSON.parse(FH.Storage.getItem('CastleCurShopItems'));
             }
 
             if (Castle.curShopItems && Castle.curShopItems.date === startOfDay)
@@ -793,7 +793,7 @@ let Castle = {
         {
             if (Castle.curAuctionWinning === undefined)
             {
-                Castle.curAuctionWinning = JSON.parse(HammerStorage.getItem('CastleCurAuctionWinning'));
+                Castle.curAuctionWinning = JSON.parse(FH.Storage.getItem('CastleCurAuctionWinning'));
             }
 
             if (Castle.curAuctionWinning && Castle.curAuctionWinning['date'] && Castle.curAuctionWinning['rewards'] && Castle.curAuctionWinning.date === startOfDay)
@@ -1014,7 +1014,7 @@ let Castle = {
 
         if (!CastlePointLog)
         {
-            CastlePointLog = JSON.parse(HammerStorage.getItem('CastlePointLog') || '[]');
+            CastlePointLog = JSON.parse(FH.Storage.getItem('CastlePointLog') || '[]');
         }
 
         // remove requestIds from log 
@@ -1030,7 +1030,7 @@ let Castle = {
             return obj.date >= removeLogsDate;
         });
 
-        HammerStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
+        FH.Storage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
 
     },
 
@@ -1059,7 +1059,7 @@ let Castle = {
         Castle.Settings.showGroupNames = !!$("#casShowGroupNames").is(':checked');
         Castle.Settings.logDays = parseInt($('#casLogDuration').val()) || Castle.Settings.logDays;
 
-        HammerStorage.setItem('CastleSettings', JSON.stringify(Castle.Settings));
+        FH.Storage.setItem('CastleSettings', JSON.stringify(Castle.Settings));
 
         $(`#CastleSettingsBox`).fadeToggle('fast', function () {
             $(this).remove();

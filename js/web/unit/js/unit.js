@@ -4,11 +4,11 @@
  */
 
 // Army types
-FoEproxy.addMetaHandler('unit_types', (xhr, postData) => {
+FH.proxy.addMetaHandler('unit_types', (xhr, postData) => {
 	Unit.Types = JSON.parse(xhr.responseText);
 });
 
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
 	Unit.RefreshAlca();
 
 	Unit.Cache = data.responseData;
@@ -23,7 +23,7 @@ FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData)
 	}
 });
 
-FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
+FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
 	Unit.RefreshAlca(data['responseData']);
 
 	if (Unit.alca && postData && postData[0] && postData[0]['requestData'] && postData[0]['requestData'][0] && postData[0]['requestData'][0][0] === Unit.alca.id) {
@@ -37,7 +37,7 @@ FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
 		}
 
 		if (data.responseData.militaryProducts.length > 0) {
-			HammerStorage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
+			FH.Storage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
 		}
 	}
 });
@@ -715,7 +715,7 @@ let Unit = {
 	GetLastAlcaUnits: ()=> {
 
 		let last = [],
-			au = HammerStorage.getItem('LastAlcatrazUnits'),
+			au = FH.Storage.getItem('LastAlcatrazUnits'),
 			AlcaUnits = null;
 
 		// nix drin
@@ -806,7 +806,7 @@ let Unit = {
 	*
 	*/
 	LoadSettings: () => {
-		cachedSettings = JSON.parse(HammerStorage.getItem('UnitOverviewSettings')) || Unit.Settings;
+		cachedSettings = JSON.parse(FH.Storage.getItem('UnitOverviewSettings')) || Unit.Settings;
 		Unit.Settings.pictogramScaling = (cachedSettings && cachedSettings.pictogramScaling !== undefined) ? cachedSettings.pictogramScaling : Unit.Settings.pictogramScaling;
 	},
 
@@ -840,7 +840,7 @@ let Unit = {
 	*/
 	SaveSettings: () => {
 		Unit.Settings.pictogramScaling = 1 <= $('#pictogramScaling').val() && $('#pictogramScaling').val() <= 4 ? $('#pictogramScaling').val() : Unit.Settings.pictogramScaling;
-		HammerStorage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
+		FH.Storage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
 
 		$('#UnitOverviewSettingsBox').remove();
 		Unit.BuildBox();

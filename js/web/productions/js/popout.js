@@ -76,7 +76,7 @@ function initPopout() {
         Productions.efficiencySettings[x] = $('#'+x).is(':checked')
         if (x === "inventorybuildingscore")
             Productions.efficiencySettings[x] = parseFloat($('#'+x).val())/100
-        HammerStorage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
+        FH.Storage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
         if (x === "inventorybuildingscore") return;
 
         if ($('#'+x).is(':checked')) {

@@ -4,12 +4,12 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     // Closes the box when the player navigates back to the city
     HTML.CloseOpenBox('mapScoutingTimesDialog');
 });
 
-FoEproxy.addMetaHandler('castle_system_levels', (data, postData) => {
+FH.proxy.addMetaHandler('castle_system_levels', (data, postData) => {
 
     let resp = JSON.parse(data['response']);
     let castlebonus = 1;
@@ -29,7 +29,7 @@ FoEproxy.addMetaHandler('castle_system_levels', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -48,16 +48,16 @@ FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
     return scoutingTimes.ShowDialog();
 });
 
-FoEproxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
        
     return scoutingTimes.CheckSectors(data);
 });
-FoEproxy.addHandler('CampaignService', 'buySector', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'buySector', (data, postData) => {
        
     return scoutingTimes.CheckSectors(data);
 });
 
-FoEproxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -69,7 +69,7 @@ FoEproxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
     return scoutingTimes.ShowDialog();
 });
 
-FoEproxy.addHandler('CampaignService', 'moveScoutToProvince', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'moveScoutToProvince', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -297,7 +297,7 @@ let scoutingTimes = {
         let value = false;
 		if ($("#autoStartScout").is(':checked'))
 			value = true;
-		HammerStorage.setItem('ShowScoutingTimes', value);
+		FH.Storage.setItem('ShowScoutingTimes', value);
 		$(`#mapScoutingTimesDialogSettingsBox`).remove();
     },
 

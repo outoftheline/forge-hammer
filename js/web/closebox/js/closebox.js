@@ -4,7 +4,7 @@
  */
 
 // AutoHide feature: Battle
-FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
     const requestMethod = data.requestMethod;
     const d = data.responseData;
@@ -55,7 +55,7 @@ let CloseBox = {
 
     InitSettings: () => {
 
-        let Settings = JSON.parse(HammerStorage.getItem('CloseBoxSettings'));
+        let Settings = JSON.parse(FH.Storage.getItem('CloseBoxSettings'));
 
         if (!Settings)
         {
@@ -233,7 +233,7 @@ let CloseBox = {
             CloseBox.Settings.Excludes.push($(this).val());
         });
 
-        HammerStorage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
+        FH.Storage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
 
         $(`#CloseBoxSettingsBox`).fadeToggle('fast', function () {
             $(this).remove();

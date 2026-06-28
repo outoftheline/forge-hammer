@@ -2,8 +2,10 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-if (typeof globalThis.HammerStorage == 'undefined') {
-    globalThis.HammerStorage = {
+
+if (typeof globalThis.FH == 'undefined') {
+    globalThis.FH = {}
+    FH.Storage = {
         getItem: (id) => {
             let data = localStorage.getItem('Hammer.' + id);
             if (data) return data;
@@ -19,10 +21,8 @@ if (typeof globalThis.HammerStorage == 'undefined') {
             localStorage.removeItem(id)
         }
     };
-}
 
-if (typeof globalThis.FoEproxy == 'undefined') {
-     globalThis.FoEproxy = (function () {
+    FH.proxy = (function () {
         const requestInfoHolder = new WeakMap();
         function getRequestData(xhr) {
             let data = requestInfoHolder.get(xhr);
@@ -77,7 +77,7 @@ if (typeof globalThis.FoEproxy == 'undefined') {
             const postData = requestData.postData;
 
             // handle raw request handlers
-            for (let callback of FoEproxy._getProxyRaw()) {
+            for (let callback of FH.proxy._getProxyRaw()) {
                 try {
                     callback(this, requestData);
                 } catch (e) {
@@ -95,7 +95,7 @@ if (typeof globalThis.FoEproxy == 'undefined') {
 
                 MainParser.MetaIds[meta] = metaArray[1];
 
-                const metaHandler = FoEproxy._getMetaMap()[meta];
+                const metaHandler = FH.proxy._getMetaMap()[meta];
 
                 if (metaHandler) {
                     for (let callback of metaHandler) {
@@ -119,23 +119,23 @@ if (typeof globalThis.FoEproxy == 'undefined') {
                     // StartUp Service als erstes behandeln
                     for (let entry of d) {
                         if (entry['requestClass'] === 'StaticDataService' && entry['requestMethod'] === 'getMetadata') {
-                            FoEproxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FoEproxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
+                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
+                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
                         }
                     }
                     // StartUp Service als zweites behandeln
                     for (let entry of d) {
                         if (entry['requestClass'] === 'StartupService' && entry['requestMethod'] === 'getData') {
-                            FoEproxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FoEproxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
+                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
+                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
                         }
                     }
 
                     for (let entry of d) {
                         if (!(entry['requestClass'] === 'StartupService' && entry['requestMethod'] === 'getData') &&
                             !(entry['requestClass'] === 'StaticDataService' && entry['requestMethod'] === 'getMetadata')) {
-                            FoEproxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FoEproxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
+                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
+                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
                         }
                     }
 
@@ -179,7 +179,7 @@ if (typeof globalThis.FoEproxy == 'undefined') {
 
                 for (let post of posts) {
                     if (!post || !post.requestClass || !post.requestMethod || !post.requestData) return;
-                    FoEproxy._proxyRequestAction(post.requestClass, post.requestMethod, post);
+                    FH.proxy._proxyRequestAction(post.requestClass, post.requestMethod, post);
                 }
             } catch (e) {
                 console.log('Can\'t parse postData: ', data, e);
@@ -207,8 +207,8 @@ if (typeof globalThis.FoEproxy == 'undefined') {
             _xhrOnLoadHandlerExec: xhrOnLoadHandlerExec
         };
     })();
-    //extend FoEproxy with utility functions
-    Object.assign(globalThis.FoEproxy, (function () {
+    //extend FH.proxy with utility functions
+    Object.assign(globalThis.FH.proxy, (function () {
         const proxyMap = {};
         const proxyRequestsMap = {};
         const proxyMetaMap = {};
@@ -337,11 +337,11 @@ if (typeof globalThis.FoEproxy == 'undefined') {
         }
 
         window.addEventListener('foe-helper#loaded', () => {
-            while (FoEproxy._getXhrQueue() && FoEproxy._getXhrQueue().length > 0) {
-                let xhrRequest = FoEproxy._getXhrQueue().shift();
-                FoEproxy._xhrOnLoadHandlerExec.call(xhrRequest);
+            while (FH.proxy._getXhrQueue() && FH.proxy._getXhrQueue().length > 0) {
+                let xhrRequest = FH.proxy._getXhrQueue().shift();
+                FH.proxy._xhrOnLoadHandlerExec.call(xhrRequest);
             }
-            FoEproxy._setXhrQueue(null);
+            FH.proxy._setXhrQueue(null);
 
             while (wsQueue.length > 0) {
                 let wsMessage = wsQueue.shift();
@@ -351,10 +351,10 @@ if (typeof globalThis.FoEproxy == 'undefined') {
         }, { capture: false, once: true, passive: true });
 
         window.addEventListener('foe-helper#error-loading', () => {
-            FoEproxy._setXhrQueue(null);
+            FH.proxy._setXhrQueue(null);
             wsQueue = null;
             proxyEnabled = false;
-            FoEproxy._setProxyEnabled(false);
+            FH.proxy._setProxyEnabled(false);
         }, { capture: false, once: true, passive: true });
 
         return {

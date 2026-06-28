@@ -14,7 +14,7 @@
  */
 
 
-FoEproxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, postData) => {
 	GBGBuildings.storeBuildingCosts(data.responseData);
 	if (!Settings.GetSetting('ShowGBGBuildings')) return;
 
@@ -37,11 +37,11 @@ FoEproxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, p
 	}, 500);
 });
 
-FoEproxy.addMetaHandler('battleground_buildings',(data,postData) => {
+FH.proxy.addMetaHandler('battleground_buildings',(data,postData) => {
 	GBGBuildings.BuildingData = Object.assign({}, ...JSON.parse(data.responseText).map((x) => ({ [x.id]: x })));
 });
 
-FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 	if (data.responseData.resources) GBGBuildings.treasury = data.responseData.resources
 	if (GBGBuildings.Timeout.B) {
 		GBGBuildings.calc()
@@ -52,7 +52,7 @@ FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 		GBGBuildings.clearTO("T")
 	}, 350);
 });
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'ClanMain') return; // for now ignore all other source types
 	if (data.responseData.resources) GBGBuildings.treasury = data.responseData.resources.resources
 	if (GBGBuildings.Timeout.B) {
@@ -65,10 +65,10 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 	}, 350);
 });
 
-FoEproxy.addHandler("BattlefieldService","getArmyPreview",(data)=>{
+FH.proxy.addHandler("BattlefieldService","getArmyPreview",(data)=>{
 	$('#GBGBuildings').remove();
 })
-FoEproxy.addHandler("GuildBattlegroundService","startNegotiation",(data)=>{
+FH.proxy.addHandler("GuildBattlegroundService","startNegotiation",(data)=>{
 	$('#GBGBuildings').remove();
 })
 
@@ -330,7 +330,7 @@ let GBGBuildings = {
 		let provinceId = data.provinceId || 0;
 		if (data.availableBuildings.length === 0) return;
 
-		let stored = JSON.parse(HammerStorage.getItem("GBGBuildingCosts") || "{}");
+		let stored = JSON.parse(FH.Storage.getItem("GBGBuildingCosts") || "{}");
 		if (stored.GBGRound != GuildFights.CurrentGBGRound)
 			stored = {};
 
@@ -340,6 +340,6 @@ let GBGBuildings = {
 			stored[provinceId] = costsMap;
 		}
 
-		HammerStorage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
+		FH.Storage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
 	}
 }

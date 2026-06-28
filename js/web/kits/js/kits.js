@@ -8,7 +8,7 @@
  * @namespace
  */
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	Kits.UpdateBoxIfVisible();
 });
 
@@ -29,7 +29,7 @@ let Kits = {
 	ShowMissing: 0,
 	Fragments:{},
 	fragmentURL:null,
-	favourites:JSON.parse(HammerStorage.getItem("Kits.favourites")||"[]"),
+	favourites:JSON.parse(FH.Storage.getItem("Kits.favourites")||"[]"),
 	specialCases:{
 		"selection_kit_watchtower_1_gbg" : "selection_kit_watchtower1_gbg",
 		"selection_kit_ind_palace_set" :"selection_kit_indian_palace",
@@ -596,7 +596,7 @@ let Kits = {
 			Kits.favourites.splice(index, 1);
 		}
 		e.target.style = `background-image:url('${Kits.favourites.includes(name)? srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_fill.png",true) : srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_empty.png",true)}')`
-		HammerStorage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
+		FH.Storage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
 		e.target.parentElement.parentElement.classList.toggle("notFavourite");
 	},
 

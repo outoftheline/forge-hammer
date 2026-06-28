@@ -91,9 +91,9 @@ let CityMap = {
 		let Title = i18n('Boxes.CityMap.YourCity');
 
 		// grid sizing and view
-		let scale = HammerStorage.getItem('CityMapScale'),
-			outpostScale = HammerStorage.getItem('OutpostMapScale'),
-			view = HammerStorage.getItem('CityMapView');
+		let scale = FH.Storage.getItem('CityMapScale'),
+			outpostScale = FH.Storage.getItem('OutpostMapScale'),
+			view = FH.Storage.getItem('CityMapView');
 		if(null !== scale)
 			CityMap.map.scale = parseInt(scale);
 		if(null !== view)
@@ -189,7 +189,7 @@ let CityMap = {
 		$('#'+elemId).on('change', '#menu-view', function(){
 			let view = $('#menu-view option:selected').data('view');
 			$('#grid-outer').attr('data-view', view);
-			HammerStorage.setItem('CityMapView', view);
+			FH.Storage.setItem('CityMapView', view);
 		});
 		
 		let scaleView = $('<select id="scale-view" class="game-cursor" />')
@@ -209,11 +209,11 @@ let CityMap = {
 			$('#grid-outer').attr('data-unit', unit);
 
 			if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
-				HammerStorage.setItem('OutpostMapScale', unit);
+				FH.Storage.setItem('OutpostMapScale', unit);
 				CityMap.map.outpostScale = unit;
 			}
 			else {
-				HammerStorage.setItem('CityMapScale', unit);
+				FH.Storage.setItem('CityMapScale', unit);
 				CityMap.map.scale = unit;	
 			}
 
@@ -301,7 +301,7 @@ let CityMap = {
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
 
-		let cssPosition = JSON.parse(HammerStorage.getItem('CityMapViewOffset'))||null;
+		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
 			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
@@ -371,9 +371,9 @@ let CityMap = {
 				let mapOffsets = {
 					[ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
-				let view = JSON.parse(HammerStorage.getItem('CityMapViewOffset'))||{};
+				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
-				HammerStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
 			}
 		});
 	},
@@ -676,7 +676,7 @@ let CityMap = {
 			return;
 		}
 
-		let cssPosition = JSON.parse(HammerStorage.getItem('CityMapViewOffset'))||null;
+		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
 			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
@@ -886,9 +886,9 @@ let CityMap = {
 				let mapOffsets = {
 					[ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
-				let view = JSON.parse(HammerStorage.getItem('CityMapViewOffset'))||{};
+				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
-				HammerStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
 			}
 		});
 		CityMap.getAreas();

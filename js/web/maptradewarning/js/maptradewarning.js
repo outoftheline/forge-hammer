@@ -4,17 +4,17 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
     // Closes the box when the player is about to attack a sector
     HTML.CloseOpenBox('mapTradeWarningDialog');
 });
 
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     // Closes the box when the player navigates back to the city
     HTML.CloseOpenBox('mapTradeWarningDialog');
 });
 
-FoEproxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
     // Is the warning enabled in the settings?
     if (!Settings.GetSetting('ShowMapTradeWarning')) {
         return;
