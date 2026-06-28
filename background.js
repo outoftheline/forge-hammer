@@ -25,10 +25,10 @@ buildingMetaDB.version(1).stores({
 	buildingMeta: "[region+id],region,id,hash,json"
 });
 
-//plannerDB.version(1).stores({
-//	plans: "++id,world,planName,playerId,playerName,boostJSON,date"	
-//	buildings: "[planId+id],planId,buildingId,x,y,type,JSON"
-//});
+plannerDB.version(1).stores({
+	plans: "++id,world,planName,playerId,playerName,boostJSON,date",	
+	buildings: "[planId+id],planId,buildingId,x,y,type,JSON"
+});
 
 // separate code from global scope
 {
@@ -492,6 +492,139 @@ buildingMetaDB.version(1).stores({
 		return metadata;
 	}
 
+	Planner = {
+		getPlan: async (id)=>{
+			try {
+				await plannerDB.open();
+				const plan = await plannerDB.plans.get(id);
+				await plannerDB.close();
+				return plan;
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.getPlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		getPlanList: async ()=>{
+			try {
+				await plannerDB.open();
+				const list = await plannerDB.plans.toArray();
+				await plannerDB.close();
+				return list.map(x=>({id:x.id,name:x.planName,world:x.world,playerName:x.playerName,date:x.date}));
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.getPlanList failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		removePlan: async (id)=>{
+			try {
+				await plannerDB.open();
+				await plannerDB.plans.delete(id);
+				await plannerDB.buildings.where('planId').equals(id).delete();
+				await plannerDB.close();
+				return;
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.removePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		newPlan: async (world,planName,playerId,playerName,boostData,mapData) => {
+			try {
+				const plan = {
+					world: world,
+					planName: planName,
+					playerId: playerId,
+					playerName: playerName,
+					boostJSON: JSON.stringify(boostData),
+					date: moment().unix()
+				};
+				await plannerDB.open();
+				const planId = await plannerDB.plans.add(plan);
+
+				const buildings = (mapData || []).map( (building) => {
+					const buildingId = building.id;
+					const x = building.x;
+					const y = building.y;
+					const type = building.type;
+					const clone = Object.assign({}, building);
+					delete clone.id; delete clone.x; delete clone.y; delete clone.type;
+					delete clone.bonuses; delete clone.connected; delete clone.state; delete clone.player_id; delete clone.max_level;
+					return {
+						planId: planId,
+						buildingId: buildingId,
+						x: x,
+						y: y,
+						type: type,
+						JSON: JSON.stringify(clone),
+					};
+				});
+
+				if (buildings.length > 0) await plannerDB.buildings.bulkPut(buildings);
+				await plannerDB.close();
+				return;
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.newPlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		updatePlan: async (planId,world,planName,playerId,playerName,boostData,mapData) => {
+			try {
+				await plannerDB.open();
+				const existing = await plannerDB.plans.get(planId);
+				if (!existing) throw new Error('plan not found');
+
+				const updatedPlan = {
+					world: world || existing.world,
+					planName: planName || existing.planName,
+					playerId: playerId || existing.playerId,
+					playerName: playerName || existing.playerName,
+					boostJSON: boostData ? JSON.stringify(boostData) : existing.boostJSON,
+					date: moment().unix()
+				};
+				await plannerDB.plans.put(updatedPlan,planId);
+
+				const oldMapDataArr = await plannerDB.buildings.where('planId').equals(planId).toArray();
+				await plannerDB.buildings.where('planId').equals(planId).delete();
+				const oldMapData = Object.assign({}, ...oldMapDataArr.map(x=>({[x.buildingId]:x}))); 
+
+				const buildings = (mapData || []).map((building) => {
+					const buildingId = building.id;
+					const x = oldMapData[buildingId] && oldMapData[buildingId].x || building.x;
+					const y = oldMapData[buildingId] && oldMapData[buildingId].y || building.y;
+					const type = building.type;
+					const clone = Object.assign({}, building);
+					delete clone.id; delete clone.x; delete clone.y; delete clone.type;
+					delete clone.bonuses; delete clone.connected; delete clone.state; delete clone.player_id; delete clone.max_level;
+					return {
+						planId: planId,
+						buildingId: buildingId,
+						x: x,
+						y: y,
+						type: type,
+						JSON: JSON.stringify(clone),
+					};
+				});
+
+				if (buildings.length > 0) await plannerDB.buildings.bulkPut(buildings);
+				await plannerDB.close();
+				return;    
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.updatePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		getBuildingList: async (planId) => {
+			try {
+				await plannerDB.open();
+				const list = await plannerDB.buildings.where('planId').equals(planId).toArray();
+				await plannerDB.close();
+				return list;
+			} catch (e) {
+				await plannerDB.close().catch(()=>{});
+				throw new Error('Planner.getBuildingList failed: '+(e && e.message ? e.message : e));
+			}
+		}
+	}
+
 	/**
 	 * handles internal and external extension communication
 	 * @param {any} request 
@@ -688,36 +821,61 @@ buildingMetaDB.version(1).stores({
 				return APIsuccess({ existingCount: count });
 			}
 
+			case 'Planner.getPlan':{
+				if (!request.planId) return APIerror('Planner.getPlan: Parameter {planId} expected!');
+				try {
+					const plan = await Planner.getPlan(request.planId);
+					return APIsuccess(plan);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				} 
+			}
 			case 'Planner.getPlanList': {
 				const plans = await Planner.getPlanList();
 				return APIsuccess(plans);
 			}
 			case 'Planner.removePlan': {
-				if (!request.planId) 
-					return APIerror('Planner.removePlan: Parameter {planId} expected!');
-				await Planner.removePlan(planId);
-				const plans = await Planner.getPlanList();
-				return APIsuccess(plans);
+				if (!request.planId) return APIerror('Planner.removePlan: Parameter {planId} expected!');
+				try {
+					await Planner.removePlan(request.planId);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
 			}
 			case 'Planner.newPlan': {
-				if (!request.world || !request.planName || !request.playerId || !request.playerName || !request.boostData || !request.mapData);
+				if (!request.world || !request.planName || !request.playerId || !request.playerName || !request.boostData || !request.mapData) {
 					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
-				await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
-				const plans = await Planner.getPlanList();
-				return APIsuccess(plans); 
+				}
+				try {
+					await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
 			}
 			case 'Planner.updatePlan': {
-				if (!request.planId || (!request.world && !request.planName && !request.playerId && !request.playerName && !request.boostData && !request.mapData) );
+				if (!request.planId || (request.world === undefined && request.planName === undefined && request.playerId === undefined && request.playerName === undefined && request.boostData === undefined && request.mapData === undefined)) {
 					return APIerror('Planner.updatePlan: Parameters {planId} and at least one of {world}, {planName}, {playerId}, {playerName}, {boostData} or {mapData} expected!');
-				await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
-				const plans = await Planner.getPlanList();
-				return APIsuccess(plans); 
+				}
+				try {
+					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
 			}
 			case 'Planner.getBuildingList': {
-				if (!request.planId) 
-					return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
-				const buildings = await Planner.getBuildingList(request.planID);
-				return APIsuccess(buildings);
+				if (!request.planId) return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
+				try {
+					const buildings = await Planner.getBuildingList(request.planId);
+					return APIsuccess(buildings);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
 			}
 
 			case 'message': { // type
