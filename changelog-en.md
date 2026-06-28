@@ -1,5 +1,14 @@
 # Changelog
  
+## Version 1.2
+### Updated
+- Stats: CSV export added to all line graphs: player resources, guild resources, units, GBG guild victory points, GBG player progression
+- Stats GBG player progression was moved to the GBG window and only current season will be shown from now on
+- GBG Stats: Guild victory point difference can now be compared more easily
+- Shop Assistant: Added search
+
+---
+ 
 ## Version 1.1
 ### New
 - Added a warning, when FoE Helper was detected

@@ -14,6 +14,7 @@ catch {
 // @ts-ignore
 let alertsDB = new Dexie("Alerts");
 let buildingMetaDB = new Dexie("FoEBuildingMeta");
+let plannerDB = new Dexie("HammerPlanner");
 
 // Define Database Schema
 alertsDB.version(1).stores({
@@ -23,6 +24,11 @@ alertsDB.version(1).stores({
 buildingMetaDB.version(1).stores({
 	buildingMeta: "[region+id],region,id,hash,json"
 });
+
+//plannerDB.version(1).stores({
+//	plans: "++id,world,planName,playerId,playerName,boostJSON,date"	
+//	buildings: "[planId+id],planId,buildingId,x,y,type,JSON"
+//});
 
 // separate code from global scope
 {
@@ -671,16 +677,47 @@ buildingMetaDB.version(1).stores({
 			case 'buildingMeta': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
 				const buildingUrls = request.buildingUrls;
-			
 				const metadata = await getBuildingMetadata(region, buildingUrls);
 				return APIsuccess(metadata);
 			}
 
 			case 'buildingMetaPreCheck': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
-					await buildingMetaDB.open();
-					const count = await buildingMetaDB.table('buildingMeta').where('region').equals(region).count();
-					return APIsuccess({ existingCount: count });
+				await buildingMetaDB.open();
+				const count = await buildingMetaDB.table('buildingMeta').where('region').equals(region).count();
+				return APIsuccess({ existingCount: count });
+			}
+
+			case 'Planner.getPlanList': {
+				const plans = await Planner.getPlanList();
+				return APIsuccess(plans);
+			}
+			case 'Planner.removePlan': {
+				if (!request.planId) 
+					return APIerror('Planner.removePlan: Parameter {planId} expected!');
+				await Planner.removePlan(planId);
+				const plans = await Planner.getPlanList();
+				return APIsuccess(plans);
+			}
+			case 'Planner.newPlan': {
+				if (!request.world || !request.planName || !request.playerId || !request.playerName || !request.boostData || !request.mapData);
+					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
+				await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+				const plans = await Planner.getPlanList();
+				return APIsuccess(plans); 
+			}
+			case 'Planner.updatePlan': {
+				if (!request.planId || (!request.world && !request.planName && !request.playerId && !request.playerName && !request.boostData && !request.mapData) );
+					return APIerror('Planner.updatePlan: Parameters {planId} and at least one of {world}, {planName}, {playerId}, {playerName}, {boostData} or {mapData} expected!');
+				await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+				const plans = await Planner.getPlanList();
+				return APIsuccess(plans); 
+			}
+			case 'Planner.getBuildingList': {
+				if (!request.planId) 
+					return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
+				const buildings = await Planner.getBuildingList(request.planID);
+				return APIsuccess(buildings);
 			}
 
 			case 'message': { // type

@@ -111,50 +111,50 @@ let GreatBuildings = {
     Show: () => {
         if ($('#greatbuildings').length === 0) {
 
-            let ForderBonus = localStorage.getItem('GreatBuildingsForderBonus');
+            let ForderBonus = FH.Storage.getItem('GreatBuildingsForderBonus');
             if (ForderBonus !== null) {
                 GreatBuildings.ForderBonus = parseFloat(ForderBonus);
             }
 
             for (let i = 0; i < GreatBuildings.GreatBuildingsData.length; i++) {
-                let GoodCosts = localStorage.getItem('GreatBuildingsGoodCosts' + i);
+                let GoodCosts = FH.Storage.getItem('GreatBuildingsGoodCosts' + i);
                 if (GoodCosts !== null) {
                     GreatBuildings.GreatBuildingsData[i]['GoodCosts'] = parseFloat(GoodCosts);
                 }
             }
 
-            let FPPerTile = localStorage.getItem('GreatBuildingsFPPerTile');
+            let FPPerTile = FH.Storage.getItem('GreatBuildingsFPPerTile');
             if (FPPerTile != null) {
                 GreatBuildings.FPPerTile = parseFloat(FPPerTile);
             }
 
 
-            let ShowGoods = localStorage.getItem('GreatBuildingsShowGoods');
+            let ShowGoods = FH.Storage.getItem('GreatBuildingsShowGoods');
             if (ShowGoods === 'true') {
                 GreatBuildings.ShowGoods = true;
             }
 
-            let GoodsValue0 = localStorage.getItem('GreatBuildingsGoodsValue0');
+            let GoodsValue0 = FH.Storage.getItem('GreatBuildingsGoodsValue0');
             if (GoodsValue0 !== null) {
                 GreatBuildings.GoodsValue0 = parseFloat(GoodsValue0);
             }
 
-            let GoodsValue1 = localStorage.getItem('GreatBuildingsGoodsValue1');
+            let GoodsValue1 = FH.Storage.getItem('GreatBuildingsGoodsValue1');
             if (GoodsValue1 !== null) {
                 GreatBuildings.GoodsValue1 = parseFloat(GoodsValue1);
             }
 
-            let GoodsValue3 = localStorage.getItem('GreatBuildingsGoodsValue3');
+            let GoodsValue3 = FH.Storage.getItem('GreatBuildingsGoodsValue3');
             if (GoodsValue3 !== null) {
                 GreatBuildings.GoodsValue3 = parseFloat(GoodsValue3);
             }
 
-            let ShowAttack = localStorage.getItem('GreatBuildingsShowAttack');
+            let ShowAttack = FH.Storage.getItem('GreatBuildingsShowAttack');
             if (ShowAttack === 'true') {
                 GreatBuildings.ShowAttack = true;
             }
 
-            let AttackValue = localStorage.getItem('GreatBuildingsAttackValue');
+            let AttackValue = FH.Storage.getItem('GreatBuildingsAttackValue');
             if (AttackValue !== null) {
                 GreatBuildings.AttackValue = parseFloat(AttackValue);
             }
@@ -186,14 +186,14 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#costFactor', function () {
                 GreatBuildings.ForderBonus = parseFloat($('#costFactor').val());
                 if (isNaN(GreatBuildings.ForderBonus)) GreatBuildings.ForderBonus = 0;
-                localStorage.setItem('GreatBuildingsForderBonus', GreatBuildings.ForderBonus);
+                FH.Storage.setItem('GreatBuildingsForderBonus', GreatBuildings.ForderBonus);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#fpPerTile', function () {
                 GreatBuildings.FPPerTile = parseFloat($('#fpPerTile').val());
                 if (isNaN(GreatBuildings.FPPerTile)) GreatBuildings.FPPerTile = 0;
-                localStorage.setItem('GreatBuildingsFPPerTile', GreatBuildings.FPPerTile);
+                FH.Storage.setItem('GreatBuildingsFPPerTile', GreatBuildings.FPPerTile);
                 GreatBuildings.CalcBody();
             });
 
@@ -209,7 +209,7 @@ let GreatBuildings = {
                     v = $this.prop('checked');
 
                 GreatBuildings.ShowGoods = v;
-                localStorage.setItem('GreatBuildingsShowGoods', GreatBuildings.ShowGoods);
+                FH.Storage.setItem('GreatBuildingsShowGoods', GreatBuildings.ShowGoods);
 
                 GreatBuildings.CalcBody();
             });
@@ -217,21 +217,21 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#goodsValue0', function () {
                 GreatBuildings.GoodsValue0 = parseFloat($('#goodsValue0').val());
                 if (isNaN(GreatBuildings.GoodsValue0)) GreatBuildings.GoodsValue0 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue0', GreatBuildings.GoodsValue0);
+                FH.Storage.setItem('GreatBuildingsGoodsValue0', GreatBuildings.GoodsValue0);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#goodsValue1', function () {
                 GreatBuildings.GoodsValue1 = parseFloat($('#goodsValue1').val());
                 if (isNaN(GreatBuildings.GoodsValue1)) GreatBuildings.GoodsValue1 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue1', GreatBuildings.GoodsValue1);
+                FH.Storage.setItem('GreatBuildingsGoodsValue1', GreatBuildings.GoodsValue1);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#goodsValue3', function () {
                 GreatBuildings.GoodsValue3 = parseFloat($('#goodsValue3').val());
                 if (isNaN(GreatBuildings.GoodsValue3)) GreatBuildings.GoodsValue3 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue3', GreatBuildings.GoodsValue3);
+                FH.Storage.setItem('GreatBuildingsGoodsValue3', GreatBuildings.GoodsValue3);
                 GreatBuildings.CalcBody();
             });
 
@@ -239,7 +239,7 @@ let GreatBuildings = {
                 $('#greatbuildings').on('blur', '#GreatBuildingsGoodCosts' + i, function () {
                     GreatBuildings.GreatBuildingsData[i].GoodCosts = parseFloat($('#GreatBuildingsGoodCosts' + i).val());
                     if (isNaN(GreatBuildings.GreatBuildingsData[i].GoodCosts)) GreatBuildings.GreatBuildingsData[i].GoodCosts = 0;
-                    localStorage.setItem('GreatBuildingsGoodCosts' + i, GreatBuildings.GreatBuildingsData[i].GoodCosts);
+                    FH.Storage.setItem('GreatBuildingsGoodCosts' + i, GreatBuildings.GreatBuildingsData[i].GoodCosts);
                     GreatBuildings.CalcBody();
                 });
             }
@@ -250,7 +250,7 @@ let GreatBuildings = {
                     v = $this.prop('checked');
 
                 GreatBuildings.ShowAttack = v;
-                localStorage.setItem('GreatBuildingsShowAttack', GreatBuildings.ShowAttack);
+                FH.Storage.setItem('GreatBuildingsShowAttack', GreatBuildings.ShowAttack);
 
                 GreatBuildings.CalcBody();
             });
@@ -258,7 +258,7 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#attackValue', function () {
                 GreatBuildings.AttackValue = parseFloat($('#attackValue').val());
                 if (isNaN(GreatBuildings.AttackValue)) GreatBuildings.AttackValue = 0;
-                localStorage.setItem('GreatBuildingsAttackValue', GreatBuildings.AttackValue);
+                FH.Storage.setItem('GreatBuildingsAttackValue', GreatBuildings.AttackValue);
                 GreatBuildings.CalcBody();
             });
 

@@ -3,11 +3,11 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
     let fromHandler = true;
     HiddenRewards.Cache = HiddenRewards.prepareData(data.responseData.hiddenRewards);
 
-    HiddenRewards.GEprogress = JSON.parse(localStorage.getItem('HiddenRewards.GEprogress')||'0');
+    HiddenRewards.GEprogress = JSON.parse(FH.Storage.getItem('HiddenRewards.GEprogress')||'0');
    
     HiddenRewards.RefreshGui(fromHandler);
     if (HiddenRewards.FirstCycle) { //Timer setzen 
@@ -19,18 +19,18 @@ FoEproxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
     HiddenRewards.GEprogress = data?.responseData?.progress?.currentEntityId || 0;
-    localStorage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
+    FH.Storage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
     HiddenRewards.RefreshGui();
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
     for (let x in data.responseData) {
         if (!data.responseData.hasOwnProperty(x)) continue;
         if (!data.responseData[x].hasOwnProperty('currentEntityId')) continue;
         HiddenRewards.GEprogress = data.responseData[x].currentEntityId;
-        localStorage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
+        FH.Storage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
         HiddenRewards.RefreshGui();
     }
 });
@@ -209,7 +209,7 @@ let HiddenRewards = {
                 if (hiddenReward.type.indexOf('outpost') > -1) {
                     img = 'Shard_' + hiddenReward.type.substr(hiddenReward.type.length-2, 2);
                 }
-                h.push('<td class="incident" title="' + HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
+                h.push('<td class="incident" title="' + HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
                 h.push('<td>' + hiddenReward.position + '</td>');
                 h.push('<td class="">' + i18n('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
                 h.push('</tr>');
@@ -230,7 +230,7 @@ let HiddenRewards = {
 	SetCounter: ()=> {
         let list = HiddenRewards.FilteredCache || [];
         let count = list.length;
-        let CountRelics = JSON.parse(localStorage.getItem('CountRelics') || 0);
+        let CountRelics = JSON.parse(FH.Storage.getItem('CountRelics') || 0);
         if (CountRelics == 1) count = list.filter(x => x.isVis).length;
         if (CountRelics == 2) count = list.filter(x => !x.isGE).length;
         $('#hidden-reward-count').text(count).show();
@@ -238,7 +238,7 @@ let HiddenRewards = {
 	},
     
     ShowSettingsButton: () => {
-        let CountRelics = JSON.parse(localStorage.getItem('CountRelics') || 0);
+        let CountRelics = JSON.parse(FH.Storage.getItem('CountRelics') || 0);
         let h = [];
         h.push(`<p class="text-center"><label for="countrelics">${i18n('Settings.CountRelics')}<label><br>`);
         h.push(`<select oninput="HiddenRewards.SaveSettings(this.value)"/><option value="0" ${CountRelics == 0 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.CountAll')} </option><option value="1" ${CountRelics == 1 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.onlyVis')} </option><option value="2" ${CountRelics == 2 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.none')} </option></p>`);
@@ -249,7 +249,7 @@ let HiddenRewards = {
     *
     */
     SaveSettings: (value='0') => {
-        localStorage.setItem('CountRelics', value);
+        FH.Storage.setItem('CountRelics', value);
         HiddenRewards.SetCounter();
     },
 };

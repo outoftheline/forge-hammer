@@ -5,19 +5,19 @@
  */
 
 // GBG leader board log
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
 	Stats.HandlePlayerLeaderboard(data.responseData);
 });
 
 // Gildengefechte
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
 	if (data.responseData['stateId'] !== 'participating') {
 		Stats.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
 	}
 });
 
 // Reward log
-FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
 	const r = data.responseData;
 	if (!Array.isArray(r)) {
 		return;
@@ -65,7 +65,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 	}
 });
 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
 	let rewardIncidentSource = data.responseData.context;
 	if (rewardIncidentSource!='guild_raids' && rewardIncidentSource.indexOf('guild_raids')>=0) rewardIncidentSource='guild_raidsP'; //QI-Pass detection
 	if (rewardIncidentSource.indexOf('event')<0 && !["guild_raids","guild_raidsP"].includes(rewardIncidentSource)) return; //exclude Main city collection "collect all", "aid_all"
@@ -108,7 +108,7 @@ FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) 
 });
 
 //reward split for QI
-FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
 	let rewards = data.responseData?.reward?.reward?.possible_rewards
 	let nodeId = postData?.[0]?.requestData?.[0];
 	
@@ -131,16 +131,16 @@ FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, 
 	}
 }),
 
-FoEproxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
 	Stats.QI.currentNode = data.responseData.currentNode;
 }),
-FoEproxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
 	Stats.QI.currentNode = postData[0].requestData[0].pop();
 }),
 
 
 // Player treasure log
-FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -160,7 +160,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postDa
 
 	StockAlarm.checkResources();
 });
-FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -181,7 +181,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, post
 });
 
 // Clan Treasure log
-FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -204,7 +204,7 @@ FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 	StockAlarm.checkTreasury();
 });
 
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'ClanMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -227,7 +227,7 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 });
 
 // Player Army log
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
 	if (ActiveMap !== 'main') {
 		return;
 	}
@@ -469,14 +469,17 @@ let Stats = {
 	Render: async () => {
 		$('#statsBody').html(`<div class="options">${Stats.RenderOptions()}</div>
 							<div class="options-2"></div>
-							<div id="statsWrapper"><div id="statsTitle"></div><canvas id="statsChart"></canvas>
+							<div id="statsWrapper">
+							<div id="statsTitle"></div>
+							<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastSeries, 'stats-${moment().format('YYYY-MM-DD')}.csv')" title="CSV">CSV</button><canvas id="statsChart"></canvas>
 							<div id="statsLegendWrapper">
 								<div class="StatsRewardFilter">
 									<input type="text" id="StatsRewardFilter" placeholder="${i18n("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
 								</div>
 								<div id="statsLegend" class="chartLegend"></div>
 							</div>
-							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div></div>`);
+							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div>
+							</div>`);
 
 		Stats.updateOptions();
 		await helper.loadChartJS();
@@ -1264,6 +1267,8 @@ let Stats = {
 			}
 		};
 
+		Stats._lastSeries = series;
+
 		Stats._chartInstance = new Chart(ctx, {
 			type: isColumn ? 'bar' : 'line',
 			data: { datasets },
@@ -1653,6 +1658,40 @@ let Stats = {
 	},
 
 
+	/**
+	 * @param {Array} series - { name, data }
+	 * @param {string} filename
+	 */
+	exportCSV: (series, filename) => {
+		if (!series || !series.length) return;
+		let normalise = (points) => Array.isArray(points) ? { x: points[0], y: points[1] } : points;
+
+		let allTimestamps = [...new Set(series.flatMap(s => s.data.map(points => normalise(points).x)))];
+		allTimestamps.sort((a, b) => a - b);
+
+		let headers = ['Date', ...series.map(s => `"${s.name || s.label || ''}"`)];
+
+		// 1 row per timestamp
+		let rows = allTimestamps.map(timestamp => {
+			let date = moment(timestamp).format('YYYY-MM-DD HH:mm');
+			let values = series.map(s => {
+				let points = s.data.find(p => normalise(p).x === timestamp);
+				return points !== undefined ? normalise(points).y : '';
+			});
+			return [date, ...values].join(';');
+		});
+
+		let csv = [headers.join(';'), ...rows].join('\n');
+		let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		let url = URL.createObjectURL(blob);
+		let a = document.createElement('a');
+		a.href = url;
+		a.download = filename || 'export.csv';
+		a.click();
+		URL.revokeObjectURL(url);
+	},
+
+
 
 
 	/* Handlers */
@@ -1809,9 +1848,13 @@ let Stats = {
 		let canvas = document.createElement('canvas');
 		canvas.width = 850;
 		canvas.height = 450;
-		$('#StatsGBGTabGuilds').empty().append(canvas).append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />')).append($('<div id="GBGStatsDiffs" class="dark-bg" />'));
+		$('#StatsGBGTabGuilds').empty().append(canvas)
+			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
+			.append($('<div id="GBGStatsDiffs" class="dark-bg" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGGuildsSeries, &apos;gbg-guilds-${moment().format('YYYY-MM-DD')}.csv&apos;)">CSV</button>`));
 
 		if (GuildFights.Chart) GuildFights.Chart.destroy();
+		Stats._lastGBGGuildsSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
 
 		let guildsHtmlLegendPlugin = {
 			id: 'htmlLegend',
@@ -1953,12 +1996,16 @@ let Stats = {
 		let canvas = document.createElement('canvas');
 		canvas.width = 850;
 		canvas.height = 450;
-		$('#StatsGBGTabPlayers').empty().append(canvas).append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />')).append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'));
+		$('#StatsGBGTabPlayers').empty().append(canvas)
+			.append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />'))
+			.append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGPlayersSeries, &apos;gbg-players-${moment().format('YYYY-MM-DD')}.csv&apos;)" title="CSV">CSV</button>`));
 
 		if (Stats.gbgPlayersChart) {
 			Stats.gbgPlayersChart.destroy();
 			Stats.gbgPlayersChart = null;
 		}
+		Stats._lastGBGPlayersSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
 
 		let legendPlugin = {
 			id: 'htmlLegend',
@@ -2080,7 +2127,7 @@ let Stats = {
 
 
 let StockAlarm = {
-	Alarms: JSON.parse(localStorage.getItem('StockAlarms') || '[]'),
+	Alarms: JSON.parse(FH.Storage.getItem('StockAlarms') || '[]'),
 	triggered: [],
 	OptionsR: "",
 	OptionsT: "",
@@ -2213,9 +2260,9 @@ let StockAlarm = {
 		htmltext += `<select id="LowStockID">${StockAlarm.OptionsR}</select>`;
 		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add i18n!!
 		htmltext += `<span id="LowStockRepeat">`;
-		htmltext += `<img class="options" data-repeat="2" src="${extUrl}js/web/stats/images/once.png">`;
-		htmltext += `<img class="options  selected" data-repeat="1" src="${extUrl}js/web/stats/images/once_per_session.png">`;
-		htmltext += `<img class="options" data-repeat="0" src="${extUrl}js/web/stats/images/always.png"></span>`
+		htmltext += `<img class="options" data-repeat="2" src="${FH.extUrl}js/web/stats/images/once.png">`;
+		htmltext += `<img class="options  selected" data-repeat="1" src="${FH.extUrl}js/web/stats/images/once_per_session.png">`;
+		htmltext += `<img class="options" data-repeat="0" src="${FH.extUrl}js/web/stats/images/always.png"></span>`
 		htmltext += `<span id="LowStockAddBtn" class="btn btn-green" onclick="StockAlarm.addbtn">+</span>`;
 		htmltext += `<table class="foe-table" id="LowStockAlarmsList">`;
 		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add i18n!!
@@ -2268,7 +2315,7 @@ let StockAlarm = {
 			value: value,
 			repeat: repeat
 		})
-		localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+		FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 	},
 
 	addline: (type, id, name, value, repeat)=>{
@@ -2289,13 +2336,13 @@ let StockAlarm = {
 		let repeatImg = '';
 		switch (repeat) {
 			case 0: 
-				repeatImg = extUrl + "js/web/stats/images/always.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/always.png";
 				break;
 			case 1:
-				repeatImg = extUrl + "js/web/stats/images/once_per_session.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once_per_session.png";
 				break;
 			case 2:
-				repeatImg = extUrl + "js/web/stats/images/once.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once.png";
 				break;
 		}
 		html = `<td><img src="${typeImg}"></td>`;
@@ -2312,7 +2359,7 @@ let StockAlarm = {
 		let i = StockAlarm.Alarms.findIndex( x => x.type==type && x.id==id && x.name == name && x.repeat == repeat && x.value == value);
 		if (i>-1) {
 			StockAlarm.Alarms.splice(i,1);
-			localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+			FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 			$(`#LowStockType [data-type="${type}"]`).trigger("click");
 			$(`#LowStockRepeat [data-repeat="${repeat}"]`).trigger("click");
 			$(`#LowStockValue`).val(value);

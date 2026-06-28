@@ -3,8 +3,8 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
-	KampagneMap.AllProvinces = JSON.parse(localStorage.getItem('AllProvinces'));
+FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
+	KampagneMap.AllProvinces = JSON.parse(FH.Storage.getItem('AllProvinces'));
 
 	KampagneMap.Provinces = data.responseData;
 	if($('#campagneMap-Btn').hasClass('hud-btn-red')){
@@ -16,8 +16,8 @@ FoEproxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
 	}
 });
 
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
-	localStorage.setItem('AllProvinces', JSON.stringify(data.responseData.provinces));
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
+	FH.Storage.setItem('AllProvinces', JSON.stringify(data.responseData.provinces));
 });
 
 let KampagneMap = {

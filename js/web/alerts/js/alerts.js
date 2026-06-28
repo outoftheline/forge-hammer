@@ -473,7 +473,7 @@ let Alerts = function(){
 			get: ( key ) => {
 				if ( tmp.preferences.data[key] ) {
 					let id = tmp.preferences.aux.key.generate( key );
-					let value = localStorage.getItem( id );
+					let value = FH.Storage.getItem( id );
 
 					if ( value ) {
 						return JSON.parse( value );
@@ -488,7 +488,7 @@ let Alerts = function(){
 					tmp.preferences.data[key].value = value;
 
 					let id = tmp.preferences.aux.key.generate( key );
-					localStorage.setItem( id, value )
+					FH.Storage.setItem( id, value )
 				}
 			},
 		},
@@ -1650,11 +1650,11 @@ let Alerts = function(){
 	return pub;
 }();
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	Alerts.update.data.battlegrounds( data['responseData'] );
 });
 
-FoEproxy.addHandler('TimerService', 'getTimers', (data, postData) => {
+FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	Alerts.update.data.timers( data['responseData'] );
 });
 

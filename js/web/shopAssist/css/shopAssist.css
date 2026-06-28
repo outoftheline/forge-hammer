@@ -75,12 +75,16 @@
 	border-right: 1px solid var(--border-table-bottom);
 }
 
-.shopAssistTable.favouritesOnly tbody tr:not(.isShopFavourite) {
+.shopAssistTable.favouritesOnly tbody tr:not(.isShopFavourite), 
+.shopAssistTable.unlockedOnly tbody tr:not(.isUnlocked), 
+.shopAssistTable.searchFilter tbody tr {
 	display: none;
 }
-.shopAssistTable.unlockedOnly tbody tr:not(.isUnlocked) {
-	display: none;
+.shopAssistTable.searchFilter tbody tr.searchResult {
+	display: table-row;
 }
+
+
 .shopAssistTable .shopFavourite:after{
 	content: '☆';
 	color: var(--text-highlight);

@@ -30,7 +30,7 @@ function scriptLoaded (src, base) {
 
 inject();
 
-function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate='') {
+function inject (extUrl = chrome.runtime.getURL('')) {
 	/**
 	 * Loads a JavaScript in the website. The returned promise will be resolved once the code has been loaded.
 	 * @param {string} src the URL to load
@@ -79,10 +79,10 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		}, {capture: false, once: true, passive: true});
 	});
 	
-	const v = chrome.runtime.getManifest().version + (loadBeta ? '-beta-'+ betaDate:'');
+	const v = chrome.runtime.getManifest().version;
 
 	let   lng = chrome.i18n.getUILanguage();
-	const uLng = localStorage.getItem('user-language');
+	const uLng = localStorage.getItem('Hammer.user-language');
 	
 	// we only need the first part
 	if (lng.indexOf('-') > 0) {
@@ -98,10 +98,10 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		lng = uLng;
 	} else {
 		// so that the language can be read out without having to change it once via the settings
-		localStorage.setItem('user-language', lng);
+		localStorage.setItem('Hammer.user-language', lng);
 	}
 
-	InjectCode(loadBeta, extUrl);
+	InjectCode(extUrl);
 
 
 	let tid = setInterval(InjectCSS, 0);
@@ -109,11 +109,11 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	function InjectCSS() {
 		// Document loaded
 		if(document.head !== null){
-			let MenuSetting = localStorage.getItem('SelectedMenu');
+			let MenuSetting = localStorage.getItem('Hammer.SelectedMenu');
 			MenuSetting = MenuSetting ? MenuSetting : 'RightBar';
 			let menuCss = "_menu_" + MenuSetting.toLowerCase().replace("bar","");
 
-			let skinCss = localStorage.getItem('HammerSkin')||'themes/hammer';
+			let skinCss = localStorage.getItem('Hammer.HammerSkin')||'themes/hammer';
 
 			let cssFiles = [
 				'boxes',
@@ -137,17 +137,15 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		}
 	}
 
-	async function InjectCode(loadBeta, extUrl) {
+	async function InjectCode(extUrl) {
 	 	try {
 			// set some global variables
-			localStorage.setItem("HelperBaseData", JSON.stringify({
+			localStorage.setItem("Hammer.ExtBaseData", JSON.stringify({
 				extID: chrome.runtime.id,
 				extUrl: extUrl,
 				GuiLng: lng,
 				extVersion: v,
-				isRelease: true,
-				devMode: `${!('update_url' in chrome.runtime.getManifest())}`,
-				loadBeta: loadBeta
+				devMode: `${!('update_url' in chrome.runtime.getManifest())}`
 			}));
 			
 			// Firefox does not support direct communication with background.js but API injections
@@ -177,7 +175,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 						)
 					);
 				}
-				exportFunction(callBgApi, window, {defineAs: 'foeHelperBgApiHandler'});
+				exportFunction(callBgApi, window, {defineAs: 'FHBgApiHandler'});
 			}
 			// start loading both script-lists
 			const vendorListPromise = loadJsonResource(`${extUrl}js/vendor.json`);
@@ -209,7 +207,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 			scriptLoaded("primed", "internal");
 
 		} catch (err) {
-			// make sure that the packet buffer in the FoEproxy does not fill up in the event of an incomplete loading.
+			// make sure that the packet buffer in the FH.proxy does not fill up in the event of an incomplete loading.
 			window.dispatchEvent(new CustomEvent('foe-helper#error-loading'));
 		}
 	}

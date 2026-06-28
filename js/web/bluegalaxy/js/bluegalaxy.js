@@ -4,7 +4,7 @@
  */
 //const util  = require('util');
 
-FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
+FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
     if (data.responseData['updatedEntities']) {
 
     	let Entities = data.responseData['updatedEntities'];
@@ -21,7 +21,7 @@ FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
     }
 });
 
-FoEproxy.addFoeHelperHandler('BonusUpdated', data => {
+FH.proxy.addFoeHelperHandler('BonusUpdated', data => {
     for (let i = 0; i < BonusService.Bonuses.length; i++) {
         if (BonusService.Bonuses[i]['type'] === 'double_collection') {
             BlueGalaxy.DoubleCollections = BonusService.Bonuses[i]['amount'] | 0;
@@ -43,7 +43,7 @@ let BlueGalaxy = {
     OlderGoodsValue : 0.1,
     DoubleCollections : 0,
     GalaxyFactor : 0,
-    sort: JSON.parse(localStorage.getItem("BlueGalaxySorting")||'{"col":null,"order":null}'),
+    sort: JSON.parse(FH.Storage.getItem("BlueGalaxySorting")||'{"col":null,"order":null}'),
 
     /**
      * Zeigt die Box an
@@ -57,12 +57,12 @@ let BlueGalaxy = {
 
         if ($('#bluegalaxy').length === 0) {
 
-            let GoodsValue = localStorage.getItem('BlueGalaxyGoodsValue');
+            let GoodsValue = FH.Storage.getItem('BlueGalaxyGoodsValue');
             if (GoodsValue != null) {
                 BlueGalaxy.GoodsValue = parseFloat(GoodsValue);
             }
 
-            let OlderGoodsValue = localStorage.getItem('BlueGalaxyOlderGoodsValue');
+            let OlderGoodsValue = FH.Storage.getItem('BlueGalaxyOlderGoodsValue');
             if (OlderGoodsValue != null) {
                 BlueGalaxy.OlderGoodsValue = parseFloat(OlderGoodsValue);
             }
@@ -83,7 +83,7 @@ let BlueGalaxy = {
             $('#bluegalaxy').on('blur', '#goodsValue', function () {
                 BlueGalaxy.GoodsValue = parseFloat($('#goodsValue').val());
                 if (isNaN(BlueGalaxy.GoodsValue)) BlueGalaxy.GoodsValue = 0;
-                localStorage.setItem('BlueGalaxyGoodsValue', BlueGalaxy.GoodsValue);
+                FH.Storage.setItem('BlueGalaxyGoodsValue', BlueGalaxy.GoodsValue);
 
                 BlueGalaxy.CalcBody();
             });
@@ -92,7 +92,7 @@ let BlueGalaxy = {
             $('#bluegalaxy').on('blur', '#OlderGoodsValue', function () {
                 BlueGalaxy.OlderGoodsValue = parseFloat($('#OlderGoodsValue').val());
                 if (isNaN(BlueGalaxy.OlderGoodsValue)) BlueGalaxy.OlderGoodsValue = 0;
-                localStorage.setItem('BlueGalaxyOlderGoodsValue', BlueGalaxy.OlderGoodsValue);
+                FH.Storage.setItem('BlueGalaxyOlderGoodsValue', BlueGalaxy.OlderGoodsValue);
 
                 BlueGalaxy.CalcBody();
             });
@@ -130,7 +130,7 @@ let BlueGalaxy = {
         let Buildings = [],
             FPB = Productions.Boosts['fp'] === undefined ? (Boosts.Sums['forge_points_production'] + 100) / 100 : Productions.Boosts['fp']
             FPBoost = (FP) => { return Math.round(FP * FPB) },
-            showBGFragments = JSON.parse(localStorage.getItem('showBGFragments')||"true");
+            showBGFragments = JSON.parse(FH.Storage.getItem('showBGFragments')||"true");
         
         for (let CityEntity of Object.values(MainParser.CityBuildingsData)) {
             
@@ -280,7 +280,7 @@ let BlueGalaxy = {
                 table.push('<td style="white-space:nowrap"><strong class="error">' + moment.unix(Buildings[i].At).fromNow() + '</strong></td>');
             }
 
-            table.push('<td class="text-right"><span class="show-entity" data-id="' + Buildings[i]['ID'] + '"><img class="game-cursor" src="' + extUrl + 'images/hud/open-eye.png"></span></td>');
+            table.push('<td class="text-right"><span class="show-entity" data-id="' + Buildings[i]['ID'] + '"><img class="game-cursor" src="' + FH.extUrl + 'images/hud/open-eye.png"></span></td>');
             table.push('</tr>');
         }
 
@@ -303,7 +303,7 @@ let BlueGalaxy = {
             } else {
                 BlueGalaxy.sort = {col:el.dataset.colname,order:"descending"}
             }
-            localStorage.setItem("BlueGalaxySorting",JSON.stringify(BlueGalaxy.sort))
+            FH.Storage.setItem("BlueGalaxySorting",JSON.stringify(BlueGalaxy.sort))
             BlueGalaxy.CalcBody();
             
         })
@@ -329,7 +329,7 @@ let BlueGalaxy = {
     */
 	ShowSettings: () => {
 		let autoOpen = Settings.GetSetting('ShowBlueGalaxyHelper');
-        let showBGFragments = JSON.parse(localStorage.getItem('showBGFragments')||"true");
+        let showBGFragments = JSON.parse(FH.Storage.getItem('showBGFragments')||"true");
 
         let h = [];
         h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${i18n('Boxes.Settings.Autostart')}</label></p>`);
@@ -347,12 +347,12 @@ let BlueGalaxy = {
         let value = false;
 		if ($("#autoStartBGHelper").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowBlueGalaxyHelper', value);
+		FH.Storage.setItem('ShowBlueGalaxyHelper', value);
         let showBGFragments = false;
 		if ($("#showBGFragments").is(':checked'))
             showBGFragments = true;
-        if (localStorage.getItem('showBGFragments') != showBGFragments) {
-            localStorage.setItem('showBGFragments', showBGFragments);
+        if (FH.Storage.getItem('showBGFragments') != showBGFragments) {
+            FH.Storage.setItem('showBGFragments', showBGFragments);
             BlueGalaxy.CalcBody();
         }
 		

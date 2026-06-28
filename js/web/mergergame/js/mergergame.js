@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('MergerGameService', 'all', (data, postData) => {
+FH.proxy.addHandler('MergerGameService', 'all', (data, postData) => {
 	
 	if (data.requestMethod != "getOverview" && data.requestMethod != "resetBoard") return;
 	//Do not show window if deactivated in settings
@@ -67,7 +67,7 @@ FoEproxy.addHandler('MergerGameService', 'all', (data, postData) => {
 });
 
 
-FoEproxy.addHandler('MergerGameService', 'spawnPieces', (data, postData) => {
+FH.proxy.addHandler('MergerGameService', 'spawnPieces', (data, postData) => {
 	// Don't handle when module not open
     if ($('#mergerGameDialog').length === 0) {
 		return;
@@ -80,7 +80,7 @@ FoEproxy.addHandler('MergerGameService', 'spawnPieces', (data, postData) => {
 	mergerGame.updateDialog();
 });
 
-FoEproxy.addHandler('MergerGameService', 'useBooster', (data, postData) => {
+FH.proxy.addHandler('MergerGameService', 'useBooster', (data, postData) => {
 // Don't handle when module not open
 	if ($('#mergerGameDialog').length === 0) {
 		return;
@@ -101,7 +101,7 @@ FoEproxy.addHandler('MergerGameService', 'useBooster', (data, postData) => {
 
 });
 
-FoEproxy.addHandler('MergerGameService', 'mergePieces', (data, postData) => {
+FH.proxy.addHandler('MergerGameService', 'mergePieces', (data, postData) => {
 	// Don't handle when module not open
     if ($('#mergerGameDialog').length === 0) {
 		return;
@@ -127,7 +127,7 @@ FoEproxy.addHandler('MergerGameService', 'mergePieces', (data, postData) => {
 
 });
 
-FoEproxy.addHandler('MergerGameService', 'convertPiece', (data, postData) => {
+FH.proxy.addHandler('MergerGameService', 'convertPiece', (data, postData) => {
 	// Don't handle when module not open
     if ($('#mergerGameDialog').length === 0) {
 		return;
@@ -144,7 +144,7 @@ FoEproxy.addHandler('MergerGameService', 'convertPiece', (data, postData) => {
 	mergerGame.updateDialog();
 });
 
-FoEproxy.addHandler('TimedTasksService', 'all', (data, postData) => {
+FH.proxy.addHandler('TimedTasksService', 'all', (data, postData) => {
 	if (!["anniversary_event", "care_event"].includes(postData[0].requestData[0])) return;
 	if (['getOverview','claimReward'].includes(data.requestMethod)) {
 		data.responseData.slots.forEach(slot => {
@@ -191,7 +191,7 @@ let mergerGame = {
 		useAverage: 0,
 		audibleTaskWarning: true,
 		opticalTaskWarning: false
-	}, JSON.parse(localStorage.getItem("MergerGameSettings") || '{}')),
+	}, JSON.parse(FH.Storage.getItem("MergerGameSettings") || '{}')),
 	eventData:{
 		anniversary: {
 			progress:"/shared/seasonalevents/league/league_anniversary_icon_progress.png",
@@ -264,7 +264,7 @@ let mergerGame = {
 	},
 	/*
 	checkSave: () => {
-		let x = localStorage.getItem("mergerGameState");
+		let x = FH.Storage.getItem("mergerGameState");
 		if (!x) return;
 		let oldState=JSON.parse(x);
 		let oldTable=JSON.stringify(oldState.table);
@@ -280,7 +280,7 @@ let mergerGame = {
 	},
 	
 	saveState:() => {
-		localStorage.setItem("mergerGameState",JSON.stringify(mergerGame.state))
+		FH.Storage.setItem("mergerGameState",JSON.stringify(mergerGame.state))
 	},*/
 
 	keySum:() => {
@@ -477,7 +477,7 @@ let mergerGame = {
 		mergerGame.settings["opticalTaskWarning"] = $('#opticalTaskWarning')[0].checked;
 		mergerGame.settings["audibleTaskWarning"] = $('#audibleTaskWarning')[0].checked;
 
-		localStorage.setItem('MergerGameSettings', JSON.stringify(mergerGame.settings));
+		FH.Storage.setItem('MergerGameSettings', JSON.stringify(mergerGame.settings));
         //mergerGame.updateDialog();
     },
 	checkTaskProgress: (warn = true) => {

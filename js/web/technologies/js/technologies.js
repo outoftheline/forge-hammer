@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addMetaHandler('research', (xhr, postData) => {
+FH.proxy.addMetaHandler('research', (xhr, postData) => {
 	Technologies.AllTechnologies = JSON.parse(xhr.responseText);
 	//$('#technologies-Btn').removeClass('hud-btn-red');
 	//$('#technologies-Btn-closed').remove();
@@ -13,11 +13,11 @@ FoEproxy.addMetaHandler('research', (xhr, postData) => {
     //}
 });
 
-FoEproxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
 	Technologies.UnlockedTechnologies = data.responseData;
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
 	let era = data.responseData.technology.era;
     if (Technologies.Eras[era] > CurrentEraID) {
         CurrentEraID = Technologies.EraNames[era];
@@ -25,7 +25,7 @@ FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -54,7 +54,7 @@ FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -216,9 +216,7 @@ let Technologies = {
     },
 
 
-	/**
-	 * Zeigt
-	 */
+
     Show: ()=> {
 		if ($('#technologies').length === 0) {
 
@@ -247,7 +245,7 @@ let Technologies = {
 
             Technologies.IgnorePrevEra = v;
 
-            localStorage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
+            FH.Storage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
 
             Technologies.CalcBody();
         });
@@ -258,7 +256,7 @@ let Technologies = {
 
             Technologies.IgnoreCurrentEraOptional = v;
 
-            localStorage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
+            FH.Storage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
 
             Technologies.CalcBody();
         });
@@ -278,20 +276,14 @@ let Technologies = {
     },
 
 
-	/**
-	 *
-	 */
     BuildBox: () => {
-        Technologies.IgnorePrevEra = (localStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
-        Technologies.IgnoreCurrentEraOptional = (localStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
+        Technologies.IgnorePrevEra = (FH.Storage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
+        Technologies.IgnoreCurrentEraOptional = (FH.Storage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
 
         Technologies.CalcBody();
     },
 
 
-	/**
-	 *
-	 */
     CalcBody: ()=> {
         let h = [],
             TechDict = [];
@@ -302,11 +294,10 @@ let Technologies = {
         }
 
         // Look up researched tech
-        for (let i = 0; i < Technologies.UnlockedTechnologies['unlockedTechnologies'].length; i++) {
-            let TechName = Technologies.UnlockedTechnologies['unlockedTechnologies'][i];
-            let Index = TechDict[TechName];
-            Technologies.AllTechnologies[Index]['isResearched'] = true;
-            Technologies.AllTechnologies[Index]['currentSP'] = Technologies.AllTechnologies[Index]['maxSP'];
+        for (let node of Technologies.UnlockedTechnologies.unlockedNodes) {
+            if (!TechDict[node]) continue;
+            Technologies.AllTechnologies[TechDict[node]].isResearched = true;
+            Technologies.AllTechnologies[TechDict[node]]['currentSP'] = Technologies.AllTechnologies[TechDict[node]]['maxSP'];
         }
 
         // Teilweise erforscht
@@ -323,6 +314,8 @@ let Technologies = {
             let Tech = Technologies.AllTechnologies[i];
             if (Tech['currentSP'] === undefined)
             	Tech['currentSP'] = 0;
+
+            //console.log(Tech.isResearched, Tech.id)
 
             if (!Tech['isResearched'] && !Tech['isTeaser']) {
                 let EraID = Technologies.Eras[Tech['era']];
@@ -353,19 +346,26 @@ let Technologies = {
         let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, CurrentEraID),
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
-        h.push('<div class="dark-bg" style="margin-bottom: 3px">');
-	        h.push('<div class="techno-head">');
-				h.push('<button class="btn btn-switchage" data-value="' + PreviousEraID + '">' + i18n('Eras.'+PreviousEraID) + '</button>');
-				h.push('<div class="text-center"><strong>' + i18n('Eras.'+Technologies.SelectedEraID) + '</strong></div>');
-				h.push('<button class="btn btn-switchage" data-value="' + NextEraID + '">' + i18n('Eras.'+NextEraID) + '</button>');
-	        h.push('</div>');
-	        h.push('<div class="text-small">');
-            h.push('<input id="IgnorePrevEra" class="ignoreprevera game-cursor" ' + (Technologies.IgnorePrevEra ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnorePrevEra') + '<br>');
-            h.push('<input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ' + (Technologies.IgnoreCurrentEraOptional ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnoreCurrentEraOptional') + '<br>');
-        	h.push('</div>');
-        h.push('</div>');
+        h.push(`<div class="dark-bg p5" style="margin-bottom: 3px">
+                    <div class="text-center"><strong>${i18n('Eras.'+Technologies.SelectedEraID)}</strong></div>
+                    <div class="flex between">
+                        <div>`);
+                        if (PreviousEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>`);
 
-        h.push('<table class="foe-table exportable">');
+                        h.push(`</div><div>`);
+
+                        if (NextEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${NextEraID}">${i18n('Eras.'+NextEraID)}</button>`);
+                        h.push(`</div>
+                    </div>
+                    <div class="text-small">
+                        <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>
+                        <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                    </div>
+                </div>
+            
+            <table class="foe-table exportable">`);
 
         h.push('<thead class="sticky">' +
             '<tr>' +
@@ -435,7 +435,7 @@ let Technologies = {
         }
         else {
             h.push('<tr>');
-            	h.push('<td colspan="5" class="text-center">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
+            	h.push('<td colspan="5" class="text-center" style="font-size:110%;height:200px;">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
             h.push('</tr>');
         }
         h.push('</table');
@@ -443,13 +443,15 @@ let Technologies = {
         $('#technologiesBody').html(h.join(''));
     },
 
-    /**
-    *
-    */
+
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+        h.push(`<p class="text-left">${i18n('Boxes.General.Export')}: 
+        <span class="btn-group">
+        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
+        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>
+        </span>
+        </p>`);
 
         $('#technologiesSettingsBox').html(h.join(''));
     },

@@ -5,14 +5,14 @@
 */
 
 // Guild rank in GEX
-FoEproxy.addHandler('ChampionshipService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('ChampionshipService', 'getOverview', (data, postData) => {
 	if (data && data.responseData) {
 		GexStat.UpdateData('championship', data.responseData);
 	}
 });
 
 // GEX member statistic
-FoEproxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
 	// Inno sends response data two times... so prevent double processing with ResponseBlockTime
 	if (data && data.responseData && (+MainParser.getCurrentDate() - GexStat.ResponseBlockTime) > 2000) {
 		GexStat.ResponseBlockTime = +MainParser.getCurrentDate();
@@ -21,7 +21,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getContributionList', (data, post
 	}
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	let Data = data.responseData;
 	if (Data !== undefined) {
 		if (data.responseData['state'] !== 'inactive') {
@@ -743,7 +743,7 @@ let GexStat = {
 		// if nothing is selected, set series to default
 		if (!chartSeries.length) { chartSeries.push('encounters', 'member', 'participants', 'rank') }
 
-		localStorage.setItem('GexStatSettings', JSON.stringify(GexStat.Settings));
+		FH.Storage.setItem('GexStatSettings', JSON.stringify(GexStat.Settings));
 
 		$(`#GexStatSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();
@@ -758,7 +758,7 @@ let GexStat = {
 
 	InitSettings: () => {
 
-		let Settings = JSON.parse(localStorage.getItem('GexStatSettings'));
+		let Settings = JSON.parse(FH.Storage.getItem('GexStatSettings'));
 
 		if (!Settings) {
 			return;
@@ -954,39 +954,39 @@ let GexStat = {
 	},
 }
 
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	GExAttempts.setCount(ResourceStock.guild_expedition_attempt || 0)
 });
 
-FoEproxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
 	GExAttempts.setNext(data.responseData.resources.guild_expedition_attempt)
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	if (data.responseData) GExAttempts.updateState(data.responseData)
 });
 
-FoEproxy.addHandler('GuildExpeditionNotificationService', 'GuildExpeditionStateNotification', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionNotificationService', 'GuildExpeditionStateNotification', (data, postData) => {
 	if (data.responseData) GExAttempts.updateState(data.responseData)
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
 	for (let x of data.responseData) {
 		if (!x.currentEntityId) continue;
 		GExAttempts.state.GEprogress = x.currentEntityId;
-		localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+		FH.Storage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 		GExAttempts.refreshGUI()
 	}
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
 	if (data.responseData) GExAttempts.updateState(data.responseData)
 });
 
 let GExAttempts = {
 	count:0,
 	next:null,
-	state: JSON.parse(localStorage.getItem('GEx.state'))||{
+	state: JSON.parse(FH.Storage.getItem('GEx.state'))||{
 		GEprogress:0,
 		active:true,
 		deactivationTime:null,
@@ -1014,7 +1014,7 @@ let GExAttempts = {
 				GExAttempts.state.deactivationTime = null
 				GExAttempts.deactivationTimer = null
 				GExAttempts.state.GEprogress = 0
-				localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+				FH.Storage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
 			}, (GExAttempts.state.deactivationTime-GameTime.get()) * 1000);
 		}
@@ -1026,7 +1026,7 @@ let GExAttempts = {
 				GExAttempts.state.deactivationTime = GExAttempts.state.activationTime + 604800
 				GExAttempts.state.activationTime = null
 				GExAttempts.activationTimer = null
-				localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+				FH.Storage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
 			}, (GExAttempts.state.activationTime-GameTime.get()) * 1000);
 		}
@@ -1076,7 +1076,7 @@ let GExAttempts = {
 			GExAttempts.state.GEprogress = 0
 		}
 
-		localStorage.setItem('GEx.state', JSON.stringify(GExAttempts.state))
+		FH.Storage.setItem('GEx.state', JSON.stringify(GExAttempts.state))
 		GExAttempts.refreshGUI()
 
 	}
@@ -1084,7 +1084,7 @@ let GExAttempts = {
 
 let GexStockWarning = {
 	check: (stock,costs) => {
-		let min = JSON.parse(localStorage.getItem('GexStockWarningMin')||"100");
+		let min = JSON.parse(FH.Storage.getItem('GexStockWarningMin')||"100");
 		if (min == 100) return
 		let parts = []
 		for (let [res,amount] of Object.entries(costs)) {
@@ -1125,6 +1125,6 @@ let GexStockWarning = {
 
 	}
 }
-FoEproxy.addHandler("GuildExpeditionService","getUnlockCosts",(data,postData)=>{
+FH.proxy.addHandler("GuildExpeditionService","getUnlockCosts",(data,postData)=>{
 	GexStockWarning.check (data.responseData.treasuryResources.resources,data.responseData.unlockCosts.resources)
 })

@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('CardGameService', 'all', (data, postData) => {
+FH.proxy.addHandler('CardGameService', 'all', (data, postData) => {
 	
 	if(!Settings.GetSetting('ShowEventChest')){
 		return;
@@ -147,11 +147,11 @@ FoEproxy.addHandler('CardGameService', 'all', (data, postData) => {
 });
 
 
-FoEproxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
+FH.proxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
 	if (["history_event"].includes(data.responseData.context)) cardGame.context = data.responseData.context;
 });
 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 	if(data.responseData.context != cardGame.context) return;
 	for (let r of data.responseData.reward.rewards) {
 		if (Object.keys(cardGame.rewardcount).includes(r.iconAssetName)) cardGame.rewardcount[r.iconAssetName] += r.amount;

@@ -5,7 +5,7 @@
 */
 
 // leveled alien GB
-FoEproxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
+FH.proxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
 	if (!MainParser.CurrentGB.Entity || !MainParser.CurrentGB.Rankings) return; // Noch kein LG offen
 	if (data.responseData['type'] !== 'great_building_contribution') return; // Nur LG Events
 	if (!data.responseData['other_player']) return; // Nur fremde LGs
@@ -25,16 +25,16 @@ FoEproxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
 	}
 });
 
-FoEproxy.addHandler("GreatBuildingsService","getConstruction", (data,postData) => {
-	if ($('#OwnPartBox').length === 0 && localStorage.getItem('CalcAutoOpen') == 'true' && postData[0].requestData[1] !== ExtPlayerID) {
+FH.proxy.addHandler("GreatBuildingsService","getConstruction", (data,postData) => {
+	if ($('#OwnPartBox').length === 0 && FH.Storage.getItem('CalcAutoOpen') == 'true' && postData[0].requestData[1] !== ExtPlayerID) {
 		Parts.View = 'calculator';
 		Parts.Show();
 	}
-	if ($('#OwnPartBox').length === 0 && localStorage.getItem('OwnPartAutoOpen') == 'true') 
+	if ($('#OwnPartBox').length === 0 && FH.Storage.getItem('OwnPartAutoOpen') == 'true') 
 		Parts.Show();
 });
 
-FoEproxy.addHandler("all","all", (data,postData) => {
+FH.proxy.addHandler("all","all", (data,postData) => {
 	if (!Parts.allowCopyPlaceSetting) return;
 	if (["GreatBuildingsService.unlockLevel","GreatBuildingsService.getConstruction"].includes(data.requestClass + "." + data.requestMethod)) {
 		Parts.allowCopyPlace = true;
@@ -63,7 +63,7 @@ FoEproxy.addHandler("all","all", (data,postData) => {
 	}
 });
 
-FoEproxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if ($('#OwnPartBox').length > 0) {
 		Parts.CalcBody();
 	}
@@ -142,10 +142,10 @@ let Parts = {
 
 	Show: (view = '') => {
 		if ($('#OwnPartBox').length === 0) {
-			/*let spk = localStorage.getItem('PartsTone');
+			/*let spk = FH.Storage.getItem('PartsTone');
 
 			if (spk === null) {
-				localStorage.setItem('PartsTone', 'deactivated');
+				FH.Storage.setItem('PartsTone', 'deactivated');
 				Parts.PlayInfoSound = false;
 			}
 			else {
@@ -170,7 +170,7 @@ let Parts = {
 			/*$('#OwnPartBox').on('click', '#PartsTone', function () {
 				let disabled = $(this).hasClass('deactivated');
 
-				localStorage.setItem('PartsTone', (disabled ? '' : 'deactivated'));
+				FH.Storage.setItem('PartsTone', (disabled ? '' : 'deactivated'));
 				Parts.PlayInfoSound = !!disabled;
 
 				if (disabled === true) {
@@ -210,7 +210,7 @@ let Parts = {
 				});
 
 				Parts.ArcPercents = ArcPercents;
-				localStorage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(ArcPercents));
+				FH.Storage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(ArcPercents));
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -234,7 +234,7 @@ let Parts = {
 					$('.arc-percent-input').eq(i).val(ArkBonus);
 				}
 
-				localStorage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(Parts.ArcPercents));
+				FH.Storage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(Parts.ArcPercents));
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -294,7 +294,7 @@ let Parts = {
 				let PlayerName = $('#player-name').val();
 
 				Parts.CopyOwnPlayerName = PlayerName;
-				localStorage.setItem(Parts.GetStorageKey('CopyOwnPlayerName', null), PlayerName);
+				FH.Storage.setItem(Parts.GetStorageKey('CopyOwnPlayerName', null), PlayerName);
 
 				Parts.CalcBackgroundBody();
 			});
@@ -303,7 +303,7 @@ let Parts = {
 				let BuildingName = $('#build-name').val();
 
 				Parts.CopyBuildingName = BuildingName;
-				localStorage.setItem(Parts.GetStorageKey('CopyGBName', MainParser.CurrentGB.Entity['cityentity_id']), BuildingName);
+				FH.Storage.setItem(Parts.GetStorageKey('CopyGBName', MainParser.CurrentGB.Entity['cityentity_id']), BuildingName);
 
 				Parts.CalcBackgroundBody();
 			});
@@ -350,47 +350,47 @@ let Parts = {
 					if (OptionsName === 'danger') {
 						Parts.CopySettings.includeDanger = !Parts.CopySettings.includeDanger;
 						StorageKey = Parts.GetStorageKey('CopyIncludeDanger', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeDanger);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeDanger);
 					}
 					else if (OptionsName === 'player') {
 						Parts.CopySettings.includePlayer = !Parts.CopySettings.includePlayer;
 						StorageKey = Parts.GetStorageKey('CopyIncludePlayer', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includePlayer);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includePlayer);
 					}
 					else if (OptionsName === 'gb') {
 						Parts.CopySettings.includeGB = !Parts.CopySettings.includeGB;
 						StorageKey = Parts.GetStorageKey('CopyIncludeGB', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeGB);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeGB);
 					}
 					else if (OptionsName === 'level') {
 						Parts.CopySettings.includeLevel = !Parts.CopySettings.includeLevel;
 						StorageKey = Parts.GetStorageKey('CopyIncludeLevel', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeLevel);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeLevel);
 					}
 					else if (OptionsName === 'fp') {
 						Parts.CopySettings.includeFP = !Parts.CopySettings.includeFP;
 						StorageKey = Parts.GetStorageKey('CopyIncludeFP', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeFP);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeFP);
 					}
 					else if (OptionsName === 'descending') {
 						Parts.CopySettings.descending = !Parts.CopySettings.descending;
 						StorageKey = Parts.GetStorageKey('CopyDescending', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.descending);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.descending);
 					}
 					else if (OptionsName === 'levelup') {
 						Parts.CopySettings.includeLevelString = !Parts.CopySettings.includeLevelString;
 						StorageKey = Parts.GetStorageKey('CopyIncludeLevelString', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeLevelString);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeLevelString);
 					}
 					else if (OptionsName === 'ownpart') {
 						Parts.CopySettings.includeOwnPart = !Parts.CopySettings.includeOwnPart;
 						StorageKey = Parts.GetStorageKey('CopyIncludeOwnPart', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.includeOwnPart);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeOwnPart);
 					}
 					else if (OptionsName === 'prep') {
 						Parts.CopyPreP = !Parts.CopyPreP;
 						StorageKey = Parts.GetStorageKey('CopyPreP', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopyPreP);
+						FH.Storage.setItem(StorageKey, Parts.CopyPreP);
 					}
 				}
 
@@ -405,12 +405,12 @@ let Parts = {
 					if (OptionsName === 'danger-prefix') {
 						Parts.CopySettings.dangerPrefix = $(this).val();
 						StorageKey = Parts.GetStorageKey('CopyDangerPrefix', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.dangerPrefix);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.dangerPrefix);
 					}
 					else if (OptionsName === 'danger-suffix') {
 						Parts.CopySettings.dangerSuffix = $(this).val();
 						StorageKey = Parts.GetStorageKey('CopyDangerSuffix', (Parts.CopyFormatPerGB ? MainParser.CurrentGB.Entity['cityentity_id'] : null));
-						localStorage.setItem(StorageKey, Parts.CopySettings.dangerSuffix);
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.dangerSuffix);
 					}
 				}
 
@@ -421,14 +421,14 @@ let Parts = {
 				Calculator.ForderBonus = parseFloat($(this).data('value'));
 				$('#costFactor').val(Calculator.ForderBonus);
 				let StorageKey = (Calculator.ForderBonusPerConversation && MainParser.OpenConversation ? 'CalculatorForderBonus_' + MainParser.OpenConversation.id : 'CalculatorForderBonus');
-				localStorage.setItem(StorageKey, Calculator.ForderBonus);
+				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
 				Calculator.Show();
 			});
 
 			$('#OwnPartBox').on('blur', '#costFactor', function () {
 				Calculator.ForderBonus = parseFloat($('#costFactor').val());
 				let StorageKey = (Calculator.ForderBonusPerConversation && MainParser.OpenConversation ? 'CalculatorForderBonus_' + MainParser.OpenConversation.id : 'CalculatorForderBonus');
-				localStorage.setItem(StorageKey, Calculator.ForderBonus);
+				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
 				Calculator.Show();
 			});
 
@@ -456,7 +456,7 @@ let Parts = {
 			$('#OwnPartBox .window-viewswitch').addClass('inactive');
 
 		// load other calculator if selected
-		let useThisCalculator = JSON.parse(localStorage.getItem('ShowOwnPartOnAllGBs'));
+		let useThisCalculator = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs'));
 		if ((!useThisCalculator && MainParser.CurrentGB.Entity.player_id !== ExtPlayerID && !(Parts.View === 'partcalc')) 
 			|| (Parts.View === 'calculator' && MainParser.CurrentGB.Entity.player_id !== ExtPlayerID)) {
 			Calculator.Show();
@@ -485,10 +485,10 @@ let Parts = {
 
 		// Restore Default settings
 		if (Parts.FirstCycle) {
-			let SavedArcPercents = localStorage.getItem(Parts.GetStorageKey('ArcPercents', null));
+			let SavedArcPercents = FH.Storage.getItem(Parts.GetStorageKey('ArcPercents', null));
 			if (SavedArcPercents !== null) Parts.ArcPercents = JSON.parse(SavedArcPercents);
 
-			let SavedCopyOwnPlayerName = localStorage.getItem(Parts.GetStorageKey('CopyOwnPlayerName', null));
+			let SavedCopyOwnPlayerName = FH.Storage.getItem(Parts.GetStorageKey('CopyOwnPlayerName', null));
 			if (SavedCopyOwnPlayerName !== null) {
 				Parts.CopyOwnPlayerName = SavedCopyOwnPlayerName
 			}
@@ -496,36 +496,36 @@ let Parts = {
 				Parts.CopyOwnPlayerName = ExtPlayerName;
 			}
 
-			Parts.CopyFormatPerGB = (localStorage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true');
+			Parts.CopyFormatPerGB = (FH.Storage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true');
 			if (!Parts.CopyFormatPerGB) {
-				let SavedCopyIncludeDanger = localStorage.getItem(Parts.GetStorageKey('CopyIncludeDanger', null));
+				let SavedCopyIncludeDanger = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeDanger', null));
 				if (SavedCopyIncludeDanger !== null) Parts.CopySettings.includeDanger = (SavedCopyIncludeDanger === 'true');
 
-				let SavedCopyDangerPrefix = localStorage.getItem(Parts.GetStorageKey('CopyDangerPrefix', null));
+				let SavedCopyDangerPrefix = FH.Storage.getItem(Parts.GetStorageKey('CopyDangerPrefix', null));
 				if (SavedCopyDangerPrefix !== null) Parts.CopySettings.dangerPrefix = SavedCopyDangerPrefix;
 
-				let SavedCopyDangerSuffix = localStorage.getItem(Parts.GetStorageKey('CopyDangerSuffix', null));
+				let SavedCopyDangerSuffix = FH.Storage.getItem(Parts.GetStorageKey('CopyDangerSuffix', null));
 				if (SavedCopyDangerSuffix !== null) Parts.CopySettings.dangerSuffix = SavedCopyDangerSuffix;
 
-				let SavedCopyIncludePlayer = localStorage.getItem(Parts.GetStorageKey('CopyIncludePlayer', null));
+				let SavedCopyIncludePlayer = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludePlayer', null));
 				if (SavedCopyIncludePlayer !== null) Parts.CopySettings.includePlayer = (SavedCopyIncludePlayer === 'true');
 
-				let SavedCopyIncludeGB = localStorage.getItem(Parts.GetStorageKey('CopyIncludeGB', null));
+				let SavedCopyIncludeGB = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeGB', null));
 				if (SavedCopyIncludeGB !== null) Parts.CopySettings.includeGB = (SavedCopyIncludeGB === 'true');
 
-				let SavedCopyIncludeLevel = localStorage.getItem(Parts.GetStorageKey('CopyIncludeLevel', null));
+				let SavedCopyIncludeLevel = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeLevel', null));
 				if (SavedCopyIncludeLevel !== null) Parts.CopySettings.includeLevel = (SavedCopyIncludeLevel === 'true');
 
-				let SavedCopyIncludeFP = localStorage.getItem(Parts.GetStorageKey('CopyIncludeFP', null));
+				let SavedCopyIncludeFP = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeFP', null));
 				if (SavedCopyIncludeFP !== null) Parts.CopySettings.includeFP = (SavedCopyIncludeFP === 'true');
 
-				let SavedCopyIncludeOwnPart = localStorage.getItem(Parts.GetStorageKey('CopyIncludeOwnPart', null));
+				let SavedCopyIncludeOwnPart = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeOwnPart', null));
 				if (SavedCopyIncludeOwnPart !== null) Parts.CopySettings.includeOwnPart = (SavedCopyIncludeOwnPart === 'true');
 
-				let SavedCopyPreP = localStorage.getItem(Parts.GetStorageKey('CopyPreP', null));
+				let SavedCopyPreP = FH.Storage.getItem(Parts.GetStorageKey('CopyPreP', null));
 				if (SavedCopyPreP !== null) Parts.CopyPreP = (SavedCopyPreP === 'true');
 
-				let SavedCopyDescending = localStorage.getItem(Parts.GetStorageKey('CopyDescending', null));
+				let SavedCopyDescending = FH.Storage.getItem(Parts.GetStorageKey('CopyDescending', null));
 				if (SavedCopyDescending !== null) Parts.CopySettings.descending = (SavedCopyDescending === 'true');
 			}
 		}
@@ -790,7 +790,7 @@ let Parts = {
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
 		let investmentSteps = [80, 90, 100, MainParser.ArkBonus],
-			customButtons = localStorage.getItem('CustomPartCalcButtons');
+			customButtons = FH.Storage.getItem('CustomPartCalcButtons');
 
 		// custom buttons available
 		if(customButtons) {
@@ -814,9 +814,9 @@ let Parts = {
 		h.push('</span>');
 		h.push('</div>');
 		
-		let medalsEnabled = (localStorage.getItem('OwnPartShowMedals') ?? 'true') === 'true';
-		let printsEnabled = (localStorage.getItem('OwnPartShowBP') ?? 'true') === 'true';
-		let minView = (localStorage.getItem('OwnPartMinView') ?? 'false') === 'true';
+		let medalsEnabled = (FH.Storage.getItem('OwnPartShowMedals') ?? 'true') === 'true';
+		let printsEnabled = (FH.Storage.getItem('OwnPartShowBP') ?? 'true') === 'true';
+		let minView = (FH.Storage.getItem('OwnPartMinView') ?? 'false') === 'true';
 
 		h.push(`<table id="OwnPartTable" class="foe-table" style="margin-top:2px">
 			<thead>
@@ -832,7 +832,7 @@ let Parts = {
 			</thead>
 			
 			<tbody>`);
-		let IncludeStart = localStorage.getItem('OwnPartIncludeStart') != 'false';
+		let IncludeStart = FH.Storage.getItem('OwnPartIncludeStart') != 'false';
 		let opt = (platz, gesamt)=>{
 			let ret = `<strong class="${PlayerID==ExtPlayerID ? "copy-fp clickable":""}" data-copy="${platz}">${HTML.Format(platz)}</strong>`;
 			if (gesamt > platz) {
@@ -1062,7 +1062,7 @@ let Parts = {
 		let h = [],
 			$OwnPartBox = $('#OwnPartBox'),
 			EntityID = MainParser.CurrentGB.Entity['cityentity_id'];
-		let SavedBuildingName = localStorage.getItem(Parts.GetStorageKey('CopyGBName', MainParser.CurrentGB.Entity['cityentity_id']));
+		let SavedBuildingName = FH.Storage.getItem(Parts.GetStorageKey('CopyGBName', MainParser.CurrentGB.Entity['cityentity_id']));
 		$OwnPartBox.find('.OwnPartBoxBackgroundBody').remove();
 
 		let isOpen = false;
@@ -1076,9 +1076,9 @@ let Parts = {
 			Parts.CopyBuildingName = MainParser.CityEntities[EntityID]['name'];
 		}
 
-		if (localStorage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true') {
+		if (FH.Storage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true') {
 			let gbID = MainParser.CurrentGB.Entity['cityentity_id'];
-			let ls = key => localStorage.getItem(Parts.GetStorageKey(key, gbID));
+			let ls = key => FH.Storage.getItem(Parts.GetStorageKey(key, gbID));
 
 			Parts.CopySettings.includeDanger = (ls('CopyIncludeDanger') ?? 'false') === 'true';
 			Parts.CopySettings.includePlayer = (ls('CopyIncludePlayer') ?? 'true') === 'true';
@@ -1549,7 +1549,7 @@ let Parts = {
 
 	ShowCalculatorSettings: ()=> {
 		// load other calculators settings if selected
-		let useThisCalculator = JSON.parse(localStorage.getItem('ShowOwnPartOnAllGBs'))
+		let useThisCalculator = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs'))
 		if (!useThisCalculator && MainParser.CurrentGB.Entity.player_id !== ExtPlayerID) {
 			Calculator.ShowCalculatorSettings();
 			return;	
@@ -1558,13 +1558,13 @@ let Parts = {
 		let c = [],
 			buttons,
 			defaults = Parts.DefaultButtons,
-			sB = localStorage.getItem('CustomPartCalcButtons'),
-			allGB = localStorage.getItem('ShowOwnPartOnAllGBs') || 'false',
-			showMedals = localStorage.getItem('OwnPartShowMedals') || 'true',
-			showPrints = localStorage.getItem('OwnPartShowBP') || 'true',
-			minView = localStorage.getItem('OwnPartMinView') || 'false',
-			autoOpen = localStorage.getItem('OwnPartAutoOpen') || 'true',
-			includeStart = localStorage.getItem('OwnPartIncludeStart') || 'true',
+			sB = FH.Storage.getItem('CustomPartCalcButtons'),
+			allGB = FH.Storage.getItem('ShowOwnPartOnAllGBs') || 'false',
+			showMedals = FH.Storage.getItem('OwnPartShowMedals') || 'true',
+			showPrints = FH.Storage.getItem('OwnPartShowBP') || 'true',
+			minView = FH.Storage.getItem('OwnPartMinView') || 'false',
+			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'true',
+			includeStart = FH.Storage.getItem('OwnPartIncludeStart') || 'true',
 			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${i18n('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
 		
 		if(sB) {
@@ -1633,40 +1633,40 @@ let Parts = {
 			}
 		});
 
-		localStorage.setItem('CustomPartCalcButtons', JSON.stringify(values));
+		FH.Storage.setItem('CustomPartCalcButtons', JSON.stringify(values));
 
 		let OldCopyFormatPerGB = Parts.CopyFormatPerGB;
 		Parts.CopyFormatPerGB = $('.copyformatpergb').prop('checked');
-		localStorage.setItem(Parts.GetStorageKey('CopyFormatPerGB', null), Parts.CopyFormatPerGB);
+		FH.Storage.setItem(Parts.GetStorageKey('CopyFormatPerGB', null), Parts.CopyFormatPerGB);
 
 		let openforeignGB = true;
 		if ($("#openonaliengb").is(':not(:checked)'))
 			openforeignGB = false;
-		localStorage.setItem('ShowOwnPartOnAllGBs',openforeignGB);
+		FH.Storage.setItem('ShowOwnPartOnAllGBs',openforeignGB);
 
 		let showMedals = true;
 		if ($("#showmedals").is(':not(:checked)'))
 			showMedals = false;
-		localStorage.setItem('OwnPartShowMedals',showMedals);
+		FH.Storage.setItem('OwnPartShowMedals',showMedals);
 
 		let showPrints = true;
 		if ($("#showprints").is(':not(:checked)'))
 			showPrints = false;
-		localStorage.setItem('OwnPartShowBP',showPrints);
+		FH.Storage.setItem('OwnPartShowBP',showPrints);
 
 		let minView = true;
 		if ($("#minview").is(':not(:checked)'))
 			minView = false;
-		localStorage.setItem('OwnPartMinView',minView);
+		FH.Storage.setItem('OwnPartMinView',minView);
 		
 		let autoOpen = true;
 		if ($("#autoOpen").is(':not(:checked)'))
 			autoOpen = false;
-		localStorage.setItem('OwnPartAutoOpen',autoOpen);
+		FH.Storage.setItem('OwnPartAutoOpen',autoOpen);
 		let includeStart = true;
 		if ($("#includeStart").is(':not(:checked)'))
 			includeStart = false;
-		localStorage.setItem('OwnPartIncludeStart',includeStart);
+		FH.Storage.setItem('OwnPartIncludeStart',includeStart);
 
 		$(`#OwnPartBoxSettingsBox`).fadeToggle('fast', function(){
 			$(this).remove();

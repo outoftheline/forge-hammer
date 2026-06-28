@@ -130,8 +130,8 @@ helper.permutations = (()=>{
 })();
 
 helper.sounds = {
-	ping: new Audio(extUrl + 'vendor/sounds/ping.mp3'),
-	message: new Audio(extUrl + 'vendor/sounds/'+(localStorage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
+	ping: new Audio(FH.extUrl + 'vendor/sounds/ping.mp3'),
+	message: new Audio(FH.extUrl + 'vendor/sounds/'+(FH.Storage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
 	play: (sound) => {
 		if (Settings.GetSetting('EnableSound')) helper.sounds[sound].play();
 	},
@@ -178,7 +178,7 @@ helper.promisedLoadCode = (src) => {
  */
 helper.loadChartJS = () => {
 	async function load() {
-		const baseUrl = extUrl + 'vendor/';
+		const baseUrl = FH.extUrl + 'vendor/';
 		const sources = [
 			'chartjs/chart.umd.min.js',
 			'chartjs/chartjs-adapter-moment.min.js',
@@ -225,13 +225,13 @@ let HTML = {
 		let title = $('<span />').addClass('title');
 		
 		if (args['onlyTitle'] !== true) {
-			title = $('<span />').addClass('title').html((extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
+			title = $('<span />').addClass('title').html((FH.BaseData.extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
 		}
 		let	buttons = $('<div />').attr('id', args['id'] + 'Buttons').addClass('box-buttons'),
 			head = $('<div />').attr('id', args['id'] + 'Header').attr('class', 'window-head').append(title),
 			body = $('<div />').attr('id', args['id'] + 'Body').attr('class', 'window-body'),
 			div = $('<div />').attr('id', args['id']).attr('class', 'window-box open').append(head).append(body).hide(),
-			cords = localStorage.getItem(args['id'] + 'Cords');
+			cords = FH.Storage.getItem(args['id'] + 'Cords');
 		
 		// close button
 		let close = $('<span />').attr('id', args['id'] + 'close').addClass('window-close');
@@ -275,7 +275,7 @@ let HTML = {
 			let spk = $('<span />').addClass('window-speaker').attr('id', args['speaker']);
 			buttons.prepend(spk);
 
-			$('#' + args['speaker']).addClass(localStorage.getItem(args['speaker']));
+			$('#' + args['speaker']).addClass(FH.Storage.getItem(args['speaker']));
 		}
 		
 		// Position von beweglichen Fenstern initialisieren und Verhindern, dass Fenster außerhalb plaziert werden
@@ -452,8 +452,8 @@ let HTML = {
 	 * Handle minimizing helper during battle
 	 */
 	MinimizeBeforeBattle: () => {
-		let HideHelperDuringBattle = localStorage.getItem('HideHelperDuringBattle');
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let HideHelperDuringBattle = FH.Storage.getItem('HideHelperDuringBattle');
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 
 		if (HideHelperDuringBattle === 'true' && MenuSetting === 'Box' && $('body').find("#menu_box").hasClass('open')) {
 			HTML.Minimize();
@@ -463,7 +463,7 @@ let HTML = {
 
 
 	MaximizeAfterBattle: () => {
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 		if (MenuSetting == 'Box' && HTML.boxWasMinimizedForBattle) {
 			HTML.Maximize();
 			HTML.boxWasMinimizedForBattle = false;
@@ -514,7 +514,7 @@ let HTML = {
 			$(el).css({"--x":cords[0]+"px","--y":cords[1]+"px"})
 
 			if (save === true) {
-				localStorage.setItem(id + 'Cords', JSON.stringify(cords));
+				FH.Storage.setItem(id + 'Cords', JSON.stringify(cords));
 			}
 		}
 
@@ -540,7 +540,7 @@ let HTML = {
 	Resizeable: (id, keepRatio) => {
 		let box = $('#' + id),
 			grip = $('<div />').addClass('window-grippy'),
-			sizeLS = localStorage.getItem(id + 'Size');
+			sizeLS = FH.Storage.getItem(id + 'Size');
 
 		// Size was defined, set
 		if (sizeLS !== null) {
@@ -589,7 +589,7 @@ let HTML = {
 				
 				let size = w + '|' + h;
 
-				localStorage.setItem(id + 'Size', size);
+				FH.Storage.setItem(id + 'Size', size);
 			}
 		};
 
@@ -670,8 +670,8 @@ let HTML = {
 			return;
 		}
 
-		let url = extUrl + 'js/web/' + modul + '/',
-			cssUrl = url + 'css/' + modul + '.css?v=' + extVersion;
+		let url = FH.extUrl + 'js/web/' + modul + '/',
+			cssUrl = url + 'css/' + modul + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -685,7 +685,7 @@ let HTML = {
 	ChangeSkinCssFile: (filepath) => {
 		$('#hammerskin').remove();
 
-		let cssUrl = extUrl + 'css/' + filepath + '.css?v=' + extVersion;
+		let cssUrl = FH.extUrl + 'css/' + filepath + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -874,8 +874,8 @@ let HTML = {
 			hideAfter: d['hideAfter'],
 			allowToastClose:  d['allowToastClose'],
 			position: Settings.GetSetting('NotificationsPosition', true),
-			extraClass: localStorage.getItem('SelectedMenu') || 'RightBar',
-			stack: localStorage.getItem('NotificationStack') || 4
+			extraClass: FH.Storage.getItem('SelectedMenu') || 'RightBar',
+			stack: FH.Storage.getItem('NotificationStack') || 4
 		});
 	},
 
@@ -888,9 +888,9 @@ let HTML = {
 						<html>
 							<head id="popout-${id}-head">
 								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
-								<link rel="stylesheet" href="${extUrl}css/variables.css">
-								<link rel="stylesheet" href="${extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${extUrl}css/goods.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/variables.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
 							</head>
 							<body id="popout-${id}-body"></body>
 						</html>`;
@@ -1087,7 +1087,7 @@ let HTML = {
 	},
 };
 
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	$('.MapActivityCheck:not(.ActiveOn'+ActiveMap+")").remove();
 	$('.MapActivityHide').hide();
 	$('.MapActivityHide.ActiveOn'+ActiveMap).show();

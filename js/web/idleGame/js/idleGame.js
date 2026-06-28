@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('IdleGameService', 'getState', (data, postData) => {
+FH.proxy.addHandler('IdleGameService', 'getState', (data, postData) => {
 	//Do not show window if deactivated in settings
 	if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperIdle') === undefined ? true : Settings.GetSetting('EventHelperIdle'))) {
 		return;
@@ -82,7 +82,7 @@ FoEproxy.addHandler('IdleGameService', 'getState', (data, postData) => {
 	idleGame.idleGameUpdateDialog();
 });
 
-FoEproxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
+FH.proxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
 	
     if(postData['requestClass'] !== 'IdleGameService')
     	return;
@@ -120,7 +120,7 @@ FoEproxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
     }
 });
 
-FoEproxy.addMetaHandler('idle_game', (data, postData) => {
+FH.proxy.addMetaHandler('idle_game', (data, postData) => {
     idleGame.meta= JSON.parse(data['response']);
 });
 
@@ -177,7 +177,7 @@ let idleGame = {
 	Tasklist: [],
 	Taskprogress:[],
 
-	settings: JSON.parse(localStorage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
+	settings: JSON.parse(FH.Storage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
 
 	Progress: 0,
 	ProgressDegree: 0,
@@ -708,7 +708,7 @@ let idleGame = {
 	},
 
 	saveSettings:() => {
-		localStorage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
+		FH.Storage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
 	},
 
 	StratUndo:() =>{

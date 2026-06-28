@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addRequestHandler('GreatBuildingsService', 'contributeForgePoints', (postData) => {
+FH.proxy.addRequestHandler('GreatBuildingsService', 'contributeForgePoints', (postData) => {
     
     let t = (Settings.GetSetting('doubleFPtimeout') || 0) * 1000;
     
