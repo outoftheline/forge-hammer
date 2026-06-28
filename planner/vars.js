@@ -76,5 +76,8 @@ window.PlannerApp.state = {
         active: false,
         startTile: null,
         previewTiles: []
-    }
+    },
+
+    history: [], // snapshots for undo, max 5
+    future:  []  // snapshots for redo, cleared on new action
 };

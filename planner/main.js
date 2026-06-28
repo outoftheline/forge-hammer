@@ -8,8 +8,9 @@ window.PlannerApp = window.PlannerApp || {};
     // BASE_KEY stores the large, rarely-changing FoE data (CityEntities etc.).
     // It is written only when a fresh clipboard paste arrives via init().
     // LAYOUT_KEY stores only building positions — tiny, written on every mutation.
-    const BASE_KEY   = 'foe_planner_base';
-    const LAYOUT_KEY = 'foe_planner_layout';
+    const BASE_KEY    = 'foe_planner_base';
+    const LAYOUT_KEY  = 'foe_planner_layout';
+    const HISTORY_KEY = 'foe_planner_history';
 
 
 
@@ -94,6 +95,12 @@ window.PlannerApp = window.PlannerApp || {};
         state.mapData  = data.UnlockedAreas;
 
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+
+        // Fresh data — old undo history is no longer meaningful.
+        state.history = [];
+        state.future  = [];
+        localStorage.removeItem(HISTORY_KEY);
+
         try {
             localStorage.setItem(BASE_KEY, JSON.stringify({
                 metaData: slimMetaData(state.metaData),
@@ -225,6 +232,8 @@ window.PlannerApp = window.PlannerApp || {};
                 applyLayout(JSON.parse(rawLayout));
             }
 
+            loadHistory();
+
             app.resizeCanvasToCSSSize();
             app.rebuildGridLayer();
             app.rebuildOccupiedTiles();
@@ -257,6 +266,9 @@ window.PlannerApp = window.PlannerApp || {};
             try {
                 const saved = JSON.parse(e.target.result);
                 deserializeState(saved);
+                // Imported state replaces everything — old history is stale.
+                state.history = [];
+                state.future  = [];
                 try {
                     localStorage.setItem(BASE_KEY, JSON.stringify({
                         metaData: slimMetaData(state.metaData),
@@ -264,6 +276,7 @@ window.PlannerApp = window.PlannerApp || {};
                         mapData:  state.mapData
                     }));
                     localStorage.setItem(LAYOUT_KEY, JSON.stringify(serializeLayout()));
+                    localStorage.removeItem(HISTORY_KEY);
                 } catch (storageErr) {
                     console.warn('Could not update localStorage after import:', storageErr);
                 }
@@ -373,9 +386,107 @@ window.PlannerApp = window.PlannerApp || {};
         app.autoSave();
     }
 
+    // --- Undo / Redo ---
+
+    const HISTORY_LIMIT = 5;
+
+    function captureSnapshot() {
+        return {
+            mapBuildings: state.mapBuildings.map(b => ({
+                metaId: b.meta.id,
+                x: b.data.x,
+                y: b.data.y
+            })),
+            storedBuildings: state.storedBuildings.map(b => ({
+                metaId: b.meta.id,
+                x: b.data.x,
+                y: b.data.y
+            }))
+        };
+    }
+
+    function saveHistory() {
+        try {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify({
+                history: state.history,
+                future:  state.future
+            }));
+        } catch (e) {
+            // History is best-effort — silently ignore if storage is full.
+            console.warn('Could not persist undo/redo history:', e);
+        }
+    }
+
+    function loadHistory() {
+        try {
+            const raw = localStorage.getItem(HISTORY_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            state.history = parsed.history || [];
+            state.future  = parsed.future  || [];
+        } catch (e) {
+            console.warn('Could not restore undo/redo history:', e);
+            state.history = [];
+            state.future  = [];
+        }
+    }
+
+    function pushSnapshot() {
+        state.history.push(captureSnapshot());
+        if (state.history.length > HISTORY_LIMIT) state.history.shift();
+        state.future = [];
+        updateUndoRedoButtons();
+        saveHistory();
+    }
+
+    function applySnapshot(snapshot) {
+        state.mapBuildings    = buildingsFromEntries(snapshot.mapBuildings);
+        state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
+
+        state.activeBuilding    = null;
+        state.placingBuilding   = null;
+        state.dragCopy          = null;
+        state.selectionRect     = null;
+        state.selectedBuildings = [];
+
+        app.rebuildOccupiedTiles();
+        app.redrawMap();
+        app.updateStats();
+        app.showStoredBuildings();
+        autoSave();
+    }
+
+    function undo() {
+        if (!state.history.length) return;
+        state.future.push(captureSnapshot());
+        applySnapshot(state.history.pop());
+        updateUndoRedoButtons();
+        saveHistory();
+    }
+
+    function redo() {
+        if (!state.future.length) return;
+        state.history.push(captureSnapshot());
+        if (state.history.length > HISTORY_LIMIT) state.history.shift();
+        applySnapshot(state.future.pop());
+        updateUndoRedoButtons();
+        saveHistory();
+    }
+
+    function updateUndoRedoButtons() {
+        const undoBtn = document.getElementById('undo');
+        const redoBtn = document.getElementById('redo');
+        if (undoBtn) undoBtn.disabled = state.history.length === 0;
+        if (redoBtn) redoBtn.disabled = state.future.length === 0;
+    }
+
     app.init = init;
     app.saveState = saveState;
     app.autoSave = autoSave;
+    app.pushSnapshot = pushSnapshot;
+    app.undo = undo;
+    app.redo = redo;
+    app.updateUndoRedoButtons = updateUndoRedoButtons;
     app.exportStateToFile = exportStateToFile;
     app.importStateFromFile = importStateFromFile;
     app.rotateLayout = rotateLayout;
@@ -386,5 +497,6 @@ window.PlannerApp = window.PlannerApp || {};
         app.dom.submitWindow.classList.add('hidden');
     }
 
+    app.updateUndoRedoButtons();
     app.bindEvents(init);
 })(window.PlannerApp);

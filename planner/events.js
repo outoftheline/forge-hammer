@@ -108,6 +108,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function storeSelectedBuildings() {
+        app.pushSnapshot();
         for (const building of state.selectedBuildings) {
             storeBuilding(building);
         }
@@ -225,6 +226,8 @@ window.PlannerApp = window.PlannerApp || {};
         const placedMetaId = state.placingBuilding.meta.id;
         const fromMeta = state.placingBuilding._fromMeta === true;
 
+        app.pushSnapshot();
+
         state.placingBuilding.x = state.dragCopy.x;
         state.placingBuilding.y = state.dragCopy.y;
         state.placingBuilding.data.x = state.dragCopy.x / SIZE;
@@ -305,6 +308,8 @@ window.PlannerApp = window.PlannerApp || {};
         const streetMeta = getStreetMeta();
         if (!streetMeta) return;
 
+        app.pushSnapshot();
+
         for (const tile of state.streetPlacement.previewTiles) {
             if (app.isTileOccupiedByNonStreet(tile.x, tile.y)) continue;
 
@@ -364,6 +369,7 @@ window.PlannerApp = window.PlannerApp || {};
 
             if (mode === 'move') {
                 drag.building = state.activeBuilding;
+                app.pushSnapshot();
                 app.removeBuildingFromOccupiedTiles(drag.building);
 
                 state.dragCopy = {
@@ -575,10 +581,29 @@ window.PlannerApp = window.PlannerApp || {};
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
 
+        const undoBtn = document.getElementById('undo');
+        const redoBtn = document.getElementById('redo');
+        if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
+        if (redoBtn) redoBtn.addEventListener('click', () => app.redo());
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
+                e.preventDefault();
+                app.undo();
+            } else if (
+                (e.ctrlKey || e.metaKey) && e.key === 'y' ||
+                (e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z'
+            ) {
+                e.preventDefault();
+                app.redo();
+            }
+        });
+
         const turn90Btn = document.getElementById('turn90');
         if (turn90Btn) turn90Btn.addEventListener('click', () => app.rotateLayout());
 
         dom.storeBuildingsBtn.addEventListener('click', () => {
+            app.pushSnapshot();
             state.storedBuildings = state.storedBuildings.concat(state.mapBuildings);
 
             sortStoredBuildingsByAreaDesc();
@@ -608,6 +633,7 @@ window.PlannerApp = window.PlannerApp || {};
         dom.canvas.addEventListener('mousedown', handleCanvasMouseDownPlace);
 
         dom.removeStreetsBtn.addEventListener('click', () => {
+            app.pushSnapshot();
             state.mapBuildings = state.mapBuildings.filter(x => x.meta.type !== 'street');
             app.rebuildOccupiedTiles();
             app.redrawMap();
