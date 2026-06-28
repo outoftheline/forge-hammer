@@ -156,7 +156,7 @@ let GuildFights = {
 		await GuildFights.db.open();
 
 		// One-time migration from FoeHelperDB_GuildFights_${playerID}
-		if (!localStorage.getItem(migrationKey)) {
+		if (!HammerStorage.getItem(migrationKey)) {
 			try {
 				// Detect version of the old DB 
 				let oldDBVersion = await new Promise((resolve) => {
@@ -172,7 +172,7 @@ let GuildFights = {
 				// there was no DB - indexedDB.open() created a DB
 				if (oldDBVersion === 0) {
 					indexedDB.deleteDatabase(helperDBName);
-					localStorage.setItem(migrationKey, '1');
+					HammerStorage.setItem(migrationKey, '1');
 					return;
 				}
 
@@ -190,7 +190,20 @@ let GuildFights = {
 					});
 				}
 
-				await oldDB.open();
+				if (oldDBVersion === 21) {
+					await oldDB.open();
+					const exportBlob = await oldDB.export({ prettyJson: true });
+					const exportJson = JSON.parse(await exportBlob.text());
+					if (exportJson?.data?.databaseVersion === 21) {
+						exportJson.data.databaseVersion = 1;
+						const fixedBlob = new Blob([JSON.stringify(exportJson, null, 2)], { type: 'application/json' });
+						await oldDB.close();
+						await oldDB.delete();
+						oldDB = await Dexie.import(fixedBlob);
+					}
+				} else {
+					await oldDB.open();
+				}
 
 				let [snapshots, history] = await Promise.all([
 					oldDB.snapshots.toArray(),
@@ -204,10 +217,13 @@ let GuildFights = {
 					GuildFights.db.history.bulkPut(history),
 					GuildFights.db.guildHistory.bulkPut(guildHistory)
 				]);
+				
+
+
 
 				oldDB.close();
 
-				localStorage.setItem(migrationKey, '1');
+				HammerStorage.setItem(migrationKey, '1');
 			} catch (e) {
 				console.warn('Forge Hammer GBG database migration failed:', e);
 			}
