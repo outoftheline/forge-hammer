@@ -150,8 +150,8 @@ let _menu = {
 		let HiddenItems = FH.Storage.getItem('MenuHiddenItems');
 
 		// Beta-Funktionen
-		if (HelperBeta.active) {
-			_menu.Items.unshift(...HelperBeta.menu);
+		if (FH.Beta.active) {
+			_menu.Items.unshift(...FH.Beta.menu);
 		}
 
 		if (StorgedItems !== null) {
@@ -188,8 +188,8 @@ let _menu = {
 
 		// Filter out beta functions
 		_menu.Items = _menu.Items.filter(e => {
-			if (HelperBeta.active) return true;
-			return !HelperBeta.menu.includes(e);
+			if (FH.Beta.active) return true;
+			return !FH.Beta.menu.includes(e);
 		});
 
 		// Filter out duplicates

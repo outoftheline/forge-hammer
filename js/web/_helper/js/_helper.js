@@ -130,8 +130,8 @@ helper.permutations = (()=>{
 })();
 
 helper.sounds = {
-	ping: new Audio(extUrl + 'vendor/sounds/ping.mp3'),
-	message: new Audio(extUrl + 'vendor/sounds/'+(FH.Storage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
+	ping: new Audio(FH.extUrl + 'vendor/sounds/ping.mp3'),
+	message: new Audio(FH.extUrl + 'vendor/sounds/'+(FH.Storage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
 	play: (sound) => {
 		if (Settings.GetSetting('EnableSound')) helper.sounds[sound].play();
 	},
@@ -178,7 +178,7 @@ helper.promisedLoadCode = (src) => {
  */
 helper.loadChartJS = () => {
 	async function load() {
-		const baseUrl = extUrl + 'vendor/';
+		const baseUrl = FH.extUrl + 'vendor/';
 		const sources = [
 			'chartjs/chart.umd.min.js',
 			'chartjs/chartjs-adapter-moment.min.js',
@@ -225,7 +225,7 @@ let HTML = {
 		let title = $('<span />').addClass('title');
 		
 		if (args['onlyTitle'] !== true) {
-			title = $('<span />').addClass('title').html((extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
+			title = $('<span />').addClass('title').html((FH.BaseData.extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
 		}
 		let	buttons = $('<div />').attr('id', args['id'] + 'Buttons').addClass('box-buttons'),
 			head = $('<div />').attr('id', args['id'] + 'Header').attr('class', 'window-head').append(title),
@@ -670,8 +670,8 @@ let HTML = {
 			return;
 		}
 
-		let url = extUrl + 'js/web/' + modul + '/',
-			cssUrl = url + 'css/' + modul + '.css?v=' + extVersion;
+		let url = FH.extUrl + 'js/web/' + modul + '/',
+			cssUrl = url + 'css/' + modul + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -685,7 +685,7 @@ let HTML = {
 	ChangeSkinCssFile: (filepath) => {
 		$('#hammerskin').remove();
 
-		let cssUrl = extUrl + 'css/' + filepath + '.css?v=' + extVersion;
+		let cssUrl = FH.extUrl + 'css/' + filepath + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -888,9 +888,9 @@ let HTML = {
 						<html>
 							<head id="popout-${id}-head">
 								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
-								<link rel="stylesheet" href="${extUrl}css/variables.css">
-								<link rel="stylesheet" href="${extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${extUrl}css/goods.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/variables.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
 							</head>
 							<body id="popout-${id}-body"></body>
 						</html>`;

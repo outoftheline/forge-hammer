@@ -164,7 +164,7 @@ let EventPresents = {
                         }
                         h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${ResourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
                     }
-                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + extUrl + 'images/hud/open-eye.png" alt="">' : '')}
+                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + FH.extUrl + 'images/hud/open-eye.png" alt="">' : '')}
                     </td>`);
                 h.push('</tr>');
             }

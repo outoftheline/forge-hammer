@@ -77,7 +77,7 @@ let Discord = {
 					if (d.type != 'template')
 						h.push(`<button class="btn btn-green btn-slim" role="button" type="button" onclick="Discord.SendEntry(${i})">${i18n('General.Send')}</button>`);
 				
-					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${i18n('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
+					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${i18n('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${FH.extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
 					if (d.type != 'template')
 						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.EntryForm(${i})">${i18n('Boxes.Discord.EditEntry')}</button>`);
 					else

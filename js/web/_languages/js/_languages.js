@@ -205,9 +205,9 @@ let Translation = {
 		let target = $('#TargetLanguage')[0].value;
 		let comparison = $('#ComparisonLanguage')[0].value;
 
-		Translation.targetData = await fetch(extUrl + 'js/web/_languages/json/'+target+'.json').then(res=>res.json()).catch(()=>({}));
-		Translation.referenceData = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
-		let comparisonData = await fetch(extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
+		Translation.targetData = await fetch(FH.extUrl + 'js/web/_languages/json/'+target+'.json').then(res=>res.json()).catch(()=>({}));
+		Translation.referenceData = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
+		let comparisonData = await fetch(FH.extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
 		
 		localData = JSON.parse(FH.Storage.getItem('Translation.Temp') || '{}');	
 		

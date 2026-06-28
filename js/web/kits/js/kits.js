@@ -51,7 +51,7 @@ let Kits = {
 	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link HTML.Box DOM box}.
 	 */
 	init: ()=> {
-		MainParser.loadJSON(extUrl + 'js/web/kits/data/sets.json', (data)=> {
+		MainParser.loadJSON(FH.extUrl + 'js/web/kits/data/sets.json', (data)=> {
 			Kits.KitsjSON = JSON.parse(data);
 			Kits.BuildBox();
 		});

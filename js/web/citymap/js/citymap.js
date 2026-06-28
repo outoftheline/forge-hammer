@@ -1066,7 +1066,7 @@ let CityMap = {
 		for (let building of limitedBuildings) {
 			output.push(`<li class="flex between">
 				<span>
-					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${extUrl}images/hud/open-eye.png"></span> 
+					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${FH.extUrl}images/hud/open-eye.png"></span> 
 					${building.name}
 				</span> 
 				<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>

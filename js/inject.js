@@ -30,7 +30,7 @@ function scriptLoaded (src, base) {
 
 inject();
 
-function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate='') {
+function inject (extUrl = chrome.runtime.getURL('')) {
 	/**
 	 * Loads a JavaScript in the website. The returned promise will be resolved once the code has been loaded.
 	 * @param {string} src the URL to load
@@ -79,7 +79,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		}, {capture: false, once: true, passive: true});
 	});
 	
-	const v = chrome.runtime.getManifest().version + (loadBeta ? '-beta-'+ betaDate:'');
+	const v = chrome.runtime.getManifest().version;
 
 	let   lng = chrome.i18n.getUILanguage();
 	const uLng = localStorage.getItem('Hammer.user-language');
@@ -101,7 +101,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		localStorage.setItem('Hammer.user-language', lng);
 	}
 
-	InjectCode(loadBeta, extUrl);
+	InjectCode(extUrl);
 
 
 	let tid = setInterval(InjectCSS, 0);
@@ -137,17 +137,15 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		}
 	}
 
-	async function InjectCode(loadBeta, extUrl) {
+	async function InjectCode(extUrl) {
 	 	try {
 			// set some global variables
-			localStorage.setItem("Hammer.HelperBaseData", JSON.stringify({
+			localStorage.setItem("Hammer.ExtBaseData", JSON.stringify({
 				extID: chrome.runtime.id,
 				extUrl: extUrl,
 				GuiLng: lng,
 				extVersion: v,
-				isRelease: true,
-				devMode: `${!('update_url' in chrome.runtime.getManifest())}`,
-				loadBeta: loadBeta
+				devMode: `${!('update_url' in chrome.runtime.getManifest())}`
 			}));
 			
 			// Firefox does not support direct communication with background.js but API injections
@@ -177,7 +175,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 						)
 					);
 				}
-				exportFunction(callBgApi, window, {defineAs: 'foeHelperBgApiHandler'});
+				exportFunction(callBgApi, window, {defineAs: 'FHBgApiHandler'});
 			}
 			// start loading both script-lists
 			const vendorListPromise = loadJsonResource(`${extUrl}js/vendor.json`);

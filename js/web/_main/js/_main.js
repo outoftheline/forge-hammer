@@ -27,7 +27,7 @@ const duplicateDetected = !!(
 );
 
 if (duplicateDetected) {
-	DuplicateWarning(!ExtbaseData.isHammer || !!window.GetFights);
+	DuplicateWarning(!FH?.BaseData?.isHammer || !window.ExtbaseData?.isHammer || !!window.GetFights);
 	return;
 }
 
@@ -37,15 +37,9 @@ setTimeout(() => {
 	}
 }, 5000);
 
-window.ExtbaseData = JSON.parse(FH.Storage.getItem("HelperBaseData")||"{}");
-ExtbaseData.isHammer = true;
-window.extID = ExtbaseData.extID;
-window.extUrl = ExtbaseData.extUrl;
-window.GuiLng = ExtbaseData.GuiLng;
-window.extVersion = ExtbaseData.extVersion;
-window.isRelease = ExtbaseData.isRelease;
-window.devMode = ExtbaseData.devMode;
-window.loadBeta = ExtbaseData.loadBeta;
+FH.BaseData = JSON.parse(FH.Storage.getItem("ExtBaseData")||"{}");
+FH.BaseData.isHammer = true;
+FH.extUrl = FH.BaseData.extUrl;
 
 
 let ExistenceConfirmed = async (varlist)=>{
@@ -139,11 +133,11 @@ let i18nData = null;
 		let languages = [];
 
 		// load english fallback
-		let data = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
+		let data = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
 		
 		//overload with gui language
-		if (GuiLng !== 'en') 
-			Object.assign(data, await fetch(extUrl + 'js/web/_languages/json/' + GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
+		if (FH.BaseData.GuiLng !== 'en') 
+			Object.assign(data, await fetch(FH.extUrl + 'js/web/_languages/json/' + FH.BaseData.GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
 
 		i18nData = data;
 	} catch (err) {
@@ -909,24 +903,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 })();
 
-let HelperBeta = {
+FH.Beta = {
 	load: (active) => {
 		if (active !== false) active = true;
-		FH.Storage.setItem('HelperBetaActive', active);
+		FH.Storage.setItem('BetaActive', active);
 		location.reload();
 	},
 	menu: [
 		'unitsGex',
 		'marketOffers'
 	],
-	active: JSON.parse(FH.Storage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
+	active: JSON.parse(FH.Storage.getItem('BetaActive')) || FH.BaseData.devMode === 'true'
 };
 
+FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
 let MainParser = {
-
-	foeHelperBgApiHandler: /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null),
-
 	activateDownload: false,
 	savedFight: null,
 	DebugMode: false,
@@ -983,9 +975,8 @@ let MainParser = {
 			/* Fresh install or deleted settings */
 			/* Attention: If you do stuff here it might be executed every start when surfing in incognito mode */
 		}
-		else if (LastStartedVersion !== extVersion) {
+		else if (LastStartedVersion !== FH.BaseData.extVersion) {
 			MainParser.StartUpType = 'UpdatedVersion';
-			if (!(!isRelease)) {FH.Storage.removeItem("LoadBeta")}
 
 			HTML.ShowToastMsg({
 				show: true,
@@ -997,7 +988,7 @@ let MainParser = {
 			});
 			/* We have a new version installed and started the first time */
 		}
-		else if (LastAgreedVersion !== extVersion) {
+		else if (LastAgreedVersion !== FH.BaseData.extVersion) {
 			MainParser.StartUpType = 'NotAgreed';
 			/* This is a second start, but the player has not yet agreed to the new prompt */
 		}
@@ -1006,8 +997,8 @@ let MainParser = {
 			/* Normal start */
 		}
 
-		FH.Storage.setItem('LastStartedVersion', extVersion);
-		FH.Storage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
+		FH.Storage.setItem('LastStartedVersion', FH.BaseData.extVersion);
+		FH.Storage.setItem('LastAgreedVersion', FH.BaseData.extVersion); //Comment out this line if you have something the player must agree on
 	},
 
 
@@ -1064,16 +1055,14 @@ let MainParser = {
 	 * @param {any & {type: string}} data
 	 */
 	sendExtMessage: async (data) => {
-		const bgApiHandler = MainParser.foeHelperBgApiHandler;
-
 		/** @type {null|Promise<{ok:true,data:any}|{ok:false,error:string}|unknown>} */
 		let _responsePromise = null;
 
 		if (typeof chrome !== 'undefined') {
-			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(extID, data, resolve));
+			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
 		}
-		else if (bgApiHandler != null) {
-			_responsePromise = bgApiHandler(data);
+		else if (FH.bgApiHandler != null) {
+			_responsePromise = FH.bgApiHandler(data);
 
 		}
 		else {
@@ -1103,7 +1092,7 @@ let MainParser = {
 
 
 	setLanguage: () => {
-		MainParser.Language = GuiLng;
+		MainParser.Language = FH.BaseData.GuiLng;
 	},
 
 
@@ -1627,7 +1616,7 @@ let MainParser = {
 								`:``}
 							>
 								${r.buildingName || ""}
-								${buildingId!=0?`<img class="show-entity" data-id="${buildingId}" src="${ extUrl + 'images/hud/open-eye.png'}">`:""}
+								${buildingId!=0?`<img class="show-entity" data-id="${buildingId}" src="${ FH.extUrl + 'images/hud/open-eye.png'}">`:""}
 							</td>
 							</tr>`;
 				
@@ -1792,7 +1781,7 @@ let MainParser = {
 		if (ArkBonus > MainParser.ArkBonus) {
 			if (MainParser.ArkBonus > 0) {
 				const s = `SetArkBonus: updated ArkBonus from ${MainParser.ArkBonus} to ${ArkBonus} by ${Source}`;
-				if (devMode === 'true') {
+				if (FH.BaseData.devMode === 'true') {
 					HTML.ShowToastMsg({
 						show: true,
 						head: 'Developer log',
@@ -2297,18 +2286,17 @@ let MainParser = {
 	}
 };
 
-if (window.foeHelperBgApiHandler !== undefined && window.foeHelperBgApiHandler instanceof Function) {
-	MainParser.foeHelperBgApiHandler = window.foeHelperBgApiHandler;
-	delete window.foeHelperBgApiHandler;
+if (window.FHBgApiHandler !== undefined && window.FHBgApiHandler instanceof Function) {
+	FH.BgApiHandler = window.FHBgApiHandler;
+	delete window.FHBgApiHandler;
 }
 
 window.MainParser = MainParser;
-window.HelperBeta = HelperBeta;
 window.ExistenceConfirmed = ExistenceConfirmed;
 window.i18n = i18n;
 window.GameTime = GameTime;
 
-console.log('Forge Hammer version ' + extVersion + ' started' + (extVersion.indexOf("beta") > -1 ? ' in Beta Mode': '') + '. ID: ' + extID);
+console.log('Forge Hammer version ' + FH.BaseData.extVersion + ' started' + '. ID: ' + FH.BaseData.extID);
 console.log(navigator.userAgent);
 
 })();

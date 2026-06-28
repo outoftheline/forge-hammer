@@ -36,7 +36,7 @@ let Settings = {
 	 */
 	LoadConfig: (callback) => {
 		fetch(
-			`${extUrl}js/web/settings/config/config.json`
+			`${FH.extUrl}js/web/settings/config/config.json`
 		).then(response => {
 			if (response.status === 200) {
 				response.json().then(callback);
@@ -132,7 +132,7 @@ let Settings = {
 
 				childLis.push(`<li class="${d['cssClass']||""}">`);
 				if (d.link)
-					childLis.push(`<a href="${extUrl}${d.link}" target="_blank">${i18n('Settings.Entry.' + d['name'])}</a>`);
+					childLis.push(`<a href="${FH.extUrl}${d.link}" target="_blank">${i18n('Settings.Entry.' + d['name'])}</a>`);
 				else
 					childLis.push(`<a href="#subtab-${cnt}">${i18n('Settings.Entry.' + d['name'])}</a>`);
 				childLis.push(`</li>`);
@@ -226,13 +226,13 @@ let Settings = {
 
 	VersionInfo: () => {
 		let v = '<ul>';
-		v +=	extVersion.includes('beta') ? `` : `<li><b>${i18n('Settings.Version.Link').replace('__version__', '')}</b></li>`;
-		v +=	`<li><a href="${extUrl}content/about.html" target="_blank">${i18n('Settings.About.Title')}</a></li>
-				<li><a href="${extUrl}content/help.html" target="_blank">${i18n('Settings.Help.Title')}</a></li>
+		v +=	FH.BaseData.extVersion.includes('beta') ? `` : `<li><b>${i18n('Settings.Version.Link').replace('__version__', '')}</b></li>`;
+		v +=	`<li><a href="${FH.extUrl}content/about.html" target="_blank">${i18n('Settings.About.Title')}</a></li>
+				<li><a href="${FH.extUrl}content/help.html" target="_blank">${i18n('Settings.Help.Title')}</a></li>
 				</ul>
-				<p>${i18n('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
+				<p>${i18n('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${FH.extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
 				<div class="info-box">
-					<span><b>${i18n('Boxes.General.Version')}</b> ${extVersion}</span>
+					<span><b>${i18n('Boxes.General.Version')}</b> ${FH.BaseData.extVersion}</span>
 					<span><b>${i18n('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
 					<span><b>${i18n('Settings.Version.GuildId')}</b> ${(ExtGuildID ? ExtGuildID : 'N/A')}</span>
 					<span><b>${i18n('Settings.Version.World')}</b> ${ExtWorld}</span>
@@ -354,31 +354,31 @@ let Settings = {
 		let v =	`<ul class="soundEffects simpleList">
 					<li> 
 						<input name="nSound" value="message" type="radio" ${chosenSound == "message" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/message.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/message.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification1" type="radio" ${chosenSound == "notification1" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification1.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification1.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification2" type="radio" ${chosenSound == "notification2" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification2.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification2.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification3" type="radio" ${chosenSound == "notification3" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification3.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification3.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification4" type="radio" ${chosenSound == "notification4" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification4.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification4.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification5" type="radio" ${chosenSound == "notification5" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification5.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification5.mp3" type="audio/mpeg" /></audio> 
 					</li>
 					<li> 
 						<input name="nSound" value="notification6" type="radio" ${chosenSound == "notification6" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${extUrl}vendor/sounds/notification6.mp3" type="audio/mpeg" /></audio> 
+						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification6.mp3" type="audio/mpeg" /></audio> 
 					</li>
 				</ul>`;
 

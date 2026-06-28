@@ -2260,9 +2260,9 @@ let StockAlarm = {
 		htmltext += `<select id="LowStockID">${StockAlarm.OptionsR}</select>`;
 		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add i18n!!
 		htmltext += `<span id="LowStockRepeat">`;
-		htmltext += `<img class="options" data-repeat="2" src="${extUrl}js/web/stats/images/once.png">`;
-		htmltext += `<img class="options  selected" data-repeat="1" src="${extUrl}js/web/stats/images/once_per_session.png">`;
-		htmltext += `<img class="options" data-repeat="0" src="${extUrl}js/web/stats/images/always.png"></span>`
+		htmltext += `<img class="options" data-repeat="2" src="${FH.extUrl}js/web/stats/images/once.png">`;
+		htmltext += `<img class="options  selected" data-repeat="1" src="${FH.extUrl}js/web/stats/images/once_per_session.png">`;
+		htmltext += `<img class="options" data-repeat="0" src="${FH.extUrl}js/web/stats/images/always.png"></span>`
 		htmltext += `<span id="LowStockAddBtn" class="btn btn-green" onclick="StockAlarm.addbtn">+</span>`;
 		htmltext += `<table class="foe-table" id="LowStockAlarmsList">`;
 		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add i18n!!
@@ -2336,13 +2336,13 @@ let StockAlarm = {
 		let repeatImg = '';
 		switch (repeat) {
 			case 0: 
-				repeatImg = extUrl + "js/web/stats/images/always.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/always.png";
 				break;
 			case 1:
-				repeatImg = extUrl + "js/web/stats/images/once_per_session.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once_per_session.png";
 				break;
 			case 2:
-				repeatImg = extUrl + "js/web/stats/images/once.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once.png";
 				break;
 		}
 		html = `<td><img src="${typeImg}"></td>`;

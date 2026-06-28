@@ -721,7 +721,7 @@ let Productions = {
 
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			rowA.push('<td class="text-right">')
-			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" alt="" src="' + extUrl + 'images/hud/open-eye.png"></span>')
+			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" alt="" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>')
 			rowA.push('</td>')
 			rowA.push('</tr>')
 			}
@@ -978,7 +978,7 @@ let Productions = {
 						rowA.push('<td style="white-space:nowrap" data-date="' + (building.state.times?.at||9999999999) + '">' + (done==""? time : '<b class="text-success">'+done+'</b>') + '</td>')
 					}
 					rowA.push('<td class="text-right">')
-					rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + extUrl + 'images/hud/open-eye.png"></span>')
+					rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>')
 					rowA.push('</td>')
 					rowA.push('</tr>')
 				}
@@ -1184,7 +1184,7 @@ let Productions = {
 			let done = (building.state.name === 'collectable' ? i18n('Boxes.Productions.Done') : '')
 			rowA.push('<td style="white-space:nowrap" data-date="' + (building.state.times?.at||9999999999) + '">' + (done==""? time : '<b class="text-success">'+done+'</b>') + '</td>')
 			rowA.push('<td class="text-right">')
-			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + extUrl + 'images/hud/open-eye.png"></span>')
+			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>')
 			rowA.push('</td>')
 			rowA.push('</tr>')
 		}
@@ -1345,7 +1345,7 @@ let Productions = {
 			let done = (building.state.name === 'collectable' ? i18n('Boxes.Productions.Done') : '')
 			rowA.push('<td style="white-space:nowrap" data-date="' + (building.state.times?.at||9999999999) + '">' + (done==""? time : '<b class="text-success">'+done+'</b>') + '</td>')
 			rowA.push('<td class="text-right">')
-			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + extUrl + 'images/hud/open-eye.png"></span>')
+			rowA.push('<span class="show-entity" data-id="' + building.id + '"><img class="game-cursor" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>')
 			rowA.push('</td>')
 			rowA.push('</tr>')
 		}
@@ -2067,7 +2067,7 @@ let Productions = {
 				h.push('<label for="gBs" data-original-title="'+i18n('Boxes.ProductionsRating.NoGBsExplanation')+'"><input type="checkbox" id="gBs" /><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" /></label>');
 				if (ActiveMap !== 'OtherPlayer') {
 					h.push('<div class="inventory">'+
-						'<label for="inventorybuildings" data-original-title="'+i18n('Boxes.ProductionsRating.ShowInventoryBuildingsExplanation')+'"><input type="checkbox" id="inventorybuildings" /><img class="game-cursor" src="' + extUrl + 'js/web/x_img/inventory.png"></label>'+
+						'<label for="inventorybuildings" data-original-title="'+i18n('Boxes.ProductionsRating.ShowInventoryBuildingsExplanation')+'"><input type="checkbox" id="inventorybuildings" /><img class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png"></label>'+
 						'<label for="inventorybuildingscore" data-original-title="'+i18n('Boxes.ProductionsRating.InventoryBuildingScoreExplanation')+'">' + i18n('Boxes.ProductionsRating.InventoryBuildingScore') + ': <input type="number" size="6" value="'+(Productions.efficiencySettings.inventorybuildingscore*100)+'" id="inventorybuildingscore" /></label>'+
 						'<label for="showLimited" data-original-title="'+i18n('Boxes.ProductionsRating.NoLimitedExplanation')+'"><input type="checkbox" id="showLimited" /><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" /></label>'+
 						'</div>');
@@ -2085,7 +2085,7 @@ let Productions = {
 				for (let size of buildingSizes) {
 					h.push('<li data-value="'+size+'" class="' + (Productions.RatingFilteredSizes.includes(size) ? 'selected' : '') + '">'+size+'</li>')
 				}
-			h.push('</ul></div></div></th><th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+i18n('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + extUrl + 'js/web/x_img/inventory.png" /></th>');
+			h.push('</ul></div></div></th><th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+i18n('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png" /></th>');
 
 			for (const type of combinedRatingTypes) {
 				let firstType = type;
@@ -2132,7 +2132,7 @@ let Productions = {
 
 				h.push('<td exportvalue="'+building.name+'" data-text="'+helper.str.cleanup(building.name)+'" class="'+(MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'"><div class="flex-between"><div>');
 				if (!building.highlight && !building.isInInventory)
-					h.push('<span class="show-all" data-original-title="'+i18n('Boxes.General.ShowOnMap')+'" data-name="'+building.name+'"><img class="game-cursor" alt="" src="' + extUrl + 'images/hud/open-eye.png"></span>');
+					h.push('<span class="show-all" data-original-title="'+i18n('Boxes.General.ShowOnMap')+'" data-name="'+building.name+'"><img class="game-cursor" alt="" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>');
 
 				h.push('<span data-meta_id="'+building.entityId+'" data-eff="'+building.rating.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="Tooltips.buildingTT" class="helperTT" '+ MainParser.Allies.tooltip(building.id) + '>'+building.name+'</span>')
 
@@ -2939,21 +2939,21 @@ let Productions = {
 							<head id="popout-${id}-head">
 								<meta charset="utf-8" />
 								<title>${i18n('Menu.ProductionsRating.Title')} - Alpha Version - Forge Hammer</title>
-								<link rel="stylesheet" href="${extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${extUrl}css/${skinCss}.css">
-								<link rel="stylesheet" href="${extUrl}css/goods.css">
-								<link rel="stylesheet" href="${extUrl}js/web/productions/css/productions.css">
-								<link rel="stylesheet" href="${extUrl}js/web/customTooltip/css/customTooltip.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/${skinCss}.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
+								<link rel="stylesheet" href="${FH.extUrl}js/web/productions/css/productions.css">
+								<link rel="stylesheet" href="${FH.extUrl}js/web/customTooltip/css/customTooltip.css">
 								<style>#RatingsResults, #addMetaBuilding, label[for="inventorybuildingscore"], label[for="showallies"] {display: none !important;}</style>
 							</head>
 							<body class="popup-body"><div id="ProductionsRatingBody">${content}</div></body>
-							<script src="${extUrl}vendor/jQuery/jquery.min.js"></script>
-							<script src="${extUrl}vendor/tooltip/tooltip.js"></script>
-							<script src="${extUrl}vendor/tableSorter/table-sorter.js"></script>
-							<script src="${extUrl}js/foeproxy.js"></script>
-							<script src="${extUrl}js/web/_main/js/_main.js"></script>
-							<script src="${extUrl}js/web/_helper/js/_helper.js"></script>
-							<script src="${extUrl}js/web/productions/js/popout.js"></script>
+							<script src="${FH.extUrl}vendor/jQuery/jquery.min.js"></script>
+							<script src="${FH.extUrl}vendor/tooltip/tooltip.js"></script>
+							<script src="${FH.extUrl}vendor/tableSorter/table-sorter.js"></script>
+							<script src="${FH.extUrl}js/foeproxy.js"></script>
+							<script src="${FH.extUrl}js/web/_main/js/_main.js"></script>
+							<script src="${FH.extUrl}js/web/_helper/js/_helper.js"></script>
+							<script src="${FH.extUrl}js/web/productions/js/popout.js"></script>
 						</html>`;
 
 		const winUrl = URL.createObjectURL(
@@ -2973,7 +2973,7 @@ let Productions = {
 				AddCssFile: (name) => {
 					const link = winObj.document.createElement('link');
 					link.rel = 'stylesheet';
-					link.href = `${extUrl}css/${name}.css`;
+					link.href = `${FH.extUrl}css/${name}.css`;
 					winObj.document.head.appendChild(link);
 				}
 			};

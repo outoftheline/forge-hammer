@@ -1137,7 +1137,7 @@ let GuildMemberStat = {
 					if (warnlist.length >= 1) {
 						for (let k in warnlist) {
 							if (!warnlist.hasOwnProperty(k)) break;
-							d.push(`<tr><td><img class="small" src="${extUrl}js/web/guildmemberstat/images/act_${warnlist[k].activity}.png" /> #${(warnlist.length - parseInt(k))}<span class="hidden-text">&nbsp;-&nbsp;${activityWarnState[warnlist[k].activity]}</span></td>
+							d.push(`<tr><td><img class="small" src="${FH.extUrl}js/web/guildmemberstat/images/act_${warnlist[k].activity}.png" /> #${(warnlist.length - parseInt(k))}<span class="hidden-text">&nbsp;-&nbsp;${activityWarnState[warnlist[k].activity]}</span></td>
 								<td>${moment(warnlist[k].date).format(i18n('Date'))}</td></tr>`);
 						}
 					}

@@ -952,7 +952,7 @@ let Negotiation = {
 
 		// gibt es noch nicht, laden
 		if (Negotiation.Tables[tableName] === undefined) {
-			let url = extUrl + 'js/web/negotiation/tables/';
+			let url = FH.extUrl + 'js/web/negotiation/tables/';
 
 			return fetch(url + tableName + '.zip')
 				.then(function (response) {
