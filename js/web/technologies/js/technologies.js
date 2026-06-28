@@ -346,17 +346,24 @@ let Technologies = {
         let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, CurrentEraID),
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
-        h.push(`<div class="dark-bg" style="margin-bottom: 3px">
-                <div class="techno-head">
-                    <button class="btn btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>
+        h.push(`<div class="dark-bg p5" style="margin-bottom: 3px">
                     <div class="text-center"><strong>${i18n('Eras.'+Technologies.SelectedEraID)}</strong></div>
-				    <button class="btn btn-switchage" data-value="${NextEraID}">${i18n('Eras.'+NextEraID)}</button>
+                    <div class="flex between">
+                        <div>`);
+                        if (PreviousEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>`);
+
+                        h.push(`</div><div>`);
+
+                        if (NextEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${NextEraID}">${i18n('Eras.'+NextEraID)}</button>`);
+                        h.push(`</div>
+                    </div>
+                    <div class="text-small">
+                        <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>
+                        <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                    </div>
                 </div>
-                <div class="text-small">
-                    <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>
-                    <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
-                </div>
-            </div>
             
             <table class="foe-table exportable">`);
 
@@ -428,7 +435,7 @@ let Technologies = {
         }
         else {
             h.push('<tr>');
-            	h.push('<td colspan="5" class="text-center">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
+            	h.push('<td colspan="5" class="text-center" style="font-size:110%;height:200px;">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
             h.push('</tr>');
         }
         h.push('</table');
@@ -439,8 +446,12 @@ let Technologies = {
 
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+        h.push(`<p class="text-left">${i18n('Boxes.General.Export')}: 
+        <span class="btn-group">
+        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
+        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>
+        </span>
+        </p>`);
 
         $('#technologiesSettingsBox').html(h.join(''));
     },
