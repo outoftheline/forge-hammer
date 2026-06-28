@@ -4,7 +4,7 @@
  */
 
 // LG Investitionen
-FoEproxy.addHandler('GreatBuildingsService', (data) => {
+FH.proxy.addHandler('GreatBuildingsService', (data) => {
 
 	if(typeof data['requestMethod'] === 'undefined') 
 	{
@@ -86,7 +86,7 @@ let Investment = {
 			medalssto: Investment.Medals
 		}
 
-		let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings'));
+		let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings'));
 		let removeUnsafeCalc = (InvestmentSettings && InvestmentSettings.removeUnsafeCalc !== undefined) ? InvestmentSettings.removeUnsafeCalc : 0;
 
 		Investment.Einsatz = 0;
@@ -126,7 +126,7 @@ let Investment = {
 
 		let b = [],
 			h = [];
-		let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings'));
+		let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings'));
 		let showEntryDate = (InvestmentSettings && InvestmentSettings.showEntryDate !== undefined) ? InvestmentSettings.showEntryDate : 0;
 		let showInvestmentIncreaseDate = (InvestmentSettings && InvestmentSettings.showInvestmentIncreaseDate !== undefined) ? InvestmentSettings.showInvestmentIncreaseDate : 0;
 		let showRestFp = (InvestmentSettings && InvestmentSettings.showRestFp !== undefined) ? InvestmentSettings.showRestFp : 0;
@@ -145,7 +145,7 @@ let Investment = {
 		if (showMedals === 1) {
 			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
 		}
-		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${extUrl}js/web/investment/images/unvisible.png" title="${i18n('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
+		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${FH.extUrl}js/web/investment/images/unvisible.png" title="${i18n('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
 
 		b.push(`</div>`);
 
@@ -287,7 +287,7 @@ let Investment = {
 				h.push(`<td class="is-number text-center" data-number="${restFp}">${restFp}</td>`);
 			}
 
-			h.push(`<td class="is-number text-center" data-number="${contribution['rank']}"><img class="rank invest-tooltip" src="${extUrl}js/web/x_img/gb_p${rankImageValue}.png" title="${i18n('Boxes.Investment.Rank')} ${contribution['rank']}" /></td>`);
+			h.push(`<td class="is-number text-center" data-number="${contribution['rank']}"><img class="rank invest-tooltip" src="${FH.extUrl}js/web/x_img/gb_p${rankImageValue}.png" title="${i18n('Boxes.Investment.Rank')} ${contribution['rank']}" /></td>`);
 			h.push(`<td class="is-number text-center gbinvestment" data-number="${contribution['currentFp']}">${contribution['currentFp']}</td>`);
 			h.push(`<td class="is-number text-center gbprofit" data-number="${RealProfit}"><b class="${RealProfitClass}">${RealProfit}</b></td>`);
 			
@@ -392,7 +392,7 @@ let Investment = {
 
 	ShowInvestmentSettings: () => {
 		let c = [],
-			InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings')),
+			InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings')),
 			showEntryDate = (InvestmentSettings && InvestmentSettings.showEntryDate !== undefined) ? InvestmentSettings.showEntryDate : 0,
 			showInvestmentIncreaseDate = (InvestmentSettings && InvestmentSettings.showInvestmentIncreaseDate !== undefined) ? InvestmentSettings.showInvestmentIncreaseDate : 0,
 			showRestFp = (InvestmentSettings && InvestmentSettings.showRestFp !== undefined) ? InvestmentSettings.showRestFp : 0,
@@ -471,7 +471,7 @@ let Investment = {
 		let allGB = await IndexDB.db.investhistory.where('id').above(0).keys();
 		let UpdatedList = false;
 		let playerSyncGbKeys = null;
-		let arcLevelCheck = JSON.parse(localStorage.getItem('InvestmentArcBonus'));
+		let arcLevelCheck = JSON.parse(FH.Storage.getItem('InvestmentArcBonus'));
 		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != MainParser.ArkBonus ? true : false;
 
 		for (let i in LGData)
@@ -628,10 +628,10 @@ let Investment = {
 
 		// Set Update Date + ArcBonus in local Storage
 		if(FullSync){
-			let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+			let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
 			InvestmentSettings['lastupdate'] = MainParser.getCurrentDate();
-			localStorage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
-			localStorage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
+			FH.Storage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
+			FH.Storage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
 		}
 	},
 
@@ -648,11 +648,11 @@ let Investment = {
 
 	ToggleHidden: () => {
 
-		let value = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+		let value = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
 
 		value['showHiddenGb'] = 1 - value['showHiddenGb'];
 
-		localStorage.setItem('InvestmentSettings', JSON.stringify(value));
+		FH.Storage.setItem('InvestmentSettings', JSON.stringify(value));
 
 		Investment.Show();
 	},
@@ -660,7 +660,7 @@ let Investment = {
 
 	SettingsSaveValues: () => {
 
-		let value = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+		let value = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
 		let autoOpen = false;
 
 		value['showEntryDate'] = 0;
@@ -695,9 +695,9 @@ let Investment = {
 		if ($("#showinvestmentsautomatically").is(':checked'))
 			autoOpen = true;
 
-		localStorage.setItem('ShowInvestments', autoOpen);
+		FH.Storage.setItem('ShowInvestments', autoOpen);
 
-		localStorage.setItem('InvestmentSettings', JSON.stringify(value));
+		FH.Storage.setItem('InvestmentSettings', JSON.stringify(value));
 
 		$(`#InvestmentSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();

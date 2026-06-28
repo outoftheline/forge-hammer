@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('ItemStoreService', 'getStore', (data, postData) => {
+FH.proxy.addHandler('ItemStoreService', 'getStore', (data, postData) => {
 	shopAssist.slots = data.responseData.slots;
 	shopAssist.storeId = data.responseData.id;
 	shopAssist.unlockProgress = Object.assign({},...data.responseData.unlockConditionsProgress.map(x=>({[x.type+"#"+(x.subtype||x.context)]:x.amount})));
@@ -21,7 +21,7 @@ FoEproxy.addHandler('ItemStoreService', 'getStore', (data, postData) => {
 	shopAssist.Show();
 });
 
-FoEproxy.addHandler('ItemStoreService', 'purchaseSlot', (data, postData) => {
+FH.proxy.addHandler('ItemStoreService', 'purchaseSlot', (data, postData) => {
 	let i = shopAssist.slots.findIndex(x=>x.slotId === data.responseData.slot.slotId);
 	shopAssist.slots[i] = data.responseData.slot;
 
@@ -29,7 +29,7 @@ FoEproxy.addHandler('ItemStoreService', 'purchaseSlot', (data, postData) => {
 	shopAssist.Show();
 });
 
-FoEproxy.addHandler('ItemStoreService', 'refreshStore', (data, postData) => {
+FH.proxy.addHandler('ItemStoreService', 'refreshStore', (data, postData) => {
 	shopAssist.slots = data.responseData.slots;
 	shopAssist.storeId = data.responseData.id;
 	shopAssist.unlockProgress = Object.assign(shopAssist.unlockProgress,...data.responseData.unlockConditionsProgress.map(x=>({[x.type+"#"+(x.subtype||x.context)]:x.amount})));
@@ -38,7 +38,7 @@ FoEproxy.addHandler('ItemStoreService', 'refreshStore', (data, postData) => {
 	shopAssist.Show();
 });
 
-FoEproxy.addHandler('ItemStoreService', 'getConfigs', (data, postData) => {
+FH.proxy.addHandler('ItemStoreService', 'getConfigs', (data, postData) => {
 	shopAssist.shopMeta = Object.assign({},...data.responseData.map(x=>({[x.id]:x})));
 	// cleanup old shop favourites data
 	let cleaned = false
@@ -48,7 +48,7 @@ FoEproxy.addHandler('ItemStoreService', 'getConfigs', (data, postData) => {
 			cleaned = true;
 		}
 	}
-	if (cleaned) localStorage.setItem("shopAssist.favourites",JSON.stringify(shopAssist.favourites));
+	if (cleaned) FH.Storage.setItem("shopAssist.favourites",JSON.stringify(shopAssist.favourites));
 	// cleanup old shop alerts data
 	cleaned = false;
 	for (let key of Object.keys(shopAssist.alerts)) {
@@ -58,11 +58,11 @@ FoEproxy.addHandler('ItemStoreService', 'getConfigs', (data, postData) => {
 			cleaned = true;
 		}
 	}
-	if (cleaned) localStorage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
-	localStorage.setItem("shopAssist.shopMeta",JSON.stringify(shopAssist.shopMeta));
+	if (cleaned) FH.Storage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
+	FH.Storage.setItem("shopAssist.shopMeta",JSON.stringify(shopAssist.shopMeta));
 });
 
-FoEproxy.addHandler("ItemStoreService","updateUnlockConditions", (data, postData) => {
+FH.proxy.addHandler("ItemStoreService","updateUnlockConditions", (data, postData) => {
 	for (let shop of data.responseData) {
 		if (shop.id != shopAssist.storeId) continue;
 		for (let cond of shop.unlockConditionsProgress) {
@@ -73,15 +73,15 @@ FoEproxy.addHandler("ItemStoreService","updateUnlockConditions", (data, postData
 	shopAssist.timeout = setTimeout(shopAssist.Show,100);
 });
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	shopAssist.updateDialog();
 });
 
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	$('#shopAssist').remove();
 });
 
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	shopAssist.checkAlerts();
 });
 
@@ -89,11 +89,11 @@ let shopAssist = {
 	slots: null,
 	storeId:null,
 	alertsTriggered: {},
-	shopMeta:JSON.parse(localStorage.getItem("shopAssist.shopMeta")||"{}"),
-	favourites: JSON.parse(localStorage.getItem("shopAssist.favourites")||"{}"),
-	favouritesOnly: JSON.parse(localStorage.getItem("shopAssist.favouritesOnly")||"false"),
+	shopMeta:JSON.parse(FH.Storage.getItem("shopAssist.shopMeta")||"{}"),
+	favourites: JSON.parse(FH.Storage.getItem("shopAssist.favourites")||"{}"),
+	favouritesOnly: JSON.parse(FH.Storage.getItem("shopAssist.favouritesOnly")||"false"),
 	currencyfilter:{},
-	alerts: JSON.parse(localStorage.getItem("shopAssist.alerts")||"{}"),
+	alerts: JSON.parse(FH.Storage.getItem("shopAssist.alerts")||"{}"),
 	timeout: null,
     /**
      * Shows a User Box with the current production stats
@@ -361,7 +361,7 @@ let shopAssist = {
 		};
 		$("#shopAssistFav").on("change",function(e){
 			shopAssist.favouritesOnly = e.currentTarget.checked;
-			localStorage.setItem("shopAssist.favouritesOnly",JSON.stringify(shopAssist.favouritesOnly));
+			FH.Storage.setItem("shopAssist.favouritesOnly",JSON.stringify(shopAssist.favouritesOnly));
 			if (shopAssist.favouritesOnly) {
 				$(".shopAssistTable").addClass("favouritesOnly");
 			} else {
@@ -374,7 +374,7 @@ let shopAssist = {
 		};
 		$("#shopAssistUnlock").on("change",function(e){
 			shopAssist.unlockedOnly = e.currentTarget.checked;
-			localStorage.setItem("shopAssist.unlockedOnly",JSON.stringify(shopAssist.unlockedOnly));
+			FH.Storage.setItem("shopAssist.unlockedOnly",JSON.stringify(shopAssist.unlockedOnly));
 			if (shopAssist.unlockedOnly) {
 				$(".shopAssistTable").addClass("unlockedOnly");
 			} else {
@@ -401,7 +401,7 @@ let shopAssist = {
 			if (!shopAssist.favourites?.[shopAssist.storeId]) shopAssist.favourites[shopAssist.storeId] = {}
 			shopAssist.favourites[shopAssist.storeId][id] = !shopAssist.favourites[shopAssist.storeId][id];
 			if (!shopAssist.favourites[shopAssist.storeId][id]) delete shopAssist.favourites[shopAssist.storeId][id];
-			localStorage.setItem("shopAssist.favourites",JSON.stringify(shopAssist.favourites));
+			FH.Storage.setItem("shopAssist.favourites",JSON.stringify(shopAssist.favourites));
 			e.currentTarget.parentNode.parentNode.classList.toggle("isShopFavourite");
 		});
 		$(".shopAlert").on("click",function(e){
@@ -412,7 +412,7 @@ let shopAssist = {
 			} else {
 				delete shopAssist.alerts[id];
 			}
-			localStorage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
+			FH.Storage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
 			e.currentTarget.classList.toggle("alertActive");
 		});
 		checkCurrencyFilters = () => {
@@ -431,7 +431,7 @@ let shopAssist = {
 		});
 		checkCurrencyFilters();
 		$('[data-original-title]').tooltip({container: 'body'});
-		localStorage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
+		FH.Storage.setItem("shopAssist.alerts",JSON.stringify(shopAssist.alerts));
     },
 
 	getStock: (reward) => {
@@ -596,7 +596,7 @@ let shopAssist = {
         let value = false;
 		if ($("#shopAssistAutoOpen").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowShopAssist', value);
+		FH.Storage.setItem('ShowShopAssist', value);
 		
 		$(`#shopAssistSettingsBox`).remove();
     },

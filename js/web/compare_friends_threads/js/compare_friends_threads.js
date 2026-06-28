@@ -16,7 +16,7 @@
 /**
  * Get threads from ConversationService
  */
-FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
 	if (data['responseData']['category']['type'] === 'social')
 	{
 		CompareFriendsThreads.ParseThreads(data['responseData']['category']['teasers']);
@@ -24,7 +24,7 @@ FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, post
 });
 
 
-FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
 	if (data['responseData']['type'] === 'social')
 	{
 		CompareFriendsThreads.ParseThreads(data['responseData']['teasers']);
@@ -34,7 +34,7 @@ FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
 /**
  * Thread is opened
  */
-FoEproxy.addHandler('ConversationSettingsService', 'getSettings', (data, postData) => {
+FH.proxy.addHandler('ConversationSettingsService', 'getSettings', (data, postData) => {
 	if(postData[0]['requestClass'] === 'ConversationSettingsService' && postData[0]['requestMethod'] === 'getSettings')
 	{
 		if (data['responseData']['participants']) {
@@ -54,7 +54,7 @@ FoEproxy.addHandler('ConversationSettingsService', 'getSettings', (data, postDat
 /**
  * Friend is deleted
  */
-FoEproxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
+FH.proxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
 	if ($('#friendsCompareBox').length > 0) {
 		setTimeout(()=>{
 			CompareFriendsThreads.BuildBody(true);

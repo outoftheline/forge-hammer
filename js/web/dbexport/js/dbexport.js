@@ -305,7 +305,7 @@ let DBExport = {
         Object.keys(json).forEach(function (k) {
             if (!excludeKeys.includes(k) && k.indexOf("forgeofempires.com") === -1)
             {
-                localStorage.setItem(k, json[k]);
+                FH.Storage.setItem(k, json[k]);
             }
         });
         $("#debex_import_wrapper").append(`<p class="success">${filename} <span class="icon success"></span></p>`);

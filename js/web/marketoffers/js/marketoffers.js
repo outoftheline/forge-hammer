@@ -4,7 +4,7 @@
  */
 
 // Market
-FoEproxy.addHandler('TradeService', 'getTradeOffers', (data, postData) => {
+FH.proxy.addHandler('TradeService', 'getTradeOffers', (data, postData) => {
     let requestMethod = postData[0]['requestMethod'];
 
     if (requestMethod === 'getTradeOffers' || requestMethod === 'acceptOfferById') {

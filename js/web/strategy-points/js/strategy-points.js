@@ -4,7 +4,7 @@
  */
 
 
-FoEproxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
+FH.proxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
 	if (data['responseData']['0']['context'] !== 'forgePoints') {
 		return;
 	}
@@ -13,7 +13,7 @@ FoEproxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
 	StrategyPoints.RefreshBuyableForgePoints(offer.formula);
 });
 
-FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
+FH.proxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
 	if (data['responseData']['gains'] === undefined || data['responseData']['gains']['resources'] === undefined || data['responseData']['gains']['resources']['strategy_points'] === undefined) {
 		return;
 	}
@@ -22,15 +22,15 @@ FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
 
 
 // GEX started
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	//Fp packages often trigger more than one Inventory Update - only update the bar once
 	if (StrategyPoints.delay) clearTimeout(StrategyPoints.delay);
 	StrategyPoints.delay = setTimeout(()=>{

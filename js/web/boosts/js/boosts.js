@@ -3,44 +3,44 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('BoostService', 'getAllBoosts', (data, postData) => {
+FH.proxy.addHandler('BoostService', 'getAllBoosts', (data, postData) => {
     Boosts.Add(data.responseData);
     if (Boosts.first) {
         Boosts.first = false;
         Boosts.InitQIAP();
     } 
 });
-FoEproxy.addHandler('BoostService', 'addBoost', (data,postData)=> {
+FH.proxy.addHandler('BoostService', 'addBoost', (data,postData)=> {
     if (postData[0].requestClass == "CityMapService") return;
     if (postData[0].requestData[0]?.additionalPayload?.cityMapEntity) return;
     if (postData[0].requestData[0]?.additionalPayload?.mapEntityId) return;
 	Boosts.Add([data.responseData]);
 });
-FoEproxy.addHandler('BoostService', 'removeBoost', (data)=> {
+FH.proxy.addHandler('BoostService', 'removeBoost', (data)=> {
 	Boosts.Remove([{boostId:data.responseData}]);
 });
-FoEproxy.addHandler('StartupService', 'getData', (data, postData) => {
+FH.proxy.addHandler('StartupService', 'getData', (data, postData) => {
     Boosts.InitLB(data.responseData.city_map.entities.filter(x=>x.type=="greatbuilding"));
     Boosts.TimeIn.add(data.responseData.city_map.entities.filter(x=>x.state.decaysAt || x.state.__class__=="ConstructionState"));
 }),
-FoEproxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
     Boosts.TimeIn.add(data.responseData);
 });
-FoEproxy.addHandler('CityMapService', 'moveEntities', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'moveEntities', (data, postData) => {
     Boosts.TimeIn.add(data.responseData);
 });
-FoEproxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
     let buildings=data.responseData.filter(x=>x.type!="greatbuilding")
     Boosts.TimeIn.add(buildings);
 });
-FoEproxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
     Boosts.Remove(postData[0].requestData.map(b=>({entityId:b})));
 });
-FoEproxy.addHandler('CityMapService', 'reset', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'reset', (data, postData) => {
     Boosts.InitLB(data.responseData.filter(x=>x.type=="greatbuilding"));
     Boosts.TimeIn.add(data.responseData.filter(x=>x.type!="greatbuilding"));
 });
-FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
     if (data.responseData.gridId!=="guild_raids") return
     Boosts.TimeIn.add(data.responseData.entities);
 });
@@ -195,7 +195,7 @@ let Boosts = {
                 }
             }
         }
-        FoEproxy.triggerFoeHelperHandler("BoostsUpdated");
+        FH.proxy.triggerFoeHelperHandler("BoostsUpdated");
     },
     TimeIn: {
         list:[],
@@ -215,7 +215,7 @@ let Boosts = {
                     Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - GameTime.get() + 2)*1000)
                     Boosts.Timer.next = boost.startTime
                 }
-                //localStorage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
+                //FH.Storage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
             }
             let boostsToAddDirectly=[]
             for (let building of buildings||[]) {

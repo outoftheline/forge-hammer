@@ -42,7 +42,7 @@ let srcLinks = {
             srcLinks.FileList = JSON.parse(HXscript);
 
             // ExtPlayerId is not available on this point
-            let c = localStorage.getItem('current_player_id');
+            let c = FH.Storage.getItem('current_player_id');
 
         } 
         catch {

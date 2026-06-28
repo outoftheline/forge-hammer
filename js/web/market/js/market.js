@@ -4,7 +4,7 @@
  */
 
 // Market
-FoEproxy.addHandler('TradeService', 'getTradeOffers', (data, postData) => {
+FH.proxy.addHandler('TradeService', 'getTradeOffers', (data, postData) => {
     let requestMethod = postData[0]['requestMethod'];
 
     if (requestMethod === 'getTradeOffers' || requestMethod === 'acceptOfferById') {
@@ -524,7 +524,7 @@ let Market = {
 		if ($("#autoStartMarket").is(':checked'))
 			value = true;
 
-		localStorage.setItem('ShowMarketFilter', value);
+		FH.Storage.setItem('ShowMarketFilter', value);
 		$(`#MarketSettingsBox`).remove();
     },
 };

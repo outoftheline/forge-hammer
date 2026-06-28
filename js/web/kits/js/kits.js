@@ -8,7 +8,7 @@
  * @namespace
  */
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	Kits.UpdateBoxIfVisible();
 });
 
@@ -29,7 +29,7 @@ let Kits = {
 	ShowMissing: 0,
 	Fragments:{},
 	fragmentURL:null,
-	favourites:JSON.parse(localStorage.getItem("Kits.favourites")||"[]"),
+	favourites:JSON.parse(FH.Storage.getItem("Kits.favourites")||"[]"),
 	specialCases:{
 		"selection_kit_watchtower_1_gbg" : "selection_kit_watchtower1_gbg",
 		"selection_kit_ind_palace_set" :"selection_kit_indian_palace",
@@ -51,7 +51,7 @@ let Kits = {
 	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link HTML.Box DOM box}.
 	 */
 	init: ()=> {
-		MainParser.loadJSON(extUrl + 'js/web/kits/data/sets.json', (data)=> {
+		MainParser.loadJSON(FH.extUrl + 'js/web/kits/data/sets.json', (data)=> {
 			Kits.KitsjSON = JSON.parse(data);
 			Kits.BuildBox();
 		});
@@ -596,7 +596,7 @@ let Kits = {
 			Kits.favourites.splice(index, 1);
 		}
 		e.target.style = `background-image:url('${Kits.favourites.includes(name)? srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_fill.png",true) : srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_empty.png",true)}')`
-		localStorage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
+		FH.Storage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
 		e.target.parentElement.parentElement.classList.toggle("notFavourite");
 	},
 

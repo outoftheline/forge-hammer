@@ -91,7 +91,7 @@ let _menu_right = {
 		}
 			
 		// has a length been set manually?
-		let MenuLength = localStorage.getItem('MenuLength');
+		let MenuLength = FH.Storage.getItem('MenuLength');
 
 		if (MenuLength !== null && MenuLength < _menu.HudCount) {
 			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
@@ -188,7 +188,7 @@ let _menu_right = {
 					_menu.Items.push($(this).data('slug'));
 				});
 
-				localStorage.setItem('MenuSort', JSON.stringify(_menu.Items));
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
 
 				$('#forgehammer-hud').removeClass('is--sorting');
 

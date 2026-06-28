@@ -5,11 +5,11 @@
 */
 
 // neues Postfach
-FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
     MainParser.setConversations(data.responseData.category, true);
 });
 
-FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
     MainParser.setConversations(data.responseData);
 });
 
@@ -30,7 +30,7 @@ let Infoboard = {
      * Setzt einen ByPass auf den WebSocket und "hört" mit
      * */
     Init: () => {
-        FoEproxy.addRawWsHandler(data => {
+        FH.proxy.addRawWsHandler(data => {
             Infoboard.HandleMessage('in', data);
         });
 
@@ -42,7 +42,7 @@ let Infoboard = {
 
 
     Show: () => {
-        let StorageHeader = localStorage.getItem('ConversationsHeaders');
+        let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 
         if (MainParser.Conversations.length === 0 && StorageHeader !== null) 
             MainParser.Conversations = JSON.parse(StorageHeader);
@@ -57,23 +57,23 @@ let Infoboard = {
      */
     Box: () => {
         if ($('#BackgroundInfo').length === 0) {
-            let spk = localStorage.getItem('infoboxTone');
+            let spk = FH.Storage.getItem('infoboxTone');
             if (spk === null) {
-                localStorage.setItem('infoboxTone', 'deactivated');
+                FH.Storage.setItem('infoboxTone', 'deactivated');
                 Infoboard.PlayInfoSound = false;
 
             } else 
                 Infoboard.PlayInfoSound = (spk !== 'deactivated');
             
-            if (localStorage.getItem("infoboxSavedFilter") === null)
-                localStorage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
+            if (FH.Storage.getItem("infoboxSavedFilter") === null)
+                FH.Storage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
             else
-                Infoboard.SavedFilter = JSON.parse(localStorage.getItem("infoboxSavedFilter"));
+                Infoboard.SavedFilter = JSON.parse(FH.Storage.getItem("infoboxSavedFilter"));
 
-            if (localStorage.getItem("infoboxTextFilter") === null)
-                localStorage.setItem("infoboxTextFilter", Infoboard.SavedTextFilter);
+            if (FH.Storage.getItem("infoboxTextFilter") === null)
+                FH.Storage.setItem("infoboxTextFilter", Infoboard.SavedTextFilter);
             else
-                Infoboard.SavedTextFilter = localStorage.getItem("infoboxTextFilter");
+                Infoboard.SavedTextFilter = FH.Storage.getItem("infoboxTextFilter");
 
             HTML.Box({
                 id: 'BackgroundInfo',
@@ -131,7 +131,7 @@ let Infoboard = {
             msg: i18n('Boxes.Infobox.Messages.Welcome'),
         });
 
-        Infoboard.MaxEntries = localStorage.getItem("EntryCount") || 0;
+        Infoboard.MaxEntries = FH.Storage.getItem("EntryCount") || 0;
 
         for (let i = 0; i < Infoboard.History.length; i++) {
             const element = Infoboard.History[i];
@@ -141,7 +141,7 @@ let Infoboard = {
         div.on('click', '#infoboxTone', function () {
             let disabled = $(this).hasClass('deactivated');
 
-            localStorage.setItem('infoboxTone', (disabled ? '' : 'deactivated'));
+            FH.Storage.setItem('infoboxTone', (disabled ? '' : 'deactivated'));
             Infoboard.PlayInfoSound = !!disabled;
 
             if (disabled === true) 
@@ -152,7 +152,7 @@ let Infoboard = {
 
         div.on('click', '.fav', function () {
             let id = $(this).parent().parent().data('id');
-            let favorites = JSON.parse(localStorage.getItem('infoboxFavs')) || [];
+            let favorites = JSON.parse(FH.Storage.getItem('infoboxFavs')) || [];
             let favFound = favorites.find(x => x == id);
             let favEl = $('[data-id="'+id+'"] .fav');
             if (favEl.hasClass('active')) {
@@ -171,7 +171,7 @@ let Infoboard = {
             else
                 favorites.splice(favorites.indexOf(id), 1);
 
-            localStorage.setItem('infoboxFavs', JSON.stringify(favorites));
+            FH.Storage.setItem('infoboxFavs', JSON.stringify(favorites));
         });
         $('#BackgroundInfoList [data-original-title]').tooltip({container: 'body'})
     },
@@ -220,7 +220,7 @@ let Infoboard = {
         let favActive = false;
 
         let favoritesOnly = $('input[data-type="favorites"]').prop('checked');
-        let favorites = JSON.parse(localStorage.getItem('infoboxFavs')) || [];
+        let favorites = JSON.parse(FH.Storage.getItem('infoboxFavs')) || [];
         let favFound = favorites.find(x => x == dataId);
         if (favFound)
             favActive = 'active';
@@ -279,9 +279,9 @@ let Infoboard = {
                 }
             });
 
-            localStorage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
-            localStorage.setItem("infoboxTextFilter", $('input[data-type="text"]').val());
-            let favorites = JSON.parse(localStorage.getItem("infoboxFavs")) || [];
+            FH.Storage.setItem("infoboxSavedFilter", JSON.stringify(Infoboard.SavedFilter));
+            FH.Storage.setItem("infoboxTextFilter", $('input[data-type="text"]').val());
+            let favorites = JSON.parse(FH.Storage.getItem("infoboxFavs")) || [];
 
             $('#BackgroundInfoList li').each(function () {
                 let li = $(this),
@@ -320,7 +320,7 @@ let Infoboard = {
 
 	ShowSettings: () => {
 		let autoOpen = Settings.GetSetting('AutoOpenInfoBox');
-		let messagesAmount = localStorage.getItem('EntryCount');
+		let messagesAmount = FH.Storage.getItem('EntryCount');
 
         let EntryCountTitle = i18n('Settings.InfoboxEntryCount.Title'); //Dummy usage. Dont mark i18n key for disposal yet. Might be useful later
 
@@ -337,8 +337,8 @@ let Infoboard = {
 
 
     SaveSettings: () => {        
-        localStorage.setItem('AutoOpenInfoBox', $("#autoStartInfoboard").is(':checked'));
-        localStorage.setItem('EntryCount', $("#infoboxentry-length").val());
+        FH.Storage.setItem('AutoOpenInfoBox', $("#autoStartInfoboard").is(':checked'));
+        FH.Storage.setItem('EntryCount', $("#infoboxentry-length").val());
 
 		$(`#BackgroundInfoSettingsBox`).remove();
     },

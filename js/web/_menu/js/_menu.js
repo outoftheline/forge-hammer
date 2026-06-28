@@ -146,12 +146,12 @@ let _menu = {
 	* Integrates all required buttons
 	*/
 	ListLinks: (InsertMenuFunction) => {
-		let StorgedItems = localStorage.getItem('MenuSort');
-		let HiddenItems = localStorage.getItem('MenuHiddenItems');
+		let StorgedItems = FH.Storage.getItem('MenuSort');
+		let HiddenItems = FH.Storage.getItem('MenuHiddenItems');
 
 		// Beta-Funktionen
-		if (HelperBeta.active) {
-			_menu.Items.unshift(...HelperBeta.menu);
+		if (FH.Beta.active) {
+			_menu.Items.unshift(...FH.Beta.menu);
 		}
 
 		if (StorgedItems !== null) {
@@ -188,8 +188,8 @@ let _menu = {
 
 		// Filter out beta functions
 		_menu.Items = _menu.Items.filter(e => {
-			if (HelperBeta.active) return true;
-			return !HelperBeta.menu.includes(e);
+			if (FH.Beta.active) return true;
+			return !FH.Beta.menu.includes(e);
 		});
 
 		// Filter out duplicates
@@ -248,7 +248,7 @@ let _menu = {
 			_menu.HiddenItems.push(name);
 		}
 		
-		localStorage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
+		FH.Storage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
 
 		// refresh the Menü after setting-toggle
 		setTimeout(()=> {
@@ -366,13 +366,13 @@ let _menu = {
 	 */
 	outpost_Btn: () => {
 		let red = false;
-		if (Outposts.OutpostData === null || localStorage.getItem('OutpostBuildings') === null) 
+		if (Outposts.OutpostData === null || FH.Storage.getItem('OutpostBuildings') === null) 
 			red = true;
 
 		let btn = _menu.MakeButton('outpost', red);
 
 		let btnEl = $('<span />').bind('click', function () {
-			let OutpostBuildings = localStorage.getItem('OutpostBuildings');
+			let OutpostBuildings = FH.Storage.getItem('OutpostBuildings');
 
 			if (OutpostBuildings !== null) {
 				Outposts.BuildInfoBox();

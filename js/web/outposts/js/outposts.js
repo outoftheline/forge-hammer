@@ -19,7 +19,7 @@ let Outposts = {
 
 	// display settings
 	/** @type {Record<string, Record<string, FoE_JSON_GoodName>>} */
-	PlannedTiles: JSON.parse(localStorage.getItem('Outposts_PlannedTiles')||'{}'),
+	PlannedTiles: JSON.parse(FH.Storage.getItem('Outposts_PlannedTiles')||'{}'),
 	GUINeedsUpdate: false,
 	DisplaySums: false,
 	DisplayAllTiles: false,
@@ -69,7 +69,7 @@ let Outposts = {
 						}
 						Outposts.PlannedTiles[cultureName][name] = value;
 					}
-					localStorage.setItem('Outposts_PlannedTiles', JSON.stringify(Outposts.PlannedTiles));
+					FH.Storage.setItem('Outposts_PlannedTiles', JSON.stringify(Outposts.PlannedTiles));
 					Outposts.RequestGUIUpdate();
 				}
 			});
@@ -79,7 +79,7 @@ let Outposts = {
 		}
 
 		if (Outposts.Advancements === null) {
-			let OutpostBuildings = localStorage.getItem('OutpostBuildings');
+			let OutpostBuildings = FH.Storage.getItem('OutpostBuildings');
 
 			if (OutpostBuildings !== null)
 			{
@@ -542,12 +542,12 @@ let Outposts = {
 		);
 
 		if (currentOutpost) {
-			let OldOutpostType = localStorage.getItem('OutpostType'),
+			let OldOutpostType = FH.Storage.getItem('OutpostType'),
 				NewOutpostType = currentOutpost.content;
 
 			if (OldOutpostType === undefined || OldOutpostType !== NewOutpostType) {
-				localStorage.setItem('OutpostType', NewOutpostType);
-				localStorage.removeItem('OutpostBuildings'); //Typ des Außenpostens hat sich geändert => Gebäude löschen => führt dazu, dass Button erst nach dem Besuch des Außenpostens grün wird
+				FH.Storage.setItem('OutpostType', NewOutpostType);
+				FH.Storage.removeItem('OutpostBuildings'); //Typ des Außenpostens hat sich geändert => Gebäude löschen => führt dazu, dass Button erst nach dem Besuch des Außenpostens grün wird
 				Outposts.Advancements = null;
 			}
 
@@ -580,7 +580,7 @@ let Outposts = {
 	 * @param {FoE_JSON_Advancement[]} d
 	 */
 	SaveBuildings: (d)=>{
-		localStorage.setItem('OutpostBuildings', JSON.stringify(d));
+		FH.Storage.setItem('OutpostBuildings', JSON.stringify(d));
 
 		Outposts.Advancements = d;
 
@@ -631,17 +631,17 @@ let Outposts = {
 
 
 	PopOutBox: ()=> {
-		let skinCss = localStorage.getItem('HammerSkin')||'variables';
+		let skinCss = FH.Storage.getItem('HammerSkin')||'variables';
 		let id = 'outpostConsumables',
 			content = $('#outpostConsumablesBody').html(),
 			winHtml = `<!DOCTYPE html>
 						<html>
 							<head id="popout-${id}-head">
 								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
-								<link rel="stylesheet" href="${extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${extUrl}css/${skinCss}.css">
-								<link rel="stylesheet" href="${extUrl}css/goods.css">
-								<link rel="stylesheet" href="${extUrl}js/web/outposts/css/outposts.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/${skinCss}.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
+								<link rel="stylesheet" href="${FH.extUrl}js/web/outposts/css/outposts.css">
 							</head>
 							<body class="popup-body" id="outpostConsumablesBody">${content}</body>
 						</html>`;
@@ -668,14 +668,14 @@ let Outposts = {
 // Verarbeiter für Außenposten Daten:
 
 // Alle Typen der Außenposten "notieren"
-FoEproxy.addHandler('OutpostService', 'getAll', (/** @type {FoE_NETWORK_OutpostService_getAll} */ data, _postData) => {
+FH.proxy.addHandler('OutpostService', 'getAll', (/** @type {FoE_NETWORK_OutpostService_getAll} */ data, _postData) => {
 	// store all informations in case of outpost change
 	Outposts.OutpostsData = data.responseData;
 	Outposts.UpdateOutpostData();
 });
 
 
-FoEproxy.addHandler('OutpostService', 'start', (/** @type {FoE_NETWORK_OutpostService_start} */ data, _postData) => {
+FH.proxy.addHandler('OutpostService', 'start', (/** @type {FoE_NETWORK_OutpostService_start} */ data, _postData) => {
 	// store changed informations
 	const culture = data.responseData;
 	const content = culture.content;
@@ -690,12 +690,12 @@ FoEproxy.addHandler('OutpostService', 'start', (/** @type {FoE_NETWORK_OutpostSe
 
 
 // Gebäude des Außenpostens sichern
-FoEproxy.addHandler('AdvancementService', 'getAll', (/** @type {FoE_NETWORK_AdvancementService_getAll} */data, _postData) => {
+FH.proxy.addHandler('AdvancementService', 'getAll', (/** @type {FoE_NETWORK_AdvancementService_getAll} */data, _postData) => {
 	Outposts.SaveBuildings(data.responseData);
 });
 
 // eine Forschung Freischalten
-FoEproxy.addHandler('AdvancementService', 'unlock', (/** @type {FoE_NETWORK_AdvancementService_unlock} */data, postData) => {
+FH.proxy.addHandler('AdvancementService', 'unlock', (/** @type {FoE_NETWORK_AdvancementService_unlock} */data, postData) => {
 	if (postData instanceof Array) {
 		postData = postData.find(request => request.requestClass === 'AdvancementService' && request.requestMethod === 'unlock');
 	}
@@ -710,7 +710,7 @@ FoEproxy.addHandler('AdvancementService', 'unlock', (/** @type {FoE_NETWORK_Adva
 
 
 // Status der Gebäude updaten
-FoEproxy.addHandler('CityProductionService', 'startProduction', (/** @type {FoE_NETWORK_CityProductionService_startProduction} */data, _postData) => {
+FH.proxy.addHandler('CityProductionService', 'startProduction', (/** @type {FoE_NETWORK_CityProductionService_startProduction} */data, _postData) => {
 	const cityMap = Outposts.CityMap;
 	if (!cityMap) {
 		return;
@@ -731,7 +731,7 @@ FoEproxy.addHandler('CityProductionService', 'startProduction', (/** @type {FoE_
 });
 
 
-FoEproxy.addHandler('CityMapService', 'getCityMap', (/** @type {FoE_NETWORK_CityMapService_getCityMap} */data, _postData) => {
+FH.proxy.addHandler('CityMapService', 'getCityMap', (/** @type {FoE_NETWORK_CityMapService_getCityMap} */data, _postData) => {
 	const response = data.responseData;
 
 	if (response.gridId === 'cultural_outpost')
@@ -742,7 +742,7 @@ FoEproxy.addHandler('CityMapService', 'getCityMap', (/** @type {FoE_NETWORK_City
 });
 
 
-FoEproxy.addHandler('CityMapService', 'placeExpansion', (/** @type {FoE_NETWORK_CityMapService_placeExpansion} */data, postData) => {
+FH.proxy.addHandler('CityMapService', 'placeExpansion', (/** @type {FoE_NETWORK_CityMapService_placeExpansion} */data, postData) => {
 	// TODO: update city layout Data
 	const city = Outposts.CityMap;
 	if (city) {
@@ -765,7 +765,7 @@ FoEproxy.addHandler('CityMapService', 'placeExpansion', (/** @type {FoE_NETWORK_
 });
 
 
-FoEproxy.addHandler('CityMapService', 'removeBuilding', (/** @type {FoE_NETWORK_CityMapService_removeBuilding} */data, postData) => {
+FH.proxy.addHandler('CityMapService', 'removeBuilding', (/** @type {FoE_NETWORK_CityMapService_removeBuilding} */data, postData) => {
 	const city = Outposts.CityMap;
 	if (city) {
 		const entities = city.entities;

@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('ClanService', 'getOwnClanData', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getOwnClanData', (data, postData) => {
 	let requestMethod = postData[0]['requestMethod'];
 	if (requestMethod === 'getOwnClanData') {
 		GuildMemberStat.Data = data.responseData;
@@ -22,7 +22,7 @@ FoEproxy.addHandler('ClanService', 'getOwnClanData', (data, postData) => {
 });
 
 // Treasury Goods 
-FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 	let requestMethod = postData[0]['requestMethod'];
 	if (requestMethod === 'getTreasury') {
 		let Goods = data.responseData.resources;
@@ -33,7 +33,7 @@ FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 		}
 	}
 });
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value !== 'ClanMain') return; // for now ignore all other source types
 	let requestMethod = postData[0]['requestMethod'];
 	if (requestMethod === 'getTreasuryBag') {
@@ -46,7 +46,7 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 
 
 // Forum Activity 
-FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
 	let ConversationData = data.responseData;
 
 	if (ConversationData !== undefined) {
@@ -60,7 +60,7 @@ FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) =
 	}
 });
 
-FoEproxy.addHandler('ConversationService', 'getMessages', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getMessages', (data, postData) => {
 	let ConversationData = data.responseData;
 
 	if (ConversationData !== undefined) {
@@ -71,13 +71,13 @@ FoEproxy.addHandler('ConversationService', 'getMessages', (data, postData) => {
 });
 
 // GEX member statistic
-FoEproxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
 	GuildMemberStat.GexData = data.responseData;
 	if (GuildMemberStat.GexData !== undefined)
 		GuildMemberStat.UpdateData('gex', null);
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	let Data = data.responseData;
 	if (Data !== undefined) {
 		if (data.responseData['state'] !== 'inactive')
@@ -88,7 +88,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) =>
 });
 
 // Guild Goods Buildings
-FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 	let GuildMember = data.responseData.other_player;
 	let IsGuildMember = GuildMember.is_guild_member;
 
@@ -103,19 +103,19 @@ FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 });
 
 // GuildBattleGround member statistic
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
 	GuildMemberStat.GBGData = data.responseData;
 	if (GuildMemberStat.GBGData !== undefined)
 		GuildMemberStat.UpdateData('gbg', null);
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	let Data = data.responseData;
 	if (Data !== undefined)
 		GuildMemberStat.GBGId = Data.endsAt;
 });
 
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
 	if (data.responseData['stateId'] !== 'participating') {
 		let Data = data.responseData;
 		if (Data !== undefined) {
@@ -411,7 +411,7 @@ let GuildMemberStat = {
 				if (typeof memberdata === 'undefined' || currentClanId === undefined) return;
 
 				let ActiveMembers = [];
-				let localClanId = JSON.parse(localStorage.getItem('GuildMemberStatClanId'));
+				let localClanId = JSON.parse(FH.Storage.getItem('GuildMemberStatClanId'));
 
 				if (!localClanId)
 					localClanId = currentClanId;
@@ -462,8 +462,8 @@ let GuildMemberStat = {
 
 				// Insert update time & current GuildId
 				GuildMemberStat.Settings.lastupdate = MainParser.getCurrentDate();
-				localStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
-				localStorage.setItem('GuildMemberStatClanId', currentClanId);
+				FH.Storage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
+				FH.Storage.setItem('GuildMemberStatClanId', currentClanId);
 
 				// Array with all valid player_id is send to mark all player_id which ar not in this array as deleted
 				await GuildMemberStat.MarkMemberAsDeleted(ActiveMembers);
@@ -1137,7 +1137,7 @@ let GuildMemberStat = {
 					if (warnlist.length >= 1) {
 						for (let k in warnlist) {
 							if (!warnlist.hasOwnProperty(k)) break;
-							d.push(`<tr><td><img class="small" src="${extUrl}js/web/guildmemberstat/images/act_${warnlist[k].activity}.png" /> #${(warnlist.length - parseInt(k))}<span class="hidden-text">&nbsp;-&nbsp;${activityWarnState[warnlist[k].activity]}</span></td>
+							d.push(`<tr><td><img class="small" src="${FH.extUrl}js/web/guildmemberstat/images/act_${warnlist[k].activity}.png" /> #${(warnlist.length - parseInt(k))}<span class="hidden-text">&nbsp;-&nbsp;${activityWarnState[warnlist[k].activity]}</span></td>
 								<td>${moment(warnlist[k].date).format(i18n('Date'))}</td></tr>`);
 						}
 					}
@@ -2152,8 +2152,8 @@ let GuildMemberStat = {
 
 	InitSettings: () => {
 
-		let Settings = JSON.parse(localStorage.getItem('GuildMemberStatSettings'));
-		let TreasuryGoods = JSON.parse(localStorage.getItem('GuildMemberStatTreasuryGoods'));
+		let Settings = JSON.parse(FH.Storage.getItem('GuildMemberStatSettings'));
+		let TreasuryGoods = JSON.parse(FH.Storage.getItem('GuildMemberStatTreasuryGoods'));
 
 		if (!Settings)
 			return;
@@ -2232,7 +2232,7 @@ let GuildMemberStat = {
 
 		GuildMemberStat.Settings.deleteOlderThan = tmpDeleteOlder;
 
-		localStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
+		FH.Storage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
 
 		if (resetMessageCounter === 'reset') {
 			await GuildMemberStat.ResetMessageCounter();
@@ -2270,7 +2270,7 @@ let GuildMemberStat = {
 		GuildMemberStat.TreasuryGoodsData.updated = +MainParser.getCurrentDate();
 		GuildMemberStat.TreasuryGoodsData.totals = eraGoodsTotals;
 
-		localStorage.setItem('GuildMemberStatTreasuryGoods', JSON.stringify(GuildMemberStat.TreasuryGoodsData));
+		FH.Storage.setItem('GuildMemberStatTreasuryGoods', JSON.stringify(GuildMemberStat.TreasuryGoodsData));
 
 		if ($('#GuildMemberStatBody').length) {
 			switch (GuildMemberStat.CurrentStatGroup) {

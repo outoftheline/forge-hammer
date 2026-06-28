@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('CollectingMinigameService', 'start', (data, postData) => {
+FH.proxy.addHandler('CollectingMinigameService', 'start', (data, postData) => {
     //Start Minigame
     const r = data.responseData;
     if (r.context !== "merchant") {
@@ -15,7 +15,7 @@ FoEproxy.addHandler('CollectingMinigameService', 'start', (data, postData) => {
     }, 200);
 });
 
-FoEproxy.addHandler('CollectingMinigameService', 'submitMove', (data, postData) => {
+FH.proxy.addHandler('CollectingMinigameService', 'submitMove', (data, postData) => {
     //DoTurn
     const r = data.responseData;
     AztecsHelper.boughtSomething = false;
@@ -72,7 +72,7 @@ FoEproxy.addHandler('CollectingMinigameService', 'submitMove', (data, postData) 
     }
 });
 
-FoEproxy.addHandler('ResourceShopService', 'buyResources', (data, postData) => {
+FH.proxy.addHandler('ResourceShopService', 'buyResources', (data, postData) => {
     if(postData[0].requestData.filter(x => x?.mainType === "cultural_outpost" && x?.subType === "collecting_minigame_buy_turns")){
         if(postData[0].requestData.filter(x => x?.["resources"] !== undefined)?.[0]?.resources?.aztecs_collecting_minigame_turns > 0){
             AztecsHelper.boughtSomething = true;
@@ -84,13 +84,13 @@ FoEproxy.addHandler('ResourceShopService', 'buyResources', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
     AztecsHelper.processResources(data,postData);
     if (AztecsHelper.timeout !== null) {
         AztecsHelper.start()
     }
 });
-FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
     AztecsHelper.processResources(data,postData);
     if (AztecsHelper.timeout !== null) {
         AztecsHelper.start()
@@ -287,7 +287,7 @@ let AztecsHelper = {
 		let value = false;
 		if ($("#aztecsAutoOpen").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowAztecHelper', value);
+		FH.Storage.setItem('ShowAztecHelper', value);
 		
 		$(`#aztecsHelperSettingsBox`).remove();
 	},

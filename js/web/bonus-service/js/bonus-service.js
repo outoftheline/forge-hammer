@@ -4,17 +4,17 @@
  */
 
 // GEX started
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	BonusService.InitBonus(true);
 });
 
 // World map
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
 	BonusService.InitBonus();
 });
 
 // neihbor is visit
-FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 	let OtherPlayer = data.responseData.other_player;
 	let IsPlunderable = (OtherPlayer.is_neighbor && !OtherPlayer.is_friend && !OtherPlayer.is_guild_member);
 
@@ -24,28 +24,28 @@ FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 });
 
 // Bonus get updated
-FoEproxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
+FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
 	BonusService.Bonuses = data['responseData'];
 
-	FoEproxy.triggerFoeHelperHandler('BonusUpdated');
+	FH.proxy.triggerFoeHelperHandler('BonusUpdated');
 
 	if ($('#bonus-hud').length > 0) {
 		BonusService.CalcBonusData();
 	}
 });
 
-FoEproxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length == 0) return;
 		BonusService.CalcBonusData();
 });
 
 // Guildfights enter
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	BonusService.InitBonus();
 });
 
 // main is entered
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
 	BonusService.HideBonusSidebar();
 });
 

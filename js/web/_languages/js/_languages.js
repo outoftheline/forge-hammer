@@ -37,8 +37,8 @@ let Languages = {
 let Translation = {
 	targetData: null,
 	referenceData: null,
-	tempData: JSON.parse(localStorage.getItem('Translation.Temp') || '{}'),
-	CopyReference: localStorage.getItem('Translation.CopyRef') || 'Conditional',
+	tempData: JSON.parse((window.HammerStorage? FH.Storage.getItem('Translation.Temp') : localStorage.getItem('Hammer.Translation.Temp')) || '{}'),
+	CopyReference: (window.HammerStorage? FH.Storage.getItem('Translation.CopyRef') : localStorage.getItem('Hammer.Translation.CopyRef')) || 'Conditional',
 	CopyRefOptions: ["No","Conditional","Once","Always"],
 	Show: ()=> {
 		if ( $('#Translation').length === 0 ) {
@@ -132,11 +132,11 @@ let Translation = {
 		});
 		$('#TempStorage').on('click', ()=>{
 			Translation.tempData = structuredClone(Translation.targetData);
-			localStorage.setItem('Translation.Temp', JSON.stringify(Translation.tempData));
+			FH.Storage.setItem('Translation.Temp', JSON.stringify(Translation.tempData));
 		});
 		$('#ClearStorage').on('click', ()=>{
 			Translation.tempData = {};
-			localStorage.removeItem('Translation.Temp');
+			FH.Storage.removeItem('Translation.Temp');
 		});
 		$('#TranslationTable').on('mousedown', 'td:nth-child(3)', function() {
 			setTimeout(()=>{
@@ -155,7 +155,7 @@ let Translation = {
 				td.find('textarea').val(currentValue).focus();
 
 				if (Translation.CopyReference == 'Once') {
-					Translation.CopyReference = localStorage.getItem('Translation.CopyRef') || 'Conditional'
+					Translation.CopyReference = FH.Storage.getItem('Translation.CopyRef') || 'Conditional'
 					$('#CopyReference')[0].value = Translation.CopyReference
 				}
 				
@@ -195,7 +195,7 @@ let Translation = {
 		})
 		$('#CopyReference').on('change', function () {
 			option = Translation.CopyReference = this.value;
-			if (option != "Once") localStorage.setItem('Translation.CopyRef', option);
+			if (option != "Once") FH.Storage.setItem('Translation.CopyRef', option);
 		})
 
 
@@ -205,11 +205,11 @@ let Translation = {
 		let target = $('#TargetLanguage')[0].value;
 		let comparison = $('#ComparisonLanguage')[0].value;
 
-		Translation.targetData = await fetch(extUrl + 'js/web/_languages/json/'+target+'.json').then(res=>res.json()).catch(()=>({}));
-		Translation.referenceData = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
-		let comparisonData = await fetch(extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
+		Translation.targetData = await fetch(FH.extUrl + 'js/web/_languages/json/'+target+'.json').then(res=>res.json()).catch(()=>({}));
+		Translation.referenceData = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
+		let comparisonData = await fetch(FH.extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
 		
-		localData = JSON.parse(localStorage.getItem('Translation.Temp') || '{}');	
+		localData = JSON.parse(FH.Storage.getItem('Translation.Temp') || '{}');	
 		
 		referenceData = Object.entries(Translation.referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, reference])=>({key, reference}));
 		let rowsHtml = referenceData.map(({key, reference})=>{

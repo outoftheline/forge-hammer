@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 HTML.AddCssFile('battle-assist');
-FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
 	// if setting is true?
 	if(!Settings.GetSetting('ShowRougeUnitWarning')){
@@ -49,7 +49,7 @@ FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
     	return BattleAssist.ShowRogueDialog();
 });
 
-FoEproxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (data.responseData?.__class__=="Error") return;
@@ -68,7 +68,7 @@ FoEproxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => 
     BattleAssist.processArmies(wave1,wave2,bonus,fightType);
 });
 
-FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     let bt=data.responseData?.battleType?.type;
@@ -108,52 +108,52 @@ FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) 
     
 });
 
-FoEproxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
     if (!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (!BattleAssist.AASettings.battleSurrendered) return
     if (BattleAssist.armyRecent[0] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id].bonus < BattleAssist.armyRecent[0]?.bonus) return
     BattleAssist.ShowAddAdvice();
 });
-FoEproxy.addHandler('BattlefieldService', 'surrenderWave', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'surrenderWave', (data, postData) => {
     if (!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (!BattleAssist.AASettings.battleSurrendered) return
     if (BattleAssist.armyRecent[0] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id].bonus < BattleAssist.armyRecent[0]?.bonus) return
     BattleAssist.ShowAddAdvice();
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'getSection', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getSection', (data, postData) => {
     for (e of data.responseData?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'selectTrial', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'selectTrial', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
    BattleAssist.ArenaOpponents = Object.assign({},...data.responseData?.opponents.map(x=>({[x.difficulty]:{id:x?.opposingPlayer?.player?.name+"#"+x?.opposingPlayer?.player?.player_id,bonus:x.defenseArmyBoosts?.defenseBoost||0}})))
    BattleAssist.SelectedOpponent = null;
 });
-FoEproxy.addHandler('PVPArenaService', 'updateOpponents', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'updateOpponents', (data, postData) => {
    setTimeout(()=>{
         BattleAssist.ArenaOpponents = Object.assign({},...data.responseData?.map(x=>({[x.difficulty]:{id:x?.opposingPlayer?.player?.name+"#"+x?.opposingPlayer?.player?.player_id,bonus:x.defenseArmyBoosts?.defenseBoost||0}})))
         BattleAssist.SelectedOpponent = null;
     },100);
 });
 
-FoEproxy.addRequestHandler('ArmyUnitManagementService', 'getArmyInfo', (postData) => {
+FH.proxy.addRequestHandler('ArmyUnitManagementService', 'getArmyInfo', (postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     
@@ -196,10 +196,10 @@ mouseActions.addAction([[97, 219, 'Center'],[152, 266, 'Center']],()=>{
  */
 let BattleAssist = {
 
-    armyAdvice: JSON.parse(localStorage.getItem("BattleAssistArmyAdvice") || "{}"),
+    armyAdvice: JSON.parse(FH.Storage.getItem("BattleAssistArmyAdvice") || "{}"),
     armyRecent:[],
     UnitOrder:null,
-    AASettings: JSON.parse(localStorage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
+    AASettings: JSON.parse(FH.Storage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
     GEArmies:{},
     ArenaOpponents:{},
     SelectedOpponent: null,
@@ -288,7 +288,7 @@ let BattleAssist = {
             if (/^GE5/.test(key)) {
                 BattleAssist.armyAdvice[key.replace(/^GE5/,"defense%")]=structuredClone(value);
                 delete BattleAssist.armyAdvice[key];
-                localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+                FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
             }
         }
 
@@ -408,7 +408,7 @@ let BattleAssist = {
             BattleAssist.armyAdvice[overrideId]=oldAdvice;
             tr.find(`.AASetAdvice[data-id="${id}"]`).attr("data-id",overrideId);
             tr.find(`.AASetBonus[data-id="${id}"]`).attr("data-id",overrideId);
-            localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+            FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         })
         
     },
@@ -428,7 +428,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,bonus,"");
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     SetAdvice: (e) => {
@@ -447,7 +447,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,null,advice);
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     AddAdvice: (id, bonus, advice) => {
@@ -492,7 +492,7 @@ let BattleAssist = {
 		BattleAssist.AASettings.lostHP = Number($('#AAlostHP').val()) || 40;
         BattleAssist.AASettings.battleLost = $('#AAbattleLost')[0].checked;
 		BattleAssist.AASettings.battleSurrendered = $('#AAbattleSurrendered')[0].checked;
-		localStorage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
+		FH.Storage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
     },
     processArmies: (wave1, wave2, bonus, type) => {
         let id= type+"%";

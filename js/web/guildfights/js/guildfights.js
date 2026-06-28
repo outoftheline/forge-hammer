@@ -4,29 +4,29 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
-FoEproxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
+FH.proxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
 	GuildFights.ProvinceNames = JSON.parse(xhr.responseText);
 });
 
-FoEproxy.addMetaHandler('battleground_colour', (xhr, postData) => {
+FH.proxy.addMetaHandler('battleground_colour', (xhr, postData) => {
 	GuildFights.Colors = JSON.parse(xhr.responseText);
 	GuildFights.PrepareColors();
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
 	GuildFights.HandlePlayerLeaderboard(data.responseData);
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postData) => {
 	GuildFights.HandleGuildLeaderboard(data.responseData);
 });
 
-/*FoEproxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
+/*FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
 	if (data.responseData.action === "province_conquered")
 		console.log(data.responseData.provinceId);
 });
 
-FoEproxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
+FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
 	return;
 	if ($('#GBGTargets').length === 0) {
 		$('body').append('<div id="GBGTargets"></div>');
@@ -39,7 +39,7 @@ FoEproxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data =>
 	}
 });*/
 
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
 	if (data.responseData.stateId === 'unsubscribed') return;
 	GuildFights.GlobalRankingTimeout = setTimeout(()=>{
 		if (data.responseData['stateId'] !== 'participating')	{
@@ -55,11 +55,11 @@ FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData
 	},500)
 });
 
-FoEproxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
+FH.proxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
 	clearTimeout(GuildFights.GlobalRankingTimeout);
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	GuildFights.init();
 	GuildFights.CurrentGBGRound = data.responseData.endsAt;
 
@@ -82,7 +82,7 @@ FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 		GuildFights.BuildFightContent();
 	}
 });
-FoEproxy.addHandler('TimerService', 'getTimers', (data, postData) => {
+FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
 	data.responseData.filter(t=>t.type=="battlegroundsAttrition").forEach(t=>{
 		if (!t.time) return;
@@ -123,12 +123,12 @@ let GuildFights = {
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
-	showTileColors: JSON.parse(localStorage.getItem("LiveFightSettings"))?.showTileColors || 1,
-	serverOffset: JSON.parse(localStorage.getItem("GuildFights.serverOffset")||"null"),
+	showTileColors: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.showTileColors || 1,
+	serverOffset: JSON.parse(FH.Storage.getItem("GuildFights.serverOffset")||"null"),
 	discordWebhook: { 
-		url: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhook || "",
-		template: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
-		bulkTemplate: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
+		url: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhook || "",
+		template: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
+		bulkTemplate: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
 	},
 	discordCache: null,
 
@@ -141,27 +141,100 @@ let GuildFights = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let hammerDBName = `ForgeHammer_GBG_${playerID}`;
+		let helperDBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let migrationKey = `ForgeHammer_GBG_Migrated_${playerID}`;
 
-		GuildFights.db = new Dexie(DBName);
+		GuildFights.db = new Dexie(hammerDBName);
 
 		GuildFights.db.version(1).stores({
 			snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
-			history: '&gbground'
-		});
-
-		GuildFights.db.version(21).stores({
+			history: '&gbground',
 			guildHistory: '[gbground+time], gbground'
 		});
 
-		GuildFights.db.open();
+		await GuildFights.db.open();
+
+		// One-time migration from FoeHelperDB_GuildFights_${playerID}
+		if (!FH.Storage.getItem(migrationKey)) {
+			try {
+				// Detect version of the old DB 
+				let oldDBVersion = await new Promise((resolve) => {
+					let request = indexedDB.open(helperDBName);
+					request.onsuccess = (e) => {
+						let version = e.target.result.version;
+						e.target.result.close();
+						resolve(version);
+					};
+					request.onerror = () => resolve(0);
+				});
+
+				// there was no DB - indexedDB.open() created a DB
+				if (oldDBVersion === 0) {
+					indexedDB.deleteDatabase(helperDBName);
+					FH.Storage.setItem(migrationKey, '1');
+					return;
+				}
+
+				let hasGuildHistory = oldDBVersion >= 21;
+				let oldDB = new Dexie(helperDBName);
+
+				oldDB.version(1).stores({
+					snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
+					history: '&gbground'
+				});
+
+				if (hasGuildHistory) {
+					oldDB.version(21).stores({
+						guildHistory: '[gbground+time], gbground'
+					});
+				}
+
+				if (oldDBVersion === 21) {
+					await oldDB.open();
+					const exportBlob = await oldDB.export({ prettyJson: true });
+					const exportJson = JSON.parse(await exportBlob.text());
+					if (exportJson?.data?.databaseVersion === 21) {
+						exportJson.data.databaseVersion = 1;
+						const fixedBlob = new Blob([JSON.stringify(exportJson, null, 2)], { type: 'application/json' });
+						await oldDB.close();
+						await oldDB.delete();
+						oldDB = await Dexie.import(fixedBlob);
+					}
+				} else {
+					await oldDB.open();
+				}
+
+				let [snapshots, history] = await Promise.all([
+					oldDB.snapshots.toArray(),
+					oldDB.history.toArray()
+				]);
+
+				let guildHistory = hasGuildHistory ? await oldDB.guildHistory.toArray() : [];
+
+				await Promise.all([
+					GuildFights.db.snapshots.bulkPut(snapshots),
+					GuildFights.db.history.bulkPut(history),
+					GuildFights.db.guildHistory.bulkPut(guildHistory)
+				]);
+				
+
+
+
+				oldDB.close();
+
+				FH.Storage.setItem(migrationKey, '1');
+			} catch (e) {
+				console.warn('Forge Hammer GBG database migration failed:', e);
+			}
+		}
 	},
 
 	init: () => {
 		GuildFights.GetAlerts();
 
 		if (GuildFights.InjectionLoaded === false) {
-			FoEproxy.addWsHandler('GuildBattlegroundService', 'all', data => {
+			FH.proxy.addWsHandler('GuildBattlegroundService', 'all', data => {
 				if (!data['responseData']?.[0]) return
 				let Pid = data.responseData[0].id || 0;
 				for (let x in data.responseData[0]) {
@@ -186,9 +259,9 @@ let GuildFights = {
 
 	HandlePlayerLeaderboard: async (d) => {
 		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
-		if (localStorage.getItem('GuildFights.NewAction') !== null) {
-			GuildFights.PrevAction = JSON.parse(localStorage.getItem('GuildFights.NewAction'));
-			GuildFights.PrevActionTimestamp = parseInt(localStorage.getItem('GuildFights.NewActionTimestamp'));
+		if (FH.Storage.getItem('GuildFights.NewAction') !== null) {
+			GuildFights.PrevAction = JSON.parse(FH.Storage.getItem('GuildFights.NewAction'));
+			GuildFights.PrevActionTimestamp = parseInt(FH.Storage.getItem('GuildFights.NewActionTimestamp'));
 		}
 		else if (GuildFights.NewAction !== null) {
 			GuildFights.PrevAction = GuildFights.NewAction;
@@ -232,10 +305,10 @@ let GuildFights = {
 
 		GuildFights.GBGHistoryView = false;
 		GuildFights.NewAction = players;
-		localStorage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
+		FH.Storage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
 
 		GuildFights.NewActionTimestamp = moment().unix();
-		localStorage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
+		FH.Storage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
 
 		if ($('#GuildPlayers').length > 0) {
 			GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
@@ -347,7 +420,7 @@ let GuildFights = {
 	SetBoxNavigation: async (gbground) => {
 		let h = [];
 		let i = 0;
-		let PlayerBoxSettings = JSON.parse(localStorage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
+		let PlayerBoxSettings = JSON.parse(FH.Storage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
 			// get all available GBG entires
@@ -434,7 +507,7 @@ let GuildFights = {
 			if (nelem.length !== 0) {
 				let oelem = elem.find('tr:not(.new)');
 				GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 1;
-				localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+				FH.Storage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 				$('#GuildPlayersTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
@@ -444,7 +517,7 @@ let GuildFights = {
 		else if (act === 'show') {
 			elem.find('tr').show();
 			GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 0;
-			localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+			FH.Storage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 			$('#GuildPlayersTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}
@@ -984,7 +1057,7 @@ let GuildFights = {
 		GuildFights.SetTabs('gbgowned');
 
 		let progress = [], nextup = [],
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		GuildFights.showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 
@@ -1160,7 +1233,7 @@ let GuildFights = {
 			mapdata = GuildFights.MapData.map.provinces,
 			gbgGuilds = GuildFights.MapData['battlegroundParticipants'],
 			own = gbgGuilds.find(e => e.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		GuildFights.showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		GuildFights.showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
@@ -1282,7 +1355,7 @@ let GuildFights = {
 			provinces = GuildFights.MapData.map.provinces,
 			guilds = GuildFights.MapData.battlegroundParticipants,
 			own = guilds.find(x => x.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		content.push('<div id="gbgowned"><table class="foe-table">');
 		content.push('<thead><tr>');
@@ -1422,20 +1495,20 @@ let GuildFights = {
 		let copy = '';
 		copycache.forEach((mapElem) => {
 			let battleType = mapElem.isAttackBattleType ? '🔴' : '🔵';
-			let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			let LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 			let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
 			copy += `${moment.unix(mapElem.lockedUntil - 2 - 60 * (GuildFights.serverOffset || 0)).format('HH:mm')} ${showTileColors === 1 ? battleType : ''} ${mapElem.title} \n`;
 		});
 
 		if (copy !== '') {
-			if (GuildFights.serverOffset && localStorage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
+			if (GuildFights.serverOffset && FH.Storage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
 				HTML.ShowToastMsg({
 					head: i18n('Boxes.GuildFights.TimeZoneWarning.Title'),
 					text: i18n('Boxes.GuildFights.TimeZoneWarning.Desc'),		
 					type: 'error',
 					hideAfter: 60000
 				});
-				localStorage.setItem('Guildfights.TimeZoneWarningShown', 'true');
+				FH.Storage.setItem('Guildfights.TimeZoneWarningShown', 'true');
 			}
 			helper.str.copyToClipboard(copy).then(() => {
 				HTML.ShowToastMsg({
@@ -1694,7 +1767,7 @@ let GuildFights = {
 
 	SetAlert: (id) => {
 		let prov = GuildFights.MapData.map.provinces.find(e => e.id === id);
-		let alertOffset = parseInt( JSON.parse(localStorage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
+		let alertOffset = parseInt( JSON.parse(FH.Storage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
 
 		const data = {
 			title: prov.title,
@@ -1751,7 +1824,7 @@ let GuildFights = {
 
 	ShowLiveFightSettings: () => {
 		let c = [];
-		let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+		let LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 		let showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 		let showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		let showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
@@ -1864,10 +1937,10 @@ let GuildFights = {
 		GuildFights.serverOffset = parseInt($("#serverOffset").val()) ?? null;
 
 		if (GuildFights.serverOffset != null)
-			localStorage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
+			FH.Storage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
 		else
-			localStorage.removeItem('GuildFights.serverOffset');
-		localStorage.setItem('LiveFightSettings', JSON.stringify(value));
+			FH.Storage.removeItem('GuildFights.serverOffset');
+		FH.Storage.setItem('LiveFightSettings', JSON.stringify(value));
 
 		$(`#LiveGildFightingSettingsBox`).fadeToggle('fast', function () {
 			$.when($(`#LiveGildFightingSettingsBox`).remove()).then(

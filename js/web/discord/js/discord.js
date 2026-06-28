@@ -17,12 +17,12 @@ let Discord = {
 	 * Get active Webhooks
 	 */
 	init: ()=> {
-		let webhooks = JSON.parse(localStorage.getItem(Discord.StorageName));
+		let webhooks = JSON.parse(FH.Storage.getItem(Discord.StorageName));
 		if (webhooks) {
 			Discord.WebHooks = webhooks;
 		}
 
-		let url = JSON.parse(localStorage.getItem('DiscordWebHookUrls'));
+		let url = JSON.parse(FH.Storage.getItem('DiscordWebHookUrls'));
 		if (url) {
 			Discord.WebHooksUrls = url;
 		}
@@ -77,7 +77,7 @@ let Discord = {
 					if (d.type != 'template')
 						h.push(`<button class="btn btn-green btn-slim" role="button" type="button" onclick="Discord.SendEntry(${i})">${i18n('General.Send')}</button>`);
 				
-					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${i18n('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
+					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${i18n('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${FH.extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
 					if (d.type != 'template')
 						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.EntryForm(${i})">${i18n('Boxes.Discord.EditEntry')}</button>`);
 					else
@@ -316,7 +316,7 @@ let Discord = {
 			name: $('#webhookUrlName').val(),
 			url: $('#webhookUrlInput').val(),
 		});
-		localStorage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
+		FH.Storage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
 		Discord.BuildWebhookFormContent('open');
 	},
 
@@ -413,7 +413,7 @@ let Discord = {
 		});
 
 		// save the array to localstorage
-		localStorage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
+		FH.Storage.setItem('DiscordWebHookUrls', JSON.stringify(Discord.WebHooksUrls));
 
 		Discord.BuildWebhookFormContent('open');
 	},
@@ -431,7 +431,7 @@ let Discord = {
 
 	SaveTheData: (rebuild = true)=> {
 		// save the array to localstorage
-		localStorage.setItem(Discord.StorageName, JSON.stringify(Discord.WebHooks));
+		FH.Storage.setItem(Discord.StorageName, JSON.stringify(Discord.WebHooks));
 
 		if(rebuild){
 			// rebuild table

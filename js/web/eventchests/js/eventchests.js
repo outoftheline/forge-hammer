@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
 
 	// is activated?
 	if(!Settings.GetSetting('ShowEventChest')){
@@ -53,7 +53,7 @@ FoEproxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
     EventChests.Show();
 });
 
-FoEproxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperPresent') === undefined ? true : Settings.GetSetting('EventHelperPresent'))) return;
     let presents = data.responseData.presentList
@@ -69,7 +69,7 @@ FoEproxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
     EventPresents.Show()
 });
 
-FoEproxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest')) return
     let presents = data.responseData.updatedPresentList
@@ -81,7 +81,7 @@ FoEproxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
     EventPresents.Show()
 });
 
-FoEproxy.addHandler('PresentGameService', 'useBooster', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'useBooster', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest')) return
     let presents = data.responseData.updatedPresentList
@@ -164,7 +164,7 @@ let EventPresents = {
                         }
                         h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${ResourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
                     }
-                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + extUrl + 'images/hud/open-eye.png" alt="">' : '')}
+                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + FH.extUrl + 'images/hud/open-eye.png" alt="">' : '')}
                     </td>`);
                 h.push('</tr>');
             }
