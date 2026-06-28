@@ -196,10 +196,10 @@ mouseActions.addAction([[97, 219, 'Center'],[152, 266, 'Center']],()=>{
  */
 let BattleAssist = {
 
-    armyAdvice: JSON.parse(localStorage.getItem("BattleAssistArmyAdvice") || "{}"),
+    armyAdvice: JSON.parse(HammerStorage.getItem("BattleAssistArmyAdvice") || "{}"),
     armyRecent:[],
     UnitOrder:null,
-    AASettings: JSON.parse(localStorage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
+    AASettings: JSON.parse(HammerStorage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
     GEArmies:{},
     ArenaOpponents:{},
     SelectedOpponent: null,
@@ -288,7 +288,7 @@ let BattleAssist = {
             if (/^GE5/.test(key)) {
                 BattleAssist.armyAdvice[key.replace(/^GE5/,"defense%")]=structuredClone(value);
                 delete BattleAssist.armyAdvice[key];
-                localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+                HammerStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
             }
         }
 
@@ -408,7 +408,7 @@ let BattleAssist = {
             BattleAssist.armyAdvice[overrideId]=oldAdvice;
             tr.find(`.AASetAdvice[data-id="${id}"]`).attr("data-id",overrideId);
             tr.find(`.AASetBonus[data-id="${id}"]`).attr("data-id",overrideId);
-            localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+            HammerStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         })
         
     },
@@ -428,7 +428,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,bonus,"");
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        HammerStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     SetAdvice: (e) => {
@@ -447,7 +447,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,null,advice);
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        HammerStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     AddAdvice: (id, bonus, advice) => {
@@ -492,7 +492,7 @@ let BattleAssist = {
 		BattleAssist.AASettings.lostHP = Number($('#AAlostHP').val()) || 40;
         BattleAssist.AASettings.battleLost = $('#AAbattleLost')[0].checked;
 		BattleAssist.AASettings.battleSurrendered = $('#AAbattleSurrendered')[0].checked;
-		localStorage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
+		HammerStorage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
     },
     processArmies: (wave1, wave2, bonus, type) => {
         let id= type+"%";

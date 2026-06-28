@@ -43,7 +43,7 @@ let BlueGalaxy = {
     OlderGoodsValue : 0.1,
     DoubleCollections : 0,
     GalaxyFactor : 0,
-    sort: JSON.parse(localStorage.getItem("BlueGalaxySorting")||'{"col":null,"order":null}'),
+    sort: JSON.parse(HammerStorage.getItem("BlueGalaxySorting")||'{"col":null,"order":null}'),
 
     /**
      * Zeigt die Box an
@@ -57,12 +57,12 @@ let BlueGalaxy = {
 
         if ($('#bluegalaxy').length === 0) {
 
-            let GoodsValue = localStorage.getItem('BlueGalaxyGoodsValue');
+            let GoodsValue = HammerStorage.getItem('BlueGalaxyGoodsValue');
             if (GoodsValue != null) {
                 BlueGalaxy.GoodsValue = parseFloat(GoodsValue);
             }
 
-            let OlderGoodsValue = localStorage.getItem('BlueGalaxyOlderGoodsValue');
+            let OlderGoodsValue = HammerStorage.getItem('BlueGalaxyOlderGoodsValue');
             if (OlderGoodsValue != null) {
                 BlueGalaxy.OlderGoodsValue = parseFloat(OlderGoodsValue);
             }
@@ -83,7 +83,7 @@ let BlueGalaxy = {
             $('#bluegalaxy').on('blur', '#goodsValue', function () {
                 BlueGalaxy.GoodsValue = parseFloat($('#goodsValue').val());
                 if (isNaN(BlueGalaxy.GoodsValue)) BlueGalaxy.GoodsValue = 0;
-                localStorage.setItem('BlueGalaxyGoodsValue', BlueGalaxy.GoodsValue);
+                HammerStorage.setItem('BlueGalaxyGoodsValue', BlueGalaxy.GoodsValue);
 
                 BlueGalaxy.CalcBody();
             });
@@ -92,7 +92,7 @@ let BlueGalaxy = {
             $('#bluegalaxy').on('blur', '#OlderGoodsValue', function () {
                 BlueGalaxy.OlderGoodsValue = parseFloat($('#OlderGoodsValue').val());
                 if (isNaN(BlueGalaxy.OlderGoodsValue)) BlueGalaxy.OlderGoodsValue = 0;
-                localStorage.setItem('BlueGalaxyOlderGoodsValue', BlueGalaxy.OlderGoodsValue);
+                HammerStorage.setItem('BlueGalaxyOlderGoodsValue', BlueGalaxy.OlderGoodsValue);
 
                 BlueGalaxy.CalcBody();
             });
@@ -130,7 +130,7 @@ let BlueGalaxy = {
         let Buildings = [],
             FPB = Productions.Boosts['fp'] === undefined ? (Boosts.Sums['forge_points_production'] + 100) / 100 : Productions.Boosts['fp']
             FPBoost = (FP) => { return Math.round(FP * FPB) },
-            showBGFragments = JSON.parse(localStorage.getItem('showBGFragments')||"true");
+            showBGFragments = JSON.parse(HammerStorage.getItem('showBGFragments')||"true");
         
         for (let CityEntity of Object.values(MainParser.CityBuildingsData)) {
             
@@ -303,7 +303,7 @@ let BlueGalaxy = {
             } else {
                 BlueGalaxy.sort = {col:el.dataset.colname,order:"descending"}
             }
-            localStorage.setItem("BlueGalaxySorting",JSON.stringify(BlueGalaxy.sort))
+            HammerStorage.setItem("BlueGalaxySorting",JSON.stringify(BlueGalaxy.sort))
             BlueGalaxy.CalcBody();
             
         })
@@ -329,7 +329,7 @@ let BlueGalaxy = {
     */
 	ShowSettings: () => {
 		let autoOpen = Settings.GetSetting('ShowBlueGalaxyHelper');
-        let showBGFragments = JSON.parse(localStorage.getItem('showBGFragments')||"true");
+        let showBGFragments = JSON.parse(HammerStorage.getItem('showBGFragments')||"true");
 
         let h = [];
         h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${i18n('Boxes.Settings.Autostart')}</label></p>`);
@@ -347,12 +347,12 @@ let BlueGalaxy = {
         let value = false;
 		if ($("#autoStartBGHelper").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowBlueGalaxyHelper', value);
+		HammerStorage.setItem('ShowBlueGalaxyHelper', value);
         let showBGFragments = false;
 		if ($("#showBGFragments").is(':checked'))
             showBGFragments = true;
-        if (localStorage.getItem('showBGFragments') != showBGFragments) {
-            localStorage.setItem('showBGFragments', showBGFragments);
+        if (HammerStorage.getItem('showBGFragments') != showBGFragments) {
+            HammerStorage.setItem('showBGFragments', showBGFragments);
             BlueGalaxy.CalcBody();
         }
 		

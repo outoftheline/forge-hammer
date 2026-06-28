@@ -29,7 +29,7 @@ let Kits = {
 	ShowMissing: 0,
 	Fragments:{},
 	fragmentURL:null,
-	favourites:JSON.parse(localStorage.getItem("Kits.favourites")||"[]"),
+	favourites:JSON.parse(HammerStorage.getItem("Kits.favourites")||"[]"),
 	specialCases:{
 		"selection_kit_watchtower_1_gbg" : "selection_kit_watchtower1_gbg",
 		"selection_kit_ind_palace_set" :"selection_kit_indian_palace",
@@ -596,7 +596,7 @@ let Kits = {
 			Kits.favourites.splice(index, 1);
 		}
 		e.target.style = `background-image:url('${Kits.favourites.includes(name)? srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_fill.png",true) : srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_empty.png",true)}')`
-		localStorage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
+		HammerStorage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
 		e.target.parentElement.parentElement.classList.toggle("notFavourite");
 	},
 

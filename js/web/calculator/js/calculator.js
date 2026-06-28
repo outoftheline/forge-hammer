@@ -11,7 +11,7 @@ let Calculator = {
     PlayInfoSound: false,
 	LastRecurringQuests: undefined,
 	ForderBonusPerConversation: true,
-	AutoOpen: localStorage.getItem('CalcAutoOpen') || false,
+	AutoOpen: HammerStorage.getItem('CalcAutoOpen') || false,
 	OwnPartClose: false,
 	DefaultButtons: [
 		80, 90, 100, 'ark'
@@ -32,12 +32,12 @@ let Calculator = {
 
 	Show: (action = "") => {
 		$('.tooltip').remove();
-		Calculator.ForderBonusPerConversation = (localStorage.getItem('CalculatorForderBonusPerConversation') !== 'false');
+		Calculator.ForderBonusPerConversation = (HammerStorage.getItem('CalculatorForderBonusPerConversation') !== 'false');
 
-        let spk = localStorage.getItem('CalculatorTone');
+        let spk = HammerStorage.getItem('CalculatorTone');
 
 		if (spk === null) {
-			localStorage.setItem('CalculatorTone', 'false');
+			HammerStorage.setItem('CalculatorTone', 'false');
 			Calculator.PlayInfoSound = false;
 
 		} else {
@@ -46,7 +46,7 @@ let Calculator = {
 
 		HTML.AddCssFile('calculator');
 
-		Calculator.CurrentPlayer = parseInt(localStorage.getItem('current_player_id'));		
+		Calculator.CurrentPlayer = parseInt(HammerStorage.getItem('current_player_id'));		
 
         Calculator.ShowBody();
 	},
@@ -56,7 +56,7 @@ let Calculator = {
 
 		if(Calculator.ForderBonusPerConversation && MainParser.OpenConversation){
 			let StorageKey = 'CalculatorForderBonus_' + MainParser.OpenConversation.id,
-				StorageValue = localStorage.getItem(StorageKey);
+				StorageValue = HammerStorage.getItem(StorageKey);
 			
 			if(StorageValue !== null){
 				Calculator.ForderBonus = parseFloat(StorageValue);
@@ -65,7 +65,7 @@ let Calculator = {
 		}
 
 		if(!ForderBonusLoaded){
-			let ab = localStorage.getItem('CalculatorForderBonus');
+			let ab = HammerStorage.getItem('CalculatorForderBonus');
 			if (ab !== null) 
 				Calculator.ForderBonus = parseFloat(ab);
 		}
@@ -112,7 +112,7 @@ let Calculator = {
 
 		// different arc bonus-buttons
 		let investmentSteps = [80, 90, 100, MainParser.ArkBonus],
-			customButtons = localStorage.getItem('CustomCalculatorButtons');
+			customButtons = HammerStorage.getItem('CustomCalculatorButtons');
 
 		if(customButtons) {
 			investmentSteps = [];
@@ -594,8 +594,8 @@ let Calculator = {
 		let c = [],
 			buttons,
 			defaults = Calculator.DefaultButtons,
-			sB = localStorage.getItem('CustomCalculatorButtons'),
-			allGB = JSON.parse(localStorage.getItem('ShowOwnPartOnAllGBs')),
+			sB = HammerStorage.getItem('CustomCalculatorButtons'),
+			allGB = JSON.parse(HammerStorage.getItem('ShowOwnPartOnAllGBs')),
 			nV = `<p class="new-row text-center bbd p5 flex gap">
 				${i18n('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> 
 				<span class="btn btn-green btn-slim" onclick="Calculator.SettingsInsertNewRow()">+</span>
@@ -665,20 +665,20 @@ let Calculator = {
 				}
 			}
 		});
-		localStorage.setItem('CustomCalculatorButtons', JSON.stringify(values));
+		HammerStorage.setItem('CustomCalculatorButtons', JSON.stringify(values));
 
 		Calculator.AutoOpen = $('.CalcAutoOpen').prop('checked');
-		localStorage.setItem('CalcAutoOpen', Calculator.AutoOpen);
+		HammerStorage.setItem('CalcAutoOpen', Calculator.AutoOpen);
 		
 		Calculator.ForderBonusPerConversation = $('.forderbonusperconversation').prop('checked');
-		localStorage.setItem('CalculatorForderBonusPerConversation', Calculator.ForderBonusPerConversation);
+		HammerStorage.setItem('CalculatorForderBonusPerConversation', Calculator.ForderBonusPerConversation);
 
 		Calculator.PlayInfoSound = $('#CalculatorTone').prop('checked');
-		localStorage.setItem('CalculatorTone', Calculator.PlayInfoSound);
+		HammerStorage.setItem('CalculatorTone', Calculator.PlayInfoSound);
 
 		let openforeignGB = false;
 		if ($("#openonaliengb").is(':not(:checked)')) openforeignGB = true;
-		localStorage.setItem('ShowOwnPartOnAllGBs',openforeignGB);
+		HammerStorage.setItem('ShowOwnPartOnAllGBs',openforeignGB);
 
 
 		$(`#OwnPartBoxSettingsBox`).fadeToggle('fast', function(){

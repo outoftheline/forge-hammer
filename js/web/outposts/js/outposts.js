@@ -19,7 +19,7 @@ let Outposts = {
 
 	// display settings
 	/** @type {Record<string, Record<string, FoE_JSON_GoodName>>} */
-	PlannedTiles: JSON.parse(localStorage.getItem('Outposts_PlannedTiles')||'{}'),
+	PlannedTiles: JSON.parse(HammerStorage.getItem('Outposts_PlannedTiles')||'{}'),
 	GUINeedsUpdate: false,
 	DisplaySums: false,
 	DisplayAllTiles: false,
@@ -69,7 +69,7 @@ let Outposts = {
 						}
 						Outposts.PlannedTiles[cultureName][name] = value;
 					}
-					localStorage.setItem('Outposts_PlannedTiles', JSON.stringify(Outposts.PlannedTiles));
+					HammerStorage.setItem('Outposts_PlannedTiles', JSON.stringify(Outposts.PlannedTiles));
 					Outposts.RequestGUIUpdate();
 				}
 			});
@@ -79,7 +79,7 @@ let Outposts = {
 		}
 
 		if (Outposts.Advancements === null) {
-			let OutpostBuildings = localStorage.getItem('OutpostBuildings');
+			let OutpostBuildings = HammerStorage.getItem('OutpostBuildings');
 
 			if (OutpostBuildings !== null)
 			{
@@ -542,12 +542,12 @@ let Outposts = {
 		);
 
 		if (currentOutpost) {
-			let OldOutpostType = localStorage.getItem('OutpostType'),
+			let OldOutpostType = HammerStorage.getItem('OutpostType'),
 				NewOutpostType = currentOutpost.content;
 
 			if (OldOutpostType === undefined || OldOutpostType !== NewOutpostType) {
-				localStorage.setItem('OutpostType', NewOutpostType);
-				localStorage.removeItem('OutpostBuildings'); //Typ des Außenpostens hat sich geändert => Gebäude löschen => führt dazu, dass Button erst nach dem Besuch des Außenpostens grün wird
+				HammerStorage.setItem('OutpostType', NewOutpostType);
+				HammerStorage.removeItem('OutpostBuildings'); //Typ des Außenpostens hat sich geändert => Gebäude löschen => führt dazu, dass Button erst nach dem Besuch des Außenpostens grün wird
 				Outposts.Advancements = null;
 			}
 
@@ -580,7 +580,7 @@ let Outposts = {
 	 * @param {FoE_JSON_Advancement[]} d
 	 */
 	SaveBuildings: (d)=>{
-		localStorage.setItem('OutpostBuildings', JSON.stringify(d));
+		HammerStorage.setItem('OutpostBuildings', JSON.stringify(d));
 
 		Outposts.Advancements = d;
 
@@ -631,7 +631,7 @@ let Outposts = {
 
 
 	PopOutBox: ()=> {
-		let skinCss = localStorage.getItem('HammerSkin')||'variables';
+		let skinCss = HammerStorage.getItem('HammerSkin')||'variables';
 		let id = 'outpostConsumables',
 			content = $('#outpostConsumablesBody').html(),
 			winHtml = `<!DOCTYPE html>

@@ -321,7 +321,7 @@ let QiProgress = {
 			    active_maps:"guild_raids"
 			});
 
-			if (localStorage.getItem('QiProgressPlayerDetailsCords') === null) {
+			if (HammerStorage.getItem('QiProgressPlayerDetailsCords') === null) {
 				ptop = $('#QiProgress').length !== 0 ? $('#QiProgress').position().top : 0;
 				pright = $('#QiProgress').length !== 0 ? ($('#QiProgress').position().left + $('#QiProgress').width() + 10) : 0;
 				$('#QiProgressPlayerDetails').css('top', ptop + 'px').css('left', (pright * 1) + 'px');
@@ -477,8 +477,8 @@ let QiProgress = {
 	SetBoxNavigation: async (qiRound) => {
 		let h = [];
 		let i = 0;
-		let storageSettings = localStorage.getItem('QiProgressProgressSettings')
-		let ProgressSettings = (storageSettings != null && storageSettings != 'undefined') ? JSON.parse(localStorage.getItem('QiProgressProgressSettings')) : '{}';
+		let storageSettings = HammerStorage.getItem('QiProgressProgressSettings')
+		let ProgressSettings = (storageSettings != null && storageSettings != 'undefined') ? JSON.parse(HammerStorage.getItem('QiProgressProgressSettings')) : '{}';
 
 		if (QiProgress.AllRounds === undefined || QiProgress.AllRounds === null) {
 			// get all available entires
@@ -565,9 +565,9 @@ let QiProgress = {
 	 */
 	HandleQiProgress: async (d) => {
 		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
-		if (localStorage.getItem('QiProgress.NewAction') !== null) {
-			QiProgress.PrevAction = JSON.parse(localStorage.getItem('QiProgress.NewAction'));
-			QiProgress.PrevActionTimestamp = parseInt(localStorage.getItem('QiProgress.NewActionTimestamp'));
+		if (HammerStorage.getItem('QiProgress.NewAction') !== null) {
+			QiProgress.PrevAction = JSON.parse(HammerStorage.getItem('QiProgress.NewAction'));
+			QiProgress.PrevActionTimestamp = parseInt(HammerStorage.getItem('QiProgress.NewActionTimestamp'));
 		}
 		else if (QiProgress.NewAction !== null) {
 			QiProgress.PrevAction = QiProgress.NewAction;
@@ -598,10 +598,10 @@ let QiProgress = {
 
 		QiProgress.HistoryView = false;
 		QiProgress.NewAction = players;
-		localStorage.setItem('QiProgress.NewAction', JSON.stringify(QiProgress.NewAction));
+		HammerStorage.setItem('QiProgress.NewAction', JSON.stringify(QiProgress.NewAction));
 
 		QiProgress.NewActionTimestamp = moment().unix();
-		localStorage.setItem('QiProgress.NewActionTimestamp', QiProgress.NewActionTimestamp);
+		HammerStorage.setItem('QiProgress.NewActionTimestamp', QiProgress.NewActionTimestamp);
 
 		if ($('#QiProgress').length > 0) {
 			QiProgress.BuildProgressList(QiProgress.CurrentQISeason);

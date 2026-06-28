@@ -65,7 +65,7 @@ let Productions = {
 
 	fragmentsSet: new Set(),
 	efficiencySettings: Object.assign(
-		JSON.parse(localStorage.getItem("Productions.efficiencySettings") || 
+		JSON.parse(HammerStorage.getItem("Productions.efficiencySettings") || 
 			`{
 			"tilevalues":false,
 			"showitems":true,
@@ -154,7 +154,7 @@ let Productions = {
 
 		savePresets: () => {
 			if (!Productions.Rating.Presets) return;
-			localStorage.setItem(Productions.Rating.PresetStorageKey, JSON.stringify(Productions.Rating.Presets));
+			HammerStorage.setItem(Productions.Rating.PresetStorageKey, JSON.stringify(Productions.Rating.Presets));
 		},
 
 		createPreset: (data) => {
@@ -176,7 +176,7 @@ let Productions = {
 
 		ensurePresets: () => {
 			if (Productions.Rating.Presets) return;
-			let stored = localStorage.getItem(Productions.Rating.PresetStorageKey);
+			let stored = HammerStorage.getItem(Productions.Rating.PresetStorageKey);
 			if (stored) {
 				try {
 					Productions.Rating.Presets = JSON.parse(stored);
@@ -185,7 +185,7 @@ let Productions = {
 				}
 			}
 			if (!Productions.Rating.Presets) {
-				const legacyData = JSON.parse(localStorage.getItem(Productions.Rating.LegacyStorageKey)||"{}");
+				const legacyData = JSON.parse(HammerStorage.getItem(Productions.Rating.LegacyStorageKey)||"{}");
 				const presetId = 'default';
 				Productions.Rating.Presets = {
 					activePresetId: presetId,
@@ -195,7 +195,7 @@ let Productions = {
 						}
 					}
 				};
-				localStorage.removeItem(Productions.Rating.LegacyStorageKey);
+				HammerStorage.removeItem(Productions.Rating.LegacyStorageKey);
 				Productions.Rating.savePresets();
 			}
 			if (!Productions.Rating.Presets.presets || Object.keys(Productions.Rating.Presets.presets).length === 0) {
@@ -296,12 +296,12 @@ let Productions = {
 			}
 			Productions.Rating.updateTypes();
 
-			if (localStorage.getItem('ProductionRatingProdPerTiles')) {
-				let RatingProdPerTiles = Object.assign({},JSON.parse(localStorage.getItem('ProductionRatingProdPerTiles')||"{}"))
+			if (HammerStorage.getItem('ProductionRatingProdPerTiles')) {
+				let RatingProdPerTiles = Object.assign({},JSON.parse(HammerStorage.getItem('ProductionRatingProdPerTiles')||"{}"))
 				for (let [type,perTile] of Object.entries(RatingProdPerTiles)) {
 					if (Productions.Rating.Data[type]) Productions.Rating.Data[type].perTile = perTile
 				}
-				localStorage.removeItem('ProductionRatingProdPerTiles')
+				HammerStorage.removeItem('ProductionRatingProdPerTiles')
 				Productions.Rating.save()
 			}
 
@@ -960,8 +960,8 @@ let Productions = {
 					rowA.push('<td '+((type.includes('att') || type.includes('def')) ? 'colspan="3"' : '')+' data-number="'+Technologies.Eras[building.eraName]+'" exportvalue="'+i18n("Eras."+Technologies.Eras[building.eraName]+".short")+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 					if (!type.includes('att') && !type.includes('def')) {
 						let time = "-"
-						let showRelativeProductionTime = JSON.parse(localStorage.getItem('productionsShowRelativeTime')||"false")
-						let showAMPMTime = JSON.parse(localStorage.getItem('productionsShowAMPMTime')||"false")
+						let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
+						let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
 						if (building.state.times?.at) {
 							if (showRelativeProductionTime)
 								time = moment.unix(building.state.times?.at).fromNow()
@@ -1167,8 +1167,8 @@ let Productions = {
 
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			let time = "-"
-			let showRelativeProductionTime = JSON.parse(localStorage.getItem('productionsShowRelativeTime')||"false")
-			let showAMPMTime = JSON.parse(localStorage.getItem('productionsShowAMPMTime')||"false")
+			let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
+			let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
 			if (building.state.times?.at) {
 				if (showRelativeProductionTime)
 					time = moment.unix(building.state.times?.at).fromNow()
@@ -1328,8 +1328,8 @@ let Productions = {
 
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + i18n("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			let time = "-"
-			let showRelativeProductionTime = JSON.parse(localStorage.getItem('productionsShowRelativeTime')||"false")
-			let showAMPMTime = JSON.parse(localStorage.getItem('productionsShowAMPMTime')||"false")
+			let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
+			let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
 			if (building.state.times?.at) {
 				if (showRelativeProductionTime)
 					time = moment.unix(building.state.times?.at).fromNow()
@@ -2231,7 +2231,7 @@ let Productions = {
 			Productions.efficiencySettings[x] = $('#'+x).is(':checked')
 			if (x === "inventorybuildingscore")
 				Productions.efficiencySettings[x] = parseFloat($('#'+x).val())/100
-			localStorage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
+			HammerStorage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
 			if (x === "inventorybuildingscore") return;
 
 			if ($('#'+x).is(':checked')) {
@@ -2745,8 +2745,8 @@ let Productions = {
 
 
 	ShowSettings: () => {
-        let showRelativeProductionTime = JSON.parse(localStorage.getItem('productionsShowRelativeTime')||"false")
-        let showAMPMTime = JSON.parse(localStorage.getItem('productionsShowAMPMTime')||"false")
+        let showRelativeProductionTime = JSON.parse(HammerStorage.getItem('productionsShowRelativeTime')||"false")
+        let showAMPMTime = JSON.parse(HammerStorage.getItem('productionsShowAMPMTime')||"false")
         let show24Time = (showAMPMTime === false && showRelativeProductionTime === false)
 
         let h = []
@@ -2773,15 +2773,15 @@ let Productions = {
 	SaveSettings: () => {
         let showRelativeProductionTime = false
 		if ($("#productionsShowRelativeTime").is(':checked')) showRelativeProductionTime = true
-		localStorage.setItem('productionsShowRelativeTime', showRelativeProductionTime)
+		HammerStorage.setItem('productionsShowRelativeTime', showRelativeProductionTime)
 
         let showAMPMTime = false
 		if ($("#productionsShowAMPMTime").is(':checked')) showAMPMTime = true
-		localStorage.setItem('productionsShowAMPMTime', showAMPMTime)
+		HammerStorage.setItem('productionsShowAMPMTime', showAMPMTime)
 
 		if ($("#productionsShow24Time").is(':checked')) {
-			localStorage.setItem('productionsShowAMPMTime', false)
-			localStorage.setItem('productionsShowRelativeTime', false)
+			HammerStorage.setItem('productionsShowAMPMTime', false)
+			HammerStorage.setItem('productionsShowRelativeTime', false)
 		}
 
 		Productions.CalcBody()
@@ -2931,7 +2931,7 @@ let Productions = {
 
 
 	ratingPopOut: ()=> {
-		let skinCss = localStorage.getItem('HammerSkin')||'variables';
+		let skinCss = HammerStorage.getItem('HammerSkin')||'variables';
 		let id = 'ProductionsRating',
 			content = $('#ProductionsRatingBody').html(),
 			winHtml = `<!DOCTYPE html>

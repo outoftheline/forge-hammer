@@ -297,7 +297,7 @@ let scoutingTimes = {
         let value = false;
 		if ($("#autoStartScout").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowScoutingTimes', value);
+		HammerStorage.setItem('ShowScoutingTimes', value);
 		$(`#mapScoutingTimesDialogSettingsBox`).remove();
     },
 

@@ -2127,7 +2127,7 @@ let Stats = {
 
 
 let StockAlarm = {
-	Alarms: JSON.parse(localStorage.getItem('StockAlarms') || '[]'),
+	Alarms: JSON.parse(HammerStorage.getItem('StockAlarms') || '[]'),
 	triggered: [],
 	OptionsR: "",
 	OptionsT: "",
@@ -2315,7 +2315,7 @@ let StockAlarm = {
 			value: value,
 			repeat: repeat
 		})
-		localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+		HammerStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 	},
 
 	addline: (type, id, name, value, repeat)=>{
@@ -2359,7 +2359,7 @@ let StockAlarm = {
 		let i = StockAlarm.Alarms.findIndex( x => x.type==type && x.id==id && x.name == name && x.repeat == repeat && x.value == value);
 		if (i>-1) {
 			StockAlarm.Alarms.splice(i,1);
-			localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+			HammerStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 			$(`#LowStockType [data-type="${type}"]`).trigger("click");
 			$(`#LowStockRepeat [data-repeat="${repeat}"]`).trigger("click");
 			$(`#LowStockValue`).val(value);

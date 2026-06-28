@@ -743,7 +743,7 @@ let GexStat = {
 		// if nothing is selected, set series to default
 		if (!chartSeries.length) { chartSeries.push('encounters', 'member', 'participants', 'rank') }
 
-		localStorage.setItem('GexStatSettings', JSON.stringify(GexStat.Settings));
+		HammerStorage.setItem('GexStatSettings', JSON.stringify(GexStat.Settings));
 
 		$(`#GexStatSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();
@@ -758,7 +758,7 @@ let GexStat = {
 
 	InitSettings: () => {
 
-		let Settings = JSON.parse(localStorage.getItem('GexStatSettings'));
+		let Settings = JSON.parse(HammerStorage.getItem('GexStatSettings'));
 
 		if (!Settings) {
 			return;
@@ -974,7 +974,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
 	for (let x of data.responseData) {
 		if (!x.currentEntityId) continue;
 		GExAttempts.state.GEprogress = x.currentEntityId;
-		localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+		HammerStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 		GExAttempts.refreshGUI()
 	}
 });
@@ -986,7 +986,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postDat
 let GExAttempts = {
 	count:0,
 	next:null,
-	state: JSON.parse(localStorage.getItem('GEx.state'))||{
+	state: JSON.parse(HammerStorage.getItem('GEx.state'))||{
 		GEprogress:0,
 		active:true,
 		deactivationTime:null,
@@ -1014,7 +1014,7 @@ let GExAttempts = {
 				GExAttempts.state.deactivationTime = null
 				GExAttempts.deactivationTimer = null
 				GExAttempts.state.GEprogress = 0
-				localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+				HammerStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
 			}, (GExAttempts.state.deactivationTime-GameTime.get()) * 1000);
 		}
@@ -1026,7 +1026,7 @@ let GExAttempts = {
 				GExAttempts.state.deactivationTime = GExAttempts.state.activationTime + 604800
 				GExAttempts.state.activationTime = null
 				GExAttempts.activationTimer = null
-				localStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
+				HammerStorage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
 			}, (GExAttempts.state.activationTime-GameTime.get()) * 1000);
 		}
@@ -1076,7 +1076,7 @@ let GExAttempts = {
 			GExAttempts.state.GEprogress = 0
 		}
 
-		localStorage.setItem('GEx.state', JSON.stringify(GExAttempts.state))
+		HammerStorage.setItem('GEx.state', JSON.stringify(GExAttempts.state))
 		GExAttempts.refreshGUI()
 
 	}
@@ -1084,7 +1084,7 @@ let GExAttempts = {
 
 let GexStockWarning = {
 	check: (stock,costs) => {
-		let min = JSON.parse(localStorage.getItem('GexStockWarningMin')||"100");
+		let min = JSON.parse(HammerStorage.getItem('GexStockWarningMin')||"100");
 		if (min == 100) return
 		let parts = []
 		for (let [res,amount] of Object.entries(costs)) {

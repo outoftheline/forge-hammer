@@ -524,7 +524,7 @@ let Market = {
 		if ($("#autoStartMarket").is(':checked'))
 			value = true;
 
-		localStorage.setItem('ShowMarketFilter', value);
+		HammerStorage.setItem('ShowMarketFilter', value);
 		$(`#MarketSettingsBox`).remove();
     },
 };

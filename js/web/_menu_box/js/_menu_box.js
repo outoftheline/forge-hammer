@@ -112,7 +112,7 @@ let _menu_box = {
 				$('.hud-btn').each(function () {
 					_menu.Items.push($(this).data('slug'));
 				});
-				localStorage.setItem('MenuSort', JSON.stringify(_menu.Items));
+				HammerStorage.setItem('MenuSort', JSON.stringify(_menu.Items));
 
 				$('#menu_box').removeClass('is--sorting');
 

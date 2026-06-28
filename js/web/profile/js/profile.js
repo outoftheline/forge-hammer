@@ -111,7 +111,7 @@ const Profile = {
 
         // actions
         $('#PlayerProfileBody').html(content.join('')).promise().done(function() {
-            let theme = localStorage.getItem("PlayerProfileTheme") || "default";
+            let theme = HammerStorage.getItem("PlayerProfileTheme") || "default";
             $('#PlayerProfile').addClass(theme);
             $('#PlayerProfileBody [data-original-title]').tooltip();
             if (isRebuilt) {
@@ -129,7 +129,7 @@ const Profile = {
                 $(this).attr('data-original-title', text);
             });
             $('#PlayerProfileBody').on('click', '.colorToggle',function () {
-                Profile.currentThemeNr = Profile.themes.indexOf(localStorage.getItem("PlayerProfileTheme")) || 0;
+                Profile.currentThemeNr = Profile.themes.indexOf(HammerStorage.getItem("PlayerProfileTheme")) || 0;
                 $('#PlayerProfile').removeClass(Profile.themes[Profile.currentThemeNr]);
                 if (Profile.themes[Profile.currentThemeNr+1] !== undefined)
                     Profile.currentThemeNr++;
@@ -137,7 +137,7 @@ const Profile = {
                     Profile.currentThemeNr = 0;
 
                 $('#PlayerProfile').addClass(Profile.themes[Profile.currentThemeNr]);
-				localStorage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
+				HammerStorage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
             });
             $('#PlayerProfile').on('click', '.toggleMore', function () {
                 $(this).toggleClass('active');

@@ -123,7 +123,7 @@ let Treasury = {
 		if ($("#autoStartMarket").is(':checked'))
 			value = true;
 
-		localStorage.setItem('ShowGuildTreasuryLogExport', value);
+		HammerStorage.setItem('ShowGuildTreasuryLogExport', value);
 		$(`#treasurySettingsBox`).remove();
     },
 };

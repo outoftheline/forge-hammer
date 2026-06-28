@@ -177,7 +177,7 @@ let idleGame = {
 	Tasklist: [],
 	Taskprogress:[],
 
-	settings: JSON.parse(localStorage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
+	settings: JSON.parse(HammerStorage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
 
 	Progress: 0,
 	ProgressDegree: 0,
@@ -708,7 +708,7 @@ let idleGame = {
 	},
 
 	saveSettings:() => {
-		localStorage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
+		HammerStorage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
 	},
 
 	StratUndo:() =>{

@@ -487,7 +487,7 @@ let betterMusic = {
     
     loadSettings: ()=> {
 
-		tempSettings = JSON.parse(localStorage.getItem('betterMusicSettings') || '{}');
+		tempSettings = JSON.parse(HammerStorage.getItem('betterMusicSettings') || '{}');
         if (tempSettings.Scenes) {
             for (let i of Object.keys(tempSettings.Scenes)) {
                 if (!betterMusic.Settings.Scenes[i]) delete tempSettings.Scenes[i];
@@ -497,7 +497,7 @@ let betterMusic = {
     },
     
     saveSettings: ()=> {
-        localStorage.setItem('betterMusicSettings', JSON.stringify(betterMusic.Settings));
+        HammerStorage.setItem('betterMusicSettings', JSON.stringify(betterMusic.Settings));
         betterMusic.buildlists();
     },
     

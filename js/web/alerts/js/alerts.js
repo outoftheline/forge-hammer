@@ -473,7 +473,7 @@ let Alerts = function(){
 			get: ( key ) => {
 				if ( tmp.preferences.data[key] ) {
 					let id = tmp.preferences.aux.key.generate( key );
-					let value = localStorage.getItem( id );
+					let value = HammerStorage.getItem( id );
 
 					if ( value ) {
 						return JSON.parse( value );
@@ -488,7 +488,7 @@ let Alerts = function(){
 					tmp.preferences.data[key].value = value;
 
 					let id = tmp.preferences.aux.key.generate( key );
-					localStorage.setItem( id, value )
+					HammerStorage.setItem( id, value )
 				}
 			},
 		},

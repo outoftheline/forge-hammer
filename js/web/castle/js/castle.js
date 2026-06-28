@@ -26,7 +26,7 @@ FoEproxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
         Castle.curShopItems.available.reward -= Castle.curCastlePointsDiff.diff;
         Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
 
-        localStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
+        HammerStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.UpdateCastlePointsLog(data['requestId'], 'purchaseItem');
         Castle.ShowProgressTable();
@@ -40,7 +40,7 @@ FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
 
     if (data.responseData['state'] === 'collectable')
     {
-        let d = JSON.parse(localStorage.getItem('CastleCurAuctionWinning'));
+        let d = JSON.parse(HammerStorage.getItem('CastleCurAuctionWinning'));
         const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
 
         if (!d || d.date !== startOfDay)
@@ -50,7 +50,7 @@ FoEproxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
 
         d.rewards.push({ time: moment(MainParser.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
 
-        localStorage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
+        HammerStorage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
 
         Castle.curAuctionWinning = d;
 
@@ -96,7 +96,7 @@ FoEproxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
         });
 
         Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
-        localStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
+        HammerStorage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.ShowProgressTable();
     }
@@ -120,13 +120,13 @@ FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) =>
     if (r['state'] && r['nextStateTime'])
     {
         let GexEnd = r['state'] === 'inactive' ? r.nextStateTime : r.nextStateTime * 1 + 86400;
-        localStorage.setItem('CastleGexEnd', GexEnd);
+        HammerStorage.setItem('CastleGexEnd', GexEnd);
     }
 
     if (Castle.curGexLastOfSection === undefined || Castle.curGexLastOfSection !== r.currentEntityId)
     {
         Castle.curGexLastOfSection = r.progress.currentEntityId;
-        localStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
+        HammerStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
 
         Castle.ShowProgressTable();
     }
@@ -146,7 +146,7 @@ FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
     if (Castle.curGexLastOfSection === undefined || Castle.curGexLastOfSection < r.currentEntityId)
     {
         Castle.curGexLastOfSection = r.currentEntityId;
-        localStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
+        HammerStorage.setItem('CastleCurGexLastOfSection', Castle.curGexLastOfSection);
 
         if (Castle.GexLastOfSectionsIds.includes(r.currentEntityId))
         {
@@ -169,7 +169,7 @@ FoEproxy.addHandler('ChallengeService', 'getOptions', (data, postData) => {
     if (r.options.length === 2)
     {
         Castle.curDailyChallenge = { id: null, state: 'select_challenge' }
-        localStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
+        HammerStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
     }
 
     Castle.ShowProgressTable();
@@ -192,7 +192,7 @@ FoEproxy.addHandler('CastleSystemService', 'all', (data, postData) => {
     if (data.requestMethod === 'getOverview')
     {
         Castle.dailyPointsCollectionAvailableAt = data.responseData.dailyPointsCollectionAvailableAt;
-        localStorage.setItem('CastleDailyPointsCollectionAvailableAt', Castle.dailyPointsCollectionAvailableAt);
+        HammerStorage.setItem('CastleDailyPointsCollectionAvailableAt', Castle.dailyPointsCollectionAvailableAt);
 
         Castle.ShowProgressTable();
     }
@@ -229,7 +229,7 @@ FoEproxy.addHandler('ChallengeService', 'collectReward', (data, postData) => {
 
     if (data.responseData.__class__ === 'Success')
     {
-        const curDailyChallenge = JSON.parse(localStorage.getItem('CastleCurDailyChallenge'));
+        const curDailyChallenge = JSON.parse(HammerStorage.getItem('CastleCurDailyChallenge'));
 
         if (curDailyChallenge && curDailyChallenge.id)
         {
@@ -262,7 +262,7 @@ FoEproxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) 
         if (d[c].type === 'daily_challenge')
         {
             Castle.curDailyChallenge = { id: d[c].id, state: d[c].state };
-            localStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
+            HammerStorage.setItem('CastleCurDailyChallenge', JSON.stringify(Castle.curDailyChallenge));
         }
 
         if (d[c].type === 'daily_challenge_counter')
@@ -361,7 +361,7 @@ let Castle = {
             return;
         }
 
-        let Settings = JSON.parse(localStorage.getItem('CastleSettings'));
+        let Settings = JSON.parse(HammerStorage.getItem('CastleSettings'));
 
         if (Settings)
         {
@@ -374,7 +374,7 @@ let Castle = {
 
         if (!Castle.CastlePointLog)
         {
-            Castle.CastlePointLog = JSON.parse(localStorage.getItem('CastlePointLog') || '[]');
+            Castle.CastlePointLog = JSON.parse(HammerStorage.getItem('CastlePointLog') || '[]');
         }
 
         Castle.Show();
@@ -396,7 +396,7 @@ let Castle = {
 
         if (Castle.curCastlePoints === undefined)
         {
-            Castle.curCastlePoints = localStorage.getItem('CastleCurCastlePoints') || 0;
+            Castle.curCastlePoints = HammerStorage.getItem('CastleCurCastlePoints') || 0;
         }
 
         if (ResourceStock.castle_points)
@@ -415,7 +415,7 @@ let Castle = {
 
             if (increased)
             {
-                localStorage.setItem('CastleCurCastlePoints', Castle.curCastlePoints);
+                HammerStorage.setItem('CastleCurCastlePoints', Castle.curCastlePoints);
                 Castle.ShowCastlePoints(diff);
             }
         }
@@ -452,7 +452,7 @@ let Castle = {
 
             rtype = 'castlePoints';
 
-            localStorage.setItem('CastleCurDailyCastlePoints', JSON.stringify(Castle.curDailyCastlePoints));
+            HammerStorage.setItem('CastleCurDailyCastlePoints', JSON.stringify(Castle.curDailyCastlePoints));
         }
 
         // CastleSystemService "requestMethod": "getOverview"
@@ -514,7 +514,7 @@ let Castle = {
         if (idx >= 0)
         {
             Castle.CastlePointLog[idx].name.push(rtype);
-            localStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
+            HammerStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
 
             if (Castle.CurrentView === 'log')
             {
@@ -596,10 +596,10 @@ let Castle = {
 
         if (Castle.curDailyCastlePoints === undefined)
         {
-            Castle.curDailyCastlePoints = JSON.parse(localStorage.getItem('CastleCurDailyCastlePoints'));
+            Castle.curDailyCastlePoints = JSON.parse(HammerStorage.getItem('CastleCurDailyCastlePoints'));
         }
 
-        const colAvailableAt = localStorage.getItem('CastleDailyPointsCollectionAvailableAt') || 0;
+        const colAvailableAt = HammerStorage.getItem('CastleDailyPointsCollectionAvailableAt') || 0;
 
         if (Castle.curDailyCastlePoints)
         {
@@ -700,11 +700,11 @@ let Castle = {
         // Gex Last of sections
         if (MainParser.UnlockedFeatures.includes("guild_expedition"))
         {
-            const GexEnd = localStorage.getItem('CastleGexEnd');
+            const GexEnd = HammerStorage.getItem('CastleGexEnd');
 
             if (Castle.curGexLastOfSection === undefined)
             {
-                Castle.curGexLastOfSection = localStorage.getItem('CastleCurGexLastOfSection');
+                Castle.curGexLastOfSection = HammerStorage.getItem('CastleCurGexLastOfSection');
             }
 
             // Reset Gex if a new round started and isn't updatet atm
@@ -757,7 +757,7 @@ let Castle = {
         {
             if (Castle.curShopItems === undefined)
             {
-                Castle.curShopItems = JSON.parse(localStorage.getItem('CastleCurShopItems'));
+                Castle.curShopItems = JSON.parse(HammerStorage.getItem('CastleCurShopItems'));
             }
 
             if (Castle.curShopItems && Castle.curShopItems.date === startOfDay)
@@ -793,7 +793,7 @@ let Castle = {
         {
             if (Castle.curAuctionWinning === undefined)
             {
-                Castle.curAuctionWinning = JSON.parse(localStorage.getItem('CastleCurAuctionWinning'));
+                Castle.curAuctionWinning = JSON.parse(HammerStorage.getItem('CastleCurAuctionWinning'));
             }
 
             if (Castle.curAuctionWinning && Castle.curAuctionWinning['date'] && Castle.curAuctionWinning['rewards'] && Castle.curAuctionWinning.date === startOfDay)
@@ -1014,7 +1014,7 @@ let Castle = {
 
         if (!CastlePointLog)
         {
-            CastlePointLog = JSON.parse(localStorage.getItem('CastlePointLog') || '[]');
+            CastlePointLog = JSON.parse(HammerStorage.getItem('CastlePointLog') || '[]');
         }
 
         // remove requestIds from log 
@@ -1030,7 +1030,7 @@ let Castle = {
             return obj.date >= removeLogsDate;
         });
 
-        localStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
+        HammerStorage.setItem('CastlePointLog', JSON.stringify(Castle.CastlePointLog));
 
     },
 
@@ -1059,7 +1059,7 @@ let Castle = {
         Castle.Settings.showGroupNames = !!$("#casShowGroupNames").is(':checked');
         Castle.Settings.logDays = parseInt($('#casLogDuration').val()) || Castle.Settings.logDays;
 
-        localStorage.setItem('CastleSettings', JSON.stringify(Castle.Settings));
+        HammerStorage.setItem('CastleSettings', JSON.stringify(Castle.Settings));
 
         $(`#CastleSettingsBox`).fadeToggle('fast', function () {
             $(this).remove();

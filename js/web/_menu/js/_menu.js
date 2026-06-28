@@ -146,8 +146,8 @@ let _menu = {
 	* Integrates all required buttons
 	*/
 	ListLinks: (InsertMenuFunction) => {
-		let StorgedItems = localStorage.getItem('MenuSort');
-		let HiddenItems = localStorage.getItem('MenuHiddenItems');
+		let StorgedItems = HammerStorage.getItem('MenuSort');
+		let HiddenItems = HammerStorage.getItem('MenuHiddenItems');
 
 		// Beta-Funktionen
 		if (HelperBeta.active) {
@@ -248,7 +248,7 @@ let _menu = {
 			_menu.HiddenItems.push(name);
 		}
 		
-		localStorage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
+		HammerStorage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
 
 		// refresh the Menü after setting-toggle
 		setTimeout(()=> {
@@ -366,13 +366,13 @@ let _menu = {
 	 */
 	outpost_Btn: () => {
 		let red = false;
-		if (Outposts.OutpostData === null || localStorage.getItem('OutpostBuildings') === null) 
+		if (Outposts.OutpostData === null || HammerStorage.getItem('OutpostBuildings') === null) 
 			red = true;
 
 		let btn = _menu.MakeButton('outpost', red);
 
 		let btnEl = $('<span />').bind('click', function () {
-			let OutpostBuildings = localStorage.getItem('OutpostBuildings');
+			let OutpostBuildings = HammerStorage.getItem('OutpostBuildings');
 
 			if (OutpostBuildings !== null) {
 				Outposts.BuildInfoBox();

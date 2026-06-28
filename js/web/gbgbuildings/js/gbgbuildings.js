@@ -330,7 +330,7 @@ let GBGBuildings = {
 		let provinceId = data.provinceId || 0;
 		if (data.availableBuildings.length === 0) return;
 
-		let stored = JSON.parse(localStorage.getItem("GBGBuildingCosts") || "{}");
+		let stored = JSON.parse(HammerStorage.getItem("GBGBuildingCosts") || "{}");
 		if (stored.GBGRound != GuildFights.CurrentGBGRound)
 			stored = {};
 
@@ -340,6 +340,6 @@ let GBGBuildings = {
 			stored[provinceId] = costsMap;
 		}
 
-		localStorage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
+		HammerStorage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
 	}
 }

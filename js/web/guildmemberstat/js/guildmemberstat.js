@@ -411,7 +411,7 @@ let GuildMemberStat = {
 				if (typeof memberdata === 'undefined' || currentClanId === undefined) return;
 
 				let ActiveMembers = [];
-				let localClanId = JSON.parse(localStorage.getItem('GuildMemberStatClanId'));
+				let localClanId = JSON.parse(HammerStorage.getItem('GuildMemberStatClanId'));
 
 				if (!localClanId)
 					localClanId = currentClanId;
@@ -462,8 +462,8 @@ let GuildMemberStat = {
 
 				// Insert update time & current GuildId
 				GuildMemberStat.Settings.lastupdate = MainParser.getCurrentDate();
-				localStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
-				localStorage.setItem('GuildMemberStatClanId', currentClanId);
+				HammerStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
+				HammerStorage.setItem('GuildMemberStatClanId', currentClanId);
 
 				// Array with all valid player_id is send to mark all player_id which ar not in this array as deleted
 				await GuildMemberStat.MarkMemberAsDeleted(ActiveMembers);
@@ -2152,8 +2152,8 @@ let GuildMemberStat = {
 
 	InitSettings: () => {
 
-		let Settings = JSON.parse(localStorage.getItem('GuildMemberStatSettings'));
-		let TreasuryGoods = JSON.parse(localStorage.getItem('GuildMemberStatTreasuryGoods'));
+		let Settings = JSON.parse(HammerStorage.getItem('GuildMemberStatSettings'));
+		let TreasuryGoods = JSON.parse(HammerStorage.getItem('GuildMemberStatTreasuryGoods'));
 
 		if (!Settings)
 			return;
@@ -2232,7 +2232,7 @@ let GuildMemberStat = {
 
 		GuildMemberStat.Settings.deleteOlderThan = tmpDeleteOlder;
 
-		localStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
+		HammerStorage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
 
 		if (resetMessageCounter === 'reset') {
 			await GuildMemberStat.ResetMessageCounter();
@@ -2270,7 +2270,7 @@ let GuildMemberStat = {
 		GuildMemberStat.TreasuryGoodsData.updated = +MainParser.getCurrentDate();
 		GuildMemberStat.TreasuryGoodsData.totals = eraGoodsTotals;
 
-		localStorage.setItem('GuildMemberStatTreasuryGoods', JSON.stringify(GuildMemberStat.TreasuryGoodsData));
+		HammerStorage.setItem('GuildMemberStatTreasuryGoods', JSON.stringify(GuildMemberStat.TreasuryGoodsData));
 
 		if ($('#GuildMemberStatBody').length) {
 			switch (GuildMemberStat.CurrentStatGroup) {

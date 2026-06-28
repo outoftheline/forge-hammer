@@ -32,7 +32,7 @@ FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
 });
 
 let Recurring = {
-    data: JSON.parse(localStorage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
+    data: JSON.parse(HammerStorage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
     
 	/**
 	 * Box in den DOM
@@ -170,7 +170,7 @@ let Recurring = {
     SaveSettings: (show=Recurring.data.showCounter) => {
         Recurring.filter()
         Recurring.data.showCounter = show;
-        localStorage.setItem('Recurring', JSON.stringify(Recurring.data));
+        HammerStorage.setItem('Recurring', JSON.stringify(Recurring.data));
         Recurring.SetCounter();
     },
     getTasks: (groups,conditions) =>{

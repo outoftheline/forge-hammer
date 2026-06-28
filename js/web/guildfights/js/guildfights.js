@@ -123,12 +123,12 @@ let GuildFights = {
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
-	showTileColors: JSON.parse(localStorage.getItem("LiveFightSettings"))?.showTileColors || 1,
-	serverOffset: JSON.parse(localStorage.getItem("GuildFights.serverOffset")||"null"),
+	showTileColors: JSON.parse(HammerStorage.getItem("LiveFightSettings"))?.showTileColors || 1,
+	serverOffset: JSON.parse(HammerStorage.getItem("GuildFights.serverOffset")||"null"),
 	discordWebhook: { 
-		url: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhook || "",
-		template: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
-		bulkTemplate: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
+		url: JSON.parse(HammerStorage.getItem("LiveFightSettings"))?.discordWebhook || "",
+		template: JSON.parse(HammerStorage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
+		bulkTemplate: JSON.parse(HammerStorage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
 	},
 	discordCache: null,
 
@@ -186,9 +186,9 @@ let GuildFights = {
 
 	HandlePlayerLeaderboard: async (d) => {
 		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
-		if (localStorage.getItem('GuildFights.NewAction') !== null) {
-			GuildFights.PrevAction = JSON.parse(localStorage.getItem('GuildFights.NewAction'));
-			GuildFights.PrevActionTimestamp = parseInt(localStorage.getItem('GuildFights.NewActionTimestamp'));
+		if (HammerStorage.getItem('GuildFights.NewAction') !== null) {
+			GuildFights.PrevAction = JSON.parse(HammerStorage.getItem('GuildFights.NewAction'));
+			GuildFights.PrevActionTimestamp = parseInt(HammerStorage.getItem('GuildFights.NewActionTimestamp'));
 		}
 		else if (GuildFights.NewAction !== null) {
 			GuildFights.PrevAction = GuildFights.NewAction;
@@ -232,10 +232,10 @@ let GuildFights = {
 
 		GuildFights.GBGHistoryView = false;
 		GuildFights.NewAction = players;
-		localStorage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
+		HammerStorage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
 
 		GuildFights.NewActionTimestamp = moment().unix();
-		localStorage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
+		HammerStorage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
 
 		if ($('#GuildPlayers').length > 0) {
 			GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
@@ -347,7 +347,7 @@ let GuildFights = {
 	SetBoxNavigation: async (gbground) => {
 		let h = [];
 		let i = 0;
-		let PlayerBoxSettings = JSON.parse(localStorage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
+		let PlayerBoxSettings = JSON.parse(HammerStorage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
 			// get all available GBG entires
@@ -434,7 +434,7 @@ let GuildFights = {
 			if (nelem.length !== 0) {
 				let oelem = elem.find('tr:not(.new)');
 				GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 1;
-				localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+				HammerStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 				$('#GuildPlayersTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
@@ -444,7 +444,7 @@ let GuildFights = {
 		else if (act === 'show') {
 			elem.find('tr').show();
 			GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 0;
-			localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+			HammerStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 			$('#GuildPlayersTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}
@@ -984,7 +984,7 @@ let GuildFights = {
 		GuildFights.SetTabs('gbgowned');
 
 		let progress = [], nextup = [],
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(HammerStorage.getItem('LiveFightSettings'));
 
 		GuildFights.showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 
@@ -1160,7 +1160,7 @@ let GuildFights = {
 			mapdata = GuildFights.MapData.map.provinces,
 			gbgGuilds = GuildFights.MapData['battlegroundParticipants'],
 			own = gbgGuilds.find(e => e.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(HammerStorage.getItem('LiveFightSettings'));
 
 		GuildFights.showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		GuildFights.showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
@@ -1282,7 +1282,7 @@ let GuildFights = {
 			provinces = GuildFights.MapData.map.provinces,
 			guilds = GuildFights.MapData.battlegroundParticipants,
 			own = guilds.find(x => x.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(HammerStorage.getItem('LiveFightSettings'));
 
 		content.push('<div id="gbgowned"><table class="foe-table">');
 		content.push('<thead><tr>');
@@ -1422,20 +1422,20 @@ let GuildFights = {
 		let copy = '';
 		copycache.forEach((mapElem) => {
 			let battleType = mapElem.isAttackBattleType ? '🔴' : '🔵';
-			let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			let LiveFightSettings = JSON.parse(HammerStorage.getItem('LiveFightSettings'));
 			let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
 			copy += `${moment.unix(mapElem.lockedUntil - 2 - 60 * (GuildFights.serverOffset || 0)).format('HH:mm')} ${showTileColors === 1 ? battleType : ''} ${mapElem.title} \n`;
 		});
 
 		if (copy !== '') {
-			if (GuildFights.serverOffset && localStorage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
+			if (GuildFights.serverOffset && HammerStorage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
 				HTML.ShowToastMsg({
 					head: i18n('Boxes.GuildFights.TimeZoneWarning.Title'),
 					text: i18n('Boxes.GuildFights.TimeZoneWarning.Desc'),		
 					type: 'error',
 					hideAfter: 60000
 				});
-				localStorage.setItem('Guildfights.TimeZoneWarningShown', 'true');
+				HammerStorage.setItem('Guildfights.TimeZoneWarningShown', 'true');
 			}
 			helper.str.copyToClipboard(copy).then(() => {
 				HTML.ShowToastMsg({
@@ -1694,7 +1694,7 @@ let GuildFights = {
 
 	SetAlert: (id) => {
 		let prov = GuildFights.MapData.map.provinces.find(e => e.id === id);
-		let alertOffset = parseInt( JSON.parse(localStorage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
+		let alertOffset = parseInt( JSON.parse(HammerStorage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
 
 		const data = {
 			title: prov.title,
@@ -1751,7 +1751,7 @@ let GuildFights = {
 
 	ShowLiveFightSettings: () => {
 		let c = [];
-		let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+		let LiveFightSettings = JSON.parse(HammerStorage.getItem('LiveFightSettings'));
 		let showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 		let showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		let showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
@@ -1864,10 +1864,10 @@ let GuildFights = {
 		GuildFights.serverOffset = parseInt($("#serverOffset").val()) ?? null;
 
 		if (GuildFights.serverOffset != null)
-			localStorage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
+			HammerStorage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
 		else
-			localStorage.removeItem('GuildFights.serverOffset');
-		localStorage.setItem('LiveFightSettings', JSON.stringify(value));
+			HammerStorage.removeItem('GuildFights.serverOffset');
+		HammerStorage.setItem('LiveFightSettings', JSON.stringify(value));
 
 		$(`#LiveGildFightingSettingsBox`).fadeToggle('fast', function () {
 			$.when($(`#LiveGildFightingSettingsBox`).remove()).then(

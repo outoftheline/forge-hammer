@@ -215,7 +215,7 @@ let Boosts = {
                     Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - GameTime.get() + 2)*1000)
                     Boosts.Timer.next = boost.startTime
                 }
-                //localStorage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
+                //HammerStorage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
             }
             let boostsToAddDirectly=[]
             for (let building of buildings||[]) {

@@ -83,7 +83,7 @@ let Negotiation = {
 					id = $this.data('id'),
 					v = $this.prop('checked');
 
-				localStorage.setItem(id, v);
+				HammerStorage.setItem(id, v);
 
 				setTimeout(()=>{
 					Negotiation.StartNegotiation(Negotiation.StartNegotiationBackupData);
@@ -130,8 +130,8 @@ let Negotiation = {
 
 		if (Negotiation.CurrentTable !== null) {
 
-			let sceg = localStorage.getItem('NegotiationSaveCurrentEraGoods'),
-				sm = localStorage.getItem('NegotiationSaveMedals');
+			let sceg = HammerStorage.getItem('NegotiationSaveCurrentEraGoods'),
+				sm = HammerStorage.getItem('NegotiationSaveMedals');
 
 			h.push('<thead class="dark-bg">');
 
@@ -310,7 +310,7 @@ let Negotiation = {
 		let value = false;
 		if ($("#negotiationAutoOpen").is(':checked'))
 			value = true;
-		localStorage.setItem('AutomaticNegotiation', value);
+		HammerStorage.setItem('AutomaticNegotiation', value);
 		
 		$(`#negotiationBoxSettingsBox`).remove();
 	},
@@ -899,7 +899,7 @@ let Negotiation = {
 			Value = 50;
 		}
 		else if (GoodName === 'medals') {
-			let SaveMedalSetting = localStorage.getItem('NegotiationSaveMedals');
+			let SaveMedalSetting = HammerStorage.getItem('NegotiationSaveMedals');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 75;
 			}
@@ -915,7 +915,7 @@ let Negotiation = {
 			Value = 4000;
 		}
 		else {
-			let SaveMedalSetting = localStorage.getItem('NegotiationSaveCurrentEraGoods');
+			let SaveMedalSetting = HammerStorage.getItem('NegotiationSaveCurrentEraGoods');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 100;
 			}

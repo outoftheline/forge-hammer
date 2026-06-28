@@ -40,8 +40,8 @@ FoEproxy.addRequestHandler('ItemAuctionService', 'makeBid', (data, postdata) => 
 
 
 let Auction = {
-    diff: JSON.parse(localStorage.getItem('AuctionDifference') || '[1,2,5,222]'),
-    fak: JSON.parse(localStorage.getItem('AuctionFactors') || '[1,1,1,1.1]'),
+    diff: JSON.parse(HammerStorage.getItem('AuctionDifference') || '[1,2,5,222]'),
+    fak: JSON.parse(HammerStorage.getItem('AuctionFactors') || '[1,1,1,1.1]'),
     index: 0,
     current: 0,
     timeout:null,
@@ -82,24 +82,24 @@ let Auction = {
             let elem = e.target;
             if (elem.dataset.type=="Add") {
                 Auction.diff[Number(elem.dataset.id)] = Number(elem.value);
-                localStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+                HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
             } else if (elem.dataset.type=="Mult") {
                 Auction.fak[Number(elem.dataset.id)] = Number(elem.value);
-                localStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+                HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             };
         });
         $('#AuctionAddRow').on("click", () => {
             Auction.diff.push(1);
             Auction.fak.push(1);
-            localStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
-            localStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+            HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+            HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             Auction.BuildBody();            
         });
         $('#AuctionDelRow').on("click", () => {
             let x= Auction.diff.pop();
             x = Auction.fak.pop();
-            localStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
-            localStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
+            HammerStorage.setItem('AuctionDifference', JSON.stringify(Auction.diff))
+            HammerStorage.setItem('AuctionFactors', JSON.stringify(Auction.fak))
             Auction.BuildBody();            
         });
         $('#AuctionHelpBtn').on("click", () => {

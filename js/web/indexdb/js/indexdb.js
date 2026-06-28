@@ -279,14 +279,14 @@ let IndexDB = {
         }
 
         function clearLog() {
-            localStorage.setItem('FH_IndexDBLastMigraion', '');
+            HammerStorage.setItem('FH_IndexDBLastMigraion', '');
         }
 
         function log(text) {
             //console.log('mergeDatabases: ' + text);
-            let logTxt = localStorage.getItem('FH_IndexDBLastMigraion') || '';
+            let logTxt = HammerStorage.getItem('FH_IndexDBLastMigraion') || '';
             logTxt += text + '\n';
-            localStorage.setItem('FH_IndexDBLastMigraion', logTxt);
+            HammerStorage.setItem('FH_IndexDBLastMigraion', logTxt);
         }
     },
 
@@ -379,7 +379,7 @@ let IndexDB = {
 
     rewardDBCleanup: async () => {
         //reward type for shard, Ad chests and shards was changed around april 11 and code was amended for that on May 19 - this will switch all old entries for incidents to the new type
-        if (!localStorage.getItem("HiddenRewardOverwrite")) {
+        if (!HammerStorage.getItem("HiddenRewardOverwrite")) {
             let x = await IndexDB.db.statsRewards.toArray();
             let y= [];
             x.forEach(a=>{
@@ -393,7 +393,7 @@ let IndexDB = {
                 }
                 });
             IndexDB.db.statsRewards.bulkPut(y);
-            localStorage.setItem("HiddenRewardOverwrite","done");
+            HammerStorage.setItem("HiddenRewardOverwrite","done");
         }
     },
 

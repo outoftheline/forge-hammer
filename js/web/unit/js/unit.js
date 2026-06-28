@@ -37,7 +37,7 @@ FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
 		}
 
 		if (data.responseData.militaryProducts.length > 0) {
-			localStorage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
+			HammerStorage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
 		}
 	}
 });
@@ -715,7 +715,7 @@ let Unit = {
 	GetLastAlcaUnits: ()=> {
 
 		let last = [],
-			au = localStorage.getItem('LastAlcatrazUnits'),
+			au = HammerStorage.getItem('LastAlcatrazUnits'),
 			AlcaUnits = null;
 
 		// nix drin
@@ -806,7 +806,7 @@ let Unit = {
 	*
 	*/
 	LoadSettings: () => {
-		cachedSettings = JSON.parse(localStorage.getItem('UnitOverviewSettings')) || Unit.Settings;
+		cachedSettings = JSON.parse(HammerStorage.getItem('UnitOverviewSettings')) || Unit.Settings;
 		Unit.Settings.pictogramScaling = (cachedSettings && cachedSettings.pictogramScaling !== undefined) ? cachedSettings.pictogramScaling : Unit.Settings.pictogramScaling;
 	},
 
@@ -840,7 +840,7 @@ let Unit = {
 	*/
 	SaveSettings: () => {
 		Unit.Settings.pictogramScaling = 1 <= $('#pictogramScaling').val() && $('#pictogramScaling').val() <= 4 ? $('#pictogramScaling').val() : Unit.Settings.pictogramScaling;
-		localStorage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
+		HammerStorage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
 
 		$('#UnitOverviewSettingsBox').remove();
 		Unit.BuildBox();

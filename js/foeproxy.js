@@ -3,6 +3,23 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 if (typeof globalThis.FoEproxy == 'undefined') {
+    globalThis.HammerStorage = {
+        getItem: (id) => {
+            let data = localStorage.getItem('Hammer.' + id);
+            if (data) 
+            data = localStorage.getItem(id);
+            if (data) localStorage.setItem('Hammer.' + id, data);
+            return data;
+        },
+        setItem: (id,value) => {
+            localStorage.setItem('Hammer.' + id, value)
+        },
+        removeItem: (id) => {
+            localStorage.removeItem('Hammer.'+ id)
+            localStorage.removeItem(id)
+        }
+    };
+
     globalThis.FoEproxy = (function () {
         const requestInfoHolder = new WeakMap();
         function getRequestData(xhr) {

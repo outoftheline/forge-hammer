@@ -55,7 +55,7 @@ let CloseBox = {
 
     InitSettings: () => {
 
-        let Settings = JSON.parse(localStorage.getItem('CloseBoxSettings'));
+        let Settings = JSON.parse(HammerStorage.getItem('CloseBoxSettings'));
 
         if (!Settings)
         {
@@ -233,7 +233,7 @@ let CloseBox = {
             CloseBox.Settings.Excludes.push($(this).val());
         });
 
-        localStorage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
+        HammerStorage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
 
         $(`#CloseBoxSettingsBox`).fadeToggle('fast', function () {
             $(this).remove();

@@ -191,7 +191,7 @@ let mergerGame = {
 		useAverage: 0,
 		audibleTaskWarning: true,
 		opticalTaskWarning: false
-	}, JSON.parse(localStorage.getItem("MergerGameSettings") || '{}')),
+	}, JSON.parse(HammerStorage.getItem("MergerGameSettings") || '{}')),
 	eventData:{
 		anniversary: {
 			progress:"/shared/seasonalevents/league/league_anniversary_icon_progress.png",
@@ -264,7 +264,7 @@ let mergerGame = {
 	},
 	/*
 	checkSave: () => {
-		let x = localStorage.getItem("mergerGameState");
+		let x = HammerStorage.getItem("mergerGameState");
 		if (!x) return;
 		let oldState=JSON.parse(x);
 		let oldTable=JSON.stringify(oldState.table);
@@ -280,7 +280,7 @@ let mergerGame = {
 	},
 	
 	saveState:() => {
-		localStorage.setItem("mergerGameState",JSON.stringify(mergerGame.state))
+		HammerStorage.setItem("mergerGameState",JSON.stringify(mergerGame.state))
 	},*/
 
 	keySum:() => {
@@ -477,7 +477,7 @@ let mergerGame = {
 		mergerGame.settings["opticalTaskWarning"] = $('#opticalTaskWarning')[0].checked;
 		mergerGame.settings["audibleTaskWarning"] = $('#audibleTaskWarning')[0].checked;
 
-		localStorage.setItem('MergerGameSettings', JSON.stringify(mergerGame.settings));
+		HammerStorage.setItem('MergerGameSettings', JSON.stringify(mergerGame.settings));
         //mergerGame.updateDialog();
     },
 	checkTaskProgress: (warn = true) => {

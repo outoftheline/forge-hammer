@@ -51,7 +51,7 @@ let Quests = {
 
 	init: ()=> {
 
-		let CounterStorage = localStorage.getItem('QuestCounter'),
+		let CounterStorage = HammerStorage.getItem('QuestCounter'),
 			parts;
 
 		Quests.Date = moment(MainParser.getCurrentDate()).format('YYYY-MM-DD');
@@ -131,7 +131,7 @@ let Quests = {
 	 * @constructor
 	 */
 	InsertStorage:()=> {
-		localStorage.setItem('QuestCounter', JSON.stringify({
+		HammerStorage.setItem('QuestCounter', JSON.stringify({
 			counter: Quests.Counter,
 			date: Quests.Date
 		}));

@@ -148,7 +148,7 @@ const PvPArena = {
     *
     */
     SaveSettings: () => {
-        localStorage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
+        HammerStorage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
         $(`#PvPArenaSettingsBox`).remove();
     },
 }

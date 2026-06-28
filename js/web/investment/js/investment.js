@@ -86,7 +86,7 @@ let Investment = {
 			medalssto: Investment.Medals
 		}
 
-		let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings'));
+		let InvestmentSettings = JSON.parse(HammerStorage.getItem('InvestmentSettings'));
 		let removeUnsafeCalc = (InvestmentSettings && InvestmentSettings.removeUnsafeCalc !== undefined) ? InvestmentSettings.removeUnsafeCalc : 0;
 
 		Investment.Einsatz = 0;
@@ -126,7 +126,7 @@ let Investment = {
 
 		let b = [],
 			h = [];
-		let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings'));
+		let InvestmentSettings = JSON.parse(HammerStorage.getItem('InvestmentSettings'));
 		let showEntryDate = (InvestmentSettings && InvestmentSettings.showEntryDate !== undefined) ? InvestmentSettings.showEntryDate : 0;
 		let showInvestmentIncreaseDate = (InvestmentSettings && InvestmentSettings.showInvestmentIncreaseDate !== undefined) ? InvestmentSettings.showInvestmentIncreaseDate : 0;
 		let showRestFp = (InvestmentSettings && InvestmentSettings.showRestFp !== undefined) ? InvestmentSettings.showRestFp : 0;
@@ -392,7 +392,7 @@ let Investment = {
 
 	ShowInvestmentSettings: () => {
 		let c = [],
-			InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings')),
+			InvestmentSettings = JSON.parse(HammerStorage.getItem('InvestmentSettings')),
 			showEntryDate = (InvestmentSettings && InvestmentSettings.showEntryDate !== undefined) ? InvestmentSettings.showEntryDate : 0,
 			showInvestmentIncreaseDate = (InvestmentSettings && InvestmentSettings.showInvestmentIncreaseDate !== undefined) ? InvestmentSettings.showInvestmentIncreaseDate : 0,
 			showRestFp = (InvestmentSettings && InvestmentSettings.showRestFp !== undefined) ? InvestmentSettings.showRestFp : 0,
@@ -471,7 +471,7 @@ let Investment = {
 		let allGB = await IndexDB.db.investhistory.where('id').above(0).keys();
 		let UpdatedList = false;
 		let playerSyncGbKeys = null;
-		let arcLevelCheck = JSON.parse(localStorage.getItem('InvestmentArcBonus'));
+		let arcLevelCheck = JSON.parse(HammerStorage.getItem('InvestmentArcBonus'));
 		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != MainParser.ArkBonus ? true : false;
 
 		for (let i in LGData)
@@ -628,10 +628,10 @@ let Investment = {
 
 		// Set Update Date + ArcBonus in local Storage
 		if(FullSync){
-			let InvestmentSettings = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+			let InvestmentSettings = JSON.parse(HammerStorage.getItem('InvestmentSettings') || '{}');
 			InvestmentSettings['lastupdate'] = MainParser.getCurrentDate();
-			localStorage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
-			localStorage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
+			HammerStorage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
+			HammerStorage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
 		}
 	},
 
@@ -648,11 +648,11 @@ let Investment = {
 
 	ToggleHidden: () => {
 
-		let value = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+		let value = JSON.parse(HammerStorage.getItem('InvestmentSettings') || '{}');
 
 		value['showHiddenGb'] = 1 - value['showHiddenGb'];
 
-		localStorage.setItem('InvestmentSettings', JSON.stringify(value));
+		HammerStorage.setItem('InvestmentSettings', JSON.stringify(value));
 
 		Investment.Show();
 	},
@@ -660,7 +660,7 @@ let Investment = {
 
 	SettingsSaveValues: () => {
 
-		let value = JSON.parse(localStorage.getItem('InvestmentSettings') || '{}');
+		let value = JSON.parse(HammerStorage.getItem('InvestmentSettings') || '{}');
 		let autoOpen = false;
 
 		value['showEntryDate'] = 0;
@@ -695,9 +695,9 @@ let Investment = {
 		if ($("#showinvestmentsautomatically").is(':checked'))
 			autoOpen = true;
 
-		localStorage.setItem('ShowInvestments', autoOpen);
+		HammerStorage.setItem('ShowInvestments', autoOpen);
 
-		localStorage.setItem('InvestmentSettings', JSON.stringify(value));
+		HammerStorage.setItem('InvestmentSettings', JSON.stringify(value));
 
 		$(`#InvestmentSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();

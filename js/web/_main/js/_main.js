@@ -37,7 +37,7 @@ setTimeout(() => {
 	}
 }, 5000);
 
-window.ExtbaseData = JSON.parse(localStorage.getItem("HelperBaseData")||"{}");
+window.ExtbaseData = JSON.parse(HammerStorage.getItem("HelperBaseData")||"{}");
 ExtbaseData.isHammer = true;
 window.extID = ExtbaseData.extID;
 window.extUrl = ExtbaseData.extUrl;
@@ -46,6 +46,7 @@ window.extVersion = ExtbaseData.extVersion;
 window.isRelease = ExtbaseData.isRelease;
 window.devMode = ExtbaseData.devMode;
 window.loadBeta = ExtbaseData.loadBeta;
+
 
 let ExistenceConfirmed = async (varlist)=>{
 	varlist = varlist.split('||')
@@ -153,7 +154,7 @@ let i18nData = null;
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world
 	//ExtWorld = window.location.hostname.split('.')[0];
-	localStorage.setItem('current_world', ExtWorld);
+	HammerStorage.setItem('current_world', ExtWorld);
 
 	// register resize functions
 	window.addEventListener('resize', () => {
@@ -836,7 +837,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 		MainMenuLoaded = true;
 		await StartUpDone;	
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let MenuSetting = HammerStorage.getItem('SelectedMenu');
 		MainParser.SelectedMenu = MenuSetting || 'RightBar';
 		_menu.CallSelectedMenu(MainParser.SelectedMenu);
 		
@@ -888,18 +889,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		MainParser.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
 	});
 
-	// Alte, nich mehr benötigte localStorage einträge löschen (in 2 min)
-	setTimeout(() => {
-		const keys = Object.keys(localStorage);
-		for (let k of keys) {
-			if (/^(OV_)?[0-9]+\/X_[A-Za-z_]+[0-9]*$/.test(k)) {
-				localStorage.removeItem(k);
-			} else if (/^OtherPlayersMotivation-[0-9]+$/.test(k)) {
-				localStorage.removeItem(k);
-			}
-		}
-	}, 1000 * 60 * 2);
-
 	// Messages: Thread opened
 	FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
 		MainParser.OpenConversation = data.responseData;
@@ -923,14 +912,14 @@ document.addEventListener("DOMContentLoaded", function () {
 let HelperBeta = {
 	load: (active) => {
 		if (active !== false) active = true;
-		localStorage.setItem('HelperBetaActive', active);
+		HammerStorage.setItem('HelperBetaActive', active);
 		location.reload();
 	},
 	menu: [
 		'unitsGex',
 		'marketOffers'
 	],
-	active: JSON.parse(localStorage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
+	active: JSON.parse(HammerStorage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
 };
 
 
@@ -986,8 +975,8 @@ let MainParser = {
 	*
 	*/
 	VersionSpecificStartupCode: () => {
-		let LastStartedVersion = localStorage.getItem('LastStartedVersion');
-		let LastAgreedVersion = localStorage.getItem('LastAgreedVersion');
+		let LastStartedVersion = HammerStorage.getItem('LastStartedVersion');
+		let LastAgreedVersion = HammerStorage.getItem('LastAgreedVersion');
 
 		if (!LastStartedVersion) {
 			MainParser.StartUpType = 'DeletedSettings';
@@ -996,7 +985,7 @@ let MainParser = {
 		}
 		else if (LastStartedVersion !== extVersion) {
 			MainParser.StartUpType = 'UpdatedVersion';
-			if (!(!isRelease)) {localStorage.removeItem("LoadBeta")}
+			if (!(!isRelease)) {HammerStorage.removeItem("LoadBeta")}
 
 			HTML.ShowToastMsg({
 				show: true,
@@ -1017,8 +1006,8 @@ let MainParser = {
 			/* Normal start */
 		}
 
-		localStorage.setItem('LastStartedVersion', extVersion);
-		localStorage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
+		HammerStorage.setItem('LastStartedVersion', extVersion);
+		HammerStorage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
 	},
 
 
@@ -1119,7 +1108,7 @@ let MainParser = {
 
 
 	setGameFilters: () => {
-		let filters = JSON.parse(localStorage.getItem('hammerGameFilters'));
+		let filters = JSON.parse(HammerStorage.getItem('hammerGameFilters'));
 		if (filters)
 			$('#game-container').css('filter',
 				`brightness(${filters.brightness}) contrast(${filters.contrast}) saturate(${filters.saturation}) hue-rotate(${filters.hue}deg)`
@@ -1222,7 +1211,7 @@ let MainParser = {
 	 * Check whether an update is necessary
 	 */
 	checkNextUpdate: (ep) => {
-		let s = localStorage.getItem(ep),
+		let s = HammerStorage.getItem(ep),
 			a = MainParser.getCurrentDateTime();
 
 		return MainParser.compareTime(a, s);
@@ -1238,7 +1227,7 @@ let MainParser = {
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
 			let PlayerLink = HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
-			if (localStorage.getItem('linkSite') === 'siteForgedb')
+			if (HammerStorage.getItem('linkSite') === 'siteForgedb')
 				PlayerLink = HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
 
 			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
@@ -1260,7 +1249,7 @@ let MainParser = {
 
 		if (Settings.GetSetting('ShowLinks')) {
 			let GuildLink = HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
-			if (localStorage.getItem('linkSite') === 'siteForgedb')
+			if (HammerStorage.getItem('linkSite') === 'siteForgedb')
 				GuildLink = HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
 
 			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
@@ -1366,7 +1355,7 @@ let MainParser = {
 			key: 'current_guild_id',
 			data: ExtGuildID
 		});
-		localStorage.setItem('current_guild_id', ExtGuildID);
+		HammerStorage.setItem('current_guild_id', ExtGuildID);
 
 		ExtPlayerID = d['player_id'];
 		MainParser.sendExtMessage({
@@ -1374,7 +1363,7 @@ let MainParser = {
 			key: 'current_player_id',
 			data: ExtPlayerID
 		});
-		localStorage.setItem('current_player_id', ExtPlayerID);
+		HammerStorage.setItem('current_player_id', ExtPlayerID);
 
 		IndexDB.Init(ExtPlayerID);
 
@@ -1383,7 +1372,7 @@ let MainParser = {
 			key: 'current_world',
 			data: ExtWorld
 		});
-		localStorage.setItem('current_world', ExtWorld);
+		HammerStorage.setItem('current_world', ExtWorld);
 
 		ExtPlayerName = d['user_name'];
 		MainParser.sendExtMessage({
@@ -1402,7 +1391,7 @@ let MainParser = {
 		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
-		localStorage.removeItem('AllProvinces');
+		HammerStorage.removeItem('AllProvinces');
 	},
 
 
@@ -1750,7 +1739,7 @@ let MainParser = {
 			let value = false;
 			if ($("#allyListAutoOpen").is(':checked'))
 				value = true;
-			localStorage.setItem('ShowAllyList', value);
+			HammerStorage.setItem('ShowAllyList', value);
 			
 			$(`#AllyListSettingsBox`).remove();
 		},
@@ -2014,7 +2003,7 @@ let MainParser = {
 		// If the cache is empty, read out the memory.
 		if (MainParser.Conversations.length === 0 && refresh)
 		{
-			let StorageHeader = localStorage.getItem('ConversationsHeaders');
+			let StorageHeader = HammerStorage.getItem('ConversationsHeaders');
 			if (StorageHeader !== null) {
 				MainParser.Conversations = JSON.parse(StorageHeader);
 			}
@@ -2079,7 +2068,7 @@ let MainParser = {
 			}
 			// Dopplungen entfernen und Daten lokal abspeichern
 			MainParser.Conversations = [...new Set(MainParser.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
-			localStorage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
+			HammerStorage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
 		}
 	},
 
@@ -2175,11 +2164,11 @@ let MainParser = {
 
 	Inactives: {
 		list:[],
-		ignore: JSON.parse(localStorage.getItem("LimitedBuildingsIgnoreList")||'[]'),
+		ignore: JSON.parse(HammerStorage.getItem("LimitedBuildingsIgnoreList")||'[]'),
 
 		check: () => {
 			//get list of buildings for which an alert is already set
-			let LB = JSON.parse(localStorage.getItem("LimitedBuildingsAlertSet")||'{}')
+			let LB = JSON.parse(HammerStorage.getItem("LimitedBuildingsAlertSet")||'{}')
 			//get list of expired limited buildings in city
 			let list = Object.values(MainParser.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
 			//remove buildings that were already tracked and that should have just triggered an alert
@@ -2194,7 +2183,7 @@ let MainParser = {
 			for (let x in LB) {
 				if (!LB[x]) continue;
 				if (LB[x]<(GameTime-GameTime.Offset)*1000) delete LB[x];
-				localStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+				HammerStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 			}
 			if(!Settings.GetSetting('ShowBuildingsExpired')){
 				return;
@@ -2243,7 +2232,7 @@ let MainParser = {
 						data: data,
 					}).then((aId) => {
 						LB[building.id]=(MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
-						localStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+						HammerStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 					})
 				}
 			}
@@ -2295,7 +2284,7 @@ let MainParser = {
 					MainParser.Inactives.ignore.push(id);
 
 				};
-				localStorage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
+				HammerStorage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
 				MainParser.Inactives.updateSettings();
 			});
 		},

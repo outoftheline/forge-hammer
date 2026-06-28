@@ -287,7 +287,7 @@ let AztecsHelper = {
 		let value = false;
 		if ($("#aztecsAutoOpen").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowAztecHelper', value);
+		HammerStorage.setItem('ShowAztecHelper', value);
 		
 		$(`#aztecsHelperSettingsBox`).remove();
 	},

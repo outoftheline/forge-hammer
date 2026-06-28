@@ -245,7 +245,7 @@ let Technologies = {
 
             Technologies.IgnorePrevEra = v;
 
-            localStorage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
+            HammerStorage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
 
             Technologies.CalcBody();
         });
@@ -256,7 +256,7 @@ let Technologies = {
 
             Technologies.IgnoreCurrentEraOptional = v;
 
-            localStorage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
+            HammerStorage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
 
             Technologies.CalcBody();
         });
@@ -277,8 +277,8 @@ let Technologies = {
 
 
     BuildBox: () => {
-        Technologies.IgnorePrevEra = (localStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
-        Technologies.IgnoreCurrentEraOptional = (localStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
+        Technologies.IgnorePrevEra = (HammerStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
+        Technologies.IgnoreCurrentEraOptional = (HammerStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
 
         Technologies.CalcBody();
     },

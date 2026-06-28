@@ -82,7 +82,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	const v = chrome.runtime.getManifest().version + (loadBeta ? '-beta-'+ betaDate:'');
 
 	let   lng = chrome.i18n.getUILanguage();
-	const uLng = localStorage.getItem('user-language');
+	const uLng = localStorage.getItem('Hammer.user-language');
 	
 	// we only need the first part
 	if (lng.indexOf('-') > 0) {
@@ -98,7 +98,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		lng = uLng;
 	} else {
 		// so that the language can be read out without having to change it once via the settings
-		localStorage.setItem('user-language', lng);
+		localStorage.setItem('Hammer.user-language', lng);
 	}
 
 	InjectCode(loadBeta, extUrl);
@@ -109,11 +109,11 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	function InjectCSS() {
 		// Document loaded
 		if(document.head !== null){
-			let MenuSetting = localStorage.getItem('SelectedMenu');
+			let MenuSetting = localStorage.getItem('Hammer.SelectedMenu');
 			MenuSetting = MenuSetting ? MenuSetting : 'RightBar';
 			let menuCss = "_menu_" + MenuSetting.toLowerCase().replace("bar","");
 
-			let skinCss = localStorage.getItem('HammerSkin')||'themes/hammer';
+			let skinCss = localStorage.getItem('Hammer.HammerSkin')||'themes/hammer';
 
 			let cssFiles = [
 				'boxes',
@@ -140,7 +140,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	async function InjectCode(loadBeta, extUrl) {
 	 	try {
 			// set some global variables
-			localStorage.setItem("HelperBaseData", JSON.stringify({
+			localStorage.setItem("Hammer.HelperBaseData", JSON.stringify({
 				extID: chrome.runtime.id,
 				extUrl: extUrl,
 				GuiLng: lng,

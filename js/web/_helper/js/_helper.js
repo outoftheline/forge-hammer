@@ -131,7 +131,7 @@ helper.permutations = (()=>{
 
 helper.sounds = {
 	ping: new Audio(extUrl + 'vendor/sounds/ping.mp3'),
-	message: new Audio(extUrl + 'vendor/sounds/'+(localStorage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
+	message: new Audio(extUrl + 'vendor/sounds/'+(HammerStorage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
 	play: (sound) => {
 		if (Settings.GetSetting('EnableSound')) helper.sounds[sound].play();
 	},
@@ -231,7 +231,7 @@ let HTML = {
 			head = $('<div />').attr('id', args['id'] + 'Header').attr('class', 'window-head').append(title),
 			body = $('<div />').attr('id', args['id'] + 'Body').attr('class', 'window-body'),
 			div = $('<div />').attr('id', args['id']).attr('class', 'window-box open').append(head).append(body).hide(),
-			cords = localStorage.getItem(args['id'] + 'Cords');
+			cords = HammerStorage.getItem(args['id'] + 'Cords');
 		
 		// close button
 		let close = $('<span />').attr('id', args['id'] + 'close').addClass('window-close');
@@ -275,7 +275,7 @@ let HTML = {
 			let spk = $('<span />').addClass('window-speaker').attr('id', args['speaker']);
 			buttons.prepend(spk);
 
-			$('#' + args['speaker']).addClass(localStorage.getItem(args['speaker']));
+			$('#' + args['speaker']).addClass(HammerStorage.getItem(args['speaker']));
 		}
 		
 		// Position von beweglichen Fenstern initialisieren und Verhindern, dass Fenster außerhalb plaziert werden
@@ -452,8 +452,8 @@ let HTML = {
 	 * Handle minimizing helper during battle
 	 */
 	MinimizeBeforeBattle: () => {
-		let HideHelperDuringBattle = localStorage.getItem('HideHelperDuringBattle');
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let HideHelperDuringBattle = HammerStorage.getItem('HideHelperDuringBattle');
+		let MenuSetting = HammerStorage.getItem('SelectedMenu');
 
 		if (HideHelperDuringBattle === 'true' && MenuSetting === 'Box' && $('body').find("#menu_box").hasClass('open')) {
 			HTML.Minimize();
@@ -463,7 +463,7 @@ let HTML = {
 
 
 	MaximizeAfterBattle: () => {
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let MenuSetting = HammerStorage.getItem('SelectedMenu');
 		if (MenuSetting == 'Box' && HTML.boxWasMinimizedForBattle) {
 			HTML.Maximize();
 			HTML.boxWasMinimizedForBattle = false;
@@ -514,7 +514,7 @@ let HTML = {
 			$(el).css({"--x":cords[0]+"px","--y":cords[1]+"px"})
 
 			if (save === true) {
-				localStorage.setItem(id + 'Cords', JSON.stringify(cords));
+				HammerStorage.setItem(id + 'Cords', JSON.stringify(cords));
 			}
 		}
 
@@ -540,7 +540,7 @@ let HTML = {
 	Resizeable: (id, keepRatio) => {
 		let box = $('#' + id),
 			grip = $('<div />').addClass('window-grippy'),
-			sizeLS = localStorage.getItem(id + 'Size');
+			sizeLS = HammerStorage.getItem(id + 'Size');
 
 		// Size was defined, set
 		if (sizeLS !== null) {
@@ -589,7 +589,7 @@ let HTML = {
 				
 				let size = w + '|' + h;
 
-				localStorage.setItem(id + 'Size', size);
+				HammerStorage.setItem(id + 'Size', size);
 			}
 		};
 
@@ -874,8 +874,8 @@ let HTML = {
 			hideAfter: d['hideAfter'],
 			allowToastClose:  d['allowToastClose'],
 			position: Settings.GetSetting('NotificationsPosition', true),
-			extraClass: localStorage.getItem('SelectedMenu') || 'RightBar',
-			stack: localStorage.getItem('NotificationStack') || 4
+			extraClass: HammerStorage.getItem('SelectedMenu') || 'RightBar',
+			stack: HammerStorage.getItem('NotificationStack') || 4
 		});
 	},
 
