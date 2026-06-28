@@ -575,6 +575,9 @@ window.PlannerApp = window.PlannerApp || {};
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
 
+        const turn90Btn = document.getElementById('turn90');
+        if (turn90Btn) turn90Btn.addEventListener('click', () => app.rotateLayout());
+
         dom.storeBuildingsBtn.addEventListener('click', () => {
             state.storedBuildings = state.storedBuildings.concat(state.mapBuildings);
 

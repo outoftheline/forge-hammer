@@ -53,6 +53,7 @@ window.PlannerApp.state = {
     activeBuilding: null,
     placingBuilding: null,
     dragCopy: null,
+    rotated: false,
 
     zoomScale: 0.75,
     camX: 0,

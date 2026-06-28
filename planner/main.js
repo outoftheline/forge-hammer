@@ -290,13 +290,97 @@ window.PlannerApp = window.PlannerApp || {};
         }
     }
 
+    // 90° clockwise rotation
+    function rotateLayout() {
+        if (!state.mapData) return;
+
+        const clockwise = !state.rotated;
+
+        let maxY = 0, maxX = 0;
+        for (const exp of state.mapData) {
+            const right  = (exp.x || 0) + exp.width;
+            const bottom = (exp.y || 0) + exp.length;
+            if (right  > maxX) maxX = right;
+            if (bottom > maxY) maxY = bottom;
+        }
+
+        // rotate expansions
+        for (const exp of state.mapData) {
+            const oldX      = exp.x      || 0;
+            const oldY      = exp.y      || 0;
+            const oldWidth  = exp.width;
+            const oldLength = exp.length;
+
+            if (clockwise) {
+                exp.x      = maxY - (oldY + oldLength);
+                exp.y      = oldX;
+            } else {
+                exp.x      = oldY;
+                exp.y      = maxX - (oldX + oldWidth);
+            }
+            exp.width  = oldLength;
+            exp.length = oldWidth;
+        }
+
+        // rotate buildings on canvas + in storage
+        function rotateBuilding(b) {
+            const tileX = Math.round(b.x / app.SIZE);
+            const tileY = Math.round(b.y / app.SIZE);
+            const tileW = Math.round(b.width  / app.SIZE);
+            const tileH = Math.round(b.height / app.SIZE);
+
+            if (clockwise) {
+                b.data.x = maxY - (tileY + tileH);
+                b.data.y = tileX;
+            } else {
+                b.data.x = tileY;
+                b.data.y = maxX - (tileX + tileW);
+            }
+
+            b.x = b.data.x * app.SIZE;
+            b.y = b.data.y * app.SIZE;
+
+            let widthTemp = b.width;
+            b.width   = b.height;
+            b.height  = widthTemp;
+
+            // hasLabel depends on whether either dimension is a single tile
+            b.hasLabel = !(b.meta.type === 'street' || b.height === app.SIZE || b.width === app.SIZE);
+        }
+
+        for (const b of state.mapBuildings) 
+            rotateBuilding(b);
+        for (const b of state.storedBuildings) 
+            rotateBuilding(b);
+
+        state.rotated = clockwise;
+
+        // cancel any action 
+        state.activeBuilding    = null;
+        state.placingBuilding   = null;
+        state.dragCopy          = null;
+        state.selectionRect     = null;
+        state.selectedBuildings = [];
+
+        state.camX = 0;
+        state.camY = 0;
+
+        app.rebuildGridLayer();
+        app.rebuildOccupiedTiles();
+        app.redrawMap();
+        app.updateStats();
+        app.showStoredBuildings();
+        app.autoSave();
+    }
+
     app.init = init;
     app.saveState = saveState;
     app.autoSave = autoSave;
     app.exportStateToFile = exportStateToFile;
     app.importStateFromFile = importStateFromFile;
+    app.rotateLayout = rotateLayout;
 
-    // Try loading from localStorage before showing the overlay.
+    // try loading from localStorage before showing the overlay.
     const hasSave = loadFromLocalStorage();
     if (hasSave) {
         app.dom.submitWindow.classList.add('hidden');

@@ -116,7 +116,9 @@ window.PlannerApp = window.PlannerApp || {};
                 context.fillText(this.name.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(FONT_SIZE * 0.2));
             }
 
-            const totalSize = (this.height / SIZE) + 'x' + (this.width / SIZE);
+            // dont change dimensions shown
+            const metaDims  = app.getMetaSize(this.meta);
+            const totalSize = metaDims.height + 'x' + metaDims.width;
             context.font = '12px Arial';
             context.fillText(totalSize, this.x + this.width / 2, this.y + this.height / 2 + sizeOffset);
 
