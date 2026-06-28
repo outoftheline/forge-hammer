@@ -6,7 +6,7 @@ if (typeof globalThis.FoEproxy == 'undefined') {
     globalThis.HammerStorage = {
         getItem: (id) => {
             let data = localStorage.getItem('Hammer.' + id);
-            if (data) 
+            if (data) return data;
             data = localStorage.getItem(id);
             if (data) localStorage.setItem('Hammer.' + id, data);
             return data;
