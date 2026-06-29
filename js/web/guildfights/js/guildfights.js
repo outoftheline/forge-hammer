@@ -1385,10 +1385,6 @@ let GuildFights = {
 
 			GuildFights.UpdateCounter(countDownDate, intervalID, province.id);
 
-			if (GuildFights.showGuildColumn) {
-				content.push(`<td>${province.owner}</td>`);
-			}
-
 			let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
 			content.push(`<td class="time-dynamic"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}">${countDownDate.format('HH:mm:ss')}</span></span></td>`);
 			content.push(`<td>${province.usedBuildingSlots||0}/${province.totalBuildingSlots}</td>`);
