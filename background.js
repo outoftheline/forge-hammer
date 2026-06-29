@@ -492,7 +492,7 @@ plannerDB.version(1).stores({
 		return metadata;
 	}
 
-	Planner = {
+	const Planner = {
 		getPlan: async (id)=>{
 			try {
 				await plannerDB.open();
