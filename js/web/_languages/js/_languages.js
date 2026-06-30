@@ -131,7 +131,7 @@ let Translation = {
 			navigator.clipboard.writeText(JSON.stringify(data, null, 2));
 		});
 		$('#TempStorage').on('click', ()=>{
-			Translation.tempData = structuredClone(Translation.targetData);
+			Translation.tempData = Object.assign(Translation.tempData || {},Translation.targetData,);
 			FH.Storage.setItem('Translation.Temp', JSON.stringify(Translation.tempData));
 		});
 		$('#ClearStorage').on('click', ()=>{
@@ -161,7 +161,7 @@ let Translation = {
 				
 			},50)
 		});
-		$('#TranslationTable').on('click', 'td:nth-child(3) b', function(e) {
+		$('#TranslationTable').on('mousedown', 'td:nth-child(3) b', function(e) {
 			let key = $(this).parent().siblings(':first').html();
 			Translation.targetData[key] = {s: Translation.targetData[key]?.s || Translation.targetData[key], r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
 			$(this).remove();
@@ -218,11 +218,12 @@ let Translation = {
 			let missing = targetValue.trim() === '';
 			let updated = !Translation.targetData?.[key]?.r || (reference.s || reference) !== Translation.targetData?.[key]?.r;
 			let OldRef = HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
+			let showCheckmark = updated && !!targetValue && (Translation.tempData?.[key]?.r !== (reference.s || reference));
 			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
 				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${reference.s||reference}</td>
 				<td ${(updated && !!OldRef) ? `title="Old Reference: ${OldRef}"` : ''}>
-					${(updated && !!targetValue) ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
+					${showCheckmark ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
 					<span>${localData?.[key]?.s || localData?.[key] || targetValue}</span>
 				</td></tr>`;
 		}).join('');
