@@ -1122,7 +1122,7 @@
   "Boxes.Settings.Active": "Aktiv",
   "Boxes.Settings.ApiTokenLengthWrongBody": "Das ist kein gültiger Token. Bitte überprüfe Deine Eingabe!",
   "Boxes.Settings.ApiTokenLengthWrongHeader": "Fehler!",
-  "Boxes.Settings.Autostart": "Fenster automatisch öffnen",
+  "Boxes.Settings.Autostart": "Fenster automatisch bei Spielstart öffnen",
   "Boxes.Settings.DeletedBoxCoordsBody": "Alle Box Koordinaten wurden zurück gesetzt, bzw. gelöscht.",
   "Boxes.Settings.DeletedBoxCoordsHead": "Gelöscht!",
   "Boxes.Settings.GameFilters.Brightness": "Helligkeit",

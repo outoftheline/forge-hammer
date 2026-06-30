@@ -6,6 +6,7 @@
 - Der GG Spielerfortschritt ist nun im GG Fenster in den Statistiken zu finden und zeigt nur noch den Fortschritt der aktuellen Runde
 - GG Statistiken: Siegpunkte können jetzt auf einen Blick verglichen werden
 - Shops: Suchfeld hinzugefügt
+- Notizen: Einstellung für automatisches Öffnen beim Spielstart hinzugefügt
 
 ---
  
