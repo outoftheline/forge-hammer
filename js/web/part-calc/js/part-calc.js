@@ -449,6 +449,11 @@ let Parts = {
 	CalcBody: async (NextLevel) => {
 		await StartUpDone;
 		if (MainParser.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
+
+		let openPayReminder = FH.Storage.getItem('CalcGBReminder');
+		if (openPayReminder === '1' && Calculator.ConversationContent && Calculator.ConversationContentNew) {
+			Calculator.showToPay();
+		}
 			
 		if (MainParser.CurrentGB.Entity.player_id !== ExtPlayerID)  // cannot use the other view
 			$('#OwnPartBox .window-viewswitch').removeClass('inactive');
