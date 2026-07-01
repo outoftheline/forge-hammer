@@ -75,7 +75,7 @@ let Infoboard = {
             else
                 Infoboard.SavedTextFilter = FH.Storage.getItem("infoboxTextFilter");
 
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'BackgroundInfo',
                 title: i18n('Boxes.Infobox.Title'),
                 auto_close: true,
@@ -83,12 +83,12 @@ let Infoboard = {
                 resize: true,
                 minimize: true,
                 speaker: 'infoboxTone',
-                settings: 'Infoboard.ShowSettings()'
+                settings: Infoboard.ShowSettings
             });
-            HTML.AddCssFile('infoboard');
+            FH.HTML.AddCssFile('infoboard');
 
         } else {
-            return HTML.CloseOpenBox('BackgroundInfo');
+            return FH.HTML.CloseOpenBox('BackgroundInfo');
         }
 
         let div = $('#BackgroundInfo'),
@@ -254,7 +254,7 @@ let Infoboard = {
         $('#BackgroundInfoList').prepend(li);
 
         if (Infoboard.PlayInfoSound && status && filterStatus) {
-            helper.sounds.play("ping");
+            FH.helper.sounds.play("ping");
         }
         
     },
@@ -358,10 +358,10 @@ let Info = {
         return {
             class: 'auction',
             type: 'Auktion',
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.Auction'), {
                     player: PlayerLink,
-                    amount: HTML.Format(d['amount']),
+                    amount: FH.HTML.Format(d['amount']),
                 }
             )
         };
@@ -386,7 +386,7 @@ let Info = {
         else if (d['attachment']) {
             if (d['attachment']['type'] === 'great_building') {
                 // legendäres Bauwerk
-                message = HTML.i18nReplacer(
+                message = FH.HTML.i18nReplacer(
                     i18n('Boxes.Infobox.Messages.MsgBuilding'), {
                     building: MainParser.CityEntities[d['attachment']['cityEntityId']]['name'],
                     level: d['attachment']['level']
@@ -412,12 +412,12 @@ let Info = {
                     header = '<div><strong class="bright">' + MainParser.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</strong></div>';
                 }
                 else {
-                    header = '<div><strong class="bright">' + HTML.escapeHtml(chat['title']) + '</strong> - <em>' + MainParser.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</em></div>';
+                    header = '<div><strong class="bright">' + FH.HTML.escapeHtml(chat['title']) + '</strong> - <em>' + MainParser.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</em></div>';
                 }
             }
             else {
                 // Chatnachricht vom System (Betreten/Verlassen)
-                header = '<div><strong class="bright">' + HTML.escapeHtml(chat['title']) + '</strong></div>';
+                header = '<div><strong class="bright">' + FH.HTML.escapeHtml(chat['title']) + '</strong></div>';
             }
         }
         else {
@@ -485,7 +485,7 @@ let Info = {
             return {
                 class: 'gbg',
                 type: i18n('Boxes.General.Guild_Battlegrounds.short'),
-                msg: HTML.i18nReplacer(
+                msg: FH.HTML.i18nReplacer(
                     i18n('Boxes.Infobox.Messages.GildFightOccupied'), {
                     provinceName: prov['name'],
                     attackerColor: tc,
@@ -583,7 +583,7 @@ let Info = {
         return {
             class: 'level',
             type: 'Level-Up',
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.LevelUp'), {
                     player: PlayerLink,
                     building: d['great_building_name'],
@@ -605,7 +605,7 @@ let Info = {
         return {
             class: 'trade',
             type: i18n('Boxes.Infobox.FilterTrade'),
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.Trade'), {
                 'player': PlayerLink,
                 'offer': GoodsData[d['offer']['good_id']]['name'],
@@ -631,10 +631,10 @@ let Info = {
         return {
             class: 'ge',
             type: 'GE',
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.GEX'), {
                 'player': PlayerLink,
-                'points': HTML.Format(d['expeditionPoints'])
+                'points': FH.HTML.Format(d['expeditionPoints'])
             }
             )
         };
@@ -649,10 +649,10 @@ let Info = {
         return {
             class: 'qi',
             type: 'QI',
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.QINodeProgress'), {
                 'id': (""+d.nodeId).toUpperCase(),
-                'points': HTML.Format(d.currentProgress)
+                'points': FH.HTML.Format(d.currentProgress)
             }),
             img: image
         };
@@ -671,7 +671,7 @@ let Info = {
         return {
             class: 'qi',
             type: 'QI',
-            msg: HTML.i18nReplacer(
+            msg: FH.HTML.i18nReplacer(
                 i18n('Boxes.Infobox.Messages.QINodeFinished'), {
                 'player': PlayerLink,
                 'id': (""+nodeID).toUpperCase()

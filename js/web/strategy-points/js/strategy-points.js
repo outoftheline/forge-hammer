@@ -131,7 +131,7 @@ let StrategyPoints = {
 			const $main = $('.fp-bar-main')
 			$main.find('.number').text(availableFPs);
 			$main.removeClass('full');
-			$main.attr('title',HTML.i18nTooltip(i18n('StrategyPoints.FPInBar')));
+			$main.attr('title',FH.HTML.i18nTooltip(i18n('StrategyPoints.FPInBar')));
 
 			const $bar = $main.find('.bars');
 
@@ -172,10 +172,10 @@ let StrategyPoints = {
 		}
 
 		if($('div.buyable-fp').length === 0) {
-			$('#fp-bar').append(`<div class="buyable-fp" title="${HTML.i18nTooltip(i18n('StrategyPoints.BuyableFP'))}">${ HTML.Format(amount)}</div>`);
+			$('#fp-bar').append(`<div class="buyable-fp" title="${FH.HTML.i18nTooltip(i18n('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
 
 		} else {
-			$('div.buyable-fp').text(HTML.Format(amount));
+			$('div.buyable-fp').text(FH.HTML.Format(amount));
 		}
 	},
 
@@ -212,7 +212,7 @@ let StrategyPoints = {
 				// this seems to be necessary due to a bug with the easy_number_animate
 				// jQuery plugin = if many animations run in a quick succession the order
 				// in which they finish is not guaranteed!
-				el.text( HTML.Format( StrategyPoints.InventoryFP ) );
+				el.text( FH.HTML.Format( StrategyPoints.InventoryFP ) );
 			}
 		});
 

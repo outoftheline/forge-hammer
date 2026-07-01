@@ -40,9 +40,9 @@ let Recurring = {
     init: () => {
         if ($('#RecurringQuestsBox').length < 1) {
 
-            HTML.AddCssFile('recurring-quests');
+            FH.HTML.AddCssFile('recurring-quests');
 
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'RecurringQuestsBox',
                 'title': i18n('Boxes.RecurringQuests.Title'),
                 'auto_close': true,
@@ -55,7 +55,7 @@ let Recurring = {
             Recurring.RefreshGui();
 
         } else {
-            HTML.CloseOpenBox('RecurringQuestsBox');
+            FH.HTML.CloseOpenBox('RecurringQuestsBox');
         }
     },
 

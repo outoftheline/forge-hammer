@@ -149,16 +149,16 @@ let reconstruction = {
         
         if ( $('#ReconstructionList').length === 0 ) {
 
-			HTML.AddCssFile('reconstruction');
+			FH.HTML.AddCssFile('reconstruction');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'ReconstructionList',
 				title: i18n('Boxes.ReconstructionList.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-                custom_buttons: [{class: "window-map", callback: "reconstruction.showMap();"}],
+                custom_buttons: [{class: "window-map", callback: reconstruction.showMap}],
 			    active_maps:"main"
 			});
         }           
@@ -180,7 +180,7 @@ let reconstruction = {
             let length = meta.length||meta.components.AllAge.placement.size.y
             let road = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0
             h+=`<tr class="reconstructionLine helperTT" data-callback_tt="Tooltips.buildingTT" data-page_id="${id}" data-meta_id="${id.split("#")[0]}" ${b.stored==0 ? ' style="display:none"' : ""}>
-                    <td data-text="${helper.str.cleanup(meta.name)}">${meta.name}</td>
+                    <td data-text="${FH.helper.str.cleanup(meta.name)}">${meta.name}</td>
                     <td>x${b.stored}</td>
                     <td></td>
                     <td data-number="${road}">${reconstruction.roadIcons[road]}</td>
@@ -199,7 +199,7 @@ let reconstruction = {
 
     showMap:()=>{
         if ( $('#ReconstructionMap').length === 0 ) {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'ReconstructionMap',
                 title: '💭',
                 auto_close: true,

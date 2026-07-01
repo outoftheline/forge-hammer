@@ -29,15 +29,15 @@ let findGB = {
     ShowDialog: () => {
         
 		if ($('#findGBDialog').length > 0){
-			HTML.CloseOpenBox('findGBDialog');
+			FH.HTML.CloseOpenBox('findGBDialog');
 
 			return;
 		}
 
         if ($('#findGBDialog').length === 0) {
-            HTML.AddCssFile('findGB');
+            FH.HTML.AddCssFile('findGB');
 
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'findGBDialog',
                 title: i18n('Boxes.findGB.Title'),
                 auto_close: true,

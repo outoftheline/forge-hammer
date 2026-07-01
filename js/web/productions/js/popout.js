@@ -343,7 +343,7 @@ function initPopout() {
         }
     });
 
-    helper.preloader.hide('#ProductionsRating');
+    FH.helper.preloader.hide('#ProductionsRating');
     //$('#ProductionsRatingBody').fadeIn(501);
 
     if (Productions.RatingSearchTerm !== "") {

@@ -66,7 +66,7 @@ let Unit = {
 	},
 
 	/**
-	 * Creates an HTML box for the DOM
+	 * Creates an FH.HTML.box for the DOM
 	 *
 	 */
 	Show: ()=> {
@@ -74,7 +74,7 @@ let Unit = {
 		Unit.PrepareCoords();
 
 		if ($('#UnitOverview').length === 0) {
-			HTML.AddCssFile('unit');
+			FH.HTML.AddCssFile('unit');
 
 			let args = {
 				id: 'UnitOverview',
@@ -83,14 +83,14 @@ let Unit = {
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'Unit.ShowSettings()'
+				settings: Unit.ShowSettings
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 			//moment.locale(18n('Local'));
 
 		} else {
-			HTML.CloseOpenBox('UnitOverview');
+			FH.HTML.CloseOpenBox('UnitOverview');
 		}
 
 		Unit.BuildBox();
@@ -498,7 +498,7 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
+			text = FH.HTML.i18nReplacer(
 				i18n('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.NextAmount,
@@ -515,7 +515,7 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
+			text = FH.HTML.i18nReplacer(
 				i18n('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.alca.state.current_product.amount,
@@ -818,7 +818,7 @@ let Unit = {
 
 		h.push(`<p>${i18n('Boxes.Units.PictogramScalingTitle')}
 					<button class="btn btn-slim btn-set-value" data-value="-1">&lt;</button>
-					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
+					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
 					<button class="btn btn-slim btn-set-value" data-value="1">&gt;</button>
 					<span class="validity"></span>
 				</p>`);

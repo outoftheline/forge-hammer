@@ -5,7 +5,7 @@ FH.proxy.addFoeHelperHandler('CityMapUpdated', () => {
     CABlocker.checkBuildings();
 });
 
-HTML.AddCssFile('cablocker')
+FH.HTML.AddCssFile('cablocker')
 
 CABlocker = {
     timer: null,

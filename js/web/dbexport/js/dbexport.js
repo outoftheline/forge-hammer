@@ -12,7 +12,7 @@ let DBExport = {
     BuildBox: (event) => {
         if ($('#DBExport').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'DBExport',
                 title: i18n('Boxes.DBExport.Title'),
                 auto_close: true,
@@ -21,10 +21,10 @@ let DBExport = {
                 minimize: true
             });
 
-            HTML.AddCssFile('dbexport');
+            FH.HTML.AddCssFile('dbexport');
         } else if (!event)
         {
-            HTML.CloseOpenBox('DBExport');
+            FH.HTML.CloseOpenBox('DBExport');
             return;
         }
 

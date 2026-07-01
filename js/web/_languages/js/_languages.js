@@ -48,9 +48,9 @@ let Translation = {
 	Show: ()=> {
 		if ( $('#Translation').length === 0 ) {
 
-			HTML.AddCssFile('_languages');
+			FH.HTML.AddCssFile('_languages');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Translation',
 				title: i18n('Boxes.Translation.Title'),
 				auto_close: true,
@@ -103,9 +103,9 @@ let Translation = {
 							<li>If you use a fork of the extension, you can also copy the JSON data into the respective language file and create a pull request on Github to get your changes merged.</li>
 							</br>
 							<li>Please keep __values__ that are encased by double underscores untranslated! These are parameters that are repaced with values during runtime.</li>
-							<li>Please keep &lt;HTMLCode&gt; between the angle backets as is. Those are needed for correct formatting. For &lt;someHTML&gtText&lt;someMoreHTML&gt; hwever, the Text between HTML Code sections can translated</li>
+							<li>Please keep &lt;FH.HTML.ode&gt; between the angle backets as is. Those are needed for correct formatting. For &lt;someFH.HTML.gtText&lt;someMoreFH.HTML.gt; hwever, the Text between FH.HTML.Code sections can translated</li>
 							</br>
-							<li>You can select whether to copy the reference text into the input field on entering it. Conditional copy means, the reference is inserted only when the current translation is empty and the reference text includes HTML or place holders.</li>
+							<li>You can select whether to copy the reference text into the input field on entering it. Conditional copy means, the reference is inserted only when the current translation is empty and the reference text includes FH.HTML.or place holders.</li>
 						</ul>
 					</div>
 					<div class="p5">
@@ -221,11 +221,11 @@ let Translation = {
 			let referenceValue = Translation.getString(reference);
 			let missing = targetValue.trim() === '';
 			let updated = !Translation.targetData?.[key]?.r || referenceValue !== Translation.targetData?.[key]?.r;
-			let OldRef = HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
+			let OldRef = FH.HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
 			let showCheckmark = updated && !!targetValue && (Translation.tempData?.[key]?.r !== referenceValue);
 			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
-				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${referenceValue}</td>
+				<td title="Comparison Value: ${FH.HTML.escapeHtml(comparisonValue)}">${referenceValue}</td>
 				<td ${(updated && !!OldRef) ? `title="Old Reference: ${OldRef}"` : ''}>
 					${showCheckmark ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
 					<span>${Translation.tempData?.[key]?.s || Translation.tempData?.[key] || targetValue}</span>

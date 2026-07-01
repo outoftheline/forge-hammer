@@ -323,9 +323,9 @@ let FPCollector = {
 			FPCollector.DatePicker = null;
 
 			// CSS into the DOM
-			HTML.AddCssFile('fp-collector');
+			FH.HTML.AddCssFile('fp-collector');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'fp-collector',
 				title: i18n('Menu.fpCollector.Title'),
 				auto_close: true,
@@ -388,7 +388,7 @@ let FPCollector = {
 			if (hidePicker) $('#FPCollectorPicker').hide();
 		}
 		else {
-			HTML.CloseOpenBox('fp-collector');
+			FH.HTML.CloseOpenBox('fp-collector');
 			return;
 		}
 

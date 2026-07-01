@@ -17,11 +17,8 @@ let peoples = [
 let ranking = helper.arr.multisort(peoples, ['points', 'name'], ['DESC','ASC']);
 
 */
-
-if( typeof helper == 'undefined' ) {
-	var helper = { } ;
-}
-
+FH.helper = (() => {
+let helper = {};
 helper.str = {
 	/**
 	 * Function to copy string to clipboard
@@ -197,11 +194,20 @@ helper.loadChartJS = () => {
 
 	return helper._chartJSPromise;
 };
+return helper;
+}) ()
 
-
+FH.HTML = (() => {
 let HTML = {
 
 	customFunctions: [],
+	callCustomFunction: (id) => {
+		if (HTML.customFunctions[id] && typeof HTML.customFunctions[id] === 'function') {
+			HTML.customFunctions[id]();
+		} else {
+			new Function(`${HTML.customFunctions[id + 'PopOut']}`)();
+		}
+	},
 	IsReversedFloatFormat: undefined,
 
 	/**
@@ -523,9 +529,7 @@ let HTML = {
 			document.onpointermove = null;
 
 			// is there a callback function after drag&drop
-			if (HTML.customFunctions[id]) {
-				new Function(`${HTML.customFunctions[id]}`)();
-			}
+			HTML.callCustomFunction(id);
 		}
 	},
 
@@ -624,19 +628,19 @@ let HTML = {
 		$(`#${id}`).append(box);
 
 		setTimeout(() => {
-			new Function(`${HTML.customFunctions[id + 'Settings']}`)();
+			HTML.callCustomFunction(id + 'Settings');
 		}, 100);
 	},
 
 
 	PopOutBox: (id) => {
-		new Function(`${HTML.customFunctions[id + 'PopOut']}`)();
+		HTML.callCustomFunction(id + 'PopOut');
 	},
 
 
 	CustomBox: (id,cls) => {
 		setTimeout(() => {
-			new Function(`${HTML.customFunctions[id + cls]}`)();
+			HTML.callCustomFunction(id + cls);
 		}, 100);
 	},
 
@@ -725,7 +729,7 @@ let HTML = {
 			return Intl.NumberFormat(i18n(language), {
 				notation: "compact",
 				maximumFractionDigits: 1
-			  }).format(Number(number));
+			}).format(Number(number));
 		}
 	},
 
@@ -931,7 +935,7 @@ let HTML = {
 				}
 				else {
 					ColumnCount = 1;
-                }
+				}
 
 				if (ColumnCount === 1) {
 					ColumnNames[index] = $(this).data('export')
@@ -942,7 +946,7 @@ let HTML = {
 						ColumnNames[index] = $(this).data('export' + (i + 1));
 						index++;
 					}
-                }
+				}
 			});
 
 			let DataRows = [];
@@ -977,7 +981,7 @@ let HTML = {
 					else {
 						ColumnID += 1;
 					}
-					 ColumnCount;
+					ColumnCount;
 				});
 
 				if(Object.keys(CurrentRow).length > 0) DataRows.push(CurrentRow); //Dont push empty rows
@@ -1005,11 +1009,11 @@ let HTML = {
 							}
 							else {
 								CurrentCells.push(CurrentCell);
-                            }
+							}
 						}
 						else {
 							CurrentCells.push('');
-                        }
+						}
 					}
 					Rows.push(CurrentCells.join(';'));
 				}
@@ -1083,7 +1087,7 @@ let HTML = {
 		}
 		else {
 			return Ret;
-        }
+		}
 	},
 };
 
@@ -1093,3 +1097,5 @@ FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	$('.MapActivityHide.ActiveOn'+ActiveMap).show();
 
 });
+return HTML;
+}) ()

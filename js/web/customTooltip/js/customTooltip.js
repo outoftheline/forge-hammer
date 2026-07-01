@@ -23,7 +23,7 @@ let Tooltips = {
     init: async () => {
         await StartUpDone
 
-		HTML.AddCssFile('customTooltip');
+		FH.HTML.AddCssFile('customTooltip');
         let container = document.createElement("div");
         container.id = "TooltipContainer"
         container.className = "window-box"
@@ -59,7 +59,7 @@ let Tooltips = {
 
     set: (content) => {
         if (!content) return
-        Tooltips.Container.innerHTML=content;
+        Tooltips.Container.innerHTMLcontent;
         Tooltips.checkposition()
     },
     checkposition: () => {
@@ -881,7 +881,7 @@ let QIActions = {
 
 		tooltip=`<div style="text-align:center">`
         tooltip+=`<h1>${i18n("Global.BoxTitle")}</h1>`
-		tooltip+=`<p style="margin: 3px">${srcLinks.icons("guild_raids_action_points")}&nbsp;${HTML.Format(hourly)} ${moment.unix(next).fromNow()}</p>`
+		tooltip+=`<p style="margin: 3px">${srcLinks.icons("guild_raids_action_points")}&nbsp;${FH.HTML.Format(hourly)} ${moment.unix(next).fromNow()}</p>`
 		tooltip+=`<h2>${i18n("Boxes.QIActions.FullAt")}</h2>`
 		tooltip+=`<p>${moment.unix(fullAt).format('lll')}</p></div>`
 

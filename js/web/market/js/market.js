@@ -61,18 +61,18 @@ let Market = {
     Show: (event = true)=> {
         if ($('#Market').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'Market',
                 title: i18n('Boxes.Market.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize: true,
-                settings: 'Market.ShowSettingsButton()'
+                settings: Market.ShowSettingsButton
             });
 
             // add css to DOM
-            HTML.AddCssFile('market');
+            FH.HTML.AddCssFile('market');
 
 
             $('#Market').on('click', '.custom-option', function(){
@@ -161,7 +161,7 @@ let Market = {
             Market.CalcBody();
         }
 		else {
-			HTML.CloseOpenBox('Market');
+			FH.HTML.CloseOpenBox('Market');
 			return;
 		}
 
@@ -273,12 +273,12 @@ let Market = {
 
         h.push('<td><label class="game-cursor"><input class="tradepartnerguild game-cursor" ' + (Market.TradePartnerGuild ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Market.TradePartnerGuild') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradeforequal game-cursor" ' + (Market.TradeForEqual ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Market.TradeForEqual') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradefairstock game-cursor" ' + (Market.TradeFairStock ? 'checked' : '') + ' type="checkbox" title="' + HTML.i18nTooltip(i18n('Boxes.Market.TradeFairStockTT')) + '">' + i18n('Boxes.Market.TradeFairStock') + '</label></td>');
+        h.push('<td><label class="game-cursor"><input class="tradefairstock game-cursor" ' + (Market.TradeFairStock ? 'checked' : '') + ' type="checkbox" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Market.TradeFairStockTT')) + '">' + i18n('Boxes.Market.TradeFairStock') + '</label></td>');
         h.push('</tr>');
 
         h.push('<tr>');
         h.push('<td><label class="game-cursor" for="minquantity">' + i18n('Boxes.Market.MinQuantity') + '</label></td>');
-        h.push('<td title="' + HTML.i18nTooltip(i18n('Boxes.Market.TTMinQuantity')) + '"><input type="number" id="minquantity" step="1" min="0" max="1000000" value="' + Market.MinQuantity + '"></td>');
+        h.push('<td title="' + FH.HTML.i18nTooltip(i18n('Boxes.Market.TTMinQuantity')) + '"><input type="number" id="minquantity" step="1" min="0" max="1000000" value="' + Market.MinQuantity + '"></td>');
         h.push('<td><label class="game-cursor"><input class="tradepartnerfriend game-cursor" ' + (Market.TradePartnerFriend ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Market.TradePartnerFriend') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradeforlower game-cursor" ' + (Market.TradeForLower ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Market.TradeForLower') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradefair game-cursor" ' + (Market.TradeFair ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Market.TradeFair') + '</label></td>');
@@ -328,18 +328,18 @@ let Market = {
                     NeedGoodID = Trade['need']['good_id'],
                     OfferEra = Technologies.Eras[GoodsData[OfferGoodID]['era']],
                     NeedEra = Technologies.Eras[GoodsData[NeedGoodID]['era']],
-                    OfferTT = HTML.i18nReplacer(i18n('Boxes.Market.OfferTT'), { 'era': i18n('Eras.' + OfferEra), 'stock': HTML.Format(ResourceStock[OfferGoodID]) }),
-                    NeedTT = HTML.i18nReplacer(i18n('Boxes.Market.NeedTT'), { 'era': i18n('Eras.' + NeedEra), 'stock': HTML.Format(ResourceStock[NeedGoodID]) }),
+                    OfferTT = FH.HTML.i18nReplacer(i18n('Boxes.Market.OfferTT'), { 'era': i18n('Eras.' + OfferEra), 'stock': FH.HTML.Format(ResourceStock[OfferGoodID]) }),
+                    NeedTT = FH.HTML.i18nReplacer(i18n('Boxes.Market.NeedTT'), { 'era': i18n('Eras.' + NeedEra), 'stock': FH.HTML.Format(ResourceStock[NeedGoodID]) }),
                     CurrentPos = (Trade['merchant']['is_self'] ? OwnPos : Pos);
 
                 h.push('<tr>');
                 h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[OfferGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + HTML.i18nTooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + HTML.i18nTooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
                 h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + HTML.i18nTooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
-                h.push('<td class="text-center">' + HTML.Format(MainParser.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
+                h.push('<td class="text-center">' + FH.HTML.Format(MainParser.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
                 h.push('<td>' + Trade['merchant']['name'] + '</td>');
                 h.push('<td class="text-center">' + (Math.floor(CurrentPos / 10 + 1)) + '-' + (CurrentPos % 10 + 1) + '</td>');
                 h.push('</tr>');
@@ -358,7 +358,7 @@ let Market = {
         h.push('</table>');
 
 		$('#MarketBody').html(h.join('')).promise().done(function(){
-            HTML.Dropdown();
+            FH.HTML.Dropdown();
 
             $('#Market').find('.custom-options').each(function () {
                 let func = $(this).data('function');
@@ -507,8 +507,8 @@ let Market = {
 		let autoOpen = Settings.GetSetting('ShowMarketFilter');
 
         let h = [];
-        h.push(`${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#MarketBody').find('.foe-table.exportable'), 'csv', 'Market')">CSV</button>`);
-        h.push(`<button class="btn" onclick="HTML.ExportTable($('#MarketBody').find('.foe-table.exportable'), 'json', 'Market')">JSON</button></span>`);
+        h.push(`${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#MarketBody').find('.foe-table.exportable'), 'csv', 'Market')">CSV</button>`);
+        h.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#MarketBody').find('.foe-table.exportable'), 'json', 'Market')">JSON</button></span>`);
         h.push(`<p><input id="autoStartMarket" name="autoStartMarket" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartMarket">${i18n('Boxes.Market.Settings.Autostart')}</label></p>`);
 
         h.push(`<p><button onclick="Market.SaveSettings()" id="save-market-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);

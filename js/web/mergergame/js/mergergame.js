@@ -313,16 +313,16 @@ let mergerGame = {
         
 		// Don't create a new box while another one is still open
 		if ($('#mergerGameDialog').length === 0) {
-			HTML.AddCssFile('mergergame');
+			FH.HTML.AddCssFile('mergergame');
 			
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'mergerGameDialog',
 				title: 'Merger Game',
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize : true,
-				settings: 'mergerGame.ShowSettingsButton()',
+				settings: mergerGame.ShowSettingsButton,
 			    active_maps:"main"
 			});
 
@@ -499,7 +499,7 @@ let mergerGame = {
 			}
 		}
 		if (mergerGame.settings.audibleTaskWarning && warn && raiseAlert) {
-			helper.sounds.play("message");
+			FH.helper.sounds.play("message");
 		}
 		if (mergerGame.settings.opticalTaskWarning && warn && raiseAlert && $('#mergerGameTaskWarning').length === 0) {
 			mergerGame.allowRemoveWarning = false;

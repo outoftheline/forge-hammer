@@ -277,7 +277,7 @@ let cardGame = {
         
 		// Don't create a new box while another one is still open
 		if ($('#cardGameDialog').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'cardGameDialog',
 				title: 'Card Game',
 				auto_close: true,
@@ -376,4 +376,4 @@ let cardGame = {
 	},
 }
 cardGame.init();
-HTML.AddCssFile('cardgame');
+FH.HTML.AddCssFile('cardgame');

@@ -6,12 +6,12 @@
 
 FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
     // Closes the box when the player is about to attack a sector
-    HTML.CloseOpenBox('mapTradeWarningDialog');
+    FH.HTML.CloseOpenBox('mapTradeWarningDialog');
 });
 
 FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     // Closes the box when the player navigates back to the city
-    HTML.CloseOpenBox('mapTradeWarningDialog');
+    FH.HTML.CloseOpenBox('mapTradeWarningDialog');
 });
 
 FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
@@ -22,7 +22,7 @@ FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
 
     // Closes the box when the player visits a province that is completely conquered
     if (data.responseData && data.responseData.filter(e => !e.isPlayerOwned).length === 0) {
-        HTML.CloseOpenBox('mapTradeWarningDialog');
+        FH.HTML.CloseOpenBox('mapTradeWarningDialog');
         return;
     }
 
@@ -45,9 +45,9 @@ let mapTradeWarning = {
      * @constructor
      */
     ShowMapDialog: () => {
-        HTML.AddCssFile('maptradewarning');
+        FH.HTML.AddCssFile('maptradewarning');
         
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'mapTradeWarningDialog',
             'title': i18n('Boxes.mapTradeWarning.Title'),
             'auto_close': true,

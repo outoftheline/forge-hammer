@@ -31,7 +31,7 @@ let Discord = {
 
 	BuildBox: ()=> {
 		if ($('#Discord').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Discord',
 				title: i18n('Boxes.Discord.Title'),
 				auto_close: true,
@@ -39,10 +39,10 @@ let Discord = {
 				resize: true
 			});
 
-			HTML.AddCssFile('discord');
+			FH.HTML.AddCssFile('discord');
 		}
 		else {
-			HTML.CloseOpenBox('Discord');
+			FH.HTML.CloseOpenBox('Discord');
 			return ;
 		}
 
@@ -325,7 +325,7 @@ let Discord = {
 		const url = $('#url').val();
 
 		if(!url) {
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				show: 'force',
 				head: i18n('General.Error'),
 				text: 'Please select a Webhook URL!',
@@ -343,7 +343,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend(e);
 
-		HTML.ShowToastMsg({
+		FH.HTML.ShowToastMsg({
 			show: 'force',
 			head: i18n('General.Success'),
 			text: 'The message was sent.',
@@ -361,7 +361,7 @@ let Discord = {
 			msg = Discord.WebHooks[entryId].message;
 		}
 		if(!url) {
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				show: 'force',
 				head: 'Error',
 				text: 'Please select a Webhook URL first!',
@@ -379,7 +379,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend(e);
 
-		HTML.ShowToastMsg({
+		FH.HTML.ShowToastMsg({
 			show: 'force',
 			head: 'Sent!',
 			text: 'The message was sent to the webhook.',

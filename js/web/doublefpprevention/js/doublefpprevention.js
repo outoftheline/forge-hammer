@@ -25,9 +25,9 @@ let doubleFPprevention = {
      * @constructor
      */
     ShowBox: () => {
-        HTML.AddCssFile('doublefpprevention');
+        FH.HTML.AddCssFile('doublefpprevention');
         
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'doubleFPprevention',
             'title': i18n('Boxes.doubleFPprevention.Title'),
             'auto_close': true,
@@ -38,6 +38,6 @@ let doubleFPprevention = {
     },
 
     Close:()=>{
-        HTML.CloseOpenBox('doubleFPprevention')
+        FH.HTML.CloseOpenBox('doubleFPprevention')
     }
 };

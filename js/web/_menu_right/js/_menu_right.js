@@ -192,7 +192,7 @@ let _menu_right = {
 
 				$('#forgehammer-hud').removeClass('is--sorting');
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Menu.SaveMessage.Title'),
 					text: i18n('Menu.SaveMessage.Desc'),

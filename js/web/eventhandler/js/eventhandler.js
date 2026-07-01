@@ -172,17 +172,17 @@ let EventHandler = {
 			if (InvalidDates.length > 0)
 			{
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Boxes.Investment.DateParseError'),
-					text: HTML.i18nReplacer(i18n('Boxes.Investment.DateParseErrorDesc'), { InvalidDate: InvalidDates[0]}),
+					text: FH.HTML.i18nReplacer(i18n('Boxes.Investment.DateParseErrorDesc'), { InvalidDate: InvalidDates[0]}),
 					type: 'error',
 					hideAfter: 6000,
 				});
             }
 			else if (count === 0) {
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					head: i18n('Boxes.Investment.AllUpToDate'),
 					text: i18n('Boxes.Investment.AllUpToDateDesc'),
 					type: 'info',
@@ -190,9 +190,9 @@ let EventHandler = {
 				});
 			}
 			else {
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					head: i18n('Boxes.Investment.PlayerFound'),
-					text: HTML.i18nReplacer(
+					text: FH.HTML.i18nReplacer(
 						count === 1 ? i18n('Boxes.Investment.PlayerFoundCount') : i18n('Boxes.Investment.PlayerFoundCounter'),
 						{count: count}
 					),
@@ -297,17 +297,17 @@ let EventHandler = {
 		//moment.locale(18n('Local'));
 
 		if ($('#moppelhelper').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'moppelhelper',
 				title: i18n('Boxes.MoppelHelper.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'EventHandler.ShowMoppelHelperSettingsButton()'
+				settings: EventHandler.ShowMoppelHelperSettingsButton
 			});
 
-			HTML.AddCssFile('eventhandler');
+			FH.HTML.AddCssFile('eventhandler');
 
 			$('#moppelhelper').on('click', '.filtermoppelevents', function () {
 				EventHandler.FilterMoppelEvents = !EventHandler.FilterMoppelEvents;
@@ -375,7 +375,7 @@ let EventHandler = {
 			EventHandler.CalcMoppelHelperBody();
 
 		} else {
-			HTML.CloseOpenBox('moppelhelper');
+			FH.HTML.CloseOpenBox('moppelhelper');
 			EventHandler.CurrentPlayerGroup = null;
 		}
 	},
@@ -584,7 +584,7 @@ let EventHandler = {
 			h.push(`<td><img style="max-width: 22px" src="${srcLinks.GetPortrait(Player['Avatar'])}" alt="${Player['PlayerName']}"></td>`);
 			
 			// Player Name column
-			h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + helper.str.cleanup(Player['PlayerName']) + '">');
+			h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + FH.helper.str.cleanup(Player['PlayerName']) + '">');
 
 			h.push(`<span class="activity activity_${Player['Activity']}"></span> `);
 			h.push(MainParser.GetPlayerLink(Player['PlayerID'], Player['PlayerName']));
@@ -594,7 +594,7 @@ let EventHandler = {
 
 			// Guild name column
 			if (EventHandler.CurrentPlayerGroup != 'Guild' && EventHandler.ShowHideColumns.GuildName) {
-				h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + (helper.str.cleanup(Player['ClanName'] || "")) + '">');
+				h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + (FH.helper.str.cleanup(Player['ClanName'] || "")) + '">');
 				h.push(Player['ClanName'] ? MainParser.GetGuildLink(Player['ClanId'], Player['ClanName']) : "");
 			}
 
@@ -607,7 +607,7 @@ let EventHandler = {
 
 			// Player points column
 			if (EventHandler.ShowHideColumns.Points) {
-				h.push('<td class="is-number" data-number="' + Player['Score'] + '">' + HTML.Format(Player['Score']) + '</td>');
+				h.push('<td class="is-number" data-number="' + Player['Score'] + '">' + FH.HTML.Format(Player['Score']) + '</td>');
 			}
 
 			// Event columns
@@ -615,8 +615,8 @@ let EventHandler = {
 				if (j < Visits.length) {
 					let Seconds = (MainParser.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
 					let Days = Seconds / 86400; //24*3600
-					let StrongColor = (Days < 3 * (j + 1) ? HTML.GetColorGradient(Days, 0, 3 * (j + 1), '00ff00', 'ffff00') : HTML.GetColorGradient(Days, 3 * (j + 1), 7 * (j + 1), 'ffff00', 'ff0000'));
-					let FormatedDays = HTML.i18nReplacer(i18n('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });
+					let StrongColor = (Days < 3 * (j + 1) ? FH.HTML.GetColorGradient(Days, 0, 3 * (j + 1), '00ff00', 'ffff00') : FH.HTML.GetColorGradient(Days, 3 * (j + 1), 7 * (j + 1), 'ffff00', 'ff0000'));
+					let FormatedDays = FH.HTML.i18nReplacer(i18n('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });
 					let EventType = EventHandler.GetEventType(Visits[j]);
 
 					h.push('<td style="white-space:nowrap" class="events-image" data-number="' + Days + '"><span class="events-sprite-35 ' + EventType + '"></span><strong style="color:#' + StrongColor + '">' + FormatedDays + '</strong></td>');
@@ -657,8 +657,8 @@ let EventHandler = {
 	*/
 	ShowMoppelHelperSettingsButton: () => {
 		let h = [];
-		h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'csv', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-		h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'json', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+		h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'csv', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
+		h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'json', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
 
 		$('#moppelhelperSettingsBox').html(h.join(''));
 	},

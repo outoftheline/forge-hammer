@@ -105,16 +105,16 @@ let shopAssist = {
 		shopAssist.timeout = null;
 
         if ($('#shopAssist').length === 0) {
-			HTML.AddCssFile('shopAssist');
+			FH.HTML.AddCssFile('shopAssist');
         
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'shopAssist',
 				title: i18n('Boxes.ShopAssist.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize : true,
-				settings: 'shopAssist.ShowSettings()',
+				settings: shopAssist.ShowSettings,
 			});
 		}
 		
@@ -130,7 +130,7 @@ let shopAssist = {
 		let newFilter = {};
 		for (let res of shopAssist.shopMeta[shopAssist.storeId].resources) {
 			newFilter[res] = shopAssist.currencyfilter[res] ?? true;
-			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${i18n('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${HTML.Format(ResourceStock[res]||0)}${srcLinks.icons(res)}</span>`
+			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${i18n('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${FH.HTML.Format(ResourceStock[res]||0)}${srcLinks.icons(res)}</span>`
 		}
 		shopAssist.currencyfilter = newFilter;
 		h += `<thead>
@@ -228,13 +228,13 @@ let shopAssist = {
 				for (let u of slot.unlockConditions||[]) {
 					if (u.type == "resource_spend") 
 						for (let [r,amount] of Object.entries(u?.resourcesVO?.resources||{})) {
-							costs += `<div class="text-right">` + HTML.Format((shopAssist.unlockProgress?.[u.type + "#"+r])||0) + "/" + amount + srcLinks.icons(r) + "</div>"
+							costs += `<div class="text-right">` + FH.HTML.Format((shopAssist.unlockProgress?.[u.type + "#"+r])||0) + "/" + amount + srcLinks.icons(r) + "</div>"
 						}
 					else if (u.type == "grand_prize_progress") {
-							costs += `<div class="text-right">` + HTML.Format((shopAssist.unlockProgress?.[u.type + "#" + u.context])||0) + "/" + u.amount + srcLinks.regEx(RegExp(`store.*?${u.context.replace("_event","")}.*?grand_prize`)) + "</div>"
+							costs += `<div class="text-right">` + FH.HTML.Format((shopAssist.unlockProgress?.[u.type + "#" + u.context])||0) + "/" + u.amount + srcLinks.regEx(RegExp(`store.*?${u.context.replace("_event","")}.*?grand_prize`)) + "</div>"
 					}
 					else if (u.type == "rarity") {
-							costs += `<div class="text-right">` + HTML.Format((shopAssist.unlockProgress?.[u.type + "#" + u.rarityPurchase.rarity.value])||0) + "/" + u.rarityPurchase.amount + '<img src="' + srcLinks.get("/item_store/store_shared/item_store_rarity_icon_common.png",true) + '"></div>'
+							costs += `<div class="text-right">` + FH.HTML.Format((shopAssist.unlockProgress?.[u.type + "#" + u.rarityPurchase.rarity.value])||0) + "/" + u.rarityPurchase.amount + '<img src="' + srcLinks.get("/item_store/store_shared/item_store_rarity_icon_common.png",true) + '"></div>'
 					}
 				}
 			}
@@ -243,8 +243,8 @@ let shopAssist = {
 			</td>`
 			//Inventory
 			h += `<td>
-				<div>${stock.stock ? HTML.Format(stock.stock) : ""}</div>
-				<div>${slot.reward.subType == "fragment" ? srcLinks.icons("icon_tooltip_fragment") + HTML.Format(stock.fragments||0)+"/"+HTML.Format(slot.reward.requiredAmount) : ""}</div>
+				<div>${stock.stock ? FH.HTML.Format(stock.stock) : ""}</div>
+				<div>${slot.reward.subType == "fragment" ? srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(stock.fragments||0)+"/"+FH.HTML.Format(slot.reward.requiredAmount) : ""}</div>
 			</td>`
 			//Costs single
 			costs = "";
@@ -253,7 +253,7 @@ let shopAssist = {
 				let cost = Math.ceil(amount*(1-(slot.discount||0)));
 				if (ResourceStock[res] == undefined || ResourceStock[res]<cost) 
 					canBuy = false;
-				costs += `<div class="text-right${isdiscounted ? " shopDiscount":""}">` + HTML.Format(cost) + srcLinks.icons(res) + "</div>"
+				costs += `<div class="text-right${isdiscounted ? " shopDiscount":""}">` + FH.HTML.Format(cost) + srcLinks.icons(res) + "</div>"
 			})
 			h += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"}">
 				${costs}
@@ -266,10 +266,10 @@ let shopAssist = {
 					let cost = neededBuys * Math.ceil(amount*(1-(slot.discount||0)));
 					if ((ResourceStock[res] || 0) < cost) 
 						canBuy = false;
-					costs += `<div class="text-right">${HTML.Format(cost) + srcLinks.icons(res)}</div>`
+					costs += `<div class="text-right">${FH.HTML.Format(cost) + srcLinks.icons(res)}</div>`
 				})
 				h += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"} helperTT" data-callback_tt="shopAssist.allTT" data-slotid="${slot.slotId}F">
-					<div><span>${srcLinks.icons("icon_tooltip_fragment") + HTML.Format(neededFragments)}</span> <span>(${neededBuys}x)</span></div>
+					<div><span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(neededFragments)}</span> <span>(${neededBuys}x)</span></div>
 					${costs}
 				</td>`
 				//costs full
@@ -281,10 +281,10 @@ let shopAssist = {
 					Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 						let cost = fullBuys * Math.ceil(amount*(1-(slot.discount||0)));
 						if ((ResourceStock[res] || 0) < cost) canBuy = false;
-						costs += `<div class="text-right">` + HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
+						costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 					})
 					allTT += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"}">
-							<div>${slot.reward.subType == "fragment" && fullBuys < Infinity && fullBuys > 0 ? `<span>${srcLinks.icons("icon_tooltip_fragment") + HTML.Format(fullBuys * slot.reward.amount)}</span>`:``} <span>(${fullBuys}x)</span></div> 
+							<div>${slot.reward.subType == "fragment" && fullBuys < Infinity && fullBuys > 0 ? `<span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(fullBuys * slot.reward.amount)}</span>`:``} <span>(${fullBuys}x)</span></div> 
 							${costs}
 							</td></tr></table>`
 					shopAssist.allTTContent[slot.slotId+"F"] = allTT;
@@ -305,13 +305,13 @@ let shopAssist = {
 				canBuy = true;
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 					let cost = maxBuys * Math.ceil(amount*(1-(slot.discount||0)));
-					costs += `<div class="text-right">` + HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
+					costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 				})
 			}
 			h += `<td class="costs ${(maxBuys>0 && maxBuys==limitedBuys) || (maxBuys>0 && limitedBuys == Infinity)?"canBuy":""} ${limitedBuys > 0 && limitedBuys < Infinity ? 'helperTT" data-callback_tt="shopAssist.allTT" data-slotid="' + slot.slotId + '"':'"'}>
 					<div>
 						${slot.reward.subType == "fragment" && maxBuys != Infinity && maxBuys != 0 ? 
-							`<span>${srcLinks.icons("icon_tooltip_fragment") + HTML.Format(maxBuys*slot.reward.amount)}</span>`:``} 
+							`<span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(maxBuys*slot.reward.amount)}</span>`:``} 
 						<span>(<span class="${maxBuys>0 ? "buyable":""}">${maxBuys}</span>${slot.flag?.value!="increasingCosts" && limitedBuys > 0 && limitedBuys < Infinity ? "/" + limitedBuys : (slot.flag?.value=="increasingCosts" && limitedBuys > 0 ? "/?" :"x")})
 						</span>
 					</div> 
@@ -326,10 +326,10 @@ let shopAssist = {
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 					let cost = limitedBuys * Math.ceil(amount*(1-(slot.discount||0)));
 					if ((ResourceStock[res] || 0) < cost) canBuy = false;
-					costs += `<div class="text-right">` + HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
+					costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 				})
 				allTT += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"}">
-						<div>${slot.reward.subType == "fragment" && limitedBuys < Infinity && limitedBuys > 0 ? `<span>${srcLinks.icons("icon_tooltip_fragment") + HTML.Format(limitedBuys * slot.reward.amount)}</span>`:``} <span>(${limitedBuys}x)</span></div> 
+						<div>${slot.reward.subType == "fragment" && limitedBuys < Infinity && limitedBuys > 0 ? `<span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(limitedBuys * slot.reward.amount)}</span>`:``} <span>(${limitedBuys}x)</span></div> 
 						${costs}
 						</td></tr></table>`
 				shopAssist.allTTContent[slot.slotId] = allTT;
@@ -570,7 +570,7 @@ let shopAssist = {
 			if (canBuy) {
 				shopAssist.alertsTriggered[key] = true;
 				let shopId = key.split("#")[0];
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Boxes.ShopAssist.Shop') + ' - ' + (shopAssist.shopMeta?.[shopId]?.name||""),
 					text: i18n('Boxes.ShopAssist.canBeBought')+": " + slot.reward.name,
