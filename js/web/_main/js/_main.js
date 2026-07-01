@@ -23,7 +23,8 @@ let DuplicateWarning = (helperDetected=true) => {
 }
 
 const duplicateDetected = !!(
-	window.ExtbaseData
+	window.ExtbaseData ||
+	window.FH.Basedata
 );
 
 if (duplicateDetected) {
@@ -1021,8 +1022,21 @@ let MainParser = {
 		const existingCount = (precheckResponse && typeof precheckResponse.existingCount === 'number') ? precheckResponse.existingCount : 0;
 
 		const missingCount = urlCount - existingCount;
-		const useLongTimeout = missingCount > Math.max(100, urlCount * 0.1);
-		const timeout = useLongTimeout ? 300000 : 30000;
+		const useLongTimeout = missingCount > 300;
+		const longTimeout = 600000
+		const timeout = useLongTimeout ? longTimeout : 30000;
+
+		if (timeout == longTimeout) {
+			let div = document.createElement('div');
+			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000000cc;color:white;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:2rem;text-align:center;flex-direction:column;">
+				<div class="loading-data" style="height: 0px; background: unset; top: calc(50vh - 250px);"><span class="loadericon"></span></div>
+				<h2>${i18n("DBCreationWarning.Title")}</h2> </br>
+				${i18n("DBCreationWarning.ExplanationLine1")}<br> 
+				${i18n("DBCreationWarning.ExplanationLine2")}</br></br>
+				<button onclick="document.getElementById('DBCreationWarning').remove()" style="font-size: 2rem;">${i18n("DBCreationWarning.CloseOverlay")}</button>
+			</div>`;
+			document.body.appendChild(div);
+		}
 
 		const metadata = await MainParser.sendExtMessage({
 			type: 'buildingMeta',
@@ -1030,6 +1044,7 @@ let MainParser = {
 			region,
 			timeout,
 		});
+		document.getElementById('DBCreationWarning')?.remove()
 
 		MainParser.CityEntities = metadata || {};
 		MainParser.correctBuildingType();

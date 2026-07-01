@@ -687,40 +687,52 @@ let Calculator = {
 		});
 	},
 
-	showToPay: (previousmessage, sentmessage) => {
-		let entriesAfter = sentmessage.split(/\r\n|\r|\n/).map(l => l.trim());
-		let entriesBefore = previousmessage.split(/\r\n|\r|\n/).map(l => l.trim());
-
-		let consideredOutput = [];
-		for (const entry of entriesBefore) {
-			let matched = false;
-			for (const afterEntry of entriesAfter) {
-				if (entry.includes(afterEntry) && entry !== afterEntry) {
-					consideredOutput.push({ before: entry, after: afterEntry });
-					matched = true;
-					break;
-				}
-			}
-			if (!matched) {
-				consideredOutput.push({ before: true, after: entry });
-			}
-		}
+	showToPay: () => {
+		let entriesBefore = Calculator.ConversationContent.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
+		let entriesAfter  = Calculator.ConversationContentNew.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 
 		let output = [];
-		for (let { before, after } of consideredOutput) {
-			if (before === true) {
-				output.push(after);
-			} else {
-				const afterTokens = new Set(after.split(/\s+/));
-				const beforeTokens = before.split(/\s+/);
-				const diffTokens = beforeTokens.filter(token => !afterTokens.has(token));
 
-				const prefix = before.split(/\s+/).slice(0, 2).join(' ');
-				output.push(prefix ? `${prefix} ${diffTokens.join(' ')}` : diffTokens.join(' '));
+		function removeFromList(el) {
+			let line = $(el).data('line');
+			if (Calculator.ConversationContent)
+				Calculator.ConversationContent = Calculator.ConversationContent.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
+			else {
+				$('#calctest').remove();
+				return;
+			}
+			$(el).remove();
+		}
+
+		for (let before of entriesBefore) {
+			if (entriesAfter.includes(before)) continue;
+
+			let match = entriesAfter.find(after => before.includes(after) && before !== after);
+			let escapedLine = before.replace(/"/g, '&quot;');
+
+			if (!match) {
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}"><b>${before}</b></div>`);
+			} 
+			else {
+				let info = before.slice(0, match.length).trimEnd();
+				let highlight = before.slice(match.length).trimStart();
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${highlight ? `${info} <b>${highlight}</b>` : info}</div>`);
 			}
 		}
-		// to do: better matching
 
-		console.log(output);
+		if ($('#calctest').length > 0)
+			$('#calctest  .content').html(output.join('\n'));
+		else {
+			$(`<div id="calctest" style="position:absolute"><div class="icon-move"></div><div class="icon-close"></div><div class="content"></div></div>`).appendTo('body')
+			$(`#calctest .content`).append(output.join('\n'));
+		}
+
+		$('#calctest').off('click', '.gbEntry').on('click', '.gbEntry', function() {
+			removeFromList(this);
+		});
+		$('#calctest').off('click', '.icon-close').on('click', '.icon-close', function() {
+			$(this).parent('#calctest').remove();
+		});
+		$( "#calctest" ).draggable({ handle: ".icon-move" });
 	}
 };

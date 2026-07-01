@@ -6,6 +6,7 @@
 - Stats GBG player progression was moved to the GBG window and only current season will be shown from now on
 - GBG Stats: Guild victory point difference can now be compared more easily
 - Shop Assistant: Added search
+- Notes: Added setting to open them automatically on game start
 
 ---
  
