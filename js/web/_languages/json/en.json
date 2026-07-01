@@ -1298,7 +1298,7 @@
   "Date": "DD/MMM/YYYY",
   "DateShort": "DD/MMM",
   "DateTime": "DD/MMM, hh:mm:ssa",
-  "DBCreationWarning.CloseOverlay":"Close Overlay",
+  "DBCreationWarning.CloseOverlay":"Close",
   "DBCreationWarning.ExplanationLine1": "The database is built anew or a lot of buildings received an update. The extension will load, when this process is finished.",
   "DBCreationWarning.ExplanationLine2": "This overlay may be closed by you or will close automatically, when finished.",
   "DBCreationWarning.Title": "Building the database for building metadata",

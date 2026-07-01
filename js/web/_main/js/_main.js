@@ -1027,12 +1027,12 @@ let MainParser = {
 
 		if (timeout == longTimeout) {
 			let div = document.createElement('div');
-			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000000cc;color:white;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:2rem;text-align:center;flex-direction:column;">
-				<div class="loading-data" style="height: 0px; background: unset; top: calc(50vh - 250px);"><span class="loadericon"></span></div>
+			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${i18n("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
 				<h2>Forge Hammer: ${i18n("DBCreationWarning.Title")}</h2> </br>
 				${i18n("DBCreationWarning.ExplanationLine1")}<br> 
 				${i18n("DBCreationWarning.ExplanationLine2")}</br></br>
-				<button onclick="document.getElementById('DBCreationWarning').remove()" style="font-size: 2rem;">${i18n("DBCreationWarning.CloseOverlay")}</button>
+				<div style="position:relative;height:75px;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>
 			</div>`;
 			document.body.appendChild(div);
 		}
