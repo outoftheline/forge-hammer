@@ -12,100 +12,73 @@ window.PlannerApp = window.PlannerApp || {};
     const LAYOUT_KEY  = 'foe_planner_layout';
     const HISTORY_KEY = 'foe_planner_history';
 
-
-
-    async function getCityEntityMetaData (region) {
-        let buildingMetaDB = new Dexie("FoEBuildingMeta");
-        await buildingMetaDB.open();
-        const table = buildingMetaDB.table('buildingMeta');
-		const existingEntries = await table.where('region').equals(region).toArray();
-		let metaData = existingEntries.map((x)=>({[x.id]:JSON.parse(x.json)}));
+    // make sure types are the same as in the game map
+    function correctBuildingType(metaData) {
+        for (const id in metaData) {
+            if (!metaData.hasOwnProperty(id)) continue;
+            const entity = metaData[id];
+            if (!entity.type) {
+                entity.type = entity?.components?.AllAge?.tags?.tags
+                    ?.find(v => v.hasOwnProperty('buildingType'))?.buildingType;
+            }
+        }
         return metaData;
     }
 
-    /**
-     * Strips a raw CityEntities meta object down to only the fields the app
-     * actually reads, dramatically reducing localStorage usage.
-     *
-     * Fields kept:
-     *   id, name, type, width, length           — identity + dimensions
-     *   components.AllAge.placement.size         — fallback dimensions
-     *   components.AllAge.streetConnectionRequirement — street req (new format)
-     *   requirements.street_connection_level     — street req (old format)
-     *   abilities[*].__class__                   — street req (ability format)
-     */
-    function slimMeta(meta) {
-        const slim = {
-            id:   meta.id,
-            name: meta.name,
-            type: meta.type,
-        };
+    // grab metadata from the DB
+    async function getCityEntityMetaData(region) {
+        const buildingMetaDB = new Dexie("FoEBuildingMeta");
+        await buildingMetaDB.open();
+        const table = buildingMetaDB.table('buildingMeta');
+        const entries = await table.where('region').equals(region).toArray();
 
-        // Explicit top-level dimensions (may be absent — that's fine).
-        if (meta.width  !== undefined) slim.width  = meta.width;
-        if (meta.length !== undefined) slim.length = meta.length;
-
-        // Street requirement — old format.
-        if (meta.requirements?.street_connection_level !== undefined) {
-            slim.requirements = { street_connection_level: meta.requirements.street_connection_level };
-        }
-
-        // Street requirement / dimensions — components format.
-        const allAge = meta.components?.AllAge;
-        if (allAge) {
-            const slimAllAge = {};
-
-            const placementSize = allAge.placement?.size;
-            if (placementSize) {
-                slimAllAge.placement = { size: { x: placementSize.x, y: placementSize.y } };
-            }
-
-            if (allAge.streetConnectionRequirement !== undefined) {
-                slimAllAge.streetConnectionRequirement = allAge.streetConnectionRequirement;
-            }
-
-            if (Object.keys(slimAllAge).length) {
-                slim.components = { AllAge: slimAllAge };
+        const metaData = {};
+        for (const entry of entries) {
+            try {
+                metaData[entry.id] = JSON.parse(entry.json);
+            } catch (e) {
+                console.warn('Could not parse meta for', entry.id, e);
             }
         }
-
-        // Street requirement — abilities array format (keep only __class__).
-        if (Array.isArray(meta.abilities)) {
-            const relevant = meta.abilities
-                .filter(a => a?.__class__ === 'StreetConnectionRequirementComponent')
-                .map(a => ({ __class__: a.__class__ }));
-            if (relevant.length) slim.abilities = relevant;
-        }
-
-        return slim;
+        return correctBuildingType(metaData);
     }
 
-    /** Convert metaData into a slim version for persistence. */
-    function slimMetaData(metaData) {
-        const slim = {};
-        for (const [key, value] of Object.entries(metaData)) {
-            slim[key] = slimMeta(value);
+    // key used by CityMap.openPlanner() via background.js
+    const PENDING_KEY = 'foe_planner_pending';
+
+    // Checks for new data from CityMap.openPlanner()
+    async function loadGameCityData() {
+        for (let attempt = 0; attempt < 10; attempt++) {
+            const stored = await browser.storage.local.get(PENDING_KEY).catch(() => null);
+            const pending = stored && stored[PENDING_KEY];
+            if (pending) {
+                await browser.storage.local.remove(PENDING_KEY).catch(() => {});
+                await init(pending);
+                return true;
+            }
+            await new Promise(r => setTimeout(r, 150));
         }
-        return slim;
+        return false;
     }
 
-    function init(data) {
-        state.metaData = data.CityEntities;
+    async function init(data) {
+        state.region = data.region;
         state.cityData = data.CityMapData;
-        state.mapData  = data.UnlockedAreas;
+        state.mapData = data.UnlockedAreas;
+
+        state.metaData = await getCityEntityMetaData(state.region);
 
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
 
-        // Fresh data — old undo history is no longer meaningful.
         state.history = [];
-        state.future  = [];
+        state.future = [];
         localStorage.removeItem(HISTORY_KEY);
 
         try {
             localStorage.setItem(BASE_KEY, JSON.stringify({
-                metaData: slimMetaData(state.metaData),
+                region: state.region,
                 cityData: state.cityData,
-                mapData:  state.mapData
+                mapData: state.mapData
             }));
         } catch (e) {
             console.warn('Could not cache base data in localStorage:', e);
@@ -141,27 +114,35 @@ window.PlannerApp = window.PlannerApp || {};
         };
     }
 
-    // Full export: self-contained file with everything.
+    // Full export
     function serializeState() {
         return {
-            version: 2,
-            metaData: state.metaData,
+            version: 3,
+            region:   state.region,
             cityData: state.cityData,
             mapData:  state.mapData,
-            mapBuildings: state.mapBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y
-            })),
-            storedBuildings: state.storedBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y
-            })),
-            camX:      state.camX,
-            camY:      state.camY,
-            zoomScale: state.zoomScale
+            mapBuildings:    state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
+            storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
+            camX: state.camX, camY: state.camY, zoomScale: state.zoomScale
         };
+    }
+
+    async function deserializeState(saved) {
+        state.region   = saved.region;
+        state.cityData = saved.cityData;
+        state.mapData  = saved.mapData;
+        state.metaData = saved.metaData          // still handle old v2 export files gracefully
+            ? saved.metaData
+            : await getCityEntityMetaData(state.region);
+        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+
+        applyLayout(saved);
+        app.resizeCanvasToCSSSize();
+        app.rebuildGridLayer();
+        app.rebuildOccupiedTiles();
+        app.redrawMap();
+        app.updateStats();
+        app.showStoredBuildings();
     }
 
     function buildingsFromEntries(entries) {
@@ -188,22 +169,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings = buildingsFromEntries(layout.storedBuildings);
     }
 
-    function deserializeState(saved) {
-        state.metaData = saved.metaData;
-        state.cityData = saved.cityData;
-        state.mapData  = saved.mapData;
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
-
-        applyLayout(saved);
-
-        app.resizeCanvasToCSSSize();
-        app.rebuildGridLayer();
-        app.rebuildOccupiedTiles();
-        app.redrawMap();
-        app.updateStats();
-        app.showStoredBuildings();
-    }
-
     // --- localStorage ---
 
     function saveState() {
@@ -216,24 +181,22 @@ window.PlannerApp = window.PlannerApp || {};
         }
     }
 
-    function loadFromLocalStorage() {
+    async function loadFromLocalStorage() {
         try {
             const rawBase   = localStorage.getItem(BASE_KEY);
             const rawLayout = localStorage.getItem(LAYOUT_KEY);
             if (!rawBase) return false;
 
             const base = JSON.parse(rawBase);
-            state.metaData = base.metaData;
+            state.region = base.region;
             state.cityData = base.cityData;
-            state.mapData  = base.mapData;
+            state.mapData = base.mapData;
+            state.metaData = await getCityEntityMetaData(state.region);
             state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
 
-            if (rawLayout) {
-                applyLayout(JSON.parse(rawLayout));
-            }
+            if (rawLayout) applyLayout(JSON.parse(rawLayout));
 
             loadHistory();
-
             app.resizeCanvasToCSSSize();
             app.rebuildGridLayer();
             app.rebuildOccupiedTiles();
@@ -262,16 +225,16 @@ window.PlannerApp = window.PlannerApp || {};
 
     function importStateFromFile(file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
                 const saved = JSON.parse(e.target.result);
-                deserializeState(saved);
+                await deserializeState(saved);
                 // Imported state replaces everything — old history is stale.
                 state.history = [];
                 state.future  = [];
                 try {
                     localStorage.setItem(BASE_KEY, JSON.stringify({
-                        metaData: slimMetaData(state.metaData),
+                        region:   state.region,
                         cityData: state.cityData,
                         mapData:  state.mapData
                     }));
@@ -491,12 +454,16 @@ window.PlannerApp = window.PlannerApp || {};
     app.importStateFromFile = importStateFromFile;
     app.rotateLayout = rotateLayout;
 
-    // try loading from localStorage before showing the overlay.
-    const hasSave = loadFromLocalStorage();
-    if (hasSave) {
-        app.dom.submitWindow.classList.add('hidden');
-    }
+    // check for data from CityMap.openPlanner() use localStorage as fallback
+    // todo: implement something to ask if incoming data should be used or the currently saved data
+    (async () => {
+        const hasPending = await loadGameCityData();
+        const hasSave = hasPending || await loadFromLocalStorage();
+        if (hasSave) {
+            app.dom.submitWindow.classList.add('hidden');
+        }
 
-    app.updateUndoRedoButtons();
-    app.bindEvents(init);
+        app.updateUndoRedoButtons();
+        app.bindEvents(init);
+    })();
 })(window.PlannerApp);

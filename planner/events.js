@@ -672,7 +672,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
+            //e.preventDefault();
 
             if (state.streetPlacement.active) {
                 cancelStreetPlacement();
