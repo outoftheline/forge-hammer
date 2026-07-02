@@ -4,7 +4,7 @@
  */
 
 /**
- * A {@link HTML.Box box} for listing owned (in inventory) and missing buildings, and according kits and assets.
+ * A {@link FH.HTML.Box box} for listing owned (in inventory) and missing buildings, and according kits and assets.
  * @namespace
  */
 
@@ -48,7 +48,7 @@ let Kits = {
 	upgradeKits:null,
 
 	/**
-	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link HTML.Box DOM box}.
+	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link FH.HTML.Box DOM box}.
 	 */
 	init: ()=> {
 		MainParser.loadJSON(FH.extUrl + 'js/web/kits/data/sets.json', (data)=> {
@@ -59,14 +59,14 @@ let Kits = {
 
 
 	/**
-	 * Creates the {@link HTML.Box box} with displayed sets.
+	 * Creates the {@link FH.HTML.Box box} with displayed sets.
 	 */
 	BuildBox: ()=> {
 		if ( $('#kits').length === 0 ) {
 
-			HTML.AddCssFile('kits');
+			FH.HTML.AddCssFile('kits');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'kits',
 				title: i18n('Menu.Kits.Title'),
 				auto_close: true,
@@ -119,7 +119,7 @@ let Kits = {
 			);
 		}
 		else {
-			HTML.CloseOpenBox('kits');
+			FH.HTML.CloseOpenBox('kits');
 		}
 
 		Kits.ReadSets();
@@ -504,7 +504,7 @@ let Kits = {
 	/**
 	 * Creates a `div` for any item.
 	 * @param {SetItem} el
-	 * @returns {string} HTML string of the `div` element.
+	 * @returns {string} FH.HTML.string of the `div` element.
 	 */
 	ItemDiv: (el)=> {
 

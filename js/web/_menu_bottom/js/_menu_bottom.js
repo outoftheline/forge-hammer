@@ -222,7 +222,7 @@ let _menu_bottom = {
 				$('#forgehammer-hud').removeClass('is--sorting');
 				if (_menu.equalTo(storedItems)) return;
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Menu.SaveMessage.Title'),
 					text: i18n('Menu.SaveMessage.Desc'),

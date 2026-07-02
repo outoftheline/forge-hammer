@@ -16,16 +16,17 @@ let Notes = {
 
 	Show: () => {
 		if ($('#Notes').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Notes',
 				title: i18n('Boxes.Notes.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
+				settings: Notes.ShowSettings,
 			});
 		}
-		HTML.AddCssFile('notes');
+		FH.HTML.AddCssFile('notes');
 
 		Notes.BuildContent();
 	},
@@ -266,4 +267,21 @@ let Notes = {
 
 		return content;
 	},
+    
+
+	ShowSettings: () => {
+		let autoOpen = Settings.GetSetting('AutoOpenNotes');
+
+        let h = `<p><input id="autoStartNotes" name="autoStartNotes" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />
+                <label for="autoStartNotes">${i18n('Boxes.Settings.Autostart')}</label></p>
+                <button onclick="Notes.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${i18n('General.Save')}</button>`;
+
+        $('#NotesSettingsBox').html(h);
+    },
+
+
+    SaveSettings: () => {        
+        FH.Storage.setItem('AutoOpenNotes', $("#autoStartNotes").is(':checked'));
+		$(`#NotesSettingsBox`).remove();
+    },
 }

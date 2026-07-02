@@ -241,9 +241,9 @@ let idleGame = {
      * @constructor
      */
     ShowDialog: () => {
-        HTML.AddCssFile('idleGame');
+        FH.HTML.AddCssFile('idleGame');
         
-        HTML.Box({
+        FH.HTML.Box({
             id: 'idleGameDialog',
             title: i18n('Boxes.idleGame.Title'),
             auto_close: true,
@@ -814,7 +814,7 @@ let idleGame = {
 	modifyStrategy:()=>{
 		let list = idleGame.settings.Strategy[idleGame.event][idleGame.Variant].map(x => x.text + (x.conditions.length > 0 ? "#":"") + x.conditions.join('#')).join('\n');
 		if ($('#idleGameStrategyDialog').length == 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'idleGameStrategyDialog',
 				title: i18n('Boxes.idleGame.Strategy.Title'),
 				auto_close: true,
@@ -835,7 +835,7 @@ let idleGame = {
 			return {"text": conditions[0],"check": false,"conditions":conditions.slice(1)}});
 		idleGame.saveSettings();
 		idleGame.DisplayStrat(0);
-		HTML.CloseOpenBox('idleGameStrategyDialog')
+		FH.HTML.CloseOpenBox('idleGameStrategyDialog')
 	},
 
 	test:()=>{
@@ -864,9 +864,9 @@ let idleGame = {
 			action: 'create',
 			data: data,
 		}).then((aId) => {
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				head: "Idle Game",
-				text: HTML.i18nReplacer(i18n('Boxes.idleGame.AlertSetText'), { minutes: minutes,hours: hours }),
+				text: FH.HTML.i18nReplacer(i18n('Boxes.idleGame.AlertSetText'), { minutes: minutes,hours: hours }),
 				type: 'success',
 				hideAfter: 5000
 			});

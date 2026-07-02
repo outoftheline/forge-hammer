@@ -6,7 +6,7 @@
 
 FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     // Closes the box when the player navigates back to the city
-    HTML.CloseOpenBox('mapScoutingTimesDialog');
+    FH.HTML.CloseOpenBox('mapScoutingTimesDialog');
 });
 
 FH.proxy.addMetaHandler('castle_system_levels', (data, postData) => {
@@ -182,15 +182,15 @@ let scoutingTimes = {
         
         if (i > 0) {
             if ($('#mapScoutingTimesDialog').length === 0) {
-                HTML.AddCssFile('scoutingtimes');
+                FH.HTML.AddCssFile('scoutingtimes');
         
-                HTML.Box({
+                FH.HTML.Box({
                     id: 'mapScoutingTimesDialog',
                     title: i18n('Boxes.scoutingTimes.Title'),
                     auto_close: true,
                     dragdrop: true,
                     minimize: true,
-                    settings: 'scoutingTimes.ShowSettings()',
+                    settings: scoutingTimes.ShowSettings,
                 });
             }
         

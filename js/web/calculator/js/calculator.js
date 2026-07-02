@@ -44,7 +44,7 @@ let Calculator = {
 			Calculator.PlayInfoSound = (spk !== 'false');
 		}
 
-		HTML.AddCssFile('calculator');
+		FH.HTML.AddCssFile('calculator');
 
 		Calculator.CurrentPlayer = parseInt(FH.Storage.getItem('current_player_id'));		
 
@@ -148,7 +148,7 @@ let Calculator = {
 		let rest = MainParser.CurrentGB.Entity['state']['forge_points_for_level_up'] - MainParser.CurrentGB.Rankings.reduce((acc,entry)=>acc+(entry?.forge_points|0),0);
 
 		if (!MainParser.CurrentGB.isPreviousLevel)
-			h.push('<div class="text-center dark-bg p5"><em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
+			h.push('<div class="text-center dark-bg p5"><em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + FH.HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
 
 		h.push(Calculator.GetRecurringQuestsLine(Calculator.PlayInfoSound));
 
@@ -340,10 +340,10 @@ let Calculator = {
 
 		h.push('<thead><tr>' +
 			'<th>#</th>' +
-			'<th><span class="forgepoints" title="' + HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment')) + '"></span></th>' +
+			'<th><span class="forgepoints" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment')) + '"></span></th>' +
 			'<th>' + i18n('Boxes.Calculator.Profit') + '</th>');
-			h.push('<th><span class="blueprint" title="' + HTML.i18nTooltip(i18n('Boxes.Calculator.BPs')) + '"></span></th>');
-			h.push('<th><span class="medal" title="' + HTML.i18nTooltip(i18n('Boxes.Calculator.Meds')) + '"></span></th>');
+			h.push('<th><span class="blueprint" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.BPs')) + '"></span></th>');
+			h.push('<th><span class="medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Meds')) + '"></span></th>');
 		h.push('</tr></thead>');
 
 		for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
@@ -370,22 +370,22 @@ let Calculator = {
 				rankTooltip = [],
 
 				contributionClass   = (rank.donorFpReward - selfContribution > StrategyPoints.AvailableFP ? 'error' : ''),
-				contributionText    = HTML.Format(rank.donorFpReward) + Calculator.FormatForderRankDiff(donorRankDiff),
-				contributionTooltip = [HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderCosts'), { 'nettoreward': rank.fpNetReward, 'forderfactor': (100 + Calculator.ForderBonus), 'costs': rank.donorFpReward })],
+				contributionText    = FH.HTML.Format(rank.donorFpReward) + Calculator.FormatForderRankDiff(donorRankDiff),
+				contributionTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderCosts'), { 'nettoreward': rank.fpNetReward, 'forderfactor': (100 + Calculator.ForderBonus), 'costs': rank.donorFpReward })],
 
 				profitClass   = (donorProfit >= 0 ? 'success' : 'error'),
-				profitText    = HTML.Format(donorProfit),
+				profitText    = FH.HTML.Format(donorProfit),
 				profitTooltip;
 
 			if (rank.donorFpReward - selfContribution > StrategyPoints.AvailableFP) {
-				contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': rank.donorFpReward - selfContribution, 'tooless': (rank.donorFpReward - selfContribution - StrategyPoints.AvailableFP) }));
+				contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': rank.donorFpReward - selfContribution, 'tooless': (rank.donorFpReward - selfContribution - StrategyPoints.AvailableFP) }));
 			}
 
 			if (donorProfit >= 0) {
-				profitTooltip = [HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
+				profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
 			}
 			else {
-				profitTooltip = [HTML.i18nReplacer(i18n('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
+				profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
 			}
 
 			if (rank.donorState === Calculator.RankState.SELF) {
@@ -393,33 +393,33 @@ let Calculator = {
 
 				if (rank.contribution < rank.donorFpReward) {
 					contributionClass = 'error';
-					contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooLess'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'tooless': rank.donorFpReward - rank.contribution }));
+					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooLess'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'tooless': rank.donorFpReward - rank.contribution }));
 				}
 				else if (rank.contribution > rank.donorFpReward) {
 					contributionClass = 'warning';
-					contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooMuch'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'toomuch': rank.contribution - rank.donorFpReward }));
+					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooMuch'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'toomuch': rank.contribution - rank.donorFpReward }));
 				}
 				else {
 					contributionClass = 'info';
 				}
 
-				contributionText = HTML.Format(rank.contribution);
+				contributionText = FH.HTML.Format(rank.contribution);
 				if (rank.contribution !== rank.donorFpReward)
-					contributionText += ' <small>(=' + HTML.Format(rank.donorFpReward) + ')</small>';
+					contributionText += ' <small>(=' + FH.HTML.Format(rank.donorFpReward) + ')</small>';
 				contributionText += Calculator.FormatForderRankDiff(donorRankDiff);
 
 				if (donorRankDiff > 0 && rank.contribution < rank.donorRankCost) {
-					contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
 				}
 				else if (donorRankDiff < 0) {
-					contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
 				}
 
 				if (donorProfit > 0) {
-					profitTooltip = [HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
+					profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
 				}
 				else {
-					profitTooltip = [HTML.i18nReplacer(i18n('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
+					profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + MainParser.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
 				}
 
 				profitClass = 'info';
@@ -427,7 +427,7 @@ let Calculator = {
 			else if (rank.donorState === Calculator.RankState.NEGATIVE_PROFIT) {
 				rankClass = 'error';
 
-				contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
+				contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
 
 				profitClass = 'error';
 			}
@@ -438,7 +438,7 @@ let Calculator = {
 
 				if (donorRankDiff < 0) {
 					Calculator.PlaySound();
-					contributionTooltip.push(HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
 				}
 
 				profitClass = '';
@@ -451,7 +451,7 @@ let Calculator = {
 			else {
 				rankClass = '';
 
-				contributionText = HTML.Format(rank.donorFpReward);
+				contributionText = FH.HTML.Format(rank.donorFpReward);
 
 				profitText    = '-';
 				profitTooltip = [];
@@ -478,13 +478,13 @@ let Calculator = {
 			h.push(`<tr class="text-center ${rowClass}">
 				<td> <strong class="${rankClass}">${rankText}</strong> </td>
 				<td>
-					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${HTML.i18nTooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
+					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${FH.HTML.i18nTooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
 				</td>
 				<td>
-					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${HTML.i18nTooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
+					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.HTML.i18nTooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
 				</td>
-				<td> ${HTML.Format(rank.bpReward)} </td>
-				<td> <small> ${HTML.Format(rank.medalReward)} </small> </td>
+				<td> ${FH.HTML.Format(rank.bpReward)} </td>
+				<td> <small> ${FH.HTML.Format(rank.medalReward)} </small> </td>
 			</tr>`);
 		}
 
@@ -501,10 +501,10 @@ let Calculator = {
 		let output = `<thead>
 				<tr>
 				<th>#</th>
-				<th><span class="forgepoints" title="${HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment'))}"></span></th>
+				<th><span class="forgepoints" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment'))}"></span></th>
 				<th>${i18n('Boxes.Calculator.Profit')}</th>
-				<th><span class="blueprint" title="${HTML.i18nTooltip(i18n('Boxes.Calculator.BPs'))}"></span></th>
-				<th><span class="medal" title="${HTML.i18nTooltip(i18n('Boxes.Calculator.Meds'))}"></span></th>
+				<th><span class="blueprint" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.BPs'))}"></span></th>
+				<th><span class="medal" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Meds'))}"></span></th>
 				</tr>
 				</thead>
 			<tbody>`;
@@ -517,10 +517,10 @@ let Calculator = {
 				
 				output += `<tr class="text-center text-grey ${paidFairly ? '' : 'bg-red'}">
 					<td><b>${entry.rank}</b></td>
-					<td><b>${HTML.Format(entry.forge_points)}</b></td>
+					<td><b>${FH.HTML.Format(entry.forge_points)}</b></td>
 					<td><b class=" ${paidFairly ? '' : 'error'}">${entry.forge_points - fpToPayWithSelectedBonus}</b></td>
-					<td>${HTML.Format(MainParser.round(entry.reward?.blueprints ? MainParser.round(entry.reward?.blueprints * (MainParser.ArkBonus + 100)) / 100 : 0))}</td>
-					<td><small>${HTML.Format(MainParser.round(entry.reward?.resources?.medals ? MainParser.round(entry.reward.resources.medals * (MainParser.ArkBonus + 100)) / 100 : 0))}</small></td>
+					<td>${FH.HTML.Format(MainParser.round(entry.reward?.blueprints ? MainParser.round(entry.reward?.blueprints * (MainParser.ArkBonus + 100)) / 100 : 0))}</td>
+					<td><small>${FH.HTML.Format(MainParser.round(entry.reward?.resources?.medals ? MainParser.round(entry.reward.resources.medals * (MainParser.ArkBonus + 100)) / 100 : 0))}</small></td>
 				</tr>`;
 			}
 			output += `</tbody>`;
@@ -540,7 +540,7 @@ let Calculator = {
 					if (cond.iconType=="icon_quest_alchemie" && ((CurrentEraID <= 3 && MaxProgress >= 3) || (MaxProgress > 15 && CurrentEraID <=15) || MaxProgress>=100)) { // Unterscheidung Buyquests von UseQuests: Bronze/Eiszeit haben nur UseQuests, Rest hat Anzahl immer >15, Buyquests immer <=15
 						let RecurringQuestString;
 						if (MaxProgress - CurrentProgress !== 0) {
-							RecurringQuestString = HTML.Format(MaxProgress - CurrentProgress) + i18n('Boxes.Calculator.FP');
+							RecurringQuestString = FH.HTML.Format(MaxProgress - CurrentProgress) + i18n('Boxes.Calculator.FP');
 							RecurringQuests += 1;
 						}
 						else {
@@ -555,7 +555,7 @@ let Calculator = {
 
 		if (Calculator.LastRecurringQuests !== undefined && RecurringQuests !== Calculator.LastRecurringQuests) { 
 			if (PlaySound) { //Nicht durch Funktion PlaySound ersetzen!!! GetRecurringQuestLine wird auch vom EARechner aufgerufen.
-				helper.sounds.play("message");
+				FH.helper.sounds.play("message");
 			}
         }
 
@@ -572,20 +572,20 @@ let Calculator = {
 	 */
 	FormatForderRankDiff: (ForderRankDiff) => {
 		if (ForderRankDiff < 0) {
-			return ' <small class="text-success">' + HTML.Format(ForderRankDiff) + '</small>';
+			return ' <small class="text-success">' + FH.HTML.Format(ForderRankDiff) + '</small>';
 		}
 		else if (ForderRankDiff === 0) {
 			return '';
 		}
 		else { // > 0
-			return ' <small class="error">+' + HTML.Format(ForderRankDiff) + '</small>';
+			return ' <small class="error">+' + FH.HTML.Format(ForderRankDiff) + '</small>';
 		}
 	},
 
 		
     PlaySound: () => {
         if (Calculator.PlayInfoSound) {
-			helper.sounds.play("message");
+			FH.helper.sounds.play("message");
         }
     },
 
@@ -687,40 +687,59 @@ let Calculator = {
 		});
 	},
 
-	showToPay: (previousmessage, sentmessage) => {
-		let entriesAfter = sentmessage.split(/\r\n|\r|\n/).map(l => l.trim());
-		let entriesBefore = previousmessage.split(/\r\n|\r|\n/).map(l => l.trim());
-
-		let consideredOutput = [];
-		for (const entry of entriesBefore) {
-			let matched = false;
-			for (const afterEntry of entriesAfter) {
-				if (entry.includes(afterEntry) && entry !== afterEntry) {
-					consideredOutput.push({ before: entry, after: afterEntry });
-					matched = true;
-					break;
-				}
-			}
-			if (!matched) {
-				consideredOutput.push({ before: true, after: entry });
-			}
-		}
+	showToPay: () => {
+		let entriesBefore = Calculator.ConversationContent.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
+		let entriesAfter  = Calculator.ConversationContentNew.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 
 		let output = [];
-		for (let { before, after } of consideredOutput) {
-			if (before === true) {
-				output.push(after);
-			} else {
-				const afterTokens = new Set(after.split(/\s+/));
-				const beforeTokens = before.split(/\s+/);
-				const diffTokens = beforeTokens.filter(token => !afterTokens.has(token));
 
-				const prefix = before.split(/\s+/).slice(0, 2).join(' ');
-				output.push(prefix ? `${prefix} ${diffTokens.join(' ')}` : diffTokens.join(' '));
+		function removeFromList(el) {
+			let line = $(el).data('line');
+			if (Calculator.ConversationContent)
+				Calculator.ConversationContent = Calculator.ConversationContent.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
+			else {
+				$('#calcReminder').remove();
+				return;
+			}
+			$(el).remove();
+			if ($('#calcReminder .gbEntry').length === 0) {
+				$('#calcReminder').remove(); 
+				return;
 			}
 		}
-		// to do: better matching
 
-		console.log(output);
+		for (let before of entriesBefore) {
+			if (entriesAfter.includes(before)) continue;
+
+			let match = entriesAfter.find(after => before.includes(after) && before !== after);
+			let escapedLine = before.replace(/"/g, '&quot;');
+
+			if (!match) {
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}"><b>${before}</b></div>`);
+			} 
+			else {
+				let info = before.slice(0, match.length).trimEnd();
+				let highlight = before.slice(match.length).trimStart();
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${highlight ? `${info} <b>${highlight}</b>` : info}</div>`);
+			}
+		}
+		if (output.length === 1) return;
+
+		if ($('#calcReminder').length > 0)
+			$('#calcReminder .content').html(output.join('\n'));
+		else {
+			FH.HTML.Box({
+				id: 'calcReminder',
+				title: '',
+				auto_close: true,
+				dragdrop: true,
+			});
+			$('#calcReminder').append('<div class="content" />')
+			$(`#calcReminder .content`).append(output.join('\n'));
+		}
+
+		$('#calcReminder').off('click', '.gbEntry').on('click', '.gbEntry', function() {
+			removeFromList(this);
+		});
 	}
 };

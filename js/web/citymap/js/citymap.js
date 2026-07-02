@@ -116,9 +116,9 @@ let CityMap = {
 		}
 
 		if( $('#citymap-main').length < 1 ) {
-			HTML.AddCssFile('citymap');
+			FH.HTML.AddCssFile('citymap');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'citymap-main',
 				title: Title,
 				auto_close: true,
@@ -132,7 +132,7 @@ let CityMap = {
 			}, 100);
 		}
 		else if (!event) {
-			HTML.CloseOpenBox('citymap-main');
+			FH.HTML.CloseOpenBox('citymap-main');
 			return;
 		}
 
@@ -146,7 +146,7 @@ let CityMap = {
 	 * Prepares and initializes the main UI box and sidebar for the City Map.
 	 *
 	 * This function:
-	 * - Sets up the HTML structure for the map container and sidebar.
+	 * - Sets up the FH.HTML.structure for the map container and sidebar.
 	 * - Initializes map scale and perspective (view) settings from local storage.
 	 * - Adds event listeners for view changes and scale adjustments.
 	 * - Configures filters and action buttons (e.g., meta info copy, submit box).
@@ -347,7 +347,7 @@ let CityMap = {
 				if (ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
-				let collectionString = HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
+				let collectionString = FH.HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
 				let f = $('<span />').addClass('entity ' + d['type'] + collectSoon).css({
 					width: xsize + 'em',
 					height: ysize + 'em',
@@ -394,7 +394,7 @@ let CityMap = {
 		out += '<div class="productions">';
 		for (let [prod, value] of Object.entries(CityMap.QI.stats.resources)) {
 			out += '<span class="'+prod+'">'+srcLinks.icons(prod);
-				out += HTML.Format(value);
+				out += FH.HTML.Format(value);
 			out += "</span> ";
 		}
 		out += '</div><div class="boosts">';
@@ -478,8 +478,8 @@ let CityMap = {
 			if (building.production !== null) {
 				if (building.type === "goods" || building.type === "military") {
 					out += (building.type === "goods" ? "+20 = " : "+10 = ")
-					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
-					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
+					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+FH.HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
+					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+FH.HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
 				}
 				else {
 					let euphoriaBoost = CityMap.QI.stats.euphoriaBoost;
@@ -497,7 +497,7 @@ let CityMap = {
 							boost = 0;
 						}
 						let boostedValue = Math.round(value*(euphoriaBoost+(boost/100)))
-						out += srcLinks.icons(prod)+HTML.Format(boostedValue)+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(boostedValue)+" ";
 						CityMap.QI.stats.resources[prod] += boostedValue*building.count;
 					}
 				}
@@ -644,7 +644,7 @@ let CityMap = {
 				out += "<td>";
 				if (building.production !== null) {
 					for (let [prod, value] of Object.entries(building.production)) {
-						out += srcLinks.icons(prod)+HTML.Format(Math.round(value))+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+" ";
 					}
 				}
 				out += "</td></tr>";
@@ -947,7 +947,7 @@ let CityMap = {
 			let str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.buildingAreas[type]}</span>`;
 
 			if (type === 'street') {
-				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
+				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
 			}
 			str = `<li>${str}</li>`;
 			areaStats.push(str);
@@ -1037,11 +1037,11 @@ let CityMap = {
 		$('#grid-outer').toggleClass('showLimited');
 
 		if ($('#citymapExtra').length !== 0) {
-			HTML.CloseOpenBox('citymapExtra');
+			FH.HTML.CloseOpenBox('citymapExtra');
 			return;
 		}
 		
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'citymapExtra',
 			title: i18n('Boxes.CityMap.limited'),
 			dragdrop: true,
@@ -1109,10 +1109,10 @@ let CityMap = {
         }
         data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
 
-        helper.str.copyToClipboard(
+        FH.helper.str.copyToClipboard(
             JSON.stringify(data)
         ).then(() => {
-            HTML.ShowToastMsg({
+            FH.HTML.ShowToastMsg({
                 head: i18n('Boxes.CityMap.ToastHeadCopyData'),
                 text: i18n('Boxes.CityMap.ToastBodyCopyData'),
                 type: 'info',

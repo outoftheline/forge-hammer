@@ -37,15 +37,20 @@ let Languages = {
 let Translation = {
 	targetData: null,
 	referenceData: null,
-	tempData: JSON.parse((window.HammerStorage? FH.Storage.getItem('Translation.Temp') : localStorage.getItem('Hammer.Translation.Temp')) || '{}'),
-	CopyReference: (window.HammerStorage? FH.Storage.getItem('Translation.CopyRef') : localStorage.getItem('Hammer.Translation.CopyRef')) || 'Conditional',
+	tempData: JSON.parse((window.FH? FH.Storage.getItem('Translation.Temp') : localStorage.getItem('Hammer.Translation.Temp')) || '{}'),
+	CopyReference: (window.FH? FH.Storage.getItem('Translation.CopyRef') : localStorage.getItem('Hammer.Translation.CopyRef')) || 'Conditional',
 	CopyRefOptions: ["No","Conditional","Once","Always"],
+	getString: (entry) => {
+		if (entry == null) return '';
+		if (typeof entry === 'object') return entry.s ?? '';
+		return String(entry);
+	},
 	Show: ()=> {
 		if ( $('#Translation').length === 0 ) {
 
-			HTML.AddCssFile('_languages');
+			FH.HTML.AddCssFile('_languages');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Translation',
 				title: i18n('Boxes.Translation.Title'),
 				auto_close: true,
@@ -98,9 +103,9 @@ let Translation = {
 							<li>If you use a fork of the extension, you can also copy the JSON data into the respective language file and create a pull request on Github to get your changes merged.</li>
 							</br>
 							<li>Please keep __values__ that are encased by double underscores untranslated! These are parameters that are repaced with values during runtime.</li>
-							<li>Please keep &lt;HTMLCode&gt; between the angle backets as is. Those are needed for correct formatting. For &lt;someHTML&gtText&lt;someMoreHTML&gt; hwever, the Text between HTML Code sections can translated</li>
+							<li>Please keep &lt;FH.HTML.ode&gt; between the angle backets as is. Those are needed for correct formatting. For &lt;someFH.HTML.gtText&lt;someMoreFH.HTML.gt; hwever, the Text between FH.HTML.Code sections can translated</li>
 							</br>
-							<li>You can select whether to copy the reference text into the input field on entering it. Conditional copy means, the reference is inserted only when the current translation is empty and the reference text includes HTML or place holders.</li>
+							<li>You can select whether to copy the reference text into the input field on entering it. Conditional copy means, the reference is inserted only when the current translation is empty and the reference text includes FH.HTML.or place holders.</li>
 						</ul>
 					</div>
 					<div class="p5">
@@ -123,7 +128,7 @@ let Translation = {
 		});
 		$('#TranslationSearch').on('input', Translation.FilterTable);
 		$('#CopyJSON').on('click', ()=>{
-			let data = Object.assign(Translation.targetData,localData);
+			let data = structuredClone(Translation.targetData);
 			data = Object.entries(data)
 						.sort((a, b) => a[0].localeCompare(b[0]))
 						.map(([key, value])=>({[key]: value}));
@@ -161,7 +166,7 @@ let Translation = {
 				
 			},50)
 		});
-		$('#TranslationTable').on('click', 'td:nth-child(3) b', function(e) {
+		$('#TranslationTable').on('mousedown', 'td:nth-child(3) b', function(e) {
 			let key = $(this).parent().siblings(':first').html();
 			Translation.targetData[key] = {s: Translation.targetData[key]?.s || Translation.targetData[key], r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
 			$(this).remove();
@@ -186,9 +191,9 @@ let Translation = {
 			}
 			
 			if (newValue != originalValue && newValue !== '') 
-				Translation.targetData[key] = {s: newValue, r:Translation.referenceData[key]?.s || Translation.referenceData[key]};
-			let reference = Translation.referenceData[key]?.s || Translation.referenceData[key] || '';
-			let updated = !Translation.targetData[key]?.r || (reference.s || reference) !== Translation.targetData[key]?.r;
+				Translation.targetData[key] = {s: newValue, r: Translation.getString(Translation.referenceData[key])};
+			let reference = Translation.getString(Translation.referenceData[key]);
+			let updated = !Translation.targetData[key]?.r || reference !== Translation.targetData[key]?.r;
 			td.html(`${(updated && newValue != "") ? `<b title="click to confirm translation as correct">✓ </b>` : ''}<span>${newValue}</span>`);
 			td.attr('title', ``);	
 
@@ -209,25 +214,26 @@ let Translation = {
 		Translation.referenceData = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
 		let comparisonData = await fetch(FH.extUrl + 'js/web/_languages/json/'+comparison+'.json').then(res=>res.json()).catch(()=>({}));
 		
-		localData = JSON.parse(FH.Storage.getItem('Translation.Temp') || '{}');	
-		
 		referenceData = Object.entries(Translation.referenceData).sort((a, b) => a[0].localeCompare(b[0])).map(([key, reference])=>({key, reference}));
 		let rowsHtml = referenceData.map(({key, reference})=>{
-			let targetValue = Translation.targetData?.[key]?.s || Translation.targetData?.[key] || '';
-			let comparisonValue = comparisonData?.[key]?.s || comparisonData?.[key] || '';
+			let targetValue = Translation.getString(Translation.targetData?.[key]);
+			let comparisonValue = Translation.getString(comparisonData?.[key]);
+			let referenceValue = Translation.getString(reference);
 			let missing = targetValue.trim() === '';
-			let updated = !Translation.targetData?.[key]?.r || (reference.s || reference) !== Translation.targetData?.[key]?.r;
-			let OldRef = HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
+			let updated = !Translation.targetData?.[key]?.r || referenceValue !== Translation.targetData?.[key]?.r;
+			let OldRef = FH.HTML.escapeHtml(Translation.targetData?.[key]?.r || '');
+			let showCheckmark = updated && !!targetValue && (Translation.tempData?.[key]?.r !== referenceValue);
 			return `<tr class="${missing ? 'missing' : ''} ${updated ? 'updated' : ''}">
 				<td>${key}</td>
-				<td title="Comparison Value: ${HTML.escapeHtml(comparisonValue)}">${reference.s||reference}</td>
+				<td title="Comparison Value: ${FH.HTML.escapeHtml(comparisonValue)}">${referenceValue}</td>
 				<td ${(updated && !!OldRef) ? `title="Old Reference: ${OldRef}"` : ''}>
-					${(updated && !!targetValue) ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
-					<span>${localData?.[key]?.s || localData?.[key] || targetValue}</span>
+					${showCheckmark ? `<b title="click to confirm translation as correct">✓ </b>` : ''}
+					<span>${Translation.tempData?.[key]?.s || Translation.tempData?.[key] || targetValue}</span>
 				</td></tr>`;
 		}).join('');
 		$('#TranslationTable tbody').html(rowsHtml);
 		Translation.FilterTable();
+		Translation.targetData=Object.assign(Translation.targetData||{},structuredClone(Translation.tempData||{}))
 	},
 
 	FilterTable: ()=> {

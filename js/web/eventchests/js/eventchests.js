@@ -98,7 +98,7 @@ let EventPresents = {
 
     Show: () => {
         if ($('#eventpresents').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'eventpresents',
                 'title': i18n('Boxes.EventPresents.Title'),
                 'auto_close': true,
@@ -108,7 +108,7 @@ let EventPresents = {
 			    active_maps:"main"
             });
 
-            HTML.AddCssFile('eventchests');
+            FH.HTML.AddCssFile('eventchests');
 
             Unit.PrepareCoords();
         }
@@ -183,7 +183,7 @@ let EventChests = {
     Show: () => {
         return;
         if ($('#eventchests').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'eventchests',
                 'title': i18n('Boxes.EventChests.Title'),
                 'auto_close': true,
@@ -192,7 +192,7 @@ let EventChests = {
 			    active_maps:"main"
             });
 
-            HTML.AddCssFile('eventchests');
+            FH.HTML.AddCssFile('eventchests');
         }
 
         EventChests.BuildBox();

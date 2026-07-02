@@ -67,18 +67,18 @@ let BlueGalaxy = {
                 BlueGalaxy.OlderGoodsValue = parseFloat(OlderGoodsValue);
             }
 
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'bluegalaxy',
                 title: i18n('Boxes.BlueGalaxy.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize: true,
-                settings: 'BlueGalaxy.ShowSettings()',
+                settings: BlueGalaxy.ShowSettings,
                 active_maps:"main",
             });
 
-            HTML.AddCssFile('bluegalaxy');
+            FH.HTML.AddCssFile('bluegalaxy');
 
             $('#bluegalaxy').on('blur', '#goodsValue', function () {
                 BlueGalaxy.GoodsValue = parseFloat($('#goodsValue').val());
@@ -109,11 +109,11 @@ let BlueGalaxy = {
             BlueGalaxy.CalcBody();
         }
         else {
-            HTML.CloseOpenBox('bluegalaxy');
+            FH.HTML.CloseOpenBox('bluegalaxy');
         }
 
         if (auto_close && BlueGalaxy.DoubleCollections === 0) {
-            HTML.CloseOpenBox('bluegalaxy');
+            FH.HTML.CloseOpenBox('bluegalaxy');
         }
     },
 
@@ -224,16 +224,16 @@ let BlueGalaxy = {
             h.push(i18n('Boxes.BlueGalaxy.AvailableCollections')+ " " + BlueGalaxy.DoubleCollections+"<br>");
 
         h.push(i18n('Boxes.BlueGalaxy.GoodsValue') + ' ');
-        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.GoodsValue > 0) {
-            h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
+            h.push('<small> (' + FH.HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
         }
 
         h.push('<br>');
         h.push(i18n('Boxes.BlueGalaxy.OlderGoodsValue') + ' ');
-        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.OlderGoodsValue > 0) {
-            h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
+            h.push('<small> (' + FH.HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
         }
 
         h.push('</div>');       
@@ -267,11 +267,11 @@ let BlueGalaxy = {
                 let items = Productions.showBuildingItems(true, Buildings[i].building)[0]
                 table.push('<td data-number="'+Buildings[i].FragmentAmount+'">'+(items != false ? items : "")+'</td>');
             }
-            table.push('<td class="text-center" data-number="'+Buildings[i].FP+'">' + HTML.Format(Buildings[i]['FP']) + '</td>');
-            table.push('<td class="text-center" data-number="'+Buildings[i].OlderGoods+'">' + HTML.Format(Buildings[i]['OlderGoods']) + '</td>');
-            table.push('<td class="text-center" data-number="'+Buildings[i].Goods+'">' + HTML.Format(Buildings[i]['Goods']) + '</td>');
-            table.push('<td class="text-center" data-number="'+Buildings[i].GuildGoods+'">' + HTML.Format(Buildings[i]['GuildGoods']) + '</td>');
-            //table.push('<td class="text-center" data-number="'+Buildings[i].CombinedValue+'">' + HTML.Format(Buildings[i]['CombinedValue']) + '</td>');
+            table.push('<td class="text-center" data-number="'+Buildings[i].FP+'">' + FH.HTML.Format(Buildings[i]['FP']) + '</td>');
+            table.push('<td class="text-center" data-number="'+Buildings[i].OlderGoods+'">' + FH.HTML.Format(Buildings[i]['OlderGoods']) + '</td>');
+            table.push('<td class="text-center" data-number="'+Buildings[i].Goods+'">' + FH.HTML.Format(Buildings[i]['Goods']) + '</td>');
+            table.push('<td class="text-center" data-number="'+Buildings[i].GuildGoods+'">' + FH.HTML.Format(Buildings[i]['GuildGoods']) + '</td>');
+            //table.push('<td class="text-center" data-number="'+Buildings[i].CombinedValue+'">' + FH.HTML.Format(Buildings[i]['CombinedValue']) + '</td>');
 
             if (Buildings[i].In == 0 || Buildings[i].At * 1000 <= MainParser.getCurrentDateTime()) {
                 table.push('<td style="white-space:nowrap"><strong class="success">' + i18n('Boxes.BlueGalaxy.Done') + '</strong></td>');

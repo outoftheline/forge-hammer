@@ -20,7 +20,7 @@ FH.proxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
 		let NewLevel = data.responseData['level'];
 		Parts.CalcBody(NewLevel);
 		if (Parts.PlayInfoSound) {
-			helper.sounds.play("message");
+			FH.helper.sounds.play("message");
 		}
 	}
 });
@@ -152,18 +152,18 @@ let Parts = {
 				Parts.PlayInfoSound = (spk !== 'deactivated');
 			}*/
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'OwnPartBox',
 				title: i18n('Boxes.OwnpartCalculator.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
-				settings: 'Parts.ShowCalculatorSettings()',
+				settings: Parts.ShowCalculatorSettings,
 			    active_maps:"main",
-				custom_buttons: [{class: "window-viewswitch", callback: "Parts.SwitchCalculator();"}]
+				custom_buttons: [{class: "window-viewswitch", callback: Parts.SwitchCalculator}]
 			});
 
-			HTML.AddCssFile('part-calc');
+			FH.HTML.AddCssFile('part-calc');
 
 			if (MainParser.CurrentGB.Entity !== undefined && MainParser.CurrentGB.Rankings !== undefined) Parts.CalcBody();
 
@@ -255,7 +255,7 @@ let Parts = {
 
 			$('#OwnPartBox').on('click', '.button-own', function () {
 				let copyParts = Parts.CopyFunction($(this), 'copy');
-				helper.str.copyToClipboardLegacy(copyParts);
+				FH.helper.str.copyToClipboardLegacy(copyParts);
 				Parts.CalcBody(Parts.Level);
 				if ($('#OwnPartBox').hasClass('gbSettingsOpen')) {
 					$('.OwnPartBoxBackgroundBody').fadeToggle();
@@ -265,7 +265,7 @@ let Parts = {
 
 			$('#OwnPartBox').on('click', '.button-save-own', function () {
 				let copyParts = Parts.CopyFunction($(this), 'save');
-				helper.str.copyToClipboardLegacy(copyParts);
+				FH.helper.str.copyToClipboardLegacy(copyParts);
 				Parts.CalcBody(Parts.Level);
 				if ($('#OwnPartBox').hasClass('gbSettingsOpen')) {
 					$('.OwnPartBoxBackgroundBody').fadeToggle();
@@ -440,8 +440,8 @@ let Parts = {
 			if (MainParser.CurrentGB.Entity !== undefined && MainParser.CurrentGB.Rankings !== undefined) Parts.CalcBody();
 		}
 		else {
-			HTML.CloseOpenBox('OwnPartBox');
-			HTML.CloseOpenBox('PowerLevelingBox');
+			FH.HTML.CloseOpenBox('OwnPartBox');
+			FH.HTML.CloseOpenBox('PowerLevelingBox');
 		}
 	},
 
@@ -449,6 +449,11 @@ let Parts = {
 	CalcBody: async (NextLevel) => {
 		await StartUpDone;
 		if (MainParser.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
+
+		let openPayReminder = FH.Storage.getItem('CalcGBReminder');
+		if (openPayReminder === '1' && Calculator.ConversationContent && Calculator.ConversationContentNew) {
+			Calculator.showToPay();
+		}
 			
 		if (MainParser.CurrentGB.Entity.player_id !== ExtPlayerID)  // cannot use the other view
 			$('#OwnPartBox .window-viewswitch').removeClass('inactive');
@@ -822,10 +827,10 @@ let Parts = {
 			<thead>
 			<tr>
 				<th>${i18n('Boxes.OwnpartCalculator.Order')}</th>
-				<th class="text-center"><span class="forgepoints" title="${HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Deposit'))}"></th>
+				<th class="text-center"><span class="forgepoints" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Deposit'))}"></th>
 				<th class="text-center">${i18n('Boxes.OwnpartCalculator.Done')}</th>`);
-					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
-					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
+					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
+					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
 					if (!minView) h.push(`<th class="text-center">${i18n('Boxes.OwnpartCalculator.Ext')}</th>`);
 					if (!minView) h.push(`<th class="text-center">${i18n('Boxes.OwnpartCalculator.Arc')}</th>`);
 			h.push(`</tr>
@@ -834,9 +839,9 @@ let Parts = {
 			<tbody>`);
 		let IncludeStart = FH.Storage.getItem('OwnPartIncludeStart') != 'false';
 		let opt = (platz, gesamt)=>{
-			let ret = `<strong class="${PlayerID==ExtPlayerID ? "copy-fp clickable":""}" data-copy="${platz}">${HTML.Format(platz)}</strong>`;
+			let ret = `<strong class="${PlayerID==ExtPlayerID ? "copy-fp clickable":""}" data-copy="${platz}">${FH.HTML.Format(platz)}</strong>`;
 			if (gesamt > platz) {
-				ret += ` <small class="${IncludeStart || PlayerID!=ExtPlayerID ? "":"copy-fp clickable"}" data-copy="${gesamt}">(=${HTML.Format(gesamt)})</small>`;
+				ret += ` <small class="${IncludeStart || PlayerID!=ExtPlayerID ? "":"copy-fp clickable"}" data-copy="${gesamt}">(=${FH.HTML.Format(gesamt)})</small>`;
 			}
 			return ret;
 		}
@@ -851,7 +856,7 @@ let Parts = {
 				let OwnPartStartText = (Eigens[i] > 0 ? opt(Eigens[i], EigenCounter): '-');
 				h.push('<td>' + i18n('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 				h.push('<td class="text-center"><span class="' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
-				h.push('<td class="text-center paidFP"><b>' + HTML.Format(EigenStart) + '</b></td>');
+				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
 				if (printsEnabled && medalsEnabled) h.push('<td colspan="4"></td>');
 				else if (printsEnabled || medalsEnabled) h.push('<td colspan="3"></td>');
 				else if (!minView) h.push('<td colspan="2"></td>');
@@ -883,7 +888,7 @@ let Parts = {
 				h.push('<td class="text-center">' + 
 					'<strong class="' + (PlayerID === ExtPlayerID ? '' : 'success' + (Parts.Maezens[i] > 0 ? ' copy-fp clickable' : '')) + '" ' + 
 						'data-copy="' + (copyvalue > 0 ? copyvalue : '') + '">' + 
-							(Parts.Maezens[i] > 0 ? HTML.Format(Parts.Maezens[i]) : '-') + 
+							(Parts.Maezens[i] > 0 ? FH.HTML.Format(Parts.Maezens[i]) : '-') + 
 						'</strong >' + 
 					'</td>');
 				
@@ -891,7 +896,7 @@ let Parts = {
 					h.push(`<td class="text-center"><strong class="error">${i18n("Boxes.OwnpartCalculator.levelt")}</strong></td>`);
 				}
 				else if (Parts.DangerPlaces[i] > 5) {
-					h.push(`<td class="text-center"><strong class="error">${i18n("Boxes.OwnpartCalculator.danger")} (${HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
+					h.push(`<td class="text-center"><strong class="error">${i18n("Boxes.OwnpartCalculator.danger")} (${FH.HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
 				}
 				else {
 					h.push('<td class="text-center">-</td>');
@@ -899,23 +904,23 @@ let Parts = {
 			}
 			else {
 				h.push('<td class="text-center">-</td>');
-				let MaezenString = Parts.Maezens[i] > 0 ? HTML.Format(Parts.Maezens[i]) : '-';
+				let MaezenString = Parts.Maezens[i] > 0 ? FH.HTML.Format(Parts.Maezens[i]) : '-';
 				let MaezenDiff = Parts.Maezens[i] - FPRewards[i];
 				let MaezenDiffString = '';
 				if (Parts.Maezens[i] > 0) {
 					if (MaezenDiff > 0) {
-						MaezenDiffString = ' <small class="success">(+' + HTML.Format(MaezenDiff) + ')</small>';
+						MaezenDiffString = ' <small class="success">(+' + FH.HTML.Format(MaezenDiff) + ')</small>';
 					}
 					else if (MaezenDiff < 0) {
-						MaezenDiffString = ' <small class="error">(' + HTML.Format(MaezenDiff) + ')</small>';
+						MaezenDiffString = ' <small class="error">(' + FH.HTML.Format(MaezenDiff) + ')</small>';
 					}
 				}
 
 				h.push('<td class="text-center paidFP"><b>' + MaezenString + MaezenDiffString + '</b></td>');
 			}
 
-			if (printsEnabled) h.push('<td class="text-center">' + HTML.Format(BPRewards[i]) + '</td>');
-			if (medalsEnabled) h.push('<td class="text-center">' + HTML.Format(MedalRewards[i]) + '</td>');
+			if (printsEnabled) h.push('<td class="text-center">' + FH.HTML.Format(BPRewards[i]) + '</td>');
+			if (medalsEnabled) h.push('<td class="text-center">' + FH.HTML.Format(MedalRewards[i]) + '</td>');
 			if (!minView) h.push('<td class="text-center"><input min="0" step="1" type="number" class="ext-part-input' + i + '" value="' + Parts.Exts[i] + '"></td>');
 			if (!minView) h.push('<td class="text-center"><input type="number" class="arc-percent-input" step="0.1" min="12" max="200" value="' + Parts.ArcPercents[i] + '"></td>');
 
@@ -932,7 +937,7 @@ let Parts = {
 			h.push('<tr>');
 			h.push('<td>#6' + (Parts.Maezens.length > 6 ? ('-' + Parts.Maezens.length) : '') + '</td>');
 			h.push('<td class="text-center">-</td>');
-			h.push('<td class="text-center"><strong class="info">' + HTML.Format(MaezenRest) + '</strong></td>');
+			h.push('<td class="text-center"><strong class="info">' + FH.HTML.Format(MaezenRest) + '</strong></td>');
 			if (!minView) h.push('<td colspan="4"></td>');
 			h.push('</tr>');
 		}
@@ -962,12 +967,12 @@ let Parts = {
 
 		if (!minView) {
 			h.push('<table style="width: 100%"><tr>');
-			h.push('<td>' + i18n('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === ExtPlayerID ? '' : 'success') + '">' + HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
-			h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + HTML.Format(EigenTotal) + '</strong></td>');
+			h.push('<td>' + i18n('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === ExtPlayerID ? '' : 'success') + '">' + FH.HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
+			h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal) + '</strong></td>');
 			h.push('</tr><tr>');
-			h.push('<td>' + i18n('Boxes.OwnpartCalculator.LGTotalFP') + ': <strong>' + HTML.Format(Total) + '</strong></td>');
+			h.push('<td>' + i18n('Boxes.OwnpartCalculator.LGTotalFP') + ': <strong>' + FH.HTML.Format(Total) + '</strong></td>');
 			if (EigenStart > 0) {
-				h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
+				h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
 			}
 			else {
 				h.push('<td></td>');
@@ -989,7 +994,7 @@ let Parts = {
 			
 			if (!minView) {
 				h.push('<div class="text-center d-flex" style="padding:3px 0;">');
-				h.push('<em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up" class="copy-fp clickable" data-copy="' + rest + '">' + HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
+				h.push('<em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up" class="copy-fp clickable" data-copy="' + rest + '">' + FH.HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
 				h.push('</div>');
 			}
 			
@@ -1023,7 +1028,7 @@ let Parts = {
 					if (i < Keys.length - 1) GBList += ', ';
 				}
 				
-				h.push('<div class="text-center dark-bg d-flex" style="padding:5px 0;"><em style="max-width:350px"><strong>' + HTML.i18nReplacer(i18n('Boxes.OwnpartCalculator.GBsNoted'), { 'GBCount': SaveCopyLength }) + ':</strong> ' + GBList + '</em></div>');
+				h.push('<div class="text-center dark-bg d-flex" style="padding:5px 0;"><em style="max-width:350px"><strong>' + FH.HTML.i18nReplacer(i18n('Boxes.OwnpartCalculator.GBsNoted'), { 'GBCount': SaveCopyLength }) + ':</strong> ' + GBList + '</em></div>');
 			}
 		}
 
@@ -1280,7 +1285,7 @@ let Parts = {
 
 	BuildBoxPowerLeveling: (event) => {
 		if ($('#PowerLevelingBox').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				'id': 'PowerLevelingBox',
 				'title': i18n('Boxes.PowerLeveling.Title'),
 				'auto_close': true,
@@ -1341,11 +1346,11 @@ let Parts = {
 				let gb_level = parseInt($(this).parent().find(".hidden-text").html());
 
 				let CopyParts = Parts.GetCopyStringEx(Places=[true, true, true, true, true], Maezens=Parts.PowerLevelingData.Places[gb_level], Level=gb_level, OwnPart=Parts.PowerLevelingData.EigenNettos[gb_level], PlaceAll=true, PlaceAuto=false, PlaceAutoUnsafe=false, DangerPlaces=[0, 0, 0, 0, 0], LeveltLG=[false, false, false, false, false]);
-				helper.str.copyToClipboardLegacy(CopyParts);
+				FH.helper.str.copyToClipboardLegacy(CopyParts);
 			});
 		}
 		else if (!event) {
-			HTML.CloseOpenBox('PowerLevelingBox');
+			FH.HTML.CloseOpenBox('PowerLevelingBox');
 			return;
 		}
 
@@ -1449,16 +1454,16 @@ let Parts = {
 		for (let i = StartLevel; i < EndLevel; i++) {
 			h.push('<tr>');
 			h.push('<td class="bright" style="white-space:nowrap">' + i + ' → ' + (i + 1) + '</td>');
-			h.push('<td><span class="hidden-text"> - #1 (</span>' + HTML.Format(Places[i][0]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td class="text-light"><span class="hidden-text"> - #2 (</span>' + HTML.Format(Places[i][1]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td><span class="hidden-text"> - #3 (</span>' + HTML.Format(Places[i][2]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td class="text-light"><span class="hidden-text"> - #4 (</span>' + HTML.Format(Places[i][3]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td><span class="hidden-text"> - #5 (</span>' + HTML.Format(Places[i][4]) + '<span class="hidden-text">)</span></td>');
+			h.push('<td><span class="hidden-text"> - #1 (</span>' + FH.HTML.Format(Places[i][0]) + '<span class="hidden-text">)</span></td>');
+			h.push('<td class="text-light"><span class="hidden-text"> - #2 (</span>' + FH.HTML.Format(Places[i][1]) + '<span class="hidden-text">)</span></td>');
+			h.push('<td><span class="hidden-text"> - #3 (</span>' + FH.HTML.Format(Places[i][2]) + '<span class="hidden-text">)</span></td>');
+			h.push('<td class="text-light"><span class="hidden-text"> - #4 (</span>' + FH.HTML.Format(Places[i][3]) + '<span class="hidden-text">)</span></td>');
+			h.push('<td><span class="hidden-text"> - #5 (</span>' + FH.HTML.Format(Places[i][4]) + '<span class="hidden-text">)</span></td>');
 			if (HasDoubleCollection) {
-				h.push('<td class="success no-select"><strong>' + HTML.Format(EigenBruttos[i]) + '</strong></td>');
-				h.push('<td class="no-select">' + HTML.Format(MainParser.round(DoubleCollections[i])) + '</td>');
+				h.push('<td class="success no-select"><strong>' + FH.HTML.Format(EigenBruttos[i]) + '</strong></td>');
+				h.push('<td class="no-select">' + FH.HTML.Format(MainParser.round(DoubleCollections[i])) + '</td>');
 			}
-			h.push('<td><strong class="info no-select">' + HTML.Format(MainParser.round(EigenNettos[i])) + '</strong></td>');
+			h.push('<td><strong class="info no-select">' + FH.HTML.Format(MainParser.round(EigenNettos[i])) + '</strong></td>');
 			h.push('<td><span class="hidden-text">' + i + '</span><span class="btn btn-slim button-powerlevel-copy">' + i18n('Boxes.PowerLeveling.CopyValues') + '</span></td>');
 			h.push('</tr>');
 		}
@@ -1477,21 +1482,21 @@ let Parts = {
 			tableBody.innerHTML = h.join('');
 
 			// Startlevel
-			const startLevel = /** @type {HTMLInputElement} */(document.getElementById('startLevel'));
+			const startLevel = /** @type {FH.HTML.nputElement} */(document.getElementById('startLevel'));
 			if (startLevel.value != '' + Parts.PowerLevelingData.StartLevel) {
 				startLevel.value = '' + Parts.PowerLevelingData.StartLevel;
 			}
 			Parts.PowerLevelingStartLevel = Parts.PowerLevelingData.StartLevel;
 
 			// EndLevel
-			const endLevel = /** @type {HTMLInputElement} */(document.getElementById('endLevel'));
+			const endLevel = /** @type {FH.HTML.nputElement} */(document.getElementById('endLevel'));
 			if (endLevel.value != '' + Parts.PowerLevelingData.EndLevel) {
 				endLevel.value = '' + Parts.PowerLevelingData.EndLevel;
 			}
 			Parts.PowerLevelingEndLevel = Parts.PowerLevelingData.EndLevel;
 
-			const ownPartSum = /** @type {HTMLElement} */(document.getElementById('PowerLevelingBoxOwnPartSum'));
-			ownPartSum.innerText = HTML.Format(MainParser.round(Parts.PowerLevelingData.OwnPartSum));
+			const ownPartSum = /** @type {FH.HTML.lement} */(document.getElementById('PowerLevelingBoxOwnPartSum'));
+			ownPartSum.innerText = FH.HTML.Format(MainParser.round(Parts.PowerLevelingData.OwnPartSum));
 		}
 	},
 
@@ -1514,7 +1519,7 @@ let Parts = {
 		h.push('<div class="d-flex justify-content-center">');
 		h.push('<div style="margin: 5px 10px 0 0;">' + i18n('Boxes.PowerLeveling.StartLevel') + ': <input type="number" id="startLevel" step="1" min=0" max="1000" value="' + StartLevel + '"></div>');
 		h.push('<div style="margin: 5px 10px 0 0;">' + i18n('Boxes.PowerLeveling.EndLevel') + ': <input type="number" id="endLevel" step="1" min=10" max="1000" value="' + EndLevel + '"></div>');
-		h.push('<div>' + i18n('Boxes.PowerLeveling.OwnPartSum') +': <strong class="info" id="PowerLevelingBoxOwnPartSum">'+ HTML.Format(MainParser.round(OwnPartSum)) + '</strong></div>')
+		h.push('<div>' + i18n('Boxes.PowerLeveling.OwnPartSum') +': <strong class="info" id="PowerLevelingBoxOwnPartSum">'+ FH.HTML.Format(MainParser.round(OwnPartSum)) + '</strong></div>')
 		h.push('</div>');
 		h.push('</div>');
 
@@ -1678,7 +1683,7 @@ let Parts = {
 
 	setDonation: (value) => {
 		if (!Parts.allowCopyPlace)
-			helper.str.copyToClipboardLegacy(String(value));
+			FH.helper.str.copyToClipboardLegacy(String(value));
 		else { //Set Cursor to input field
 			mouseActions.randomClick([189, -62, 'Center']);
 			KeyboardEvents.paste(String(value));

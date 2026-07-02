@@ -27,7 +27,7 @@ let KampagneMap = {
     Show: () => {
         if ($('#campagne').length === 0) {
 
-            HTML.Box({
+            FH.HTML.Box({
 				'id': 'campagne',
 				'title': i18n('Boxes.Campagne.Title'),
 				'auto_close': true,
@@ -37,10 +37,10 @@ let KampagneMap = {
 			});
 
 			// CSS in den DOM prügeln
-			HTML.AddCssFile('campagnemap');
+			FH.HTML.AddCssFile('campagnemap');
 
         } else {
-			HTML.CloseOpenBox('campagne');
+			FH.HTML.CloseOpenBox('campagne');
 		}
 
         KampagneMap.BuildBox();
@@ -159,9 +159,9 @@ let KampagneMap = {
 
                     h.push('<tr>');
                     h.push('<td>' + GoodsData[ResourceName]['name'] + '</td>');
-                    h.push('<td>' + HTML.Format(Required) + '</td>');
-                    h.push('<td>' + HTML.Format(Stock) + '</td>');
-                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + HTML.Format(Diff) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Required) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
+                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');
                     h.push('</tr>');
                 }
             }

@@ -1451,13 +1451,17 @@ a:hover, input[type="radio"], .clickable {
 	z-index: 150;
 }
 
-.icon-close {
+.icon-close, .icon-move {
     background-image: url('../images/hud/box-sprite.png'), none;
     background-position: -2px -2px, 0 0;
     box-shadow: none;
 	width: 22px;
 	height: 22px;
 	display: inline-block;
+}
+
+.icon-move {
+    background-position: -315px -2px, 0 0;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------ */

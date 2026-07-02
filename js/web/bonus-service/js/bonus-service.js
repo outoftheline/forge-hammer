@@ -75,7 +75,7 @@ let BonusService = {
 	 */
 	InitBonus: (isGex = false)=> {
 		if($('#bonus-hud').length === 0){
-			HTML.AddCssFile('bonus-service');
+			FH.HTML.AddCssFile('bonus-service');
 
 			// wait 2s
 			BonusService.timeout = setTimeout(()=>{
@@ -246,7 +246,7 @@ let BonusService = {
 					si.addClass('bonus-blink');
 
 					if (bt[i] === 'donequests') {
-						helper.sounds.play("message");
+						FH.helper.sounds.play("message");
 					}
 
 					setTimeout(()=>{

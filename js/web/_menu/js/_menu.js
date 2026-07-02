@@ -86,6 +86,10 @@ let _menu = {
 			Infoboard.Show();
 		}
 
+		if(Settings.GetSetting('AutoOpenNotes')){
+			Notes.Show();
+		}
+
 		if (Settings.GetSetting('AutoOpenCloseBox')) {
 			CloseBox.BuildBox();
 		}

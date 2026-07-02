@@ -25,7 +25,7 @@ FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if (!MainParser.Quests) return; 
 	for (let Quest of MainParser.Quests) {
 		if (Quest?.questGiver?.id.indexOf("rival") >=0 && Quest.state == 'collectReward') {
-			helper.sounds.play("message");
+			FH.helper.sounds.play("message");
 			break;
 		}
 	}
@@ -79,7 +79,7 @@ let Quests = {
 			return;
 		}
 
-		HTML.AddCssFile('quests');
+		FH.HTML.AddCssFile('quests');
 
 		// some html for visual view
 		let div = $('<div />');

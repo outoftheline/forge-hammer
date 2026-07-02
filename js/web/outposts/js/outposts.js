@@ -39,13 +39,13 @@ let Outposts = {
 				//popout: 'Outposts.PopOutBox()'
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 
-			HTML.AddCssFile('outposts');
+			FH.HTML.AddCssFile('outposts');
 
-			const window = /** @type {HTMLElement} */(document.getElementById('outpostConsumables'));
+			const window = /** @type {FH.HTML.lement} */(document.getElementById('outpostConsumables'));
 			window.addEventListener('change', (event) => {
-				const target = /** @type {HTMLInputElement} */(event.target);
+				const target = /** @type {FH.HTML.nputElement} */(event.target);
 				const namePrefix = 'foe_helper_';
 
 				if (target.tagName === 'INPUT' && target.type === 'radio' && target.checked && target.name.startsWith(namePrefix) && Outposts.OutpostData)
@@ -75,7 +75,7 @@ let Outposts = {
 			});
 
 		} else {
-			HTML.CloseOpenBox('outpostConsumables');
+			FH.HTML.CloseOpenBox('outpostConsumables');
 		}
 
 		if (Outposts.Advancements === null) {
@@ -194,11 +194,11 @@ let Outposts = {
 		const displayAllTiles = Outposts.DisplayAllTiles;
 
 
-		// HTML erstellen
+		// FH.HTML.erstellen
 
 		$('#outpostConsumablesHeader > .title').text(i18n('Boxes.Outpost.TitleShort') + OutpostData.contentName);
 
-		/** output HTML teile-liste
+		/** output FH.HTML.teile-liste
 		 * @type {string[]}
 		 */
 		let t = [];
@@ -211,7 +211,7 @@ let Outposts = {
 		// Durchlauf Informationen
 		if (currentRun) {
 			t.push(
-				HTML.i18nReplacer(i18n('Boxes.Outpost.infoLine'), {
+				FH.HTML.i18nReplacer(i18n('Boxes.Outpost.infoLine'), {
 					runNumber: (currentRun.id||0)+1,
 					chanceX4: MainParser.round(currentRun.productionBonusProbability * 100)
 				})
@@ -221,9 +221,9 @@ let Outposts = {
 		// Münzen und aktuelle Münz-Produktion
 		t.push(
 			'</span><span><strong>'
-			+ GoodsData[primaryResourceId].name + ': ' + HTML.Format(ResourceStock[primaryResourceId]||0)
+			+ GoodsData[primaryResourceId].name + ': ' + FH.HTML.Format(ResourceStock[primaryResourceId]||0)
 			+ '</strong> (+ '
-			+ (current5HProductionRate > 0 ? HTML.Format(MainParser.round(current5HProductionRate)) : '???')
+			+ (current5HProductionRate > 0 ? FH.HTML.Format(MainParser.round(current5HProductionRate)) : '???')
 			+ `/5h)`
 			+ '</span>'
 		);
@@ -353,7 +353,7 @@ let Outposts = {
 
 				if (unlocked) {
 					// bereits erforscht
-					t.push('<span class="text-muted">' + HTML.Format(resourceCost) + '</span>');
+					t.push('<span class="text-muted">' + FH.HTML.Format(resourceCost) + '</span>');
 					t.push('</td>');
 					continue;
 				}
@@ -376,7 +376,7 @@ let Outposts = {
 				}
 				sums[resourceID] = resourceSumAfter;
 
-				const displayVal = HTML.Format(displaySums && resourceID !== 'diplomacy' && resourceID !== goodProductionResourceId ? resourceSumAfter : resourceCost);
+				const displayVal = FH.HTML.Format(displaySums && resourceID !== 'diplomacy' && resourceID !== goodProductionResourceId ? resourceSumAfter : resourceCost);
 
 				if (resourceInStock >= resourceSumAfter) {
 					// Es sind genug Güter vorhanden.
@@ -384,7 +384,7 @@ let Outposts = {
 				}
 				else {
 					// Es sind nicht genug Güter vorhanden.
-					t.push(displayVal + ' <small class="text-danger">' + HTML.Format(resourceInStock - resourceSumAfter) + '</small>' );
+					t.push(displayVal + ' <small class="text-danger">' + FH.HTML.Format(resourceInStock - resourceSumAfter) + '</small>' );
 				}
 
 				// Empfehlung für Diplomatie
@@ -452,7 +452,7 @@ let Outposts = {
 						const resourceSumAfter = resourceID === 'diplomacy' ? resourceCost : resourceSumBefore + resourceCost;
 						sums[resourceID] = resourceSumAfter;
 
-						const displayVal = HTML.Format(displaySums ? resourceSumAfter : resourceCost);
+						const displayVal = FH.HTML.Format(displaySums ? resourceSumAfter : resourceCost);
 
 						t.push('<td class="text-center">');
 						if (resourceInStock < resourceSumBefore) {
@@ -463,7 +463,7 @@ let Outposts = {
 								t.push('<span class="text-success">' +displayVal + '</span>' );
 							} else {
 								// Es sind nicht genug Güter vorhanden.
-								t.push(displayVal + ' <small class="text-danger">' + HTML.Format(resourceInStock - resourceSumAfter) + '</small>' );
+								t.push(displayVal + ' <small class="text-danger">' + FH.HTML.Format(resourceInStock - resourceSumAfter) + '</small>' );
 							}
 						}
 						t.push('</td>');
@@ -484,7 +484,7 @@ let Outposts = {
 		t.push('<td>' + i18n('Boxes.Outpost.DescRequired') + '</td><td></td>');
 
 		for (let resourceID of resourceIDs) {
-			t.push('<td class="text-center">' + HTML.Format(sums[resourceID]) + '</td>');
+			t.push('<td class="text-center">' + FH.HTML.Format(sums[resourceID]) + '</td>');
 		}
 
 		t.push('</tr>');
@@ -495,7 +495,7 @@ let Outposts = {
 		t.push('<td>' + i18n('Boxes.Outpost.DescInStock') + '</td><td></td>');
 
 		for (let resourceID of resourceIDs) {
-			t.push('<td class="text-center">' + HTML.Format(currStock[resourceID]) + '</td>');
+			t.push('<td class="text-center">' + FH.HTML.Format(currStock[resourceID]) + '</td>');
 		}
 
 		t.push('</tr>');
@@ -512,7 +512,7 @@ let Outposts = {
 			if (currentRun) {
 				difference2 = (resourceID !== goodProductionResourceId) ? Math.floor((difference)/(1 + 3*currentRun.productionBonusProbability)) : currStock[resourceID] - Math.floor((sums[resourceID])/(1 + 3*currentRun.productionBonusProbability));
 			}
-			t.push('<td class="text-center text-' + (difference < 0 ? 'danger' : 'success') + ((resourceID !== 'diplomacy' && difference < 0 && difference2 != null) ? '" title="' + HTML.Format(difference2) + " " + i18n('Boxes.Outpost.including4x'): '') + '">' + HTML.Format(difference) + '</td>');
+			t.push('<td class="text-center text-' + (difference < 0 ? 'danger' : 'success') + ((resourceID !== 'diplomacy' && difference < 0 && difference2 != null) ? '" title="' + FH.HTML.Format(difference2) + " " + i18n('Boxes.Outpost.including4x'): '') + '">' + FH.HTML.Format(difference) + '</td>');
 			
 		}
 

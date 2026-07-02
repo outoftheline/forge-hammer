@@ -1477,13 +1477,13 @@ let Alerts = function(){
 						},
 						close: () => {
 							let boxId = tmp.web.popup.type.common.boxId;
-							HTML.CloseOpenBox( boxId );
+							FH.HTML.CloseOpenBox( boxId );
 						},
 						show: ( labels, options ) => {
 							let boxId = tmp.web.popup.type.common.boxId;
 
 							if ( $( '#' + boxId ).length < 1 ) {
-								HTML.Box( {
+								FH.HTML.Box( {
 									id: boxId,
 									title: labels.title,
 									auto_close: true,
@@ -1530,13 +1530,13 @@ let Alerts = function(){
 			show: () => {
 
 				if ( tmp.web.visible() ) {
-					HTML.CloseOpenBox( 'Alerts' );
+					FH.HTML.CloseOpenBox( 'Alerts' );
 				}
 				else {
 					// override the CSS already in DOM
-					HTML.AddCssFile( 'alerts' );
+					FH.HTML.AddCssFile( 'alerts' );
 
-					HTML.Box( {
+					FH.HTML.Box( {
 						id: 'Alerts',
 						title: i18n( 'Boxes.Alerts.Title', 'Alerts' ),
 						auto_close: true,

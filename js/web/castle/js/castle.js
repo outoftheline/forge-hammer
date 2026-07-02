@@ -343,21 +343,21 @@ let Castle = {
 
         if ($('#Castle').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'Castle',
                 title: i18n('Boxes.Castle.Title'),
                 auto_close: true,
                 dragdrop: true,
                 resize: false,
                 minimize: true,
-                settings: 'Castle.CastleSettings()'
+                settings: Castle.CastleSettings
             });
 
-            HTML.AddCssFile('castle');
+            FH.HTML.AddCssFile('castle');
         }
         else
         {
-            HTML.CloseOpenBox('Castle');
+            FH.HTML.CloseOpenBox('Castle');
             return;
         }
 
@@ -644,7 +644,7 @@ let Castle = {
             reward: cp.success ? cp.points : 0,
             maxreward: cp.points ? cp.points : '?',
             warning: cpwarn,
-            warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitCastleWarning')),
+            warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitCastleWarning')),
             success: cp.success,
             date: startOfDay
         });
@@ -746,7 +746,7 @@ let Castle = {
                 reward: glsr,
                 maxreward: Castle.MaxGexLastOfSections,
                 warning: Castle.curGexLastOfSection === undefined,
-                warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitGexWarning')),
+                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitGexWarning')),
                 success: glsp >= Castle.GexLastOfSectionsIds.length,
                 date: startOfDay
             });
@@ -782,7 +782,7 @@ let Castle = {
                 reward: sir,
                 maxreward: sirsum,
                 warning: siwarn,
-                warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitAntiqueDealerWarning')),
+                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitAntiqueDealerWarning')),
                 success: sip === sipsum,
                 date: startOfDay
             });
@@ -808,10 +808,10 @@ let Castle = {
                 name: i18n('Boxes.Castle.AuctionsWon'),
                 group: Castle.RewardGroups.AntiqueDealer,
                 sort: 2,
-                progress: HTML.Format(aup),
-                maxprogress: HTML.Format(aup),
-                reward: HTML.Format(aur),
-                maxreward: HTML.Format(aur),
+                progress: FH.HTML.Format(aup),
+                maxprogress: FH.HTML.Format(aup),
+                reward: FH.HTML.Format(aur),
+                maxreward: FH.HTML.Format(aur),
                 warning: false,
                 success: aup > 0,
                 date: startOfDay
@@ -862,7 +862,7 @@ let Castle = {
             let CastleLimit = MainParser.CastleSystemLevels[Castle.curLevel].requiredPoints;
 
             $('#Castle #casPointsWrapper').html(`
-                <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${HTML.Format(Castle.curCastlePoints)} / ${HTML.Format(CastleLimit)}</span>
+                <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>
                 <span id="casPointsDiff">${diff ? '+' + diff : ''}</span><br />
                 <span>${i18n('Boxes.Castle.Level')}: ${Castle.curLevel}</span></div>
                 <div><span id="casLogBtn"><button id="casSwitchView" class="btn"${!Castle.CastlePointLog || Castle.CastlePointLog.length === 0 ? ' disabled' : ''}>${Castle.CurrentView === 'log' ? i18n('Boxes.Castle.Overview') : i18n('Boxes.Castle.Log')}</button></span></div>
@@ -894,7 +894,7 @@ let Castle = {
 
         if (!Castle.Settings.showGroupNames)
         {
-            h.push(`<thead class="sticky"><tr class="caption"><th>${i18n('Boxes.Castle.Type')}</th><th class="text-right"><span>${HTML.i18nTooltip(i18n('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${HTML.i18nTooltip(i18n('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
+            h.push(`<thead class="sticky"><tr class="caption"><th>${i18n('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
         }
 
         h.push(`<tbody>`);

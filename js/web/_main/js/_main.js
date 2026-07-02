@@ -159,9 +159,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Detect and process fullscreen
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', function () {
 		if (!window.screenTop && !window.screenY) {
-			HTML.LeaveFullscreen();
+			FH.HTML.LeaveFullscreen();
 		} else {
-			HTML.EnterFullscreen();
+			FH.HTML.EnterFullscreen();
 		}
 	});
 });
@@ -328,9 +328,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			MainParser.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
 		} else {
 			$('script').each((i,s)=>{    
-				if (!s?.innerHTML?.includes("unlockedFeatures")) return
+				if (!s?.innerHTML.includes("unlockedFeatures")) return
 				try {
-					let ulf = JSON.parse([...s.innerHTML.matchAll(/(unlockedFeatures:\ )(.*?)(,\n)/gm)][0][2])
+					let ulf = JSON.parse([...s.innerHTMLmatchAll(/(unlockedFeatures:\ )(.*?)(,\n)/gm)][0][2])
 					if (Array.isArray(ulf)) MainParser.UnlockedFeatures = ulf.map(x=>x.feature);
 				} catch (e) {
 
@@ -541,20 +541,20 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 		// not autobattling in either round 1 or 2
 		if (!data.responseData["isAutoBattle"]) {
-			HTML.MinimizeBeforeBattle();
+			FH.HTML.MinimizeBeforeBattle();
 		}
 
 		// round was won with autobattle
 		// winnerBit==1 round won, winnerBit==2 round lost
 		if (data.responseData.state?.winnerBit > 0) {
-			HTML.MaximizeAfterBattle();
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
 	FH.proxy.addHandler('BattlefieldService', 'submitMove', (data, postData) => {
 		// round was won/lost by auto-complete battle during manual turn
 		if (data.responseData['winnerBit'] > 0) {
-			HTML.MaximizeAfterBattle();
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
@@ -562,14 +562,14 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addHandler('BattlefieldService', 'continueBattle', (data, postData) => {
 		// round in progress was not auto-battle
 		if (!data.responseData["isAutoBattle"]) {
-			HTML.MinimizeBeforeBattle();
+			FH.HTML.MinimizeBeforeBattle();
 		}
 	});
 
 	// if user surrenders
 	FH.proxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
 		if (data.responseData["surrenderBit"] == 1) {
-			HTML.MaximizeAfterBattle();
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
@@ -979,7 +979,7 @@ let MainParser = {
 		else if (LastStartedVersion !== FH.BaseData.extVersion) {
 			MainParser.StartUpType = 'UpdatedVersion';
 
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				show: true,
 				head: i18n('Menu.NewVersion.Title'),
 				text: i18n('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
@@ -1021,8 +1021,21 @@ let MainParser = {
 		const existingCount = (precheckResponse && typeof precheckResponse.existingCount === 'number') ? precheckResponse.existingCount : 0;
 
 		const missingCount = urlCount - existingCount;
-		const useLongTimeout = missingCount > Math.max(100, urlCount * 0.1);
-		const timeout = useLongTimeout ? 300000 : 30000;
+		const useLongTimeout = missingCount > 300;
+		const longTimeout = 600000
+		const timeout = useLongTimeout ? longTimeout : 30000;
+
+		if (timeout == longTimeout) {
+			let div = document.createElement('div');
+			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${i18n("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
+				<h2>Forge Hammer: ${i18n("DBCreationWarning.Title")}</h2> </br>
+				${i18n("DBCreationWarning.ExplanationLine1")}<br> 
+				${i18n("DBCreationWarning.ExplanationLine2")}</br></br>
+				<div style="position:relative;height:75px;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>
+			</div>`;
+			document.body.appendChild(div);
+		}
 
 		const metadata = await MainParser.sendExtMessage({
 			type: 'buildingMeta',
@@ -1030,6 +1043,7 @@ let MainParser = {
 			region,
 			timeout,
 		});
+		document.getElementById('DBCreationWarning')?.remove()
 
 		MainParser.CityEntities = metadata || {};
 		MainParser.correctBuildingType();
@@ -1216,14 +1230,14 @@ let MainParser = {
 	 */
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let PlayerLink = HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
+			let PlayerLink = FH.HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				PlayerLink = HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
+				PlayerLink = FH.HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
 
-			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${FH.HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
 		}
 		else {
-			return HTML.escapeHtml(PlayerName);
+			return FH.HTML.escapeHtml(PlayerName);
 		}
 	},
 
@@ -1238,14 +1252,14 @@ let MainParser = {
 		if(!WorldId) WorldId = ExtWorld;
 
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			let GuildLink = FH.HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
+				GuildLink = FH.HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
 
-			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
 		}
 		else {
-			return HTML.escapeHtml(GuildName);
+			return FH.HTML.escapeHtml(GuildName);
 		}
 	},
 
@@ -1253,11 +1267,11 @@ let MainParser = {
 	/**
 	 * @param {string} BuildingID - The unique identifier for the building.
 	 * @param {string} BuildingName - The name of the building to be displayed.
-	 * @returns {string} A string containing either an HTML link or plain text for the building name.
+	 * @returns {string} A string containing either an FH.HTML.link or plain text for the building name.
 	 */
 	GetBuildingLink: (BuildingID, BuildingName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let BuildingLink = HTML.i18nReplacer(BuildingsLinkFormat, {'buildingid': BuildingID });
+			let BuildingLink = FH.HTML.i18nReplacer(BuildingsLinkFormat, {'buildingid': BuildingID });
 
 			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${LinkIcon}</a>`;
 		}
@@ -1481,19 +1495,19 @@ let MainParser = {
 		showAllyList:(closeIfOpen = false)=>{
 
 			if ($('#AllyList').length === 0) {
-				HTML.Box({
+				FH.HTML.Box({
 					id: 'AllyList',
 					title: i18n('Boxes.AllyList.Title'),
 					auto_close: true,
 					dragdrop: true,
 					minimize: true,
 					resize: true,
-					settings: 'MainParser.Allies.ShowSettings()',
+					settings: MainParser.Allies.ShowSettings,
 					active_maps:"main",				
 				});
 			} else {
 				if (closeIfOpen) {
-					HTML.CloseOpenBox('AllyList');
+					FH.HTML.CloseOpenBox('AllyList');
 					return;
 				}
 			}
@@ -1783,7 +1797,7 @@ let MainParser = {
 			if (MainParser.ArkBonus > 0) {
 				const s = `SetArkBonus: updated ArkBonus from ${MainParser.ArkBonus} to ${ArkBonus} by ${Source}`;
 				if (FH.BaseData.devMode === 'true') {
-					HTML.ShowToastMsg({
+					FH.HTML.ShowToastMsg({
 						show: true,
 						head: 'Developer log',
 						text: s,
@@ -2231,7 +2245,7 @@ let MainParser = {
 		showSettings: ()=> {
 
 			if ($('#inactivesSettingsBox').length === 0) {
-				HTML.Box({
+				FH.HTML.Box({
 					id: 'inactivesSettingsBox',
 					title: i18n('Boxes.InactivesSettings.Title'),
 					auto_close: true,
@@ -2240,7 +2254,7 @@ let MainParser = {
 					resize: true,
 				});
 	
-				//HTML.AddCssFile('auctions');
+				//FH.HTML.AddCssFile('auctions');
 			}
 			MainParser.Inactives.updateSettings();
 		},

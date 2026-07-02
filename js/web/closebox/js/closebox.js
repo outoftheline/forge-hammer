@@ -75,17 +75,17 @@ let CloseBox = {
     BuildBox: () => {
         if ($('#CloseBox').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'CloseBox',
                 title: i18n('Boxes.CloseBox.Title'),
                 auto_close: false,
                 dragdrop: true,
                 resize: false,
                 minimize: false,
-                settings: 'CloseBox.CloseBoxSettings()'
+                settings: CloseBox.CloseBoxSettings
             });
 
-            HTML.AddCssFile('closebox');
+            FH.HTML.AddCssFile('closebox');
         }
 
         CloseBox.Show();

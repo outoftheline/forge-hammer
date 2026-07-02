@@ -51,9 +51,9 @@ let Settings = {
 	BuildBox: (activeTab = null, activeSubTab = null) => {
 		if ($('#SettingsBox').length < 1) {
 
-			HTML.AddCssFile('settings');
+			FH.HTML.AddCssFile('settings');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'SettingsBox',
 				title: i18n('Boxes.Settings.Title'),
 				auto_close: true,
@@ -61,7 +61,7 @@ let Settings = {
 			});
 
 		} else {
-			HTML.CloseOpenBox('SettingsBox');
+			FH.HTML.CloseOpenBox('SettingsBox');
 		}
 
 		Settings.BuildBody(activeTab, activeSubTab);
@@ -455,7 +455,7 @@ let Settings = {
 			}
 		});
 
-		HTML.ShowToastMsg({
+		FH.HTML.ShowToastMsg({
 			head: i18n('Boxes.Settings.DeletedBoxCoordsHead'),
 			text: i18n('Boxes.Settings.DeletedBoxCoordsBody'),
 			type: 'success',
@@ -529,7 +529,7 @@ let Settings = {
 		$('#SettingsBoxBody').on('change', '#changeSkin', function () {
 			let skin = $(this).val();
 			FH.Storage.setItem('HammerSkin', skin);
-			HTML.ChangeSkinCssFile(skin);
+			FH.HTML.ChangeSkinCssFile(skin);
 		});
 
 		return dp.join('');

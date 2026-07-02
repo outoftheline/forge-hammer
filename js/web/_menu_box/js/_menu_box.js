@@ -19,11 +19,11 @@ let _menu_box = {
 	Show: () => {
         //moment.locale(18n('Local'));
 
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'menu_box',
 			title: i18n('Global.BoxTitle'),
 			onlyTitle: true,
-			dragdrop: '_menu_box.CheckButtons()',
+			dragdrop: _menu_box.CheckButtons,
 			minimize: true,
 			resize: true,
 			auto_close: false
@@ -116,7 +116,7 @@ let _menu_box = {
 
 				$('#menu_box').removeClass('is--sorting');
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Menu.SaveMessage.Title'),
 					text: i18n('Menu.SaveMessage.Desc'),

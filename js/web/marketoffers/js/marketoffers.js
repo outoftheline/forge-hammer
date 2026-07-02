@@ -35,21 +35,21 @@ let MarketOffers = {
      */
     Show: (event = true) => {
         if ($('#MarketOffers').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'MarketOffers',
                 title: i18n('Boxes.MarketOffers.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize: true,
-                settings: 'MarketOffers.ShowSettingsButton()'
+                settings: MarketOffers.ShowSettingsButton
             });
 
             // add css to DOM
-            HTML.AddCssFile('marketoffers');
+            FH.HTML.AddCssFile('marketoffers');
         }
         else if (!event) {
-            HTML.CloseOpenBox('MarketOffers');
+            FH.HTML.CloseOpenBox('MarketOffers');
             return;
         }
 
@@ -145,12 +145,12 @@ let MarketOffers = {
             h.push('<tr>');
             h.push('<td class="is-number" data-number="' + i + '">' + i18n('Eras.' + Era) + '</td>');
             h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodID + '"></span></td>');
-            h.push('<td data-text="' + helper.str.cleanup(CurrentGood['name']) + '"><strong>' + CurrentGood['name'] + '</strong></td>');
-            h.push('<td class="is-number" data-number="' + Inventory + '">' + HTML.Format(Inventory) + '</td>');
-            h.push('<td class="is-number" data-number="' + OfferSum + '">' + (OfferCount > 0 ? '<button class="btn btn-filter-offer" data-value="' + i + '" style="white-space:nowrap">' + HTML.Format(OfferSum) + ' (' + OfferCount + ')' + '</button>' : '-') + '</td>');
-            h.push('<td class="is-number" data-number="' + NeedSum + '">' + (NeedCount > 0 ? '<button class="btn btn-filter-need" data-value="' + i + '" style="white-space:nowrap">' + HTML.Format(NeedSum) + ' (' + NeedCount + ')' + '</button>' : '-') + '</td>');
-            h.push('<td class="is-number" data-number="' + (Inventory + OfferSum) + '">' + HTML.Format(Inventory + OfferSum) + '</td>');
-            h.push('<td class="is-number" data-number="' + NeedSum + '">' + HTML.Format(Inventory + NeedSum) + '</td>');
+            h.push('<td data-text="' + FH.helper.str.cleanup(CurrentGood['name']) + '"><strong>' + CurrentGood['name'] + '</strong></td>');
+            h.push('<td class="is-number" data-number="' + Inventory + '">' + FH.HTML.Format(Inventory) + '</td>');
+            h.push('<td class="is-number" data-number="' + OfferSum + '">' + (OfferCount > 0 ? '<button class="btn btn-filter-offer" data-value="' + i + '" style="white-space:nowrap">' + FH.HTML.Format(OfferSum) + ' (' + OfferCount + ')' + '</button>' : '-') + '</td>');
+            h.push('<td class="is-number" data-number="' + NeedSum + '">' + (NeedCount > 0 ? '<button class="btn btn-filter-need" data-value="' + i + '" style="white-space:nowrap">' + FH.HTML.Format(NeedSum) + ' (' + NeedCount + ')' + '</button>' : '-') + '</td>');
+            h.push('<td class="is-number" data-number="' + (Inventory + OfferSum) + '">' + FH.HTML.Format(Inventory + OfferSum) + '</td>');
+            h.push('<td class="is-number" data-number="' + NeedSum + '">' + FH.HTML.Format(Inventory + NeedSum) + '</td>');
             
             h.push('</tr>');
         }
@@ -201,8 +201,8 @@ let MarketOffers = {
     */
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#MarketOffersBody').find('.foe-table.exportable'), 'csv', 'MarketOffers')">CSV</button>`);
-        h.push(`<button class="btn" onclick="HTML.ExportTable($('#MarketOffersBody').find('.foe-table.exportable'), 'json', 'MarketOffers')">JSON</button></span>`);
+        h.push(`${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#MarketOffersBody').find('.foe-table.exportable'), 'csv', 'MarketOffers')">CSV</button>`);
+        h.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#MarketOffersBody').find('.foe-table.exportable'), 'json', 'MarketOffers')">JSON</button></span>`);
 
         $('#MarketOffersSettingsBox').html(h.join(''));
     },
@@ -213,21 +213,21 @@ let MarketOffers = {
      */
     ShowEvents: (event = true) => {
         if ($('#MarketOffersEvents').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'MarketOffersEvents',
                 title: i18n('Boxes.MarketOffersEvents.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize: true,
-                settings: 'MarketOffers.ShowEventsSettingsButton()'
+                settings: MarketOffers.ShowEventsSettingsButton
             });
 
             // add css to DOM
-            HTML.AddCssFile('marketoffers');
+            FH.HTML.AddCssFile('marketoffers');
         }
         else if (!event) {
-            HTML.CloseOpenBox('MarketOffersEvents');
+            FH.HTML.CloseOpenBox('MarketOffersEvents');
             return;
         }              
 
@@ -311,8 +311,8 @@ let MarketOffers = {
                 NeedGoodID = Event['need']['good_id'],
                 OfferEra = Technologies.Eras[GoodsData[OfferGoodID]['era']],
                 NeedEra = Technologies.Eras[GoodsData[NeedGoodID]['era']],
-                OfferTT = HTML.i18nReplacer(i18n('Boxes.Market.OfferTT'), { 'era': i18n('Eras.' + OfferEra), 'stock': HTML.Format(ResourceStock[OfferGoodID]) }),
-                NeedTT = HTML.i18nReplacer(i18n('Boxes.Market.NeedTT'), { 'era': i18n('Eras.' + NeedEra), 'stock': HTML.Format(ResourceStock[NeedGoodID]) }),
+                OfferTT = FH.HTML.i18nReplacer(i18n('Boxes.Market.OfferTT'), { 'era': i18n('Eras.' + OfferEra), 'stock': FH.HTML.Format(ResourceStock[OfferGoodID]) }),
+                NeedTT = FH.HTML.i18nReplacer(i18n('Boxes.Market.NeedTT'), { 'era': i18n('Eras.' + NeedEra), 'stock': FH.HTML.Format(ResourceStock[NeedGoodID]) }),
                 PlayerID = Event['playerid'],
                 PlayerName = Event['playername'];
 
@@ -322,15 +322,15 @@ let MarketOffers = {
             h.push('<td class="is-number" data-number="' + (Event['date'].getTime()) + '">' + (Event['date'] ? moment.unix(Event['date'] / 1000).format(i18n('DateTime')) : i18n('Boxes.MarketOffersEvents.DateNA')) + '</td>');
 
             h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[OfferGoodID]['id'] + '"></span></td>');
-            h.push('<td data-text="' + helper.str.cleanup(GoodsData[OfferGoodID]['name']) + '"><strong class="td-tooltip" title="' + HTML.i18nTooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
-            h.push('<td class="is-number" data-number="' + Event['offer']['value'] + '"><strong class="td-tooltip" title="' + HTML.i18nTooltip(OfferTT) + '">' + Event['offer']['value'] + '</strong></td>');
+            h.push('<td data-text="' + FH.helper.str.cleanup(GoodsData[OfferGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
+            h.push('<td class="is-number" data-number="' + Event['offer']['value'] + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(OfferTT) + '">' + Event['offer']['value'] + '</strong></td>');
 
             h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] + '"></span></td>');
-            h.push('<td data-text="' + helper.str.cleanup(GoodsData[NeedGoodID]['name']) + '"><strong class="td-tooltip" title="' + HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
-            h.push('<td class="is-number" data-number="' + Event['need']['value'] + '"><strong class="td-tooltip" title="' + HTML.i18nTooltip(NeedTT) + '">' + Event['need']['value'] + '</strong></td>');
+            h.push('<td data-text="' + FH.helper.str.cleanup(GoodsData[NeedGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
+            h.push('<td class="is-number" data-number="' + Event['need']['value'] + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + Event['need']['value'] + '</strong></td>');
 
-            h.push('<td class="text-center" data-number="' + Event['offer']['value'] / Event['need']['value'] + '">' + HTML.Format(MainParser.round(Event['offer']['value'] / Event['need']['value'] * 100) / 100) + '</td>');
-            if (MarketOffers.CurrentEventsTab === 'accepted') h.push('<td data-text="' + helper.str.cleanup(PlayerName) + '">' + MainParser.GetPlayerLink(PlayerID, PlayerName) + '</td>');
+            h.push('<td class="text-center" data-number="' + Event['offer']['value'] / Event['need']['value'] + '">' + FH.HTML.Format(MainParser.round(Event['offer']['value'] / Event['need']['value'] * 100) / 100) + '</td>');
+            if (MarketOffers.CurrentEventsTab === 'accepted') h.push('<td data-text="' + FH.helper.str.cleanup(PlayerName) + '">' + MainParser.GetPlayerLink(PlayerID, PlayerName) + '</td>');
             h.push('</tr>');
         }
 
@@ -350,8 +350,8 @@ let MarketOffers = {
     */
     ShowEventsSettingsButton: () => {
         let h = [];
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#MarketOffersEventsBody').find('.foe-table.exportable'), 'csv', 'MarketOffersEvents')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#MarketOffersEventsBody').find('.foe-table.exportable'), 'json', 'MarketOffersEvents')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+        h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#MarketOffersEventsBody').find('.foe-table.exportable'), 'csv', 'MarketOffersEvents')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
+        h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#MarketOffersEventsBody').find('.foe-table.exportable'), 'json', 'MarketOffersEvents')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
 
         h.push(i18n('Boxes.MarketOffersEvents.OptionalColumns') + ':');       
        
