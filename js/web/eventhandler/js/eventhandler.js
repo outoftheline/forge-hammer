@@ -602,7 +602,7 @@ let EventHandler = {
 			if (EventHandler.ShowHideColumns.Era) {
 				let pTime = EventHandler.isProtected[Player['PlayerID']] | 0;
 				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > MainParser.getCurrentDateTime())) ? pImage : '';
-				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]+'.short') + pImg}</td>`);
+				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]+'.short')}</td>`);
 			}
 
 			// Player points column
@@ -615,14 +615,14 @@ let EventHandler = {
 				if (j < Visits.length) {
 					let Seconds = (MainParser.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
 					let Days = Seconds / 86400; //24*3600
-					let StrongColor = (Days < 3 * (j + 1) ? FH.HTML.GetColorGradient(Days, 0, 3 * (j + 1), '00ff00', 'ffff00') : FH.HTML.GetColorGradient(Days, 3 * (j + 1), 7 * (j + 1), 'ffff00', 'ff0000'));
+					let bgColor = (Days < 2 * (j + 1) ? 'bg-green' : (Days < 5 * (j + 1) ? 'bg-yellow' : 'bg-red'));
 					let FormatedDays = FH.HTML.i18nReplacer(i18n('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });
 					let EventType = EventHandler.GetEventType(Visits[j]);
 
-					h.push('<td style="white-space:nowrap" class="events-image" data-number="' + Days + '"><span class="events-sprite-35 ' + EventType + '"></span><strong style="color:#' + StrongColor + '">' + FormatedDays + '</strong></td>');
+					h.push('<td style="white-space:nowrap" class="events-image '+bgColor+'" data-number="' + Days + '"><span class="events-sprite-35 ' + EventType + '"></span><strong>' + FormatedDays + '</strong></td>');
 				}
 				else {
-					h.push('<td class="is-date" data-number="999999999"><strong style="color:#ff0000">' + i18n('Boxes.MoppelHelper.Never') + '</strong></td>');
+					h.push('<td class="is-date bg-red" data-number="999999999"><strong>' + i18n('Boxes.MoppelHelper.Never') + '</strong></td>');
 				}
 			}
 			h.push('</tr>');

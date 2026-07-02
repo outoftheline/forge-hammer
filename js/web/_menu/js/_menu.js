@@ -322,7 +322,7 @@ let _menu = {
 		{ id: 'investment', title: i18n('Menu.Investment.Title'), description: i18n('Menu.Investment.Desc') },
 		{ id: 'alerts', title: i18n('Menu.Alerts.Title'), description: i18n('Menu.Alerts.Desc') },
 		{ id: 'fpCollector', title: i18n('Menu.fpCollector.Title'), description: i18n('Menu.fpCollector.Desc') },
-		{ id: 'moppelHelper', title: i18n('Menu.MoppelFH.helper.Title'), description: i18n('Menu.MoppelFH.helper.Desc') },
+		{ id: 'moppelHelper', title: i18n('Menu.Moppelhelper.Title'), description: i18n('Menu.Moppelhelper.Desc') },
 		{ id: 'blueGalaxy', title: i18n('Menu.Bluegalaxy.Title'), description: i18n('Menu.Bluegalaxy.Desc') },
 		{ id: 'greatBuildings', title: i18n('Menu.greatbuildings.Title'), description: i18n('Menu.greatbuildings.Desc') },
 		{ id: 'kits', title: i18n('Menu.Kits.Title'), description: i18n('Menu.Kits.Desc') },
