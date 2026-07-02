@@ -51,7 +51,7 @@ window.PlannerApp = window.PlannerApp || {};
             state.activeBuilding = null;
         }
 
-        state.placingBuilding = new app.MapBuilding(
+        state.placingBuilding = app.createRotatedBuilding(
             {
                 ...stored.data,
                 x: 0,
@@ -74,7 +74,7 @@ window.PlannerApp = window.PlannerApp || {};
             return;
         }
 
-        state.placingBuilding = new app.MapBuilding(
+        state.placingBuilding = app.createRotatedBuilding(
             {
                 ...nextStored.data,
                 x: 0,
@@ -121,16 +121,27 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function resetCity() {
+        app.restoreOriginalMapAndCity();
+
         state.mapBuildings = [];
         state.storedBuildings = [];
         state.selectedBuildings = [];
         state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.rotated = false;
         state.camX = 0;
         state.camY = 0;
         state.zoomScale = 0.75;
 
+        // The reset button already clears the persisted history — clear the
+        // in-memory copy too, so undo can't reach back past the reset into
+        // whatever (possibly rotated) state existed before it.
+        state.history = [];
+        state.future  = [];
+        app.updateUndoRedoButtons();
+
+        app.rebuildGridLayer();
         app.drawMap();
         app.rebuildOccupiedTiles();
         app.updateStats();
@@ -242,7 +253,7 @@ window.PlannerApp = window.PlannerApp || {};
             // Re-arm immediately with a fresh copy of the same building.
             const meta = state.metaById.get(String(placedMetaId));
             if (meta) {
-                state.placingBuilding = new app.MapBuilding(
+                state.placingBuilding = app.createRotatedBuilding(
                     { cityentity_id: meta.id, x: 0, y: 0 },
                     meta
                 );
@@ -293,7 +304,7 @@ window.PlannerApp = window.PlannerApp || {};
 
     function createStreetBuildingAtTile(tx, ty, streetMeta) {
         const forcedMeta = { ...streetMeta, width: 1, length: 1 };
-        return new app.MapBuilding(
+        return app.createRotatedBuilding(
             {
                 cityentity_id: streetMeta.id,
                 type: 'street',
@@ -553,7 +564,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         // Create a fresh building from meta — not tied to storedBuildings.
-        state.placingBuilding = new app.MapBuilding(
+        state.placingBuilding = app.createRotatedBuilding(
             { cityentity_id: meta.id, x: 0, y: 0 },
             meta
         );
@@ -644,7 +655,7 @@ window.PlannerApp = window.PlannerApp || {};
         dom.resetBtn.addEventListener('click', () => {
             const reset = confirm('Do you want to restart from scratch? Your changes will not be saved');
             if (reset) {
-                localStorage.removeItem('foe_planner_save');
+                app.clearSavedLayout();
                 resetCity();
             }
         });
@@ -672,6 +683,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         document.addEventListener('contextmenu', (e) => {
+            // todo: remove 
             //e.preventDefault();
 
             if (state.streetPlacement.active) {

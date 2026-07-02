@@ -70,6 +70,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
 
+        state.rotated = false;
         state.history = [];
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
@@ -94,7 +95,7 @@ window.PlannerApp = window.PlannerApp || {};
 
     // --- Serialization ---
 
-    // Layout-only: just positions + metaIds. Very small.
+    // just position + metaId
     function serializeLayout() {
         return {
             version: 2,
@@ -108,9 +109,11 @@ window.PlannerApp = window.PlannerApp || {};
                 x: b.data.x,
                 y: b.data.y
             })),
-            camX:      state.camX,
-            camY:      state.camY,
-            zoomScale: state.zoomScale
+            camX: state.camX,
+            camY: state.camY,
+            zoomScale: state.zoomScale,
+            rotated: !!state.rotated,
+            mapData: state.mapData
         };
     }
 
@@ -118,23 +121,20 @@ window.PlannerApp = window.PlannerApp || {};
     function serializeState() {
         return {
             version: 3,
-            region:   state.region,
+            region: state.region,
             cityData: state.cityData,
-            mapData:  state.mapData,
-            mapBuildings:    state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
+            mapData: state.mapData,
+            mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
             storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
-            camX: state.camX, camY: state.camY, zoomScale: state.zoomScale
+            camX: state.camX, camY: state.camY, zoomScale: state.zoomScale,
+            rotated: !!state.rotated
         };
     }
 
     async function deserializeState(saved) {
-        state.region   = saved.region;
+        state.region = saved.region;
         state.cityData = saved.cityData;
-        state.mapData  = saved.mapData;
-        state.metaData = saved.metaData          // still handle old v2 export files gracefully
-            ? saved.metaData
-            : await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.mapData = saved.mapData;
 
         applyLayout(saved);
         app.resizeCanvasToCSSSize();
@@ -143,6 +143,22 @@ window.PlannerApp = window.PlannerApp || {};
         app.redrawMap();
         app.updateStats();
         app.showStoredBuildings();
+    }
+
+    // switch width and height
+    function swapBuildingDimensions(b) {
+        const widthTemp = b.width;
+        b.width  = b.height;
+        b.height = widthTemp;
+
+        b.hasLabel = !(b.meta.type === 'street' || b.height === app.SIZE || b.width === app.SIZE);
+    }
+
+
+    function createRotatedBuilding(data, meta) {
+        const building = new app.MapBuilding(data, meta);
+        if (state.rotated) swapBuildingDimensions(building);
+        return building;
     }
 
     function buildingsFromEntries(entries) {
@@ -157,7 +173,7 @@ window.PlannerApp = window.PlannerApp || {};
             const effectiveMeta = meta.type === 'street'
                 ? { ...meta, width: 1, length: 1 }
                 : meta;
-            return new app.MapBuilding(data, effectiveMeta);
+            return createRotatedBuilding(data, effectiveMeta);
         }).filter(Boolean);
     }
 
@@ -165,6 +181,8 @@ window.PlannerApp = window.PlannerApp || {};
         state.camX      = layout.camX      ?? 0;
         state.camY      = layout.camY      ?? 0;
         state.zoomScale = layout.zoomScale ?? 0.75;
+        state.rotated   = !!layout.rotated;
+        if (layout.mapData) state.mapData = layout.mapData;
         state.mapBuildings    = buildingsFromEntries(layout.mapBuildings);
         state.storedBuildings = buildingsFromEntries(layout.storedBuildings);
     }
@@ -259,7 +277,29 @@ window.PlannerApp = window.PlannerApp || {};
         setTimeout(() => { btn.textContent = 'Save'; }, 1500);
     }
 
-    // --- Auto-save hook (called after mutations) ---
+
+    function restoreOriginalMapAndCity() {
+        try {
+            const rawBase = localStorage.getItem(BASE_KEY);
+            if (!rawBase) return false;
+
+            const base = JSON.parse(rawBase);
+            state.cityData = base.cityData;
+            state.mapData  = base.mapData;
+            return true;
+        } catch (e) {
+            console.warn('Could not restore original map/city data:', e);
+            return false;
+        }
+    }
+
+
+    function clearSavedLayout() {
+        localStorage.removeItem(LAYOUT_KEY);
+        localStorage.removeItem(HISTORY_KEY);
+    }
+
+
     function autoSave() {
         if (state.metaData && Object.keys(state.metaData).length) {
             saveState();
@@ -316,12 +356,7 @@ window.PlannerApp = window.PlannerApp || {};
             b.x = b.data.x * app.SIZE;
             b.y = b.data.y * app.SIZE;
 
-            let widthTemp = b.width;
-            b.width   = b.height;
-            b.height  = widthTemp;
-
-            // hasLabel depends on whether either dimension is a single tile
-            b.hasLabel = !(b.meta.type === 'street' || b.height === app.SIZE || b.width === app.SIZE);
+            swapBuildingDimensions(b);
         }
 
         for (const b of state.mapBuildings) 
@@ -350,7 +385,6 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     // --- Undo / Redo ---
-
     const HISTORY_LIMIT = 5;
 
     function captureSnapshot() {
@@ -364,7 +398,14 @@ window.PlannerApp = window.PlannerApp || {};
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y
-            }))
+            })),
+            // Grid shape + orientation at capture time. Rotating doesn't
+            // push its own history entry, but a move made while rotated
+            // still needs to be replayed against a matching grid — without
+            // this, undo/redo across an intervening rotate corrupts
+            // positions/dimensions instead of just skipping past the rotate.
+            mapData: state.mapData ? JSON.parse(JSON.stringify(state.mapData)) : state.mapData,
+            rotated: !!state.rotated
         };
     }
 
@@ -403,6 +444,12 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function applySnapshot(snapshot) {
+        // Restore grid shape + rotation BEFORE rebuilding buildings, so
+        // buildingsFromEntries applies dimensions matching the orientation
+        // the saved x/y positions actually belong to.
+        if (snapshot.mapData) state.mapData = snapshot.mapData;
+        state.rotated = !!snapshot.rotated;
+
         state.mapBuildings    = buildingsFromEntries(snapshot.mapBuildings);
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
 
@@ -412,6 +459,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.selectionRect     = null;
         state.selectedBuildings = [];
 
+        app.rebuildGridLayer();
         app.rebuildOccupiedTiles();
         app.redrawMap();
         app.updateStats();
@@ -453,6 +501,9 @@ window.PlannerApp = window.PlannerApp || {};
     app.exportStateToFile = exportStateToFile;
     app.importStateFromFile = importStateFromFile;
     app.rotateLayout = rotateLayout;
+    app.createRotatedBuilding = createRotatedBuilding;
+    app.restoreOriginalMapAndCity = restoreOriginalMapAndCity;
+    app.clearSavedLayout = clearSavedLayout;
 
     // check for data from CityMap.openPlanner() use localStorage as fallback
     // todo: implement something to ask if incoming data should be used or the currently saved data

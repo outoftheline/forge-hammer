@@ -120,7 +120,7 @@ window.PlannerApp = window.PlannerApp || {};
                 buildingData.type !== 'friends_tavern' &&
                 !String(buildingData.type).includes('hub')
             ) {
-                const newBuilding = new app.MapBuilding({ ...building }, buildingData);
+                const newBuilding = app.createRotatedBuilding({ ...building }, buildingData);
                 state.mapBuildings.push(newBuilding);
             }
         }
