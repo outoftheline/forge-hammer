@@ -2381,7 +2381,7 @@ let GuildMemberStat = {
 			for (let j = 0; j < td.length; j++) {
 				cell = tr[i].getElementsByTagName("td")[j];
 				if (cell) {
-					if (cell.innerHTMLtoUpperCase().indexOf(filter) > -1) {
+					if (cell.innerHTML.toUpperCase().indexOf(filter) > -1) {
 						tr[i].style.display = "";
 						break;
 					}

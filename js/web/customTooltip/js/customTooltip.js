@@ -59,7 +59,7 @@ let Tooltips = {
 
     set: (content) => {
         if (!content) return
-        Tooltips.Container.innerHTMLcontent;
+        Tooltips.Container.innerHTML = content;
         Tooltips.checkposition()
     },
     checkposition: () => {
