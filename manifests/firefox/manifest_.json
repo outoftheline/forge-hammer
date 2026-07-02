@@ -51,7 +51,10 @@
 		"content/*.html",
 		"js/vendor.json",
 		"js/internal.json",
-		"js/foeproxy.js"
+		"js/foeproxy.js",
+		"planner/*.html",
+		"planner/*.js",
+		"planner/*.css"
 	],
 
 	"content_scripts": [
