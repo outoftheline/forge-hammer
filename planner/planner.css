@@ -202,6 +202,8 @@ textarea, button, input, .btn {
 
 #map .buttons.right {
     right: 0.5em;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .buttons .group {
@@ -220,6 +222,25 @@ textarea, button, input, .btn {
 
 .buttons .group .btn:last-child {
     border-radius: 0 5px 5px 0;
+}
+
+.buttons .group.column {
+    flex-direction: column;
+}
+
+.buttons .group.column .btn {
+    border: 1px solid #eeea;
+    border-radius: 0;
+    border-top: none;
+}
+
+.buttons .group.column .btn:first-child {
+    border-top: 1px solid #eeea;
+    border-radius: 5px 5px 0 0;
+}
+
+.buttons .group.column .btn:last-child {
+    border-radius: 0 0 5px 5px;
 }
 
 #map .info {
