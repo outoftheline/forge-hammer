@@ -7,7 +7,7 @@ if (typeof FH === 'undefined') {
 	var FH = {};
 }
 [FH.Translation,FH.Languages] = (()=>{
-FH.Languages = {
+Languages = {
 	PossibleLanguages: {
 		'bs': 'Bosanski',
 		'ca': 'Català',
