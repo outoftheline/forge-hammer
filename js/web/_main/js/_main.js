@@ -125,7 +125,7 @@ let GameTime = {
 }
 
 let i18n = (key) => {
-	return Translation.tempData?.[key]?.s || Translation.tempData?.[key] || i18nData[key] || key;
+	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || i18nData[key] || key;
 }
 let i18nData = null;
 

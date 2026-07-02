@@ -493,7 +493,7 @@ let Settings = {
 		dp.push('</select>');
 
 		if (FH.Storage.getItem('user-language') !== "de") {
-			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
+			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="FH.Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
 		}
 
 		$('#SettingsBoxBody').on('change', '#change-lang', function () {
