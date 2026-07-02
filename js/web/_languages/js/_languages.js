@@ -3,7 +3,11 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-let Languages = {
+if (typeof FH === 'undefined') {
+	var FH = {};
+}
+[FH.Translation,FH.Languages] = (()=>{
+FH.Languages = {
 	PossibleLanguages: {
 		'bs': 'Bosanski',
 		'ca': 'Català',
@@ -34,7 +38,7 @@ let Languages = {
 	},
 };
 
-let Translation = {
+Translation = {
 	targetData: null,
 	referenceData: null,
 	tempData: JSON.parse((window.FH? FH.Storage.getItem('Translation.Temp') : localStorage.getItem('Hammer.Translation.Temp')) || '{}'),
@@ -260,3 +264,5 @@ let Translation = {
 		}
 	}
 };
+return [Translation, Languages];
+})()

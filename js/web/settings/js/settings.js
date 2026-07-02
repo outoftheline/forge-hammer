@@ -483,12 +483,12 @@ let Settings = {
 		let dp = [];
 
 		dp.push('<select class="setting-dropdown" id="change-lang">');
-		for (let iso in Languages.PossibleLanguages) {
-			if (!Languages.PossibleLanguages.hasOwnProperty(iso)) {
+		for (let iso in FH.Languages.PossibleLanguages) {
+			if (!FH.Languages.PossibleLanguages.hasOwnProperty(iso)) {
 				break;
 			}
 
-			dp.push('<option value="' + iso + '"' + (MainParser.Language === iso ? ' selected' : '') + '>' + Languages.PossibleLanguages[iso] + '</option>');
+			dp.push('<option value="' + iso + '"' + (MainParser.Language === iso ? ' selected' : '') + '>' + FH.Languages.PossibleLanguages[iso] + '</option>');
 		}
 		dp.push('</select>');
 

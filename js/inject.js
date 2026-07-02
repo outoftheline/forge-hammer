@@ -90,7 +90,7 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 	}
 
 	// is there a translation?
-	if (Languages.PossibleLanguages[lng] === undefined) {
+	if (FH.Languages.PossibleLanguages[lng] === undefined) {
 		lng = 'en';
 	}
 
