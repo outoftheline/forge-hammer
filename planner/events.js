@@ -576,17 +576,6 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function bindEvents(init) {
-        dom.submitBtn.addEventListener('click', async () => {
-            try {
-                const clipboardContents = await navigator.clipboard.readText();
-                const data = JSON.parse(clipboardContents);
-                dom.submitWindow.classList.add('hidden');
-                init(data);
-            } catch (error) {
-                console.error(error);
-                dom.submitError.textContent = 'The data is corrupted.';
-            }
-        });
 
         dom.zoomInBtn.addEventListener('click', app.zoomIn);
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);

@@ -236,7 +236,7 @@ window.PlannerApp = window.PlannerApp || {};
         const url  = URL.createObjectURL(blob);
         const a    = document.createElement('a');
         a.href     = url;
-        a.download = 'foe_planner_save.json';
+        a.download = 'foe_planner.json';
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -273,7 +273,7 @@ window.PlannerApp = window.PlannerApp || {};
     function flashSaveBtn() {
         const btn = app.dom.saveBtn;
         if (!btn) return;
-        btn.textContent = '✓ Saved';
+        btn.textContent = 'Saved';
         setTimeout(() => { btn.textContent = 'Save'; }, 1500);
     }
 

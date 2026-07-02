@@ -1,6 +1,7 @@
 <!--
 **************************************************************************************
   ~ Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+  ~ Copyright (C) 2026 Forge Hammer - All Rights Reserved
   ~ See file LICENSE.md for license details.
 **************************************************************************************
 -->
@@ -17,21 +18,15 @@
     <section class="overlay">
         <div class="inner">
             <h1>Forge Hammer - City Planner</h1>
-            <h2>Paste your City Data</h2>
-            <p>The button submits the latest text from your clipboard and tries to parse it. Please use the "Copy to Clipboard" function in the City Overview of your City before clicking it.</p>
-            <button>Submit</button>
-            <span class="error"></span>
-            <hr style="border-color:#ffffff22; margin: 1em 0">
-            <p style="margin:0 0 0.5em">Or load a previously exported save file:</p>
-            <label style="cursor:pointer"><input type="file" id="overlayImportFileInput" accept=".json" style="display:none"><button onclick="this.closest('label').querySelector('input').click(); return false;">Load save file</button></label>
+            <p>Please use the "Send to planner" function in the City Overview of your City before clicking it.</p>
         </div>
     </section>
 
 
     <div class="wrapper">
         <section class="sidebar">
+            <h1><img src="../images/app48.png" /> City Planner v0.5</h1>
             <div class="filter">
-            
             <div id="metaSearch">
                 <input id="metaSearchInput" type="text" placeholder="Add a new building…" autocomplete="off">
                 <ul id="metaSearchResults"></ul>
@@ -71,8 +66,7 @@
             </div>
         </section>
         <div class="content">
-            <header>
-                <h1>Forge Hammer - City Planner v0.2</h1>
+            <!--<header>
                 <div class="stats">
                     <div class="old">
                         Streets: <span class="streets"></span>
@@ -81,11 +75,11 @@
                         Streets: <span class="streets"></span>
                     </div>
                 </div>
-            </header>
+            </header>-->
             <section id="map">
                 <div class="buttons left">
                     <div class="group">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download btn"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>
+                    <span class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg></span>
                     <button id="storeSelection" class="btn">Selection <span></span></button>
                     <button id="storeAll" class="btn">Everything</button></div>
                     <div class="group">

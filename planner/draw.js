@@ -173,10 +173,10 @@ window.PlannerApp = window.PlannerApp || {};
 
     function updateStats() {
         const oldStreetAmount = Object.values(state.cityData).filter(x => x.type === 'street').length;
-        dom.oldStreetsEl.textContent = oldStreetAmount;
+        if (dom.oldStreetsEl) dom.oldStreetsEl.textContent = oldStreetAmount;
 
         const streetAmount = state.mapBuildings.filter(x => x.data.type === 'street').length;
-        dom.newStreetsEl.textContent = streetAmount;
+        if (dom.newStreetsEl) dom.newStreetsEl.textContent = streetAmount;
     }
 
     function clampZoomToSteps(dir) {

@@ -47,6 +47,14 @@ body, html {
     color: var(--danger-red)
 }
 
+h1 {
+    display: flex;
+    margin: 0.5rem 0;
+    align-items: center;
+    gap: 5px;
+    padding: 0 5px;
+}
+
 textarea, button, input, .btn {
     background-color: inherit;
     color: inherit;
@@ -56,6 +64,14 @@ textarea, button, input, .btn {
 
 .btn {
     padding: 3px 6px;
+}
+
+.btn:hover {
+    background-color: #383028;
+}
+
+.btn:disabled {
+    opacity: 0.3;
 }
 
 .wrapper {
@@ -191,7 +207,7 @@ textarea, button, input, .btn {
 #map .buttons {
     z-index: 1200;
     position: absolute;
-    top: 70px;
+    top: 5px;
     display: flex;
     gap: 3px;
 }
@@ -254,7 +270,7 @@ textarea, button, input, .btn {
     background-color: #0002;
 }
 
-button {
+button, .btn {
     backdrop-filter: blur(5px) brightness(0.5) contrast(1.2);
     text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
     border-radius: 3px;
@@ -270,7 +286,7 @@ button {
     overflow: hidden;
 	position: relative;
 	height: 100vh;
-	width: calc(100vw - 250px);
+	width: calc(100vw - 290px);
 }
 #canvasWrapper .shadow {
 	position: absolute;

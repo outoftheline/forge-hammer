@@ -4,7 +4,6 @@ window.PlannerApp = window.PlannerApp || {};
 
 window.PlannerApp.dom = {
     submitWindow: document.querySelector('.overlay'),
-    submitBtn: document.querySelector('.overlay button'),
     submitError: document.querySelector('.overlay .error'),
 
     storeBuildingsBtn: document.querySelector('#storeAll'),
