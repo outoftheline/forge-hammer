@@ -10,7 +10,7 @@ let mouseActions = {
     lastMouseCoords:{},
 
     init: async () => {
-        await ExistenceConfirmed('$("#openfl-content canvas")')
+        await FH.ExistenceConfirmed('$("#openfl-content canvas")')
 
         mouseActions.targetEl = $("#openfl-content canvas")[0]
         $("#openfl-content").on("click",(e) => {
@@ -159,7 +159,7 @@ mouseActions.addAction([[210, -487, 'BottomLeft'],[0,0,"BottomLeft"]],(X,Y)=>{
 })    
 
 FH.proxy.addRequestHandler("CityMapService","placeBuilding",(data)=>{
-    if (MainParser.CityEntities[data.requestData[0].cityentity_id].type != "street") buildRepeat.click()
+    if (FH.Main.CityEntities[data.requestData[0].cityentity_id].type != "street") buildRepeat.click()
 })
 
 let buildRepeat = {

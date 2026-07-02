@@ -175,7 +175,7 @@ let Alerts = function(){
 		 * @returns {Promise<FoEAlert|undefined>}
 		 */
 		get: (id) => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'get',
@@ -188,7 +188,7 @@ let Alerts = function(){
 		 * @returns {Promise<FoEAlert[]>}
 		 */
 		getAll: () => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'getAll',
@@ -201,7 +201,7 @@ let Alerts = function(){
 		 * @returns {Promise<void>}
 		 */
 		create: (data) => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'create',
@@ -216,7 +216,7 @@ let Alerts = function(){
 		 * @returns {Promise<number>} the id of the possibly changed alert
 		 */
 		setData: (id, data) => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'setData',
@@ -231,7 +231,7 @@ let Alerts = function(){
 		 * @returns {Promise<boolean>} true if an alert was deleted
 		 */
 		delete: (id) => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'delete',
@@ -244,7 +244,7 @@ let Alerts = function(){
 		 * @param {FoEAlertData} data the alert data to create an alert preview from
 		 */
 		preview: (data) => {
-			return MainParser.sendExtMessage({
+			return FH.Main.sendExtMessage({
 				type: 'alerts',
 				playerId: ExtPlayerID,
 				action: 'preview',

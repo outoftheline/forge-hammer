@@ -10,7 +10,7 @@ FH.proxy.addHandler('ItemStoreService', 'getStore', (data, postData) => {
 	shopAssist.alertsTriggered = {};
 	shopAssist.checkAlerts();
 	shopAssist.alertsTriggered = {};
-	shopAssist.showDiscount = data.responseData.refresh?.refreshAt - GameTime.get() < 24*3600; //only show discount if less than 24h to next refresh
+	shopAssist.showDiscount = data.responseData.refresh?.refreshAt - FH.GameTime.get() < 24*3600; //only show discount if less than 24h to next refresh
 	
     if ($('#shopAssist-Btn').hasClass('hud-btn-red')) {
         $('#shopAssist-Btn').removeClass('hud-btn-red');
@@ -214,8 +214,8 @@ let shopAssist = {
 			if (slot.reward?.assembledReward?.type == "ally") {
 				let allTT = `<table class="foe-table shopAssistTable">
 							<tr><th><img src=${srcLinks.get("/historical_allies/portraits/historical_allies_portrait_ally_"+slot.reward.assembledReward.iconAssetName+".png",true)} style="height:unset">
-							${MainParser.Allies.rarityStars(slot.reward.assembledReward.rarity.value)}</th></tr>
-							<tr><td> ${MainParser.Allies.boosts(slot.reward.assembledReward.boosts)}</td></tr>
+							${FH.Main.Allies.rarityStars(slot.reward.assembledReward.rarity.value)}</th></tr>
+							<tr><td> ${FH.Main.Allies.boosts(slot.reward.assembledReward.boosts)}</td></tr>
 							</table>`
 				shopAssist.allTTContent[slot.slotId+"A"] = allTT;
 			}
@@ -439,15 +439,15 @@ let shopAssist = {
 			AssembledStock = null;
 		if (reward.type == "building") {
 			buildingId = reward.id.replace("building#","")
-			stock = Object.values(MainParser.Inventory).find(x=>x.item.cityEntityId === buildingId)?.inStock || 0;
+			stock = Object.values(FH.Main.Inventory).find(x=>x.item.cityEntityId === buildingId)?.inStock || 0;
 		}
 		if (reward.subType == "fragment") 
 			AssembledStock = shopAssist.getStock(reward.assembledReward).stock;
 		
 		if (reward.subType == "selection_kit")
-			stock = Object.values(MainParser.Inventory).find(x=>x.item.selectionKitId === reward.id)?.inStock || 0;
+			stock = Object.values(FH.Main.Inventory).find(x=>x.item.selectionKitId === reward.id)?.inStock || 0;
 		if (reward.subType == "upgrade_kit")
-			stock = Object.values(MainParser.Inventory).find(x=>x.item.upgradeItemId === reward.id)?.inStock || 0;
+			stock = Object.values(FH.Main.Inventory).find(x=>x.item.upgradeItemId === reward.id)?.inStock || 0;
 		if (reward.type == "unit") 
 			stock = Object.values(Unit?.Cache?.counts||{}).find(x=>x.unitTypeId === reward.unit.unitTypeId)?.unattached || "???";
 		if (reward.type == "resource") 	{
@@ -455,7 +455,7 @@ let shopAssist = {
 			stock = ResourceStock[id]
 		}
 		if (stock === null)
-			stock = Object.values(MainParser.Inventory).find(x=>x.item.id === reward.id || x.item.reward?.id && x.item.reward?.id===/(^.*?#(\(.*?\)|[^#])*)/.exec(reward.id)?.[1])?.inStock || 0;
+			stock = Object.values(FH.Main.Inventory).find(x=>x.item.id === reward.id || x.item.reward?.id && x.item.reward?.id===/(^.*?#(\(.*?\)|[^#])*)/.exec(reward.id)?.[1])?.inStock || 0;
 		return {
 			stock: AssembledStock !== null ? AssembledStock : stock,
 			fragments: AssembledStock !== null ? stock : null
@@ -466,7 +466,7 @@ let shopAssist = {
 	getBuildingIds: (reward) => {
 		let Ids = [];
 		getFromUpgrade = (id)=>{
-			let steps = MainParser.BuildingUpgrades[id].upgradeSteps
+			let steps = FH.Main.BuildingUpgrades[id].upgradeSteps
 			return steps[steps.length-1].buildingIds
 		}
 		if (reward.type == "building") {
@@ -474,7 +474,7 @@ let shopAssist = {
 		} else if (reward.subType == "fragment") {
 			Ids = Array(...Ids,...shopAssist.getBuildingIds(reward.assembledReward));
 		} else if (reward.subType == "selection_kit") {
-			for (let option of MainParser.SelectionKits[reward.id].options) {
+			for (let option of FH.Main.SelectionKits[reward.id].options) {
 				if (option.item.__class__ == "BuildingItemPayload") Ids.push(option.item.cityEntityId)
 				if (option.item.__class__ == "UpgradeKitPayload") Ids.push(getFromUpgrade(option.item.upgradeItemId))
 			}
@@ -494,7 +494,7 @@ let shopAssist = {
         if (!buildingIds) return
 
         let eff = Object.assign({},...Productions.rateBuildings(buildingIds,true,CurrentEra)?.map(x=>({[x.entityId]:Math.round(100 * x.rating?.totalScore||0)})))
-		let meta = Object.assign({},...buildingIds.map(x=>({[x]:MainParser.CityEntities[x]})))
+		let meta = Object.assign({},...buildingIds.map(x=>({[x]:FH.Main.CityEntities[x]})))
 
 		let upgrades = Object.assign({},...buildingIds.map(x=>{
 			let u = ""

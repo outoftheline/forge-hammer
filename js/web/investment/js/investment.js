@@ -13,7 +13,7 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 
 	if (data['requestMethod'] !== 'getContributions')
 	{
-		Investment.RequestBlockTime = +MainParser.getCurrentDate();
+		Investment.RequestBlockTime = +FH.Main.getCurrentDate();
 	}
 
 	if (data['requestMethod'] === 'getContributions')
@@ -25,7 +25,7 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 		Investment.Data = data['responseData'];
 
 		Investment.UpdateData(Investment.Data, true).then((e) => {
-		if (Settings.GetSetting('ShowInvestments') && (+MainParser.getCurrentDate() - Investment.RequestBlockTime) > 2000)
+		if (Settings.GetSetting('ShowInvestments') && (+FH.Main.getCurrentDate() - Investment.RequestBlockTime) > 2000)
 			{
 				Investment.BuildBox(true);
 			}
@@ -239,7 +239,7 @@ let Investment = {
 				history = JSON.parse(contribution['fphistory'] || false);
 				for (let i in history) {
 					if (history.hasOwnProperty(i)) {
-						if ((+MainParser.getCurrentDate() - 300 * 1000) < new Date(history[i].date).getTime())
+						if ((+FH.Main.getCurrentDate() - 300 * 1000) < new Date(history[i].date).getTime())
 						{
 							newerClass = 'new';
 						}
@@ -259,7 +259,7 @@ let Investment = {
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${MainParser.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
 			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${i18n('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
@@ -311,7 +311,7 @@ let Investment = {
 			let uptodateClass = 'uptodate';
 
 			let date = moment(lastupdate).unix();
-			let actdate = moment(MainParser.getCurrentDate()).unix();
+			let actdate = moment(FH.Main.getCurrentDate()).unix();
 			let datediff = actdate - date;
 			let updrequTitle = i18n('Boxes.Investment.UpToDate');
 
@@ -445,7 +445,7 @@ let Investment = {
 				blueprints: Investment['blueprints'],
 				increase: Investment['increase'],
 				ishidden: Investment['ishidden'],
-				date: MainParser.getCurrentDate()
+				date: FH.Main.getCurrentDate()
 			});
 		}
 		else {
@@ -467,12 +467,12 @@ let Investment = {
 
 	UpdateData: async (LGData, FullSync) => {
 
-		let arc = 1 + (MainParser.ArkBonus / 100);
+		let arc = 1 + (FH.Main.ArkBonus / 100);
 		let allGB = await IndexDB.db.investhistory.where('id').above(0).keys();
 		let UpdatedList = false;
 		let playerSyncGbKeys = null;
 		let arcLevelCheck = JSON.parse(FH.Storage.getItem('InvestmentArcBonus'));
-		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != MainParser.ArkBonus ? true : false;
+		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != FH.Main.ArkBonus ? true : false;
 
 		for (let i in LGData)
 		{
@@ -513,9 +513,9 @@ let Investment = {
 				let isHidden = 0;
 
 				if (undefined !== LGData[i]['reward']) {
-					Medals = MainParser.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
-					Blueprints = MainParser.round(LGData[i]['reward']['blueprints'] !== undefined ? LGData[i]['reward']['blueprints'] * arc : 0);
-					CurrentErtrag = MainParser.round(LGData[i]['reward']['strategy_point_amount'] !== undefined ? LGData[i]['reward']['strategy_point_amount'] * arc : 0);
+					Medals = FH.Main.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
+					Blueprints = FH.Main.round(LGData[i]['reward']['blueprints'] !== undefined ? LGData[i]['reward']['blueprints'] * arc : 0);
+					CurrentErtrag = FH.Main.round(LGData[i]['reward']['strategy_point_amount'] !== undefined ? LGData[i]['reward']['strategy_point_amount'] * arc : 0);
 					Profit = CurrentErtrag;
 				}
 
@@ -545,7 +545,7 @@ let Investment = {
 
 					let data = {
 						current_progress: CurrentProgress,
-						date: MainParser.getCurrentDate(),
+						date: FH.Main.getCurrentDate(),
 						increase: increase
 					}
 
@@ -629,9 +629,9 @@ let Investment = {
 		// Set Update Date + ArcBonus in local Storage
 		if(FullSync){
 			let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
-			InvestmentSettings['lastupdate'] = MainParser.getCurrentDate();
+			InvestmentSettings['lastupdate'] = FH.Main.getCurrentDate();
 			FH.Storage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
-			FH.Storage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
+			FH.Storage.setItem('InvestmentArcBonus', FH.Main.ArkBonus);
 		}
 	},
 

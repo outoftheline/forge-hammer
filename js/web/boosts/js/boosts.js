@@ -137,7 +137,7 @@ let Boosts = {
         Boosts.Add(boosts)
     },
     InitQIAP: async () => {
-        await ExistenceConfirmed('GoodsData.guild_raids_action_points');
+        await FH.ExistenceConfirmed('GoodsData.guild_raids_action_points');
         QIActions.capacity  = (GoodsData.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity'];
 
     },
@@ -190,7 +190,7 @@ let Boosts = {
             Boosts.noSettlement[boost] = 0;
             for (let b of Boosts.ListByType[boost]) {
                 Boosts.Sums[boost] += b.value;
-                if ((!b.entityId || MainParser.CityMapData[b.entityId])) {
+                if ((!b.entityId || FH.Main.CityMapData[b.entityId])) {
                     Boosts.noSettlement[boost] += b.value;
                 }
             }
@@ -212,16 +212,16 @@ let Boosts = {
                 }
                 if (!Boosts.Timer.id || !Boosts.Timer.next || boost.startTime < Boosts.Timer.next) {
                     clearTimeout(Boosts.Timer.id)
-                    Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - GameTime.get() + 2)*1000)
+                    Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - FH.GameTime.get() + 2)*1000)
                     Boosts.Timer.next = boost.startTime
                 }
-                //FH.Storage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
+                //FH.Storage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!FH.Main.CityMapData[x.entityId])))
             }
             let boostsToAddDirectly=[]
             for (let building of buildings||[]) {
                 if (!building.id) continue
                 Boosts.Remove([{entityId:building.id}])
-                let metaData = structuredClone(MainParser.CityEntities[building.cityentity_id])
+                let metaData = structuredClone(FH.Main.CityEntities[building.cityentity_id])
                 let era = Technologies.getEraName(building.cityentity_id, building.level)
                 let NCE=CityBuildings.createBuilding(metaData, era, building)
                 if (!NCE.boosts||NCE.boosts.length==0) continue
@@ -247,7 +247,7 @@ let Boosts = {
                  
                 if (metaData?.components?.AllAge?.limited) {
                     let target = metaData.components.AllAge.limited.config.targetCityEntityId
-                    let metaTarget = structuredClone(MainParser.CityEntities[target])
+                    let metaTarget = structuredClone(FH.Main.CityEntities[target])
                     let era = Technologies.getEraName(building.cityentity_id, building.level)
                     let NCE=CityBuildings.createBuilding(metaTarget, era)
                     for (let boost of NCE.boosts||[]) {
@@ -266,7 +266,7 @@ let Boosts = {
         add:(boost)=>{
             if (!Boosts.TimeOut.id || !Boosts.Timer.next || boost.expireTime < Boosts.TimeOut.next) {
                 clearTimeout(Boosts.Timer.id)
-                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.expireTime - GameTime.get() + 2)*1000)
+                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.expireTime - FH.GameTime.get() + 2)*1000)
                 Boosts.Timer.next = boost.expireTime
             }
             Boosts.TimeOut.list.push(boost)
@@ -277,7 +277,7 @@ let Boosts = {
         id:null,
         execute:()=>{
 
-            let refTime=GameTime.get()
+            let refTime=FH.GameTime.get()
             let toRemove = Boosts.TimeOut.list.filter(x=>x.expireTime<=refTime)
             Boosts.TimeOut.list = Boosts.TimeOut.list.filter(x=>x.expireTime>refTime)
             Boosts.Remove(toRemove)
@@ -289,7 +289,7 @@ let Boosts = {
             let next=Math.min(...list)
             clearTimeout(Boosts.Timer.id)
             Boosts.Timer.id=null
-            if (list.length>0) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (next - GameTime.get() + 2)*1000)
+            if (list.length>0) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (next - FH.GameTime.get() + 2)*1000)
         },
     },
     Remove: (boosts) => {

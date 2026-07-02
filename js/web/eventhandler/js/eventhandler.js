@@ -274,7 +274,7 @@ let EventHandler = {
 						break;
 					default:
 						refDate = moment().day(capitalize(day));
-						if (refDate.isAfter(MainParser.getCurrentDate())) refDate = refDate.subtract(7 * 86400000); //Date is in the future => subtract 1 week
+						if (refDate.isAfter(FH.Main.getCurrentDate())) refDate = refDate.subtract(7 * 86400000); //Date is in the future => subtract 1 week
 				}
 
 				refDate.set({
@@ -587,7 +587,7 @@ let EventHandler = {
 			h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + FH.helper.str.cleanup(Player['PlayerName']) + '">');
 
 			h.push(`<span class="activity activity_${Player['Activity']}"></span> `);
-			h.push(MainParser.GetPlayerLink(Player['PlayerID'], Player['PlayerName']));
+			h.push(FH.Main.GetPlayerLink(Player['PlayerID'], Player['PlayerName']));
 
             // Player ID
             h.push('<td style="display:none" data-text="' + Player['PlayerID'] + '">' + Player['PlayerID'] + '</td>');
@@ -595,13 +595,13 @@ let EventHandler = {
 			// Guild name column
 			if (EventHandler.CurrentPlayerGroup != 'Guild' && EventHandler.ShowHideColumns.GuildName) {
 				h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + (FH.helper.str.cleanup(Player['ClanName'] || "")) + '">');
-				h.push(Player['ClanName'] ? MainParser.GetGuildLink(Player['ClanId'], Player['ClanName']) : "");
+				h.push(Player['ClanName'] ? FH.Main.GetGuildLink(Player['ClanId'], Player['ClanName']) : "");
 			}
 
 			// Player Age column (with shield icons if protected)
 			if (EventHandler.ShowHideColumns.Era) {
 				let pTime = EventHandler.isProtected[Player['PlayerID']] | 0;
-				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > MainParser.getCurrentDateTime())) ? pImage : '';
+				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > FH.Main.getCurrentDateTime())) ? pImage : '';
 				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]+'.short')}</td>`);
 			}
 
@@ -613,7 +613,7 @@ let EventHandler = {
 			// Event columns
 			for (let j = 0; j < EventHandler.MaxVisitCount; j++) {
 				if (j < Visits.length) {
-					let Seconds = (MainParser.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
+					let Seconds = (FH.Main.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
 					let Days = Seconds / 86400; //24*3600
 					let bgColor = (Days < 2 * (j + 1) ? 'bg-green' : (Days < 5 * (j + 1) ? 'bg-yellow' : 'bg-red'));
 					let FormatedDays = FH.HTML.i18nReplacer(i18n('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });

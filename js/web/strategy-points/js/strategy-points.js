@@ -198,7 +198,7 @@ let StrategyPoints = {
 			StrategyPoints.HandleWindowResize();
 		}
 		let old = StrategyPoints.InventoryFP;
-		StrategyPoints.InventoryFP = Object.values(MainParser.Inventory).filter(x=>x.item.__class__ == "ForgePointPackagePayload").reduce((total,x) => total + (x.inStock || 0) * (x.item?.resource_package?.gain || 0),0)
+		StrategyPoints.InventoryFP = Object.values(FH.Main.Inventory).filter(x=>x.item.__class__ == "ForgePointPackagePayload").reduce((total,x) => total + (x.inStock || 0) * (x.item?.resource_package?.gain || 0),0)
 
 		let delimiter = Number(1000).toLocaleString().substring(1,2);
 

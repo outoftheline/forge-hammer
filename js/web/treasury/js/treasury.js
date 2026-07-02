@@ -99,7 +99,7 @@ let Treasury = {
         let ExportString = h.join('\r\n');
         let BOM = "\uFEFF";
         let Blob1 = new Blob([BOM + ExportString], { type: "application/octet-binary;charset=ANSI" });
-        MainParser.ExportFile(Blob1, 'GuildTreasury-'+moment().format('YYYY-MM-DD')+'.csv');
+        FH.Main.ExportFile(Blob1, 'GuildTreasury-'+moment().format('YYYY-MM-DD')+'.csv');
     },
 
     /**

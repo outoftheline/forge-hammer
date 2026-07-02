@@ -159,7 +159,7 @@ let GreatBuildings = {
                 GreatBuildings.AttackValue = parseFloat(AttackValue);
             }
 
-            GreatBuildings.RewardPerDay = MainParser.round(GreatBuildings.FPRewards / 6);
+            GreatBuildings.RewardPerDay = FH.Main.round(GreatBuildings.FPRewards / 6);
 
             FH.HTML.Box({
                 id: 'greatbuildings',
@@ -365,7 +365,7 @@ let GreatBuildings = {
         h.push('</tr>');
         h.push('</thead>');
 
-        let CurrentCityMapData = (LastMapPlayerID === ExtPlayerID ? MainParser.CityMapData : CityMap.OtherPlayer.mapData);
+        let CurrentCityMapData = (LastMapPlayerID === ExtPlayerID ? FH.Main.CityMapData : CityMap.OtherPlayer.mapData);
 
         let AllROIResults = [],
             IsNewGBs = [];
@@ -382,7 +382,7 @@ let GreatBuildings = {
                 }
             }
                         
-            let CityEntity = MainParser.CityEntities[GBData.ID];
+            let CityEntity = FH.Main.CityEntities[GBData.ID];
             if (!CityEntity) continue; //Great building has been removed from the game => skip
 
             let OwnGB = Object.values(CurrentCityMapData).find(obj => (obj['cityentity_id'] === GBData.ID));
@@ -420,7 +420,7 @@ let GreatBuildings = {
                     GoodsValue = GreatBuildings.GoodsValue0;
                 }
                 else if (GBData.ID === 'X_FutureEra_Landmark1') { // Arche
-                    let arc = 1 + MainParser.ArkBonus / 100;
+                    let arc = 1 + FH.Main.ArkBonus / 100;
                     FPProductions[j] = GBData.Rewards[j] * GreatBuildings.RewardPerDay / arc;
                 }
 //                else if (GBData.ID === 'X_AllAge_Expedition') { // Relikttempel
@@ -583,7 +583,7 @@ let GreatBuildings = {
                         AttackProduction = CurrentROIResult['ROIValues'][BestLevel]['Attack'],
                         AttackValue = CurrentROIResult['AttackValue'],
                         BreakEven = CurrentROIResult['ROIValues'][BestLevel]['ROI'],
-                        BreakEvenString = TotalValueSign + FH.HTML.Format(MainParser.round(BreakEven)),
+                        BreakEvenString = TotalValueSign + FH.HTML.Format(FH.Main.round(BreakEven)),
                         BreakEvenClass = (i === 0 && j === 0 ? 'text-success' : 'text-bright');
                         CostsTT = (IsNewGBs[Index] ? FH.HTML.i18nReplacer(i18n('Boxes.GreatBuildings.NewGBCostsTT'), { 'goodcosts': CurrentROIResult['BuildCosts'] }) : ''),
                         FPProductionTT = (IsNewGBs[Index] ? FH.HTML.i18nReplacer(i18n('Boxes.GreatBuildings.NewGBFPProductionTT'), { 'tiles': Math.round(CurrentROIResult['BuildDailyCosts'] / GreatBuildings.FPPerTile * 100)/100, 'fppertile': GreatBuildings.FPPerTile, 'opcost': Math.round(CurrentROIResult['BuildDailyCosts'] * 100)/ 100 }) : '');
@@ -606,16 +606,16 @@ let GreatBuildings = {
                         BreakEvenTT = FH.HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenTT'), { 'days': Math.round(BreakEven), 'costs': FH.HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10 });
                     }
                                         
-                    h.push('<td>' + MainParser.CityEntities[GBData.ID]['name'] + '</td>');
+                    h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
                     h.push('<td style="white-space:nowrap">' + CurrentLevel + ' &rarr; ' + (BestLevel + 1) + '</td>');
-                    h.push('<td title="' + FH.HTML.i18nTooltip(CostsTT) + '">' + FH.HTML.Format(MainParser.round(Costs)) + '</td>');
-                    h.push('<td title="' + FH.HTML.i18nTooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(MainParser.round(FPProduction * 10) / 10) + '</td>');
-                    if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + FH.HTML.Format(MainParser.round(GoodsProduction * 10) / 10) + '</td>');
-                    if (GreatBuildings.ShowAttack) h.push('<td>' + AttackValueSign + FH.HTML.Format(MainParser.round(AttackProduction * 10) / 10) + '</td>');
+                    h.push('<td title="' + FH.HTML.i18nTooltip(CostsTT) + '">' + FH.HTML.Format(FH.Main.round(Costs)) + '</td>');
+                    h.push('<td title="' + FH.HTML.i18nTooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(FH.Main.round(FPProduction * 10) / 10) + '</td>');
+                    if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + FH.HTML.Format(FH.Main.round(GoodsProduction * 10) / 10) + '</td>');
+                    if (GreatBuildings.ShowAttack) h.push('<td>' + AttackValueSign + FH.HTML.Format(FH.Main.round(AttackProduction * 10) / 10) + '</td>');
                     h.push('<td title="' + FH.HTML.i18nTooltip(BreakEvenTT) + '"><strong class="' + BreakEvenClass + '">' + FH.HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenUnit'), { 'days': BreakEvenString }) + '</strong></td>');
                 }
                 else { //LG zu hoch => Keine Daten mehr verfügbar oder Güterkosten zu hoch
-                    h.push('<td>' + MainParser.CityEntities[GBData.ID]['name'] + '</td>');
+                    h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
                     h.push('<td>-</td>');
                     h.push('<td>-</td>');
                     h.push('<td>-</td>');
@@ -649,12 +649,12 @@ let GreatBuildings = {
     RefreshGalaxyBuildings: () => {
         GreatBuildings.GalaxyBuildings = [];
 
-        let CityMap = Object.values(MainParser.CityMapData);
+        let CityMap = Object.values(FH.Main.CityMapData);
 
         for (let i = 0; i < CityMap.length; i++) {
             let ID = CityMap[i]['id']
             EntityID = CityMap[i]['cityentity_id'],
-                CityEntity = MainParser.CityEntities[EntityID];
+                CityEntity = FH.Main.CityEntities[EntityID];
 
             if (CityEntity['type'] === 'main_building' || CityEntity['type'] === 'greatbuilding') continue;
 
@@ -796,7 +796,7 @@ let GreatBuildings = {
 
 
     GetBruttoCosts: (EntityID, Level) => {
-        let CityEntity = MainParser.CityEntities[EntityID];
+        let CityEntity = FH.Main.CityEntities[EntityID];
 
         if (Level < 10) {
             return CityEntity['strategy_points_for_upgrade'][Level];
@@ -808,7 +808,7 @@ let GreatBuildings = {
 
 
     GetLevel: (EntityID, TotalFP) => {
-        let CityEntity = MainParser.CityEntities[EntityID];
+        let CityEntity = FH.Main.CityEntities[EntityID];
 
         let Level10 = CityEntity['strategy_points_for_upgrade'][9];
 
@@ -842,11 +842,11 @@ let GreatBuildings = {
 
         Ret[0] = P1;
         for (let i = 1; i < 5; i++) {
-            Ret[i] = MainParser.round(Ret[i - 1] / (i + 1) / 5) * 5;
+            Ret[i] = FH.Main.round(Ret[i - 1] / (i + 1) / 5) * 5;
         }
 
         for (let i = 0; i < 5; i++) {
-            Ret[i] = MainParser.round(Ret[i] * arcs[i]);
+            Ret[i] = FH.Main.round(Ret[i] * arcs[i]);
         }
 
         return Ret;
@@ -864,7 +864,7 @@ let GreatBuildings = {
             if (Event['type'] !== 'great_building_contribution') continue;
 
             if (!GreatBuildings.GreatBuildingEntityCache) {
-                GreatBuildings.GreatBuildingEntityCache = Object.values(MainParser.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
+                GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
             }
 
             let Entity = GreatBuildings.GreatBuildingEntityCache.find(obj => (obj['name'] === Event['great_building_name']))
@@ -878,7 +878,7 @@ let GreatBuildings = {
 
             if (Rank > 5) continue;
 
-            let Maezen = GreatBuildings.GetMaezen(Reward, MainParser.ArkBonus);
+            let Maezen = GreatBuildings.GetMaezen(Reward, FH.Main.ArkBonus);
             let FPReward = Maezen[Rank - 1];
 
             GreatBuildings.FPRewards += FPReward;

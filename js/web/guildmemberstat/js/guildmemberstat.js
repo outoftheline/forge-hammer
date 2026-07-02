@@ -258,7 +258,7 @@ let GuildMemberStat = {
 
 			if (entity.hasOwnProperty(i)) {
 				let EntityID = entity[i]['cityentity_id'];
-				let CityEntity = MainParser.CityEntities[EntityID];
+				let CityEntity = FH.Main.CityEntities[EntityID];
 				let EntityEraId = entity[i].level !== undefined ? (entity[i].level + 1) : null;
 				let EntityEra = EntityEraId !== null ? Technologies.EraNames[EntityEraId] : null;
 
@@ -438,11 +438,11 @@ let GuildMemberStat = {
 						if (GuildMemberStat.hasGuildMemberRights && memberdata[i].activity < 2) {
 							let Warning = {
 								player_id: memberdata[i].player_id,
-								lastwarn: MainParser.getCurrentDate(),
+								lastwarn: FH.Main.getCurrentDate(),
 								lastactivity: memberdata[i]['activity'],
 								warnings: [{
 									activity: memberdata[i].activity,
-									date: MainParser.getCurrentDate()
+									date: FH.Main.getCurrentDate()
 								}]
 							}
 
@@ -452,16 +452,16 @@ let GuildMemberStat = {
 				}
 
 				// Update Own Guild support buildings
-				if (MainParser.CityMapData && Object.keys(MainParser.CityMapData).length > 0) {
+				if (FH.Main.CityMapData && Object.keys(FH.Main.CityMapData).length > 0) {
 					let self = {
 						player_id: ExtPlayerID,
 						era: CurrentEra
 					}
-					await GuildMemberStat.ReadGuildMemberBuildings({ city_map: { entities: Object.values(MainParser.CityMapData) } }, self);
+					await GuildMemberStat.ReadGuildMemberBuildings({ city_map: { entities: Object.values(FH.Main.CityMapData) } }, self);
 				}
 
 				// Insert update time & current GuildId
-				GuildMemberStat.Settings.lastupdate = MainParser.getCurrentDate();
+				GuildMemberStat.Settings.lastupdate = FH.Main.getCurrentDate();
 				FH.Storage.setItem('GuildMemberStatSettings', JSON.stringify(GuildMemberStat.Settings));
 				FH.Storage.setItem('GuildMemberStatClanId', currentClanId);
 
@@ -584,7 +584,7 @@ let GuildMemberStat = {
 			if (CurrentMember.lastactivity === undefined)
 				CurrentMember.lastactivity = 1;
 
-			if ((moment(MainParser.getCurrentDate()).format('DD.MM.YYYY') !== moment(CurrentMember.lastwarn).format('DD.MM.YYYY')) || CurrentMember.lastactivity !== Warning.lastactivity) {
+			if ((moment(FH.Main.getCurrentDate()).format('DD.MM.YYYY') !== moment(CurrentMember.lastwarn).format('DD.MM.YYYY')) || CurrentMember.lastactivity !== Warning.lastactivity) {
 
 				await GuildMemberStat.db.activity.where('player_id').equals(playerID).modify(x => x.warnings.push(Warning.warnings[0]));
 
@@ -612,7 +612,7 @@ let GuildMemberStat = {
 
 		if (CurrentMember !== undefined) {
 			await GuildMemberStat.db.player.update(CurrentMember.id, {
-				guildbuildings: { era: era, date: MainParser.getCurrentDate(), buildings: buildings },
+				guildbuildings: { era: era, date: FH.Main.getCurrentDate(), buildings: buildings },
 				greatbuildings: gbs
 			});
 
@@ -643,7 +643,7 @@ let GuildMemberStat = {
 				await GuildMemberStat.db.forum.add({
 					player_id: player_id,
 					message_id: m,
-					lastupdate: MainParser.getCurrentDate()
+					lastupdate: FH.Main.getCurrentDate()
 				});
 			}
 			else {
@@ -653,7 +653,7 @@ let GuildMemberStat = {
 				await GuildMemberStat.db.forum.put({
 					player_id: player_id,
 					message_id: GuildMemberStat.uniq_array(message_ids),
-					lastupdate: MainParser.getCurrentDate()
+					lastupdate: FH.Main.getCurrentDate()
 				});
 			}
 		}
@@ -750,9 +750,9 @@ let GuildMemberStat = {
 				city_name: Member['city_name'],
 				activity: Member['activity'],
 				won_battles: Member['won_battles'],
-				date: MainParser.getCurrentDate(),
+				date: FH.Main.getCurrentDate(),
 				deleted: 0,
-				updated: MainParser.getCurrentDate()
+				updated: FH.Main.getCurrentDate()
 			});
 		}
 		else {
@@ -772,7 +772,7 @@ let GuildMemberStat = {
 				activity: Member['activity'],
 				won_battles: Member['won_battles'],
 				deleted: 0,
-				updated: MainParser.getCurrentDate()
+				updated: FH.Main.getCurrentDate()
 			});
 		}
 	},
@@ -791,7 +791,7 @@ let GuildMemberStat = {
 		if (newDeleted.length > 0) {
 			for (let i in newDeleted) {
 				await GuildMemberStat.db.player.update(newDeleted[i].id, {
-					deleted: MainParser.getCurrentDate()
+					deleted: FH.Main.getCurrentDate()
 				});
 			}
 		}
@@ -808,7 +808,7 @@ let GuildMemberStat = {
 
 			let time = +moment(member.deleted);
 
-			if (Math.floor((+MainParser.getCurrentDate() - time) / 86400000) > days) {
+			if (Math.floor((+FH.Main.getCurrentDate() - time) / 86400000) > days) {
 				let db = GuildMemberStat.db;
 
 				db.transaction("rw", db.player, db.gex, db.gbg, db.activity, db.warning, db.forum, async () => {
@@ -1005,7 +1005,7 @@ let GuildMemberStat = {
 
 			h.push(`<tr id="gms${x}" class="${deletedMember ? 'strikeout gms-tooltip ' : 'clickable '}${stateClass}" " data-id="${MemberID}" ${deletedMember ? 'title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.MemberLeavedGuild')) + '"' : ''}>
 				<td class="is-number text-center${rankDiffClass}" data-number="${!deletedMember ? rank : member['score']}">${!deletedMember ? '#' + (rank - deletedCount) : ''}</td>
-				<td class="case-sensitive copyable" data-text="${FH.helper.str.cleanup(member['name'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(member.avatar)}" alt="${member['name']}"> <span>${MainParser.GetPlayerLink(member['player_id'], member['name'])}</span></td>
+				<td class="case-sensitive copyable" data-text="${FH.helper.str.cleanup(member['name'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(member.avatar)}" alt="${member['name']}"> <span>${FH.Main.GetPlayerLink(member['player_id'], member['name'])}</span></td>
 				<td class="is-number" data-number="${member['score']}">${FH.HTML.Format(member['score'])}${scoreDiff > 0 || scoreDiff < 0 ? '<span class="prev_score ' + scoreDiffClass + '">' + (scoreDiff > 0 ? '+' : '') + FH.HTML.FormatNumberShort(scoreDiff) + '</span>' : ''}</td>`);
 
 				if (GuildMemberStat.Settings.showBattlesWon) {
@@ -1034,7 +1034,7 @@ let GuildMemberStat = {
 		if (GuildMemberStat.Settings.lastupdate !== 0) {
 			let uptodateClass = 'uptodate';
 			let date = moment(GuildMemberStat.Settings.lastupdate).unix();
-			let actdate = moment(MainParser.getCurrentDate()).unix();
+			let actdate = moment(FH.Main.getCurrentDate()).unix();
 
 			if (actdate - date >= 10800) {
 				uptodateClass = 'updaterequired';
@@ -1080,7 +1080,7 @@ let GuildMemberStat = {
 			return;
 		}
 
-		let currentTime = MainParser.round(+MainParser.getCurrentDate() / 1000);
+		let currentTime = FH.Main.round(+FH.Main.getCurrentDate() / 1000);
 		let Member = GuildMemberStat.MemberDict[id];
 		let memberData = GuildMemberStat.Data.members.find(x => x.player_id == id);
 		let guildbuildings = Member.guildbuildings;
@@ -1297,7 +1297,7 @@ let GuildMemberStat = {
 
 					}
 
-					let Entity = MainParser.CityEntities[plbuilding.entity_id];
+					let Entity = FH.Main.CityEntities[plbuilding.entity_id];
 					let LevelString;
 					if (plbuilding.level === null) {
 						LevelString = '';
@@ -1517,7 +1517,7 @@ let GuildMemberStat = {
 					let EraMembers = EraGroup[eraId].members.sort(function (a, b) { return a.score > b.score });
 
 					EraMembers.forEach(member => {
-						h.push(`<tr><td>${member.rank[1]}</td><td>${MainParser.GetPlayerLink(member.player_id, member.name)}</td><td>${i18n('Eras.' + eraId)}</td><td class="text-right">${FH.HTML.Format(member.score)}</td></tr>`);
+						h.push(`<tr><td>${member.rank[1]}</td><td>${FH.Main.GetPlayerLink(member.player_id, member.name)}</td><td>${i18n('Eras.' + eraId)}</td><td class="text-right">${FH.HTML.Format(member.score)}</td></tr>`);
 					});
 
 				}
@@ -1682,7 +1682,7 @@ let GuildMemberStat = {
 
 			let goodCount = (plbuilding.resources && plbuilding.resources.totalgoods) ? plbuilding.resources.totalgoods : 0;
 			let powerCount = (plbuilding.power && plbuilding.power.value) ? plbuilding.power.value : 0;
-			let Entity = MainParser.CityEntities[plbuilding.entity_id];
+			let Entity = FH.Main.CityEntities[plbuilding.entity_id];
 			let level = Entity && Entity['type'] === 'greatbuilding' && plbuilding.level !== null && plbuilding.level !== undefined ? plbuilding.level : 0;
 			let goodslist = '';
 
@@ -1699,7 +1699,7 @@ let GuildMemberStat = {
 				`<td class="is-number" data-number="${bCounter}">${bCounter++}</td>` +
 				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(plbuilding.name)}">${plbuilding.name}</td>` +
 				`<td class="is-number text-center" data-number="${level}">${FH.HTML.Format(level)}</td>` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(plbuilding.member)}">${MainParser.GetPlayerLink(plbuilding.player_id, plbuilding.member)}</td>` +
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(plbuilding.member)}">${FH.Main.GetPlayerLink(plbuilding.player_id, plbuilding.member)}</td>` +
 				`<td class="is-number" data-number="${Technologies.Eras[plbuilding.era]}">${plbuilding.era !== undefined ? i18n('Eras.' + Technologies.Eras[plbuilding.era]) : '-'}</td>` +
 				`<td class="is-number text-center gms-tooltip" data-number="${goodCount}" title="${FH.HTML.i18nTooltip(goodslist !== '' ? `<span class="goods-count">${goodCount / 5}x</span>${goodslist}` : '')}">${FH.HTML.Format(goodCount)}</td>` +
 				`<td class="is-number text-center" data-number="${powerCount}">${FH.HTML.Format(powerCount)}</td></tr>`);
@@ -1990,7 +1990,7 @@ let GuildMemberStat = {
 
 			d.push(`<tr id="gms_detail_${x}" data-id="${x}">` +
 				`<td class="case-sensitive ascending" data-text="${FH.helper.str.cleanup(dbuilding.name)}">${dbuilding.name}</td>` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(dbuilding.member)}">${MainParser.GetPlayerLink(dbuilding.player_id, dbuilding.member)}</td>` +
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(dbuilding.member)}">${FH.Main.GetPlayerLink(dbuilding.player_id, dbuilding.member)}</td>` +
 				`<td class="text-center" data-number="${dbuilding.level}">${dbuilding.level}</td>` +
 				`<td class="text-center" data-number="${dbuilding.max_level}">${dbuilding.max_level}</td>` +
 				`<td class="text-center" data-number="${invested_forge_points}">${investable ? invested_forge_points : '-'}</td>` +
@@ -2056,7 +2056,7 @@ let GuildMemberStat = {
 					for (let i in player) {
 						if (!player.hasOwnProperty(i)) continue;
 
-						d.push(`<tr><td data-text="${FH.helper.str.cleanup(player[i].member)}">${MainParser.GetPlayerLink(player[i].player_id, player[i].member)}</td>` +
+						d.push(`<tr><td data-text="${FH.helper.str.cleanup(player[i].member)}">${FH.Main.GetPlayerLink(player[i].player_id, player[i].member)}</td>` +
 							`<td class="text-center" data-number="${player[i].level}">${player[i].level}</td>` +
 							`<td class="text-center" data-number="${player[i].max_level}">${player[i].max_level}</td>` +
 							`<td class="text-center" data-number="${player[i].investedfp}">${player[i].fplevelup !== 0 ? player[i].investedfp : '-'}</td>` +
@@ -2073,7 +2073,7 @@ let GuildMemberStat = {
 						d.push(`<div class="no_gb_member copyable"><span class="text-bright"><i>${FH.HTML.i18nReplacer(i18n('Boxes.GuildMemberStat.MemberWithoutGB'), { 'greatbuilding': GBOverview[id]['name'] })}</i>: </span>`);
 						for (let i = 0; i < NoGbMember.length; i++)
 						{
-							d.push(MainParser.GetPlayerLink(NoGbMember[i], GuildMemberStat.MemberDict[NoGbMember[i]].name));
+							d.push(FH.Main.GetPlayerLink(NoGbMember[i], GuildMemberStat.MemberDict[NoGbMember[i]].name));
 							if (i < NoGbMember.length - 1) d.push(', ');
 						}
 						d.push(`</div>`);
@@ -2267,7 +2267,7 @@ let GuildMemberStat = {
 			}
 		}
 
-		GuildMemberStat.TreasuryGoodsData.updated = +MainParser.getCurrentDate();
+		GuildMemberStat.TreasuryGoodsData.updated = +FH.Main.getCurrentDate();
 		GuildMemberStat.TreasuryGoodsData.totals = eraGoodsTotals;
 
 		FH.Storage.setItem('GuildMemberStatTreasuryGoods', JSON.stringify(GuildMemberStat.TreasuryGoodsData));
@@ -2331,7 +2331,7 @@ let GuildMemberStat = {
 		}
 
 		let Blob1 = new Blob([BOM + FileContent], { type: "application/octet-binary;charset=ANSI" });
-		MainParser.ExportFile(Blob1, filename + '-' + moment().format('YYYY-MM-DD') + '.' + type);
+		FH.Main.ExportFile(Blob1, filename + '-' + moment().format('YYYY-MM-DD') + '.' + type);
 
 		$(`#GuildMemberStatSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();

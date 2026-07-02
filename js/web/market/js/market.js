@@ -339,7 +339,7 @@ let Market = {
                 h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] +'"></span></td>');
                 h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
                 h.push('<td><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
-                h.push('<td class="text-center">' + FH.HTML.Format(MainParser.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
+                h.push('<td class="text-center">' + FH.HTML.Format(FH.Main.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
                 h.push('<td>' + Trade['merchant']['name'] + '</td>');
                 h.push('<td class="text-center">' + (Math.floor(CurrentPos / 10 + 1)) + '-' + (CurrentPos % 10 + 1) + '</td>');
                 h.push('</tr>');

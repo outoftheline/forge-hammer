@@ -209,8 +209,8 @@ let Unit = {
 			let AttackBoost = Boosts['AttackAttackBoost'],
 				DefenseBoost = Boosts['AttackDefenseBoost']
 			
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			attack.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			attack.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -277,8 +277,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			defense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			defense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -344,8 +344,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			arenaDefense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			arenaDefense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -535,7 +535,7 @@ let Unit = {
 	 */
 	RefreshAlca: (data) => {
 		if (!Unit.alca) {
-			Unit.alca = Object.values(MainParser.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
+			Unit.alca = Object.values(FH.Main.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
 		}
 
 		// update next harvest time if pickup
@@ -788,7 +788,7 @@ let Unit = {
 				last.push('<td>' + LastAlca[i]['name'] + '</td>');
 
 				last.push('<td class="text-center">' + LastAlca[i]['count'] + 'x</td>');
-				last.push('<td class="text-center">' + MainParser.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
+				last.push('<td class="text-center">' + FH.Main.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
 
 			last.push('</tr>');
 

@@ -71,14 +71,14 @@ let srcLinks = {
         CSfilename += "-" + CS + "." + filenameP[1];
         
         if (full){
-            return MainParser.InnoCDN + 'assets' + CSfilename;
+            return FH.Main.InnoCDN + 'assets' + CSfilename;
         }
         return CSfilename;
     },
 
 
     GetPortrait: (id)=> {
-        let file = MainParser.PlayerPortraits[id] || 'portrait_433';
+        let file = FH.Main.PlayerPortraits[id] || 'portrait_433';
 
         return srcLinks.get('/shared/avatars/' + file + '.jpg', true);
     },
@@ -87,7 +87,7 @@ let srcLinks = {
     getReward:(icon) => {
         let url=""
         if (icon.substring(1, 2) === "_") {
-            url = srcLinks.get(`/city/buildings/${MainParser.CityEntities?.[icon]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
+            url = srcLinks.get(`/city/buildings/${FH.Main.CityEntities?.[icon]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
         } else if (url==""|| url.indexOf("antiquedealer_flag") > -1) 
             url = srcLinks.get(`/shared/unit_portraits/armyuniticons_90x90/armyuniticons_90x90_${icon}.jpg`,true, true) // does not work :(
 
@@ -123,7 +123,7 @@ let srcLinks = {
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/shared/icons/reward_icons/reward_icon_${x.replace(/(.*?)_[0-9]+/gm,"$1")}.png`,true,true);
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${x.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true,true);
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${x.replace(/(.*?)_[0-9]+/gm,"$1").replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true,true);
-        if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${MainParser.CityEntities?.[x]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
+        if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${FH.Main.CityEntities?.[x]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
         return `<img src=${link} alt="">`;
     },
     regEx: (regEx)=>{

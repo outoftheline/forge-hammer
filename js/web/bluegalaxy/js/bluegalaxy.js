@@ -132,7 +132,7 @@ let BlueGalaxy = {
             FPBoost = (FP) => { return Math.round(FP * FPB) },
             showBGFragments = JSON.parse(FH.Storage.getItem('showBGFragments')||"true");
         
-        for (let CityEntity of Object.values(MainParser.CityBuildingsData)) {
+        for (let CityEntity of Object.values(FH.Main.CityBuildingsData)) {
             
             if (['main_building', 'greatbuilding', 'off_grid'].includes(CityEntity.type)) {
                 continue;
@@ -188,7 +188,7 @@ let BlueGalaxy = {
                         building: CityEntity,
                         ID: CityEntity.id, 
                         EntityID: CityEntity.entityId,
-                        name: MainParser.CityBuildingsData[CityEntity.id].name,
+                        name: FH.Main.CityBuildingsData[CityEntity.id].name,
                         Fragments: Fragments, 
                         FragmentAmount: FragmentAmount,
                         FP: FP, 
@@ -259,7 +259,7 @@ let BlueGalaxy = {
 
         for (let i = 0; i < 50 && i < Buildings.length; i++) { // limits the list to max 50 items
 
-            let isPolivated = MainParser.CityBuildingsData[Buildings[i]['ID']].state.isPolivated;
+            let isPolivated = FH.Main.CityBuildingsData[Buildings[i]['ID']].state.isPolivated;
             table.push('<tr>');
             table.push('<td>' + (isPolivated != undefined ? (isPolivated ? '<span class="text-bright">★</span>' : '☆') : '') + '</td>');
             table.push('<td data-text="'+Buildings[i]['name'].replace(/[. -]/g,"")+'">' + Buildings[i]['name'] + '</td>');
@@ -273,7 +273,7 @@ let BlueGalaxy = {
             table.push('<td class="text-center" data-number="'+Buildings[i].GuildGoods+'">' + FH.HTML.Format(Buildings[i]['GuildGoods']) + '</td>');
             //table.push('<td class="text-center" data-number="'+Buildings[i].CombinedValue+'">' + FH.HTML.Format(Buildings[i]['CombinedValue']) + '</td>');
 
-            if (Buildings[i].In == 0 || Buildings[i].At * 1000 <= MainParser.getCurrentDateTime()) {
+            if (Buildings[i].In == 0 || Buildings[i].At * 1000 <= FH.Main.getCurrentDateTime()) {
                 table.push('<td style="white-space:nowrap"><strong class="success">' + i18n('Boxes.BlueGalaxy.Done') + '</strong></td>');
             }
             else {

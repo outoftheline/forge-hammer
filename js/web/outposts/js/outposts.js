@@ -134,7 +134,7 @@ let Outposts = {
 			advancements
 				.filter(building => building.isUnlocked && building.rewards[0].toLocaleLowerCase().indexOf('diplomacy') > -1)
 				.map(building => {
-					let BuildingData = MainParser.CityEntities[building.rewards[0]];
+					let BuildingData = FH.Main.CityEntities[building.rewards[0]];
 					return {name: building.name, diplomacy: BuildingData.staticResources.resources.diplomacy};
 				})
 				.reverse()
@@ -213,7 +213,7 @@ let Outposts = {
 			t.push(
 				FH.HTML.i18nReplacer(i18n('Boxes.Outpost.infoLine'), {
 					runNumber: (currentRun.id||0)+1,
-					chanceX4: MainParser.round(currentRun.productionBonusProbability * 100)
+					chanceX4: FH.Main.round(currentRun.productionBonusProbability * 100)
 				})
 			);
 		}
@@ -223,7 +223,7 @@ let Outposts = {
 			'</span><span><strong>'
 			+ GoodsData[primaryResourceId].name + ': ' + FH.HTML.Format(ResourceStock[primaryResourceId]||0)
 			+ '</strong> (+ '
-			+ (current5HProductionRate > 0 ? FH.HTML.Format(MainParser.round(current5HProductionRate)) : '???')
+			+ (current5HProductionRate > 0 ? FH.HTML.Format(FH.Main.round(current5HProductionRate)) : '???')
 			+ `/5h)`
 			+ '</span>'
 		);
@@ -320,7 +320,7 @@ let Outposts = {
 
 			if (advancement['rewards'].length > 0) {
 				let EntityID = advancement['rewards'][0],
-					Entity = MainParser.CityEntities[EntityID];
+					Entity = FH.Main.CityEntities[EntityID];
 
 				t.push('<td>' + Entity['name'] + '</td>');
             }

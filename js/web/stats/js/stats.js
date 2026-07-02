@@ -309,13 +309,13 @@ let Stats = {
     },
 
 	DatePickerObj: null,
-	DatePickerStart: moment(MainParser.getCurrentDate()).subtract(6, 'days'),
-	DatePickerEnd: moment(MainParser.getCurrentDateTime()),//.toDate(),
+	DatePickerStart: moment(FH.Main.getCurrentDate()).subtract(6, 'days'),
+	DatePickerEnd: moment(FH.Main.getCurrentDateTime()),//.toDate(),
 
 	minDateFilter: null,
-	maxDateFilter: moment(MainParser.getCurrentDate()).toDate(),
-	DatePickerFrom: null, //moment(MainParser.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
-	DatePickerTo: null, //moment(MainParser.getCurrentDateTime()),//.format('YYYY-MM-DD'),
+	maxDateFilter: moment(FH.Main.getCurrentDate()).toDate(),
+	DatePickerFrom: null, //moment(FH.Main.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
+	DatePickerTo: null, //moment(FH.Main.getCurrentDateTime()),//.format('YYYY-MM-DD'),
 
 	lockDates: [],
 	TodayEntries: null,
@@ -506,17 +506,17 @@ let Stats = {
 				Stats.DatePickerObj = new Litepicker({
 					element: document.getElementById('StatsDatePicker'),
 					format: i18n('Date'),
-					lang: MainParser.Language,
+					lang: FH.Main.Language,
 					singleMode: false,
-					maxDate: MainParser.getCurrentDateTime(),
+					maxDate: FH.Main.getCurrentDateTime(),
 					showWeekNumbers: true,
 					endDate: Stats.DatePickerTo,
 					startDate: Stats.DatePickerFrom,
 					resetButton: true,
 					onSelect: async function (start, end) {
 						// get now if day is today
-						if (end.getDate() === MainParser.getCurrentDate().getDate() && end.getMonth() === MainParser.getCurrentDate().getMonth() && end.getYear() === MainParser.getCurrentDate().getYear()) 
-							end = MainParser.getCurrentDate();
+						if (end.getDate() === FH.Main.getCurrentDate().getDate() && end.getMonth() === FH.Main.getCurrentDate().getMonth() && end.getYear() === FH.Main.getCurrentDate().getYear()) 
+							end = FH.Main.getCurrentDate();
 						else
 							// otherwise, take end of day for end date
 							end.setHours(23);
@@ -708,8 +708,8 @@ let Stats = {
 
 	formatRange: ()=> {
 		let text = undefined;
-		let dateStart = moment(MainParser.getCurrentDateTime()).subtract(10, 'days');
-		let dateEnd = moment(MainParser.getCurrentDateTime());
+		let dateStart = moment(FH.Main.getCurrentDateTime()).subtract(10, 'days');
+		let dateEnd = moment(FH.Main.getCurrentDateTime());
 
 		if (Stats.DatePickerFrom !== null && Stats.DatePickerTo !== null) {
 			dateStart = moment(Stats.DatePickerFrom);
@@ -1708,7 +1708,7 @@ let Stats = {
 			};
 			return acc;
 		}, {});
-		const timeNow = MainParser.getCurrentDate();
+		const timeNow = FH.Main.getCurrentDate();
 
 		await IndexDB.getDB();
 
@@ -1729,7 +1729,7 @@ let Stats = {
 	addReward: async (type,amount,reward) => {
 		//console.log(`add ${type} -  ${reward}: ${amount}`);
 		IndexDB.db.statsRewards.add({
-			date: MainParser.getCurrentDate(),
+			date: FH.Main.getCurrentDate(),
 			type: type,
 			amount: amount,
 			reward: reward

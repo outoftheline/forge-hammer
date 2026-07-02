@@ -329,8 +329,8 @@ let MarketOffers = {
             h.push('<td data-text="' + FH.helper.str.cleanup(GoodsData[NeedGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
             h.push('<td class="is-number" data-number="' + Event['need']['value'] + '"><strong class="td-tooltip" title="' + FH.HTML.i18nTooltip(NeedTT) + '">' + Event['need']['value'] + '</strong></td>');
 
-            h.push('<td class="text-center" data-number="' + Event['offer']['value'] / Event['need']['value'] + '">' + FH.HTML.Format(MainParser.round(Event['offer']['value'] / Event['need']['value'] * 100) / 100) + '</td>');
-            if (MarketOffers.CurrentEventsTab === 'accepted') h.push('<td data-text="' + FH.helper.str.cleanup(PlayerName) + '">' + MainParser.GetPlayerLink(PlayerID, PlayerName) + '</td>');
+            h.push('<td class="text-center" data-number="' + Event['offer']['value'] / Event['need']['value'] + '">' + FH.HTML.Format(FH.Main.round(Event['offer']['value'] / Event['need']['value'] * 100) / 100) + '</td>');
+            if (MarketOffers.CurrentEventsTab === 'accepted') h.push('<td data-text="' + FH.helper.str.cleanup(PlayerName) + '">' + FH.Main.GetPlayerLink(PlayerID, PlayerName) + '</td>');
             h.push('</tr>');
         }
 

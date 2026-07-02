@@ -6,11 +6,11 @@
 
 // neues Postfach
 FH.proxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
-    MainParser.setConversations(data.responseData.category, true);
+    FH.Main.setConversations(data.responseData.category, true);
 });
 
 FH.proxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
-    MainParser.setConversations(data.responseData);
+    FH.Main.setConversations(data.responseData);
 });
 
 let Infoboard = {
@@ -44,8 +44,8 @@ let Infoboard = {
     Show: () => {
         let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 
-        if (MainParser.Conversations.length === 0 && StorageHeader !== null) 
-            MainParser.Conversations = JSON.parse(StorageHeader);
+        if (FH.Main.Conversations.length === 0 && StorageHeader !== null) 
+            FH.Main.Conversations = JSON.parse(StorageHeader);
 
         Infoboard.Box();
     },
@@ -353,7 +353,7 @@ let Info = {
      * Jmd hat in einer Auktion mehr geboten
      */
     ItemAuctionService_updateBid: (d) => {
-        let PlayerLink = MainParser.GetPlayerLink(d['player']['player_id'], d['player']['name']);
+        let PlayerLink = FH.Main.GetPlayerLink(d['player']['player_id'], d['player']['name']);
 
         return {
             class: 'auction',
@@ -372,7 +372,7 @@ let Info = {
      * Nachricht in einem bekannten Chat
      */
     ConversationService_getNewMessage: (d) => {
-        let chat = MainParser.Conversations.find(obj => obj.id === d['conversationId']),
+        let chat = FH.Main.Conversations.find(obj => obj.id === d['conversationId']),
             header, message, image = 'msg';
 
         if (chat && chat['hidden']){
@@ -388,7 +388,7 @@ let Info = {
                 // legendäres Bauwerk
                 message = FH.HTML.i18nReplacer(
                     i18n('Boxes.Infobox.Messages.MsgBuilding'), {
-                    building: MainParser.CityEntities[d['attachment']['cityEntityId']]['name'],
+                    building: FH.Main.CityEntities[d['attachment']['cityEntityId']]['name'],
                     level: d['attachment']['level']
                 });
             }
@@ -409,10 +409,10 @@ let Info = {
             if (d.sender && d.sender.name) {
                 // normale Chatnachricht (bekannte ID)
                 if (d.sender.name === chat.title) {
-                    header = '<div><strong class="bright">' + MainParser.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</strong></div>';
+                    header = '<div><strong class="bright">' + FH.Main.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</strong></div>';
                 }
                 else {
-                    header = '<div><strong class="bright">' + FH.HTML.escapeHtml(chat['title']) + '</strong> - <em>' + MainParser.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</em></div>';
+                    header = '<div><strong class="bright">' + FH.HTML.escapeHtml(chat['title']) + '</strong> - <em>' + FH.Main.GetPlayerLink(d['sender']['player_id'], d['sender']['name']) + '</em></div>';
                 }
             }
             else {
@@ -444,7 +444,7 @@ let Info = {
      * Nachricht in einem unbekannten Chat
      */
     ConversationService_getConversationUpdate: (d) => {
-        let chat = MainParser.Conversations.find(obj => obj.id === d['conversationId']);
+        let chat = FH.Main.Conversations.find(obj => obj.id === d['conversationId']);
         if (chat) return undefined;
 
         let message = '<div><strong class="bright">' + i18n('Boxes.Infobox.UnknownConversation') + '</strong></div>';
@@ -460,7 +460,7 @@ let Info = {
      * GBG Map figths
      */
     GuildBattlegroundService_getProvinces: async (d) => {
-        await ExistenceConfirmed('GuildFights.SortedColors')
+        await FH.ExistenceConfirmed('GuildFights.SortedColors')
 
         let data = d[0];
         let bP = GuildFights.MapData['battlegroundParticipants'],
@@ -474,7 +474,7 @@ let Info = {
 
         if (data.lockedUntil !== undefined) {
             // keine Übernahme
-            if (data.lockedUntil < Math.floor(MainParser.getCurrentDateTime() / 1000) + 14390) return undefined;
+            if (data.lockedUntil < Math.floor(FH.Main.getCurrentDateTime() / 1000) + 14390) return undefined;
 
             let p = bP.find(o => (o['participantId'] === data['ownerId'])),
                 colors = GuildFights.SortedColors.find(c => (c['id'] === data['ownerId']));
@@ -568,17 +568,17 @@ let Info = {
         if (d['rank'] >= 6) 
             newFP = 0;
         else {
-            let Entity = Object.values(MainParser.CityEntities).find(obj => (obj['name'] === d['great_building_name']));
+            let Entity = Object.values(FH.Main.CityEntities).find(obj => (obj['name'] === d['great_building_name']));
                 EntityID = Entity['id'],
                 EraName = EraName = GreatBuildings.GetEraName(EntityID),
                 Era = Technologies.Eras[EraName],
                 P1 = GreatBuildings.Rewards[Era][d['level']-1],
-                FPRewards = GreatBuildings.GetMaezen(P1, MainParser.ArkBonus);
+                FPRewards = GreatBuildings.GetMaezen(P1, FH.Main.ArkBonus);
 
                 newFP = FPRewards[d['rank'] - 1];
         }
 
-        let PlayerLink = MainParser.GetPlayerLink(d['other_player']['player_id'], d['other_player']['name']);
+        let PlayerLink = FH.Main.GetPlayerLink(d['other_player']['player_id'], d['other_player']['name']);
 
         return {
             class: 'level',
@@ -600,7 +600,7 @@ let Info = {
      * Handel wurde angenommen
      */
     OtherPlayerService_newEventtrade_accepted: (d) => {
-        let PlayerLink = MainParser.GetPlayerLink(d['other_player']['player_id'], d['other_player']['name']);
+        let PlayerLink = FH.Main.GetPlayerLink(d['other_player']['player_id'], d['other_player']['name']);
 
         return {
             class: 'trade',
@@ -626,7 +626,7 @@ let Info = {
             return false;
         }
 
-        let PlayerLink = MainParser.GetPlayerLink(d['player']['player_id'], d['player']['name']);
+        let PlayerLink = FH.Main.GetPlayerLink(d['player']['player_id'], d['player']['name']);
 
         return {
             class: 'ge',
@@ -662,7 +662,7 @@ let Info = {
         if (d.causingPlayerId === ExtPlayerID) return false;
 
         let nodeID = d.state.nodeId;
-        let PlayerLink = MainParser.GetPlayerLink(d.causingPlayerId, PlayerDict[d.causingPlayerId]?.PlayerName) || '';
+        let PlayerLink = FH.Main.GetPlayerLink(d.causingPlayerId, PlayerDict[d.causingPlayerId]?.PlayerName) || '';
         let nodeData = QiProgress.QiMap.nodes?.find(x => x.id === nodeID);
         let image = ('qi-'+nodeData.type?.type) || 'qi';
         if (nodeData.type?.armyType !== undefined)

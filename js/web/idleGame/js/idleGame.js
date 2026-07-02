@@ -858,7 +858,7 @@ let idleGame = {
 			actions: [{title:"OK"}]
 		};
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
 			playerId: ExtPlayerID,
 			action: 'create',

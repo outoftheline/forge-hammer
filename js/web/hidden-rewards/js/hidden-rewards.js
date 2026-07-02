@@ -13,8 +13,8 @@ FH.proxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
     if (HiddenRewards.FirstCycle) { //Timer setzen 
         HiddenRewards.FirstCycle = false;
         data.responseData.hiddenRewards.forEach(x=>{
-            if (x.startTime && x.startTime>GameTime.get()) 
-                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-GameTime.get())*1000)
+            if (x.startTime && x.startTime>FH.GameTime.get()) 
+                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-FH.GameTime.get())*1000)
         })
     }
 });
@@ -147,7 +147,7 @@ let HiddenRewards = {
 	    let StartTime = moment.unix(HiddenRewards.Cache[i].starts|0),
 		EndTime = moment.unix(HiddenRewards.Cache[i].expires);
             HiddenRewards.Cache[i].isVis = true;
-            if (StartTime > MainParser.getCurrentDateTime() || EndTime < MainParser.getCurrentDateTime()) continue;
+            if (StartTime > FH.Main.getCurrentDateTime() || EndTime < FH.Main.getCurrentDateTime()) continue;
             if (HiddenRewards.Cache[i].isGE && !(HiddenRewards.GElookup[HiddenRewards.Cache[i].positionGE] <= Math.floor((HiddenRewards.GEprogress % 32)/8))) {
                 HiddenRewards.Cache[i].isVis = false;
             }
@@ -177,7 +177,7 @@ let HiddenRewards = {
     BuildBox: () => {
         let h = [];
 
-        let twolane = 0 < [...new Set(Object.values(MainParser.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>MainParser.CityEntities[x].requirements.street_connection_level == 2).length
+        let twolane = 0 < [...new Set(Object.values(FH.Main.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>FH.Main.CityEntities[x].requirements.street_connection_level == 2).length
         let warning = HiddenRewards.FilteredCache.filter(x=>x.twolane).length > 0 && !twolane
         if (warning) {
             h.push(`<div class="dark-bg"><div class="warning">${i18n("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)

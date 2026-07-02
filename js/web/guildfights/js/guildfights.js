@@ -65,7 +65,7 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 
 	if (GuildFights.curDateFilter === null || GuildFights.curDateEndFilter === null) {
 		GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
-		GuildFights.curDateEndFilter = MainParser.getCurrentDateTime();
+		GuildFights.curDateEndFilter = FH.Main.getCurrentDateTime();
 	}
 
 	GuildFights.MapData = data.responseData;
@@ -1411,7 +1411,7 @@ let GuildFights = {
 		GuildFights.LogDatePicker = new Litepicker({
 			element: document.getElementById('gbgLogDatepicker'),
 			format: 'YYYYMMDD',
-			lang: MainParser.Language,
+			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
 			numberOfMonths: 1,
@@ -1420,7 +1420,7 @@ let GuildFights = {
 			minDate: moment.unix(GuildFights.CurrentGBGRound).subtract(12, "d").toDate(),
 			maxDate: moment.unix(GuildFights.CurrentGBGRound).toDate(),
 			startDate: moment.unix(GuildFights.CurrentGBGRound).subtract(11, "d").toDate(),
-			endDate: MainParser.getCurrentDateTime(),
+			endDate: FH.Main.getCurrentDateTime(),
 			showWeekNumbers: false,
 			onSelect: async (dateStart, dateEnd) => {
 				GuildFights.curDateFilter = moment(dateStart).format('YYYYMMDD');
@@ -1738,7 +1738,7 @@ let GuildFights = {
 					resolve();
 				}
 
-				let currentTime = MainParser.getCurrentDateTime();
+				let currentTime = FH.Main.getCurrentDateTime();
 
 				GuildFights.Alerts = [];
 
@@ -1777,7 +1777,7 @@ let GuildFights = {
 			actions: null
 		};
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
 			playerId: ExtPlayerID,
 			action: 'create',
@@ -1799,7 +1799,7 @@ let GuildFights = {
 	DeleteAlert: (provId) => {
 		let prov = GuildFights.MapData['map']['provinces'].find(e => e.id === provId);
 		let alert = GuildFights.Alerts.find((a) => a.provId == provId);
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
 			playerId: ExtPlayerID,
 			action: 'delete',

@@ -98,10 +98,10 @@ let _menu = {
 	},
 
 	OverflowCheck: (selMenu='Box', flag) => {
-		if (window.innerHeight >= 600 && window.innerWidth >= 950 && (!flag && selMenu != MainParser.SelectedMenu)) {			
+		if (window.innerHeight >= 600 && window.innerWidth >= 950 && (!flag && selMenu != FH.Main.SelectedMenu)) {			
 			$('#menu_box').remove();
 			$('.tooltip').remove();
-			_menu.CallSelectedMenu(MainParser.SelectedMenu);
+			_menu.CallSelectedMenu(FH.Main.SelectedMenu);
 		}
 	},
 
@@ -257,7 +257,7 @@ let _menu = {
 		// refresh the Menü after setting-toggle
 		setTimeout(()=> {
 			$('#forgehammer-hud, #menu_box').remove();
-			_menu.CallSelectedMenu(MainParser.SelectedMenu);
+			_menu.CallSelectedMenu(FH.Main.SelectedMenu);
 		}, 100);
 
 	},
@@ -412,7 +412,7 @@ let _menu = {
 		let btn = _menu.MakeButton('allies');
 
 		let btnEl = $('<span />').bind('click', function () {
-			MainParser.Allies.showAllyList(true);
+			FH.Main.Allies.showAllyList(true);
 		});
 
 		return btn.append(btnEl);
@@ -654,7 +654,7 @@ let _menu = {
 	},
 
 	blueGalaxy_Btn: () => {
-		let OwnGalaxy = Object.values(MainParser.CityMapData).find(obj => (obj['cityentity_id'] === 'X_OceanicFuture_Landmark3'));;
+		let OwnGalaxy = Object.values(FH.Main.CityMapData).find(obj => (obj['cityentity_id'] === 'X_OceanicFuture_Landmark3'));;
 
 		// no BG => display none
 		if (!OwnGalaxy) {

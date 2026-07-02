@@ -190,7 +190,7 @@ let Technologies = {
     },
     maxEra:null,
     getMaxEra:()=>{ // 1 more than "InnoEra"
-        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(MainParser.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
+        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(FH.Main.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
         return Technologies.maxEra;
     },
 

@@ -1025,7 +1025,7 @@ let HTML = {
 
 			// with UTF-8 BOM
 			let BlobData = new Blob(["\uFEFF" + FileContent], { type: "application/octet-binary;charset=ANSI" });
-			MainParser.ExportFile(BlobData, FileName + '-' + moment().format('YYYY-MM-DD') + '.' + Format);
+			FH.Main.ExportFile(BlobData, FileName + '-' + moment().format('YYYY-MM-DD') + '.' + Format);
 		});
 	},
 

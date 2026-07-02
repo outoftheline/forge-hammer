@@ -434,13 +434,13 @@ let IndexDB = {
                     clanName: player.ClanName,
                     avatar: player.Avatar,
                     era: 'unknown', // Era can be discovered when user is visited, not now
-                    date: MainParser.getCurrentDate(),
+                    date: FH.Main.getCurrentDate(),
                 });
             }
         }
         else if (updateDate) {
             IndexDB.db.players.update(playerId, {
-                date: MainParser.getCurrentDate()
+                date: FH.Main.getCurrentDate()
             });
         }
     }

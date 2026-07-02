@@ -96,11 +96,11 @@ let Tooltips = {
     },
     buildingTT: async (e)=>{
         let buildingId=e?.currentTarget?.dataset?.id
-        let id = e?.currentTarget?.dataset?.meta_id||MainParser?.CityMapData[buildingId]?.cityentity_id
+        let id = e?.currentTarget?.dataset?.meta_id||FH.Main?.CityMapData[buildingId]?.cityentity_id
         if (!id) return
 
-        let era =  e?.currentTarget?.dataset?.era||Technologies.InnoEraNames[MainParser?.CityMapData[e?.currentTarget?.dataset?.id]?.level]
-        let meta = MainParser.CityEntities[id]
+        let era =  e?.currentTarget?.dataset?.era||Technologies.InnoEraNames[FH.Main?.CityMapData[e?.currentTarget?.dataset?.id]?.level]
+        let meta = FH.Main.CityEntities[id]
         let allies =  JSON.parse(e?.currentTarget?.dataset?.allies||"null")
         let eff =  Math.round(JSON.parse(e?.currentTarget?.dataset?.eff||"null"))
         //let eff = Math.round(e?.currentTarget?.previousElementSibling?.dataset?.number)
@@ -248,7 +248,7 @@ let Tooltips = {
             let chainMin = levels?.[minEra]?.chain
             let chainMax = levels?.[maxEra]?.chain
             if (chain?.chainId) {
-                let ChainMeta=(MainParser.BuildingChains?.[chain?.chainId]||MainParser.BuildingChains?.[chain?.chainId.toLowerCase()])
+                let ChainMeta=(FH.Main.BuildingChains?.[chain?.chainId]||FH.Main.BuildingChains?.[chain?.chainId.toLowerCase()])
                 set = srcLinks.icons(chain?.chainId) + ChainMeta.name
                 if (!ChainMeta.cityEntityIds.includes(meta.id)) set+= '</td></tr><tr><td style="text-wrap-mode:wrap;">' + chain.description
             }
@@ -272,19 +272,19 @@ let Tooltips = {
                 }
             }
             if (levels?.AllAge?.cityLimit) {
-                traits+=`<tr><td>${srcLinks.icons("icon_unique_building")}${i18n("Boxes.Tooltip.Building.isUnique")} (${Object.values(MainParser.CityMapData).filter(x => MainParser.CityEntities?.[x.cityentity_id]?.components?.AllAge?.cityLimit?.buildingFamily == levels?.AllAge?.cityLimit?.buildingFamily).length+"/"+MainParser.BuildingFamilyLimits?.[levels?.AllAge?.cityLimit?.buildingFamily] || 1})</td></tr>`
+                traits+=`<tr><td>${srcLinks.icons("icon_unique_building")}${i18n("Boxes.Tooltip.Building.isUnique")} (${Object.values(FH.Main.CityMapData).filter(x => FH.Main.CityEntities?.[x.cityentity_id]?.components?.AllAge?.cityLimit?.buildingFamily == levels?.AllAge?.cityLimit?.buildingFamily).length+"/"+FH.Main.BuildingFamilyLimits?.[levels?.AllAge?.cityLimit?.buildingFamily] || 1})</td></tr>`
             }
             
             for (let r of levels.AllAge?.ally?.rooms || []) {
                 let allydata = null
                 for (a of allies||[]) {
-                    allydata = MainParser.Allies.getAllieData(a)
+                    allydata = FH.Main.Allies.getAllieData(a)
                     if (r.allyType === allydata.type && (!r.rarity?.value || r.rarity?.value === allydata.rarity)) break
                     allydata = null
                 }
-                ally += `<tr><td>${srcLinks.icons("historical_allies_slot_tooltip_icon_" + (allydata ? "full" :"empty"))}<div>${MainParser.Allies.types[r.allyType]?.name + (r.rarity?.value ? (" ("+i18n("Boxes.Productions.AllyRarity."+r.rarity?.value)+")"):"")}`
+                ally += `<tr><td>${srcLinks.icons("historical_allies_slot_tooltip_icon_" + (allydata ? "full" :"empty"))}<div>${FH.Main.Allies.types[r.allyType]?.name + (r.rarity?.value ? (" ("+i18n("Boxes.Productions.AllyRarity."+r.rarity?.value)+")"):"")}`
                 if (allydata) {
-                    ally+=`<div class="allyName"><span>${MainParser.Allies.meta[allydata.allyId]?.name}</span><span>(${i18n("Boxes.Productions.AllyRarity."+allydata.rarity)} - ${i18n("General.Level")} ${allydata.level})</span></div>`
+                    ally+=`<div class="allyName"><span>${FH.Main.Allies.meta[allydata.allyId]?.name}</span><span>(${i18n("Boxes.Productions.AllyRarity."+allydata.rarity)} - ${i18n("General.Level")} ${allydata.level})</span></div>`
                     //productions:
                     for (b of allydata.currentLevel?.boosts||allydata.boosts||[]) {
                         ally+=`${srcLinks.icons(b.type+feature[b.targetedFeature])} ${b.value + Boosts.percent(b.type)}`
@@ -307,7 +307,7 @@ let Tooltips = {
                     let ratings = Productions.rateBuildings([meta.id,levels.AllAge.limited.config.targetCityEntityId],true,era)?.map(x=>Math.round(100 * x?.rating?.totalScore)||0)
                     efficiencyDifference = ratings[0]-ratings[1] //Eff1-Eff2 = efficiencyDifference = efficiency - efficiencyAfter --> effAfter = efficiency - efficiencyDifference
                 }
-                out += `<tr><td class="limited">${srcLinks.icons("limited_building_downgrade") + MainParser.CityEntities[levels.AllAge.limited.config.targetCityEntityId].name} (${i18n("Boxes.Tooltip.Building.after")} ${formatTime(levels.AllAge.limited.config.expireTime)})${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference): ""}</td></tr>`
+                out += `<tr><td class="limited">${srcLinks.icons("limited_building_downgrade") + FH.Main.CityEntities[levels.AllAge.limited.config.targetCityEntityId].name} (${i18n("Boxes.Tooltip.Building.after")} ${formatTime(levels.AllAge.limited.config.expireTime)})${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference): ""}</td></tr>`
             }   
 
             if (await CityBuildings.canAscend(meta.id)) {
@@ -317,7 +317,7 @@ let Tooltips = {
                     //console.log(JSON.stringify(ratings) )
                     efficiencyDifference = ratings[0]-ratings[1]
                 }
-                out += `<tr><td class="limited">${srcLinks.icons("limited_building_upgrade") + MainParser.CityEntities[ascendedId].name}${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference) :""}</td></tr>`
+                out += `<tr><td class="limited">${srcLinks.icons("limited_building_upgrade") + FH.Main.CityEntities[ascendedId].name}${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference) :""}</td></tr>`
 
             }
 
@@ -582,13 +582,13 @@ let Tooltips = {
                     }
                 }
                 if (a.__class__=="ChainStartAbility") {
-                    set =srcLinks.icons(a.chainId) + MainParser.BuildingChains[a.chainId].name + '</td></tr><tr><td style="text-wrap-mode:wrap;">' + a.description
+                    set =srcLinks.icons(a.chainId) + FH.Main.BuildingChains[a.chainId].name + '</td></tr><tr><td style="text-wrap-mode:wrap;">' + a.description
                 }
                 if (a.__class__=="ChainLinkAbility") {
-                    set =srcLinks.icons(a.chainId) + MainParser.BuildingChains[a.chainId].name
+                    set =srcLinks.icons(a.chainId) + FH.Main.BuildingChains[a.chainId].name
                 }
                 if (a.__class__=="BuildingSetAbility") {
-                    set =srcLinks.icons(a.setId) + MainParser.BuildingSets[a.setId].name
+                    set =srcLinks.icons(a.setId) + FH.Main.BuildingSets[a.setId].name
                 }
                 if (a.__class__=="PolishableAbility") {
                     traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${i18n("Boxes.Tooltip.Building.canPolish")}</td></tr>`
@@ -858,7 +858,7 @@ let QIActions = {
 		let hourly = QIActions.hourlyBase + Boosts.Sums["guild_raids_action_points_collection"] 
 
 		if (time) { 
-			timer = (time-GameTime.get()+3600)*1000
+			timer = (time-FH.GameTime.get()+3600)*1000
 			QIActions.last = time
 		} else {
 			let amount = Math.floor((moment().unix() - QIActions.last + 10)/3600)

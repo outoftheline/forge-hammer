@@ -365,7 +365,7 @@ plannerDB.version(1).stores({
 	browser.runtime.onInstalled.addListener(() => {
 		"use strict";
 		//const version = browser.runtime.getManifest().version;
-		let lng = browser.i18n.getUILanguage();
+		let lng = navigator.language.split("-")[0];
 
 		// Fallback to "en"
 		if(lng !== 'de' && lng !== 'en'){

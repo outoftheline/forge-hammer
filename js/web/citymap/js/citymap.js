@@ -69,10 +69,10 @@ let CityMap = {
 	 */
 	AscendingBuildings: new Promise((resolve) => {
 		let timer = () => {
-			if (!MainParser.BuildingUpgrades) {
+			if (!FH.Main.BuildingUpgrades) {
 				setTimeout(timer,500)
 			} else {
-				resolve (Object.assign({},...Object.values(MainParser.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
+				resolve (Object.assign({},...Object.values(FH.Main.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
 			}
 		}
 
@@ -101,7 +101,7 @@ let CityMap = {
 		if(null !== outpostScale)
 			CityMap.map.outpostScale = parseInt(outpostScale);
 
-		let Data = MainParser.CityMapData;
+		let Data = FH.Main.CityMapData;
 		if (ActiveMap === "cultural_outpost") 
 			Data = CityMap.CulturalOutpost.data;
 		else if (ActiveMap === "era_outpost") 
@@ -333,7 +333,7 @@ let CityMap = {
 			let x = (buildings[b]['x'] || 0) - xOffset;
 			let y = (buildings[b]['y'] || 0) - yOffset;
 			let CityMapEntity = buildings[b],
-				d = MainParser.CityEntities[CityMapEntity['cityentity_id']],
+				d = FH.Main.CityEntities[CityMapEntity['cityentity_id']],
 				BuildingSize = CityMap.GetBuildingSize(CityMapEntity),
 
 				xx = (parseInt(x) * CityMap.map.gridSize),
@@ -441,7 +441,7 @@ let CityMap = {
 		}
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)){
-			let building = CityMap.setQIBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setQIBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 			
@@ -609,7 +609,7 @@ let CityMap = {
 
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)) {
-			let building = CityMap.setOutpostBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setOutpostBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 		}
@@ -733,7 +733,7 @@ let CityMap = {
 		if (ActiveMap === 'OtherPlayer')
 			buildingData = CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData))
 		else
-			buildingData = CityBuildings.createBuildings(Object.values(MainParser.CityMapData))
+			buildingData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 
 		// find highest rating in all buildings, do not include roads
 		let buildingsWithoutStreets = Object.values(buildingData).filter((x) => x.type !== "street");
@@ -775,7 +775,7 @@ let CityMap = {
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
 						(building.rating?.totalScore*100 <= (rating30) ? ' rating30' : '')));
 			
-			let f = $('<span '+ MainParser.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
+			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
 				width: xsize + 'em',
 				height: ysize + 'em',
 				left: x + 'em',
@@ -1050,7 +1050,7 @@ let CityMap = {
 		});
 		
 		let limitedBuildings = [];
-		for (let building of Object.values(MainParser.CityBuildingsData)) {
+		for (let building of Object.values(FH.Main.CityBuildingsData)) {
 			if (!building.isLimited) continue;
 			limitedBuildings.push(building);
 		}
@@ -1102,12 +1102,12 @@ let CityMap = {
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
                 break;
             default:
-                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(MainParser.CityMapData);
+                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
-				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
                 break;
         }
-        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
 
         FH.helper.str.copyToClipboard(
             JSON.stringify(data)
@@ -1123,7 +1123,7 @@ let CityMap = {
 
 
 	GetBuildingSize: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		let Ret = {};
 
@@ -1178,7 +1178,7 @@ let CityMap = {
 	 * @returns {number|string} - The era id for the building
 	 */
 	GetBuildingEra: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		// Great building
 		if (CityEntity['type'] === 'greatbuilding') {
@@ -1254,7 +1254,7 @@ let CityMap = {
 
 
 // // // // // // // // // // // // //
-// Data for MainParser.CityBuildingsData
+// Data for FH.Main.CityBuildingsData
 // // // // // // // // // // // // //
 let CityBuildings = {
 	
@@ -1574,7 +1574,7 @@ let CityBuildings = {
 			}
 		}
 		if (withAlly) {
-			let allyStats = MainParser.Allies.getProd(data.id||0)
+			let allyStats = FH.Main.Allies.getProd(data.id||0)
 			if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
 				(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
 					let boost = {
@@ -1632,7 +1632,7 @@ let CityBuildings = {
 		
 		if (state === "producing") {
 			if (data.cityentity_id.includes("CastleSystem")) {
-				return { at: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt, in: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
+				return { at: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt, in: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
 			}
 			return { at: data?.state?.next_state_transition_at, in: data?.state?.next_state_transition_in }
 		}
@@ -1754,7 +1754,7 @@ let CityBuildings = {
 			h = building.size.length,
 			setName = building.setBuilding.name,
 			adjacents = new Set(),
-			allBuildings = Object.values(MainParser.CityBuildingsData);
+			allBuildings = Object.values(FH.Main.CityBuildingsData);
 
 		const getB = (tx, ty) => {
 			return allBuildings.find(b =>
@@ -1815,7 +1815,7 @@ let CityBuildings = {
 				}
 			}
 			if (metaData.type === "main_building") { // add emissary production to town hall
-				MainParser.EmissaryService?.forEach(emissary => {
+				FH.Main.EmissaryService?.forEach(emissary => {
 					let resource = {
 						type: (emissary.bonus.type !== "unit" ? "resources" : emissary.bonus.type),
 						needsMotivation: false,
@@ -1823,7 +1823,7 @@ let CityBuildings = {
 					}
 					productions.push(resource)
 				})
-				MainParser.BonusService?.forEach(bonus => { // guild FP
+				FH.Main.BonusService?.forEach(bonus => { // guild FP
 					if (bonus.type === "daily_strategypoint") {
 						let resource = {
 							type: "resources",
@@ -1837,8 +1837,8 @@ let CityBuildings = {
 			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
 				let currentLevel = Castle.curLevel
 				era = CurrentEra 
-				if (MainParser.CastleSystemLevels[(currentLevel-1)] !== undefined)
-					MainParser.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
+				if (FH.Main.CastleSystemLevels[(currentLevel-1)] !== undefined)
+					FH.Main.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
@@ -2205,14 +2205,14 @@ let CityBuildings = {
 		if (metaData.components[era]) {
 			let lookupRewards = structuredClone(metaData.components[era].lookup?.rewards||{})
 			if (metaData.components?.AllAge?.chain) {
-				MainParser.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
+				FH.Main.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
 				})
 			}
 			let setId = this.setSetBuilding(metaData)?.name;
-			if (setId && MainParser.BuildingSets[setId]) {
-				MainParser.BuildingSets[setId].buildings.forEach(setBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || MainParser.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
+			if (setId && FH.Main.BuildingSets[setId]) {
+				FH.Main.BuildingSets[setId].buildings.forEach(setBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
 				})
 			}
 
@@ -2488,12 +2488,12 @@ let CityBuildings = {
 
 
 	getBuildingById(id) {
-		return Object.values(MainParser.CityBuildingsData).find(x => x.id === id)
+		return Object.values(FH.Main.CityBuildingsData).find(x => x.id === id)
 	},
 
 	
 	getBuildingByCoords(x,y) {	
-		return Object.values(MainParser.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
+		return Object.values(FH.Main.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
 	},
 
 
@@ -2661,30 +2661,30 @@ let CityBuildings = {
 	},
 
 
-	createBuildings(data=Object.values(MainParser.CityMapData),withAllies=true) {	
+	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=true) {	
 		if (ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
 
 		for (let building of data) {
 			if (ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
-			let metaData = Object.values(MainParser.CityEntities).find(x => x.id === building.cityentity_id)
+			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
 			if (ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
 			else
-				MainParser.CityBuildingsData[building.id] = newCityEntity
+				FH.Main.CityBuildingsData[building.id] = newCityEntity
 		}
 
-		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : MainParser.CityBuildingsData) 
+		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
 	},
 
 
 	createBuilding(metaData, era=CurrentEra, data={}, withAlly=true) {	
 		if (typeof(metaData)=="string") {
-			metaData=MainParser.CityEntities[metaData];
+			metaData=FH.Main.CityEntities[metaData];
 		}
 		let entity = {
 			player_id: data.player_id||0,

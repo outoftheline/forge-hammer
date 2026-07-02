@@ -24,7 +24,7 @@ FH.proxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
         Castle.curShopItems.available.count -= 1;
         Castle.curShopItems.purchased.reward += Castle.curCastlePointsDiff.diff;
         Castle.curShopItems.available.reward -= Castle.curCastlePointsDiff.diff;
-        Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        Castle.curShopItems.date = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
@@ -41,14 +41,14 @@ FH.proxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
     if (data.responseData['state'] === 'collectable')
     {
         let d = JSON.parse(FH.Storage.getItem('CastleCurAuctionWinning'));
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         if (!d || d.date !== startOfDay)
         {
             d = { date: startOfDay, rewards: [] };
         }
 
-        d.rewards.push({ time: moment(MainParser.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
+        d.rewards.push({ time: moment(FH.Main.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
 
         FH.Storage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
 
@@ -95,7 +95,7 @@ FH.proxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
             }
         });
 
-        Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        Castle.curShopItems.date = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.ShowProgressTable();
@@ -326,7 +326,7 @@ let Castle = {
     NextNegotiationPoints: undefined,
     NextWinningBattlesPoints: undefined,
     RewardGroups: { Daily: 0, Challenge: 1, Gex: 2, AntiqueDealer: 3, Shop: 4 },
-    startOfDay: moment(MainParser.getCurrentDateTime()).startOf('day').unix(),
+    startOfDay: moment(FH.Main.getCurrentDateTime()).startOf('day').unix(),
 
     Settings: {
         showGroupNames: true,
@@ -432,7 +432,7 @@ let Castle = {
         if (!d || !d.responseData) { return; }
 
         const rid = d.requestId || null;
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         let rtype;
         let nextlevel = false;
 
@@ -535,7 +535,7 @@ let Castle = {
             sir = 0, sip = 0, sipsum = 0, sirsum = 0, siwarn = false, //Bought Shop Items
             aup = 0, aur = 0,       //Auction
             cp, cpwarn = false;     //Castle Points
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         //Reset values on new day
         if (Castle.startOfDay !== startOfDay)
@@ -543,7 +543,7 @@ let Castle = {
             Castle.curWinningBattles = Castle.DailyWinningBattles;
             Castle.curNegotiations = Castle.DailyNegotiations;
 
-            Castle.startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+            Castle.startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         }
 
         // Daily winning battle reward
@@ -650,7 +650,7 @@ let Castle = {
         });
 
         // Daily Challenge
-        if (MainParser.UnlockedFeatures.includes("daily_challenges"))
+        if (FH.Main.UnlockedFeatures.includes("daily_challenges"))
         {
             if (Castle.curDailyChallenge === undefined || Castle.curDailyChallenge.state === 'success')
             {
@@ -674,7 +674,7 @@ let Castle = {
         }
 
         // Seven Day Challenge
-        if (MainParser.UnlockedFeatures.includes("daily_challenges"))
+        if (FH.Main.UnlockedFeatures.includes("daily_challenges"))
         {
             scp = Castle.curSevenDayChallenge ? Castle.curSevenDayChallenge.currentProgress : 0;
 
@@ -698,7 +698,7 @@ let Castle = {
         }
 
         // Gex Last of sections
-        if (MainParser.UnlockedFeatures.includes("guild_expedition"))
+        if (FH.Main.UnlockedFeatures.includes("guild_expedition"))
         {
             const GexEnd = FH.Storage.getItem('CastleGexEnd');
 
@@ -708,7 +708,7 @@ let Castle = {
             }
 
             // Reset Gex if a new round started and isn't updatet atm
-            if (GexEnd && GexEnd < moment(MainParser.getCurrentDateTime()).unix())
+            if (GexEnd && GexEnd < moment(FH.Main.getCurrentDateTime()).unix())
             {
                 Castle.curGexLastOfSection = 0;
             }
@@ -753,7 +753,7 @@ let Castle = {
         }
 
         // Item Shop
-        if (MainParser.UnlockedFeatures.includes("antiques_dealer"))
+        if (FH.Main.UnlockedFeatures.includes("antiques_dealer"))
         {
             if (Castle.curShopItems === undefined)
             {
@@ -789,7 +789,7 @@ let Castle = {
         }
 
         // Won auction bidding
-        if (MainParser.UnlockedFeatures.includes("antiques_dealer"))
+        if (FH.Main.UnlockedFeatures.includes("antiques_dealer"))
         {
             if (Castle.curAuctionWinning === undefined)
             {
@@ -859,7 +859,7 @@ let Castle = {
 
         if ($('#Castle #casPointsWrapper').length === 1)
         {
-            let CastleLimit = MainParser.CastleSystemLevels[Castle.curLevel].requiredPoints;
+            let CastleLimit = FH.Main.CastleSystemLevels[Castle.curLevel].requiredPoints;
 
             $('#Castle #casPointsWrapper').html(`
                 <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>
@@ -1006,7 +1006,7 @@ let Castle = {
 
         if (!d) { return; }
 
-        const Time = MainParser.getCurrentDateTime();
+        const Time = FH.Main.getCurrentDateTime();
         const startOfDay = moment(Time).startOf('day').unix();
         const removeLogsDate = startOfDay - Castle.Settings.logDays * 86400;
 

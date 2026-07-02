@@ -22,8 +22,8 @@ FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length > 0) return;
 	if (!Settings.GetSetting('RivalSound')) return;
 	if (Quests.RivalInActive) return;
-	if (!MainParser.Quests) return; 
-	for (let Quest of MainParser.Quests) {
+	if (!FH.Main.Quests) return; 
+	for (let Quest of FH.Main.Quests) {
 		if (Quest?.questGiver?.id.indexOf("rival") >=0 && Quest.state == 'collectReward') {
 			FH.helper.sounds.play("message");
 			break;
@@ -54,14 +54,14 @@ let Quests = {
 		let CounterStorage = FH.Storage.getItem('QuestCounter'),
 			parts;
 
-		Quests.Date = moment(MainParser.getCurrentDate()).format('YYYY-MM-DD');
+		Quests.Date = moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD');
 
 		if(CounterStorage !== null)
 		{
 			parts = JSON.parse(CounterStorage);
 
 			// current is older than stored date
-			if (!parts || !parts['date'] || moment(moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')).isAfter(parts['date'])){
+			if (!parts || !parts['date'] || moment(moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')).isAfter(parts['date'])){
 				Quests.Counter = 2000;
 			}
 			// is today

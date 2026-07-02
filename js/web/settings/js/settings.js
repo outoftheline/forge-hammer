@@ -317,7 +317,7 @@ let Settings = {
 			blob1 = new Blob([json], { type: "application/json;charset=utf-8" }),
 			file = `${ExtWorld}-${ExtPlayerID}.json`;
 
-		MainParser.ExportFile(blob1, file);
+		FH.Main.ExportFile(blob1, file);
 	},
 
 
@@ -329,7 +329,7 @@ let Settings = {
 		for (let index = 0; index < _menu.MenuOptions.length; index++) {
 			const element = _menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
-				dp.push('<option value="' + element + '"' + (MainParser.SelectedMenu === element ? ' selected' : '') + '>' + i18n('Menu.' + element) + '</option>');
+				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + i18n('Menu.' + element) + '</option>');
 			}
 		}
 
@@ -488,7 +488,7 @@ let Settings = {
 				break;
 			}
 
-			dp.push('<option value="' + iso + '"' + (MainParser.Language === iso ? ' selected' : '') + '>' + FH.Languages.PossibleLanguages[iso] + '</option>');
+			dp.push('<option value="' + iso + '"' + (FH.Main.Language === iso ? ' selected' : '') + '>' + FH.Languages.PossibleLanguages[iso] + '</option>');
 		}
 		dp.push('</select>');
 

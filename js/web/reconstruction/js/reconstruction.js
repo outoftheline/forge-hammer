@@ -7,7 +7,7 @@
 FH.proxy.addHandler('CityReconstructionService', 'getDraft', (data, postData) => {
     if(!Settings.GetSetting('ShowReconstructionList')) return;
     if (data?.responseData?.length==0) {
-        data.responseData = Object.values(MainParser.CityMapData).map(x=>({
+        data.responseData = Object.values(FH.Main.CityMapData).map(x=>({
             "entityId": x.id,
             "position": {
                 "x": x.x,
@@ -26,7 +26,7 @@ FH.proxy.addHandler('CityReconstructionService', 'getDraft', (data, postData) =>
                             greatbuilding: [],
                         }
     for (let b of data.responseData) {
-        let id = MainParser.CityMapData[b.entityId].cityentity_id + "#" + (MainParser.CityMapData[b.entityId].level||0)
+        let id = FH.Main.CityMapData[b.entityId].cityentity_id + "#" + (FH.Main.CityMapData[b.entityId].level||0)
         if (!reconstruction.count[id]) reconstruction.count[id] = {placed:0,stored:0}
         if (b.position) 
             reconstruction.count[id].placed++
@@ -53,7 +53,7 @@ FH.proxy.addHandler('InventoryService', 'getGreatBuildings', (data, postData) =>
 FH.proxy.addRequestHandler('CityReconstructionService', 'saveDraft', (data) => {
     if(!Settings.GetSetting('ShowReconstructionList')) return;
     for (let x of data.requestData[0]) {
-        let id = MainParser.CityMapData[x.entityId].cityentity_id + "#" + (MainParser.CityMapData[x.entityId].level||0);
+        let id = FH.Main.CityMapData[x.entityId].cityentity_id + "#" + (FH.Main.CityMapData[x.entityId].level||0);
         let pagesUpdated=false;
         if (x.position && !reconstruction.draft[x.entityId].position) {
             reconstruction.count[id].placed++;
@@ -110,7 +110,7 @@ let reconstruction = {
     roadIcons:null,
     mapScale: 20,  
     pageUpdate:(id)=>{
-        let meta = MainParser.CityEntities[id.split("#")[0]]
+        let meta = FH.Main.CityEntities[id.split("#")[0]]
         if (["friends_tavern",
             "main_building",
             "impediment",
@@ -175,7 +175,7 @@ let reconstruction = {
                     </tr>
                 </thead><tbody class="reconstructionSizes">`
         for (let [id,b] of Object.entries(reconstruction.count)) {
-            let meta=MainParser.CityEntities[id.split("#")[0]]
+            let meta=FH.Main.CityEntities[id.split("#")[0]]
             let width = meta.width||meta.components.AllAge.placement.size.x
             let length = meta.length||meta.components.AllAge.placement.size.y
             let road = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0
@@ -229,7 +229,7 @@ let reconstruction = {
         $('#ReconstructionMapBody').html(c);
     },
     placeBuildingOnMap:(data)=>{
-        let meta = MainParser.CityEntities[MainParser.CityMapData[data.entityId].cityentity_id];
+        let meta = FH.Main.CityEntities[FH.Main.CityMapData[data.entityId].cityentity_id];
         if (meta.type.includes("hub") || meta.type === "off_grid" || meta.type === "outpost_ship" || meta.type === "friends_tavern") return '';
 
         let width = meta.width||meta.components.AllAge.placement.size.x;

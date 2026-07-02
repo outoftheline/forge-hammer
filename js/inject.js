@@ -81,7 +81,7 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 	
 	const v = chrome.runtime.getManifest().version;
 
-	let   lng = chrome.i18n.getUILanguage();
+	let   lng = navigator.language.split("-")[0]();
 	const uLng = localStorage.getItem('Hammer.user-language');
 	
 	// we only need the first part

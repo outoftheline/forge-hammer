@@ -30,7 +30,7 @@ FH.proxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 			event: event,
 			notes: notes ? notes : '',
 			amount: reward.amount,
-			date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+			date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 		});
 	}
 });
@@ -124,7 +124,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		event: event,
 		notes: notes ? notes : '',
 		amount: amount,
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
@@ -157,7 +157,7 @@ FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 		event: event,
 		notes: notes,
 		amount: amount,
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
@@ -172,7 +172,7 @@ FH.proxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
 	StrategyPoints.insertIntoDB({
 		event: 'chest',
 		amount: d['amount'],
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
@@ -189,9 +189,9 @@ FH.proxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) =
 
 	StrategyPoints.insertIntoDB({
 		event: 'satDown',
-		notes: player ? `<img alt="${player['PlayerName']}" src="${srcLinks.GetPortrait(player['Avatar'])}"><span>${MainParser.GetPlayerLink(player['PlayerID'], player['PlayerName'])}</span>` : '',
+		notes: player ? `<img alt="${player['PlayerName']}" src="${srcLinks.GetPortrait(player['Avatar'])}"><span>${FH.Main.GetPlayerLink(player['PlayerID'], player['PlayerName'])}</span>` : '',
 		amount: d['rewardResources']['resources']['strategy_points'],
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
@@ -215,13 +215,13 @@ FH.proxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 			if (PlunderReward['product'] && PlunderReward['product']['resources'] && PlunderReward['product']['resources']['strategy_points']) {
 				let PlunderedFP = PlunderReward['product']['resources']['strategy_points'];
 				const player = PlayerDict[FPCollector.lastVisitedPlayer];
-				const entity = MainParser.CityEntities[FPCollector.lastPlunderedEntity];
+				const entity = FH.Main.CityEntities[FPCollector.lastPlunderedEntity];
 
 				StrategyPoints.insertIntoDB({
 					event: 'plunderReward',
-					notes: player ? `<img src="${srcLinks.GetPortrait(MainParser.PlayerPortraits[player['Avatar']])}"><span>${MainParser.GetPlayerLink(player['PlayerID'], player['PlayerName'])}${entity ? ' - ' + entity['name'] : ''}</span>` : '',
+					notes: player ? `<img src="${srcLinks.GetPortrait(FH.Main.PlayerPortraits[player['Avatar']])}"><span>${FH.Main.GetPlayerLink(player['PlayerID'], player['PlayerName'])}${entity ? ' - ' + entity['name'] : ''}</span>` : '',
 					amount: PlunderedFP,
-					date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+					date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 				});
 			}
 		}
@@ -238,8 +238,8 @@ FH.proxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 
 		if (data['responseData']['bonus'][0] === BonusId) {
 			let CityMapID = data['responseData']['entityId'],
-				Building = MainParser.CityMapData[CityMapID],
-				CityEntity = MainParser.CityEntities[Building['cityentity_id']],
+				Building = FH.Main.CityMapData[CityMapID],
+				CityEntity = FH.Main.CityEntities[Building['cityentity_id']],
 				Production = Productions.readType(Building);
 
 			if (Production['products']) {
@@ -250,7 +250,7 @@ FH.proxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 						event: 'double_collection',
 						notes: CityEntity['name'],
 						amount: FP,
-						date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+						date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 					});
 				}
 			}
@@ -267,8 +267,8 @@ FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
 		if (BonusId !== data['responseData']['bonus'][j]) continue;
 
 		let CityMapID = data['responseData']['entityId'],
-		buildingData = MainParser.CityMapData[CityMapID],
-		metaData = MainParser.CityEntities[buildingData.cityentity_id],
+		buildingData = FH.Main.CityMapData[CityMapID],
+		metaData = FH.Main.CityEntities[buildingData.cityentity_id],
 		era = Technologies.getEraName(buildingData.cityentity_id, buildingData.level)
 
 		let building = CityBuildings.createBuilding(metaData, era, buildingData)
@@ -281,7 +281,7 @@ FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
 			event: 'double_collection',
 			notes: building.name,
 			amount: FP,
-			date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+			date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 		});
 	}
 });
@@ -297,9 +297,9 @@ let FPCollector = {
 	lastPlunderedEntity: null,
 
 	minDateFilter: null,
-	maxDateFilter: moment(MainParser.getCurrentDate()).toDate(),
-	currentDateFilter: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD'),
-	currentDateEndFilter: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD'),
+	maxDateFilter: moment(FH.Main.getCurrentDate()).toDate(),
+	currentDateFilter: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD'),
+	currentDateEndFilter: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD'),
 
 	CityMapDataNew: null,
 
@@ -343,7 +343,7 @@ let FPCollector = {
 				FPCollector.minDateFilter = moment(resp.date).subtract(1, 'minute').toDate();
 
 			}).catch(() => {
-				FPCollector.minDateFilter = moment(MainParser.getCurrentDate()).toDate();
+				FPCollector.minDateFilter = moment(FH.Main.getCurrentDate()).toDate();
 			});
 
 			// set the last known date
@@ -459,7 +459,7 @@ let FPCollector = {
 		if (PostData['requestData'] && PostData['requestData'][0]) {
 			let QuestID = PostData['requestData'][0];
 
-			for (let Quest of MainParser.Quests) {
+			for (let Quest of FH.Main.Quests) {
 				if (Quest['id'] !== QuestID || Quest['state'] !== 'collectReward') continue;
 
 				if (Quest['genericRewards']) {
@@ -475,7 +475,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: amount,
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 						else if (Reward['type'] === 'forgepoint_package') { // Belohnung einer Schleifenquest
@@ -483,7 +483,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: Number(Reward['subType']),
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 						else if (Reward['subType'] === 'strategy_points') { // normale Quest-Belohnung
@@ -491,7 +491,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: Reward['amount'],
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 					}
@@ -545,7 +545,7 @@ let FPCollector = {
 		FPCollector.DatePicker = new Litepicker({
 			element: document.getElementById('FPCollectorPicker'),
 			format: i18n('Date'),
-			lang: MainParser.Language,
+			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
 			numberOfMonths: 1,

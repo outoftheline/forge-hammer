@@ -177,7 +177,7 @@ const Profile = {
         cl.push('<div class="expansions secondary">');
         cl.push('<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_street.png`,true)+'" />');
         let roadAmount = 0;
-        for (let building of Object.values(MainParser.CityMapData)) { 
+        for (let building of Object.values(FH.Main.CityMapData)) { 
             if (building.type !== "street") continue; 
             roadAmount++;
         }
@@ -190,13 +190,13 @@ const Profile = {
         cl.push('<div class="greatbuildings pad text-center">')
         // selected GBs
         for (let gb of Profile.gbList) {
-            let gbLevel = Object.values(MainParser.CityMapData).find(x => x.cityentity_id == gb)?.level;
+            let gbLevel = Object.values(FH.Main.CityMapData).find(x => x.cityentity_id == gb)?.level;
             if (gbLevel)
                 cl.push('<span class="removable"><img src="'+srcLinks.get(`/city/buildings/${gb.replace('X_','X_SS_')}.png`,true)+'" />' + gbLevel +'</span>');
         }
 
         let allGBs = [];
-        for (let building of Object.values(MainParser.CityMapData)) { // get all GBs
+        for (let building of Object.values(FH.Main.CityMapData)) { // get all GBs
             if (building.type !== "greatbuilding") continue; 
             allGBs.push(building);
         }
@@ -503,9 +503,9 @@ const Profile = {
 		cr.push('<div class="inventory pad text-center">');
 		cr.push('<h2 class="border"><span>'+i18n('Boxes.MarketOffers.Inventory')+'</span></h2>');
 		for (let item of Profile.inventoryList) {
-			let itemInStock = Object.values(MainParser.Inventory).find(x => x.itemAssetName === item);
+			let itemInStock = Object.values(FH.Main.Inventory).find(x => x.itemAssetName === item);
 			if (item === 'rush_mass_supply_large') { // same asset as 6h rush, filter by speedup
-				itemInStock = Object.values(MainParser.Inventory).filter(x => x.itemAssetName === item).find(x => x.item.duration === 86400);
+				itemInStock = Object.values(FH.Main.Inventory).filter(x => x.itemAssetName === item).find(x => x.item.duration === 86400);
 			}
 			if (itemInStock)
 				cr.push('<span class="removable" data-original-title="'+itemInStock.name+'"><img src="'+srcLinks.get(`/shared/icons/reward_icons/reward_icon_${item}.png`,true)+'" />'+FH.HTML.Format(itemInStock.inStock)+'</span>');
@@ -514,7 +514,7 @@ const Profile = {
 		// get additional favorites
 		cr.push('<div class="favorites">');
 		let favCounter = 0;
-		for(let item of Object.values(MainParser.Inventory)) {
+		for(let item of Object.values(FH.Main.Inventory)) {
 			if (!item.favorite || Profile.inventoryList.find(x => x === item.itemAssetName)) continue;
 			if (favCounter > 6) continue;
 			if (item.itemAssetName !== "icon_fragment") { // do not include fragments

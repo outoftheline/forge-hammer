@@ -142,7 +142,7 @@ let Negotiation = {
 			}
 			h.push('<th class="text-right" colspan="' + (CurrentTry === 1 ? '2' : '5') + '"' + '>' + 
 			'<strong class="text-warning"' + (Negotiation.TryCountIsGreaterThan5 ? 'data-title="'+i18n('Boxes.Negotiation.ChanceGreaterThan5') : '')+'">' + 
-				i18n('Boxes.Negotiation.Chance') + ': ' + FH.HTML.Format(MainParser.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
+				i18n('Boxes.Negotiation.Chance') + ': ' + FH.HTML.Format(FH.Main.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
 			h.push('<b style="padding-right: 15px"> ');
 			h.push(i18n('Boxes.Negotiation.Round') + ' ' + (Guesses.length + 1) + '/' + (Negotiation.TryCount));
 			h.push('</b></strong></th>');
@@ -185,10 +185,10 @@ let Negotiation = {
 				}
 
 				if (GoodName === 'money' || GoodName === 'supplies' || GoodName === 'medals') {
-					GoodAmount = MainParser.round(GoodAmount);
+					GoodAmount = FH.Main.round(GoodAmount);
 				}
 				else {
-					GoodAmount = MainParser.round(GoodAmount * 10) / 10;
+					GoodAmount = FH.Main.round(GoodAmount * 10) / 10;
 				}
 
 				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
@@ -378,9 +378,9 @@ let Negotiation = {
 					const color2 = colors[colorIdx+1];
 					const invMix = 1-mix;
 					// Lineare mischung und auf 0-255 beschrenken
-					const colorR = Math.min(255, Math.max(0, MainParser.round(color1[0]*invMix + color2[0]*mix)));
-					const colorG = Math.min(255, Math.max(0, MainParser.round(color1[1]*invMix + color2[1]*mix)));
-					const colorB = Math.min(255, Math.max(0, MainParser.round(color1[2]*invMix + color2[2]*mix)));
+					const colorR = Math.min(255, Math.max(0, FH.Main.round(color1[0]*invMix + color2[0]*mix)));
+					const colorG = Math.min(255, Math.max(0, FH.Main.round(color1[1]*invMix + color2[1]*mix)));
+					const colorB = Math.min(255, Math.max(0, FH.Main.round(color1[2]*invMix + color2[2]*mix)));
 
 					colorVal = `rgba(${colorR}, ${colorG}, ${colorB}, 0.3)`;
 				} else {

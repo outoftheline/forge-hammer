@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// register resize functions
 	window.addEventListener('resize', () => {
-		MainParser.ResizeFunctions();
+		Main.ResizeFunctions();
 	});
 
 	// Detect and process fullscreen
@@ -173,82 +173,82 @@ document.addEventListener("DOMContentLoaded", function () {
 	/* removed as inno changed city entity loading
 	FH.proxy.addMetaHandler('city_entities', (xhr, postData) => {
 		let EntityArray = JSON.parse(xhr.responseText);
-		MainParser.CityEntities = Object.assign({}, ...EntityArray.map((x) => ({ [x.id]: x })));
-		MainParser.correctBuildingType()
-		MainParser.Inactives.check();
+		Main.CityEntities = Object.assign({}, ...EntityArray.map((x) => ({ [x.id]: x })));
+		Main.correctBuildingType()
+		Main.Inactives.check();
 	});
 	*/
 	FH.proxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
 		const region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
-		setTimeout(()=>{MainParser.CityEntityBuilder(buildingUrls, region)},500);
+		setTimeout(()=>{Main.CityEntityBuilder(buildingUrls, region)},500);
 	});
 
 	// Building-Upgrades
 	FH.proxy.addMetaHandler('building_upgrades', (xhr, postData) => {
 		let BuildingUpgradesArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
-		if (MainParser.SelectionKits != null) Kits.CreateUpgradeSchemes();
+		Main.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
+		if (Main.SelectionKits != null) Kits.CreateUpgradeSchemes();
 	});
 
 	// Building-Sets
 	FH.proxy.addMetaHandler('building_sets', (xhr, postData) => {
 		let BuildingSetsArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingSets = Object.assign({}, ...BuildingSetsArray.map((x) => ({ [x.id]: x })));
+		Main.BuildingSets = Object.assign({}, ...BuildingSetsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Building-Chains
 	FH.proxy.addMetaHandler('building_chains', (xhr, postData) => {
 		let BuildingChainsArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingChains = Object.assign({}, ...BuildingChainsArray.map((x) => ({ [x.id]: x })));
+		Main.BuildingChains = Object.assign({}, ...BuildingChainsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Selection-Kits
 	FH.proxy.addMetaHandler('selection_kits', (xhr, postData) => {
 		let SelectKitsArray = JSON.parse(xhr.responseText);
-		MainParser.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
-		if (MainParser.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
+		Main.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
+		if (Main.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
 	});
 	FH.proxy.addMetaHandler("building_families", (xhr,postData) => {
-		MainParser.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
+		Main.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
 	})	
 	// Castle-System-Levels
 	FH.proxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
-		MainParser.CastleSystemLevels = JSON.parse(xhr.responseText);
+		Main.CastleSystemLevels = JSON.parse(xhr.responseText);
 	});
 
 	// Allies
 	FH.proxy.addMetaHandler('allies', (xhr, postData) => {
-		MainParser.Allies.setMeta(JSON.parse(xhr.responseText));
+		Main.Allies.setMeta(JSON.parse(xhr.responseText));
 	});
 
 	FH.proxy.addMetaHandler('ally_rarities', (xhr, postData) => {
-		MainParser.Allies.setRarities(JSON.parse(xhr.responseText));
+		Main.Allies.setRarities(JSON.parse(xhr.responseText));
 	});
 
 	FH.proxy.addMetaHandler('ally_types', (xhr, postData) => {
-		MainParser.Allies.setTypes(JSON.parse(xhr.responseText));
+		Main.Allies.setTypes(JSON.parse(xhr.responseText));
 	});
 
 	FH.proxy.addHandler('AllyService', 'getAllies', (data, postData) => {
-		MainParser.Allies.getAllies(data.responseData);
+		Main.Allies.getAllies(data.responseData);
 		
 		if (!Settings.GetSetting('ShowAllyList')) return;
-		if (postData[0].requestMethod == 'getAllies') MainParser.Allies.showAllyList();
+		if (postData[0].requestMethod == 'getAllies') Main.Allies.showAllyList();
 	});
 	FH.proxy.addHandler('AllyService', 'getAssignedAllies', (data, postData) => {
-		MainParser.Allies.getAllies(data.responseData);
+		Main.Allies.getAllies(data.responseData);
 	});
 	FH.proxy.addHandler('AllyService', 'updateAlly', (data, postData) => {
-		MainParser.Allies.buildingBoostSums = [];
-		MainParser.Allies.updateAlly(data.responseData);
+		Main.Allies.buildingBoostSums = [];
+		Main.Allies.updateAlly(data.responseData);
 	});
 	FH.proxy.addHandler('AllyService', 'addAlly', (data, postData) => {
-		MainParser.Allies.addAlly(data.responseData);
+		Main.Allies.addAlly(data.responseData);
 	});
 	FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
-		MainParser.Allies.updateAllyList();
+		Main.Allies.updateAllyList();
 	});
 
 	// Portrait-Mapping für Spieler Avatare
@@ -256,14 +256,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		const idx = requestData.url.indexOf("/assets/shared/avatars/Portraits");
 
 		if (idx !== -1) {
-			MainParser.InnoCDN = requestData.url.substring(0, idx + 1);
+			Main.InnoCDN = requestData.url.substring(0, idx + 1);
 			let portraits = {};
 
 			$(xhr.responseText).find('portrait').each(function () {
 				portraits[$(this).attr('name')] = $(this).attr('src');
 			});
 
-			MainParser.PlayerPortraits = portraits;
+			Main.PlayerPortraits = portraits;
 		}
 	});
 
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		});
 
 		// Player-ID, Gilden-ID und Name setzen
-		MainParser.StartUp(data.responseData.user_data);
+		Main.StartUp(data.responseData.user_data);
 
 		// check if DB exists
 		StrategyPoints.checkForDB(ExtPlayerID);
@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			vals.getClanMemberList += (data.responseData.socialbar_list[i].is_guild_member ? 1 : 0);
 		}
 
-		MainParser.UpdatePlayerDict(
+		Main.UpdatePlayerDict(
 			data.responseData.socialbar_list,
 			'PlayerList',
 			Object.keys(vals).reduce((a, b) => vals[a] > vals[b] ? a : b)
@@ -310,8 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Alle Gebäude sichern
 		LastMapPlayerID = ExtPlayerID;
-		MainParser.CityMapData = Object.assign({}, ...data.responseData.city_map.entities.map((x) => ({ [x.id]: x })));
-		MainParser.SetArkBonus2();
+		Main.CityMapData = Object.assign({}, ...data.responseData.city_map.entities.map((x) => ({ [x.id]: x })));
+		Main.SetArkBonus2();
 		// Güterliste
 		GoodsList = data.responseData.goodsList
 
@@ -325,13 +325,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Unlocked features
 		if (data.responseData.unlocked_features) {
-			MainParser.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
+			Main.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
 		} else {
 			$('script').each((i,s)=>{    
 				if (!s?.innerHTML.includes("unlockedFeatures")) return
 				try {
 					let ulf = JSON.parse([...s.innerHTML.matchAll(/(unlockedFeatures:\ )(.*?)(,\n)/gm)][0][2])
-					if (Array.isArray(ulf)) MainParser.UnlockedFeatures = ulf.map(x=>x.feature);
+					if (Array.isArray(ulf)) Main.UnlockedFeatures = ulf.map(x=>x.feature);
 				} catch (e) {
 
 				}
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 
 		//A/B Tests
-		MainParser.ABTests=Object.assign({}, ...data.responseData.active_ab_tests.map((x) => ({ [x.test_name]: x })));
+		Main.ABTests=Object.assign({}, ...data.responseData.active_ab_tests.map((x) => ({ [x.test_name]: x })));
 	
 		Stats.Init();
 		Alerts.init();
@@ -352,24 +352,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	//Metadata file links
 	FH.proxy.addHandler('StaticDataService', 'getMetadata', (data, postData) => {
-		MainParser.MetaUrls = Object.assign({},...data.responseData.map(x=>( {[x.identifier]: x.url}) ));
+		Main.MetaUrls = Object.assign({},...data.responseData.map(x=>( {[x.identifier]: x.url}) ));
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Bonus notieren, enthält tägliche Rathaus FP
 	FH.proxy.addHandler('BonusService', 'getBonuses', (data, postData) => {
-		MainParser.BonusService = data.responseData;
+		Main.BonusService = data.responseData;
 	});
 
 	// Limited Bonus (Archenbonus, Kraken etc.)
 	FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
-		MainParser.SetArkBonus(data.responseData);
+		Main.SetArkBonus(data.responseData);
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Botschafter notieren, enthält Bonus FPs oder Münzen
 	FH.proxy.addHandler('EmissaryService', 'getAssigned', (data, postData) => {
-		MainParser.EmissaryService = data.responseData;
+		Main.EmissaryService = data.responseData;
 	});
 
 	// QI map
@@ -379,13 +379,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// CastleSystem rewards
 	FH.proxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
-		MainParser.CastleSystemChest = data.responseData;
+		Main.CastleSystemChest = data.responseData;
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Karte wird gewechselt zum Außenposten
 	FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
-		MainParser.UpdateActiveMap(data.responseData.gridId);
+		Main.UpdateActiveMap(data.responseData.gridId);
 
 		if (ActiveMap === 'era_outpost') {
 			CityMap.EraOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
@@ -410,30 +410,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		LastMapPlayerID = ExtPlayerID;
 
-		MainParser.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
+		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
-		MainParser.SetArkBonus2();
+		Main.SetArkBonus2();
 
 		if (ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
-		MainParser.UpdateActiveMap('main');
+		Main.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 	});
 
 
 	// main is entered
 	FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
-		MainParser.UpdateActiveMap('main');
+		Main.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 	});
 
 	// gex is entered
 	FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
-		MainParser.UpdateActiveMap('gex');
+		Main.UpdateActiveMap('gex');
 	});
 
 	// GBG is entered
 	FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
-		MainParser.UpdateActiveMap('gg');
+		Main.UpdateActiveMap('gg');
 	});
 
 	// QI is entered
@@ -442,13 +442,13 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (data.responseData?.__class__ != "GuildRaidsRunningState") return;
 		if (!data.responseData?.endsAt) return;
 
-		MainParser.UpdateActiveMap('guild_raids');
+		Main.UpdateActiveMap('guild_raids');
 		CityMap.QI.level = data.responseData.raidInstance?.difficultyLevel;
 	});
 
 	// visiting another player
 	FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
-		MainParser.UpdateActiveMap('OtherPlayer');
+		Main.UpdateActiveMap('OtherPlayer');
 		LastMapPlayerID = data.responseData.other_player.player_id;
 		CityMap.OtherPlayer.name = data.responseData.other_player.name;
 		CityMap.OtherPlayer.unlockedAreas = data.responseData.city_map.unlocked_areas;
@@ -461,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			let Buildings = data.responseData;
 
 			if (Buildings[0]?.player_id != ExtPlayerID) return; // opened another players GB
-			MainParser.UpdateCityMap(data.responseData);
+			Main.UpdateCityMap(data.responseData);
 		}
 		else if (data.requestMethod === 'placeBuilding') {
 			let building = data.responseData[0];
@@ -479,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					return
 				}
 
-				MainParser.CityMapData[building.id] = building;
+				Main.CityMapData[building.id] = building;
 			}
 		}
 		else if (data.requestMethod === 'removeBuilding') {
@@ -496,10 +496,10 @@ document.addEventListener("DOMContentLoaded", function () {
 				delete CityMap.QI.data[ID];
 				return
 			}
-			if (ID && MainParser.CityMapData[ID]) {
-				delete MainParser.CityMapData[ID];
-				if (MainParser.CityBuildingsData[ID])
-					delete MainParser.CityBuildingsData[ID];
+			if (ID && Main.CityMapData[ID]) {
+				delete Main.CityMapData[ID];
+				if (Main.CityBuildingsData[ID])
+					delete Main.CityBuildingsData[ID];
 			}
 		}
 		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
@@ -511,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			let Buildings = data.responseData['updatedEntities'];
 			if (!Buildings) return
 			if (ActiveMap != "main") return // do not add outpost buildings
-			MainParser.UpdateCityMap(Buildings)
+			Main.UpdateCityMap(Buildings)
 		}
 	});
 
@@ -529,7 +529,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// open a message
 	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'Conversation');
+		Main.UpdatePlayerDict(data.responseData, 'Conversation');
 	});
 
 	FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
@@ -576,15 +576,15 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Nachbarn/Gildenmitglieder/Freunde Tab geöffnet
 	FH.proxy.addHandler('OtherPlayerService', 'all', (data, postData) => {
 		if (data.requestMethod === 'getNeighborList' || data.requestMethod === 'getFriendsList' || data.requestMethod === 'getClanMemberList' || data.requestMethod === 'getAwaitingFriendRequestCount') {
-			MainParser.UpdatePlayerDict(data.responseData, 'PlayerList', data.requestMethod);
+			Main.UpdatePlayerDict(data.responseData, 'PlayerList', data.requestMethod);
 		}
 		if (data.requestMethod === 'getSocialList') {
 			if (data.responseData.neighbours) 
-				MainParser.UpdatePlayerDict(data.responseData.neighbours, 'PlayerList', 'getNeighborList');
+				Main.UpdatePlayerDict(data.responseData.neighbours, 'PlayerList', 'getNeighborList');
 			if (data.responseData.guildMembers) 
-				MainParser.UpdatePlayerDict(data.responseData.guildMembers, 'PlayerList', 'getClanMemberList');
+				Main.UpdatePlayerDict(data.responseData.guildMembers, 'PlayerList', 'getClanMemberList');
 			if (data.responseData.friends) 
-				MainParser.UpdatePlayerDict(data.responseData.friends, 'PlayerList', 'getFriendsList');
+				Main.UpdatePlayerDict(data.responseData.friends, 'PlayerList', 'getFriendsList');
 		}
 	});
 
@@ -592,31 +592,31 @@ document.addEventListener("DOMContentLoaded", function () {
 	// --------------------------------------------------------------------------------------------------
 	// goods translations
 	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		MainParser.setGoodsData(data.responseData);
+		Main.setGoodsData(data.responseData);
 	});
 
 
 	// Required by the kits
 	FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
-		MainParser.UpdateInventoryItem(data.responseData);
+		Main.UpdateInventoryItem(data.responseData);
 	});
 
 
 	// Required by the kits
 	FH.proxy.addHandler('InventoryService', 'getItems', (data, postData) => {
-		MainParser.UpdateInventory(data.responseData);
+		Main.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
 	FH.proxy.addHandler('InventoryService', 'getItemsByType', (data, postData) => {
-		MainParser.UpdateInventory(data.responseData);
+		Main.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
 	FH.proxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
-		MainParser.UpdateInventoryAmount(data.responseData);
+		Main.UpdateInventoryAmount(data.responseData);
 	});
 
 
@@ -626,7 +626,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// GB overview of another player
 	FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'LGOverview');
+		Main.UpdatePlayerDict(data.responseData, 'LGOverview');
 
 		// update investments
 		if (Investment) {
@@ -682,7 +682,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	FH.proxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'LGContributions');
+		Main.UpdatePlayerDict(data.responseData, 'LGContributions');
 	});
 
 	// can be removed after game update 1.332
@@ -699,7 +699,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		if (data.responseData[0]?.player_id === ExtPlayerID) {
 			
 			if ($('#OwnPartBox').length > 0) {
-				MainParser.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+				Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
 				Parts.CalcBody();
 			}
 		}
@@ -718,7 +718,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 		if (formattedData.responseData[0]?.player_id === ExtPlayerID) {
 			if ($('#OwnPartBox').length > 0) {
-				MainParser.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
+				Main.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
 				Parts.CalcBody();
 			}
 		}
@@ -726,24 +726,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	FH.proxy.addWsHandler('CityMapService', 'updateEntity', data => {
 		for (let b of data.responseData) {
-			MainParser.CityMapData[b.id]=b;
+			Main.CityMapData[b.id]=b;
 		}
 		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
 	FH.proxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
 		for (let b of data.responseData.updatedEntities||[]) {
-			MainParser.CityMapData[b.id]=b;
+			Main.CityMapData[b.id]=b;
 		}
 		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
 	FH.proxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
 		if (postData?.requestData?.[0]?.__class__=="UseItemOnBuildingPayload") {
-			if (MainParser.Inventory[postData?.requestData?.[0]?.itemId].itemAssetName =="store_building") {
+			if (Main.Inventory[postData?.requestData?.[0]?.itemId].itemAssetName =="store_building") {
 				let id= postData?.requestData?.[0]?.mapEntityId
-				if (MainParser.CityMapData[id]) delete MainParser.CityMapData[id]
-				if (MainParser.CityBuildingsData[id]) delete MainParser.CityBuildingsData[id]
+				if (Main.CityMapData[id]) delete Main.CityMapData[id]
+				if (Main.CityBuildingsData[id]) delete Main.CityBuildingsData[id]
 			}
 		}
 	});
@@ -752,7 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	function lgUpdate() {
 		const { CityMapEntity, Rankings, Bonus } = gbUpdateData;
 		gbUpdateData = null;
-		MainParser.CurrentGB.isPreviousLevel = false;
+		Main.CurrentGB.isPreviousLevel = false;
 
 		if (!Rankings) return;
 
@@ -767,7 +767,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 
 			if (Medals !== LGCurrentLevelMedals) {
-				MainParser.CurrentGB.isPreviousLevel = true;
+				Main.CurrentGB.isPreviousLevel = true;
 			}
 		}
 		else {
@@ -781,10 +781,10 @@ document.addEventListener("DOMContentLoaded", function () {
 			LGCurrentLevelMedals = Medals;
 		}
 
-		MainParser.CurrentGB.Entity = CityMapEntity.responseData[0];
-		MainParser.CurrentGB.Rankings = Rankings;
-		Parts.IsPreviousLevel = MainParser.CurrentGB.isPreviousLevel;
-		if (!MainParser.CurrentGB.isPreviousLevel) 
+		Main.CurrentGB.Entity = CityMapEntity.responseData[0];
+		Main.CurrentGB.Rankings = Rankings;
+		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
+		if (!Main.CurrentGB.isPreviousLevel) 
 			Parts.View = '';
 
 		// GB was loaded
@@ -833,11 +833,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		MainMenuLoaded = true;
 		await StartUpDone;	
 		let MenuSetting = FH.Storage.getItem('SelectedMenu');
-		MainParser.SelectedMenu = MenuSetting || 'RightBar';
-		_menu.CallSelectedMenu(MainParser.SelectedMenu);
+		Main.SelectedMenu = MenuSetting || 'RightBar';
+		_menu.CallSelectedMenu(Main.SelectedMenu);
 		
-		MainParser.setLanguage();
-		MainParser.setGameFilters();
+		Main.setLanguage();
+		Main.setGameFilters();
 		Quests.init();
 	});
 
@@ -858,11 +858,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 		// Inventory Update, e.g. when receiving FP packages from GB leveling	
 		if (requestClass === 'InventoryService' && requestMethod === 'getItem') {
-			MainParser.UpdateInventoryItem(responseData);
+			Main.UpdateInventoryItem(responseData);
 		}
 
 		if (requestClass === 'InventoryService' && requestMethod === 'getItemAmount') {
-			MainParser.UpdateInventoryAmount(responseData);
+			Main.UpdateInventoryAmount(responseData);
 
 		}
 	});
@@ -874,25 +874,25 @@ document.addEventListener("DOMContentLoaded", function () {
 			FPCollector.HandleAdvanceQuest(PostData[0]);
 		}
 
-		MainParser.Quests = data.responseData;
+		Main.Quests = data.responseData;
 
 		FH.proxy.triggerFoeHelperHandler('QuestsUpdated');
 	});
 
 	// Update unlocked features
 	FH.proxy.addHandler('UnlockableFeatureService', 'getUnlockedFeatures', (data, postData) => {
-		MainParser.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
+		Main.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
 	});
 
 	// Messages: Thread opened
 	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		MainParser.OpenConversation = data.responseData;
+		Main.OpenConversation = data.responseData;
 		Calculator.ConversationContent = data.responseData.messages[0].text;
 	});
 
 	// Messages: Thread closed
 	FH.proxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
-		MainParser.OpenConversation = null;
+		Main.OpenConversation = null;
 		Calculator.ConversationContent = null;
 		Calculator.ConversationContentNew = null;
 	});
@@ -919,7 +919,7 @@ FH.Beta = {
 
 FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
-let MainParser = {
+let Main = {
 	activateDownload: false,
 	savedFight: null,
 	DebugMode: false,
@@ -972,12 +972,12 @@ let MainParser = {
 		let LastAgreedVersion = FH.Storage.getItem('LastAgreedVersion');
 
 		if (!LastStartedVersion) {
-			MainParser.StartUpType = 'DeletedSettings';
+			Main.StartUpType = 'DeletedSettings';
 			/* Fresh install or deleted settings */
 			/* Attention: If you do stuff here it might be executed every start when surfing in incognito mode */
 		}
 		else if (LastStartedVersion !== FH.BaseData.extVersion) {
-			MainParser.StartUpType = 'UpdatedVersion';
+			Main.StartUpType = 'UpdatedVersion';
 
 			FH.HTML.ShowToastMsg({
 				show: true,
@@ -990,11 +990,11 @@ let MainParser = {
 			/* We have a new version installed and started the first time */
 		}
 		else if (LastAgreedVersion !== FH.BaseData.extVersion) {
-			MainParser.StartUpType = 'NotAgreed';
+			Main.StartUpType = 'NotAgreed';
 			/* This is a second start, but the player has not yet agreed to the new prompt */
 		}
 		else {
-			MainParser.StartUpType = 'RegularStart';
+			Main.StartUpType = 'RegularStart';
 			/* Normal start */
 		}
 
@@ -1013,7 +1013,7 @@ let MainParser = {
 		const urlIds = Object.keys(buildingUrls);
 		const urlCount = urlIds.length;
 
-		const precheckResponse = await MainParser.sendExtMessage({
+		const precheckResponse = await Main.sendExtMessage({
 			type: 'buildingMetaPreCheck',
 			region,
 			timeout: 1000,
@@ -1037,7 +1037,7 @@ let MainParser = {
 			document.body.appendChild(div);
 		}
 
-		const metadata = await MainParser.sendExtMessage({
+		const metadata = await Main.sendExtMessage({
 			type: 'buildingMeta',
 			buildingUrls,
 			region,
@@ -1045,20 +1045,20 @@ let MainParser = {
 		});
 		document.getElementById('DBCreationWarning')?.remove()
 
-		MainParser.CityEntities = metadata || {};
-		MainParser.correctBuildingType();
-		MainParser.Inactives.check();
+		Main.CityEntities = metadata || {};
+		Main.correctBuildingType();
+		Main.Inactives.check();
 	},
 
 
 	/**
-	 * Updates the `type` property of each CityEntity in `MainParser.CityEntities` if it is missing.
+	 * Updates the `type` property of each CityEntity in `Main.CityEntities` if it is missing.
 	 */
 	correctBuildingType: () => {
-		for (let i in MainParser.CityEntities) {
-			if (!MainParser.CityEntities.hasOwnProperty(i)) continue;
+		for (let i in Main.CityEntities) {
+			if (!Main.CityEntities.hasOwnProperty(i)) continue;
 
-			let CityEntity = MainParser.CityEntities[i];
+			let CityEntity = Main.CityEntities[i];
 			if (!CityEntity.type) CityEntity.type = CityEntity?.components?.AllAge?.tags?.tags?.find(value => value.hasOwnProperty('buildingType')).buildingType;
         }
 	},
@@ -1107,7 +1107,7 @@ let MainParser = {
 
 
 	setLanguage: () => {
-		MainParser.Language = FH.BaseData.GuiLng;
+		Main.Language = FH.BaseData.GuiLng;
 	},
 
 
@@ -1128,7 +1128,7 @@ let MainParser = {
 	 * @returns {number}
 	 */
 	getAddedDateTime: (hrs, min = 0) => {
-		let time = MainParser.getCurrentDateTime(),
+		let time = Main.getCurrentDateTime(),
 			h = hrs || 0,
 			m = min || 0,
 
@@ -1146,7 +1146,7 @@ let MainParser = {
 	 * @returns {number}
 	 */
 	getCurrentDateTime: () => {
-		return MainParser.getCurrentDate().getTime();
+		return Main.getCurrentDate().getTime();
 	},
 
 
@@ -1216,9 +1216,9 @@ let MainParser = {
 	 */
 	checkNextUpdate: (ep) => {
 		let s = FH.Storage.getItem(ep),
-			a = MainParser.getCurrentDateTime();
+			a = Main.getCurrentDateTime();
 
-		return MainParser.compareTime(a, s);
+		return Main.compareTime(a, s);
 	},
 
 
@@ -1346,7 +1346,7 @@ let MainParser = {
 		//console.log("StartUp called");
 		Settings.Init(false);
 
-		MainParser.VersionSpecificStartupCode();
+		Main.VersionSpecificStartupCode();
 		ExtGuildID = d['clan_id'];
 		ExtGuildPermission = d['clan_permissions'];
 		//ExtWorld = window.location.hostname.split('.')[0];
@@ -1354,7 +1354,7 @@ let MainParser = {
 		if (CurrentEra['era']) CurrentEra = CurrentEra['era'];
 		CurrentEraID = Technologies.Eras[CurrentEra];
 
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_guild_id',
 			data: ExtGuildID
@@ -1362,7 +1362,7 @@ let MainParser = {
 		FH.Storage.setItem('current_guild_id', ExtGuildID);
 
 		ExtPlayerID = d['player_id'];
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_player_id',
 			data: ExtPlayerID
@@ -1371,7 +1371,7 @@ let MainParser = {
 
 		IndexDB.Init(ExtPlayerID);
 
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_world',
 			data: ExtWorld
@@ -1379,18 +1379,18 @@ let MainParser = {
 		FH.Storage.setItem('current_world', ExtWorld);
 
 		ExtPlayerName = d['user_name'];
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_player_name',
 			data: ExtPlayerName
 		});
 
 		ExtPlayerAvatar = d.portrait_id;
-		await ExistenceConfirmed('MainParser.CityEntities||srcLinks.FileList||Infoboard||EventHandler||i18nData');
+		await ExistenceConfirmed('Main.CityEntities||srcLinks.FileList||Infoboard||EventHandler||i18nData');
 	
 		Infoboard.Init();
 		EventHandler.Init();
-		setTimeout(MainParser.forceLoadCityEntities, 15000);
+		setTimeout(Main.forceLoadCityEntities, 15000);
 		
 		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
 		
@@ -1400,10 +1400,10 @@ let MainParser = {
 
 
 	forceLoadCityEntities: () => {
-		if (MainParser.CityEntities) return;
+		if (Main.CityEntities) return;
 		//console.log('Forcing load of CityEntities');
 		let xhr = new XMLHttpRequest();
-        xhr.open("GET", MainParser.MetaUrls['city_entities'], true);
+        xhr.open("GET", Main.MetaUrls['city_entities'], true);
         xhr.send();
 	},
 
@@ -1417,8 +1417,8 @@ let MainParser = {
 		buildingBoostSums:[],
 
 		getAllies:(allies)=>{
-			MainParser.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
-			let list = MainParser.Allies.buildingList = {}
+			Main.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
+			let list = Main.Allies.buildingList = {}
 			for (let ally of allies) {
 				if (!ally.mapEntityId) continue
 				if (list[ally.mapEntityId]) 
@@ -1426,41 +1426,41 @@ let MainParser = {
 				else 
 				 	list[ally.mapEntityId] = {[ally.id]:ally.id}
 			}
-			MainParser.Allies.updateAllyList()
+			Main.Allies.updateAllyList()
 		},
 
 		updateAlly:(ally)=>{
 			if (ally.mapEntityId) {
-				let list = MainParser.Allies.buildingList
+				let list = Main.Allies.buildingList
 				if (list[ally.mapEntityId]) 
 					list[ally.mapEntityId][ally.id]=ally.id
 				else 
 				 	list[ally.mapEntityId] = {[ally.id]:ally.id}
 			} else {
-				mapID=MainParser.Allies.allyList[ally.id]?.mapEntityId
+				mapID=Main.Allies.allyList[ally.id]?.mapEntityId
 				if (mapID) {
-					delete MainParser.Allies.buildingList[mapID][ally.id]
-					if (Object.keys(MainParser.Allies.buildingList[mapID]).length==0) delete MainParser.Allies.buildingList[mapID]
+					delete Main.Allies.buildingList[mapID][ally.id]
+					if (Object.keys(Main.Allies.buildingList[mapID]).length==0) delete Main.Allies.buildingList[mapID]
 				}
 			}
-			MainParser.Allies.allyList[ally.id] = ally
-			MainParser.Allies.updateAllyList()
+			Main.Allies.allyList[ally.id] = ally
+			Main.Allies.updateAllyList()
 		},
 
 		addAlly:(ally)=>{
-			MainParser.Allies.allyList[ally.id]=ally
-			MainParser.Allies.updateAllyList()
+			Main.Allies.allyList[ally.id]=ally
+			Main.Allies.updateAllyList()
 		},
 
 		setMeta:(raw)=>{
-			let meta = MainParser.Allies.meta = {} 
+			let meta = Main.Allies.meta = {} 
 			for (ally of raw) {
 				meta[ally.id]=ally
 			}
 		},
 
 		getProd:(CityMapId) => {
-			let M = MainParser.Allies
+			let M = Main.Allies
 			if (!M.buildingList?.[CityMapId]) return null
 			let prod={}
 			Object.values(M.buildingList[CityMapId]).forEach(id=> {
@@ -1471,24 +1471,24 @@ let MainParser = {
 		},
 
 		tooltip:(id)=>{
-			if (!MainParser.Allies.buildingList?.[id]) return ""
-			return `data-allies ="${JSON.stringify(Object.values(MainParser.Allies.buildingList[id]))}"`
+			if (!Main.Allies.buildingList?.[id]) return ""
+			return `data-allies ="${JSON.stringify(Object.values(Main.Allies.buildingList[id]))}"`
 		},
 
 		setRarities:(raw)=>{
-			MainParser.Allies.rarities=Object.assign({}, ...raw.map(r=>({[r.id.value]:r})))
+			Main.Allies.rarities=Object.assign({}, ...raw.map(r=>({[r.id.value]:r})))
 		},
 
 		setTypes:(raw)=>{
-			MainParser.Allies.types=Object.assign({}, ...raw.map(t=>({[t.id]:t})))
+			Main.Allies.types=Object.assign({}, ...raw.map(t=>({[t.id]:t})))
 		},
 
 		getAllieData:(id)=>{
-			let ally = structuredClone(MainParser.Allies.allyList[id])
+			let ally = structuredClone(Main.Allies.allyList[id])
 			ally.rarity=ally.rarity.value
-			ally.name=MainParser.Allies.meta[ally.allyId]?.name
-			ally.typeName=MainParser.Allies.types[ally.type]?.name
-			ally.type=MainParser.Allies.meta[ally.allyId]?.allyType
+			ally.name=Main.Allies.meta[ally.allyId]?.name
+			ally.typeName=Main.Allies.types[ally.type]?.name
+			ally.type=Main.Allies.meta[ally.allyId]?.allyType
 			return ally
 		},
 
@@ -1502,7 +1502,7 @@ let MainParser = {
 					dragdrop: true,
 					minimize: true,
 					resize: true,
-					settings: MainParser.Allies.ShowSettings,
+					settings: Main.Allies.ShowSettings,
 					active_maps:"main",				
 				});
 			} else {
@@ -1511,13 +1511,13 @@ let MainParser = {
 					return;
 				}
 			}
-			MainParser.Allies.updateAllyList()
+			Main.Allies.updateAllyList()
 		},
 
 		updateAllyList:()=>{
-			MainParser.Allies.buildingBoostSums=[]	
+			Main.Allies.buildingBoostSums=[]	
 			if ($('#AllyList').length === 0) return;
-			let buildings = Object.assign({},...Object.values(MainParser.CityMapData).map(x=>({id:x.id,metaID:x.cityentity_id,rooms:structuredClone(MainParser.CityEntities[x.cityentity_id]?.components?.AllAge?.ally?.rooms)})).filter(x=>x.rooms!==undefined).map(x=>({[x.id]:x})))
+			let buildings = Object.assign({},...Object.values(Main.CityMapData).map(x=>({id:x.id,metaID:x.cityentity_id,rooms:structuredClone(Main.CityEntities[x.cityentity_id]?.components?.AllAge?.ally?.rooms)})).filter(x=>x.rooms!==undefined).map(x=>({[x.id]:x})))
 			let rooms = {}
 			let unassigned = 0;
 			let boostList = [
@@ -1534,7 +1534,7 @@ let MainParser = {
 				{feature:"guild_expedition",type: "def_boost_attacker"},
 				{feature:"guild_expedition",type: "def_boost_defender"},
 			]
-			Object.values(MainParser.Allies.allyList).forEach(x=>{
+			Object.values(Main.Allies.allyList).forEach(x=>{
 				if (x.mapEntityId) {
 					let rs=buildings[x.mapEntityId].rooms
 					for (let r of rs) {
@@ -1553,7 +1553,7 @@ let MainParser = {
 						allyRarity: x.rarity?.value || "",
 						allyLevel: x.level || null,												
 						allyBoosts: x.currentLevel?.boosts || x.boosts || null,
-						allyName: MainParser.Allies.meta[x.allyId]?.name || "",
+						allyName: Main.Allies.meta[x.allyId]?.name || "",
 					}
 					unassigned++
 				}
@@ -1561,17 +1561,17 @@ let MainParser = {
 			Object.values(buildings).forEach(b=>{
 				for (let [i,r] of Object.entries(b.rooms)) {
 					rooms[b.id+"#" + i] = {
-						buildingName: MainParser.CityEntities[b.metaID].name,
+						buildingName: Main.CityEntities[b.metaID].name,
 						buildingMeta:b.metaID,
-						roomRarity: r.rarity?.value || Object.keys(MainParser.Allies.rarities).join("#"),
+						roomRarity: r.rarity?.value || Object.keys(Main.Allies.rarities).join("#"),
 						allyRarity: r.ally?.rarity?.value || "",
 						allyLevel: r.ally?.level || null,												
 						allyBoosts: r.ally?.currentLevel?.boosts || r.ally?.boosts || null,
-						allyName: MainParser.Allies.meta[r.ally?.allyId]?.name || "",
+						allyName: Main.Allies.meta[r.ally?.allyId]?.name || "",
 					}
 				}
 			})
-			Object.values(MainParser.Inventory).filter(x=>x?.item?.reward?.assembledReward?.type=="ally").forEach(x=>{
+			Object.values(Main.Inventory).filter(x=>x?.item?.reward?.assembledReward?.type=="ally").forEach(x=>{
 				if (!x.inStock) return;
 				rooms[0+"#" + unassigned] = {
 					fragmentsAmount: x.inStock,
@@ -1586,7 +1586,7 @@ let MainParser = {
 
 			html=`<div class="dark-bg">
 				<select id="AllyFilter"><option value="">${i18n('Boxes.AllyList.All')}</option>`
-				for (let r of Object.values(MainParser.Allies.rarities)) {
+				for (let r of Object.values(Main.Allies.rarities)) {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
 				}
 			html+=`</select></div>`
@@ -1602,7 +1602,7 @@ let MainParser = {
 				</thead>
 				<tbody class="ally-list">`;
 			sortedRooms = Object.entries(rooms).sort((a,b)=>{
-				f=(r)=>{return Object.keys(MainParser.Allies.rarities).indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0)}
+				f=(r)=>{return Object.keys(Main.Allies.rarities).indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0)}
 				return f(a[1])-f(b[1])
 			})
 				
@@ -1614,19 +1614,19 @@ let MainParser = {
 
 				html+=`<tr class="allyRoomRow ${rarities.join(" ")}">
 						   	<td style="white-space:nowrap">
-								${MainParser.Allies.rarityStars(r.allyRarity)}
+								${Main.Allies.rarityStars(r.allyRarity)}
 								${r.allyName || ""}${r.fragmentsAmount?srcLinks.icons("icon_tooltip_fragment") + r.fragmentsAmount+"/"+r.fragmentsNeeded:""}
 							</td>
 						   	<td data-number="${(r.allyLevel || 0)}">${r.allyLevel || ""}</td>`;
 							for (let b of boostList) {
-								let allyB = MainParser.Allies.boostsArray(r.allyBoosts);
+								let allyB = Main.Allies.boostsArray(r.allyBoosts);
 								let boost = allyB.find(x => x.type == b.type && x.feature == b.feature);
 						   		html+=`<td data-number="${(boost ? boost.value : 0)}">${(boost ? boost.value : '-')}</td>`
 							}
 						html+=`
 					   	   	<td ${buildingId!=0?`class="helperTT" 
 								data-id="${buildingId}" 
-								data-era="${Technologies.InnoEraNames[MainParser.CityMapData[buildingId].level]}"
+								data-era="${Technologies.InnoEraNames[Main.CityMapData[buildingId].level]}"
 								data-callback_tt="Tooltips.buildingTT" 
 								`:``}
 							>
@@ -1638,26 +1638,26 @@ let MainParser = {
 				// gather sums of all boosts
 				if (buildingId!=0 && r.allyBoosts !== null) {
 					for (let boost of r.allyBoosts) {
-						let bBoost = MainParser.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.targetedFeature);
+						let bBoost = Main.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.targetedFeature);
 						if (bBoost)
 							bBoost.value += boost.value;
 						else
-							MainParser.Allies.buildingBoostSums.push(structuredClone(boost));
+							Main.Allies.buildingBoostSums.push(structuredClone(boost));
 					}
 				}
 			}
-			MainParser.Allies.buildingBoostSums.sort((a, b) => {
+			Main.Allies.buildingBoostSums.sort((a, b) => {
 				if (a.type < b.type) return -1
 				if (a.type > b.type) return 1
 				return 0
 			});
-			MainParser.Allies.buildingBoostSums.sort((a, b) => {
+			Main.Allies.buildingBoostSums.sort((a, b) => {
 				if (a.targetedFeature < b.targetedFeature) return -1
 				if (a.targetedFeature > b.targetedFeature) return 1
 				return 0
 			});
 			html+=`</tbody><tr><td colspan="19" class="text-center dark-bg">
-				${MainParser.Allies.boosts(MainParser.Allies.buildingBoostSums)}
+				${Main.Allies.boosts(Main.Allies.buildingBoostSums)}
 				</td></tr></table>`
 			
 			$('#AllyListBody').html(html).promise().done(function () {
@@ -1679,7 +1679,7 @@ let MainParser = {
 
 		rarityStars: (r) => {
 			if (!r || r=="") return ""
-			let i = Object.keys(MainParser.Allies.rarities).indexOf(r)
+			let i = Object.keys(Main.Allies.rarities).indexOf(r)
 			if (i==-1) return `<img style="filter: drop-shadow(0px 2px 2px black)"  src="${srcLinks.get(`/shared/icons/when_motivated.png`, true)}">`
 			if (i==0) return `<span style="font-size: large; color: transparent; text-shadow: 0px 0px 4px black;" >☆</span>`
 			let ret=""					
@@ -1734,7 +1734,7 @@ let MainParser = {
 
 			let h = [];
 			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-			h.push(`<p><button onclick="MainParser.Allies.SaveSettings()" id="save-bghelper-settings" >${i18n('Boxes.Settings.Save')}</button></p>`);
+			h.push(`<p><button onclick="Main.Allies.SaveSettings()" id="save-bghelper-settings" >${i18n('Boxes.Settings.Save')}</button></p>`);
 
 			$('#AllyListSettingsBox').html(h.join(''));
 		},
@@ -1769,33 +1769,33 @@ let MainParser = {
 			}
 		}
 
-		MainParser.updateArkBonus(ArkBonus,"Limited Bonuses");
+		Main.updateArkBonus(ArkBonus,"Limited Bonuses");
 	},
 
 
 	SetArkBonus2: () => {
 		let ArkBonus = 0;
 
-		for (let i of Object.values(MainParser.CityMapData).filter(x => x?.bonus?.type === "contribution_boost")) {
+		for (let i of Object.values(Main.CityMapData).filter(x => x?.bonus?.type === "contribution_boost")) {
 			ArkBonus += i.bonus.value;
 		}
 
-		MainParser.updateArkBonus(ArkBonus,"City Map");
+		Main.updateArkBonus(ArkBonus,"City Map");
 	},
 
 
 	/**
 	 * Updates the ArkBonus value if the new value is greater than the current value stored
-	 * in MainParser.ArkBonus. If the ArkBonus is updated and the current value was greater than 0,
+	 * in Main.ArkBonus. If the ArkBonus is updated and the current value was greater than 0,
 	 * a developer log is optionally shown as a toast message in developer mode.
 	 *
 	 * @param {number} ArkBonus - The new ArkBonus value to set.
 	 * @param {string} Source - A string representing the source or origin of the update.
 	 */
 	updateArkBonus:(ArkBonus, Source)=>{
-		if (ArkBonus > MainParser.ArkBonus) {
-			if (MainParser.ArkBonus > 0) {
-				const s = `SetArkBonus: updated ArkBonus from ${MainParser.ArkBonus} to ${ArkBonus} by ${Source}`;
+		if (ArkBonus > Main.ArkBonus) {
+			if (Main.ArkBonus > 0) {
+				const s = `SetArkBonus: updated ArkBonus from ${Main.ArkBonus} to ${ArkBonus} by ${Source}`;
 				if (FH.BaseData.devMode === 'true') {
 					FH.HTML.ShowToastMsg({
 						show: true,
@@ -1806,7 +1806,7 @@ let MainParser = {
 					});
 				}
 			}
-			MainParser.ArkBonus = ArkBonus;
+			Main.ArkBonus = ArkBonus;
 		}
 	},
 
@@ -1828,13 +1828,13 @@ let MainParser = {
 				let Message = d['messages'][i];
 
 				if (Message.sender !== undefined) {
-					MainParser.UpdatePlayerDictCore(Message.sender);
+					Main.UpdatePlayerDictCore(Message.sender);
 				}
 			}
 		}
 
 		else if (Source === 'LGOverview' && d[0]) {
-			MainParser.UpdatePlayerDictCore(d[0].player);
+			Main.UpdatePlayerDictCore(d[0].player);
 		}
 
 		else if (Source === 'LGContributions') {
@@ -1842,7 +1842,7 @@ let MainParser = {
 				if (!d.hasOwnProperty(i))
 					continue;
 
-				MainParser.UpdatePlayerDictCore(d[i].player);
+				Main.UpdatePlayerDictCore(d[i].player);
 			}
 		}
 
@@ -1851,7 +1851,7 @@ let MainParser = {
 				if (!d.hasOwnProperty(i))
 					continue;
 
-				MainParser.UpdatePlayerDictCore(d[i]);
+				Main.UpdatePlayerDictCore(d[i]);
 			}
 
 			if (ListType === 'getNeighborList') {
@@ -1924,10 +1924,10 @@ let MainParser = {
 	 * @param Items
 	 */
 	UpdateInventory: (Items) => {
-		//MainParser.Inventory = {};
+		//Main.Inventory = {};
 		for (let i = 0; i < Items.length; i++) {
 			let ID = Items[i]['id'];
-			MainParser.Inventory[ID] = Items[i];
+			Main.Inventory[ID] = Items[i];
 		}
 		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
@@ -1940,7 +1940,7 @@ let MainParser = {
 	 */
 	UpdateInventoryItem: (Item) => {
 		let ID = Item['id'];
-		MainParser.Inventory[ID] = Item;
+		Main.Inventory[ID] = Item;
 		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
@@ -1954,7 +1954,7 @@ let MainParser = {
 			let ID = Item[0],
 			Amount = Item[1];
 			try {
-				MainParser.Inventory[ID].inStock = Amount;
+				Main.Inventory[ID].inStock = Amount;
 			} catch (e) {
 			}
 			FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
@@ -1972,8 +1972,8 @@ let MainParser = {
 			if (Buildings[i]['player_id'] !== ExtPlayerID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
 			let ID = Buildings[i]['id'];
-			if (MainParser.CityMapData[ID]) {
-				MainParser.CityMapData[ID] = Buildings[i];
+			if (Main.CityMapData[ID]) {
+				Main.CityMapData[ID] = Buildings[i];
 			} 
 			if (ActiveMap === "era_outpost") {
 				CityMap.EraOutpost.data[ID] = Buildings[i];
@@ -1985,7 +1985,7 @@ let MainParser = {
 				CityMap.QI.data[ID] = Buildings[i];
 			}
 		}
-		MainParser.SetArkBonus2();
+		Main.SetArkBonus2();
 
 		if ($('#bluegalaxy').length > 0) {
 			BlueGalaxy.CalcBody(Buildings);
@@ -2005,26 +2005,26 @@ let MainParser = {
 	setConversations: (d, refresh = false) => {
 
 		// If the cache is empty, read out the memory.
-		if (MainParser.Conversations.length === 0 && refresh)
+		if (Main.Conversations.length === 0 && refresh)
 		{
 			let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 			if (StorageHeader !== null) {
-				MainParser.Conversations = JSON.parse(StorageHeader);
+				Main.Conversations = JSON.parse(StorageHeader);
 			}
 		}
 		let day = Math.floor(Date.now()/86400000);
-		let LCUindex = MainParser.Conversations.findIndex((obj) => (obj.id === "__lastCleanup"));
+		let LCUindex = Main.Conversations.findIndex((obj) => (obj.id === "__lastCleanup"));
 		let LCU = day;
 		if (LCUindex === -1) {
-			MainParser.Conversations.forEach( (obj) => obj.lastSeen = day);
-			MainParser.Conversations.push({
+			Main.Conversations.forEach( (obj) => obj.lastSeen = day);
+			Main.Conversations.push({
 				id: "__lastCleanup",
 				LCU: day,
 				lastSeen: day
 			})
 		} else {
-			LCU = MainParser.Conversations[LCUindex]["LCU"];
-			MainParser.Conversations[LCUindex]["lastSeen"] = day;
+			LCU = Main.Conversations[LCUindex]["LCU"];
+			Main.Conversations[LCUindex]["lastSeen"] = day;
 		}
 
 		if (d['teasers'])
@@ -2035,20 +2035,20 @@ let MainParser = {
 					continue;
 				}
 
-				let key = MainParser.Conversations.findIndex((obj) => (obj.id === d['teasers'][k]['id']));
+				let key = Main.Conversations.findIndex((obj) => (obj.id === d['teasers'][k]['id']));
 
 				// Is a key already available?
 				if (key !== -1) {
-					MainParser.Conversations[key]['type'] = d['type'];
-					MainParser.Conversations[key]['title'] = d['teasers'][k]['title'];
-					MainParser.Conversations[key]['hidden'] = d['teasers'][k]['isHidden'];
-					MainParser.Conversations[key]['favorite'] = d['teasers'][k]['isFavorite'];
-					MainParser.Conversations[key]['important'] = d['teasers'][k]['isImportant'];
-					MainParser.Conversations[key]['lastSeen'] = day;
+					Main.Conversations[key]['type'] = d['type'];
+					Main.Conversations[key]['title'] = d['teasers'][k]['title'];
+					Main.Conversations[key]['hidden'] = d['teasers'][k]['isHidden'];
+					Main.Conversations[key]['favorite'] = d['teasers'][k]['isFavorite'];
+					Main.Conversations[key]['important'] = d['teasers'][k]['isImportant'];
+					Main.Conversations[key]['lastSeen'] = day;
 				}
 				// → Create key
 				else {
-					MainParser.Conversations.push({
+					Main.Conversations.push({
 						type: d['type'],
 						id: d['teasers'][k]['id'],
 						title: d['teasers'][k]['title'],
@@ -2063,16 +2063,16 @@ let MainParser = {
 
 		}
 
-		if (MainParser.Conversations.length > 0)
+		if (Main.Conversations.length > 0)
 		{
 			//cleanup of entries that have not been seen for more than a month - executes once per day
 			if (LCU != day) {
-				MainParser.Conversations[LCUindex]["LCU"] = day;
-				MainParser.Conversations = MainParser.Conversations.filter(obj => obj.lastSeen +30 > day);
+				Main.Conversations[LCUindex]["LCU"] = day;
+				Main.Conversations = Main.Conversations.filter(obj => obj.lastSeen +30 > day);
 			}
 			// Dopplungen entfernen und Daten lokal abspeichern
-			MainParser.Conversations = [...new Set(MainParser.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
-			FH.Storage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
+			Main.Conversations = [...new Set(Main.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
+			FH.Storage.setItem('ConversationsHeaders', JSON.stringify(Main.Conversations));
 		}
 	},
 
@@ -2174,14 +2174,14 @@ let MainParser = {
 			//get list of buildings for which an alert is already set
 			let LB = JSON.parse(FH.Storage.getItem("LimitedBuildingsAlertSet")||'{}')
 			//get list of expired limited buildings in city
-			let list = Object.values(MainParser.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
+			let list = Object.values(Main.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
 			//remove buildings that were already tracked and that should have just triggered an alert
 			for (let i = list.length-1;i>=0;i--) {
-				if (LB[list[i]] || MainParser.Inactives.ignore.includes(MainParser.CityMapData[list[i]].cityentity_id)) {
+				if (LB[list[i]] || Main.Inactives.ignore.includes(Main.CityMapData[list[i]].cityentity_id)) {
 					list.splice(i,1)
 				}
 			}
-			MainParser.Inactives.list = [...new Set(list.map(x=>MainParser.CityMapData[x].cityentity_id))];
+			Main.Inactives.list = [...new Set(list.map(x=>Main.CityMapData[x].cityentity_id))];
 			
 			//remove tracked buildings if time ran out
 			for (let x in LB) {
@@ -2196,7 +2196,7 @@ let MainParser = {
 			if (list.length > 0) {
 					const data = {
 					title: i18n("InactiveBuildingsAlert.title"),
-					body: list.map(x=>MainParser.CityEntities[MainParser.CityMapData[x].cityentity_id].name).join("\n"),
+					body: list.map(x=>Main.CityEntities[Main.CityMapData[x].cityentity_id].name).join("\n"),
 					expires: moment().add(1,"seconds").valueOf(),
 					repeat: -1,
 					persistent: true,
@@ -2206,21 +2206,21 @@ let MainParser = {
 					actions: [{title:"OK"}]
 				};
 		
-				MainParser.sendExtMessage({
+				Main.sendExtMessage({
 					type: 'alerts',
 					playerId: ExtPlayerID,
 					action: 'create',
 					data: data,
 				})
 			}
-			let buildings = Object.values(MainParser.CityMapData)
+			let buildings = Object.values(Main.CityMapData)
 			for (let building of buildings) {
 				// set alerts for limited buildings that will run out in the future and that have no alert yet
-				if (!LB[building.id] && MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime) {
+				if (!LB[building.id] && Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime) {
 					const data = {
 						title: i18n("InactiveBuildingsAlert.title"),
-						body: MainParser.CityEntities[MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.targetCityEntityId].name,
-						expires: (MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000,
+						body: Main.CityEntities[Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.targetCityEntityId].name,
+						expires: (Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000,
 						repeat: -1,
 						persistent: true,
 						tag: '',
@@ -2229,13 +2229,13 @@ let MainParser = {
 						actions: [{title:"OK"}]
 					};
 			
-					MainParser.sendExtMessage({
+					Main.sendExtMessage({
 						type: 'alerts',
 						playerId: ExtPlayerID,
 						action: 'create',
 						data: data,
 					}).then((aId) => {
-						LB[building.id]=(MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
+						LB[building.id]=(Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
 						FH.Storage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 					})
 				}
@@ -2256,20 +2256,20 @@ let MainParser = {
 	
 				//FH.HTML.AddCssFile('auctions');
 			}
-			MainParser.Inactives.updateSettings();
+			Main.Inactives.updateSettings();
 		},
 
 		updateSettings:()=>{ 
 			let t=[];
 			//t.push(`<h2>${i18n('Boxes.InactivesSettings.Ignored')}</h2>`);
 			t.push(`<h2>${i18n('Boxes.InactivesSettings.Toggle')}</h2>`);
-			for (let id of MainParser.Inactives.ignore) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.NoAlert')}">🤐${MainParser.CityEntities[id].name}</span></br>`);
+			for (let id of Main.Inactives.ignore) {
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.NoAlert')}">🤐${Main.CityEntities[id].name}</span></br>`);
 			}
 			//t.push(`<h2>${i18n('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
 			
-			for (let id of MainParser.Inactives.list) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.AlertActive')}">⚠️${MainParser.CityEntities[id].name}</span></br>`);
+			for (let id of Main.Inactives.list) {
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.AlertActive')}">⚠️${Main.CityEntities[id].name}</span></br>`);
 			}
 			
 			
@@ -2277,19 +2277,19 @@ let MainParser = {
 			
 			$('.inactivesIgnoreToggle').on("click", (e) => {
 				let id = e.target.dataset.id;
-				let i = MainParser.Inactives.ignore.findIndex(x => x==id);
+				let i = Main.Inactives.ignore.findIndex(x => x==id);
 				if (i>=0) {
-					MainParser.Inactives.ignore.splice(i,1);
-					MainParser.Inactives.list.push(id);
+					Main.Inactives.ignore.splice(i,1);
+					Main.Inactives.list.push(id);
 
 				} else {
-					i = MainParser.Inactives.list.findIndex(x => x==id);
-					MainParser.Inactives.list.splice(i,1);
-					MainParser.Inactives.ignore.push(id);
+					i = Main.Inactives.list.findIndex(x => x==id);
+					Main.Inactives.list.splice(i,1);
+					Main.Inactives.ignore.push(id);
 
 				};
-				FH.Storage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
-				MainParser.Inactives.updateSettings();
+				FH.Storage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(Main.Inactives.ignore));
+				Main.Inactives.updateSettings();
 			});
 		},
 	},
@@ -2306,10 +2306,10 @@ if (window.FHBgApiHandler !== undefined && window.FHBgApiHandler instanceof Func
 	delete window.FHBgApiHandler;
 }
 
-window.MainParser = MainParser;
-window.ExistenceConfirmed = ExistenceConfirmed;
+FH.Main = Main;
+FH.ExistenceConfirmed = ExistenceConfirmed;
 window.i18n = i18n;
-window.GameTime = GameTime;
+FH.GameTime = GameTime;
 
 console.log('Forge Hammer version ' + FH.BaseData.extVersion + ' started' + '. ID: ' + FH.BaseData.extID);
 console.log(navigator.userAgent);
