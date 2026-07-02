@@ -18,9 +18,17 @@ window.PlannerApp = window.PlannerApp || {};
     ctx.textAlign = 'center';
     ctx.lineWidth = 2;
 
+    function getDpr() {
+        return Math.min(window.devicePixelRatio || 1, 2);
+    }
+
     function resizeCanvasToCSSSize() {
+        const cssRect = canvas.parentElement.getBoundingClientRect();
+        canvas.style.width = cssRect.width + 'px';
+        canvas.style.height = cssRect.height + 'px';
+
         const rect = canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getDpr();
 
         const newW = Math.max(1, Math.round(rect.width * dpr));
         const newH = Math.max(1, Math.round(rect.height * dpr));
@@ -47,7 +55,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function rebuildGridLayer() {
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getDpr();
 
         state.gridCanvas = document.createElement('canvas');
         state.gridCanvas.width = canvas.width;
@@ -141,7 +149,7 @@ window.PlannerApp = window.PlannerApp || {};
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
 
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getDpr();
 
         ctx.setTransform(
             dpr * state.zoomScale, 0,
@@ -286,6 +294,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     app.ctx = ctx;
+    app.getDpr = getDpr;
     app.resizeCanvasToCSSSize = resizeCanvasToCSSSize;
     app.getCanvasPointElem = getCanvasPointElem;
     app.rebuildGridLayer = rebuildGridLayer;
