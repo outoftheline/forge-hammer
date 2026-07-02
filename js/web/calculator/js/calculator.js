@@ -698,10 +698,14 @@ let Calculator = {
 			if (Calculator.ConversationContent)
 				Calculator.ConversationContent = Calculator.ConversationContent.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
 			else {
-				$('#calctest').remove();
+				$('#calcReminder').remove();
 				return;
 			}
 			$(el).remove();
+			if ($('#calcReminder .gbEntry').length === 0) {
+				$('#calcReminder').remove(); 
+				return;
+			}
 		}
 
 		for (let before of entriesBefore) {
@@ -719,20 +723,23 @@ let Calculator = {
 				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${highlight ? `${info} <b>${highlight}</b>` : info}</div>`);
 			}
 		}
+		if (output.length === 1) return;
 
-		if ($('#calctest').length > 0)
-			$('#calctest  .content').html(output.join('\n'));
+		if ($('#calcReminder').length > 0)
+			$('#calcReminder .content').html(output.join('\n'));
 		else {
-			$(`<div id="calctest" style="position:absolute"><div class="icon-move"></div><div class="icon-close"></div><div class="content"></div></div>`).appendTo('body')
-			$(`#calctest .content`).append(output.join('\n'));
+			FH.HTML.Box({
+				id: 'calcReminder',
+				title: '',
+				auto_close: true,
+				dragdrop: true,
+			});
+			$('#calcReminder').append('<div class="content" />')
+			$(`#calcReminder .content`).append(output.join('\n'));
 		}
 
-		$('#calctest').off('click', '.gbEntry').on('click', '.gbEntry', function() {
+		$('#calcReminder').off('click', '.gbEntry').on('click', '.gbEntry', function() {
 			removeFromList(this);
 		});
-		$('#calctest').off('click', '.icon-close').on('click', '.icon-close', function() {
-			$(this).parent('#calctest').remove();
-		});
-		$( "#calctest" ).draggable({ handle: ".icon-move" });
 	}
 };
