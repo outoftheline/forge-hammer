@@ -1134,12 +1134,12 @@ let CityMap = {
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
 				break;
 			default:
-				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(MainParser.CityMapData);
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
 				break;
 		}
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'storeData',
 			key: 'foe_planner_pending',
 			data: data
