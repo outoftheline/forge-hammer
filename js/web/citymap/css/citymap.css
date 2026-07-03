@@ -637,3 +637,8 @@
 	overflow: auto;
 	max-height: calc(98vh - 30px);
 }
+
+
+#open-planner {
+	display: none;
+}
