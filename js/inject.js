@@ -81,14 +81,9 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 	
 	const v = chrome.runtime.getManifest().version;
 
-	let   lng = navigator.language.split("-")[0]();
+	let   lng = navigator.language.split("-")[0];
 	const uLng = localStorage.getItem('Hammer.user-language');
 	
-	// we only need the first part
-	if (lng.indexOf('-') > 0) {
-		lng = lng.split('-')[0];
-	}
-
 	// is there a translation?
 	if (FH.Languages.PossibleLanguages[lng] === undefined) {
 		lng = 'en';
