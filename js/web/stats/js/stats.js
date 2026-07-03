@@ -1829,7 +1829,7 @@ let Stats = {
 			let color = guildColors[guildId] ?? null;
 
 			return {
-				label: name,
+				label: FH.HTML.escapeHtml(name),
 				borderColor: color,
 				backgroundColor: color,
 				borderWidth: 1.5,
