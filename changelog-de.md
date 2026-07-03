@@ -5,8 +5,12 @@
 - Statistiken: CSV Export (wieder) hinzugefügt für: Ressourcen, Gildenkasse, Einheiten, GG Siegpunkte, GG Spielerfortschritt
 - Der GG Spielerfortschritt ist nun im GG Fenster in den Statistiken zu finden und zeigt nur noch den Fortschritt der aktuellen Runde
 - GG Statistiken: Siegpunkte können jetzt auf einen Blick verglichen werden
+- Gefechte: Option zum automatischen Öffnen hinzugefügt
 - Shops: Suchfeld hinzugefügt
 - Notizen: Einstellung für automatisches Öffnen beim Spielstart hinzugefügt
+
+### Bug Fixes
+- Gefechte: Es konnten leere Einträge in der Gefechtshistorie angezeigt werden
 
 ---
  

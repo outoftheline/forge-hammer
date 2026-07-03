@@ -1846,7 +1846,7 @@ let Stats = {
 		});
 
 		let canvas = document.createElement('canvas');
-		canvas.width = 850;
+		canvas.width = 1050;
 		canvas.height = 450;
 		$('#StatsGBGTabGuilds').empty().append(canvas)
 			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
@@ -1994,7 +1994,7 @@ let Stats = {
 		});
 
 		let canvas = document.createElement('canvas');
-		canvas.width = 850;
+		canvas.width = 1050;
 		canvas.height = 450;
 		$('#StatsGBGTabPlayers').empty().append(canvas)
 			.append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />'))

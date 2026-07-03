@@ -78,9 +78,15 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	}
 
 	// update box when open
-	if ($('#LiveGildFighting').length > 0) {
+	if ($('#LiveGuildFighting').length > 0) {
 		GuildFights.BuildFightContent();
 	}
+
+	setTimeout(function () {
+		if (GuildFights.autoOpen && $('#LiveGuildFighting').length === 0) {
+			GuildFights.ShowGuildBox();
+		}
+	}, 700);
 });
 FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
@@ -120,6 +126,7 @@ let GuildFights = {
 	PlayerBoxSettings: {
 		showOnlyActivePlayers: 0,
 	},
+	autoOpen: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.autoOpen || 0,
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
@@ -243,7 +250,7 @@ let GuildFights = {
 				}
 
 				// Update Tables
-				if ($('#LiveGildFighting').length > 0) {
+				if ($('#LiveGuildFighting').length > 0) {
 					GuildFights.RefreshTable(data['responseData'][0]);
 				}
 
@@ -423,13 +430,13 @@ let GuildFights = {
 		let PlayerBoxSettings = JSON.parse(FH.Storage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
-			// get all available GBG entires
-			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).keys();
+			// get all GBG entires, skip those without participation data
+			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).filter(entry => entry.participation && entry.participation.length > 0).primaryKeys();
 			gbgRounds.sort(function (a, b) { return b - a });
 			GuildFights.GBGAllRounds = gbgRounds;
 		}
 
-		//set latest GBG round to show if available and no specific GBG round is set
+		// set latest GBG round to show if available and no specific GBG round is set
 		if (!gbground && GuildFights.GBGAllRounds && GuildFights.GBGAllRounds.length) {
 			gbground = GuildFights.GBGAllRounds[i];
 		}
@@ -561,9 +568,9 @@ let GuildFights = {
 	 * Creates the box with the data
 	 */
 	ShowGuildBox: (reload) => {
-		if ($('#LiveGildFighting').length === 0) {
+		if ($('#LiveGuildFighting').length === 0) {
 			FH.HTML.Box({
-				id: 'LiveGildFighting',
+				id: 'LiveGuildFighting',
 				title: i18n('Menu.Gildfight.Title'),
 				auto_close: true,
 				dragdrop: true,
@@ -576,7 +583,7 @@ let GuildFights = {
 			FH.HTML.AddCssFile('guildfights');
 		}
 		else if (!reload) {
-			FH.HTML.CloseOpenBox('LiveGildFighting');
+			FH.HTML.CloseOpenBox('LiveGuildFighting');
 			return;
 		}
 
@@ -1106,7 +1113,7 @@ let GuildFights = {
 		let activeTab = 1;
 		if ($('.gbgprogress.active').length > 0) activeTab = 2;
 
-		$('#LiveGildFighting').find('#LiveGildFightingBody').html(h.join('')).promise().done(function () {
+		$('#LiveGuildFighting').find('#LiveGuildFightingBody').html(h.join('')).promise().done(function () {
 			$('.gbg-tabs').tabslet({ active: activeTab });
 
 			$('.gbg-tabs').on('_after', (e) => {
@@ -1125,7 +1132,7 @@ let GuildFights = {
 				GuildFights.ToggleCopyButton();
 			});
 			// in BuildFightContent(), inside .promise().done(), alongside the existing delegated listeners:
-			$('#LiveGildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
+			$('#LiveGuildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
 				if (ProvinceMap.selectedProvince?.owner) {
 					ProvinceMap.selectedProvince.isSelected = false;
 					ProvinceMap.selectedProvince.updateMapSector();
@@ -1830,8 +1837,11 @@ let GuildFights = {
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';
 		let discordWebhookTemplate = LiveFightSettings?.discordWebhookTemplate ?? '';
 		let discordWebhookTemplateBulk = LiveFightSettings?.discordWebhookTemplateBulk ?? '';
+		let autoOpen = LiveFightSettings?.autoOpen ?? 0;
 
-		c.push(`<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
+		c.push(`<p><input id="gbgautopen" name="gbgautopen" value="1" type="checkbox" ${(autoOpen === 1) ? ' checked="checked"' : ''} /> 
+			<label for="gbgautopen">${i18n('Boxes.General.AutoOpen')}</label></p>
+			<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showguildcolumn">${i18n('Boxes.GuildFights.ShowOwner')}</label></p>
 			<p><input id="showAdjacentSectors" name="showAdjacentSectors" value="0" type="checkbox" ${(showAdjacentSectors === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showAdjacentSectors">${i18n('Boxes.GuildFights.ShowAdjacentSectors')}</label></p>
@@ -1884,13 +1894,14 @@ let GuildFights = {
 		c.push(`<p><button onclick="GuildFights.SaveLiveFightSettings()" id="save-livefight-settings" class="btn saveSettings">${i18n('Boxes.GuildFights.SaveSettings')}</button></p>`);
 
 		
-		$('#LiveGildFightingSettingsBox').html(c.join(''));
+		$('#LiveGuildFightingSettingsBox').html(c.join(''));
 	},
 
 
 	SaveLiveFightSettings: () => {
 		let value = {};
 
+		value.autoOpen = 0;
 		value.showGuildColumn = 0;
 		value.showAdjacentSectors = 0;
 		value.showOwnSectors = 0;
@@ -1900,6 +1911,9 @@ let GuildFights = {
 		value.discordWebhook = '';
 		value.discordWebhookTemplate = '';
 		value.discordWebhookTemplateBulk = '';
+
+		if ($("#gbgautopen").is(':checked')) 
+			value.autoOpen = 1;
 
 		if ($("#showguildcolumn").is(':checked')) 
 			value.showGuildColumn = 1;
@@ -1921,6 +1935,7 @@ let GuildFights = {
 		value.discordWebhookTemplate = $("#gbgWebhookTemplate").val();
 		value.discordWebhookTemplateBulk = $("#gbgWebhookTemplateBulk").val();
 				
+		GuildFights.autoOpen = value.autoOpen;
 		GuildFights.showGuildColumn = value.showGuildColumn;
 		GuildFights.showAdjacentSectors = value.showAdjacentSectors;
 		GuildFights.showOwnSectors = value.showOwnSectors;
@@ -1938,8 +1953,8 @@ let GuildFights = {
 			FH.Storage.removeItem('GuildFights.serverOffset');
 		FH.Storage.setItem('LiveFightSettings', JSON.stringify(value));
 
-		$(`#LiveGildFightingSettingsBox`).fadeToggle('fast', function () {
-			$.when($(`#LiveGildFightingSettingsBox`).remove()).then(
+		$(`#LiveGuildFightingSettingsBox`).fadeToggle('fast', function () {
+			$.when($(`#LiveGuildFightingSettingsBox`).remove()).then(
 				GuildFights.ShowGuildBox(true)
 			);
 		});
