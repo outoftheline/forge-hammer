@@ -420,38 +420,38 @@ let Alerts = function(){
 			/** @type {Object.<string,{info: string, title: string, value: number|boolean}>} */
 			data: {
 				early: {
-					info: i18n('Boxes.Alerts.Preferences.Early.Info'),
-					title: i18n('Boxes.Alerts.Preferences.Early.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.Early.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.Early.Title'),
 					value: 30
 				},
 				auction: {
-					info: i18n('Boxes.Alerts.Preferences.Auction.Info'),
-					title: i18n('Boxes.Alerts.Preferences.Auction.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.Auction.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.Auction.Title'),
 					value: false
 				},
 				gbg: {
-					info: i18n('Boxes.Alerts.Preferences.Battlegrounds.Info'),
-					title: i18n('Boxes.Alerts.Preferences.Battlegrounds.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.Battlegrounds.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.Battlegrounds.Title'),
 					value: false
 				},
 				icon: {
-					info: i18n('Boxes.Alerts.Preferences.MenuIcon.Info'),
-					title: i18n('Boxes.Alerts.Preferences.MenuIcon.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.MenuIcon.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.MenuIcon.Title'),
 					value: false
 				},
 				ingame: {
-					info: i18n('Boxes.Alerts.Preferences.InGame.Info'),
-					title: i18n('Boxes.Alerts.Preferences.InGame.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.InGame.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.InGame.Title'),
 					value: false
 				},
 				start: {
-					info: i18n('Boxes.Alerts.Preferences.Start.Info'),
-					title: i18n('Boxes.Alerts.Preferences.Start.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.Start.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.Start.Title'),
 					value: false
 				},
 				suggestions: {
-					info: i18n('Boxes.Alerts.Preferences.Suggestions.Info'),
-					title: i18n('Boxes.Alerts.Preferences.Suggestions.Title'),
+					info: FH.t('Boxes.Alerts.Preferences.Suggestions.Info'),
+					title: FH.t('Boxes.Alerts.Preferences.Suggestions.Title'),
 					value: false
 				},
 			},
@@ -605,8 +605,8 @@ let Alerts = function(){
 				build: () => {
 
 					let labels = {
-						alerts: '<span>'+i18n('Boxes.Alerts.Tabs.Alerts')+'</span>',
-						preferences: '<span>'+i18n('Boxes.Alerts.Tabs.Preferences')+'</span>',
+						alerts: '<span>'+FH.t('Boxes.Alerts.Tabs.Alerts')+'</span>',
+						preferences: '<span>'+FH.t('Boxes.Alerts.Tabs.Preferences')+'</span>',
 					}
 
 					tmp.web.body.tabs.clean();
@@ -637,7 +637,7 @@ let Alerts = function(){
 						});
 
 						$('#AlertsBody').find('span.button-alert-create-all-sectors').on('click', function(){
-							let reset = confirm(i18n('Boxes.Alerts.Form.ConfirmSectorAlerts'))
+							let reset = confirm(FH.t('Boxes.Alerts.Form.ConfirmSectorAlerts'))
 							if (reset) 
 								tmp.web.forms.actions.createSectors().then(function(){});
 						});
@@ -710,12 +710,12 @@ let Alerts = function(){
 					tabListContent: () => {
 
 						let labels = {
-							create: i18n('Boxes.Alerts.Form.CreateAlert'),
-							allsectors: i18n('Boxes.Alerts.Form.CreateAllSectors'),
-							expiration: i18n('Boxes.Alerts.Form.Expiration'),
-							title: i18n('Boxes.Alerts.Form.Title'),
-							repeat: i18n('Boxes.Alerts.Form.Repeat'),
-							persistent: i18n('Boxes.Alerts.Form.Persistent'),
+							create: FH.t('Boxes.Alerts.Form.CreateAlert'),
+							allsectors: FH.t('Boxes.Alerts.Form.CreateAllSectors'),
+							expiration: FH.t('Boxes.Alerts.Form.Expiration'),
+							title: FH.t('Boxes.Alerts.Form.Title'),
+							repeat: FH.t('Boxes.Alerts.Form.Repeat'),
+							persistent: FH.t('Boxes.Alerts.Form.Persistent'),
 						};
 
 						let allSectorsHtml = ``;
@@ -748,9 +748,9 @@ let Alerts = function(){
 					tabPreferencesContent: () => {
 
 						let labels = {
-							active: i18n('Boxes.Settings.Active'),
-							inactive: i18n('Boxes.Settings.Inactive'),
-							soon: i18n('Boxes.Alerts.Preferences.ComingSoon')
+							active: FH.t('Boxes.Settings.Active'),
+							inactive: FH.t('Boxes.Settings.Inactive'),
+							soon: FH.t('Boxes.Alerts.Preferences.ComingSoon')
 						};
 
 						let html = '';
@@ -809,21 +809,21 @@ let Alerts = function(){
 						if ( ! tmp.web.visible() ) { return; }
 
 						let labels = {
-							preview: i18n('Boxes.Alerts.Form.Preview'),
-							edit: i18n('Boxes.Alerts.Form.Edit'),
-							delete: i18n('Boxes.Alerts.Form.Delete'),
+							preview: FH.t('Boxes.Alerts.Form.Preview'),
+							edit: FH.t('Boxes.Alerts.Form.Edit'),
+							delete: FH.t('Boxes.Alerts.Form.Delete'),
 							repeats: {
 								'-1': '-',
-								'60': i18n('Boxes.Alerts.Time.1m'),
-								'300': i18n('Boxes.Alerts.Time.5m'),
-								'900': i18n('Boxes.Alerts.Time.15m'),
-								'3600': i18n('Boxes.Alerts.Time.1h'),
-								'14400': i18n('Boxes.Alerts.Time.4h'),
-								'18000': i18n('Boxes.Alerts.Time.5h'),
-								'28800': i18n('Boxes.Alerts.Time.8h'),
-								'36000': i18n('Boxes.Alerts.Time.10h'),
-								'86400': i18n('Boxes.Alerts.Time.1d'),
-								'604800': i18n('Boxes.Alerts.Time.7d'),
+								'60': FH.t('Boxes.Alerts.Time.1m'),
+								'300': FH.t('Boxes.Alerts.Time.5m'),
+								'900': FH.t('Boxes.Alerts.Time.15m'),
+								'3600': FH.t('Boxes.Alerts.Time.1h'),
+								'14400': FH.t('Boxes.Alerts.Time.4h'),
+								'18000': FH.t('Boxes.Alerts.Time.5h'),
+								'28800': FH.t('Boxes.Alerts.Time.8h'),
+								'36000': FH.t('Boxes.Alerts.Time.10h'),
+								'86400': FH.t('Boxes.Alerts.Time.1d'),
+								'604800': FH.t('Boxes.Alerts.Time.7d'),
 							}
 						};
 
@@ -1073,8 +1073,8 @@ let Alerts = function(){
 					},
 					update: () => {
 						let labels = {
-							expires: i18n('Boxes.Alerts.Form.Expires'),
-							expired: i18n('Boxes.Alerts.Form.Expired'),
+							expires: FH.t('Boxes.Alerts.Form.Expires'),
+							expired: FH.t('Boxes.Alerts.Form.Expired'),
 						};
 
 						let data = tmp.web.forms.data();
@@ -1153,51 +1153,51 @@ let Alerts = function(){
 				render: (data) => {
 
 					let labels = {
-						title: i18n('Boxes.Alerts.Form.Title'),
-						body: i18n('Boxes.Alerts.Form.Body'),
-						datetime: i18n('Boxes.Alerts.Form.Datetime'),
+						title: FH.t('Boxes.Alerts.Form.Title'),
+						body: FH.t('Boxes.Alerts.Form.Body'),
+						datetime: FH.t('Boxes.Alerts.Form.Datetime'),
 						presets: {
-							header: i18n('Boxes.Alerts.Form.Presets'),
-							now: i18n('Boxes.Alerts.Form.Preset.Now'),
-							antique: i18n('Boxes.Alerts.Form.Antiques.Dealer'),
-							auction: i18n('Boxes.Alerts.Form.Antiques.Auction'),
-							cooldown: i18n('Boxes.Alerts.Form.Antiques.Cooldown'),
-							exchange: i18n('Boxes.Alerts.Form.Antiques.Exchange'),
-							battlegrounds: i18n('Boxes.Alerts.Form.Battleground'),
-							neighborhood: i18n('Boxes.Alerts.Form.Neighborhood'),
+							header: FH.t('Boxes.Alerts.Form.Presets'),
+							now: FH.t('Boxes.Alerts.Form.Preset.Now'),
+							antique: FH.t('Boxes.Alerts.Form.Antiques.Dealer'),
+							auction: FH.t('Boxes.Alerts.Form.Antiques.Auction'),
+							cooldown: FH.t('Boxes.Alerts.Form.Antiques.Cooldown'),
+							exchange: FH.t('Boxes.Alerts.Form.Antiques.Exchange'),
+							battlegrounds: FH.t('Boxes.Alerts.Form.Battleground'),
+							neighborhood: FH.t('Boxes.Alerts.Form.Neighborhood'),
 						},
 						repeats: {
-							repeat: i18n('Boxes.Alerts.Form.Repeat'),
-							never: i18n('Boxes.Alerts.Form.Repeat.Never'),
-							every: i18n('Boxes.Alerts.Form.Repeat.Every'),
+							repeat: FH.t('Boxes.Alerts.Form.Repeat'),
+							never: FH.t('Boxes.Alerts.Form.Repeat.Never'),
+							every: FH.t('Boxes.Alerts.Form.Repeat.Every'),
 						},
 						persist: {
-							persistence: i18n('Boxes.Alerts.Form.Persistence'),
-							on: i18n('Boxes.Alerts.Form.Persistence.On'),
-							off: i18n('Boxes.Alerts.Form.Persistence.Off'),
-							description: i18n('Boxes.Alerts.Form.Persistence.Description'),
+							persistence: FH.t('Boxes.Alerts.Form.Persistence'),
+							on: FH.t('Boxes.Alerts.Form.Persistence.On'),
+							off: FH.t('Boxes.Alerts.Form.Persistence.Off'),
+							description: FH.t('Boxes.Alerts.Form.Persistence.Description'),
 						},
 						buttons: {
-							create: i18n('Boxes.Alerts.Form.Create'),
-							discard: i18n('Boxes.Alerts.Form.Discard'),
-							preview: i18n('Boxes.Alerts.Form.Preview'),
-							save: i18n('Boxes.Alerts.Form.Save'),
+							create: FH.t('Boxes.Alerts.Form.Create'),
+							discard: FH.t('Boxes.Alerts.Form.Discard'),
+							preview: FH.t('Boxes.Alerts.Form.Preview'),
+							save: FH.t('Boxes.Alerts.Form.Save'),
 						},
 						times: {
-							'1m': i18n('Boxes.Alerts.Time.1m'),
-							'5m': i18n('Boxes.Alerts.Time.5m'),
-							'15m': i18n('Boxes.Alerts.Time.15m'),
-							'1h': i18n('Boxes.Alerts.Time.1h'),
-							'4h': i18n('Boxes.Alerts.Time.4h'),
-							'5h': i18n('Boxes.Alerts.Time.5h'),
-							'8h': i18n('Boxes.Alerts.Time.8h'),
-							'10h': i18n('Boxes.Alerts.Time.10h'),
-							'1d': i18n('Boxes.Alerts.Time.1d'),
-							'7d': i18n('Boxes.Alerts.Time.7d'),
+							'1m': FH.t('Boxes.Alerts.Time.1m'),
+							'5m': FH.t('Boxes.Alerts.Time.5m'),
+							'15m': FH.t('Boxes.Alerts.Time.15m'),
+							'1h': FH.t('Boxes.Alerts.Time.1h'),
+							'4h': FH.t('Boxes.Alerts.Time.4h'),
+							'5h': FH.t('Boxes.Alerts.Time.5h'),
+							'8h': FH.t('Boxes.Alerts.Time.8h'),
+							'10h': FH.t('Boxes.Alerts.Time.10h'),
+							'1d': FH.t('Boxes.Alerts.Time.1d'),
+							'7d': FH.t('Boxes.Alerts.Time.7d'),
 						},
 						tags: {
-							header: i18n('Boxes.Alerts.Form.Tag'),
-							description: i18n('Boxes.Alerts.Form.Tag.Description'),
+							header: FH.t('Boxes.Alerts.Form.Tag'),
+							description: FH.t('Boxes.Alerts.Form.Tag.Description'),
 						}
 					};
 					let id = (data.alert.id) ? data.alert.id : 0;
@@ -1374,7 +1374,7 @@ let Alerts = function(){
 						},
 
 						form: {
-							header: i18n('Boxes.Alerts.Form.CreateAlert')
+							header: FH.t('Boxes.Alerts.Form.CreateAlert')
 						},
 
 						buttons: {
@@ -1386,7 +1386,7 @@ let Alerts = function(){
 					edit: {
 						alert: null,
 						form: {
-							header: i18n('Boxes.Alerts.Form.EditAlert')
+							header: FH.t('Boxes.Alerts.Form.EditAlert')
 						},
 						buttons: {
 							left: ['discard'],
@@ -1504,7 +1504,7 @@ let Alerts = function(){
 						},
 						show: () => {
 							let labels = {
-								title: i18n('Boxes.Alerts.Form.CreateNewAlert'),
+								title: FH.t('Boxes.Alerts.Form.CreateNewAlert'),
 							};
 							let options = tmp.web.popup.options.create;
 							tmp.web.popup.type.common.show(labels, options);
@@ -1516,7 +1516,7 @@ let Alerts = function(){
 						},
 						show: ( alert ) => {
 							let labels = {
-								title: i18n('Boxes.Alerts.Form.EditAlert'),
+								title: FH.t('Boxes.Alerts.Form.EditAlert'),
 							};
 							let options = tmp.web.popup.options.edit;
 							options.alert = alert;
@@ -1538,7 +1538,7 @@ let Alerts = function(){
 
 					FH.HTML.Box( {
 						id: 'Alerts',
-						title: i18n( 'Boxes.Alerts.Title', 'Alerts' ),
+						title: FH.t( 'Boxes.Alerts.Title', 'Alerts' ),
 						auto_close: true,
 						dragdrop: true,
 						minimize: true,

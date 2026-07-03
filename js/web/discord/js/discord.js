@@ -33,7 +33,7 @@ let Discord = {
 		if ($('#Discord').length === 0) {
 			FH.HTML.Box({
 				id: 'Discord',
-				title: i18n('Boxes.Discord.Title'),
+				title: FH.t('Boxes.Discord.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true
@@ -54,7 +54,7 @@ let Discord = {
 			$body = $('body');
 		h.push('<div id="helperWebhook"></div>');
 
-		h.push(`<h1 class="p5 dark-bg">${i18n('Boxes.Discord.TitleEntries')}</h1>`);
+		h.push(`<h1 class="p5 dark-bg">${FH.t('Boxes.Discord.TitleEntries')}</h1>`);
 		h.push(`<ul class="foe-table">`);
 
 		for(let i in Discord.WebHooks) {
@@ -75,13 +75,13 @@ let Discord = {
 				<span style="white-space:nowrap;" class="text-right">
 					<span class="btn-group">`);
 					if (d.type != 'template')
-						h.push(`<button class="btn btn-green btn-slim" role="button" type="button" onclick="Discord.SendEntry(${i})">${i18n('General.Send')}</button>`);
+						h.push(`<button class="btn btn-green btn-slim" role="button" type="button" onclick="Discord.SendEntry(${i})">${FH.t('General.Send')}</button>`);
 				
-					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${i18n('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${FH.extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
+					h.push(`<button class="btn btn-slim" role="button" type="button" data-original-title="${FH.t('Boxes.Discord.CopyTitle')}" onclick="Discord.CopyEntry(${i})"><img src="${FH.extUrl}js/web/discord/images/copy-paste.svg" style="width: 17px;" alt="" /></button>`);
 					if (d.type != 'template')
-						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.EntryForm(${i})">${i18n('Boxes.Discord.EditEntry')}</button>`);
+						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.EntryForm(${i})">${FH.t('Boxes.Discord.EditEntry')}</button>`);
 					else
-						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.TemplateForm(${i})">${i18n('Boxes.Discord.EditEntry')}</button>`);
+						h.push(`<button class="btn btn-slim btn-edit" role="button" type="button" onclick="Discord.TemplateForm(${i})">${FH.t('Boxes.Discord.EditEntry')}</button>`);
 
 					h.push(`<button class="btn btn-slim btn-delete icon" role="button" type="button" onclick="Discord.Delete(${i})"></button>
 					
@@ -94,8 +94,8 @@ let Discord = {
 			<div class="formWrapper"></div>`);
 
 		h.push(`<div class="flex between p5">
-			<button class="btn" id="addDiscordEntry" onclick="Discord.EntryForm()">${i18n('Boxes.Discord.TitleNewEntry')}</button>
-			<button class="btn" id="addDiscordTemplate" onclick="Discord.TemplateForm()">${i18n('Boxes.Discord.TitleNewTemplate')}</button>
+			<button class="btn" id="addDiscordEntry" onclick="Discord.EntryForm()">${FH.t('Boxes.Discord.TitleNewEntry')}</button>
+			<button class="btn" id="addDiscordTemplate" onclick="Discord.TemplateForm()">${FH.t('Boxes.Discord.TitleNewTemplate')}</button>
 			</div>`);
 
 		$('#DiscordBody').html(h.join(''));
@@ -115,7 +115,7 @@ let Discord = {
 
 		h.push(`<div class="fham-accordion ${state}">
 			<div class="fham-accordion-head">
-				<strong>${i18n('Boxes.Discord.WebhookUrlManage')}</strong>
+				<strong>${FH.t('Boxes.Discord.WebhookUrlManage')}</strong>
 			</div>
 
 			<div class="fham-accordion-body">
@@ -129,7 +129,7 @@ let Discord = {
 					<td style="width: 1%;">${url.name}</td>
 					<td style="word-break:break-all;font-size:smaller;">${url.url}</td>
 					<td style="white-space:nowrap;">
-						<button class="btn btn-mid btn-delete" role="button" type="button" onclick="Discord.DeleteWebhookUrl(${Discord.WebHooksUrls.indexOf(url)})">${i18n('Boxes.Discord.DeleteEntry')}</button>
+						<button class="btn btn-mid btn-delete" role="button" type="button" onclick="Discord.DeleteWebhookUrl(${Discord.WebHooksUrls.indexOf(url)})">${FH.t('Boxes.Discord.DeleteEntry')}</button>
 					</td>`);
 			h.push(`</tr>`);
 		}
@@ -137,7 +137,7 @@ let Discord = {
 		h.push(`<tr>
 			<td style="width: 1%;"><input style="width:80px" id="webhookUrlName" name="name" type="text" placeholder="Name" spellcheck="false"></td>
 			<td><input id="webhookUrlInput" name="url" placeholder="Webhook-URL" type="text" spellcheck="false" style="width:100%"></td>
-			<td style="white-space:nowrap;" class="text-right"><button class="btn btn-mid" role="button" type="button" onclick="Discord.SaveWebhookUrl()">${i18n('Boxes.Discord.Save')}</button></td>
+			<td style="white-space:nowrap;" class="text-right"><button class="btn btn-mid" role="button" type="button" onclick="Discord.SaveWebhookUrl()">${FH.t('Boxes.Discord.Save')}</button></td>
 		</tr>`);
 
 		h.push(`</tbody></table>
@@ -177,13 +177,13 @@ let Discord = {
 		let h = [];
 
 		h.push(`<div id="discord-entry-form" style="display:none;" class="dark-bg discordForm">
-			<h1 class="p5">${i18n('Boxes.Discord.TitleNewEntry')}</h1>`);
+			<h1 class="p5">${FH.t('Boxes.Discord.TitleNewEntry')}</h1>`);
 		h.push(`<form action="" onsubmit="return false;" autocomplete="off">
-			<b>${i18n('Boxes.Discord.WebhookUrl')}</b>`);
+			<b>${FH.t('Boxes.Discord.WebhookUrl')}</b>`);
 		h.push(`<ul id="url-list" class="clickable">`);
 		
 		if (Discord.WebHooksUrls.length === 0) {
-			h.push(`<li><em>${i18n('Boxes.Discord.WebhookUrlNeeded')}</em></li>`);
+			h.push(`<li><em>${FH.t('Boxes.Discord.WebhookUrlNeeded')}</em></li>`);
 		}
 		for(let j in Discord.WebHooksUrls){
 			if(!Discord.WebHooksUrls.hasOwnProperty(j)) continue;
@@ -201,14 +201,14 @@ let Discord = {
 		h.push(`<input type="hidden" id="url" value="${data && data['url'] ? data['url'] : (Discord.WebHooksUrls.length === 1 ? Discord.WebHooksUrls[0]['url'] : '')}">`);
 
 
-		h.push(`<b>${i18n('Boxes.Discord.Message')}</b>`);
+		h.push(`<b>${FH.t('Boxes.Discord.Message')}</b>`);
 		h.push(`<textarea id="message" name="message" spellcheck="false">${data ? data['message'] : ':robot: **Test message**\nForge Hammer was here!'}</textarea>`);
 
 
 		h.push(`<div>`);
-		h.push(`<button class="btn" role="button" type="button" onclick="Discord.CancelEntryForm()">${i18n('General.Cancel')}</button>&nbsp;`);
-		h.push(`<button class="btn btn-green" role="button" type="button" onclick="Discord.SendEntry()">${i18n('General.Send')}</button>&nbsp;`);
-		h.push(`<button class="btn" role="button" type="button" onclick="Discord.SaveEntry(${i})">${i18n('General.Save')}</button></div>`);
+		h.push(`<button class="btn" role="button" type="button" onclick="Discord.CancelEntryForm()">${FH.t('General.Cancel')}</button>&nbsp;`);
+		h.push(`<button class="btn btn-green" role="button" type="button" onclick="Discord.SendEntry()">${FH.t('General.Send')}</button>&nbsp;`);
+		h.push(`<button class="btn" role="button" type="button" onclick="Discord.SaveEntry(${i})">${FH.t('General.Save')}</button></div>`);
 
 		h.push(`</form></div>`);
 
@@ -235,21 +235,21 @@ let Discord = {
 		let h = [];		
 
 		h.push(`<div id="discord-template-form" style="display:none;" class="dark-bg discordForm">
-			<h1 class="p5">${i18n('Boxes.Discord.TitleNewTemplate')}</h1>
+			<h1 class="p5">${FH.t('Boxes.Discord.TitleNewTemplate')}</h1>
 			<form action="" onsubmit="return false;" autocomplete="off">
-				<b>${i18n('Boxes.Discord.Name')}</b>
+				<b>${FH.t('Boxes.Discord.Name')}</b>
 				<input id="discord-template-name" type="text" value="${data ? data['name'] : ''}" />
 
-				<b>${i18n('Boxes.Discord.Message')}</b>
+				<b>${FH.t('Boxes.Discord.Message')}</b>
 				<textarea id="message" name="message" spellcheck="false">${data ? data['message'] : ':robot: #battletype **#name** <t:#time:R>'}</textarea>
 
 				<div class="w-full">
-					${i18n('Boxes.Discord.GBGVariables')}: #name, #battletype, #time, #guild, #vp, #attrition, #neighbors <br/>
-					<a class="external-link" href="https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline" target="_blank">${i18n('Boxes.Discord.MarkdownLinkText')}</a>
+					${FH.t('Boxes.Discord.GBGVariables')}: #name, #battletype, #time, #guild, #vp, #attrition, #neighbors <br/>
+					<a class="external-link" href="https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline" target="_blank">${FH.t('Boxes.Discord.MarkdownLinkText')}</a>
 				</div>
 				<div>
-					<button class="btn" onclick="Discord.CancelTemplateForm()">${i18n('General.Cancel')}</button>
-					<button class="btn" onclick="Discord.SaveTemplate(${i})">${i18n('General.Save')}</button>
+					<button class="btn" onclick="Discord.CancelTemplateForm()">${FH.t('General.Cancel')}</button>
+					<button class="btn" onclick="Discord.SaveTemplate(${i})">${FH.t('General.Save')}</button>
 				</div>
 			</form></div>`);
 
@@ -327,7 +327,7 @@ let Discord = {
 		if(!url) {
 			FH.HTML.ShowToastMsg({
 				show: 'force',
-				head: i18n('General.Error'),
+				head: FH.t('General.Error'),
 				text: 'Please select a Webhook URL!',
 				type: 'error',
 				hideAfter: 6000,
@@ -345,7 +345,7 @@ let Discord = {
 
 		FH.HTML.ShowToastMsg({
 			show: 'force',
-			head: i18n('General.Success'),
+			head: FH.t('General.Success'),
 			text: 'The message was sent.',
 			type: 'success',
 			hideAfter: 2500,

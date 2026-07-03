@@ -345,7 +345,7 @@ let Castle = {
         {
             FH.HTML.Box({
                 id: 'Castle',
-                title: i18n('Boxes.Castle.Title'),
+                title: FH.t('Boxes.Castle.Title'),
                 auto_close: true,
                 dragdrop: true,
                 resize: false,
@@ -553,7 +553,7 @@ let Castle = {
         }
 
         d.push({
-            name: i18n('Boxes.Castle.Battles'),
+            name: FH.t('Boxes.Castle.Battles'),
             group: Castle.RewardGroups.Daily,
             sort: 1,
             progress: Castle.DailyWinningBattles - Castle.curWinningBattles,
@@ -572,7 +572,7 @@ let Castle = {
         }
 
         d.push({
-            name: i18n('Boxes.Castle.Negotiations'),
+            name: FH.t('Boxes.Castle.Negotiations'),
             group: Castle.RewardGroups.Daily,
             sort: 2,
             progress: Castle.DailyNegotiations - Castle.curNegotiations,
@@ -636,7 +636,7 @@ let Castle = {
         }
 
         d.push({
-            name: i18n('Boxes.Castle.DailyCastlePoints'),
+            name: FH.t('Boxes.Castle.DailyCastlePoints'),
             group: Castle.RewardGroups.Daily,
             sort: 3,
             progress: cp.success ? 1 : 0,
@@ -644,7 +644,7 @@ let Castle = {
             reward: cp.success ? cp.points : 0,
             maxreward: cp.points ? cp.points : '?',
             warning: cpwarn,
-            warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitCastleWarning')),
+            warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitCastleWarning')),
             success: cp.success,
             date: startOfDay
         });
@@ -660,7 +660,7 @@ let Castle = {
 
 
             d.push({
-                name: i18n('Boxes.Castle.DailyChallenge'),
+                name: FH.t('Boxes.Castle.DailyChallenge'),
                 group: Castle.RewardGroups.Challenge,
                 sort: 1,
                 progress: dcp,
@@ -684,7 +684,7 @@ let Castle = {
             }
 
             d.push({
-                name: i18n('Boxes.Castle.SevenDayChallenge'),
+                name: FH.t('Boxes.Castle.SevenDayChallenge'),
                 group: Castle.RewardGroups.Challenge,
                 sort: 2,
                 progress: scp,
@@ -738,7 +738,7 @@ let Castle = {
             }
 
             d.push({
-                name: i18n('Boxes.Castle.GexLastOfSections'),
+                name: FH.t('Boxes.Castle.GexLastOfSections'),
                 group: Castle.RewardGroups.Gex,
                 sort: 1,
                 progress: glsp,
@@ -746,7 +746,7 @@ let Castle = {
                 reward: glsr,
                 maxreward: Castle.MaxGexLastOfSections,
                 warning: Castle.curGexLastOfSection === undefined,
-                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitGexWarning')),
+                warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitGexWarning')),
                 success: glsp >= Castle.GexLastOfSectionsIds.length,
                 date: startOfDay
             });
@@ -774,7 +774,7 @@ let Castle = {
             }
 
             d.push({
-                name: i18n('Boxes.Castle.ShopAntiqueDealer'),
+                name: FH.t('Boxes.Castle.ShopAntiqueDealer'),
                 group: Castle.RewardGroups.AntiqueDealer,
                 sort: 1,
                 progress: sip,
@@ -782,7 +782,7 @@ let Castle = {
                 reward: sir,
                 maxreward: sirsum,
                 warning: siwarn,
-                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitAntiqueDealerWarning')),
+                warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitAntiqueDealerWarning')),
                 success: sip === sipsum,
                 date: startOfDay
             });
@@ -805,7 +805,7 @@ let Castle = {
             }
 
             d.push({
-                name: i18n('Boxes.Castle.AuctionsWon'),
+                name: FH.t('Boxes.Castle.AuctionsWon'),
                 group: Castle.RewardGroups.AntiqueDealer,
                 sort: 2,
                 progress: FH.HTML.Format(aup),
@@ -840,12 +840,12 @@ let Castle = {
 
                 if (Castle.CurrentView === 'log')
                 {
-                    $('#casSwitchView').html(i18n('Boxes.Castle.Overview'))
+                    $('#casSwitchView').html(FH.t('Boxes.Castle.Overview'))
                     Castle.ShowLog();
                 }
                 else
                 {
-                    $('#casSwitchView').html(i18n('Boxes.Castle.Log'))
+                    $('#casSwitchView').html(FH.t('Boxes.Castle.Log'))
                     Castle.ShowProgressTable();
                 }
 
@@ -862,10 +862,10 @@ let Castle = {
             let CastleLimit = FH.Main.CastleSystemLevels[Castle.curLevel].requiredPoints;
 
             $('#Castle #casPointsWrapper').html(`
-                <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>
+                <div><span>${FH.t('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>
                 <span id="casPointsDiff">${diff ? '+' + diff : ''}</span><br />
-                <span>${i18n('Boxes.Castle.Level')}: ${Castle.curLevel}</span></div>
-                <div><span id="casLogBtn"><button id="casSwitchView" class="btn"${!Castle.CastlePointLog || Castle.CastlePointLog.length === 0 ? ' disabled' : ''}>${Castle.CurrentView === 'log' ? i18n('Boxes.Castle.Overview') : i18n('Boxes.Castle.Log')}</button></span></div>
+                <span>${FH.t('Boxes.Castle.Level')}: ${Castle.curLevel}</span></div>
+                <div><span id="casLogBtn"><button id="casSwitchView" class="btn"${!Castle.CastlePointLog || Castle.CastlePointLog.length === 0 ? ' disabled' : ''}>${Castle.CurrentView === 'log' ? FH.t('Boxes.Castle.Overview') : FH.t('Boxes.Castle.Log')}</button></span></div>
             `).promise().done(function () {
 
                 if (diff)
@@ -894,7 +894,7 @@ let Castle = {
 
         if (!Castle.Settings.showGroupNames)
         {
-            h.push(`<thead class="sticky"><tr class="caption"><th>${i18n('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
+            h.push(`<thead class="sticky"><tr class="caption"><th>${FH.t('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.helper.str.Tooltip(FH.t('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.helper.str.Tooltip(FH.t('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
         }
 
         h.push(`<tbody>`);
@@ -906,7 +906,7 @@ let Castle = {
             if (Castle.Settings.showGroupNames && i.sort === 1)
             {
                 let GroupName = Object.keys(Castle.RewardGroups).find(k => Castle.RewardGroups[k] === i.group);
-                r = r + `<tr class="caption"><td>${i18n('Boxes.Castle.' + GroupName)}</td><td class="text-right"><span>${firstCaption ? i18n('Boxes.Castle.Progress') : ''}</span></td><td class="text-right"><span>${firstCaption ? i18n('Boxes.Castle.CastlePoints') : ''}</span></td></tr>`;
+                r = r + `<tr class="caption"><td>${FH.t('Boxes.Castle.' + GroupName)}</td><td class="text-right"><span>${firstCaption ? FH.t('Boxes.Castle.Progress') : ''}</span></td><td class="text-right"><span>${firstCaption ? FH.t('Boxes.Castle.CastlePoints') : ''}</span></td></tr>`;
                 firstCaption = false;
             }
 
@@ -941,14 +941,14 @@ let Castle = {
 
         const elwidth = $('#Castle #cas-table-wrapper').width();
         const typeNames = {
-            battle: i18n('Boxes.Castle.Battle'),
-            negotiation: i18n('Boxes.Castle.Negotiation'),
-            gex: i18n('Boxes.Castle.Gex'),
-            purchaseItem: i18n('Boxes.Castle.AntiqueDealer'),
-            wonAuction: i18n('Boxes.Castle.AuctionsWon'),
-            dailyChallenge: i18n('Boxes.Castle.Challenge'),
-            sevenDayChallenge: i18n('Boxes.Castle.Challenge'),
-            castlePoints: i18n('Boxes.Castle.CastlePoints')
+            battle: FH.t('Boxes.Castle.Battle'),
+            negotiation: FH.t('Boxes.Castle.Negotiation'),
+            gex: FH.t('Boxes.Castle.Gex'),
+            purchaseItem: FH.t('Boxes.Castle.AntiqueDealer'),
+            wonAuction: FH.t('Boxes.Castle.AuctionsWon'),
+            dailyChallenge: FH.t('Boxes.Castle.Challenge'),
+            sevenDayChallenge: FH.t('Boxes.Castle.Challenge'),
+            castlePoints: FH.t('Boxes.Castle.CastlePoints')
         }
 
         Castle.CastlePointLog.forEach(entry => {
@@ -961,26 +961,26 @@ let Castle = {
 
         h.push(`<div id="casLogWrapper"><div class="overview">`);
         h.push(`<table class="foe-table" id="casLogTable">
-            <thead><tr class="caption open"><th>${i18n('Boxes.Castle.Time')} <span></span></th>
-            <th>${i18n('Boxes.Castle.Type')}</th><th class="text-right">${i18n('Boxes.Castle.CastlePoints')}</th>
+            <thead><tr class="caption open"><th>${FH.t('Boxes.Castle.Time')} <span></span></th>
+            <th>${FH.t('Boxes.Castle.Type')}</th><th class="text-right">${FH.t('Boxes.Castle.CastlePoints')}</th>
             </thead><tbody>`);
 
         h.push(Castle.CastlePointLog.sort((a, b) => b.time - a.time).map((e) => {
             let r = '';
             if (!c.includes(e.date))
             {
-                r = r + `<tr class="caption open" data-group="${e.date}"><td>${moment.unix(e.date).format(i18n('Date'))} <span></span></td>
+                r = r + `<tr class="caption open" data-group="${e.date}"><td>${moment.unix(e.date).format(FH.t('Date'))} <span></span></td>
                         <td colspan="2" class="text-right">${sumPerDays[e.date]}</td></tr>`;
                 c.push(e.date);
             }
 
-            return r + `<tr data-group="${e.date}"><td>${moment.unix(e.time).format(i18n('DateTime'))}</td>
-                <td>${e.name && e.name.length ? e.name.map(n => { return typeNames[n] ? typeNames[n] : '' }).join(' + ') : i18n('Boxes.Castle.Unknown')}</td>
+            return r + `<tr data-group="${e.date}"><td>${moment.unix(e.time).format(FH.t('DateTime'))}</td>
+                <td>${e.name && e.name.length ? e.name.map(n => { return typeNames[n] ? typeNames[n] : '' }).join(' + ') : FH.t('Boxes.Castle.Unknown')}</td>
                 <td class="text-right">+${e.value}</td></tr>`;
         }).join(''));
 
         h.push(`</tbody></table></div>`);
-        h.push(`<div id="casLogFooter">${i18n('Boxes.Castle.LogDuration') + ': ' + Castle.Settings.logDays + ' ' + i18n('Boxes.Castle.Days')}</div>`)
+        h.push(`<div id="casLogFooter">${FH.t('Boxes.Castle.LogDuration') + ': ' + Castle.Settings.logDays + ' ' + FH.t('Boxes.Castle.Days')}</div>`)
         h.push(`</div>`);
 
         $('#Castle #cas-table-wrapper').css({ 'min-width': elwidth }).html(h.join(''));
@@ -1041,14 +1041,14 @@ let Castle = {
         const logdurations = [3, 5, 7, 14];
         const Settings = Castle.Settings;
 
-        c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.Castle.Overview')}</span><input id="casShowGroupNames" name="showgroupnames" value="1" type="checkbox" ${Settings.showGroupNames === true ? ' checked="checked"' : ''} /> <label for="casShowGroupNames">${i18n('Boxes.Castle.ShowGroupNames')}</label></p>`);
-        c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.Castle.Log')}</span><label for="casLogDuration">${i18n('Boxes.Castle.LogDuration')}</label> <select id="casLogDuration" name="logduration">`);
+        c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.Castle.Overview')}</span><input id="casShowGroupNames" name="showgroupnames" value="1" type="checkbox" ${Settings.showGroupNames === true ? ' checked="checked"' : ''} /> <label for="casShowGroupNames">${FH.t('Boxes.Castle.ShowGroupNames')}</label></p>`);
+        c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.Castle.Log')}</span><label for="casLogDuration">${FH.t('Boxes.Castle.LogDuration')}</label> <select id="casLogDuration" name="logduration">`);
         logdurations.forEach(l => {
-            c.push(`<option value="${l}"${Castle.Settings.logDays === l ? ' selected="selected"' : ''}>${l + ' ' + i18n('Boxes.Castle.Days')}</option>`);
+            c.push(`<option value="${l}"${Castle.Settings.logDays === l ? ' selected="selected"' : ''}>${l + ' ' + FH.t('Boxes.Castle.Days')}</option>`);
         });
         c.push(`</select></p>`);
 
-        c.push(`<hr><button id="save-Castle-settings" class="btn saveSettings" onclick="Castle.SettingsSaveValues()">${i18n('Boxes.General.Save')}</button>`);
+        c.push(`<hr><button id="save-Castle-settings" class="btn saveSettings" onclick="Castle.SettingsSaveValues()">${FH.t('Boxes.General.Save')}</button>`);
         $('#CastleSettingsBox').html(c.join(''));
 
     },

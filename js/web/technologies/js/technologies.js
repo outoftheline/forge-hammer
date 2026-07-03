@@ -222,7 +222,7 @@ let Technologies = {
 
 			FH.HTML.Box({
 				id: 'technologies',
-				title: i18n('Boxes.Technologies.Title'),
+				title: FH.t('Boxes.Technologies.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -347,21 +347,21 @@ let Technologies = {
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
         h.push(`<div class="dark-bg p5" style="margin-bottom: 3px">
-                    <div class="text-center"><strong>${i18n('Eras.'+Technologies.SelectedEraID)}</strong></div>
+                    <div class="text-center"><strong>${FH.t('Eras.'+Technologies.SelectedEraID)}</strong></div>
                     <div class="flex between">
                         <div>`);
                         if (PreviousEraID !== Technologies.SelectedEraID)
-                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${PreviousEraID}">${i18n('Eras.'+PreviousEraID)}</button>`);
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${PreviousEraID}">${FH.t('Eras.'+PreviousEraID)}</button>`);
 
                         h.push(`</div><div>`);
 
                         if (NextEraID !== Technologies.SelectedEraID)
-                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${NextEraID}">${i18n('Eras.'+NextEraID)}</button>`);
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${NextEraID}">${FH.t('Eras.'+NextEraID)}</button>`);
                         h.push(`</div>
                     </div>
                     <div class="text-small">
-                        <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnorePrevEra')}</label><br/>
-                        <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${i18n('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                        <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnorePrevEra')}</label><br/>
+                        <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
                     </div>
                 </div>
             
@@ -369,10 +369,10 @@ let Technologies = {
 
         h.push('<thead class="sticky">' +
             '<tr>' +
-            '<th colspan="2" data-export2="resource">' + i18n('Boxes.Technologies.Resource') + '</th>' +
-            '<th data-export="required">' + i18n('Boxes.Technologies.DescRequired') + '</th>' +
-            '<th data-export="instock">' + i18n('Boxes.Technologies.DescInStock') + '</th>' +
-            '<th data-export="remaining" class="text-right">' + i18n('Boxes.Technologies.DescStillMissing') + '</th>' +
+            '<th colspan="2" data-export2="resource">' + FH.t('Boxes.Technologies.Resource') + '</th>' +
+            '<th data-export="required">' + FH.t('Boxes.Technologies.DescRequired') + '</th>' +
+            '<th data-export="instock">' + FH.t('Boxes.Technologies.DescInStock') + '</th>' +
+            '<th data-export="remaining" class="text-right">' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
             '</tr>' +
             '</thead>');
 
@@ -435,7 +435,7 @@ let Technologies = {
         }
         else {
             h.push('<tr>');
-            	h.push('<td colspan="5" class="text-center" style="font-size:110%;height:200px;">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
+            	h.push('<td colspan="5" class="text-center" style="font-size:110%;height:200px;">' + FH.t('Boxes.Technologies.NoTechs') + '</td>');
             h.push('</tr>');
         }
         h.push('</table');
@@ -446,7 +446,7 @@ let Technologies = {
 
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<p class="text-left">${i18n('Boxes.General.Export')}: 
+        h.push(`<p class="text-left">${FH.t('Boxes.General.Export')}: 
         <span class="btn-group">
         <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
         <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>

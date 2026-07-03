@@ -69,7 +69,7 @@ let BlueGalaxy = {
 
             FH.HTML.Box({
                 id: 'bluegalaxy',
-                title: i18n('Boxes.BlueGalaxy.Title'),
+                title: FH.t('Boxes.BlueGalaxy.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -217,23 +217,23 @@ let BlueGalaxy = {
         let h = [];
         h.push('<div class="text-center dark-bg header">');
 
-        //let Title = i18n('Boxes.BlueGalaxy.DoneProductionsTitle');
+        //let Title = FH.t('Boxes.BlueGalaxy.DoneProductionsTitle');
         //h.push('<strong class="title">' + Title + '</strong><br>');
 
         if (BlueGalaxy.DoubleCollections > 0)
-            h.push(i18n('Boxes.BlueGalaxy.AvailableCollections')+ " " + BlueGalaxy.DoubleCollections+"<br>");
+            h.push(FH.t('Boxes.BlueGalaxy.AvailableCollections')+ " " + BlueGalaxy.DoubleCollections+"<br>");
 
-        h.push(i18n('Boxes.BlueGalaxy.GoodsValue') + ' ');
-        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push(FH.t('Boxes.BlueGalaxy.GoodsValue') + ' ');
+        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.GoodsValue > 0) {
-            h.push('<small> (' + FH.HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
+            h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
         }
 
         h.push('<br>');
-        h.push(i18n('Boxes.BlueGalaxy.OlderGoodsValue') + ' ');
-        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push(FH.t('Boxes.BlueGalaxy.OlderGoodsValue') + ' ');
+        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.OlderGoodsValue > 0) {
-            h.push('<small> (' + FH.HTML.i18nReplacer(i18n('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
+            h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
         }
 
         h.push('</div>');       
@@ -245,14 +245,14 @@ let BlueGalaxy = {
         table.push('<thead class="sticky">' +
             '<tr class="sorter-header">' +
             '<th class="no-sort"></th>'+
-            '<th class="no-sort" data-type="bg-group">' + i18n('Boxes.BlueGalaxy.Building') + '</th>' +
-            (showBGFragments ? '<th class="is-number icon fragments ' + (BlueGalaxy.sort.col=="FragmentAmount" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.BlueGalaxy.Fragments') + '" data-type="bg-group" data-colname="FragmentAmount"><span></span></th>' : '') +
-            '<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="FP" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.BlueGalaxy.FP') + '" data-type="bg-group" data-colname="FP"><span></span></th>' +
-            '<th class="is-number icon old_goods ' + (BlueGalaxy.sort.col=="OlderGoods" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.BlueGalaxy.OlderGoods') + '" data-type="bg-group" data-colname="OlderGoods"><span></span></th>' +
-            '<th class="is-number icon goods ' + (BlueGalaxy.sort.col=="Goods" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.BlueGalaxy.Goods') + '" data-type="bg-group" data-colname="Goods"><span></span></th>' +
-            '<th class="is-number icon guildgoods ' + (BlueGalaxy.sort.col=="GuildGoods" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="GuildGoods"><span></span></th>' +
-            //'<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="CombinedValue" ? BlueGalaxy.sort.order : "") + '" title="' + i18n('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="CombinedValue"><span></span></th>' +
-            '<th colspan="2" class="case-sensitive no-sort" data-type="bg-group">' + i18n('Boxes.BlueGalaxy.DoneIn') + '</th>' +
+            '<th class="no-sort" data-type="bg-group">' + FH.t('Boxes.BlueGalaxy.Building') + '</th>' +
+            (showBGFragments ? '<th class="is-number icon fragments ' + (BlueGalaxy.sort.col=="FragmentAmount" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.Fragments') + '" data-type="bg-group" data-colname="FragmentAmount"><span></span></th>' : '') +
+            '<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="FP" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.FP') + '" data-type="bg-group" data-colname="FP"><span></span></th>' +
+            '<th class="is-number icon old_goods ' + (BlueGalaxy.sort.col=="OlderGoods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.OlderGoods') + '" data-type="bg-group" data-colname="OlderGoods"><span></span></th>' +
+            '<th class="is-number icon goods ' + (BlueGalaxy.sort.col=="Goods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.Goods') + '" data-type="bg-group" data-colname="Goods"><span></span></th>' +
+            '<th class="is-number icon guildgoods ' + (BlueGalaxy.sort.col=="GuildGoods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="GuildGoods"><span></span></th>' +
+            //'<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="CombinedValue" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="CombinedValue"><span></span></th>' +
+            '<th colspan="2" class="case-sensitive no-sort" data-type="bg-group">' + FH.t('Boxes.BlueGalaxy.DoneIn') + '</th>' +
             '</tr>' +
             '</thead>');
             table.push('<tbody class="bg-group">');
@@ -274,7 +274,7 @@ let BlueGalaxy = {
             //table.push('<td class="text-center" data-number="'+Buildings[i].CombinedValue+'">' + FH.HTML.Format(Buildings[i]['CombinedValue']) + '</td>');
 
             if (Buildings[i].In == 0 || Buildings[i].At * 1000 <= FH.Main.getCurrentDateTime()) {
-                table.push('<td style="white-space:nowrap"><strong class="success">' + i18n('Boxes.BlueGalaxy.Done') + '</strong></td>');
+                table.push('<td style="white-space:nowrap"><strong class="success">' + FH.t('Boxes.BlueGalaxy.Done') + '</strong></td>');
             }
             else {
                 table.push('<td style="white-space:nowrap"><strong class="error">' + moment.unix(Buildings[i].At).fromNow() + '</strong></td>');
@@ -332,9 +332,9 @@ let BlueGalaxy = {
         let showBGFragments = JSON.parse(FH.Storage.getItem('showBGFragments')||"true");
 
         let h = [];
-        h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${i18n('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><input id="showBGFragments" name="showBGFragments" value="1" type="checkbox" ${(showBGFragments === true) ? ' checked="checked"' : ''} /> <label for="showBGFragments">${i18n('Boxes.Settings.showBGFragments')}</label></p>`);
-        h.push(`<p><button onclick="BlueGalaxy.SaveSettings()" id="save-bghelper-settings" >${i18n('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+        h.push(`<p><input id="showBGFragments" name="showBGFragments" value="1" type="checkbox" ${(showBGFragments === true) ? ' checked="checked"' : ''} /> <label for="showBGFragments">${FH.t('Boxes.Settings.showBGFragments')}</label></p>`);
+        h.push(`<p><button onclick="BlueGalaxy.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#bluegalaxySettingsBox').html(h.join(''));
     },

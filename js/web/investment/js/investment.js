@@ -47,7 +47,7 @@ let Investment = {
 		if ($('#Investment').length === 0) {
 			FH.HTML.Box({
 				id: 'Investment',
-				title: i18n('Boxes.Investment.Title'),
+				title: FH.t('Boxes.Investment.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -138,14 +138,14 @@ let Investment = {
 
 		b.push(`<div class="total-wrapper dark-bg">`);
 
-		b.push(`<div id="invest-bar">${i18n('Boxes.Investment.InvestBar')} <strong class="invest-storage">0</strong></div>`);
-		b.push(`<div id="reward-bar">${i18n('Boxes.Investment.CurrReward')}<strong class="reward-storage">0</strong>${removeUnsafeCalc ? '<span class="safe">  (' + i18n('Boxes.Investment.Safe') + ')</span>':''}</div>`);
-		b.push(`<div id="total-fp" class="text-center">${i18n('Boxes.Investment.TotalFP')}<strong class="total-storage-invest">0</strong></div>`);
+		b.push(`<div id="invest-bar">${FH.t('Boxes.Investment.InvestBar')} <strong class="invest-storage">0</strong></div>`);
+		b.push(`<div id="reward-bar">${FH.t('Boxes.Investment.CurrReward')}<strong class="reward-storage">0</strong>${removeUnsafeCalc ? '<span class="safe">  (' + FH.t('Boxes.Investment.Safe') + ')</span>':''}</div>`);
+		b.push(`<div id="total-fp" class="text-center">${FH.t('Boxes.Investment.TotalFP')}<strong class="total-storage-invest">0</strong></div>`);
 		
 		if (showMedals === 1) {
-			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
+			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
 		}
-		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${FH.extUrl}js/web/investment/images/unvisible.png" title="${i18n('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
+		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${FH.extUrl}js/web/investment/images/unvisible.png" title="${FH.t('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
 
 		b.push(`</div>`);
 
@@ -160,39 +160,39 @@ let Investment = {
 		h.push('<table id="InvestmentTable" class="foe-table">');
 		h.push('<thead class="sticky">' +
 			'<tr class="sorter-header">' +
-			'<th class="case-sensitive" data-type="invest-group">' + i18n('Boxes.Investment.Overview.Player') + '</th>' +
-			'<th class="case-sensitive" data-type="invest-group">' + i18n('Boxes.Investment.Overview.Building') + '</th>' +
+			'<th class="case-sensitive" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Player') + '</th>' +
+			'<th class="case-sensitive" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Building') + '</th>' +
 			'<th class="is-number text-center no-sort" data-type="invest-group"></th>');
 
 		if (showEntryDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + i18n('Boxes.Investment.Overview.EntryTime') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + FH.t('Boxes.Investment.Overview.EntryTime') + '</th>');
 		}
 
 		if (showInvestmentIncreaseDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + i18n('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + FH.t('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
 		}
 
-		h.push('<th class="is-number" data-type="invest-group">' + i18n('Boxes.Investment.Overview.Progress') + '</th>');
+		h.push('<th class="is-number" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Progress') + '</th>');
 
 		if (showRestFp)
 		{
-			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.RestFPDesc')) + '">' + i18n('Boxes.Investment.Overview.RestFP') + '</th>');
+			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.RestFPDesc')) + '">' + FH.t('Boxes.Investment.Overview.RestFP') + '</th>');
 		}
 
 		h.push('<th class="is-number text-center" data-type="invest-group">&nbsp;</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.InvestedDesc')) + '">' + i18n('Boxes.Investment.Overview.Invested') + '</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.ProfitDesc')) + '" >' + i18n('Boxes.Investment.Overview.Profit') + '</th>');
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.InvestedDesc')) + '">' + FH.t('Boxes.Investment.Overview.Invested') + '</th>' +
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.ProfitDesc')) + '" >' + FH.t('Boxes.Investment.Overview.Profit') + '</th>');
 		
 		if(showMedals)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Medals')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.Medals')) + '"></span></th>');
 		}
 		
 		if(showBlueprints)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
 		}
 		
 		h.push('<th class="no-sort"></th></tr></thead><tbody class="invest-group">');
@@ -261,15 +261,15 @@ let Investment = {
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
 				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
 			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
-			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${i18n('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
+			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
 			if (showEntryDate) {
-				h.push(`<td class="is-numeric" data-number="${moment(contribution['date']).format('YYMMDDHHmm')}">${moment(contribution['date']).format(i18n('Date'))}</td>`);
+				h.push(`<td class="is-numeric" data-number="${moment(contribution['date']).format('YYMMDDHHmm')}">${moment(contribution['date']).format(FH.t('Date'))}</td>`);
 			}
 
 			if (showInvestmentIncreaseDate) {
 				let increaseSort = lastInvestmentIncreaseDate ? moment(lastInvestmentIncreaseDate).format('YYMMDDHHmm') : 0;
-				let increaseDate = lastInvestmentIncreaseDate ? moment(lastInvestmentIncreaseDate).format(i18n('DateTime')) : '-';
+				let increaseDate = lastInvestmentIncreaseDate ? moment(lastInvestmentIncreaseDate).format(FH.t('DateTime')) : '-';
 				h.push(`<td class="is-numeric invest-tooltip" data-number="${increaseSort}">${increaseDate}</td>`);
 			}
 
@@ -287,7 +287,7 @@ let Investment = {
 				h.push(`<td class="is-number text-center" data-number="${restFp}">${restFp}</td>`);
 			}
 
-			h.push(`<td class="is-number text-center" data-number="${contribution['rank']}"><img class="rank invest-tooltip" src="${FH.extUrl}js/web/x_img/gb_p${rankImageValue}.png" title="${i18n('Boxes.Investment.Rank')} ${contribution['rank']}" /></td>`);
+			h.push(`<td class="is-number text-center" data-number="${contribution['rank']}"><img class="rank invest-tooltip" src="${FH.extUrl}js/web/x_img/gb_p${rankImageValue}.png" title="${FH.t('Boxes.Investment.Rank')} ${contribution['rank']}" /></td>`);
 			h.push(`<td class="is-number text-center gbinvestment" data-number="${contribution['currentFp']}">${contribution['currentFp']}</td>`);
 			h.push(`<td class="is-number text-center gbprofit" data-number="${RealProfit}"><b class="${RealProfitClass}">${RealProfit}</b></td>`);
 			
@@ -313,16 +313,16 @@ let Investment = {
 			let date = moment(lastupdate).unix();
 			let actdate = moment(FH.Main.getCurrentDate()).unix();
 			let datediff = actdate - date;
-			let updrequTitle = i18n('Boxes.Investment.UpToDate');
+			let updrequTitle = FH.t('Boxes.Investment.UpToDate');
 
 			// set notification class if last update ist older then 30 minutes
 			if(datediff >= 1800)
 			{
 				uptodateClass='updaterequired';
-				updrequTitle = i18n('Boxes.Investment.UpdateRequired');
+				updrequTitle = FH.t('Boxes.Investment.UpdateRequired');
 			}
 
-			h.push(`<div class="last-update-message invest-tooltip" title="${updrequTitle}"><span class="icon ${uptodateClass}"></span> <span class="${uptodateClass}">${moment(lastupdate).format(i18n('DateTime'))}</span></div>`);
+			h.push(`<div class="last-update-message invest-tooltip" title="${updrequTitle}"><span class="icon ${uptodateClass}"></span> <span class="${uptodateClass}">${moment(lastupdate).format(FH.t('DateTime'))}</span></div>`);
 		}
 
 		$('#history-wrapper').html(h.join('')).promise().done(function(){
@@ -350,7 +350,7 @@ let Investment = {
 						{
 							if (detail.hasOwnProperty(i)) {
 								let restFP = (max_progress * 1 - detail[i].current_progress * 1)
-								d.push('<tr class="detail"><td>' + moment(detail[i].date).format(i18n('DateTime')) + ' :</td><td> +' + detail[i].increase + ' </td><td>' + i18n('Boxes.Investment.Overview.RemainingFP') + ': ' + restFP + '</td></tr>');
+								d.push('<tr class="detail"><td>' + moment(detail[i].date).format(FH.t('DateTime')) + ' :</td><td> +' + detail[i].increase + ' </td><td>' + FH.t('Boxes.Investment.Overview.RemainingFP') + ': ' + restFP + '</td></tr>');
 							}
 						}
 
@@ -402,15 +402,15 @@ let Investment = {
 			removeUnsafeCalc = (InvestmentSettings && InvestmentSettings.removeUnsafeCalc !== undefined) ? InvestmentSettings.removeUnsafeCalc : 0,
 			showinvestmentsautomatically = Settings.GetSetting('ShowInvestments');
 
-		c.push(`<p>${i18n('Boxes.Investment.Overview.AdditionalColumns')}:</p><input id="showentrydate" name="showentrydate" value="1" type="checkbox" ${(showEntryDate === 1) ? ' checked="checked"':''} /> <label for="showentrydate">${i18n('Boxes.Investment.Overview.SettingsEntryTime')}</label><br>`);
-		c.push(`<input id="showinvestmentincreasedate" name="showinvestmentincreasedate" value="1" type="checkbox" ${(showInvestmentIncreaseDate === 1) ? ' checked="checked"':''} /> <label for="showinvestmentincreasedate">${i18n('Boxes.Investment.Overview.DateOfIncrease')}</label><br>`);
-		c.push(`<input id="showrestfp" name="showrestfp" value="1" type="checkbox" ${(showRestFp === 1) ? ' checked="checked"':''} /> <label for="showrestfp">${i18n('Boxes.Investment.Overview.SettingsRestFP')}</label><br>`);
-		c.push(`<input id="showmedals" name="showmedals" value="1" type="checkbox" ${(showMedals === 1) ? ' checked="checked"':''} /> <label for="showmedals">${i18n('Boxes.Investment.Overview.Medals')}</label><br>`);
-		c.push(`<input id="showblueprints" name="showblueprints" value="1" type="checkbox" ${(showBlueprints === 1) ? ' checked="checked"':''} /> <label for="showblueprints">${i18n('Boxes.Investment.Overview.Blueprints')}</label><br>`);
-		c.push(`<hr /><input id="showhiddengb" name="showhiddengb" value="1" type="checkbox" ${(showHiddenGb === 1) ? ' checked="checked"':''} /> <label for="showhiddengb">${i18n('Boxes.Investment.Overview.SettingsHiddenGB')}</label><br>`);
-		c.push(`<input id="removeunsafecalc" name="removeunsafecalc" value="1" type="checkbox" ${(removeUnsafeCalc === 1) ? ' checked="checked"':''} /> <label for="removeunsafecalc">${i18n('Boxes.Investment.Overview.SettingsUnsafeCalc')}</label>`);
-		c.push(`<hr /><input id="showinvestmentsautomatically" name="showinvestmentsautomatically" value="1" type="checkbox" ${(showinvestmentsautomatically === true) ? ' checked="checked"':''} /> <label for="showinvestmentsautomatically">${i18n('Boxes.Settings.Autostart')}</label>`);
-		c.push(`<p><button id="save-Investment-settings" class="btn saveSettings" onclick="Investment.SettingsSaveValues()">${i18n('Boxes.Investment.Overview.SettingsSave')}</button></p>`);
+		c.push(`<p>${FH.t('Boxes.Investment.Overview.AdditionalColumns')}:</p><input id="showentrydate" name="showentrydate" value="1" type="checkbox" ${(showEntryDate === 1) ? ' checked="checked"':''} /> <label for="showentrydate">${FH.t('Boxes.Investment.Overview.SettingsEntryTime')}</label><br>`);
+		c.push(`<input id="showinvestmentincreasedate" name="showinvestmentincreasedate" value="1" type="checkbox" ${(showInvestmentIncreaseDate === 1) ? ' checked="checked"':''} /> <label for="showinvestmentincreasedate">${FH.t('Boxes.Investment.Overview.DateOfIncrease')}</label><br>`);
+		c.push(`<input id="showrestfp" name="showrestfp" value="1" type="checkbox" ${(showRestFp === 1) ? ' checked="checked"':''} /> <label for="showrestfp">${FH.t('Boxes.Investment.Overview.SettingsRestFP')}</label><br>`);
+		c.push(`<input id="showmedals" name="showmedals" value="1" type="checkbox" ${(showMedals === 1) ? ' checked="checked"':''} /> <label for="showmedals">${FH.t('Boxes.Investment.Overview.Medals')}</label><br>`);
+		c.push(`<input id="showblueprints" name="showblueprints" value="1" type="checkbox" ${(showBlueprints === 1) ? ' checked="checked"':''} /> <label for="showblueprints">${FH.t('Boxes.Investment.Overview.Blueprints')}</label><br>`);
+		c.push(`<hr /><input id="showhiddengb" name="showhiddengb" value="1" type="checkbox" ${(showHiddenGb === 1) ? ' checked="checked"':''} /> <label for="showhiddengb">${FH.t('Boxes.Investment.Overview.SettingsHiddenGB')}</label><br>`);
+		c.push(`<input id="removeunsafecalc" name="removeunsafecalc" value="1" type="checkbox" ${(removeUnsafeCalc === 1) ? ' checked="checked"':''} /> <label for="removeunsafecalc">${FH.t('Boxes.Investment.Overview.SettingsUnsafeCalc')}</label>`);
+		c.push(`<hr /><input id="showinvestmentsautomatically" name="showinvestmentsautomatically" value="1" type="checkbox" ${(showinvestmentsautomatically === true) ? ' checked="checked"':''} /> <label for="showinvestmentsautomatically">${FH.t('Boxes.Settings.Autostart')}</label>`);
+		c.push(`<p><button id="save-Investment-settings" class="btn saveSettings" onclick="Investment.SettingsSaveValues()">${FH.t('Boxes.Investment.Overview.SettingsSave')}</button></p>`);
 
 		$('#InvestmentSettingsBox').html(c.join(''));
 	},

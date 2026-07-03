@@ -78,7 +78,7 @@ let GexStat = {
 		if ($('#GexStat').length === 0) {
 			FH.HTML.Box({
 				id: 'GexStat',
-				title: i18n('Boxes.GexStat.Title'),
+				title: FH.t('Boxes.GexStat.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -107,7 +107,7 @@ let GexStat = {
 			GexStat.ShowTabContent(GexStat.CurrentStatGroup, GexStat.CurrentGexWeek);
 		});
 
-		// moment.locale(i18n('Local'));
+		// moment.locale(FH.t('Local'));
 		// GexStat.InitSettings();
 
 		GexStat.Show();
@@ -256,7 +256,7 @@ let GexStat = {
 		// No GEX data available
 		if (gexweek === undefined || !GexRanking || !GexRanking.participants) {
 			GexStat.hidePreloader("#GexStat");
-			h.push(`<div class="no-data"><p>${i18n('Boxes.GexStat.ResultsNoData')}</p></div>`);
+			h.push(`<div class="no-data"><p>${FH.t('Boxes.GexStat.ResultsNoData')}</p></div>`);
 			$('#gexsContentWrapper').html(h.join(''))
 			return;
 		}
@@ -282,8 +282,8 @@ let GexStat = {
 				`<div class="claninfo"><span class="clanname">${FH.Main.GetGuildLink(participant['guildId'], participant['name'], participant['worldId'])}</span><br /> ` +
 				`<span class="clanworld">${participant.worldName}</span></div></td>`);
 			h.push(`<td class="progress"><div class="progbar rank-${rankClass}${stripedClass}" style="width: ${progressWidth}%"></div> ${participant.points}%</td>`);
-			h.push(`<td><div class="flex justify-content-between mbottom2"><div>${i18n('Boxes.GexStat.Rank')}: ${participant.worldrank} </div><div>${i18n('Boxes.GexStat.Member')}: ${participant.memberCount}</div></div>` +
-				`<div class="flex justify-content-between"><div>${i18n('Boxes.GexStat.Level')}: ${participant.level}</div>` +
+			h.push(`<td><div class="flex justify-content-between mbottom2"><div>${FH.t('Boxes.GexStat.Rank')}: ${participant.worldrank} </div><div>${FH.t('Boxes.GexStat.Member')}: ${participant.memberCount}</div></div>` +
+				`<div class="flex justify-content-between"><div>${FH.t('Boxes.GexStat.Level')}: ${participant.level}</div>` +
 				`<div><span class="trophie"></span> <strong>${participant.trophies.guild_championship_trophy_gold}</strong>` +
 				`<span class="trophie silver"></span> <strong>${participant.trophies.guild_championship_trophy_silver}</strong>` +
 				`<span class="trophie bronze"></span> <strong>${participant.trophies.guild_championship_trophy_bronze}</strong></div></div></td>`);
@@ -321,7 +321,7 @@ let GexStat = {
 
 		if (!GexParticipation || !GexParticipation.participation) {
 			GexStat.hidePreloader("#GexStat");
-			h.push(`<div class="no-data"><p>${i18n('Boxes.GexStat.ParticipationNoData')}</p></div>`);
+			h.push(`<div class="no-data"><p>${FH.t('Boxes.GexStat.ParticipationNoData')}</p></div>`);
 			$('#gexsContentWrapper').html(h.join(''));
 			return;
 		}
@@ -340,20 +340,20 @@ let GexStat = {
 		let aEncounters = GexParticipation.countMember * base;
 		let processing = Number((sEncounters / aEncounters) * 100).toFixed(2);
 
-		h.push(`<div class="participation_overview justify-content-between"><div>${i18n('Boxes.GexStat.Points')}<br />${FH.HTML.Format(GexParticipation.expeditionPoints)}</div>` +
-			`<div class="text-center">${i18n('Boxes.GexStat.Member')}<br />${GexParticipation.countMember}</div>` +
-			`<div class="text-right">${i18n('Boxes.GexStat.Encounters')}<br />${sEncounters}/${aEncounters} ( ${processing}% )</div>` +
+		h.push(`<div class="participation_overview justify-content-between"><div>${FH.t('Boxes.GexStat.Points')}<br />${FH.HTML.Format(GexParticipation.expeditionPoints)}</div>` +
+			`<div class="text-center">${FH.t('Boxes.GexStat.Member')}<br />${GexParticipation.countMember}</div>` +
+			`<div class="text-right">${FH.t('Boxes.GexStat.Encounters')}<br />${sEncounters}/${aEncounters} ( ${processing}% )</div>` +
 			`</div>`);
 
 		h.push(`<table id="gexsParticipationTable" class="foe-table">` +
 			`<thead class="sticky"><tr class="sorter-header">` +
 			`<th class="text-center is-number" data-type="gexs-group">#</th>` +
 			`<th class="text-center is-number" data-type="gexs-group"><span class="level"></span></th>` +
-			`<th class="case-sensitive" data-type="gexs-group">${i18n('Boxes.GexStat.Player')}</th>` +
-			`<th class="is-number" data-type="gexs-group">${i18n('Boxes.GexStat.Points')}</th>` +
-			`<th class="is-number" data-type="gexs-group">${i18n('Boxes.GexStat.Level')}</th>` +
-			`<th class="is-number" data-type="gexs-group">${i18n('Boxes.GexStat.Encounters')}</th>` +
-			`<th class="is-number" data-type="gexs-group">${i18n('Boxes.GexStat.GexTrial')}</th>` +
+			`<th class="case-sensitive" data-type="gexs-group">${FH.t('Boxes.GexStat.Player')}</th>` +
+			`<th class="is-number" data-type="gexs-group">${FH.t('Boxes.GexStat.Points')}</th>` +
+			`<th class="is-number" data-type="gexs-group">${FH.t('Boxes.GexStat.Level')}</th>` +
+			`<th class="is-number" data-type="gexs-group">${FH.t('Boxes.GexStat.Encounters')}</th>` +
+			`<th class="is-number" data-type="gexs-group">${FH.t('Boxes.GexStat.GexTrial')}</th>` +
 			`</tr></thead>` +
 			`<tbody class="gexs-group">`);
 
@@ -363,7 +363,7 @@ let GexStat = {
 			let encounterClass = ' level' + level;
 			h.push(`<tr>`);
 			h.push(`<td class="text-center is-number" data-number="${member.rank}">${member.rank}</td>`);
-			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${FH.HTML.i18nTooltip(i18n('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
+			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${FH.helper.str.Tooltip(FH.t('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
 			h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(member.name)}">` +
 				`<div class="avatar"><img src="${srcLinks.GetPortrait(member.avatar)}" /></div>` +
 				`<div class="membername">${FH.Main.GetPlayerLink(member.player_id, member.name)}</div></td>`);
@@ -408,7 +408,7 @@ let GexStat = {
 
 		if ((!GexParticipation || !GexParticipation.length) && (!GexRanking || !GexRanking.length)) {
 			GexStat.hidePreloader("#GexStat");
-			$('#gexsContentWrapper').html(`<div class="no-data"><p>${i18n('Boxes.GexStat.ParticipationNoData')}</p></div>`);
+			$('#gexsContentWrapper').html(`<div class="no-data"><p>${FH.t('Boxes.GexStat.ParticipationNoData')}</p></div>`);
 			return;
 		}
 
@@ -420,7 +420,7 @@ let GexStat = {
 			let hasParticipation = true;
 			let hasParticipants = true;
 
-			CourseData.weeks.push(moment(gexweek.gexweek * 1000).format(i18n('DateShort')));
+			CourseData.weeks.push(moment(gexweek.gexweek * 1000).format(FH.t('DateShort')));
 			CourseData.pointSum += gexweek.expeditionPoints !== undefined ? gexweek.expeditionPoints : 0;
 			CourseData.pointsData.push(gexweek.expeditionPoints !== undefined ? gexweek.expeditionPoints : null);
 			CourseData.allMemberData.push(gexweek.countMember !== undefined ? gexweek.countMember : null);
@@ -485,12 +485,12 @@ let GexStat = {
 				plugins: {
 					title: {
 						display: true,
-						text: i18n('Boxes.GexStat.Gex') + ' ' + i18n('Boxes.GexStat.Rounds')
+						text: FH.t('Boxes.GexStat.Gex') + ' ' + FH.t('Boxes.GexStat.Rounds')
 					},
 					subtitle: {
 						display: true,
 						text: CourseData.weeks[0] + ' - ' + CourseData.weeks[CourseData.weeks.length - 1] +
-							' (' + CourseData.weeks.length + ' ' + i18n('Boxes.GexStat.Rounds') + ')'
+							' (' + CourseData.weeks.length + ' ' + FH.t('Boxes.GexStat.Rounds') + ')'
 					},
 					legend: {
 						position: 'bottom'
@@ -516,7 +516,7 @@ let GexStat = {
 						ticks: { precision: 0 },
 						title: {
 							display: GexStat.Settings.showAxisLabel && series.yaxis.includes('y0'),
-							text: i18n('Boxes.GexStat.Points')
+							text: FH.t('Boxes.GexStat.Points')
 						}
 					},
 					y1: {
@@ -527,7 +527,7 @@ let GexStat = {
 						ticks: { precision: 0 },
 						title: {
 							display: GexStat.Settings.showAxisLabel && series.yaxis.includes('y1'),
-							text: i18n('Boxes.GexStat.Member') + ' / ' + i18n('Boxes.GexStat.Participant')
+							text: FH.t('Boxes.GexStat.Member') + ' / ' + FH.t('Boxes.GexStat.Participant')
 						},
 						grid: { drawOnChartArea: false }
 					},
@@ -538,7 +538,7 @@ let GexStat = {
 						ticks: { precision: 0 },
 						title: {
 							display: GexStat.Settings.showAxisLabel && series.yaxis.includes('y2'),
-							text: i18n('Boxes.GexStat.Encounters') + ' (⌀)'
+							text: FH.t('Boxes.GexStat.Encounters') + ' (⌀)'
 						},
 						grid: { drawOnChartArea: false }
 					},
@@ -604,9 +604,9 @@ let GexStat = {
 
 
 		h.push('<div class="tabs dark-bg"><ul id="gexsTabs" class="horizontal">');
-		h.push(`<li${GexStat.CurrentStatGroup === 'Ranking' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Ranking"><span>${i18n('Boxes.GexStat.Ranking')}</span></a></li>`);
-		h.push(`<li${GexStat.CurrentStatGroup === 'Participation' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Participation"><span>${i18n('Boxes.GexStat.MemberParticipation')}</span></a></li>`);
-		h.push(`<li${GexStat.CurrentStatGroup === 'Course' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Course"><span>${i18n('Boxes.GexStat.Course')}</span></a></li>`);
+		h.push(`<li${GexStat.CurrentStatGroup === 'Ranking' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Ranking"><span>${FH.t('Boxes.GexStat.Ranking')}</span></a></li>`);
+		h.push(`<li${GexStat.CurrentStatGroup === 'Participation' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Participation"><span>${FH.t('Boxes.GexStat.MemberParticipation')}</span></a></li>`);
+		h.push(`<li${GexStat.CurrentStatGroup === 'Course' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Course"><span>${FH.t('Boxes.GexStat.Course')}</span></a></li>`);
 		h.push(`</ul>`);
 		h.push(`</div>`);
 
@@ -618,11 +618,11 @@ let GexStat = {
 
 			GexStat.CurrentGexWeek = gexweek;
 
-			h.push(`<div id="gexs_weekswitch" class="weekswitch dark-bg" data-group="${GexStat.CurrentStatGroup}">${i18n('Boxes.GexStat.Gex')} ${i18n('Boxes.GexStat.Week')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> `);
+			h.push(`<div id="gexs_weekswitch" class="weekswitch dark-bg" data-group="${GexStat.CurrentStatGroup}">${FH.t('Boxes.GexStat.Gex')} ${FH.t('Boxes.GexStat.Week')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> `);
 			h.push(`<select id="gexs-select-gexweek">`);
 
 			GexStat.GexWeeks.forEach(week => {
-				h.push(`<option value="${week}"${gexweek === week ? ' selected="selected"' : ''}>` + moment.unix(week - 518400).format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
+				h.push(`<option value="${week}"${gexweek === week ? ' selected="selected"' : ''}>` + moment.unix(week - 518400).format(FH.t('Date')) + ` - ` + moment.unix(week).format(FH.t('Date')) + `</option>`);
 			});
 
 			h.push(`</select>`);
@@ -684,28 +684,28 @@ let GexStat = {
 		let exportLimits = [1, 2, 3, 5, 10, 15, 20, 25, 30];
 		let Settings = GexStat.Settings;
 
-		c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.GexStat.General')}</span>${i18n('Boxes.GexStat.DeleteDataOlderThan')} <select id="gexsDeleteOlderThan" name="deleteolderthan">`);
+		c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.GexStat.General')}</span>${FH.t('Boxes.GexStat.DeleteDataOlderThan')} <select id="gexsDeleteOlderThan" name="deleteolderthan">`);
 		deleteAfterWeeks.forEach(weeks => {
 			let option = '';
-			if (weeks === 0) { option = i18n('Boxes.GexStat.Never'); }
-			else { option = weeks + ' ' + i18n('Boxes.GexStat.Weeks'); }
+			if (weeks === 0) { option = FH.t('Boxes.GexStat.Never'); }
+			else { option = weeks + ' ' + FH.t('Boxes.GexStat.Weeks'); }
 
 			c.push(`<option value="${weeks}" ${Settings.deleteOlderThan === weeks ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 
 		c.push(`</select>`);
-		c.push(`<hr><p class="text-left"><span class="settingtitle">${i18n('Boxes.GexStat.Course')}</span></p>`);
-		c.push(`<p class="text-left">${i18n('Boxes.GexStat.CompareLast')} <select id="gexsShowRoundLimit" name="showroundlimit">`);
+		c.push(`<hr><p class="text-left"><span class="settingtitle">${FH.t('Boxes.GexStat.Course')}</span></p>`);
+		c.push(`<p class="text-left">${FH.t('Boxes.GexStat.CompareLast')} <select id="gexsShowRoundLimit" name="showroundlimit">`);
 		showRounds.forEach(round => {
-			let option = round + ' ' + i18n('Boxes.GexStat.Rounds');
+			let option = round + ' ' + FH.t('Boxes.GexStat.Rounds');
 			c.push(`<option value="${round}" ${Settings.showRoundLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 
 		c.push(`</select></p>`);
-		c.push(`<hr><p class="text-left"><span class="settingtitle">${i18n('Boxes.General.Export')}</span>` +
-			`${i18n('Boxes.GexStat.ExportLast')} <select id="gexsExportLimit" name="exportlimit">`);
+		c.push(`<hr><p class="text-left"><span class="settingtitle">${FH.t('Boxes.General.Export')}</span>` +
+			`${FH.t('Boxes.GexStat.ExportLast')} <select id="gexsExportLimit" name="exportlimit">`);
 		exportLimits.forEach(round => {
-			let option = round + ' ' + i18n('Boxes.GexStat.Rounds');
+			let option = round + ' ' + FH.t('Boxes.GexStat.Rounds');
 			c.push(`<option value="${round}" ${Settings.exportLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 		c.push(`</select></p>`);
@@ -713,9 +713,9 @@ let GexStat = {
 		let disabledExport = '';
 		if (GexStat.CurrentStatGroup === 'Course') { disabledExport = ' disabled'; }
 
-		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
-			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
-		c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="GexStat.SettingsSaveValues()">${i18n('Boxes.GexStat.Save')}</button>`);
+		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
+			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
+		c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="GexStat.SettingsSaveValues()">${FH.t('Boxes.GexStat.Save')}</button>`);
 		$('#GexStatSettingsBox').html(c.join(''));
 
 	},
@@ -778,7 +778,7 @@ let GexStat = {
 		const chartSeries = {
 			encounters: {
 				type: 'line',
-				label: i18n('Boxes.GexStat.Encounters') + ' (⌀)',
+				label: FH.t('Boxes.GexStat.Encounters') + ' (⌀)',
 				data: data.encounterData,
 				borderColor: '#cedbeb',
 				backgroundColor: '#cedbeb',
@@ -789,7 +789,7 @@ let GexStat = {
 			},
 			member: {
 				type: 'bar',
-				label: i18n('Boxes.GexStat.Member'),
+				label: FH.t('Boxes.GexStat.Member'),
 				data: data.allMemberData.map((m, i) => m !== null && data.activeMemberData[i] !== null ? m - data.activeMemberData[i] : m),
 				_realData: data.allMemberData,
 				borderColor: '#525a2d',
@@ -800,7 +800,7 @@ let GexStat = {
 			},
 			participants: {
 				type: 'bar',
-				label: i18n('Boxes.GexStat.Participant'),
+				label: FH.t('Boxes.GexStat.Participant'),
 				data: data.activeMemberData,
 				borderColor: '#458635',
 				backgroundColor: '#458635',
@@ -810,7 +810,7 @@ let GexStat = {
 			},
 			rank: {
 				type: 'line',
-				label: i18n('Boxes.GexStat.Rank'),
+				label: FH.t('Boxes.GexStat.Rank'),
 				data: data.rankData,
 				borderWidth: 0,
 				borderColor: '#e9d732',
@@ -856,7 +856,7 @@ let GexStat = {
 				Ranking.sort((a, b) => a.gexweek - b.gexweek).forEach(gexweek => {
 					if (!gexweek.gexweek || !gexweek.participants) { return; }
 					let participants = gexweek.participants;
-					let weekdate = moment(gexweek.gexweek * 1000).format(i18n('Date'));
+					let weekdate = moment(gexweek.gexweek * 1000).format(FH.t('Date'));
 
 					participants.sort((a, b) => a.rank - b.rank).forEach(participant => {
 						exportData.push([weekdate, participant.guildId, participant.name, participant.worldName, participant.level, participant.memberCount, participant.points + '%', participant.rank]);
@@ -870,7 +870,7 @@ let GexStat = {
 				exportData.push(['gexWeek', 'player ID', 'player', 'expeditionPoints', 'solvedEncounters', 'rank', 'trial']);
 				Participation.sort((a, b) => a.gexweek - b.gexweek).forEach(gexweek => {
 					let participation = gexweek.participation;
-					let weekdate = moment(gexweek.gexweek * 1000).format(i18n('Date'));
+					let weekdate = moment(gexweek.gexweek * 1000).format(FH.t('Date'));
 					participation.sort((a, b) => a.rank - b.rank).forEach(participant => {
 						exportData.push([weekdate, participant.player_id, participant.name, participant.expeditionPoints, participant.solvedEncounters, participant.rank, participant.trial||0]);
 					});
@@ -1103,7 +1103,7 @@ let GexStockWarning = {
 		if ($('#GexStockWarning').length === 0)	{
 			FH.HTML.Box({
 				id: 'GexStockWarning',
-				title: i18n('Settings.GexStockWarning.Title'),
+				title: FH.t('Settings.GexStockWarning.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -1115,7 +1115,7 @@ let GexStockWarning = {
 		for (let part of parts) {
 			h+=`<tr>
 			<td>${srcLinks.icons(part.resource)}</td>
-			<td>${GoodsData[part.resource].name} (${i18n("Eras."+Technologies.Eras[GoodsData[part.resource].era]+".short")})</td>
+			<td>${GoodsData[part.resource].name} (${FH.t("Eras."+Technologies.Eras[GoodsData[part.resource].era]+".short")})</td>
 			<td>${part.part}%</td>
 			</tr>`
 		}

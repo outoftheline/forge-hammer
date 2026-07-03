@@ -153,7 +153,7 @@ let reconstruction = {
 
 			FH.HTML.Box({
 				id: 'ReconstructionList',
-				title: i18n('Boxes.ReconstructionList.Title'),
+				title: FH.t('Boxes.ReconstructionList.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -166,7 +166,7 @@ let reconstruction = {
         h =`<table class="sortable-table foe-table">
                 <thead class="sticky">
                     <tr class="sorter-header">
-                        <th data-type="reconstructionSizes">${i18n('Boxes.CityMap.Building')}</th>
+                        <th data-type="reconstructionSizes">${FH.t('Boxes.CityMap.Building')}</th>
                         <th class="no-sort">#</th>
                         <th class="no-sort text-center">${srcLinks.icons("icon_copy")}</th>
                         <th class="is-number" data-type="reconstructionSizes">${srcLinks.icons("road_required")}</th>

@@ -77,7 +77,7 @@ let Infoboard = {
 
             FH.HTML.Box({
                 id: 'BackgroundInfo',
-                title: i18n('Boxes.Infobox.Title'),
+                title: FH.t('Boxes.Infobox.Title'),
                 auto_close: true,
                 dragdrop: true,
                 resize: true,
@@ -98,22 +98,22 @@ let Infoboard = {
         h.push('<div class="filter-row sticky">');
 
         h.push('<div class="dropdown">');
-        h.push('<input type="checkbox" class="dropdown-checkbox" id="infobox-checkbox-toggle"><label class="dropdown-label" for="infobox-checkbox-toggle">' + i18n('Boxes.Infobox.Filter') + '</label><span class="arrow"></span>');
+        h.push('<input type="checkbox" class="dropdown-checkbox" id="infobox-checkbox-toggle"><label class="dropdown-label" for="infobox-checkbox-toggle">' + FH.t('Boxes.Infobox.Filter') + '</label><span class="arrow"></span>');
 
         h.push('<ul>');
-        h.push('<li><label><input type="checkbox" data-type="favorites" class="filter-msg" ' + (Infoboard.SavedFilter.includes("favorites") ? "checked" : "") + '> ' + i18n('Boxes.General.Favorites') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="auction" class="filter-msg" ' + (Infoboard.SavedFilter.includes("auction") ? "checked" : "") + '> ' + i18n('Boxes.Infobox.FilterAuction') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="ge" class="filter-msg" ' + (Infoboard.SavedFilter.includes("ge") ? "checked" : "") + '> ' + i18n('Boxes.General.Guild_Expedition.short') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="gbg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("gbg") ? "checked" : "") + '> ' + i18n('Boxes.General.Guild_Battlegrounds.short') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="qi" class="filter-msg" ' + (Infoboard.SavedFilter.includes("qi") ? "checked" : "") + '> ' + i18n('Boxes.General.Quantum_Incursion.short') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="trade" class="filter-msg" ' + (Infoboard.SavedFilter.includes("trade") ? "checked" : "") + '> ' + i18n('Boxes.Infobox.FilterTrade') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="level" class="filter-msg" ' + (Infoboard.SavedFilter.includes("level") ? "checked" : "") + '> ' + i18n('Boxes.Infobox.FilterLevel') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="msg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("msg") ? "checked" : "") + '> ' + i18n('Boxes.Infobox.FilterMessage') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="favorites" class="filter-msg" ' + (Infoboard.SavedFilter.includes("favorites") ? "checked" : "") + '> ' + FH.t('Boxes.General.Favorites') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="auction" class="filter-msg" ' + (Infoboard.SavedFilter.includes("auction") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterAuction') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="ge" class="filter-msg" ' + (Infoboard.SavedFilter.includes("ge") ? "checked" : "") + '> ' + FH.t('Boxes.General.Guild_Expedition.short') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="gbg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("gbg") ? "checked" : "") + '> ' + FH.t('Boxes.General.Guild_Battlegrounds.short') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="qi" class="filter-msg" ' + (Infoboard.SavedFilter.includes("qi") ? "checked" : "") + '> ' + FH.t('Boxes.General.Quantum_Incursion.short') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="trade" class="filter-msg" ' + (Infoboard.SavedFilter.includes("trade") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterTrade') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="level" class="filter-msg" ' + (Infoboard.SavedFilter.includes("level") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterLevel') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="msg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("msg") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterMessage') + '</label></li>');
         h.push('<li><label><input type="text" data-type="text" placeholder="1.9|A1: M" class="textfilter filter-msg" value=' + (Infoboard.SavedFilter.includes("text") ? Infoboard.SavedTextFilter : "") + '></label></li>');
         h.push('</ul>');
         h.push('</div>');
 
-        h.push('<button class="btn btn-mid btn-reset-box">' + i18n('Boxes.Infobox.ResetBox') + '</button>');
+        h.push('<button class="btn btn-mid btn-reset-box">' + FH.t('Boxes.Infobox.ResetBox') + '</button>');
         h.push('</div>');
 
         h.push('<ul id="BackgroundInfoList" class="foe-table">');
@@ -127,8 +127,8 @@ let Infoboard = {
 
         Infoboard.PostMessage({
             class: 'welcome',
-            type: i18n('Menu.Info.Title'),
-            msg: i18n('Boxes.Infobox.Messages.Welcome'),
+            type: FH.t('Menu.Info.Title'),
+            msg: FH.t('Boxes.Infobox.Messages.Welcome'),
         });
 
         Infoboard.MaxEntries = FH.Storage.getItem("EntryCount") || 0;
@@ -157,11 +157,11 @@ let Infoboard = {
             let favEl = $('[data-id="'+id+'"] .fav');
             if (favEl.hasClass('active')) {
                 favEl.text('☆');
-                favEl.attr('data-original-title',i18n('Boxes.General.FavoritesAdd'));
+                favEl.attr('data-original-title',FH.t('Boxes.General.FavoritesAdd'));
             }
             else {
                 favEl.text('★');
-                favEl.attr('data-original-title',i18n('Boxes.General.FavoritesRemove'));
+                favEl.attr('data-original-title',FH.t('Boxes.General.FavoritesRemove'));
             }
 
             $('[data-id="'+id+'"] .fav').toggleClass('active')
@@ -322,15 +322,15 @@ let Infoboard = {
 		let autoOpen = Settings.GetSetting('AutoOpenInfoBox');
 		let messagesAmount = FH.Storage.getItem('EntryCount');
 
-        let EntryCountTitle = i18n('Settings.InfoboxEntryCount.Title'); //Dummy usage. Dont mark i18n key for disposal yet. Might be useful later
+        let EntryCountTitle = FH.t('Settings.InfoboxEntryCount.Title'); //Dummy usage. Dont mark key for disposal yet. Might be useful later
 
         let h = [];
         h.push(`<p><input id="autoStartInfoboard" name="autoStartInfoboard" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />
-                <label for="autoStartInfoboard">${i18n('Boxes.Settings.Autostart')}</label></p>
+                <label for="autoStartInfoboard">${FH.t('Boxes.Settings.Autostart')}</label></p>
                 <hr>
-                <p><label for="infoboxentry-length">${i18n('Settings.InfoboxEntryCount.Desc')}</label>
+                <p><label for="infoboxentry-length">${FH.t('Settings.InfoboxEntryCount.Desc')}</label>
                 <input class="setting-input" type="number" id="infoboxentry-length" step="1" min="1" max="2000" value="${(messagesAmount)}"></p>
-                <button onclick="Infoboard.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button>`);
+                <button onclick="Infoboard.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button>`);
 
         $('#BackgroundInfoSettingsBox').html(h.join(''));
     },
@@ -358,8 +358,8 @@ let Info = {
         return {
             class: 'auction',
             type: 'Auktion',
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.Auction'), {
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.Auction'), {
                     player: PlayerLink,
                     amount: FH.HTML.Format(d['amount']),
                 }
@@ -386,8 +386,8 @@ let Info = {
         else if (d['attachment']) {
             if (d['attachment']['type'] === 'great_building') {
                 // legendäres Bauwerk
-                message = FH.HTML.i18nReplacer(
-                    i18n('Boxes.Infobox.Messages.MsgBuilding'), {
+                message = FH.helper.str.Replacer(
+                    FH.t('Boxes.Infobox.Messages.MsgBuilding'), {
                     building: FH.Main.CityEntities[d['attachment']['cityEntityId']]['name'],
                     level: d['attachment']['level']
                 });
@@ -423,7 +423,7 @@ let Info = {
         else {
             return {
                 class: 'msg',
-                type: i18n('Boxes.Infobox.FilterMessage'),
+                type: FH.t('Boxes.Infobox.FilterMessage'),
                 msg: (d.sender?.name||'') + '<div class="content">'+message+'</div>',
                 img: 'msg',
                 data: d.conversationId
@@ -432,7 +432,7 @@ let Info = {
 
         return {
             class: 'msg',
-            type: i18n('Boxes.Infobox.FilterMessage'),
+            type: FH.t('Boxes.Infobox.FilterMessage'),
             msg: header + '<div class="content">'+message+'</div>',
             img: image,
             data: d.conversationId
@@ -447,10 +447,10 @@ let Info = {
         let chat = FH.Main.Conversations.find(obj => obj.id === d['conversationId']);
         if (chat) return undefined;
 
-        let message = '<div><strong class="bright">' + i18n('Boxes.Infobox.UnknownConversation') + '</strong></div>';
+        let message = '<div><strong class="bright">' + FH.t('Boxes.Infobox.UnknownConversation') + '</strong></div>';
         return {
             class: 'message',
-            type: i18n('Boxes.Infobox.FilterMessage'),
+            type: FH.t('Boxes.Infobox.FilterMessage'),
             msg: message
         };
     },
@@ -484,9 +484,9 @@ let Info = {
 
             return {
                 class: 'gbg',
-                type: i18n('Boxes.General.Guild_Battlegrounds.short'),
-                msg: FH.HTML.i18nReplacer(
-                    i18n('Boxes.Infobox.Messages.GildFightOccupied'), {
+                type: FH.t('Boxes.General.Guild_Battlegrounds.short'),
+                msg: FH.helper.str.Replacer(
+                    FH.t('Boxes.Infobox.Messages.GildFightOccupied'), {
                     provinceName: prov['name'],
                     attackerColor: tc,
                     attackerShadow: ts,
@@ -553,7 +553,7 @@ let Info = {
 
         return {
             class: 'gbg',
-            type: i18n('Boxes.General.Guild_Battlegrounds.short'),
+            type: FH.t('Boxes.General.Guild_Battlegrounds.short'),
             msg: t,
             img: image
         };
@@ -583,8 +583,8 @@ let Info = {
         return {
             class: 'level',
             type: 'Level-Up',
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.LevelUp'), {
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.LevelUp'), {
                     player: PlayerLink,
                     building: d['great_building_name'],
                     level: d['level'],
@@ -604,9 +604,9 @@ let Info = {
 
         return {
             class: 'trade',
-            type: i18n('Boxes.Infobox.FilterTrade'),
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.Trade'), {
+            type: FH.t('Boxes.Infobox.FilterTrade'),
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.Trade'), {
                 'player': PlayerLink,
                 'offer': GoodsData[d['offer']['good_id']]['name'],
                 'offerValue': d['offer']['value'],
@@ -631,8 +631,8 @@ let Info = {
         return {
             class: 'ge',
             type: 'GE',
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.GEX'), {
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.GEX'), {
                 'player': PlayerLink,
                 'points': FH.HTML.Format(d['expeditionPoints'])
             }
@@ -649,8 +649,8 @@ let Info = {
         return {
             class: 'qi',
             type: 'QI',
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.QINodeProgress'), {
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.QINodeProgress'), {
                 'id': (""+d.nodeId).toUpperCase(),
                 'points': FH.HTML.Format(d.currentProgress)
             }),
@@ -671,8 +671,8 @@ let Info = {
         return {
             class: 'qi',
             type: 'QI',
-            msg: FH.HTML.i18nReplacer(
-                i18n('Boxes.Infobox.Messages.QINodeFinished'), {
+            msg: FH.helper.str.Replacer(
+                FH.t('Boxes.Infobox.Messages.QINodeFinished'), {
                 'player': PlayerLink,
                 'id': (""+nodeID).toUpperCase()
             }),

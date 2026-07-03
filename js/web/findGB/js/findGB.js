@@ -39,7 +39,7 @@ let findGB = {
 
             FH.HTML.Box({
                 id: 'findGBDialog',
-                title: i18n('Boxes.findGB.Title'),
+                title: FH.t('Boxes.findGB.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -50,17 +50,17 @@ let findGB = {
         html = ``;
         html += `<table class="dark-bg w-full"><tr>`;
         html += `<td><select id="GBselect">`;
-        html += `<option value="" disabled selected>${i18n("Boxes.findGB.selectGB")}</option>`
+        html += `<option value="" disabled selected>${FH.t("Boxes.findGB.selectGB")}</option>`
         for (i of findGB.list) {
             html += `<option value="${i}">${i}</option>`
         }
         html += `</select></td>`;
-        html += `<td><input type="number" id="GBminLevel" min="0" max ="998" placeholder="${i18n("Boxes.findGB.minLvl")}"></td>`;
-        html += `<td><input type="number" id="GBmaxLevel" min="1" max ="999" placeholder="${i18n("Boxes.findGB.maxLvl")}"></td></tr><tr>`;
-        html += `<td><input type="checkbox" id="GBhasProgress"><label for="GBhasProress">${i18n("Boxes.findGB.hasProgress")}</label></td>`;
-        html += `<td colspan="2"><input type="button" id="findGBreset" class="btn" value="${i18n("General.Reset")}"></input></td>`;
+        html += `<td><input type="number" id="GBminLevel" min="0" max ="998" placeholder="${FH.t("Boxes.findGB.minLvl")}"></td>`;
+        html += `<td><input type="number" id="GBmaxLevel" min="1" max ="999" placeholder="${FH.t("Boxes.findGB.maxLvl")}"></td></tr><tr>`;
+        html += `<td><input type="checkbox" id="GBhasProgress"><label for="GBhasProress">${FH.t("Boxes.findGB.hasProgress")}</label></td>`;
+        html += `<td colspan="2"><input type="button" id="findGBreset" class="btn" value="${FH.t("General.Reset")}"></input></td>`;
         html += `</tr></table>`;
-        html += `<table id="foundGB" class="foe-table"><thead class="sticky"><tr><th>${i18n("General.Player")}</th><th>${i18n("General.GB")}</th><th>${i18n("General.Level")}</th></tr></thead>`
+        html += `<table id="foundGB" class="foe-table"><thead class="sticky"><tr><th>${FH.t("General.Player")}</th><th>${FH.t("General.GB")}</th><th>${FH.t("General.Level")}</th></tr></thead>`
         
         for (i of findGB.found) {
             html += findGB.row(i)

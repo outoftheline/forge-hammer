@@ -68,7 +68,7 @@ let Negotiation = {
 			// Box in den DOM
 			FH.HTML.Box({
 				'id': 'negotiationBox',
-				'title': i18n('Boxes.Negotiation.Title'),
+				'title': FH.t('Boxes.Negotiation.Title'),
 				'auto_close': true,
 				'minimize': true,
 				'dragdrop': true,
@@ -137,14 +137,14 @@ let Negotiation = {
 
 			h.push('<tr>');
 			if (CurrentTry === 1) {
-				h.push('<th colspan="2"><label class="game-cursor" for="NegotiationSaveCurrentEraGoods">' + i18n('Boxes.Negotiation.SaveCurrentEraGoods') + '<input id="NegotiationSaveCurrentEraGoods" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveCurrentEraGoods"' + ((sceg === null || sceg === 'true') ? ' checked' : '') + '></label></th>');
-				h.push('<th><label class="game-cursor" for="NegotiationSaveMedals">' + i18n('Boxes.Negotiation.SaveMedals') + '<input id="NegotiationSaveMedals" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveMedals"' + ((sm === null || sm === 'true') ? ' checked' : '') + '></label></th>');
+				h.push('<th colspan="2"><label class="game-cursor" for="NegotiationSaveCurrentEraGoods">' + FH.t('Boxes.Negotiation.SaveCurrentEraGoods') + '<input id="NegotiationSaveCurrentEraGoods" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveCurrentEraGoods"' + ((sceg === null || sceg === 'true') ? ' checked' : '') + '></label></th>');
+				h.push('<th><label class="game-cursor" for="NegotiationSaveMedals">' + FH.t('Boxes.Negotiation.SaveMedals') + '<input id="NegotiationSaveMedals" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveMedals"' + ((sm === null || sm === 'true') ? ' checked' : '') + '></label></th>');
 			}
 			h.push('<th class="text-right" colspan="' + (CurrentTry === 1 ? '2' : '5') + '"' + '>' + 
-			'<strong class="text-warning"' + (Negotiation.TryCountIsGreaterThan5 ? 'data-title="'+i18n('Boxes.Negotiation.ChanceGreaterThan5') : '')+'">' + 
-				i18n('Boxes.Negotiation.Chance') + ': ' + FH.HTML.Format(FH.Main.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
+			'<strong class="text-warning"' + (Negotiation.TryCountIsGreaterThan5 ? 'data-title="'+FH.t('Boxes.Negotiation.ChanceGreaterThan5') : '')+'">' + 
+				FH.t('Boxes.Negotiation.Chance') + ': ' + FH.HTML.Format(FH.Main.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
 			h.push('<b style="padding-right: 15px"> ');
-			h.push(i18n('Boxes.Negotiation.Round') + ' ' + (Guesses.length + 1) + '/' + (Negotiation.TryCount));
+			h.push(FH.t('Boxes.Negotiation.Round') + ' ' + (Guesses.length + 1) + '/' + (Negotiation.TryCount));
 			h.push('</b></strong></th>');
 			h.push('</tr>');
 			h.push('</thead>');
@@ -152,7 +152,7 @@ let Negotiation = {
 			h.push('<tbody>');
 			h.push('<tr>');
 
-			h.push('<td class="text-warning">' + i18n('Boxes.Negotiation.Average') + '</td>');
+			h.push('<td class="text-warning">' + FH.t('Boxes.Negotiation.Average') + '</td>');
 
 			h.push('<td colspan="4"><div id="good-sort" ' + (CurrentTry === 1 ? '  class="goods-dragable"' : '') + '>');
 
@@ -191,7 +191,7 @@ let Negotiation = {
 					GoodAmount = FH.Main.round(GoodAmount * 10) / 10;
 				}
 
-				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
+				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
 					'<span class="goods-sprite ' + GoodName + '"></span><br>' +
 					'<span class="text-' + TextClass + '">' + FH.HTML.Format(GoodAmount) + '</span>' +
 					'</div>');
@@ -203,20 +203,20 @@ let Negotiation = {
 
 			if (Negotiation.CurrentTry === 1) {
 				h.push('<tr>');
-				h.push('<td colspan="5" class="text-center"><small>' + i18n('Boxes.Negotiation.DragDrop') + '</small></td>');
+				h.push('<td colspan="5" class="text-center"><small>' + FH.t('Boxes.Negotiation.DragDrop') + '</small></td>');
 				h.push('</tr>');
 			}
 		}
 		else if (Negotiation.CurrentTable == null && Negotiation.CurrentTry === 1){
 			Negotiation.MessageClass = 'danger';
-			Negotiation.Message = i18n('Boxes.Negotiation.TableLoadError');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TableLoadError');
 		}
 
 		// Verhandlungspartner überschrifteh
 		h.push('<tr class="thead">');
 
 		for (let i = 0; i < Negotiation.PlaceCount; i++) {
-			h.push('<th class="text-center">' + i18n('Boxes.Negotiation.Person') + ' ' + (i + 1) + '</th>');
+			h.push('<th class="text-center">' + FH.t('Boxes.Negotiation.Person') + ' ' + (i + 1) + '</th>');
 		}
 
 		h.push('</tr></tbody>');
@@ -248,10 +248,10 @@ let Negotiation = {
 		}
 
 		if (StockState === 1) {
-			h.push('<p class="text-center text-warning"><strong>' + i18n('Boxes.Negotiation.GoodsLow') + '</strong></p>')
+			h.push('<p class="text-center text-warning"><strong>' + FH.t('Boxes.Negotiation.GoodsLow') + '</strong></p>')
 		}
 		else if (StockState === 2) {
-			h.push('<p class="text-center text-danger"><strong>' + i18n('Boxes.Negotiation.GoodsCritical') + '</strong></p>')
+			h.push('<p class="text-center text-danger"><strong>' + FH.t('Boxes.Negotiation.GoodsCritical') + '</strong></p>')
 		}
 
 		$('#negotiationBoxBody').html(h.join('')).promise().done(function(){
@@ -300,8 +300,8 @@ let Negotiation = {
 		let autoOpen = Settings.GetSetting('AutomaticNegotiation');
 
 		let h = [];
-		h.push(`<p><label><input id="negotiationAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-		h.push(`<p><button onclick="Negotiation.SaveSettings()" id="save-negotiationAutoOpen-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><label><input id="negotiationAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+		h.push(`<p><button onclick="Negotiation.SaveSettings()" id="save-negotiationAutoOpen-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#negotiationBoxSettingsBox').html(h.join(''));
 	},
@@ -400,7 +400,7 @@ let Negotiation = {
 				if (slotSugestion) {
 					h.push('<td class="text-center">');
 					h.push(`<span class="goods-sprite ${good_id}"></span>`);
-					h.push(`<span class="numberIcon" title="${FH.HTML.i18nReplacer(i18n("Boxes.Negotiation.KeyboardTooltip"), {place: place + 1, slot: (slotSugestion.id+1) % 10})}">${place+1} ${(slotSugestion.id+1) % 10}</span>`);
+					h.push(`<span class="numberIcon" title="${FH.helper.str.Replacer(FH.t("Boxes.Negotiation.KeyboardTooltip"), {place: place + 1, slot: (slotSugestion.id+1) % 10})}">${place+1} ${(slotSugestion.id+1) % 10}</span>`);
 					h.push('</td>');
 				} else {
 					h.push('<td>&nbsp;</td>');
@@ -477,7 +477,7 @@ let Negotiation = {
 		if (responseData.context === Negotiation.CONST_Context_GBG) {
 			if (! $('#negotiation-Btn').hasClass('hud-btn-red')) {
 				$('#negotiation-Btn').addClass('hud-btn-red');
-				_menu.toolTipp('#negotiation-Btn', i18n('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + i18n('Menu.Negotiation.Warning') + '<br></em>' + i18n('Menu.Negotiation.Desc'));
+				_menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
 			}
 			return; //No Negotiation helper for GBG
 		}
@@ -655,7 +655,7 @@ let Negotiation = {
 			// Verhandlung erfolgreich abgeschlossen
 			Negotiation.CurrentTry = 0;
 			Negotiation.CurrentTable = null;
-			Negotiation.Message = i18n('Boxes.Negotiation.Success');
+			Negotiation.Message = FH.t('Boxes.Negotiation.Success');
 			Negotiation.MessageClass = 'success';
 
 			if (Settings.GetSetting('AutomaticNegotiation') && $('#negotiationBox').length > 0) {
@@ -667,7 +667,7 @@ let Negotiation = {
 			if (Negotiation.CurrentTable) {
 				// keine Tabelle mehr zum abarbeiten da
 				Negotiation.CurrentTable = null;
-				Negotiation.Message = `${i18n('Boxes.Negotiation.WrongGoods')} <button class="btn" onclick="Negotiation.confirmGoodsMissmatch()">${i18n('Boxes.Negotiation.confirmGoodsMissmatch')}</button>`;
+				Negotiation.Message = `${FH.t('Boxes.Negotiation.WrongGoods')} <button class="btn" onclick="Negotiation.confirmGoodsMissmatch()">${FH.t('Boxes.Negotiation.confirmGoodsMissmatch')}</button>`;
 				Negotiation.MessageClass = 'danger';
 				Negotiation.WrongGoodsSelected = true;
 				Negotiation.NeedGoodMissmatchConfirm = true;
@@ -675,9 +675,9 @@ let Negotiation = {
 		} else if (currentTry >= Negotiation.TryCount) {
 			// Versuche aufgebraucht
 			Negotiation.CurrentTable = null;
-			Negotiation.Message = i18n('Boxes.Negotiation.TryEnd');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TryEnd');
 			if (Negotiation.TryCountIsGreaterThan5)
-			Negotiation.Message = i18n('Boxes.Negotiation.TryContinue');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TryContinue');
 			Negotiation.MessageClass = 'warning';
 
 		} else if (Negotiation.CurrentTable) {
@@ -704,7 +704,7 @@ let Negotiation = {
 	ExitNegotiation: () => {
 		Negotiation.CurrentTry = 0;
 		Negotiation.CurrentTable = null;
-		Negotiation.Message = i18n('Boxes.Negotiation.Canceled');
+		Negotiation.Message = FH.t('Boxes.Negotiation.Canceled');
 		Negotiation.MessageClass = 'danger';
 
 		Negotiation.RefreshBox();
@@ -1059,7 +1059,7 @@ let NegotiationDebugger = {
 			// Box in den DOM
 			FH.HTML.Box({
 				'id': 'negotiationDebuggerBox',
-				'title': i18n('Boxes.Negotiation.Title'),
+				'title': FH.t('Boxes.Negotiation.Title'),
 				'minimize': true,
 				'dragdrop': true,
 				'resize': true,

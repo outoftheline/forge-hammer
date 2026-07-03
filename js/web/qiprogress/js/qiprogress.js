@@ -82,7 +82,7 @@ let QiProgress = {
 
 			FH.HTML.Box({
 				id: 'QiProgressList',
-				title: i18n('Boxes.QiProgress.Title'),
+				title: FH.t('Boxes.QiProgress.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -221,9 +221,9 @@ let QiProgress = {
 		t.push('<thead class="sticky">');
 		t.push('<tr>');
 		t.push('<th style="display:none" data-export="Player_ID"></th>');
-		t.push('<th colspan="3" data-export3="Player">' + i18n('General.Player') + '</th>');
-		t.push('<th class="text-center" data-export="Actions">' + i18n('Boxes.QiProgress.Actions') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Progress">' + i18n('Boxes.QiProgress.Progress') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tP) + ')</strong></th>');
+		t.push('<th colspan="3" data-export3="Player">' + FH.t('General.Player') + '</th>');
+		t.push('<th class="text-center" data-export="Actions">' + FH.t('Boxes.QiProgress.Actions') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Progress">' + FH.t('Boxes.QiProgress.Progress') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tP) + ')</strong></th>');
 		t.push('</tr>');
 		t.push('</thead>');
 
@@ -275,7 +275,7 @@ let QiProgress = {
 			let time = duration.humanize();
 
 			$('.time-diff').text(
-				FH.HTML.i18nReplacer(i18n('Boxes.QiProgress.LastSnapshot'), { time: time })
+				FH.helper.str.Replacer(FH.t('Boxes.QiProgress.LastSnapshot'), { time: time })
 			);
 		}
 	},
@@ -313,7 +313,7 @@ let QiProgress = {
 
 			FH.HTML.Box({
 				id: 'QiProgressPlayerDetails',
-				title: i18n('Boxes.QiProgress.SnapshotLog'),
+				title: FH.t('Boxes.QiProgress.SnapshotLog'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -361,20 +361,20 @@ let QiProgress = {
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
 
 
-			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(qiround).subtract(11, 'd').format(i18n('DateShort')) + ` - ` + moment.unix(qiround).format(i18n('Date')) + '</div>');
-			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + i18n('Boxes.QiProgress.SnapShotLogDisclaimer') + '</p>')
+			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(qiround).subtract(11, 'd').format(FH.t('DateShort')) + ` - ` + moment.unix(qiround).format(FH.t('Date')) + '</div>');
+			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + FH.t('Boxes.QiProgress.SnapShotLogDisclaimer') + '</p>')
 			h.push('<table id="qiPlayerLogTable" class="foe-table qilog"><thead>');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="qi-playerlog-group">' + i18n('General.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.i18nTooltip(i18n('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.i18nTooltip(i18n('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number" data-type="qi-playerlog-group">' + FH.t('General.Date') + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-playerlog-group">');
 
 			dailyProgress.forEach(day => {
-				let id = moment.unix(day.time).format(i18n('DateTime'));
+				let id = moment.unix(day.time).format(FH.t('DateTime'));
 				h.push('<tr id="qidetail_' + id + '" data-qiround="' + qiround + '" data-player="' + player_id + '" data-id="' + id + '">');
-				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(i18n('Date'))}</td>`);
+				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(FH.t('Date'))}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${day.actions}">${FH.HTML.Format(day.actions)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${day.progress}">${FH.HTML.Format(day.progress)}</td>`);
 				h.push('</tr>');
@@ -393,16 +393,16 @@ let QiProgress = {
 			h.push('<div class="datetimepicker"><button id="qiLogDatepicker" class="btn">' + QiProgress.formatRange() + '</button></div>');
 			h.push('<table id="QiProgressLogTable" class="foe-table qilog"><thead>');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="qi-log-group">' + i18n('Boxes.QiProgress.Date') + '</th>');
-			h.push('<th class="case-sensitive" data-type="qi-log-group">' + i18n('Boxes.QiProgress.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.i18nTooltip(i18n('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.i18nTooltip(i18n('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Date') + '</th>');
+			h.push('<th class="case-sensitive" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Player') + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-log-group">');
 
 			detaildata.forEach(e => {
 				h.push('<tr data-id="' + e.time + '" id="qitime_' + e.time + '">');
-				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
+				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(FH.t('DateTime'))}</td>`);
 				h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(e.name)}">${e.name}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${e.actions}">${FH.HTML.Format(e.actions)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${e.progress}">${FH.HTML.Format(e.progress)}</td>`);
@@ -457,13 +457,13 @@ let QiProgress = {
 		let dateEnd = moment(QiProgress.curDateEndFilter);
 
 		if (dateStart.isSame(dateEnd)) {
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())) {
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		return text;
@@ -499,11 +499,11 @@ let QiProgress = {
 			let nextweek = QiProgress.AllRounds[index - 1] || null;
 
 			h.push(`<div id="qi_roundswitch" class="roundswitch dark-bg">
-				${i18n('Boxes.QiProgress.QiRound')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> 
+				${FH.t('Boxes.QiProgress.QiRound')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> 
 				<select id="qi-select-qiRound">`);
 
 				QiProgress.AllRounds.forEach(week => {
-					h.push(`<option value="${week}"${qiRound === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
+					h.push(`<option value="${week}"${qiRound === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(FH.t('Date')) + ` - ` + moment.unix(week).format(FH.t('Date')) + `</option>`);
 				});
 
 				h.push(`</select> 
@@ -511,7 +511,7 @@ let QiProgress = {
 
 			if (qiRound === QiProgress.CurrentQISeason) {
 				h.push(`<div id="qiLogFilter" style="float:right">
-					<button id="qi_filterProgressList" title="${FH.HTML.i18nTooltip(i18n('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+					<button id="qi_filterProgressList" title="${FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 					</div>`);
 			}
 			h.push(`</div>`);
@@ -553,8 +553,8 @@ let QiProgress = {
 
 	ShowSettings: () => {
 		let c = [];
-		c.push(`<p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#QiProgressListSettingsBox').html(c.join(''));
 	},

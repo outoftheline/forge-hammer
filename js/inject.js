@@ -180,7 +180,7 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 			scriptLoaded("primed", "main");
 			await mainLoaded;
 			
-			// wait for ant and i18n to be loaded
+			// wait jquery to be loaded
 			await jQueryLoading;
 
 			// load all vendor scripts first (unknown order)

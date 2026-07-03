@@ -170,7 +170,7 @@ let BonusService = {
 
 				sp.attr({
 					class: `hud-btn`,
-					title: 'Forge Hammer: '+i18n('Boxes.BonusService.'+bt[i]),
+					title: 'Forge Hammer: '+FH.t('Boxes.BonusService.'+bt[i]),
 				}).tooltip({
 					placement: 'left'
 				});

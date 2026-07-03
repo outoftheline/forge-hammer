@@ -18,7 +18,7 @@ let Notes = {
 		if ($('#Notes').length === 0) {
 			FH.HTML.Box({
 				id: 'Notes',
-				title: i18n('Boxes.Notes.Title'),
+				title: FH.t('Boxes.Notes.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -57,7 +57,7 @@ let Notes = {
 		}).join('');
 
 		let output = `<div id="notesList">
-			<div class="options p5 dark-bg"><button id="addNote" class="btn btn-mid">${i18n('Boxes.Notes.Add')}</button></div>
+			<div class="options p5 dark-bg"><button id="addNote" class="btn btn-mid">${FH.t('Boxes.Notes.Add')}</button></div>
 			<ul class="simpleList">${items}</ul>
 			</div>
 			<div id="noteView" style="display:none"></div>
@@ -103,7 +103,7 @@ let Notes = {
 		$('#noteView').html(`
 			<div class="options p5 dark-bg flex between">
 				<span id="backToList" class="clickable">&larr;</span>
-				<div class="btn-group"><button class="btn btn-mid" id="editNote">${i18n('Boxes.General.Edit')}</button>
+				<div class="btn-group"><button class="btn btn-mid" id="editNote">${FH.t('Boxes.General.Edit')}</button>
 				<button class="btn btn-mid btn-delete icon" id="deleteNote"></button></div>
 			</div>
 			<div class="note-view p5">
@@ -167,11 +167,11 @@ let Notes = {
 
 		$('#noteEdit').html(`
 			<div class="options p5 dark-bg flex between">
-				<button class="btn btn-mid" id="cancelEdit">${i18n('Boxes.General.Cancel')}</button>
-				<button class="btn btn-mid btn-green" id="saveNote">${i18n('Boxes.General.Save')}</button>
+				<button class="btn btn-mid" id="cancelEdit">${FH.t('Boxes.General.Cancel')}</button>
+				<button class="btn btn-mid btn-green" id="saveNote">${FH.t('Boxes.General.Save')}</button>
 			</div>
-			<input id="editTitle" class="my-5 p5" type="text" placeholder="${i18n('Boxes.Notes.NewHeadline')}" value="${entry.title}" />
-			<textarea id="editNoteContent" class="p5" placeholder="${i18n('Boxes.Notes.NewText')}"></textarea>
+			<input id="editTitle" class="my-5 p5" type="text" placeholder="${FH.t('Boxes.Notes.NewHeadline')}" value="${entry.title}" />
+			<textarea id="editNoteContent" class="p5" placeholder="${FH.t('Boxes.Notes.NewText')}"></textarea>
 		`);
 
 		$('#editNoteContent').val(content);
@@ -217,9 +217,9 @@ let Notes = {
 
 	ConfirmDelete: () => {
 		$('#noteView .options').html(`
-			<span>${i18n('Boxes.General.ConfirmDelete')}</span>
-			<div><button class="btn btn-mid btn-delete" id="confirmDelete">${i18n('Boxes.General.Delete')}</button>
-			<button class="btn btn-mid" id="cancelDelete">${i18n('Boxes.General.Cancel')}</button></div>
+			<span>${FH.t('Boxes.General.ConfirmDelete')}</span>
+			<div><button class="btn btn-mid btn-delete" id="confirmDelete">${FH.t('Boxes.General.Delete')}</button>
+			<button class="btn btn-mid" id="cancelDelete">${FH.t('Boxes.General.Cancel')}</button></div>
 		`);
 	},
 
@@ -273,8 +273,8 @@ let Notes = {
 		let autoOpen = Settings.GetSetting('AutoOpenNotes');
 
         let h = `<p><input id="autoStartNotes" name="autoStartNotes" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />
-                <label for="autoStartNotes">${i18n('Boxes.Settings.Autostart')}</label></p>
-                <button onclick="Notes.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${i18n('General.Save')}</button>`;
+                <label for="autoStartNotes">${FH.t('Boxes.Settings.Autostart')}</label></p>
+                <button onclick="Notes.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${FH.t('General.Save')}</button>`;
 
         $('#NotesSettingsBox').html(h);
     },

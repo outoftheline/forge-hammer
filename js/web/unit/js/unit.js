@@ -78,7 +78,7 @@ let Unit = {
 
 			let args = {
 				id: 'UnitOverview',
-				title: i18n('Boxes.Units.Title'),
+				title: FH.t('Boxes.Units.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -161,10 +161,10 @@ let Unit = {
 		attack.push('<thead class="head-sticky">');
 			attack.push('<tr>');
 				attack.push('<th></th>');
-				attack.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				attack.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			attack.push('</tr>');
 		attack.push('</thead>');
 
@@ -221,7 +221,7 @@ let Unit = {
 
     	for(let i = Unit.Attack.length; i < 8; i++) {
 		    attack.push('<tr>');
-			attack.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			attack.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			attack.push('</tr>');
 		}
 
@@ -241,10 +241,10 @@ let Unit = {
 		defense.push('<thead class="head-sticky">');
 			defense.push('<tr>');
 				defense.push('<th></th>');
-				defense.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				defense.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			defense.push('</tr>');
 		defense.push('</thead>');
 		defense.push('<tbody>');
@@ -288,7 +288,7 @@ let Unit = {
 
 		for(let i = Unit.Defense.length; i < 8; i++){
 			defense.push('<tr>');
-			defense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			defense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			defense.push('</tr>');
 		}
 
@@ -308,10 +308,10 @@ let Unit = {
 		arenaDefense.push('<thead class="head-sticky">');
 			arenaDefense.push('<tr>');
 				arenaDefense.push('<th></th>');
-				arenaDefense.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				arenaDefense.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			arenaDefense.push('</tr>');
 		arenaDefense.push('</thead>');
 		arenaDefense.push('<tbody>');
@@ -355,7 +355,7 @@ let Unit = {
 
 		for(let i = Unit.ArenaDefense.length; i < 8; i++){
 			arenaDefense.push('<tr>');
-			arenaDefense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			arenaDefense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			arenaDefense.push('</tr>');
 		}
 
@@ -401,9 +401,9 @@ let Unit = {
 		pool.push('<thead class="head-sticky">');
 			pool.push('<tr>');
 				pool.push('<th></th>');
-				pool.push('<th>' + i18n('Boxes.Units.Unit') + '</th>');
-				pool.push('<th class="text-center">' + i18n('Boxes.Units.Bind') + '</th>');
-				pool.push('<th class="text-center">' + i18n('Boxes.Units.Unbind') + '</th>');
+				pool.push('<th>' + FH.t('Boxes.Units.Unit') + '</th>');
+				pool.push('<th class="text-center">' + FH.t('Boxes.Units.Bind') + '</th>');
+				pool.push('<th class="text-center">' + FH.t('Boxes.Units.Unbind') + '</th>');
 			pool.push('</tr>');
 		pool.push('</thead>');
 
@@ -417,7 +417,7 @@ let Unit = {
 			}
 
 			pool.push('<tr>');
-			pool.push('<th colspan="4">' + i18n('Eras.' + era) + '</th>');
+			pool.push('<th colspan="4">' + FH.t('Eras.' + era) + '</th>');
 			pool.push('</tr>');
 
 			for(let i in eras[era])
@@ -484,7 +484,7 @@ let Unit = {
 		}
 
 		if(Unit.alca['state']['next_state_transition_at'] === undefined) {
-			text = `<strong class="text-warning">${i18n('Boxes.Units.AlcaHarvest')}</strong>`;
+			text = `<strong class="text-warning">${FH.t('Boxes.Units.AlcaHarvest')}</strong>`;
 
 		}
 		// there was a harvest...
@@ -498,8 +498,8 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = FH.HTML.i18nReplacer(
-				i18n('Boxes.Units.NextUnitsIn'),
+			text = FH.helper.str.Replacer(
+				FH.t('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.NextAmount,
 					harvest: moment.unix(Unit.alca['state']['next_state_transition_at']).format('HH:mm:ss')
@@ -515,8 +515,8 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = FH.HTML.i18nReplacer(
-				i18n('Boxes.Units.NextUnitsIn'),
+			text = FH.helper.str.Replacer(
+				FH.t('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.alca.state.current_product.amount,
 					harvest: moment.unix(Unit.alca['state']['next_state_transition_at']).format('HH:mm:ss')
@@ -553,7 +553,7 @@ let Unit = {
 	 * @param id
 	 */
 	SetTabs: (id)=>{
-		Unit.Tabs.push('<li class="' + id + ' game-cursor"><a href="#' + id + '" class="game-cursor" title="' + i18n('Boxes.Units.' + id + '') + '" ><span>&nbsp;</span></a></li>');
+		Unit.Tabs.push('<li class="' + id + ' game-cursor"><a href="#' + id + '" class="game-cursor" title="' + FH.t('Boxes.Units.' + id + '') + '" ><span>&nbsp;</span></a></li>');
 	},
 
 
@@ -600,14 +600,14 @@ let Unit = {
 			if (diff <= 0)
 			{
 				clearInterval(intervalID);
-				$('.alca-info').html('<span class="text-danger"><strong>'+i18n('Boxes.Units.ReadyToLoot')+'</strong></span>');
+				$('.alca-info').html('<span class="text-danger"><strong>'+FH.t('Boxes.Units.ReadyToLoot')+'</strong></span>');
 			}
 			else
 				$('.alca-countdown').text(moment.utc(diff).format("HH:mm:ss"));
 		}
 		else{
 			clearInterval(intervalID);
-			$('.alca-info').html('<span class="text-danger"><strong>'+i18n('Boxes.Units.ReadyToLoot')+'</strong></span>');
+			$('.alca-info').html('<span class="text-danger"><strong>'+FH.t('Boxes.Units.ReadyToLoot')+'</strong></span>');
 		}
 	},
 
@@ -765,9 +765,9 @@ let Unit = {
 		last.push('<thead class="head-sticky">');
 			last.push('<tr>');
 				last.push('<th class="text-warning">' + LastTotal + 'x</th>');
-				last.push('<th>' + i18n('Boxes.Units.Unit') + '</th>');
-				last.push('<th class="text-center">' + i18n('Boxes.Units.Quantity') + '</th>');
-				last.push('<th class="text-center">' + i18n('Boxes.Units.Proportionally') + '</th>');
+				last.push('<th>' + FH.t('Boxes.Units.Unit') + '</th>');
+				last.push('<th class="text-center">' + FH.t('Boxes.Units.Quantity') + '</th>');
+				last.push('<th class="text-center">' + FH.t('Boxes.Units.Proportionally') + '</th>');
 			last.push('</tr>');
 		last.push('</thead>');
 
@@ -816,13 +816,13 @@ let Unit = {
 	ShowSettings: () => {
 		let h = [];
 
-		h.push(`<p>${i18n('Boxes.Units.PictogramScalingTitle')}
+		h.push(`<p>${FH.t('Boxes.Units.PictogramScalingTitle')}
 					<button class="btn btn-slim btn-set-value" data-value="-1">&lt;</button>
-					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
+					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.helper.str.Tooltip(FH.t('Boxes.Units.PictogramScalingDesc'))}">
 					<button class="btn btn-slim btn-set-value" data-value="1">&gt;</button>
 					<span class="validity"></span>
 				</p>`);
-		h.push(`<p><button onclick="Unit.SaveSettings()" id="unit-save-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><button onclick="Unit.SaveSettings()" id="unit-save-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#UnitOverviewSettingsBox').html(h.join(''));
 		

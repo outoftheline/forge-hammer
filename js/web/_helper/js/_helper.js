@@ -54,6 +54,41 @@ helper.str = {
 	cleanup: (textToCleanup) => {
 		return textToCleanup.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/[\W_ ]+/g, '')
 	},
+	/**
+	 * Replaces variables in a string with arguments
+	 *
+	 * @param string
+	 * @param args
+	 * @returns {*}
+	 */
+	Replacer: (string, args) => {
+		if (string === undefined || args === undefined) {
+			return;
+		}
+
+		for (let key in args) {
+			if (!args.hasOwnProperty(key)) {
+				break;
+			}
+
+			const regExp = new RegExp('__' + key + '__', 'g');
+			string = string.replace(regExp, args[key]);
+		}
+		return string;
+	},
+
+
+	/**
+	 * Replaces " with &quot;
+	 *
+	 * @param string
+	 * @returns {*}
+	 */
+	Tooltip: (string) => {
+		return string.replace(/"/g, "&quot;")
+	},
+
+
 };
 
 helper.arr = {
@@ -711,7 +746,7 @@ let HTML = {
 			return '-';
 		} else {
 			if (typeof number !== 'number' && isNaN(Number(number))) return "" + number;
-			return Number(number).toLocaleString(i18n('Local'));
+			return Number(number).toLocaleString(FH.t('Local'));
 		}
 	},
 
@@ -726,7 +761,7 @@ let HTML = {
 		if (number === 0 && replaceZero) {
 			return '-';
 		} else {
-			return Intl.NumberFormat(i18n(language), {
+			return Intl.NumberFormat(FH.t(language), {
 				notation: "compact",
 				maximumFractionDigits: 1
 			}).format(Number(number));
@@ -768,41 +803,6 @@ let HTML = {
 			Ret = '0' + Ret;
 		}
 		return Ret;
-	},
-
-
-	/**
-	 * Replaces variables in a string with arguments
-	 *
-	 * @param string
-	 * @param args
-	 * @returns {*}
-	 */
-	i18nReplacer: (string, args) => {
-		if (string === undefined || args === undefined) {
-			return;
-		}
-
-		for (let key in args) {
-			if (!args.hasOwnProperty(key)) {
-				break;
-			}
-
-			const regExp = new RegExp('__' + key + '__', 'g');
-			string = string.replace(regExp, args[key]);
-		}
-		return string;
-	},
-
-
-	/**
-	 * Replaces " with &quot;
-	 *
-	 * @param string
-	 * @returns {*}
-	 */
-	i18nTooltip: (string) => {
-		return string.replace(/"/g, "&quot;")
 	},
 
 
@@ -891,7 +891,7 @@ let HTML = {
 		const winHtml = `<!DOCTYPE html>
 						<html>
 							<head id="popout-${id}-head">
-								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
+								<title>PopOut Test - ${FH.t('Boxes.Outpost.Title')}</title>
 								<link rel="stylesheet" href="${FH.extUrl}css/variables.css">
 								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
 								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
@@ -1005,7 +1005,7 @@ let HTML = {
 						let CurrentCell = DataRow[ValidColumnNames[j]];
 						if (CurrentCell !== undefined) {
 							if ($.isNumeric(CurrentCell)) {
-								CurrentCells.push(Number(CurrentCell).toLocaleString(i18n('Local'),{useGrouping:false}));
+								CurrentCells.push(Number(CurrentCell).toLocaleString(FH.t('Local'),{useGrouping:false}));
 							}
 							else {
 								CurrentCells.push(CurrentCell);
@@ -1052,7 +1052,7 @@ let HTML = {
 
 	ParseFloatLocalIfPossible: (NumberString) => {
 		if (HTML.IsReversedFloatFormat === undefined) { //FloatFormat bestimmen, wenn noch unbekannt
-			let ExampleNumberString = Number(1.2).toLocaleString(i18n('Local'))
+			let ExampleNumberString = Number(1.2).toLocaleString(FH.t('Local'))
 			if (ExampleNumberString.charAt(1) === ',') {
 				HTML.IsReversedFloatFormat = true;
 			}

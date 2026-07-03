@@ -29,12 +29,12 @@ let doubleFPprevention = {
         
         FH.HTML.Box({
             'id': 'doubleFPprevention',
-            'title': i18n('Boxes.doubleFPprevention.Title'),
+            'title': FH.t('Boxes.doubleFPprevention.Title'),
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        $('#doubleFPpreventionBody').html(`${i18n('Boxes.doubleFPprevention.Text')}`);
+        $('#doubleFPpreventionBody').html(`${FH.t('Boxes.doubleFPprevention.Text')}`);
     },
 
     Close:()=>{

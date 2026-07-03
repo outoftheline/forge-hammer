@@ -68,7 +68,7 @@ let Kits = {
 
 			FH.HTML.Box({
 				id: 'kits',
-				title: i18n('Menu.Kits.Title'),
+				title: FH.t('Menu.Kits.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -84,7 +84,7 @@ let Kits = {
 			$('#kitsBodyTopbar').append(
 				$('<label />').attr({
 					class: 'game-cursor'
-				}).text(i18n('Boxes.Kits.FilterSets') + ':\xA0').append(
+				}).text(FH.t('Boxes.Kits.FilterSets') + ':\xA0').append(
 					$('<input />').attr({
 						class: 'game-cursor',
 						type: 'text',
@@ -93,7 +93,7 @@ let Kits = {
 					}).on('change', Kits._filter)
 				)
 			).append(
-				$('<label />').attr({class: 'game-cursor'}).text(i18n('Boxes.General.FilterItems') + ':\xA0').append(
+				$('<label />').attr({class: 'game-cursor'}).text(FH.t('Boxes.General.FilterItems') + ':\xA0').append(
 					$('<input />').attr({
 						class: 'game-cursor',
 						type: 'text',
@@ -108,14 +108,14 @@ let Kits = {
 					id: 'kits-triplestate-button',
 					class: 'btn btn-slim',
 					onclick: 'Kits.ToggleView()'
-				}).text(i18n('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
+				}).text(FH.t('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
 			);
 			$('#kitsBodyBottombar').append(
 				$('<span />').attr({
 					id: 'kits-showFavourites',
 					class: 'btn btn-slim',
 					onclick: 'Kits.ToggleFavouritesBtn()'
-				}).text(i18n('Boxes.Kits.ShowFavourites'))
+				}).text(FH.t('Boxes.Kits.ShowFavourites'))
 			);
 		}
 		else {
@@ -362,7 +362,7 @@ let Kits = {
 
 				
 				if (Name === 'Kits') {
-					KitText = i18n('Boxes.Kits.Kits');
+					KitText = FH.t('Boxes.Kits.Kits');
 				}
 				else if (Name === 'Guard_Post') {
 					KitText = FH.Main.SelectionKits.selection_kit_guard_post.name;
@@ -401,19 +401,19 @@ let Kits = {
 				KitText = FH.Main.GetBuildingLink(Link, KitText);
 			}
 			else if (GroupName) { // Group is set
-				let i18nKey = 'Boxes.Kits.' + GroupName,
-					i18nTranslation = i18n(i18nKey);
+				let Key = 'Boxes.Kits.' + GroupName,
+					Translation = FH.t(Key);
 
-				if (i18nKey === i18nTranslation) i18nTranslation = GroupName.replace(/_/g, ' '); //No translation => Fallback to GroupName
+				if (Key === Translation) Translation = GroupName.replace(/_/g, ' '); //No translation => Fallback to GroupName
 
-				KitText = i18nTranslation;
+				KitText = Translation;
 				show = true;
 				if (GroupName !== 'Events')
 					t += '</div>'
 				t += `<div class="group"><h1 class="grouphead" onclick="Kits.toggleGroup(event)">` + KitText + '</h1>'
 			}
 			else { // No name and group set => Show udate
-				KitText = i18n('Boxes.Kits.Udate') + kits[set].udate;
+				KitText = FH.t('Boxes.Kits.Udate') + kits[set].udate;
 				show = true;
 			}
 			//let upgradeOrder=["upgrade","silver","golden","platinum","ascended"];
@@ -423,12 +423,12 @@ let Kits = {
 				let f=Kits.upgradeKits?.[kits[set].buildings[0].first]
 				let upgradeCount = f?.upgradeCount;
 				if (upgradeCount) {
-					upgrades = '<span class="upgrades" data-original-title="'+i18n('Boxes.Kits.Upgrades')+'" data-toggle="tooltip">'
+					upgrades = '<span class="upgrades" data-original-title="'+FH.t('Boxes.Kits.Upgrades')+'" data-toggle="tooltip">'
 					let first = true
 					//for (let i of upgradeOrder) {
 					for (let i in upgradeCount) {
 						if (!upgradeCount[i]) continue
-						upgrades += (first ? '<span class="base">1</span>' : "") + `<span class="${i}">${upgradeCount[i]}</span>` //title="'+i18n('Boxes.Kits.Base')+'"
+						upgrades += (first ? '<span class="base">1</span>' : "") + `<span class="${i}">${upgradeCount[i]}</span>` //title="'+FH.t('Boxes.Kits.Base')+'"
 						first = false;
 					}
 					upgrades+= '</span>'
@@ -445,7 +445,7 @@ let Kits = {
 						}
 					}
 					let top=rating.pop()
-					eff = `<span class="kitsEff" data-original-title="${title}">${i18n('Boxes.Kits.Efficiency')}: `
+					eff = `<span class="kitsEff" data-original-title="${title}">${FH.t('Boxes.Kits.Efficiency')}: `
 					eff += Math.round(100 * top?.rating.totalScore||0);
 					eff+= '</span>'
 				}
@@ -478,7 +478,7 @@ let Kits = {
 
 			// Asset listing
 			if (assetRow.length) {
-				t += `<h3 class="assets-header ${!show ? "all-missing" : (!showA ? "row-missing" : "")}">${i18n('Boxes.Kits.Extensions')}</h3>`;
+				t += `<h3 class="assets-header ${!show ? "all-missing" : (!showA ? "row-missing" : "")}">${FH.t('Boxes.Kits.Extensions')}</h3>`;
 				let rowTd = ''
 				assetRow.forEach((e)=> {
 					rowTd += Kits.ItemDiv(e);
@@ -530,16 +530,16 @@ let Kits = {
 
 		if (!title ) {
 			if (el.type === 'update') {
-				title = FH.Main.BuildingUpgrades[item] ? FH.Main.BuildingUpgrades[item].upgradeItem.name : i18n('Boxes.Kits.UpgradeKit');
+				title = FH.Main.BuildingUpgrades[item] ? FH.Main.BuildingUpgrades[item].upgradeItem.name : FH.t('Boxes.Kits.UpgradeKit');
 			}
 			else if (el.type === 'kit') {
-				title = FH.Main.SelectionKits[item] ? FH.Main.SelectionKits[item].name : i18n('Boxes.Kits.SelectionKit');
+				title = FH.Main.SelectionKits[item] ? FH.Main.SelectionKits[item].name : FH.t('Boxes.Kits.SelectionKit');
 			}
 		}
 
 		return 	`<div class="item${((el.missing) ? ' is-missing' : '')}">
 					<div class="image"><img loading="lazy" src="${url}" alt="${title}" /></div>
-					<strong class="in-stock" data-original-title="${i18n('Boxes.Kits.InStock')}">${(item.inStock ? item.inStock : '-')}</strong>
+					<strong class="in-stock" data-original-title="${FH.t('Boxes.Kits.InStock')}">${(item.inStock ? item.inStock : '-')}</strong>
 					<span>${title}</span>
 					<span class="fragments">${(el.fragments ? `<img class="ItemFragment" src="${Kits.fragmentURL}"> ` + el.fragments + '/' + el.reqFragments : '')}</span>
 				</div>`;
@@ -608,7 +608,7 @@ let Kits = {
 
 		Kits._filter()
 
-		$('#kits-triplestate-button').text(i18n('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
+		$('#kits-triplestate-button').text(FH.t('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
 	},
 
 	ToggleFavouritesBtn:() => {
@@ -1106,7 +1106,7 @@ let Kits = {
 
 		let tooltip = `<div class="inventoryTooltip" lang="${lng}">`;
         tooltip += `<h2>${inventoryBuilding.amount}x ${FH.Main.CityEntities[id]?.name}${upgrades}</h2>`;
-		tooltip += `<span style="padding:3px 8px;">${i18n("Boxes.Tooltip.Efficiency.description")}:</span>`;
+		tooltip += `<span style="padding:3px 8px;">${FH.t("Boxes.Tooltip.Efficiency.description")}:</span>`;
 
 		if (inventoryBuilding.includesAscended) {
 			tooltip += `<span class="inventoryChainAscendedStock">${inventoryBuilding.ascendedStock}x</span>`;
@@ -1135,7 +1135,7 @@ let Kits = {
 
 		if (upgradesMax !== '<span class="upgrades"></span>') {
 			tooltip += `<div class="maxBuilding">`;
-			tooltip += `<h2>${i18n("Boxes.Kits.maxBuilding")}:</h2>`;
+			tooltip += `<h2>${FH.t("Boxes.Kits.maxBuilding")}:</h2>`;
 			tooltip += `<span class="maxBuildingDetails">${FH.Main.CityEntities[inventoryBuilding.maxBuilding]?.name}${upgradesMax}</span>`;
 			tooltip += `</div>`;
 		}
