@@ -159,7 +159,8 @@ let CityMap = {
 	PrepareBox: (Title,elemId="citymap-main")=> {	
 		let oB = $('#'+elemId+'Body'),
 			wrapper = $('<div id="citymap-wrapper" />'),
-			menu = $('<div id="city-map-menu" />');
+			menu = $('<div id="city-map-menu" />'),
+			menuBottom = $('<div id="city-map-menu-bottom" />');
 
 		/* scale */
 		let scaleUnit = CityMap.map.scale;
@@ -223,9 +224,10 @@ let CityMap = {
 		// Button for submit Box
 		if (ActiveMap === 'main') {
 			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ i18n('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
-			menu.append(
+			menuBottom.append(
 				$('<div class="btn-group" />')
-					.append($('<button class="btn ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
+					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
+					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(i18n('Boxes.CityMap.SendToPlanner')))
 			);
 		}
 		oB.append(wrapper);
@@ -236,7 +238,7 @@ let CityMap = {
 				$("#sidebar").append(CityMap.showQIBuildingList());
 			}
 
-		wrapper.append(menu);
+		wrapper.append(menu).append(menuBottom);
 
 		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost") 
 			$("#sidebar").append(CityMap.showOutpostBuildings());
@@ -1119,6 +1121,29 @@ let CityMap = {
                 hideAfter: 4000,
             })
         });
+	},
+
+
+	openPlanner: () => {
+		let region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
+		let data = { region };
+
+		switch (ActiveMap) {
+			case 'guild_raids':
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+				break;
+			default:
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(MainParser.CityMapData);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
+				break;
+		}
+
+		MainParser.sendExtMessage({
+			type: 'storeData',
+			key: 'foe_planner_pending',
+			data: data
+		}).catch(err => console.error('openPlanner: failed to hand off data', err));
 	},
 
 

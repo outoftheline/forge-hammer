@@ -36,7 +36,8 @@
 				"vendor/*",
 				"css/*",
 				"images/*",
-				"content/*"
+				"content/*",
+				"planner/*"
 			],
 			"matches": [ "https://*/*" ]
 		}

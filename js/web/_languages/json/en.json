@@ -271,6 +271,7 @@
   "Boxes.CityMap.random_production": "Random",
   "Boxes.CityMap.residential": "Residential",
   "Boxes.CityMap.roadless": "Roadless buildings",
+  "Boxes.CityMap.SendToPlanner": "Send to planner",
   "Boxes.CityMap.SetBuildings": "Set buildings",
   "Boxes.CityMap.ShowAscendableBuildings": "Ascendable buildings",
   "Boxes.CityMap.ShowDecayedBuildings": "Decayed buildings",

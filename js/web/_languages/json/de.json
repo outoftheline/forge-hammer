@@ -270,6 +270,7 @@
   "Boxes.CityMap.random_production": "Zufallsproduktionen",
   "Boxes.CityMap.residential": "Wohngebäude",
   "Boxes.CityMap.roadless": "Gebäude ohne Straße",
+  "Boxes.CityMap.SendToPlanner": "An Stadtplaner schicken",
   "Boxes.CityMap.SetBuildings": "Set-Gebäude",
   "Boxes.CityMap.ShowAscendableBuildings": "Verbesserbare Gebäude",
   "Boxes.CityMap.ShowDecayedBuildings": "Abgelaufene Gebäude",

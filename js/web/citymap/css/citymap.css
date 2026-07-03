@@ -21,7 +21,7 @@
 	height: 100%;
 }
 
-#city-map-menu {
+#city-map-menu, #city-map-menu-bottom {
 	position: absolute;
 	display: flex;
 	flex-direction: row;
@@ -31,6 +31,12 @@
 	z-index: 5000;
 	padding: 2px;
 	box-sizing: border-box;
+}
+
+#city-map-menu-bottom {
+	top: unset;
+	bottom: 0;
+	justify-content: end;
 }
 
 /* eigene Stadt */
@@ -630,4 +636,9 @@
 #citymapExtraBody {
 	overflow: auto;
 	max-height: calc(98vh - 30px);
+}
+
+
+#open-planner {
+	display: none;
 }
