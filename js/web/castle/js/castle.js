@@ -644,7 +644,7 @@ let Castle = {
             reward: cp.success ? cp.points : 0,
             maxreward: cp.points ? cp.points : '?',
             warning: cpwarn,
-            warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitCastleWarning')),
+            warnnotice: FH.HTML.Tooltip(FH.t('Boxes.Castle.VisitCastleWarning')),
             success: cp.success,
             date: startOfDay
         });
@@ -746,7 +746,7 @@ let Castle = {
                 reward: glsr,
                 maxreward: Castle.MaxGexLastOfSections,
                 warning: Castle.curGexLastOfSection === undefined,
-                warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitGexWarning')),
+                warnnotice: FH.HTML.Tooltip(FH.t('Boxes.Castle.VisitGexWarning')),
                 success: glsp >= Castle.GexLastOfSectionsIds.length,
                 date: startOfDay
             });
@@ -782,7 +782,7 @@ let Castle = {
                 reward: sir,
                 maxreward: sirsum,
                 warning: siwarn,
-                warnnotice: FH.helper.str.Tooltip(FH.t('Boxes.Castle.VisitAntiqueDealerWarning')),
+                warnnotice: FH.HTML.Tooltip(FH.t('Boxes.Castle.VisitAntiqueDealerWarning')),
                 success: sip === sipsum,
                 date: startOfDay
             });
@@ -894,7 +894,7 @@ let Castle = {
 
         if (!Castle.Settings.showGroupNames)
         {
-            h.push(`<thead class="sticky"><tr class="caption"><th>${FH.t('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.helper.str.Tooltip(FH.t('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.helper.str.Tooltip(FH.t('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
+            h.push(`<thead class="sticky"><tr class="caption"><th>${FH.t('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.HTML.Tooltip(FH.t('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.HTML.Tooltip(FH.t('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
         }
 
         h.push(`<tbody>`);

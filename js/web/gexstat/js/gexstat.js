@@ -363,7 +363,7 @@ let GexStat = {
 			let encounterClass = ' level' + level;
 			h.push(`<tr>`);
 			h.push(`<td class="text-center is-number" data-number="${member.rank}">${member.rank}</td>`);
-			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${FH.helper.str.Tooltip(FH.t('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
+			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${FH.HTML.Tooltip(FH.t('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
 			h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(member.name)}">` +
 				`<div class="avatar"><img src="${srcLinks.GetPortrait(member.avatar)}" /></div>` +
 				`<div class="membername">${FH.Main.GetPlayerLink(member.player_id, member.name)}</div></td>`);
@@ -713,8 +713,8 @@ let GexStat = {
 		let disabledExport = '';
 		if (GexStat.CurrentStatGroup === 'Course') { disabledExport = ' disabled'; }
 
-		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
-			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
+		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
+			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
 		c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="GexStat.SettingsSaveValues()">${FH.t('Boxes.GexStat.Save')}</button>`);
 		$('#GexStatSettingsBox').html(c.join(''));
 

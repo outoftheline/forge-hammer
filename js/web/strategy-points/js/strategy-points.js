@@ -131,7 +131,7 @@ let StrategyPoints = {
 			const $main = $('.fp-bar-main')
 			$main.find('.number').text(availableFPs);
 			$main.removeClass('full');
-			$main.attr('title',FH.helper.str.Tooltip(FH.t('StrategyPoints.FPInBar')));
+			$main.attr('title',FH.HTML.Tooltip(FH.t('StrategyPoints.FPInBar')));
 
 			const $bar = $main.find('.bars');
 
@@ -172,7 +172,7 @@ let StrategyPoints = {
 		}
 
 		if($('div.buyable-fp').length === 0) {
-			$('#fp-bar').append(`<div class="buyable-fp" title="${FH.helper.str.Tooltip(FH.t('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
+			$('#fp-bar').append(`<div class="buyable-fp" title="${FH.HTML.Tooltip(FH.t('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
 
 		} else {
 			$('div.buyable-fp').text(FH.HTML.Format(amount));

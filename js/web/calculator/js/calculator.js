@@ -340,10 +340,10 @@ let Calculator = {
 
 		h.push('<thead><tr>' +
 			'<th>#</th>' +
-			'<th><span class="forgepoints" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Calculator.Commitment')) + '"></span></th>' +
+			'<th><span class="forgepoints" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment')) + '"></span></th>' +
 			'<th>' + FH.t('Boxes.Calculator.Profit') + '</th>');
-			h.push('<th><span class="blueprint" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Calculator.BPs')) + '"></span></th>');
-			h.push('<th><span class="medal" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Calculator.Meds')) + '"></span></th>');
+			h.push('<th><span class="blueprint" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs')) + '"></span></th>');
+			h.push('<th><span class="medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds')) + '"></span></th>');
 		h.push('</tr></thead>');
 
 		for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
@@ -478,10 +478,10 @@ let Calculator = {
 			h.push(`<tr class="text-center ${rowClass}">
 				<td> <strong class="${rankClass}">${rankText}</strong> </td>
 				<td>
-					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${FH.helper.str.Tooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
+					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${FH.HTML.Tooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
 				</td>
 				<td>
-					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.helper.str.Tooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
+					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.HTML.Tooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
 				</td>
 				<td> ${FH.HTML.Format(rank.bpReward)} </td>
 				<td> <small> ${FH.HTML.Format(rank.medalReward)} </small> </td>
@@ -501,10 +501,10 @@ let Calculator = {
 		let output = `<thead>
 				<tr>
 				<th>#</th>
-				<th><span class="forgepoints" title="${FH.helper.str.Tooltip(FH.t('Boxes.Calculator.Commitment'))}"></span></th>
+				<th><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment'))}"></span></th>
 				<th>${FH.t('Boxes.Calculator.Profit')}</th>
-				<th><span class="blueprint" title="${FH.helper.str.Tooltip(FH.t('Boxes.Calculator.BPs'))}"></span></th>
-				<th><span class="medal" title="${FH.helper.str.Tooltip(FH.t('Boxes.Calculator.Meds'))}"></span></th>
+				<th><span class="blueprint" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs'))}"></span></th>
+				<th><span class="medal" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds'))}"></span></th>
 				</tr>
 				</thead>
 			<tbody>`;

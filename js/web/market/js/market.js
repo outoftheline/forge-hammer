@@ -273,12 +273,12 @@ let Market = {
 
         h.push('<td><label class="game-cursor"><input class="tradepartnerguild game-cursor" ' + (Market.TradePartnerGuild ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradePartnerGuild') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradeforequal game-cursor" ' + (Market.TradeForEqual ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeForEqual') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradefairstock game-cursor" ' + (Market.TradeFairStock ? 'checked' : '') + ' type="checkbox" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Market.TradeFairStockTT')) + '">' + FH.t('Boxes.Market.TradeFairStock') + '</label></td>');
+        h.push('<td><label class="game-cursor"><input class="tradefairstock game-cursor" ' + (Market.TradeFairStock ? 'checked' : '') + ' type="checkbox" title="' + FH.HTML.Tooltip(FH.t('Boxes.Market.TradeFairStockTT')) + '">' + FH.t('Boxes.Market.TradeFairStock') + '</label></td>');
         h.push('</tr>');
 
         h.push('<tr>');
         h.push('<td><label class="game-cursor" for="minquantity">' + FH.t('Boxes.Market.MinQuantity') + '</label></td>');
-        h.push('<td title="' + FH.helper.str.Tooltip(FH.t('Boxes.Market.TTMinQuantity')) + '"><input type="number" id="minquantity" step="1" min="0" max="1000000" value="' + Market.MinQuantity + '"></td>');
+        h.push('<td title="' + FH.HTML.Tooltip(FH.t('Boxes.Market.TTMinQuantity')) + '"><input type="number" id="minquantity" step="1" min="0" max="1000000" value="' + Market.MinQuantity + '"></td>');
         h.push('<td><label class="game-cursor"><input class="tradepartnerfriend game-cursor" ' + (Market.TradePartnerFriend ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradePartnerFriend') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradeforlower game-cursor" ' + (Market.TradeForLower ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeForLower') + '</label></td>');
         h.push('<td><label class="game-cursor"><input class="tradefair game-cursor" ' + (Market.TradeFair ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeFair') + '</label></td>');
@@ -334,11 +334,11 @@ let Market = {
 
                 h.push('<tr>');
                 h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[OfferGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.helper.str.Tooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.helper.str.Tooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
                 h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.helper.str.Tooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.helper.str.Tooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
                 h.push('<td class="text-center">' + FH.HTML.Format(FH.Main.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
                 h.push('<td>' + Trade['merchant']['name'] + '</td>');
                 h.push('<td class="text-center">' + (Math.floor(CurrentPos / 10 + 1)) + '-' + (CurrentPos % 10 + 1) + '</td>');

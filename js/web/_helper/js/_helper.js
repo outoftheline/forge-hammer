@@ -76,19 +76,6 @@ helper.str = {
 		}
 		return string;
 	},
-
-
-	/**
-	 * Replaces " with &quot;
-	 *
-	 * @param string
-	 * @returns {*}
-	 */
-	Tooltip: (string) => {
-		return string.replace(/"/g, "&quot;")
-	},
-
-
 };
 
 helper.arr = {
@@ -768,6 +755,15 @@ let HTML = {
 		}
 	},
 
+	/**
+	 * Replaces " with &quot;
+	 *
+	 * @param string
+	 * @returns {*}
+	 */
+	Tooltip: (string) => {
+		return string.replace(/"/g, "&quot;")
+	},
 
 	/**
 	* Returns strong class for formating mopppel date
@@ -845,7 +841,6 @@ let HTML = {
 			}
 		});
 	},
-
 
 	EnterFullscreen: () => {
 

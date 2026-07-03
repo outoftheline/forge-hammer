@@ -296,10 +296,10 @@ let GreatBuildings = {
         h.push(FH.t('Boxes.GreatBuildings.HideNewGBs'));
         h.push('<br>');
         h.push(FH.t('Boxes.GreatBuildings.FPPerTile') + ' ');
-        h.push('<input type="number" id="fpPerTile" step="0.01" min="0" max="1000" value="' + GreatBuildings.FPPerTile + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTFPPerTile')) + '">');
+        h.push('<input type="number" id="fpPerTile" step="0.01" min="0" max="1000" value="' + GreatBuildings.FPPerTile + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTFPPerTile')) + '">');
         h.push('<br>');
         h.push(FH.t('Boxes.GreatBuildings.RewardPerDay') + ' ');
-        h.push('<input type="number" id="rewardPerDay" step="1" min="0" max="1000000" value="' + GreatBuildings.RewardPerDay + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTRewardPerDay')) + '">');
+        h.push('<input type="number" id="rewardPerDay" step="1" min="0" max="1000000" value="' + GreatBuildings.RewardPerDay + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTRewardPerDay')) + '">');
         h.push('<br><br>');
 
         h.push('<input id="ShowGoods" class="showgoods game-cursor" ' + (GreatBuildings.ShowGoods ? 'checked' : '') + ' type="checkbox">');
@@ -308,7 +308,7 @@ let GreatBuildings = {
 
         if (GreatBuildings.ShowGoods) { //Güterwert - Boxen ausblenden, wenn Güter deaktiviert
             h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + CurrentEraID) }) + ' ');
-            h.push('<input type="number" id="goodsValue0" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue0 + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+            h.push('<input type="number" id="goodsValue0" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue0 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
             if (GreatBuildings.GoodsValue0 > 0) {
                 h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue0 * 100) / 100 }) + ')</small>')
             }
@@ -316,7 +316,7 @@ let GreatBuildings = {
 
             if (CurrentEraID >= 3) { //Ab Eisenzeit => Star Gazer liefert Bronzezeitgüter
                 h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (CurrentEraID - 1)) }) + ' ');
-                h.push('<input type="number" id="goodsValue1" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue1 + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+                h.push('<input type="number" id="goodsValue1" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue1 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue1 > 0) {
                     h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue1 * 100) / 100 }) + ')</small>')
                 }
@@ -325,7 +325,7 @@ let GreatBuildings = {
 
             if (CurrentEraID >= 10) { //Ab Moderne => Unveredelte Güter
                 h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (CurrentEraID - 3)) }) + ' ');
-                h.push('<input type="number" id="goodsValue3" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue3 + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+                h.push('<input type="number" id="goodsValue3" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue3 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue3 > 0) {
                     h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue3 * 100) / 100 }) + ')</small>')
                 }
@@ -339,7 +339,7 @@ let GreatBuildings = {
 
         if (GreatBuildings.ShowAttack) { //Güterwert - Boxen ausblenden, wenn Güter deaktiviert
             h.push(FH.t('Boxes.GreatBuildings.AttackValue')) + ' ';
-            h.push('<input type="number" id="attackValue" step="0.01" min="0" max="1000" value="' + GreatBuildings.AttackValue + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTAttackValue')) + '">');
+            h.push('<input type="number" id="attackValue" step="0.01" min="0" max="1000" value="' + GreatBuildings.AttackValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTAttackValue')) + '">');
             if (GreatBuildings.AttackValue > 0) {
                 h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.AttackPerFP'), { percent: Math.round(1 / GreatBuildings.AttackValue * 100) / 100 }) + ')</small>')
             }
@@ -361,7 +361,7 @@ let GreatBuildings = {
         if (GreatBuildings.ShowGoods) h.push('<th>' + FH.t('Boxes.GreatBuildings.DailyGoods') + '</th>');
         if (GreatBuildings.ShowAttack) h.push('<th>' + FH.t('Boxes.GreatBuildings.Attack') + '</th>');
         h.push('<th>' + FH.t('Boxes.GreatBuildings.BreakEven') + '</th>');
-        h.push('<th title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCostsColumn')) + '">' + FH.t('Boxes.GreatBuildings.FPCostGoods') + '</th>');
+        h.push('<th title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCostsColumn')) + '">' + FH.t('Boxes.GreatBuildings.FPCostGoods') + '</th>');
         h.push('</tr>');
         h.push('</thead>');
 
@@ -608,11 +608,11 @@ let GreatBuildings = {
                                         
                     h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
                     h.push('<td style="white-space:nowrap">' + CurrentLevel + ' &rarr; ' + (BestLevel + 1) + '</td>');
-                    h.push('<td title="' + FH.helper.str.Tooltip(CostsTT) + '">' + FH.HTML.Format(FH.Main.round(Costs)) + '</td>');
-                    h.push('<td title="' + FH.helper.str.Tooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(FH.Main.round(FPProduction * 10) / 10) + '</td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(CostsTT) + '">' + FH.HTML.Format(FH.Main.round(Costs)) + '</td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(FH.Main.round(FPProduction * 10) / 10) + '</td>');
                     if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + FH.HTML.Format(FH.Main.round(GoodsProduction * 10) / 10) + '</td>');
                     if (GreatBuildings.ShowAttack) h.push('<td>' + AttackValueSign + FH.HTML.Format(FH.Main.round(AttackProduction * 10) / 10) + '</td>');
-                    h.push('<td title="' + FH.helper.str.Tooltip(BreakEvenTT) + '"><strong class="' + BreakEvenClass + '">' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenUnit'), { 'days': BreakEvenString }) + '</strong></td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(BreakEvenTT) + '"><strong class="' + BreakEvenClass + '">' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenUnit'), { 'days': BreakEvenString }) + '</strong></td>');
                 }
                 else { //LG zu hoch => Keine Daten mehr verfügbar oder Güterkosten zu hoch
                     h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
@@ -626,7 +626,7 @@ let GreatBuildings = {
 
                 if (j === 0) {
                     if (IsNewGBs[Index]) {
-                        h.push('<td><input title="' + FH.helper.str.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCosts')) + '" type="number" id="GreatBuildingsGoodCosts' + Index + '" step="1" min="0" max="999999" value="' + GBData.GoodCosts + '"></td>');
+                        h.push('<td><input title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCosts')) + '" type="number" id="GreatBuildingsGoodCosts' + Index + '" step="1" min="0" max="999999" value="' + GBData.GoodCosts + '"></td>');
                     }
                     else {
                         h.push('<td class="text-center">-</td>');

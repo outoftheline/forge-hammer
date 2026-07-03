@@ -191,7 +191,7 @@ let Negotiation = {
 					GoodAmount = FH.Main.round(GoodAmount * 10) / 10;
 				}
 
-				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
+				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
 					'<span class="goods-sprite ' + GoodName + '"></span><br>' +
 					'<span class="text-' + TextClass + '">' + FH.HTML.Format(GoodAmount) + '</span>' +
 					'</div>');

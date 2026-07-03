@@ -209,7 +209,7 @@ let HiddenRewards = {
                 if (hiddenReward.type.indexOf('outpost') > -1) {
                     img = 'Shard_' + hiddenReward.type.substr(hiddenReward.type.length-2, 2);
                 }
-                h.push('<td class="incident" title="' + FH.helper.str.Tooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
+                h.push('<td class="incident" title="' + FH.HTML.Tooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
                 h.push('<td>' + hiddenReward.position + '</td>');
                 h.push('<td class="">' + FH.t('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
                 h.push('</tr>');

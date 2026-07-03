@@ -827,10 +827,10 @@ let Parts = {
 			<thead>
 			<tr>
 				<th>${FH.t('Boxes.OwnpartCalculator.Order')}</th>
-				<th class="text-center"><span class="forgepoints" title="${FH.helper.str.Tooltip(FH.t('Boxes.OwnpartCalculator.Deposit'))}"></th>
+				<th class="text-center"><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.Deposit'))}"></th>
 				<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Done')}</th>`);
-					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${FH.helper.str.Tooltip(FH.t('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
-					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${FH.helper.str.Tooltip(FH.t('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
+					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
+					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
 					if (!minView) h.push(`<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Ext')}</th>`);
 					if (!minView) h.push(`<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Arc')}</th>`);
 			h.push(`</tr>

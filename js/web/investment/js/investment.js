@@ -143,7 +143,7 @@ let Investment = {
 		b.push(`<div id="total-fp" class="text-center">${FH.t('Boxes.Investment.TotalFP')}<strong class="total-storage-invest">0</strong></div>`);
 		
 		if (showMedals === 1) {
-			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
+			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
 		}
 		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${FH.extUrl}js/web/investment/images/unvisible.png" title="${FH.t('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
 
@@ -166,33 +166,33 @@ let Investment = {
 
 		if (showEntryDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + FH.t('Boxes.Investment.Overview.EntryTime') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + FH.t('Boxes.Investment.Overview.EntryTime') + '</th>');
 		}
 
 		if (showInvestmentIncreaseDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + FH.t('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + FH.t('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
 		}
 
 		h.push('<th class="is-number" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Progress') + '</th>');
 
 		if (showRestFp)
 		{
-			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.RestFPDesc')) + '">' + FH.t('Boxes.Investment.Overview.RestFP') + '</th>');
+			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.RestFPDesc')) + '">' + FH.t('Boxes.Investment.Overview.RestFP') + '</th>');
 		}
 
 		h.push('<th class="is-number text-center" data-type="invest-group">&nbsp;</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.InvestedDesc')) + '">' + FH.t('Boxes.Investment.Overview.Invested') + '</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.ProfitDesc')) + '" >' + FH.t('Boxes.Investment.Overview.Profit') + '</th>');
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.InvestedDesc')) + '">' + FH.t('Boxes.Investment.Overview.Invested') + '</th>' +
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.ProfitDesc')) + '" >' + FH.t('Boxes.Investment.Overview.Profit') + '</th>');
 		
 		if(showMedals)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.Medals')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.Medals')) + '"></span></th>');
 		}
 		
 		if(showBlueprints)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.helper.str.Tooltip(FH.t('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
 		}
 		
 		h.push('<th class="no-sort"></th></tr></thead><tbody class="invest-group">');

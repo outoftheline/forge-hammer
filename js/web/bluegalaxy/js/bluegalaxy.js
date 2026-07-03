@@ -224,14 +224,14 @@ let BlueGalaxy = {
             h.push(FH.t('Boxes.BlueGalaxy.AvailableCollections')+ " " + BlueGalaxy.DoubleCollections+"<br>");
 
         h.push(FH.t('Boxes.BlueGalaxy.GoodsValue') + ' ');
-        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.GoodsValue > 0) {
             h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
         }
 
         h.push('<br>');
         h.push(FH.t('Boxes.BlueGalaxy.OlderGoodsValue') + ' ');
-        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.helper.str.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
+        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
         if (BlueGalaxy.OlderGoodsValue > 0) {
             h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
         }

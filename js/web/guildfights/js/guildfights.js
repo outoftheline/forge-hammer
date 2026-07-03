@@ -462,7 +462,7 @@ let GuildFights = {
 			if (gbground === GuildFights.CurrentGBGRound) {
 				h.push(`<div id="gbgLogFilter">
 							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${FH.t('Boxes.GuildFights.Stats.Open')}</button>
-							<button id="gbg_filterProgressList" title="${FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
 						</div>`);
 			}
@@ -805,8 +805,8 @@ let GuildFights = {
 
 		t.push('<th style="display:none;" data-export="Player_ID"></th>');
 		t.push('<th colspan="3" data-export3="Player">' + FH.t('Boxes.GuildFights.Player') + '</th>');
-		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Total">' + FH.t('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Attrition">' + FH.t('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
 
@@ -917,8 +917,8 @@ let GuildFights = {
 			h.push('<table id="gbgPlayerLogTable" class="foe-table gbglog"><thead class="sticky">');
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-playerlog-group">');
@@ -948,8 +948,8 @@ let GuildFights = {
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="gbg-log-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
 			h.push('<th class="case-sensitive" data-type="gbg-log-group">' + FH.t('Boxes.GuildFights.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.helper.str.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
@@ -1725,8 +1725,8 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
-		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#GuildPlayersSettingsBox').html(c.join(''));
 	},

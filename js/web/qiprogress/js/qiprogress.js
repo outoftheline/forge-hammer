@@ -366,8 +366,8 @@ let QiProgress = {
 			h.push('<table id="qiPlayerLogTable" class="foe-table qilog"><thead>');
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="qi-playerlog-group">' + FH.t('General.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-playerlog-group">');
 
@@ -395,8 +395,8 @@ let QiProgress = {
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Date') + '</th>');
 			h.push('<th class="case-sensitive" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-log-group">');
 
@@ -511,7 +511,7 @@ let QiProgress = {
 
 			if (qiRound === QiProgress.CurrentQISeason) {
 				h.push(`<div id="qiLogFilter" style="float:right">
-					<button id="qi_filterProgressList" title="${FH.helper.str.Tooltip(FH.t('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+					<button id="qi_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 					</div>`);
 			}
 			h.push(`</div>`);
@@ -553,8 +553,8 @@ let QiProgress = {
 
 	ShowSettings: () => {
 		let c = [];
-		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${FH.helper.str.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#QiProgressListSettingsBox').html(c.join(''));
 	},

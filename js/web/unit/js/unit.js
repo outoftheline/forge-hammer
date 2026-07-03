@@ -818,7 +818,7 @@ let Unit = {
 
 		h.push(`<p>${FH.t('Boxes.Units.PictogramScalingTitle')}
 					<button class="btn btn-slim btn-set-value" data-value="-1">&lt;</button>
-					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.helper.str.Tooltip(FH.t('Boxes.Units.PictogramScalingDesc'))}">
+					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.HTML.Tooltip(FH.t('Boxes.Units.PictogramScalingDesc'))}">
 					<button class="btn btn-slim btn-set-value" data-value="1">&gt;</button>
 					<span class="validity"></span>
 				</p>`);
