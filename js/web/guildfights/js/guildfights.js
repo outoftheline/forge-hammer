@@ -81,6 +81,12 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	if ($('#LiveGildFighting').length > 0) {
 		GuildFights.BuildFightContent();
 	}
+
+	setTimeout(function () {
+		if (GuildFights.autoOpen && $('#LiveGildFighting').length === 0) {
+			GuildFights.ShowGuildBox();
+		}
+	}, 700);
 });
 FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
@@ -120,6 +126,7 @@ let GuildFights = {
 	PlayerBoxSettings: {
 		showOnlyActivePlayers: 0,
 	},
+	autoOpen: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.autoOpen || 0,
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
@@ -1830,8 +1837,11 @@ let GuildFights = {
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';
 		let discordWebhookTemplate = LiveFightSettings?.discordWebhookTemplate ?? '';
 		let discordWebhookTemplateBulk = LiveFightSettings?.discordWebhookTemplateBulk ?? '';
+		let autoOpen = LiveFightSettings?.autoOpen ?? 0;
 
-		c.push(`<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
+		c.push(`<p><input id="gbgautopen" name="gbgautopen" value="1" type="checkbox" ${(autoOpen === 1) ? ' checked="checked"' : ''} /> 
+			<label for="gbgautopen">${i18n('Boxes.General.AutoOpen')}</label></p>
+			<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showguildcolumn">${i18n('Boxes.GuildFights.ShowOwner')}</label></p>
 			<p><input id="showAdjacentSectors" name="showAdjacentSectors" value="0" type="checkbox" ${(showAdjacentSectors === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showAdjacentSectors">${i18n('Boxes.GuildFights.ShowAdjacentSectors')}</label></p>
@@ -1891,6 +1901,7 @@ let GuildFights = {
 	SaveLiveFightSettings: () => {
 		let value = {};
 
+		value.autoOpen = 0;
 		value.showGuildColumn = 0;
 		value.showAdjacentSectors = 0;
 		value.showOwnSectors = 0;
@@ -1900,6 +1911,9 @@ let GuildFights = {
 		value.discordWebhook = '';
 		value.discordWebhookTemplate = '';
 		value.discordWebhookTemplateBulk = '';
+
+		if ($("#gbgautopen").is(':checked')) 
+			value.autoOpen = 1;
 
 		if ($("#showguildcolumn").is(':checked')) 
 			value.showGuildColumn = 1;
@@ -1921,6 +1935,7 @@ let GuildFights = {
 		value.discordWebhookTemplate = $("#gbgWebhookTemplate").val();
 		value.discordWebhookTemplateBulk = $("#gbgWebhookTemplateBulk").val();
 				
+		GuildFights.autoOpen = value.autoOpen;
 		GuildFights.showGuildColumn = value.showGuildColumn;
 		GuildFights.showAdjacentSectors = value.showAdjacentSectors;
 		GuildFights.showOwnSectors = value.showOwnSectors;

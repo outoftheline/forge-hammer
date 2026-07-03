@@ -422,6 +422,7 @@
   "Boxes.GBGBuildings.title": "Gebäude Empfehlung",
   "Boxes.GBGBuildings.toBuild": "Zu bauen",
   "Boxes.GBGBuildings.totalChance": "Chance",
+  "Boxes.General.AutoOpen": "Automatisch öffnen",
   "Boxes.General.Cancel": "Abbrechen",
   "Boxes.General.ConfirmDelete": "Löschen bestätigen:",
   "Boxes.General.Delete": "Löschen",
