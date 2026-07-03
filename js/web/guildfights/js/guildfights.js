@@ -430,13 +430,13 @@ let GuildFights = {
 		let PlayerBoxSettings = JSON.parse(FH.Storage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
-			// get all available GBG entires
-			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).keys();
+			// get all GBG entires, skip those without participation data
+			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).filter(entry => entry.participation && entry.participation.length > 0).primaryKeys();
 			gbgRounds.sort(function (a, b) { return b - a });
 			GuildFights.GBGAllRounds = gbgRounds;
 		}
 
-		//set latest GBG round to show if available and no specific GBG round is set
+		// set latest GBG round to show if available and no specific GBG round is set
 		if (!gbground && GuildFights.GBGAllRounds && GuildFights.GBGAllRounds.length) {
 			gbground = GuildFights.GBGAllRounds[i];
 		}
