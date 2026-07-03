@@ -326,6 +326,10 @@
 	padding: 2px;
 }
 
+#calcReminder .gbEntry {
+    white-space: nowrap;
+}
+
 #calcReminder .gbEntry:hover {
     text-decoration: line-through;
 }
