@@ -21,7 +21,7 @@ let Treasury = {
         if ($('#treasury').length === 0) {
             FH.HTML.Box({
                 'id': 'treasury',
-                'title': i18n('Boxes.Treasury.Title'),
+                'title': FH.t('Boxes.Treasury.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 settings: Treasury.ShowSettings
@@ -55,10 +55,10 @@ let Treasury = {
     CalcBody: () => {
         let h = [];
 
-        h.push('<strong>' + i18n('Boxes.Treasury.Message') + '</strong><br>');
-        h.push(i18n('Boxes.Treasury.RowNumber') + ': ' + FH.HTML.Format(Treasury.Logs.length) + '<br>');
-        h.push('<span class="btn button-reset">' + i18n('Boxes.Treasury.Reset') + '</span>');
-        h.push('<span class="btn button-export">' + i18n('Boxes.Treasury.Export') + '</span>');
+        h.push('<strong>' + FH.t('Boxes.Treasury.Message') + '</strong><br>');
+        h.push(FH.t('Boxes.Treasury.RowNumber') + ': ' + FH.HTML.Format(Treasury.Logs.length) + '<br>');
+        h.push('<span class="btn button-reset">' + FH.t('Boxes.Treasury.Reset') + '</span>');
+        h.push('<span class="btn button-export">' + FH.t('Boxes.Treasury.Export') + '</span>');
 
         $('#treasuryBody').html(h.join(''));
     },
@@ -68,13 +68,13 @@ let Treasury = {
         let h = [],
             CurrentLine = [];
 
-        CurrentLine.push(i18n('Boxes.Treasury.PlayerID'));
-        CurrentLine.push(i18n('Boxes.Treasury.PlayerName'));
-        CurrentLine.push(i18n('Boxes.Treasury.Era'));
-        CurrentLine.push(i18n('Boxes.Treasury.Resource'));
-        CurrentLine.push(i18n('Boxes.Treasury.Amount'));
-        CurrentLine.push(i18n('Boxes.Treasury.Action'));
-        CurrentLine.push(i18n('Boxes.Treasury.DateTime'));
+        CurrentLine.push(FH.t('Boxes.Treasury.PlayerID'));
+        CurrentLine.push(FH.t('Boxes.Treasury.PlayerName'));
+        CurrentLine.push(FH.t('Boxes.Treasury.Era'));
+        CurrentLine.push(FH.t('Boxes.Treasury.Resource'));
+        CurrentLine.push(FH.t('Boxes.Treasury.Amount'));
+        CurrentLine.push(FH.t('Boxes.Treasury.Action'));
+        CurrentLine.push(FH.t('Boxes.Treasury.DateTime'));
 
         h.push(CurrentLine.join(';'));
 
@@ -87,7 +87,7 @@ let Treasury = {
             let GoodID = CurrentLog['resource'];
             let EraName = GoodsData[GoodID]['era'];
             let EraID = Technologies.Eras[EraName];
-            CurrentLine.push((EraID + '').padStart(2, '0') + ' - ' + i18n('Eras.' + EraID).replace(/;/g, ''));
+            CurrentLine.push((EraID + '').padStart(2, '0') + ' - ' + FH.t('Eras.' + EraID).replace(/;/g, ''));
             CurrentLine.push(GoodsData[GoodID]['name'].replace(/;/g, ''));
             CurrentLine.push(CurrentLog['amount']);
             CurrentLine.push(CurrentLog['action'].replace(/;/g, ''));
@@ -109,8 +109,8 @@ let Treasury = {
 		let autoOpen = Settings.GetSetting('ShowGuildTreasuryLogExport');
 
         let h = [];
-        h.push(`<p><input id="autoStartTreasuryExport" name="autoStartTreasuryExport" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartMarket">${i18n('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><button onclick="Treasury.SaveSettings()" id="save-treasury-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><input id="autoStartTreasuryExport" name="autoStartTreasuryExport" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartMarket">${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+        h.push(`<p><button onclick="Treasury.SaveSettings()" id="save-treasury-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#treasurySettingsBox').html(h.join(''));
     },

@@ -96,7 +96,7 @@ let Calculator = {
 		h.push(`<div id="gbCalc">
 				<div class="header text-center dark-bg p5">
 					<strong><span class="building-name">${BuildingName}</span></strong>
-					<p style="margin: 0 0 5px">${Level} &rarr; ${(Level + 1)} &middot; ${i18n('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</p>`);
+					<p style="margin: 0 0 5px">${Level} &rarr; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</p>`);
  
 			if (Calculator.PlayerName) {
 				h.push(`<span class="player-name">
@@ -136,7 +136,7 @@ let Calculator = {
 				h.push(`<button class="btn btn-mid btn-toggle-arc ${(bonus === Calculator.ForderBonus ? 'btn-active' : '')}${(bonus === FH.Main.ArkBonus ? ' arkBonus' : '')}" data-value="${bonus}">${bonus}%</button>`);
 			});
 		
-		h.push(`<span data-original-title="${i18n('Boxes.Calculator.FriendlyInvestment')} x%">  <input type="number" id="costFactor" step="0.1" min="12" max="200" value="${Calculator.ForderBonus}"></span>`);
+		h.push(`<span data-original-title="${FH.t('Boxes.Calculator.FriendlyInvestment')} x%">  <input type="number" id="costFactor" step="0.1" min="12" max="200" value="${Calculator.ForderBonus}"></span>`);
 
         h.push(`</div>
 				</div>
@@ -148,7 +148,7 @@ let Calculator = {
 		let rest = FH.Main.CurrentGB.Entity['state']['forge_points_for_level_up'] - FH.Main.CurrentGB.Rankings.reduce((acc,entry)=>acc+(entry?.forge_points|0),0);
 
 		if (!FH.Main.CurrentGB.isPreviousLevel)
-			h.push('<div class="text-center dark-bg p5"><em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + FH.HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
+			h.push('<div class="text-center dark-bg p5"><em>' + FH.t('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + FH.HTML.Format(rest) + '</span> ' + FH.t('Boxes.Calculator.FP') + '</em>');
 
 		h.push(Calculator.GetRecurringQuestsLine(Calculator.PlayInfoSound));
 
@@ -158,12 +158,12 @@ let Calculator = {
 
         // level is not unlocked yet
 		if (FH.Main.CurrentGB.Entity['level'] === FH.Main.CurrentGB.Entity['max_level']) {
-            $('#OwnPartBox').find('#OwnPartBoxBody').append($('<div />').addClass('lg-not-possible').attr('data-text', i18n('Boxes.Calculator.LGNotOpen')));
+            $('#OwnPartBox').find('#OwnPartBoxBody').append($('<div />').addClass('lg-not-possible').attr('data-text', FH.t('Boxes.Calculator.LGNotOpen')));
 		}
 
 		// no street connection
 		else if (FH.Main.CurrentGB.Entity['connected'] === undefined) {
-            $('#OwnPartBox').find('#OwnPartBoxBody').append($('<div />').addClass('lg-not-possible').attr('data-text', i18n('Boxes.Calculator.LGNotConnected')));
+            $('#OwnPartBox').find('#OwnPartBoxBody').append($('<div />').addClass('lg-not-possible').attr('data-text', FH.t('Boxes.Calculator.LGNotConnected')));
         }
 		h.push('</div>');
 
@@ -340,10 +340,10 @@ let Calculator = {
 
 		h.push('<thead><tr>' +
 			'<th>#</th>' +
-			'<th><span class="forgepoints" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment')) + '"></span></th>' +
-			'<th>' + i18n('Boxes.Calculator.Profit') + '</th>');
-			h.push('<th><span class="blueprint" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.BPs')) + '"></span></th>');
-			h.push('<th><span class="medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Meds')) + '"></span></th>');
+			'<th><span class="forgepoints" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment')) + '"></span></th>' +
+			'<th>' + FH.t('Boxes.Calculator.Profit') + '</th>');
+			h.push('<th><span class="blueprint" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs')) + '"></span></th>');
+			h.push('<th><span class="medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds')) + '"></span></th>');
 		h.push('</tr></thead>');
 
 		for (let rankIndex = 0; rankIndex < ranks.length; rankIndex++) {
@@ -371,21 +371,21 @@ let Calculator = {
 
 				contributionClass   = (rank.donorFpReward - selfContribution > StrategyPoints.AvailableFP ? 'error' : ''),
 				contributionText    = FH.HTML.Format(rank.donorFpReward) + Calculator.FormatForderRankDiff(donorRankDiff),
-				contributionTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderCosts'), { 'nettoreward': rank.fpNetReward, 'forderfactor': (100 + Calculator.ForderBonus), 'costs': rank.donorFpReward })],
+				contributionTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTForderCosts'), { 'nettoreward': rank.fpNetReward, 'forderfactor': (100 + Calculator.ForderBonus), 'costs': rank.donorFpReward })],
 
 				profitClass   = (donorProfit >= 0 ? 'success' : 'error'),
 				profitText    = FH.HTML.Format(donorProfit),
 				profitTooltip;
 
 			if (rank.donorFpReward - selfContribution > StrategyPoints.AvailableFP) {
-				contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': rank.donorFpReward - selfContribution, 'tooless': (rank.donorFpReward - selfContribution - StrategyPoints.AvailableFP) }));
+				contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTForderFPStockLow'), { 'fpstock': StrategyPoints.AvailableFP, 'costs': rank.donorFpReward - selfContribution, 'tooless': (rank.donorFpReward - selfContribution - StrategyPoints.AvailableFP) }));
 			}
 
 			if (donorProfit >= 0) {
-				profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
+				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
 			}
 			else {
-				profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
+				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
 			}
 
 			if (rank.donorState === Calculator.RankState.SELF) {
@@ -393,11 +393,11 @@ let Calculator = {
 
 				if (rank.contribution < rank.donorFpReward) {
 					contributionClass = 'error';
-					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooLess'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'tooless': rank.donorFpReward - rank.contribution }));
+					contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTPaidTooLess'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'tooless': rank.donorFpReward - rank.contribution }));
 				}
 				else if (rank.contribution > rank.donorFpReward) {
 					contributionClass = 'warning';
-					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTPaidTooMuch'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'toomuch': rank.contribution - rank.donorFpReward }));
+					contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTPaidTooMuch'), { 'paid': rank.contribution, 'topay': rank.donorFpReward, 'toomuch': rank.contribution - rank.donorFpReward }));
 				}
 				else {
 					contributionClass = 'info';
@@ -409,17 +409,17 @@ let Calculator = {
 				contributionText += Calculator.FormatForderRankDiff(donorRankDiff);
 
 				if (donorRankDiff > 0 && rank.contribution < rank.donorRankCost) {
-					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
 				}
 				else if (donorRankDiff < 0) {
-					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
 				}
 
 				if (donorProfit > 0) {
-					profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
+					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
 				}
 				else {
-					profitTooltip = [FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
+					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + FH.Main.ArkBonus), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
 				}
 
 				profitClass = 'info';
@@ -427,18 +427,18 @@ let Calculator = {
 			else if (rank.donorState === Calculator.RankState.NEGATIVE_PROFIT) {
 				rankClass = 'error';
 
-				contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
+				contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTForderNegativeProfit'), { 'fpcount': donorRankDiff, 'totalfp': rank.donorRankCost }));
 
 				profitClass = 'error';
 			}
 			else if (rank.donorState === Calculator.RankState.LEVEL_WARNING) {
 				rankClass = '';
 
-				contributionTooltip.push(i18n('Boxes.Calculator.LevelWarning'));
+				contributionTooltip.push(FH.t('Boxes.Calculator.LevelWarning'));
 
 				if (donorRankDiff < 0) {
 					Calculator.PlaySound();
-					contributionTooltip.push(FH.HTML.i18nReplacer(i18n('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
+					contributionTooltip.push(FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLevelWarning'), { 'fpcount': (0 - donorRankDiff), 'totalfp': rank.donorRankCost }));
 				}
 
 				profitClass = '';
@@ -478,10 +478,10 @@ let Calculator = {
 			h.push(`<tr class="text-center ${rowClass}">
 				<td> <strong class="${rankClass}">${rankText}</strong> </td>
 				<td>
-					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${FH.HTML.i18nTooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
+					<strong class="${contributionClass} td-tooltip copy-fp clickable" data-copy="${rank.donorFpReward}" data-original-title="${FH.HTML.Tooltip(contributionTooltip.join('<br>'))}">${contributionText}</strong>
 				</td>
 				<td>
-					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.HTML.i18nTooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
+					<strong class="${profitClass} td-tooltip copy-fp" data-copy="${donorProfit}" data-original-title="${FH.HTML.Tooltip(profitTooltip.join('<br>'))}">${profitText}</strong>
 				</td>
 				<td> ${FH.HTML.Format(rank.bpReward)} </td>
 				<td> <small> ${FH.HTML.Format(rank.medalReward)} </small> </td>
@@ -501,10 +501,10 @@ let Calculator = {
 		let output = `<thead>
 				<tr>
 				<th>#</th>
-				<th><span class="forgepoints" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Commitment'))}"></span></th>
-				<th>${i18n('Boxes.Calculator.Profit')}</th>
-				<th><span class="blueprint" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.BPs'))}"></span></th>
-				<th><span class="medal" title="${FH.HTML.i18nTooltip(i18n('Boxes.Calculator.Meds'))}"></span></th>
+				<th><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment'))}"></span></th>
+				<th>${FH.t('Boxes.Calculator.Profit')}</th>
+				<th><span class="blueprint" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs'))}"></span></th>
+				<th><span class="medal" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds'))}"></span></th>
 				</tr>
 				</thead>
 			<tbody>`;
@@ -540,14 +540,14 @@ let Calculator = {
 					if (cond.iconType=="icon_quest_alchemie" && ((CurrentEraID <= 3 && MaxProgress >= 3) || (MaxProgress > 15 && CurrentEraID <=15) || MaxProgress>=100)) { // Unterscheidung Buyquests von UseQuests: Bronze/Eiszeit haben nur UseQuests, Rest hat Anzahl immer >15, Buyquests immer <=15
 						let RecurringQuestString;
 						if (MaxProgress - CurrentProgress !== 0) {
-							RecurringQuestString = FH.HTML.Format(MaxProgress - CurrentProgress) + i18n('Boxes.Calculator.FP');
+							RecurringQuestString = FH.HTML.Format(MaxProgress - CurrentProgress) + FH.t('Boxes.Calculator.FP');
 							RecurringQuests += 1;
 						}
 						else {
-							RecurringQuestString = i18n('Boxes.Calculator.Done');
+							RecurringQuestString = FH.t('Boxes.Calculator.Done');
 						}
 
-						h.push('<div class="rq"><em>' + i18n('Boxes.Calculator.ActiveRecurringQuest') + ' <span class="recurringquests copy-fp clickable" data-copy="'+ (MaxProgress - CurrentProgress) +'">' + RecurringQuestString + '</span></em></div>');
+						h.push('<div class="rq"><em>' + FH.t('Boxes.Calculator.ActiveRecurringQuest') + ' <span class="recurringquests copy-fp clickable" data-copy="'+ (MaxProgress - CurrentProgress) +'">' + RecurringQuestString + '</span></em></div>');
 					}
 				}
 			}
@@ -597,7 +597,7 @@ let Calculator = {
 			sB = FH.Storage.getItem('CustomCalculatorButtons'),
 			allGB = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs')),
 			nV = `<p class="new-row text-center bbd p5 flex gap">
-				${i18n('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> 
+				${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> 
 				<span class="btn btn-green btn-slim" onclick="Calculator.SettingsInsertNewRow()">+</span>
 				</p>`;
 
@@ -626,20 +626,20 @@ let Calculator = {
 		c.push(nV);
 
 		c.push(`<p class="bbd p5">
-			<label for="CalcAutoOpen"><input id="CalcAutoOpen" class="CalcAutoOpen game-cursor" ${(Calculator.AutoOpen ? 'checked' : '')} type="checkbox"> ${i18n('Settings.ShowOwnPartAutoOpen.Desc')}</label><br/>
-			<label for="openonaliengb"><input type="checkbox" id="openonaliengb" class="openonaliengb game-cursor" ${((!allGB) ? 'checked' : '')}> ${i18n('Settings.ShowOwnPartOnAllGBs.Desc')}</label><br>
-			<label for="forderbonusperconversation"><input id="forderbonusperconversation" class="forderbonusperconversation game-cursor" ${(Calculator.ForderBonusPerConversation ? 'checked' : '')} type="checkbox">${i18n('Boxes.Calculator.ForderBonusPerConversation')}</label><br/>
-			<label for="CalculatorTone"><input id="CalculatorTone" class="CalculatorTone game-cursor" ${(Calculator.PlayInfoSound ? 'checked' : '')} type="checkbox"> ${i18n('Boxes.Calculator.PlayInfoSound')}</label>
+			<label for="CalcAutoOpen"><input id="CalcAutoOpen" class="CalcAutoOpen game-cursor" ${(Calculator.AutoOpen ? 'checked' : '')} type="checkbox"> ${FH.t('Settings.ShowOwnPartAutoOpen.Desc')}</label><br/>
+			<label for="openonaliengb"><input type="checkbox" id="openonaliengb" class="openonaliengb game-cursor" ${((!allGB) ? 'checked' : '')}> ${FH.t('Settings.ShowOwnPartOnAllGBs.Desc')}</label><br>
+			<label for="forderbonusperconversation"><input id="forderbonusperconversation" class="forderbonusperconversation game-cursor" ${(Calculator.ForderBonusPerConversation ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Calculator.ForderBonusPerConversation')}</label><br/>
+			<label for="CalculatorTone"><input id="CalculatorTone" class="CalculatorTone game-cursor" ${(Calculator.PlayInfoSound ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.Calculator.PlayInfoSound')}</label>
 		</p>`);
 
-		c.push(`<p class="text-center"><button id="save-calculator-settings" class="btn btn-green" onclick="Calculator.SettingsSaveValues()">${i18n('Boxes.Calculator.Settings.Save')}</button></p>`);
+		c.push(`<p class="text-center"><button id="save-calculator-settings" class="btn btn-green" onclick="Calculator.SettingsSaveValues()">${FH.t('Boxes.Calculator.Settings.Save')}</button></p>`);
 
 		$('#OwnPartBoxSettingsBox').html(c.join(''));
 	},
 
 
 	SettingsInsertNewRow: ()=> {
-    	let nV = `<p class="new-row">${i18n('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Calculator.SettingsInsertNewRow()">+</span></p>`;
+    	let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Calculator.SettingsInsertNewRow()">+</span></p>`;
 
 		$(nV).insertAfter( $('.new-row:eq(-1)') );
 	},

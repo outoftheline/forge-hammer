@@ -137,14 +137,14 @@ let Popgame = {
             // Box in den DOM
             FH.HTML.Box({
                 'id': 'Popgame',
-                'title': 'Popgame preview',//i18n('Boxes.Popgame.Title'),
+                'title': 'Popgame preview',//FH.t('Boxes.Popgame.Title'),
                 'auto_close': true,
                 'minimize': true,
                 'dragdrop': false,
 			    active_maps:"main"
             });
             let body='<div style="background:#553815">';
-            body+=`<div id="PGwarning">${i18n("Boxes.Popgame.Warning")}</div>`;
+            body+=`<div id="PGwarning">${FH.t("Boxes.Popgame.Warning")}</div>`;
             if (Popgame.event=="wildlife") {
                 body+=`<div id="PGhammer" class="PGtool"></div>`;
                 body+=`<div id="PGdestroyer" class="PGtool"></div>`;

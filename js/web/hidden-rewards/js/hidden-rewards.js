@@ -58,7 +58,7 @@ let HiddenRewards = {
 
             FH.HTML.Box({
                 'id': 'HiddenRewardBox',
-                'title': i18n('Boxes.HiddenRewards.Title'),
+                'title': FH.t('Boxes.HiddenRewards.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -111,7 +111,7 @@ let HiddenRewards = {
             }
 
             const positionI18nLookupKey = 'HiddenRewards.Positions.' + position;
-            const positionI18nLookup = i18n('HiddenRewards.Positions.' + position);
+            const positionI18nLookup = FH.t('HiddenRewards.Positions.' + position);
 
             if (positionI18nLookupKey !== positionI18nLookup) {
                 position = positionI18nLookup;
@@ -180,15 +180,15 @@ let HiddenRewards = {
         let twolane = 0 < [...new Set(Object.values(FH.Main.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>FH.Main.CityEntities[x].requirements.street_connection_level == 2).length
         let warning = HiddenRewards.FilteredCache.filter(x=>x.twolane).length > 0 && !twolane
         if (warning) {
-            h.push(`<div class="dark-bg"><div class="warning">${i18n("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)
+            h.push(`<div class="dark-bg"><div class="warning">${FH.t("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)
         }
         h.push('<table class="foe-table">');
 
         h.push('<thead>');
         h.push('<tr>');
-        h.push('<th>' + i18n('HiddenRewards.Table.type') + '</th>');
-        h.push('<th>' + i18n('HiddenRewards.Table.position') + '</th>');
-        h.push('<th>' + i18n('HiddenRewards.Table.expires') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.type') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.position') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.expires') + '</th>');
         h.push('</tr>');
         h.push('</thead>');
 
@@ -209,14 +209,14 @@ let HiddenRewards = {
                 if (hiddenReward.type.indexOf('outpost') > -1) {
                     img = 'Shard_' + hiddenReward.type.substr(hiddenReward.type.length-2, 2);
                 }
-                h.push('<td class="incident" title="' + FH.HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
+                h.push('<td class="incident" title="' + FH.HTML.Tooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
                 h.push('<td>' + hiddenReward.position + '</td>');
-                h.push('<td class="">' + i18n('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
+                h.push('<td class="">' + FH.t('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
                 h.push('</tr>');
             }
         }
         else {
-            h.push('<td colspan="3">' + i18n('Boxes.HiddenRewards.NoEvents') + '</td>');
+            h.push('<td colspan="3">' + FH.t('Boxes.HiddenRewards.NoEvents') + '</td>');
         }
 
         h.push('</tbody>');
@@ -240,8 +240,8 @@ let HiddenRewards = {
     ShowSettingsButton: () => {
         let CountRelics = JSON.parse(FH.Storage.getItem('CountRelics') || 0);
         let h = [];
-        h.push(`<p class="text-center"><label for="countrelics">${i18n('Settings.CountRelics')}<label><br>`);
-        h.push(`<select oninput="HiddenRewards.SaveSettings(this.value)"/><option value="0" ${CountRelics == 0 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.CountAll')} </option><option value="1" ${CountRelics == 1 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.onlyVis')} </option><option value="2" ${CountRelics == 2 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.none')} </option></p>`);
+        h.push(`<p class="text-center"><label for="countrelics">${FH.t('Settings.CountRelics')}<label><br>`);
+        h.push(`<select oninput="HiddenRewards.SaveSettings(this.value)"/><option value="0" ${CountRelics == 0 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.CountAll')} </option><option value="1" ${CountRelics == 1 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.onlyVis')} </option><option value="2" ${CountRelics == 2 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.none')} </option></p>`);
         $('#HiddenRewardBoxSettingsBox').html(h.join(''));
     },
 

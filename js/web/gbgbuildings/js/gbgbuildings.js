@@ -189,7 +189,7 @@ let GBGBuildings = {
 			s["maxCosts"]=max;
 			s["avgCosts"]=avg;
 			s["absCosts"]=abs;
-			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.HTML.i18nReplacer(i18n('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:i18n("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
+			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.helper.str.Replacer(FH.t('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:FH.t("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
 		}
 		let sortby = "maxCosts"
 		sets.sort((a,b)=> a.absCosts - b.absCosts);
@@ -229,7 +229,7 @@ let GBGBuildings = {
 		if ($('#GBGBuildings').length === 0) {
 			FH.HTML.Box({
 				id: 'GBGBuildings',
-				title: i18n('Boxes.GBGBuildings.title'),
+				title: FH.t('Boxes.GBGBuildings.title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -240,7 +240,7 @@ let GBGBuildings = {
 		}
 
 		let h='<table class="foe-table">';
-		h += `<tr><th>${i18n('Boxes.GBGBuildings.toBuild')}</th><th>${i18n('Boxes.GBGBuildings.totalChance')}</th><th colspan="2">${i18n('Boxes.GBGBuildings.Costs')}</th></tr>`
+		h += `<tr><th>${FH.t('Boxes.GBGBuildings.toBuild')}</th><th>${FH.t('Boxes.GBGBuildings.totalChance')}</th><th colspan="2">${FH.t('Boxes.GBGBuildings.Costs')}</th></tr>`
 		let lastBlock = Infinity;
 		let lastCost = Infinity;
 		let lastMax = Infinity;
@@ -281,7 +281,7 @@ let GBGBuildings = {
 			}
 			h+=`</td><td ${highlight == "chance"? 'class="highlight"':''}>${s.block}%</td>
 				<td title="${s.title}" ${highlight == "max"? 'class="highlight"':''}>${(s[sortby]*100).toPrecision(2)}%</td>
-				<td title="${i18n('Boxes.GBGBuildings.absoluteCosts')}" ${highlight == "cost"? 'class="highlight"':''}>${s.absCosts}</td>
+				<td title="${FH.t('Boxes.GBGBuildings.absoluteCosts')}" ${highlight == "cost"? 'class="highlight"':''}>${s.absCosts}</td>
 				</tr>`;
 		}
 		h+='</table>';

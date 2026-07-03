@@ -139,7 +139,7 @@ let CompareFriendsThreads = {
 		if ($('#friendsCompareBox').length === 0) {
 			FH.HTML.Box({
 				id: 'friendsCompareBox',
-				title: i18n('Boxes.CompareFriendsThreads.Title'),
+				title: FH.t('Boxes.CompareFriendsThreads.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -154,7 +154,7 @@ let CompareFriendsThreads = {
 
 		// no threads visited
 		if(CompareFriendsThreads.Threads[0]?.participants.length === undefined){
-			let info = `<div class="text-center text-warning" style="margin-top:2em">${i18n('Boxes.CompareFriendsThreads.Information')}</div>`;
+			let info = `<div class="text-center text-warning" style="margin-top:2em">${FH.t('Boxes.CompareFriendsThreads.Information')}</div>`;
 
 			$('#friendsCompareBoxBody').html(info);
 

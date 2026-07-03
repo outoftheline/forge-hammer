@@ -252,7 +252,7 @@ let cardGame = {
 			minHealth += cardGame.enemy.card.abilities[0].minValue;
 		}
 
-		let warning = maxHealth <= 0 ? i18n("Boxes.cardGame.WarningCertainDeath"): minHealth <= 0 ? i18n("Boxes.cardGame.WarningPossibleDeath"):undefined;
+		let warning = maxHealth <= 0 ? FH.t("Boxes.cardGame.WarningCertainDeath"): minHealth <= 0 ? FH.t("Boxes.cardGame.WarningPossibleDeath"):undefined;
 		/*
 		if (cardGame.isLastLevel && warning) {
 			let enemyHealth;
@@ -345,7 +345,7 @@ let cardGame = {
 		h +=`<td style="text-align:right"><img style="height:40px" src=${srcLinks.get(imgs.spentHealth,true)}></td><td style="text-align:left">${cardGame.currencySpent.heal+currency}</td>`;
 		h +=`<td style="text-align:right"><img style="height:30px" src="${srcLinks.get(imgs.spentRedraw,true)}"><img style="margin-left: -20px;height: 19px;margin-top: 10px;" src="${srcLinks.get("/shared/gui/pvp_arena/hud/pvp_arena_icon_refresh.png",true)}"></td><td style="text-align:left">${cardGame.currencySpent.redraw+currency}</td>`;
 		h +=`</tr></table><table class="foe-table">`;
-		h +=`<tr><th></th><th class="attack">${i18n('Boxes.cardGame.Attack')}</th><th class="bonus">${i18n('Boxes.cardGame.Bonus')}</th></tr>`;
+		h +=`<tr><th></th><th class="attack">${FH.t('Boxes.cardGame.Attack')}</th><th class="bonus">${FH.t('Boxes.cardGame.Bonus')}</th></tr>`;
 		for (let c of cards) {
 			h+=`<tr ${(cardGame.cardOptions.includes(c) && cardGame.cardOptions.length > 1) ? 'class="highlightOptions"': (cardGame.cardOptions.includes(c) && cardGame.cardOptions.length == 1) ? 'class="highlight"':""}>`;
 			h+=`<td title="${cardGame.cards[c].description}">`;

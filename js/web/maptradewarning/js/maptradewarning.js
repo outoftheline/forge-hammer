@@ -49,12 +49,12 @@ let mapTradeWarning = {
         
         FH.HTML.Box({
             'id': 'mapTradeWarningDialog',
-            'title': i18n('Boxes.mapTradeWarning.Title'),
+            'title': FH.t('Boxes.mapTradeWarning.Title'),
             'auto_close': true,
             'class': 'window-warning',
             'dragdrop': false,
             'minimize': false
         });
-        $('#mapTradeWarningDialogBody').html(`${i18n('Boxes.mapTradeWarning.Text')}`);
+        $('#mapTradeWarningDialogBody').html(`${FH.t('Boxes.mapTradeWarning.Text')}`);
     },
 };

@@ -100,7 +100,7 @@ let EventPresents = {
         if ($('#eventpresents').length === 0) {
             FH.HTML.Box({
                 'id': 'eventpresents',
-                'title': i18n('Boxes.EventPresents.Title'),
+                'title': FH.t('Boxes.EventPresents.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -185,7 +185,7 @@ let EventChests = {
         if ($('#eventchests').length === 0) {
             FH.HTML.Box({
                 'id': 'eventchests',
-                'title': i18n('Boxes.EventChests.Title'),
+                'title': FH.t('Boxes.EventChests.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -208,17 +208,17 @@ let EventChests = {
         h.push('<table class="foe-table">');
         h.push('<thead>' +
             '<tr>' +
-            '<th colspan="3" class="text-center">' + i18n('Boxes.EventChests.MainPrize') + '</th>' +
-            '<th colspan="3" class="text-center">' + i18n('Boxes.EventChests.MainPrizeTitle') + '</th>' +
+            '<th colspan="3" class="text-center">' + FH.t('Boxes.EventChests.MainPrize') + '</th>' +
+            '<th colspan="3" class="text-center">' + FH.t('Boxes.EventChests.MainPrizeTitle') + '</th>' +
             '</tr>' +
 
             '<tr>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Cost') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Steps') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.CostPerStep') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Chance') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.CostPerPrize') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Cost') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Cost') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Steps') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.CostPerStep') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Chance') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.CostPerPrize') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Cost') + '</th>' +
             '</tr>' +
 
             '</thead>');

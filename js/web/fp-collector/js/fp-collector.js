@@ -48,27 +48,27 @@ FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		}
 		if (eventCheck.includes("AutoCollect")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.auto_collect');
+			notes = FH.t('Boxes.FPCollector.auto_collect');
 		}
 		if (eventCheck.includes("task_reward")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.task_reward');
+			notes = FH.t('Boxes.FPCollector.task_reward');
 		}
 		if (eventCheck.includes("card_duel")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.card_duel');
+			notes = FH.t('Boxes.FPCollector.card_duel');
 		}
 		if (eventCheck.includes("reward_calendar")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.reward_calendar');
+			notes = FH.t('Boxes.FPCollector.reward_calendar');
 		}
 		if (eventCheck.toLowerCase().includes("collectRewardSet")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.grand_prize');
+			notes = FH.t('Boxes.FPCollector.grand_prize');
 		}
 		if (eventCheck.toLowerCase().includes("grandprize") || eventCheck.includes("grand_prize") || d['type'].includes("grand_prize") || eventCheck.includes("event_pass") ) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.grand_prize');
+			notes = FH.t('Boxes.FPCollector.grand_prize');
 		}
 	}
 
@@ -98,7 +98,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		/*else if (data.responseData[0][2] && data.responseData[0][2]['subType'] === 'strategy_points') { // Event-Überraschungskiste
 			console.log('✔️Event-Überraschungskiste', data, postData);
 			event = 'event';
-			notes = i18n('Boxes.FPCollector.event_mystery_item');
+			notes = FH.t('Boxes.FPCollector.event_mystery_item');
 			amount = data.responseData[0][2]['amount'];
 		}*/
 		else {
@@ -113,7 +113,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		}
 		if (postData[0].requestMethod === 'useItem') {
 			event = !FPCollector.currentEvent ? 'event' : FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.league_reward');
+			notes = FH.t('Boxes.FPCollector.league_reward');
 		}
 		if (postData[0].requestMethod === 'advanceQuest') {
 			return;
@@ -134,7 +134,7 @@ FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 
 	if (eventCheck.includes("calendar_completion")) {
 		let event = !FPCollector.currentEvent ? 'event' : FPCollector.currentEvent,
-			notes = i18n('Boxes.FPCollector.reward_calendar_completion'),
+			notes = FH.t('Boxes.FPCollector.reward_calendar_completion'),
 			amount = 0,
 			rewards = data.responseData.item.reward['rewards'];
 		if (!Array.isArray(rewards)) {
@@ -327,7 +327,7 @@ let FPCollector = {
 
 			FH.HTML.Box({
 				id: 'fp-collector',
-				title: i18n('Menu.fpCollector.Title'),
+				title: FH.t('Menu.fpCollector.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -379,7 +379,7 @@ let FPCollector = {
 
 			$('#fp-collectorBody').append(
 				`<div class="dark-bg head sticky">
-					<div class="text-warning"><strong>${i18n('Boxes.FPCollector.Total')} <span id="fp-collector-total-fp"></span>${i18n('Boxes.FPCollector.FP')}</strong></div>
+					<div class="text-warning"><strong>${FH.t('Boxes.FPCollector.Total')} <span id="fp-collector-total-fp"></span>${FH.t('Boxes.FPCollector.FP')}</strong></div>
 					<div class="text-right"><button class="btn btn-slim" id="FPCollectorPicker">${FPCollector.formatRange()}</button></div>
 				</div>`,
 				`<div id="fp-collectorBodyInner"></div>`
@@ -410,7 +410,7 @@ let FPCollector = {
 
 		if (FPCollector.TodayEntries.length === 0)
 		{
-			tr.push(`<div class="text-center" style="padding:15px"><em>${i18n('Boxes.FPCollector.NoEntriesFound')}</em></div>`);
+			tr.push(`<div class="text-center" style="padding:15px"><em>${FH.t('Boxes.FPCollector.NoEntriesFound')}</em></div>`);
 		}
 		else {
 
@@ -425,16 +425,16 @@ let FPCollector = {
 
 				tr.push(	`<div class="fham-accordion-head game-cursor ${event}-head" onclick="FPCollector.ToggleHeader('${event}')">
 								<span class="image"></span>
-								<strong class="text-warning">${sumTotal} ${i18n('Boxes.FPCollector.FP')}</strong>
-								<span>${i18n('Boxes.FPCollector.' + event)}</span>
+								<strong class="text-warning">${sumTotal} ${FH.t('Boxes.FPCollector.FP')}</strong>
+								<span>${FH.t('Boxes.FPCollector.' + event)}</span>
 							</div>`);
 
 				tr.push(	`<div class="fham-accordion-body ${event}-body">`);
 
 				 entriesEvent.forEach(e => {
 					 tr.push(`<div>
-								<span class="fps">${e.amount.toLocaleString(i18n('Local'))} ${i18n('Boxes.FPCollector.FP')}</span>
-								<span class="desc">${i18n('Boxes.FPCollector.' + e.event)}</span>
+								<span class="fps">${e.amount.toLocaleString(FH.t('Local'))} ${FH.t('Boxes.FPCollector.FP')}</span>
+								<span class="desc">${FH.t('Boxes.FPCollector.' + e.event)}</span>
 								<span class="building">${e.notes ? e.notes : ''}</span>
 						</div>`);
 				 });
@@ -513,7 +513,7 @@ let FPCollector = {
 			totalFP += e.amount
 		});
 
-		return totalFP.toLocaleString(i18n('Local'));
+		return totalFP.toLocaleString(FH.t('Local'));
 	},
 
 
@@ -527,7 +527,7 @@ let FPCollector = {
 			}
 		});
 
-		return totalFPByType.toLocaleString(i18n('Local'));
+		return totalFPByType.toLocaleString(FH.t('Local'));
 	},
 
 
@@ -544,7 +544,7 @@ let FPCollector = {
 
 		FPCollector.DatePicker = new Litepicker({
 			element: document.getElementById('FPCollectorPicker'),
-			format: i18n('Date'),
+			format: FH.t('Date'),
 			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
@@ -574,13 +574,13 @@ let FPCollector = {
 		let dateEnd = moment(FPCollector.currentDateEndFilter);
 
 		if (dateStart.isSame(dateEnd)){
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())){
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		return text;

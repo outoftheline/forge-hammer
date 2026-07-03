@@ -153,7 +153,7 @@ let AztecsHelper = {
             // Box in den DOM
             FH.HTML.Box({
                 'id': 'aztecsHelper',
-                'title': i18n('Boxes.AztecMiniGame.Title'),
+                'title': FH.t('Boxes.AztecMiniGame.Title'),
                 'auto_close': true,
                 'minimize': true,
                 'dragdrop': false,
@@ -225,7 +225,7 @@ let AztecsHelper = {
             $('#aztecsHelperBody').append(table);
             var divDes = document.createElement('div');
             var span = document.createElement('span');
-            span.appendChild(document.createTextNode(i18n('Boxes.AztecMiniGame.Description')));
+            span.appendChild(document.createTextNode(FH.t('Boxes.AztecMiniGame.Description')));
             span.className = "aztecDescription";
             divDes.className = "aztecDescriptionWrapper";
             divDes.appendChild(span);
@@ -277,8 +277,8 @@ let AztecsHelper = {
 		let autoOpen = Settings.GetSetting('ShowAztecHelper');
 
 		let h = [];
-		h.push(`<p><label><input id="aztecsAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-		h.push(`<p><button onclick="AztecsHelper.SaveSettings()" id="save-aztecsAutoOpen-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><label><input id="aztecsAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+		h.push(`<p><button onclick="AztecsHelper.SaveSettings()" id="save-aztecsAutoOpen-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#aztecsHelperSettingsBox').html(h.join(''));
 	},

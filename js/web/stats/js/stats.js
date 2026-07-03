@@ -339,7 +339,7 @@ let Stats = {
 		if ($('#stats').length === 0) {
 			let args = {
 				'id': 'stats',
-				'title': i18n('Boxes.Stats.Title'),
+				'title': FH.t('Boxes.Stats.Title'),
 				'auto_close': true,
 				'dragdrop': true,
 				'minimize': true
@@ -474,7 +474,7 @@ let Stats = {
 							<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastSeries, 'stats-${moment().format('YYYY-MM-DD')}.csv')" title="CSV">CSV</button><canvas id="statsChart"></canvas>
 							<div id="statsLegendWrapper">
 								<div class="StatsRewardFilter">
-									<input type="text" id="StatsRewardFilter" placeholder="${i18n("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
+									<input type="text" id="StatsRewardFilter" placeholder="${FH.t("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
 								</div>
 								<div id="statsLegend" class="chartLegend"></div>
 							</div>
@@ -505,7 +505,7 @@ let Stats = {
 
 				Stats.DatePickerObj = new Litepicker({
 					element: document.getElementById('StatsDatePicker'),
-					format: i18n('Date'),
+					format: FH.t('Date'),
 					lang: FH.Main.Language,
 					singleMode: false,
 					maxDate: FH.Main.getCurrentDateTime(),
@@ -557,7 +557,7 @@ let Stats = {
 		const selectedEras = Stats.getSelectedEras().sort();
 
 		const btnSelectNoEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnNoEra'),
+			name: FH.t('Boxes.Stats.BtnNoEra'),
 			isActive: selectedEras.length === 1 && selectedEras[0] === 'NoAge',
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -565,7 +565,7 @@ let Stats = {
 		});
 
 		const btnSelectMyEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnMyEra'),
+			name: FH.t('Boxes.Stats.BtnMyEra'),
 			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -573,7 +573,7 @@ let Stats = {
 		});
 
 		const btnSelectNextEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnNextEra'),
+			name: FH.t('Boxes.Stats.BtnNextEra'),
 			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID + 1],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -581,8 +581,8 @@ let Stats = {
 		});
 
 		const btnSelectAll = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnAll'),
-			title: i18n('Boxes.Stats.BtnAllTittle'),
+			name: FH.t('Boxes.Stats.BtnAll'),
+			title: FH.t('Boxes.Stats.BtnAllTittle'),
 			isActive: Object.keys(Stats.ResMap).length == selectedEras.length,
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -590,8 +590,8 @@ let Stats = {
 		});
 
 		const btnSelectTwoLastEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnLastEras'),
-			title: i18n('Boxes.Stats.BtnLastErasTitle'),
+			name: FH.t('Boxes.Stats.BtnLastEras'),
+			title: FH.t('Boxes.Stats.BtnLastErasTitle'),
 			isActive: (selectedEras.length === 2 &&
 				selectedEras.includes(Technologies.EraNames[CurrentEraID]) &&
 				selectedEras.includes(Technologies.EraNames[CurrentEraID - 1])),
@@ -601,8 +601,8 @@ let Stats = {
 		});
 
 		const btnSelectAllEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnAllPlayableEras'),
-			title: i18n('Boxes.Stats.BtnAllPlayableErasTitle'),
+			name: FH.t('Boxes.Stats.BtnAllPlayableEras'),
+			title: FH.t('Boxes.Stats.BtnAllPlayableErasTitle'),
 			isActive: Stats.equals(selectedEras, Stats.PlayableEras.slice().sort()),
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -610,16 +610,16 @@ let Stats = {
 		});
 
 		const btnGroupByEra = Stats.RenderBox({
-			name: i18n('Boxes.Stats.BtnToggleGroupBy'),
-			title: i18n('Boxes.Stats.BtnToggleGroupByTitle'),
+			name: FH.t('Boxes.Stats.BtnToggleGroupBy'),
+			title: FH.t('Boxes.Stats.BtnToggleGroupByTitle'),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources(),
 			isActive: Stats.state.isGroupByEra,
 			dataType: 'groupByToggle',
 		});
 
 		const btnGroupRenormalize = Stats.RenderBox({
-			name: i18n('Boxes.Stats.BtnToggleRenormalize'),
-			title: i18n('Boxes.Stats.BtnToggleRenormalizeTitle'),
+			name: FH.t('Boxes.Stats.BtnToggleRenormalize'),
+			title: FH.t('Boxes.Stats.BtnToggleRenormalizeTitle'),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources(),
 			isActive: Stats.state.isRenormalize,
 			dataType: 'renormalizeToggle',
@@ -631,16 +631,16 @@ let Stats = {
 			'statsUnitsD',
 			'statsRewards'
 		].map(source => Stats.RenderTab({
-			name: i18n('Boxes.Stats.BtnSource.' + source),
-			title: i18n('Boxes.Stats.SourceTitle.' + source),
+			name: FH.t('Boxes.Stats.BtnSource.' + source),
+			title: FH.t('Boxes.Stats.SourceTitle.' + source),
 			isActive: Stats.state.source === source,
 			dataType: 'selectSource',
 			value: source
 		}));
 
 		const chartTypes = ['line', 'delta'].map(it => Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnChartType.' + it),
-			title: i18n('Boxes.Stats.BtnChartTypeTitle.' + it),
+			name: FH.t('Boxes.Stats.BtnChartType.' + it),
+			title: FH.t('Boxes.Stats.BtnChartTypeTitle.' + it),
 			isActive: Stats.state.chartType === it,
 			dataType: 'setChartType',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -660,8 +660,8 @@ let Stats = {
 				'diplomaticGifts', //Space Carrier
 				'shards', //Flying Island
 			].map(it => Stats.RenderTab({
-				name: i18n('Boxes.Stats.Rewards.Source.' + it),
-				title: i18n('Boxes.Stats.Rewards.SourceTitle.' + it),
+				name: FH.t('Boxes.Stats.Rewards.Source.' + it),
+				title: FH.t('Boxes.Stats.Rewards.SourceTitle.' + it),
 				isActive: Stats.state.rewardSource === it,
 				dataType: 'setRewardSource',
 				value: it,
@@ -679,7 +679,7 @@ let Stats = {
 					${Stats.RenderEraSwitchers()}
 				</div>
 				<div class="option-era-wrap text-center">
-					<strong>${i18n('Boxes.Stats.Era')}:</strong> ${btnGroupByEra}<br>
+					<strong>${FH.t('Boxes.Stats.Era')}:</strong> ${btnGroupByEra}<br>
 					<span class="btn-group">
 					${btnSelectAllEra}
 					${btnSelectMyEra}
@@ -717,17 +717,17 @@ let Stats = {
 		}
 
 		if (dateStart.isSame(dateEnd)){
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())){
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		if (Stats.DatePickerFrom == null && Stats.DatePickerTo == null) {
-			text = i18n('Boxes.Stats.DatePicker');
+			text = FH.t('Boxes.Stats.DatePicker');
 		}
 
 		//console.log(dateStart,dateEnd);
@@ -745,7 +745,7 @@ let Stats = {
 		const ages = [
 			'NoAge',
 		].concat(Stats.PlayableEras);
-		const selectedErasI18n = Stats.getSelectedEras().map(era => Technologies.Eras.hasOwnProperty(era) ? i18n('Eras.' + Technologies.Eras[era]) : era).join(',');
+		const selectedErasI18n = Stats.getSelectedEras().map(era => Technologies.Eras.hasOwnProperty(era) ? FH.t('Eras.' + Technologies.Eras[era]) : era).join(',');
 
 		return `<div class="dropdown">
 					<input type="checkbox" class="dropdown-checkbox" id="toggle-era-dropdown" data-type="eraSelectOpen" data-value="${Stats.state.eraSelectOpen ? 0 : 1}" ${Stats.state.eraSelectOpen ? ' checked' : ''}>
@@ -761,7 +761,7 @@ let Stats = {
 							isActive: !!Stats.state.eras.special
 						})}
 						${ages.map(it => Stats.RenderCheckbox({
-							name: i18n('Eras.' + Technologies.Eras[it]),
+							name: FH.t('Eras.' + Technologies.Eras[it]),
 							dataType: 'toggleEra',
 							value: it,
 							isActive: !!Stats.state.eras[it]
@@ -898,7 +898,7 @@ let Stats = {
 			const era = unitInfo.minEra;
 			return {
 				name: unitInfo.name,
-				era: era ? i18n('Eras.' + Technologies.Eras[era] + '.short') : '',
+				era: era ? FH.t('Eras.' + Technologies.Eras[era] + '.short') : '',
 				unitId,
 				unitUrl:srcLinks.get("/shared/unit_portraits/armyuniticons_50x50/armyuniticons_50x50_"+unitId+".jpg", true),
 				data: data.map(({date, army}) => [
@@ -935,7 +935,7 @@ let Stats = {
 
 		const series = Stats.getSelectedEras().map(era => {
 			return {
-				name: i18n('Eras.' + Technologies.Eras[era] + '.short'),
+				name: FH.t('Eras.' + Technologies.Eras[era] + '.short'),
 				// Group by era's resources
 				data: data.map(({date, resources}) => [
 					+date,
@@ -990,7 +990,7 @@ let Stats = {
 		const series = selectedResources.map(it => {
 			const goodsData = (GoodsData[it] || {name: it})
 			return {
-				era: goodsData.era ? i18n('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
+				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
 				name: goodsData.name,
 				data: data.map(({date, resources}) => {
@@ -1027,7 +1027,7 @@ let Stats = {
 
 		const series = Stats.getSelectedEras().map(era => {
 			return {
-				name: i18n('Eras.' + Technologies.Eras[era] + '.short'),
+				name: FH.t('Eras.' + Technologies.Eras[era] + '.short'),
 				// Group by era's resources
 				data: data.map(({date, resources}) => [
 					+date,
@@ -1082,7 +1082,7 @@ let Stats = {
 		const series = selectedResources.map(it => {
 			const goodsData = (GoodsData[it] || {name: it})
 			return {
-				era: goodsData.era ? i18n('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
+				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
 				name: goodsData.name,
 				data: data.map(({date, resources}) => {
@@ -1188,7 +1188,7 @@ let Stats = {
 	 * @returns {Promise<void>}
 	 */
 	updateCommonChart: async ({series, colors, chartType}) => {
-		const title = i18n('Boxes.Stats.SourceTitle.' + Stats.state.source);
+		const title = FH.t('Boxes.Stats.SourceTitle.' + Stats.state.source);
 		const isColumn = chartType === 'column';
 
 		const defaultColors = [
@@ -1300,7 +1300,7 @@ let Stats = {
 							}
 
 							const dateTitle = tooltip.dataPoints?.length
-								? moment(tooltip.dataPoints[0].parsed.x).format(i18n('Date'))
+								? moment(tooltip.dataPoints[0].parsed.x).format(FH.t('Date'))
 								: '';
 
 							const rows = (tooltip.dataPoints || []).map(item => {
@@ -1361,7 +1361,7 @@ let Stats = {
 					x: {
 						type: 'time',
 						time: {
-							tooltipFormat: i18n('Date'),
+							tooltipFormat: FH.t('Date'),
 						},
 					},
 					y: {
@@ -1426,7 +1426,7 @@ let Stats = {
 						text = rewardInfo.name;
 					} else {
 						url = srcLinks.get("/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png",true);
-						text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? i18n("General.Units"):i18n("General.Unit"));
+						text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? FH.t("General.Units"):FH.t("General.Unit"));
 					}
 					pointImage = `<img src="${url}" />`
 					//console.log(rewardInfo)
@@ -1438,7 +1438,7 @@ let Stats = {
 					};
 				case 'good':
 					url = srcLinks.get("/shared/icons/goods/goods.png",true);
-					text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? i18n("General.Goods"):i18n("General.Good"));
+					text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? FH.t("General.Goods"):FH.t("General.Good"));
 
 					pointImage = `<img src="${url}" />`
 					return {
@@ -1495,7 +1495,7 @@ let Stats = {
 
 
 		return {
-			title: i18n('Boxes.Stats.Rewards.SourceTitle.' + rewardSource),
+			title: FH.t('Boxes.Stats.Rewards.SourceTitle.' + rewardSource),
 			series: [{
 				name: rewardSource,
 				data: serieData
@@ -1751,7 +1751,7 @@ let Stats = {
 		if ($('#StatsGBG').length === 0) {
 			FH.HTML.Box({
 				id: 'StatsGBG',
-				title: i18n('Boxes.GuildFights.Stats.Title'),
+				title: FH.t('Boxes.GuildFights.Stats.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -1779,8 +1779,8 @@ let Stats = {
 		$('#StatsGBGBody').html(`
 			<div class="tabs">
 				<ul class="horizontal dark-bg">
-					<li class="gbg-tab-guilds active" data-gbgtab="guilds"><span>${i18n('Boxes.GuildFights.Stats.TabGuilds')}</span></li>
-					<li class="gbg-tab-players" data-gbgtab="players"><span>${i18n('Boxes.GuildFights.Stats.TabPlayers')}</span></li>
+					<li class="gbg-tab-guilds active" data-gbgtab="guilds"><span>${FH.t('Boxes.GuildFights.Stats.TabGuilds')}</span></li>
+					<li class="gbg-tab-players" data-gbgtab="players"><span>${FH.t('Boxes.GuildFights.Stats.TabPlayers')}</span></li>
 				</ul>
 			</div>
 			<div id="StatsGBGTabGuilds"></div>
@@ -1829,7 +1829,7 @@ let Stats = {
 			let color = guildColors[guildId] ?? null;
 
 			return {
-				label: name,
+				label: FH.HTML.escapeHtml(name),
 				borderColor: color,
 				backgroundColor: color,
 				borderWidth: 1.5,
@@ -2091,7 +2091,7 @@ let Stats = {
 							let playerInfo = players[playerIds[item.datasetIndex]] || {};
 							let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
 							let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-tooltip-img">` : '';
-							let date = moment(item.parsed.x).format(i18n('DateTime'));
+							let date = moment(item.parsed.x).format(FH.t('DateTime'));
 
 							el.innerHTML = `<div class="stats-tooltip-title">
 									<span class="stats-tooltip-swatch" style="background:${dataSet.borderColor};"></span>
@@ -2195,8 +2195,8 @@ let StockAlarm = {
 	trigger: (alm) => {
 		StockAlarm.triggered.push({type:alm.type,id:alm.id})
 		FH.HTML.ShowToastMsg({
-			head: i18n('Boxes.LowStock.LowStockHeader'),
-			text: replace(replace(i18n('Boxes.LowStock.LowStockMessage'),'%name%',alm.name),'%amount%',alm.value),
+			head: FH.t('Boxes.LowStock.LowStockHeader'),
+			text: replace(replace(FH.t('Boxes.LowStock.LowStockMessage'),'%name%',alm.name),'%amount%',alm.value),
 			type: 'warning',
 			hideAfter: 20000,
 		});
@@ -2246,7 +2246,7 @@ let StockAlarm = {
         
         FH.HTML.Box({
             id: 'LowStock',
-            title: i18n('Boxes.LowStock.Title'),
+            title: FH.t('Boxes.LowStock.Title'),
             auto_close: true,
             dragdrop: true,
             minimize: true,
@@ -2258,14 +2258,14 @@ let StockAlarm = {
 		htmltext += `<img class="options" data-type="T" src="${srcLinks.get("/shared/icons/reward_icons/reward_icon_treasury_goods.png",true)}">`;
 		htmltext += `<img class="options" data-type="A" src="${srcLinks.get("/shared/icons/reward_icons/reward_icon_all_units.png",true)}"></span>`;
 		htmltext += `<select id="LowStockID">${StockAlarm.OptionsR}</select>`;
-		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add i18n!!
+		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add Translation!!
 		htmltext += `<span id="LowStockRepeat">`;
 		htmltext += `<img class="options" data-repeat="2" src="${FH.extUrl}js/web/stats/images/once.png">`;
 		htmltext += `<img class="options  selected" data-repeat="1" src="${FH.extUrl}js/web/stats/images/once_per_session.png">`;
 		htmltext += `<img class="options" data-repeat="0" src="${FH.extUrl}js/web/stats/images/always.png"></span>`
 		htmltext += `<span id="LowStockAddBtn" class="btn btn-green" onclick="StockAlarm.addbtn">+</span>`;
 		htmltext += `<table class="foe-table" id="LowStockAlarmsList">`;
-		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add i18n!!
+		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add Translation!!
 		htmltext += `</table>`;
 		
 		

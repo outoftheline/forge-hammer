@@ -88,7 +88,7 @@ let CityMap = {
 	 * @param {Object} event - An optional event object passed when triggered. If not provided, it toggles the visibility of the map UI.
 	 */
 	init: (event)=> {
-		let Title = i18n('Boxes.CityMap.YourCity');
+		let Title = FH.t('Boxes.CityMap.YourCity');
 
 		// grid sizing and view
 		let scale = FH.Storage.getItem('CityMapScale'),
@@ -108,7 +108,7 @@ let CityMap = {
 			Data = CityMap.EraOutpost.data;
 		else if (ActiveMap === "guild_raids") {
 			Data = CityMap.QI.data;
-			Title = i18n('Boxes.General.Quantum_Incursion.short')+' '+i18n('Boxes.General.Level')+' '+CityMap.QI.level;
+			Title = FH.t('Boxes.General.Quantum_Incursion.short')+' '+FH.t('Boxes.General.Level')+' '+CityMap.QI.level;
 		}
 		else if (ActiveMap === "OtherPlayer") {
 			Data = CityMap.OtherPlayer.mapData;
@@ -183,9 +183,9 @@ let CityMap = {
 
 		/* change view */
 		let dropView = $('<select id="menu-view" class="game-cursor" />')
-			.append($('<option class="game-cursor" data-view="normal" />').prop('selected', CityMap.map.view === 'normal').text(i18n('Boxes.CityMap.NormalPerspecitve')) )
-			.append($('<option class="game-cursor" data-view="turned" />').prop('selected', CityMap.map.view === 'turned').text(i18n('Boxes.CityMap.TurnedPerspecitve')) )
-			.append($('<option class="game-cursor" data-view="skew" />').prop('selected', CityMap.map.view === 'skew').text(i18n('Boxes.CityMap.CavalierPerspecitve')) );
+			.append($('<option class="game-cursor" data-view="normal" />').prop('selected', CityMap.map.view === 'normal').text(FH.t('Boxes.CityMap.NormalPerspecitve')) )
+			.append($('<option class="game-cursor" data-view="turned" />').prop('selected', CityMap.map.view === 'turned').text(FH.t('Boxes.CityMap.TurnedPerspecitve')) )
+			.append($('<option class="game-cursor" data-view="skew" />').prop('selected', CityMap.map.view === 'skew').text(FH.t('Boxes.CityMap.CavalierPerspecitve')) );
 
 		$('#'+elemId).on('change', '#menu-view', function(){
 			let view = $('#menu-view option:selected').data('view');
@@ -223,18 +223,18 @@ let CityMap = {
 
 		// Button for submit Box
 		if (ActiveMap === 'main') {
-			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ i18n('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
+			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
-					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
-					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(i18n('Boxes.CityMap.SendToPlanner')))
+					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(FH.t('Boxes.CityMap.CopyMetaInfos')))
+					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(FH.t('Boxes.CityMap.SendToPlanner')))
 			);
 		}
 		oB.append(wrapper);
 
 		if (ActiveMap === "guild_raids")
 			if (CityMap.QI.data) {
-				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(i18n('Boxes.CityMap.CopyMetaInfos')));
+				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(FH.t('Boxes.CityMap.CopyMetaInfos')));
 				$("#sidebar").append(CityMap.showQIBuildingList());
 			}
 
@@ -244,13 +244,13 @@ let CityMap = {
 			$("#sidebar").append(CityMap.showOutpostBuildings());
 		
 		if (ActiveMap === "cultural_outpost")
-			$('#citymap-wrapper').append('<span class="btn btn-mid openOverview" onClick="Outposts.BuildInfoBox()">'+i18n('Menu.OutP.Title')+'</span>');
+			$('#citymap-wrapper').append('<span class="btn btn-mid openOverview" onClick="Outposts.BuildInfoBox()">'+FH.t('Menu.OutP.Title')+'</span>');
 
 		if (ActiveMap === 'OtherPlayer') {
 			let townhall = (Object.values(CityMap.OtherPlayer.mapData).find(x => x.type === 'main_building'));
 			CityMap.OtherPlayer.eraName = townhall.cityentity_id?.split('_')[1] || townhall.entityId?.split('_')[1];
 
-			$("#sidebar").append($('<a id="openEfficiencyRating" class="btn" onclick="Productions.ShowRating(true,\''+CityMap.OtherPlayer.eraName+'\')">'+ i18n('Menu.ProductionsRating.Title') +'</a>'));
+			$("#sidebar").append($('<a id="openEfficiencyRating" class="btn" onclick="Productions.ShowRating(true,\''+CityMap.OtherPlayer.eraName+'\')">'+ FH.t('Menu.ProductionsRating.Title') +'</a>'));
 		}
 	},
 
@@ -349,7 +349,7 @@ let CityMap = {
 				if (ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
-				let collectionString = FH.HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
+				let collectionString = FH.helper.str.Replacer(FH.t('Boxes.CityMap.CollectSoon'), {hours: hours/100})
 				let f = $('<span />').addClass('entity ' + d['type'] + collectSoon).css({
 					width: xsize + 'em',
 					height: ysize + 'em',
@@ -385,7 +385,7 @@ let CityMap = {
 		if (!CityMap.QI.data) return;
 
 		let out = '<div class="metaSums">';
-		out += '<p class="text-center"><i>'+i18n('Boxes.CityMap.QIHint')+'</i></p>';
+		out += '<p class="text-center"><i>'+FH.t('Boxes.CityMap.QIHint')+'</i></p>';
 		out += '<div class="flex between" style="margin-bottom: 10px;">';
         out += '<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' +  CityMap.QI.areas.length + '</span>';
 		out += '<div class="popStats"><span class="prod population">'+CityMap.QI.stats.availablePopulation+'/'+CityMap.QI.stats.totalPopulation+'</span> ';
@@ -431,7 +431,7 @@ let CityMap = {
 		};
 
 		let out = '<table class="foe-table allBuildings">'
-		out += '<thead><tr><th colspan="2">'+i18n('Boxes.CityMap.Building')+'</th><th class="population textright"></th><th class="happiness textright"></th><th>'+i18n('Boxes.CityMap.Boosts')+'</th></tr></thead>'
+		out += '<thead><tr><th colspan="2">'+FH.t('Boxes.CityMap.Building')+'</th><th class="population textright"></th><th class="happiness textright"></th><th>'+FH.t('Boxes.CityMap.Boosts')+'</th></tr></thead>'
 		out += "<tbody>"
 
 		let uniques = {};
@@ -624,10 +624,10 @@ let CityMap = {
 
 		let out = '<table class="foe-table allBuildings">'
 		out += `<thead><tr>
-			<th colspan="2">${i18n('Boxes.CityMap.Building')}</th>
+			<th colspan="2">${FH.t('Boxes.CityMap.Building')}</th>
 			<th class="population textright"></th>
 			<th><span class="goods-sprite ${(ActiveMap !== "era_outpost"?'diplomacy':'')}"></span></th>
-			<th>${i18n('Boxes.CityMap.Boosts')}</th></tr></thead>`
+			<th>${FH.t('Boxes.CityMap.Boosts')}</th></tr></thead>`
 		out += "<tbody>"
 
 		let totals = {
@@ -661,7 +661,7 @@ let CityMap = {
 		let meta = "";
 		if (totals.diplomacy > 0) {
 			meta += `<div class="metaSums p5 text-center">
-						<i>${i18n('Boxes.CityMap.QIHint')}</i><br/> 
+						<i>${FH.t('Boxes.CityMap.QIHint')}</i><br/> 
 						<span class="population"></span>${totals.population}
 						<span class="goods-sprite diplomacy"></span>${totals.diplomacy}
 					</div>`;
@@ -925,8 +925,8 @@ let CityMap = {
 		if (ActiveMap !== 'OtherPlayer') {
 			$('.building-stats').html(
 				'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
-				'<span data-original-title="'+i18n('Boxes.CityMap.FreeArea')+'">' + txtFree + 
-				'</span> / <span data-original-title="'+i18n('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
+				'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
+				'</span> / <span data-original-title="'+FH.t('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
 		}
 
 		let sortedBldTypes = [];
@@ -935,52 +935,52 @@ let CityMap = {
 		sortedBldTypes.reverse();
 
 		let areaStats = [];
-		areaStats.push('<p class="text-center"><b>'+ CityMap.metrics.buildings +' '+ i18n('Boxes.CityMap.BuildingsAmount') + '</b></p>');
+		areaStats.push('<p class="text-center"><b>'+ CityMap.metrics.buildings +' '+ FH.t('Boxes.CityMap.BuildingsAmount') + '</b></p>');
 		areaStats.push('<ul>');
 		for(let x in sortedBldTypes) {
 			if(!sortedBldTypes.hasOwnProperty(x)) break;
 
 			let type = sortedBldTypes[x][0];
 
-			let TypeName = i18n('Boxes.CityMap.' + type)
+			let TypeName = FH.t('Boxes.CityMap.' + type)
 			const count = sortedBldTypes[x][1];
 			const pct = parseFloat(100*count/CityMap.metrics.buildings).toFixed(1);
 
 			let str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.buildingAreas[type]}</span>`;
 
 			if (type === 'street') {
-				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
+				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${FH.t('Boxes.Citymap.Efficiency')}</small>`;
 			}
 			str = `<li>${str}</li>`;
 			areaStats.push(str);
 		}
 		areaStats.push('</ul>');
 
-		areaStats.push(`<b>${i18n('Boxes.CityMap.Highlight')}</b>`)
+		areaStats.push(`<b>${FH.t('Boxes.CityMap.Highlight')}</b>`)
 		areaStats.push('<ul class="highlight-map">' +
-			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
-			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
-			'<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.limited')+', '+parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" />' + CityMap.metrics.limitedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.limitedBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.ShowAscendableBuildings')+', '+parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)+'" />' + CityMap.metrics.ascendableBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.ascendableBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
+			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
+			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
+			'<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.limited')+', '+parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" />' + CityMap.metrics.limitedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.limitedBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowAscendableBuildings')+', '+parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)+'" />' + CityMap.metrics.ascendableBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.ascendableBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
 
 		areaStats.push('<li class="ratings clickable">')
-			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${i18n('Boxes.CityMap.ShowWorstBuildings')}</label>`)
+			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${FH.t('Boxes.CityMap.ShowWorstBuildings')}</label>`)
 			if (ActiveMap !== 'OtherPlayer') 
 				areaStats.push('<span onclick="Productions.ShowRating()" class="clickable"></span>')
 		areaStats.push('</li>')
 
 		if (ActiveMap !== 'OtherPlayer') {
-			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${i18n('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
-			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${i18n('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
+			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
+			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${FH.t('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
 			if (CityMap.metrics.hasCollectableBuildings)
-				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${i18n('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
+				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${FH.t('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
 		}
 		areaStats.push('</ul>')
 
 		// let cityEfficiency = parseFloat(CityMap.metrics.connectedBuildingsArea / CityMap.metrics.roadsArea * 100).toFixed(0);
-		// areaStats.push('<p data-original-title="'+i18n('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+i18n('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
+		// areaStats.push('<p data-original-title="'+FH.t('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+FH.t('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
 
 		$('.building-count-area').html(areaStats.join('')).promise().done(function() {
 			$('.building-count-area ul.highlight-map li').click(function(){
@@ -990,10 +990,10 @@ let CityMap = {
 		
 		let legends = [];
 		
-		legends.push(`<span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${i18n('Boxes.CityMap.OlderThan1Era')}<br>`);
-		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${i18n('Boxes.CityMap.OlderThan2Era')}<br>`);
-		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${i18n('Boxes.CityMap.OlderThan3Era')}<br>`);
-		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${i18n('Boxes.CityMap.OlderThan4Era')}<br>`);
+		legends.push(`<span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>`);
+		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${FH.t('Boxes.CityMap.OlderThan2Era')}<br>`);
+		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${FH.t('Boxes.CityMap.OlderThan3Era')}<br>`);
+		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}<br>`);
 
 		$('.too-old-legends').html(legends.join(''));
 	},
@@ -1045,7 +1045,7 @@ let CityMap = {
 		
 		FH.HTML.Box({
 			id: 'citymapExtra',
-			title: i18n('Boxes.CityMap.limited'),
+			title: FH.t('Boxes.CityMap.limited'),
 			dragdrop: true,
 			auto_close: true,
 			resize: true,
@@ -1115,8 +1115,8 @@ let CityMap = {
             JSON.stringify(data)
         ).then(() => {
             FH.HTML.ShowToastMsg({
-                head: i18n('Boxes.CityMap.ToastHeadCopyData'),
-                text: i18n('Boxes.CityMap.ToastBodyCopyData'),
+                head: FH.t('Boxes.CityMap.ToastHeadCopyData'),
+                text: FH.t('Boxes.CityMap.ToastBodyCopyData'),
                 type: 'info',
                 hideAfter: 4000,
             })
@@ -2043,7 +2043,7 @@ let CityBuildings = {
 										let newReward = {
 											id: null,
 											type: "resources",
-											name: i18n('Boxes.OwnpartCalculator.OptionsFP'), // ugly
+											name: FH.t('Boxes.OwnpartCalculator.OptionsFP'), // ugly
 											subType: Object.keys(reward.product.playerResources.resources)[0],
 											amount: reward.product.playerResources.resources.strategy_points,
 											dropChance: reward.dropChance,
@@ -2056,7 +2056,7 @@ let CityBuildings = {
 										let newReward = {
 											id: Object.keys(reward.product.playerResources.resources)[0],
 											type: type,
-											name: i18n('Boxes.BlueGalaxy.Goods'),
+											name: FH.t('Boxes.BlueGalaxy.Goods'),
 											subType: Object.keys(reward.product.playerResources.resources)[0],
 											amount: Object.values(reward.product.playerResources.resources)[0],
 											dropChance: reward.dropChance,

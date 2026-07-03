@@ -108,7 +108,7 @@ function initPopout() {
     $('.ratingPresetDelete').on('click', () => {
         const preset = Productions.Rating.getActivePreset();
         if (!preset) return;
-        if (!window.confirm(i18n('Boxes.ProductionsRating.PresetConfirmDelete'))) return;
+        if (!window.confirm(FH.t('Boxes.ProductionsRating.PresetConfirmDelete'))) return;
         const activeId = Productions.Rating.Presets?.activePresetId;
         Productions.Rating.deletePreset(activeId);
         Productions.Rating.savePresets();
@@ -116,7 +116,7 @@ function initPopout() {
         Productions.CalcRatingBody();
     });
     $('#ratingPresetReset').on('click', () => {
-        if (!window.confirm(i18n('Boxes.ProductionsRating.PresetConfirmReset'))) return;
+        if (!window.confirm(FH.t('Boxes.ProductionsRating.PresetConfirmReset'))) return;
         Productions.Rating.resetActivePreset();
         Productions.Rating.save();
         Productions.CalcRatingBody();
@@ -275,7 +275,7 @@ function initPopout() {
             $("#FSPCalculator").remove()
             return
         }
-        h = `<div id="FSPCalculator" class="dark-bg p5"><h2>${i18n("Boxes.ProductionsRating.TitleFSPCalculator")}</h2><div class="cats flex-between my-5 p5">`
+        h = `<div id="FSPCalculator" class="dark-bg p5"><h2>${FH.t("Boxes.ProductionsRating.TitleFSPCalculator")}</h2><div class="cats flex-between my-5 p5">`
         for (let x of Productions.FSPqualifiedResources) {
             h += `<div><span class="resicon ${x}"></span> <input type="number" step="1" min="0" max="1000000" class="${x} no-grow" value="${Productions.Rating.Data.fsp[x] || ""}"></div>`
         }
@@ -337,7 +337,7 @@ function initPopout() {
     $('.sortable-table').tableSorter();
 
     $('.reset-button').on('click', function () {
-        if (window.confirm(i18n('Boxes.ProductionsRating.ConfirmReset'))) {
+        if (window.confirm(FH.t('Boxes.ProductionsRating.ConfirmReset'))) {
             Productions.Rating.resetActivePreset();
             Productions.Rating.save();
         }

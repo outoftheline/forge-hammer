@@ -21,7 +21,7 @@ let _menu_box = {
 
 		FH.HTML.Box({
 			id: 'menu_box',
-			title: i18n('Global.BoxTitle'),
+			title: FH.t('Global.BoxTitle'),
 			onlyTitle: true,
 			dragdrop: _menu_box.CheckButtons,
 			minimize: true,
@@ -118,8 +118,8 @@ let _menu_box = {
 
 				FH.HTML.ShowToastMsg({
 					show: 'force',
-					head: i18n('Menu.SaveMessage.Title'),
-					text: i18n('Menu.SaveMessage.Desc'),
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
 					type: 'success',
 					hideAfter: 5000
 				});
