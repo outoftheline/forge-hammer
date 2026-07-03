@@ -57,9 +57,19 @@ window.PlannerApp = window.PlannerApp || {};
     function rebuildGridLayer() {
         const dpr = getDpr();
 
+        let maxX = 0, maxY = 0;
+        if (state.mapData) {
+            for (const exp of state.mapData) {
+                const right  = ((exp.x || 0) + exp.width)  * SIZE;
+                const bottom = ((exp.y || 0) + exp.length) * SIZE;
+                if (right  > maxX) maxX = right;
+                if (bottom > maxY) maxY = bottom;
+            }
+        }
+
         state.gridCanvas = document.createElement('canvas');
-        state.gridCanvas.width = canvas.width;
-        state.gridCanvas.height = canvas.height;
+        state.gridCanvas.width  = Math.max(1, Math.round(maxX * dpr));
+        state.gridCanvas.height = Math.max(1, Math.round(maxY * dpr));
         state.gridCtx = state.gridCanvas.getContext('2d');
 
         state.gridCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
