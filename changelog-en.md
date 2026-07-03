@@ -3,10 +3,14 @@
 ## Version 1.2
 ### Updated
 - Stats: CSV export added to all line graphs: player resources, guild resources, units, GBG guild victory points, GBG player progression
-- Stats GBG player progression was moved to the GBG window and only current season will be shown from now on
+- Stats: GBG player progression was moved to the GBG window and only current season will be shown from now on
 - GBG Stats: Guild victory point difference can now be compared more easily
+- GBG: Added option to open the window automatically when you visit the map
 - Shop Assistant: Added search
 - Notes: Added setting to open them automatically on game start
+
+### Bug fixes
+- GBG Overview: Data without entries could be shown in the history
 
 ---
  

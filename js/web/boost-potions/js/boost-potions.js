@@ -118,7 +118,7 @@ let BoostPotions = {
 			def_boost_defender: {},
 		}
 
-		for (let i of Object.values(MainParser.Inventory)) {
+		for (let i of Object.values(FH.Main.Inventory)) {
 			let b = i.item.reward || i.item;
 			if (!BoostPotions.list[b.boostType]) continue;
 			if (!BoostPotions.list[b.boostType][b.target||"all"]) BoostPotions.list[b.boostType][b.target||"all"] = [];

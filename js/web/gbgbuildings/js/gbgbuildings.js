@@ -189,7 +189,7 @@ let GBGBuildings = {
 			s["maxCosts"]=max;
 			s["avgCosts"]=avg;
 			s["absCosts"]=abs;
-			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>HTML.i18nReplacer(i18n('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:i18n("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
+			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.HTML.i18nReplacer(i18n('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:i18n("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
 		}
 		let sortby = "maxCosts"
 		sets.sort((a,b)=> a.absCosts - b.absCosts);
@@ -227,7 +227,7 @@ let GBGBuildings = {
 
 		// Don't create a new box while another one is still open
 		if ($('#GBGBuildings').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GBGBuildings',
 				title: i18n('Boxes.GBGBuildings.title'),
 				auto_close: true,
@@ -236,7 +236,7 @@ let GBGBuildings = {
 				resize : true,
 			    active_maps:"gg",
 			});
-			HTML.AddCssFile('gbgbuildings');
+			FH.HTML.AddCssFile('gbgbuildings');
 		}
 
 		let h='<table class="foe-table">';

@@ -13,8 +13,8 @@ FH.proxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
     if (HiddenRewards.FirstCycle) { //Timer setzen 
         HiddenRewards.FirstCycle = false;
         data.responseData.hiddenRewards.forEach(x=>{
-            if (x.startTime && x.startTime>GameTime.get()) 
-                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-GameTime.get())*1000)
+            if (x.startTime && x.startTime>FH.GameTime.get()) 
+                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-FH.GameTime.get())*1000)
         })
     }
 });
@@ -54,9 +54,9 @@ let HiddenRewards = {
     init: () => {
         if ($('#HiddenRewardBox').length < 1) {
 
-            HTML.AddCssFile('hidden-rewards');
+            FH.HTML.AddCssFile('hidden-rewards');
 
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'HiddenRewardBox',
                 'title': i18n('Boxes.HiddenRewards.Title'),
                 'auto_close': true,
@@ -72,7 +72,7 @@ let HiddenRewards = {
             HiddenRewards.RefreshGui();
 
         } else {
-            HTML.CloseOpenBox('HiddenRewardBox');
+            FH.HTML.CloseOpenBox('HiddenRewardBox');
         }
     },
 
@@ -147,7 +147,7 @@ let HiddenRewards = {
 	    let StartTime = moment.unix(HiddenRewards.Cache[i].starts|0),
 		EndTime = moment.unix(HiddenRewards.Cache[i].expires);
             HiddenRewards.Cache[i].isVis = true;
-            if (StartTime > MainParser.getCurrentDateTime() || EndTime < MainParser.getCurrentDateTime()) continue;
+            if (StartTime > FH.Main.getCurrentDateTime() || EndTime < FH.Main.getCurrentDateTime()) continue;
             if (HiddenRewards.Cache[i].isGE && !(HiddenRewards.GElookup[HiddenRewards.Cache[i].positionGE] <= Math.floor((HiddenRewards.GEprogress % 32)/8))) {
                 HiddenRewards.Cache[i].isVis = false;
             }
@@ -177,7 +177,7 @@ let HiddenRewards = {
     BuildBox: () => {
         let h = [];
 
-        let twolane = 0 < [...new Set(Object.values(MainParser.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>MainParser.CityEntities[x].requirements.street_connection_level == 2).length
+        let twolane = 0 < [...new Set(Object.values(FH.Main.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>FH.Main.CityEntities[x].requirements.street_connection_level == 2).length
         let warning = HiddenRewards.FilteredCache.filter(x=>x.twolane).length > 0 && !twolane
         if (warning) {
             h.push(`<div class="dark-bg"><div class="warning">${i18n("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)
@@ -209,7 +209,7 @@ let HiddenRewards = {
                 if (hiddenReward.type.indexOf('outpost') > -1) {
                     img = 'Shard_' + hiddenReward.type.substr(hiddenReward.type.length-2, 2);
                 }
-                h.push('<td class="incident" title="' + HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
+                h.push('<td class="incident" title="' + FH.HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
                 h.push('<td>' + hiddenReward.position + '</td>');
                 h.push('<td class="">' + i18n('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
                 h.push('</tr>');

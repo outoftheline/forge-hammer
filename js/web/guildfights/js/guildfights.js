@@ -65,7 +65,7 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 
 	if (GuildFights.curDateFilter === null || GuildFights.curDateEndFilter === null) {
 		GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
-		GuildFights.curDateEndFilter = MainParser.getCurrentDateTime();
+		GuildFights.curDateEndFilter = FH.Main.getCurrentDateTime();
 	}
 
 	GuildFights.MapData = data.responseData;
@@ -78,9 +78,15 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	}
 
 	// update box when open
-	if ($('#LiveGildFighting').length > 0) {
+	if ($('#LiveGuildFighting').length > 0) {
 		GuildFights.BuildFightContent();
 	}
+
+	setTimeout(function () {
+		if (GuildFights.autoOpen && $('#LiveGuildFighting').length === 0) {
+			GuildFights.ShowGuildBox();
+		}
+	}, 700);
 });
 FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
@@ -120,6 +126,7 @@ let GuildFights = {
 	PlayerBoxSettings: {
 		showOnlyActivePlayers: 0,
 	},
+	autoOpen: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.autoOpen || 0,
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
@@ -243,7 +250,7 @@ let GuildFights = {
 				}
 
 				// Update Tables
-				if ($('#LiveGildFighting').length > 0) {
+				if ($('#LiveGuildFighting').length > 0) {
 					GuildFights.RefreshTable(data['responseData'][0]);
 				}
 
@@ -423,13 +430,13 @@ let GuildFights = {
 		let PlayerBoxSettings = JSON.parse(FH.Storage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
-			// get all available GBG entires
-			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).keys();
+			// get all GBG entires, skip those without participation data
+			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).filter(entry => entry.participation && entry.participation.length > 0).primaryKeys();
 			gbgRounds.sort(function (a, b) { return b - a });
 			GuildFights.GBGAllRounds = gbgRounds;
 		}
 
-		//set latest GBG round to show if available and no specific GBG round is set
+		// set latest GBG round to show if available and no specific GBG round is set
 		if (!gbground && GuildFights.GBGAllRounds && GuildFights.GBGAllRounds.length) {
 			gbground = GuildFights.GBGAllRounds[i];
 		}
@@ -455,7 +462,7 @@ let GuildFights = {
 			if (gbground === GuildFights.CurrentGBGRound) {
 				h.push(`<div id="gbgLogFilter">
 							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${i18n('Boxes.GuildFights.Stats.Open')}</button>
-							<button id="gbg_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<button id="gbg_filterProgressList" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 							<button id="gbg_showLog" class="btn btn-mid">${i18n('Boxes.GuildFights.SnapshotLog')}</button>
 						</div>`);
 			}
@@ -561,22 +568,22 @@ let GuildFights = {
 	 * Creates the box with the data
 	 */
 	ShowGuildBox: (reload) => {
-		if ($('#LiveGildFighting').length === 0) {
-			HTML.Box({
-				id: 'LiveGildFighting',
+		if ($('#LiveGuildFighting').length === 0) {
+			FH.HTML.Box({
+				id: 'LiveGuildFighting',
 				title: i18n('Menu.Gildfight.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'GuildFights.ShowLiveFightSettings()',
+				settings: GuildFights.ShowLiveFightSettings,
 			    //active_maps:"gg"
 			});
 
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		}
 		else if (!reload) {
-			HTML.CloseOpenBox('LiveGildFighting');
+			FH.HTML.CloseOpenBox('LiveGuildFighting');
 			return;
 		}
 
@@ -589,17 +596,17 @@ let GuildFights = {
 	 */
 	ShowPlayerBox: () => {
 		if ($('#GuildPlayers').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GuildPlayers',
 				title: i18n('Boxes.GuildFights.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'GuildFights.ShowPlayerBoxSettings()',
+				settings: GuildFights.ShowPlayerBoxSettings,
 			    active_maps:"gg",
 			});
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		}
 			
 		if (Settings.GetSetting('ShowGBGPlayerInfo') == false) {
@@ -618,7 +625,7 @@ let GuildFights = {
 			let ptop = null,
 				pright = null;
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GuildPlayersDetailView',
 				title: i18n('Boxes.GuildFights.SnapshotLog'),
 				auto_close: true,
@@ -798,10 +805,10 @@ let GuildFights = {
 
 		t.push('<th style="display:none;" data-export="Player_ID"></th>');
 		t.push('<th colspan="3" data-export3="Player">' + i18n('Boxes.GuildFights.Player') + '</th>');
-		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + HTML.Format(tN) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + HTML.Format(tF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Total">' + i18n('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + HTML.Format(tNF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Attrition">' + i18n('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + HTML.Format(tA) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Total">' + i18n('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Attrition">' + i18n('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
 
 		t.push('<th></th>');
 		t.push('</tr>');
@@ -864,7 +871,7 @@ let GuildFights = {
 			let time = duration.humanize();
 
 			$('.time-diff').text(
-				HTML.i18nReplacer(i18n('Boxes.GuildFights.LastSnapshot'), { time: time })
+				FH.HTML.i18nReplacer(i18n('Boxes.GuildFights.LastSnapshot'), { time: time })
 			);
 		}
 	},
@@ -910,8 +917,8 @@ let GuildFights = {
 			h.push('<table id="gbgPlayerLogTable" class="foe-table gbglog"><thead class="sticky">');
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + i18n('Boxes.GuildFights.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${i18n('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-playerlog-group">');
@@ -921,9 +928,9 @@ let GuildFights = {
 				let sum = (day.battles + day.negotiations * 2);
 				h.push(`<tr id="gbgdetail_${id}" data-gbground="${gbground}" data-player="${player_id}" data-id="${id}">`);
 				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(i18n('Date'))}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${HTML.Format(day.negotiations)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.battles}">${HTML.Format(day.battles)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
 				h.push('</tr>');
 			});
 
@@ -941,8 +948,8 @@ let GuildFights = {
 			h.push('<tr class="sorter-header">');
 			h.push('<th class="is-number" data-type="gbg-log-group">' + i18n('Boxes.GuildFights.Date') + '</th>');
 			h.push('<th class="case-sensitive" data-type="gbg-log-group">' + i18n('Boxes.GuildFights.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${i18n('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
@@ -954,10 +961,10 @@ let GuildFights = {
 				let sum = (e.battles + e.negotiations * 2);
 				h.push(`<tr  ${e.time === lastDataId ? '' : 'class="spacer"'} data-id="${e.time}" id="gbgtime_${e.time}">`);
 				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
-				h.push(`<td class="case-sensitive" data-text="${helper.str.cleanup(e.name)}">${e.name}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${HTML.Format(e.negotiations)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.battles}">${HTML.Format(e.battles)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
+				h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(e.name)}">${e.name}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${FH.HTML.Format(e.negotiations)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.battles}">${FH.HTML.Format(e.battles)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
 				h.push('</tr>');
 				lastDataId = e.time;
 			});
@@ -1106,7 +1113,7 @@ let GuildFights = {
 		let activeTab = 1;
 		if ($('.gbgprogress.active').length > 0) activeTab = 2;
 
-		$('#LiveGildFighting').find('#LiveGildFightingBody').html(h.join('')).promise().done(function () {
+		$('#LiveGuildFighting').find('#LiveGuildFightingBody').html(h.join('')).promise().done(function () {
 			$('.gbg-tabs').tabslet({ active: activeTab });
 
 			$('.gbg-tabs').on('_after', (e) => {
@@ -1125,7 +1132,7 @@ let GuildFights = {
 				GuildFights.ToggleCopyButton();
 			});
 			// in BuildFightContent(), inside .promise().done(), alongside the existing delegated listeners:
-			$('#LiveGildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
+			$('#LiveGuildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
 				if (ProvinceMap.selectedProvince?.owner) {
 					ProvinceMap.selectedProvince.isSelected = false;
 					ProvinceMap.selectedProvince.updateMapSector();
@@ -1411,7 +1418,7 @@ let GuildFights = {
 		GuildFights.LogDatePicker = new Litepicker({
 			element: document.getElementById('gbgLogDatepicker'),
 			format: 'YYYYMMDD',
-			lang: MainParser.Language,
+			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
 			numberOfMonths: 1,
@@ -1420,7 +1427,7 @@ let GuildFights = {
 			minDate: moment.unix(GuildFights.CurrentGBGRound).subtract(12, "d").toDate(),
 			maxDate: moment.unix(GuildFights.CurrentGBGRound).toDate(),
 			startDate: moment.unix(GuildFights.CurrentGBGRound).subtract(11, "d").toDate(),
-			endDate: MainParser.getCurrentDateTime(),
+			endDate: FH.Main.getCurrentDateTime(),
 			showWeekNumbers: false,
 			onSelect: async (dateStart, dateEnd) => {
 				GuildFights.curDateFilter = moment(dateStart).format('YYYYMMDD');
@@ -1498,7 +1505,7 @@ let GuildFights = {
 
 		if (copy !== '') {
 			if (GuildFights.serverOffset && FH.Storage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					head: i18n('Boxes.GuildFights.TimeZoneWarning.Title'),
 					text: i18n('Boxes.GuildFights.TimeZoneWarning.Desc'),		
 					type: 'error',
@@ -1506,8 +1513,8 @@ let GuildFights = {
 				});
 				FH.Storage.setItem('Guildfights.TimeZoneWarningShown', 'true');
 			}
-			helper.str.copyToClipboard(copy).then(() => {
-				HTML.ShowToastMsg({
+			FH.helper.str.copyToClipboard(copy).then(() => {
+				FH.HTML.ShowToastMsg({
 					head: i18n('Boxes.GuildFights.CopyToClipBoard.Title'),
 					text: i18n('Boxes.GuildFights.CopyToClipBoard.Desc'),
 					type: 'success',
@@ -1718,8 +1725,8 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
-		c.push(`<p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#GuildPlayersSettingsBox').html(c.join(''));
 	},
@@ -1738,7 +1745,7 @@ let GuildFights = {
 					resolve();
 				}
 
-				let currentTime = MainParser.getCurrentDateTime();
+				let currentTime = FH.Main.getCurrentDateTime();
 
 				GuildFights.Alerts = [];
 
@@ -1767,7 +1774,7 @@ let GuildFights = {
 
 		const data = {
 			title: prov.title,
-        	body: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
+        	body: FH.HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
 			expires: (prov.lockedUntil - alertOffset) * 1000, // -30s * Microtime
 			repeat: -1,
 			persistent: true,
@@ -1777,7 +1784,7 @@ let GuildFights = {
 			actions: null
 		};
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
 			playerId: ExtPlayerID,
 			action: 'create',
@@ -1786,9 +1793,9 @@ let GuildFights = {
 			GuildFights.Alerts.push({ provId: id, alertId: aId });
 			$(`#alert-${id}`).html(GuildFights.GetAlertButton(id));
 			$('.tooltip').remove();
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				head: i18n('Boxes.GuildFights.SaveMessage.Title'),
-				text: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveMessage.Desc'), { provinceName: prov.title }),
+				text: FH.HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveMessage.Desc'), { provinceName: prov.title }),
 				type: 'success',
 				hideAfter: 5000
 			});
@@ -1799,7 +1806,7 @@ let GuildFights = {
 	DeleteAlert: (provId) => {
 		let prov = GuildFights.MapData['map']['provinces'].find(e => e.id === provId);
 		let alert = GuildFights.Alerts.find((a) => a.provId == provId);
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
 			playerId: ExtPlayerID,
 			action: 'delete',
@@ -1807,9 +1814,9 @@ let GuildFights = {
 		}).then(() => {
 			GuildFights.Alerts = GuildFights.Alerts.filter((a) => a.provId != provId);
 			$('.tooltip').remove();
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				head: i18n('Boxes.GuildFights.DeleteMessage.Title'),
-				text: HTML.i18nReplacer(i18n('Boxes.GuildFights.DeleteMessage.Desc'), { provinceName: prov.title }),
+				text: FH.HTML.i18nReplacer(i18n('Boxes.GuildFights.DeleteMessage.Desc'), { provinceName: prov.title }),
 				type: 'success',
 				hideAfter: 5000
 			});
@@ -1830,8 +1837,11 @@ let GuildFights = {
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';
 		let discordWebhookTemplate = LiveFightSettings?.discordWebhookTemplate ?? '';
 		let discordWebhookTemplateBulk = LiveFightSettings?.discordWebhookTemplateBulk ?? '';
+		let autoOpen = LiveFightSettings?.autoOpen ?? 0;
 
-		c.push(`<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
+		c.push(`<p><input id="gbgautopen" name="gbgautopen" value="1" type="checkbox" ${(autoOpen === 1) ? ' checked="checked"' : ''} /> 
+			<label for="gbgautopen">${i18n('Boxes.General.AutoOpen')}</label></p>
+			<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showguildcolumn">${i18n('Boxes.GuildFights.ShowOwner')}</label></p>
 			<p><input id="showAdjacentSectors" name="showAdjacentSectors" value="0" type="checkbox" ${(showAdjacentSectors === 1) ? ' checked="checked"' : ''} /> 
 			<label for="showAdjacentSectors">${i18n('Boxes.GuildFights.ShowAdjacentSectors')}</label></p>
@@ -1884,13 +1894,14 @@ let GuildFights = {
 		c.push(`<p><button onclick="GuildFights.SaveLiveFightSettings()" id="save-livefight-settings" class="btn saveSettings">${i18n('Boxes.GuildFights.SaveSettings')}</button></p>`);
 
 		
-		$('#LiveGildFightingSettingsBox').html(c.join(''));
+		$('#LiveGuildFightingSettingsBox').html(c.join(''));
 	},
 
 
 	SaveLiveFightSettings: () => {
 		let value = {};
 
+		value.autoOpen = 0;
 		value.showGuildColumn = 0;
 		value.showAdjacentSectors = 0;
 		value.showOwnSectors = 0;
@@ -1900,6 +1911,9 @@ let GuildFights = {
 		value.discordWebhook = '';
 		value.discordWebhookTemplate = '';
 		value.discordWebhookTemplateBulk = '';
+
+		if ($("#gbgautopen").is(':checked')) 
+			value.autoOpen = 1;
 
 		if ($("#showguildcolumn").is(':checked')) 
 			value.showGuildColumn = 1;
@@ -1921,6 +1935,7 @@ let GuildFights = {
 		value.discordWebhookTemplate = $("#gbgWebhookTemplate").val();
 		value.discordWebhookTemplateBulk = $("#gbgWebhookTemplateBulk").val();
 				
+		GuildFights.autoOpen = value.autoOpen;
 		GuildFights.showGuildColumn = value.showGuildColumn;
 		GuildFights.showAdjacentSectors = value.showAdjacentSectors;
 		GuildFights.showOwnSectors = value.showOwnSectors;
@@ -1938,8 +1953,8 @@ let GuildFights = {
 			FH.Storage.removeItem('GuildFights.serverOffset');
 		FH.Storage.setItem('LiveFightSettings', JSON.stringify(value));
 
-		$(`#LiveGildFightingSettingsBox`).fadeToggle('fast', function () {
-			$.when($(`#LiveGildFightingSettingsBox`).remove()).then(
+		$(`#LiveGuildFightingSettingsBox`).fadeToggle('fast', function () {
+			$.when($(`#LiveGuildFightingSettingsBox`).remove()).then(
 				GuildFights.ShowGuildBox(true)
 			);
 		});
@@ -2011,7 +2026,7 @@ let ProvinceMap = {
 
 	build: () => {
 		if ($('#ProvinceMap').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'ProvinceMap',
 				title: 'ProvinceMap',
 				auto_close: true,
@@ -2022,9 +2037,9 @@ let ProvinceMap = {
 			});
 
 			// add css to the dom
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		} else {
-			HTML.CloseOpenBox('ProvinceMap')
+			FH.HTML.CloseOpenBox('ProvinceMap')
 		}
 
 		ProvinceMap.prepare();
@@ -2413,8 +2428,8 @@ let ProvinceMap = {
 		let elem = document.querySelector("#provDetails");
 		elem.style.borderColor = ProvinceMap.selectedProvince.owner.colors.base;
 		elem.innerHTML = `<h2>${ProvinceMap.selectedProvince.short}</h2>`;
-		elem.innerHTML += `<p>${ProvinceMap.selectedProvince.owner.name}</p>`;
-		elem.innerHTML += `<p>${additionalData.victoryPoints}</p>`;
+		elem.innerHTML+= `<p>${ProvinceMap.selectedProvince.owner.name}</p>`;
+		elem.innerHTML+= `<p>${additionalData.victoryPoints}</p>`;
 	},
 
 	/**

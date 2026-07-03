@@ -16,17 +16,17 @@ let Notes = {
 
 	Show: () => {
 		if ($('#Notes').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Notes',
 				title: i18n('Boxes.Notes.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'Notes.ShowSettings()',
+				settings: Notes.ShowSettings,
 			});
 		}
-		HTML.AddCssFile('notes');
+		FH.HTML.AddCssFile('notes');
 
 		Notes.BuildContent();
 	},

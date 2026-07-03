@@ -24,7 +24,7 @@ FH.proxy.addHandler('ItemShopService', 'purchaseItem', (data, postData) => {
         Castle.curShopItems.available.count -= 1;
         Castle.curShopItems.purchased.reward += Castle.curCastlePointsDiff.diff;
         Castle.curShopItems.available.reward -= Castle.curCastlePointsDiff.diff;
-        Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        Castle.curShopItems.date = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
@@ -41,14 +41,14 @@ FH.proxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
     if (data.responseData['state'] === 'collectable')
     {
         let d = JSON.parse(FH.Storage.getItem('CastleCurAuctionWinning'));
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         if (!d || d.date !== startOfDay)
         {
             d = { date: startOfDay, rewards: [] };
         }
 
-        d.rewards.push({ time: moment(MainParser.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
+        d.rewards.push({ time: moment(FH.Main.getCurrentDateTime()).unix(), reward: Castle.AuctionWinningReward });
 
         FH.Storage.setItem('CastleCurAuctionWinning', JSON.stringify(d));
 
@@ -95,7 +95,7 @@ FH.proxy.addHandler('ItemShopService', 'getShop', (data, postData) => {
             }
         });
 
-        Castle.curShopItems.date = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        Castle.curShopItems.date = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         FH.Storage.setItem('CastleCurShopItems', JSON.stringify(Castle.curShopItems));
 
         Castle.ShowProgressTable();
@@ -326,7 +326,7 @@ let Castle = {
     NextNegotiationPoints: undefined,
     NextWinningBattlesPoints: undefined,
     RewardGroups: { Daily: 0, Challenge: 1, Gex: 2, AntiqueDealer: 3, Shop: 4 },
-    startOfDay: moment(MainParser.getCurrentDateTime()).startOf('day').unix(),
+    startOfDay: moment(FH.Main.getCurrentDateTime()).startOf('day').unix(),
 
     Settings: {
         showGroupNames: true,
@@ -343,21 +343,21 @@ let Castle = {
 
         if ($('#Castle').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'Castle',
                 title: i18n('Boxes.Castle.Title'),
                 auto_close: true,
                 dragdrop: true,
                 resize: false,
                 minimize: true,
-                settings: 'Castle.CastleSettings()'
+                settings: Castle.CastleSettings
             });
 
-            HTML.AddCssFile('castle');
+            FH.HTML.AddCssFile('castle');
         }
         else
         {
-            HTML.CloseOpenBox('Castle');
+            FH.HTML.CloseOpenBox('Castle');
             return;
         }
 
@@ -432,7 +432,7 @@ let Castle = {
         if (!d || !d.responseData) { return; }
 
         const rid = d.requestId || null;
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         let rtype;
         let nextlevel = false;
 
@@ -535,7 +535,7 @@ let Castle = {
             sir = 0, sip = 0, sipsum = 0, sirsum = 0, siwarn = false, //Bought Shop Items
             aup = 0, aur = 0,       //Auction
             cp, cpwarn = false;     //Castle Points
-        const startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+        const startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
 
         //Reset values on new day
         if (Castle.startOfDay !== startOfDay)
@@ -543,7 +543,7 @@ let Castle = {
             Castle.curWinningBattles = Castle.DailyWinningBattles;
             Castle.curNegotiations = Castle.DailyNegotiations;
 
-            Castle.startOfDay = moment(MainParser.getCurrentDateTime()).startOf('day').unix();
+            Castle.startOfDay = moment(FH.Main.getCurrentDateTime()).startOf('day').unix();
         }
 
         // Daily winning battle reward
@@ -644,13 +644,13 @@ let Castle = {
             reward: cp.success ? cp.points : 0,
             maxreward: cp.points ? cp.points : '?',
             warning: cpwarn,
-            warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitCastleWarning')),
+            warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitCastleWarning')),
             success: cp.success,
             date: startOfDay
         });
 
         // Daily Challenge
-        if (MainParser.UnlockedFeatures.includes("daily_challenges"))
+        if (FH.Main.UnlockedFeatures.includes("daily_challenges"))
         {
             if (Castle.curDailyChallenge === undefined || Castle.curDailyChallenge.state === 'success')
             {
@@ -674,7 +674,7 @@ let Castle = {
         }
 
         // Seven Day Challenge
-        if (MainParser.UnlockedFeatures.includes("daily_challenges"))
+        if (FH.Main.UnlockedFeatures.includes("daily_challenges"))
         {
             scp = Castle.curSevenDayChallenge ? Castle.curSevenDayChallenge.currentProgress : 0;
 
@@ -698,7 +698,7 @@ let Castle = {
         }
 
         // Gex Last of sections
-        if (MainParser.UnlockedFeatures.includes("guild_expedition"))
+        if (FH.Main.UnlockedFeatures.includes("guild_expedition"))
         {
             const GexEnd = FH.Storage.getItem('CastleGexEnd');
 
@@ -708,7 +708,7 @@ let Castle = {
             }
 
             // Reset Gex if a new round started and isn't updatet atm
-            if (GexEnd && GexEnd < moment(MainParser.getCurrentDateTime()).unix())
+            if (GexEnd && GexEnd < moment(FH.Main.getCurrentDateTime()).unix())
             {
                 Castle.curGexLastOfSection = 0;
             }
@@ -746,14 +746,14 @@ let Castle = {
                 reward: glsr,
                 maxreward: Castle.MaxGexLastOfSections,
                 warning: Castle.curGexLastOfSection === undefined,
-                warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitGexWarning')),
+                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitGexWarning')),
                 success: glsp >= Castle.GexLastOfSectionsIds.length,
                 date: startOfDay
             });
         }
 
         // Item Shop
-        if (MainParser.UnlockedFeatures.includes("antiques_dealer"))
+        if (FH.Main.UnlockedFeatures.includes("antiques_dealer"))
         {
             if (Castle.curShopItems === undefined)
             {
@@ -782,14 +782,14 @@ let Castle = {
                 reward: sir,
                 maxreward: sirsum,
                 warning: siwarn,
-                warnnotice: HTML.i18nTooltip(i18n('Boxes.Castle.VisitAntiqueDealerWarning')),
+                warnnotice: FH.HTML.i18nTooltip(i18n('Boxes.Castle.VisitAntiqueDealerWarning')),
                 success: sip === sipsum,
                 date: startOfDay
             });
         }
 
         // Won auction bidding
-        if (MainParser.UnlockedFeatures.includes("antiques_dealer"))
+        if (FH.Main.UnlockedFeatures.includes("antiques_dealer"))
         {
             if (Castle.curAuctionWinning === undefined)
             {
@@ -808,10 +808,10 @@ let Castle = {
                 name: i18n('Boxes.Castle.AuctionsWon'),
                 group: Castle.RewardGroups.AntiqueDealer,
                 sort: 2,
-                progress: HTML.Format(aup),
-                maxprogress: HTML.Format(aup),
-                reward: HTML.Format(aur),
-                maxreward: HTML.Format(aur),
+                progress: FH.HTML.Format(aup),
+                maxprogress: FH.HTML.Format(aup),
+                reward: FH.HTML.Format(aur),
+                maxreward: FH.HTML.Format(aur),
                 warning: false,
                 success: aup > 0,
                 date: startOfDay
@@ -859,10 +859,10 @@ let Castle = {
 
         if ($('#Castle #casPointsWrapper').length === 1)
         {
-            let CastleLimit = MainParser.CastleSystemLevels[Castle.curLevel].requiredPoints;
+            let CastleLimit = FH.Main.CastleSystemLevels[Castle.curLevel].requiredPoints;
 
             $('#Castle #casPointsWrapper').html(`
-                <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${HTML.Format(Castle.curCastlePoints)} / ${HTML.Format(CastleLimit)}</span>
+                <div><span>${i18n('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>
                 <span id="casPointsDiff">${diff ? '+' + diff : ''}</span><br />
                 <span>${i18n('Boxes.Castle.Level')}: ${Castle.curLevel}</span></div>
                 <div><span id="casLogBtn"><button id="casSwitchView" class="btn"${!Castle.CastlePointLog || Castle.CastlePointLog.length === 0 ? ' disabled' : ''}>${Castle.CurrentView === 'log' ? i18n('Boxes.Castle.Overview') : i18n('Boxes.Castle.Log')}</button></span></div>
@@ -894,7 +894,7 @@ let Castle = {
 
         if (!Castle.Settings.showGroupNames)
         {
-            h.push(`<thead class="sticky"><tr class="caption"><th>${i18n('Boxes.Castle.Type')}</th><th class="text-right"><span>${HTML.i18nTooltip(i18n('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${HTML.i18nTooltip(i18n('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
+            h.push(`<thead class="sticky"><tr class="caption"><th>${i18n('Boxes.Castle.Type')}</th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.Progress'))}</span></th><th class="text-right"><span>${FH.HTML.i18nTooltip(i18n('Boxes.Castle.CastlePoints'))}</span></th></tr></thead>`);
         }
 
         h.push(`<tbody>`);
@@ -1006,7 +1006,7 @@ let Castle = {
 
         if (!d) { return; }
 
-        const Time = MainParser.getCurrentDateTime();
+        const Time = FH.Main.getCurrentDateTime();
         const startOfDay = moment(Time).startOf('day').unix();
         const removeLogsDate = startOfDay - Castle.Settings.logDays * 86400;
 

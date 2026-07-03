@@ -48,13 +48,13 @@ let Auction = {
     
     updateClipboard: () => {
         newBid = Math.floor(Math.max(Auction.fak[Auction.index] * Auction.current, Auction.current + Auction.diff[Auction.index]));
-        helper.str.copyToClipboard(newBid);
+        FH.helper.str.copyToClipboard(newBid);
     },
 
 	BuildBody: ()=> {
 
 		if ($('#auctionSettingsBox').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'auctionSettingsBox',
 				title: i18n('Boxes.AuctionSettings.Title'),
 				auto_close: true,
@@ -63,7 +63,7 @@ let Auction = {
 				resize: true,
 			});
 
-			HTML.AddCssFile('auctions');
+			FH.HTML.AddCssFile('auctions');
 		} 
         let t=[];
         t.push(`<button id="AuctionHelpBtn" class="btn">${i18n('Boxes.AuctionSettings.Help')}</button>`);

@@ -66,7 +66,7 @@ let Unit = {
 	},
 
 	/**
-	 * Creates an HTML box for the DOM
+	 * Creates an FH.HTML.box for the DOM
 	 *
 	 */
 	Show: ()=> {
@@ -74,7 +74,7 @@ let Unit = {
 		Unit.PrepareCoords();
 
 		if ($('#UnitOverview').length === 0) {
-			HTML.AddCssFile('unit');
+			FH.HTML.AddCssFile('unit');
 
 			let args = {
 				id: 'UnitOverview',
@@ -83,14 +83,14 @@ let Unit = {
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'Unit.ShowSettings()'
+				settings: Unit.ShowSettings
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 			//moment.locale(18n('Local'));
 
 		} else {
-			HTML.CloseOpenBox('UnitOverview');
+			FH.HTML.CloseOpenBox('UnitOverview');
 		}
 
 		Unit.BuildBox();
@@ -209,8 +209,8 @@ let Unit = {
 			let AttackBoost = Boosts['AttackAttackBoost'],
 				DefenseBoost = Boosts['AttackDefenseBoost']
 			
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			attack.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			attack.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -277,8 +277,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			defense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			defense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -344,8 +344,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			arenaDefense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			arenaDefense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -498,7 +498,7 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
+			text = FH.HTML.i18nReplacer(
 				i18n('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.NextAmount,
@@ -515,7 +515,7 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
+			text = FH.HTML.i18nReplacer(
 				i18n('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.alca.state.current_product.amount,
@@ -535,7 +535,7 @@ let Unit = {
 	 */
 	RefreshAlca: (data) => {
 		if (!Unit.alca) {
-			Unit.alca = Object.values(MainParser.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
+			Unit.alca = Object.values(FH.Main.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
 		}
 
 		// update next harvest time if pickup
@@ -788,7 +788,7 @@ let Unit = {
 				last.push('<td>' + LastAlca[i]['name'] + '</td>');
 
 				last.push('<td class="text-center">' + LastAlca[i]['count'] + 'x</td>');
-				last.push('<td class="text-center">' + MainParser.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
+				last.push('<td class="text-center">' + FH.Main.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
 
 			last.push('</tr>');
 
@@ -818,7 +818,7 @@ let Unit = {
 
 		h.push(`<p>${i18n('Boxes.Units.PictogramScalingTitle')}
 					<button class="btn btn-slim btn-set-value" data-value="-1">&lt;</button>
-					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
+					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
 					<button class="btn btn-slim btn-set-value" data-value="1">&gt;</button>
 					<span class="validity"></span>
 				</p>`);

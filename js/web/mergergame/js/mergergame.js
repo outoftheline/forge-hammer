@@ -11,17 +11,17 @@ FH.proxy.addHandler('MergerGameService', 'all', (data, postData) => {
 		return;
 	}
 	let board = data.responseData.board || data.responseData;
-	if (!mergerGame.state.day) mergerGame.state.day = moment.unix(GameTime.get()).dayOfYear()
+	if (!mergerGame.state.day) mergerGame.state.day = moment.unix(FH.GameTime.get()).dayOfYear()
 
 	if (data.requestMethod == "resetBoard") {
-		if (mergerGame.state.day == moment.unix(GameTime.get()).dayOfYear())  {//gleicher Tag wie zuvor
+		if (mergerGame.state.day == moment.unix(FH.GameTime.get()).dayOfYear())  {//gleicher Tag wie zuvor
 			mergerGame.state.daily.progress += mergerGame.state.progress;
 			mergerGame.state.daily.energyUsed += mergerGame.state.energyUsed;
 			mergerGame.state.daily.keys += mergerGame.state.keys;		
 		} else {
 			mergerGame.state.daily={progress:0,keys:0,energyUsed:0}
 		}
-		mergerGame.state.day = moment.unix(GameTime.get()).dayOfYear()
+		mergerGame.state.day = moment.unix(FH.GameTime.get()).dayOfYear()
 	}
 	mergerGame.event = board.context.replace("_event","")
 	mergerGame.cells = board.cells;
@@ -313,16 +313,16 @@ let mergerGame = {
         
 		// Don't create a new box while another one is still open
 		if ($('#mergerGameDialog').length === 0) {
-			HTML.AddCssFile('mergergame');
+			FH.HTML.AddCssFile('mergergame');
 			
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'mergerGameDialog',
 				title: 'Merger Game',
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize : true,
-				settings: 'mergerGame.ShowSettingsButton()',
+				settings: mergerGame.ShowSettingsButton,
 			    active_maps:"main"
 			});
 
@@ -499,7 +499,7 @@ let mergerGame = {
 			}
 		}
 		if (mergerGame.settings.audibleTaskWarning && warn && raiseAlert) {
-			helper.sounds.play("message");
+			FH.helper.sounds.play("message");
 		}
 		if (mergerGame.settings.opticalTaskWarning && warn && raiseAlert && $('#mergerGameTaskWarning').length === 0) {
 			mergerGame.allowRemoveWarning = false;

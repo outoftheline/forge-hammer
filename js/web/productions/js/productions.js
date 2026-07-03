@@ -254,7 +254,7 @@ let Productions = {
 				presets: Productions.Rating.Presets.presets
 			};
 			const fileName = `EfficiencyRatingPresets_${moment().format('YYMMDD-HHmm')}.json`;
-			MainParser.ExportFile(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), fileName);
+			FH.Main.ExportFile(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), fileName);
 		},
 
 		importPresets: (file) => {
@@ -325,8 +325,8 @@ let Productions = {
 	init: () => {
 		if (ActiveMap === 'OtherPlayer') return
 
-		MainParser.CityBuildingsData = CityBuildings.createBuildings(Object.values(MainParser.CityMapData))
-		Productions.CombinedCityMapData = MainParser.CityBuildingsData
+		FH.Main.CityBuildingsData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
+		Productions.CombinedCityMapData = FH.Main.CityBuildingsData
 
 		if (CityMap.EraOutpost.data) {
 			Productions.CombinedCityMapData = Object.assign({}, Productions.CombinedCityMapData, CityMap.EraOutpost.data)
@@ -378,21 +378,21 @@ let Productions = {
 	showBox: () => {
 
 		if ($('#Productions').length > 0){
-			HTML.CloseOpenBox('Productions');
+			FH.HTML.CloseOpenBox('Productions');
 
 			return;
 		}
 
-		HTML.AddCssFile('productions');
+		FH.HTML.AddCssFile('productions');
 
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'Productions',
 			title: i18n('Boxes.Productions.Title'),
 			auto_close: true,
 			dragdrop: true,
 			minimize: true,
 			resize: true,
-        	settings: 'Productions.ShowSettings()'
+        	settings: Productions.ShowSettings
 		});
 
 		Productions.ActiveTab = 1;
@@ -607,7 +607,7 @@ let Productions = {
 								$("#Productions #"+type).html(content)
 								$('.TSinactive').tableSorter()
 								$('.TSinactive').removeClass('TSinactive')
-								HTML.FilterTable('#Productions .filterCurrentList')
+								FH.HTML.FilterTable('#Productions .filterCurrentList')
 							}
 							$("#Productions .content").css('display','none')
 							$("#Productions #"+type).css('display','block')
@@ -616,7 +616,7 @@ let Productions = {
 					})
 					$('.TSinactive').tableSorter()
 					$('.TSinactive').removeClass('TSinactive')
-					HTML.FilterTable('#Productions .filterCurrentList')
+					FH.HTML.FilterTable('#Productions .filterCurrentList')
 
 					//$('#Productions [data-original-title]').tooltip({container: "#Productions", html:true});
 				}
@@ -628,7 +628,7 @@ let Productions = {
 			$('.production-tabs').tabslet({ active: Productions.ActiveTab })
 			$('.TSinactive').tableSorter()					
 			$('.TSinactive').removeClass('TSinactive')					
-			HTML.FilterTable('#Productions .filterCurrentList')
+			FH.HTML.FilterTable('#Productions .filterCurrentList')
 
 			// show a building on the map
 			$('#Productions').on('click', '.foe-table .show-entity', function () {
@@ -639,7 +639,7 @@ let Productions = {
 
 
 	setChainsAndSets(buildings) {
-		if (buildings === undefined) buildings = Object.values(MainParser.CityBuildingsData)
+		if (buildings === undefined) buildings = Object.values(FH.Main.CityBuildingsData)
 		let idsToRemove = [];
 
 		for (const building of buildings) {
@@ -692,7 +692,7 @@ let Productions = {
 				if (building.chainBuilding !== undefined)
 					rowA.push('<img src="' + srcLinks.get('/shared/icons/' + building.chainBuilding.name + '.png', true) + '" class="chain-set-ico">')
 			rowA.push('</td>')
-			rowA.push('<td data-text="'+helper.str.cleanup(building.name)+'" class="' + (MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'" class="' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
 
 			if (building.boosts !== undefined) {
 				boosts = {}
@@ -712,7 +712,7 @@ let Productions = {
 				for (let type of Object.keys(Boosts.Sums)) {
 					if (type.includes('guild_raids_')) {
 						if (boosts[type] !== undefined)
-							rowA.push('<td data-number="'+boosts[type]+'" class="text-center">'+ HTML.Format(boosts[type]) +'</td>')
+							rowA.push('<td data-number="'+boosts[type]+'" class="text-center">'+ FH.HTML.Format(boosts[type]) +'</td>')
 						else
 							rowA.push('<td data-number="'+0+'" class="text-center">-</td>')
 					}
@@ -801,7 +801,7 @@ let Productions = {
 						if (building.chainBuilding !== undefined)
 						rowA.push('<img src="' + srcLinks.get('/shared/icons/' + building.chainBuilding.name + '.png', true) + '" class="chain-set-ico">')
 					rowA.push('</td>')
-					rowA.push('<td data-text="'+helper.str.cleanup(building.name)+'" exportvalue="'+building.name+'" class="' + (MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
+					rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'" exportvalue="'+building.name+'" class="' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
 
 					if (!type.includes('att') && !type.includes('def')) {
 						if (type !== 'items') {
@@ -826,8 +826,8 @@ let Productions = {
 							}
 
 							rowA.push('<td data-number="'+amount+'" exportvalue="'+amount+'" class="textright">')
-							let parsedCurrentAmount = (currentAmount >= 10000 ? HTML.FormatNumberShort(currentAmount) : HTML.Format(currentAmount)) 
-							let parsedAmount = (currentAmount >= 10000 ? HTML.FormatNumberShort(amount) : HTML.Format(amount)) 
+							let parsedCurrentAmount = (currentAmount >= 10000 ? FH.HTML.FormatNumberShort(currentAmount) : FH.HTML.Format(currentAmount)) 
+							let parsedAmount = (currentAmount >= 10000 ? FH.HTML.FormatNumberShort(amount) : FH.HTML.Format(amount)) 
 
 							if (generalProductionByCategory.units.length>0 || currentProductionByCategory.units.length>0) {
 								if (currentProductionByCategory.units.length > 0) 
@@ -933,10 +933,10 @@ let Productions = {
 								}
 							})
 
-							rowA.push('<td data-number="'+boosts.all+'" exportvalue="'+boosts.all+'" class="text-center">'+ (boosts.all !== 0 ? HTML.Format(boosts.all) : '-') +'</td>')
-							rowA.push('<td data-number="'+boosts.battleground+'" exportvalue="'+boosts.battleground+'" class="text-center">'+ (boosts.battleground !== 0 ? HTML.Format(boosts.battleground) : '-') +'</td>')
-							rowA.push('<td data-number="'+boosts.guild_expedition+'" exportvalue="'+boosts.guild_expedition+'" class="text-center">'+ (boosts.guild_expedition !== 0 ? HTML.Format(boosts.guild_expedition) : '-') +'</td>')
-							rowA.push('<td data-number="'+boosts.guild_raids+'" exportvalue="'+boosts.guild_raids+'" class="text-center">'+ (boosts.guild_raids !== 0 ? HTML.Format(boosts.guild_raids) : '-') +'</td>')
+							rowA.push('<td data-number="'+boosts.all+'" exportvalue="'+boosts.all+'" class="text-center">'+ (boosts.all !== 0 ? FH.HTML.Format(boosts.all) : '-') +'</td>')
+							rowA.push('<td data-number="'+boosts.battleground+'" exportvalue="'+boosts.battleground+'" class="text-center">'+ (boosts.battleground !== 0 ? FH.HTML.Format(boosts.battleground) : '-') +'</td>')
+							rowA.push('<td data-number="'+boosts.guild_expedition+'" exportvalue="'+boosts.guild_expedition+'" class="text-center">'+ (boosts.guild_expedition !== 0 ? FH.HTML.Format(boosts.guild_expedition) : '-') +'</td>')
+							rowA.push('<td data-number="'+boosts.guild_raids+'" exportvalue="'+boosts.guild_raids+'" class="text-center">'+ (boosts.guild_raids !== 0 ? FH.HTML.Format(boosts.guild_raids) : '-') +'</td>')
 						}
 					}
 
@@ -991,7 +991,7 @@ let Productions = {
 				table.push('<th colspan="3"><span class="btn change-view game-cursor" data-type="' + type + '">' + i18n('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + i18n('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
 				if (!type.includes('att') && !type.includes('def') && type!='items') {
 					table.push('<th colspan="3" class="textright">')
-					table.push((typeCurrentSum >= 10000 ? HTML.FormatNumberShort(typeCurrentSum) : HTML.Format(typeCurrentSum))+ "/" + (typeSum >= 10000 ? HTML.FormatNumberShort(typeSum) : HTML.Format(typeSum)))
+					table.push((typeCurrentSum >= 10000 ? FH.HTML.FormatNumberShort(typeCurrentSum) : FH.HTML.Format(typeCurrentSum))+ "/" + (typeSum >= 10000 ? FH.HTML.FormatNumberShort(typeSum) : FH.HTML.Format(typeSum)))
 					if (type === 'strategy_points') {
 						table.push(' <button class="typeBoost btn btn-slim"><a href="#forge_points_production" class="game-cursor">'+i18n('General.Boost')+': '+Boosts.Sums.forge_points_production+'%</a></button>')
 						Profile.fpProduction = typeSum;
@@ -1118,7 +1118,7 @@ let Productions = {
 			rowA.push('<td>')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-text="'+helper.str.cleanup(building.name)+'"  class="' + (MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"  class="' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
@@ -1155,10 +1155,10 @@ let Productions = {
 				rowA.push('<td data-number="'+goodAmount+'" class="text-center">')
 					if (currentGoodAmount !== goodAmount) {
 						let isAverage = (allGoods.hasRandomProduction ? "Ø" : "")
-						rowA.push(HTML.Format(currentGoodAmount)+'/'+isAverage+HTML.Format(goodAmount))
+						rowA.push(FH.HTML.Format(currentGoodAmount)+'/'+isAverage+FH.HTML.Format(goodAmount))
 					}
 					else
-						rowA.push(HTML.Format(goodAmount))
+						rowA.push(FH.HTML.Format(goodAmount))
 				rowA.push('</td>')
 			}
 
@@ -1194,14 +1194,14 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th colspan="5"><span class="btn change-view game-cursor" data-type="' + type + '">' + i18n('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + i18n('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
-		table.push(`<th colspan=${eras.length+1} class="textright">${HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))} 	<button class="typeBoost btn btn-slim"><a href="#special_goods" class="game-cursor">★</a></button> </th>`)
+		table.push(`<th colspan=${eras.length+1} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))} 	<button class="typeBoost btn btn-slim"><a href="#special_goods" class="game-cursor">★</a></button> </th>`)
 		table.push('</tr>')
 
 		table.push('<tr class="sorter-header exportheader">')
 		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
 		table.push('<th class="ascending" data-type="prodlist'+type+'">' + i18n('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
-			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+i18n('Eras.'+(parseInt(era)+1))+'">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+HTML.Format(erasCurrent[era])+'/'+HTML.Format(erasTotal[era])+'</small></span></th>')
+			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+i18n('Eras.'+(parseInt(era)+1))+'">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')
 		}
 		table.push('<th data-type="prodlist'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.era') + '</th>')
 		table.push('<th data-type="prodlist'+type+'" class="is-date">'+i18n('Boxes.Productions.Headings.earning')+'</th>')
@@ -1219,13 +1219,13 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th><span class="btn change-view game-cursor" data-type="' + type + '">' + i18n('Boxes.Productions.ModeSingle') + '</span></th>')
-		table.push(`<th colspan=${2+eras.length} class="textright">${HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
+		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header">')
 		table.push('<th data-type="prodgroup'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.number') + '</th>')
 		table.push('<th data-type="prodgroup'+type+'">' + i18n('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
-			table.push('<th data-type="prodgroup'+type+'" class="is-number text-center">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '</span><br><small>'+HTML.Format(erasTotal[era])+'</small></th>')
+			table.push('<th data-type="prodgroup'+type+'" class="is-number text-center">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '</span><br><small>'+FH.HTML.Format(erasTotal[era])+'</small></th>')
 		}
 		table.push('<th data-type="prodgroup'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.size') + '</th>')
 		table.push('</tr>')
@@ -1235,10 +1235,10 @@ let Productions = {
 		for (const building of groupedBuildings) {
 			rowB.push('<tr>')
 			rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-			rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"  class="' + (MainParser.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
+			rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"  class="' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
 			for (const era of eras) {
 				rowB.push('<td data-number="'+building[era]+'" class="text-center">')
-				rowB.push(HTML.Format(building[era]))
+				rowB.push(FH.HTML.Format(building[era]))
 				rowB.push('</td>')
 			}
 			rowB.push('<td data-number="'+(building.building.size.length*building.building.size.width)+'">'+building.building.size.length+'x'+building.building.size.width+'</td>')
@@ -1282,7 +1282,7 @@ let Productions = {
 			rowA.push('<td>')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-text="'+helper.str.cleanup(building.name)+'"  class="' + (MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"  class="' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
@@ -1319,10 +1319,10 @@ let Productions = {
 				rowA.push('<td data-number="'+goodAmount+'" class="text-center">')
 					if (currentGoodAmount !== goodAmount) {
 						let isAverage = (allGoods.hasRandomProduction ? "Ø" : "")
-						rowA.push(HTML.Format(currentGoodAmount)+'/'+isAverage+HTML.Format(goodAmount))
+						rowA.push(FH.HTML.Format(currentGoodAmount)+'/'+isAverage+FH.HTML.Format(goodAmount))
 					}
 					else
-						rowA.push(HTML.Format(goodAmount))
+						rowA.push(FH.HTML.Format(goodAmount))
 				rowA.push('</td>')
 			}
 
@@ -1358,13 +1358,13 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th colspan="'+(6+eras.length)+'"><span class="btn change-view game-cursor" data-type="' + type + '">' + i18n('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + i18n('Boxes.Productions.FilterTable') + '" class="filterCurrentList">')
-		table.push(`<span style="float:right;">${HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</span></th>`)
+		table.push(`<span style="float:right;">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</span></th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header exportheader">')
 		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
 		table.push('<th class="ascending" data-type="prodlist'+type+'">' + i18n('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
-			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+i18n('Eras.'+(parseInt(era)+1))+'">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+HTML.Format(erasCurrent[era])+'/'+HTML.Format(erasTotal[era])+'</small></span></th>')
+			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+i18n('Eras.'+(parseInt(era)+1))+'">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')
 		}
 		table.push('<th data-type="prodlist'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.era') + '</th>')
 		table.push('<th data-type="prodlist'+type+'" class="is-date">'+i18n('Boxes.Productions.Headings.earning')+'</th>')
@@ -1381,13 +1381,13 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th><span class="btn change-view game-cursor" data-type="' + type + '">' + i18n('Boxes.Productions.ModeSingle') + '</span></th>')
-		table.push(`<th colspan=${2+eras.length} class="textright">${HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
+		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header">')
 		table.push('<th data-type="prodgroup'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.number') + '</th>')
 		table.push('<th data-type="prodgroup'+type+'">' + i18n('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
-			table.push('<th data-type="prodgroup'+type+'" class="is-number text-center">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '</span><br><small>'+HTML.Format(erasTotal[era])+'</small></th>')
+			table.push('<th data-type="prodgroup'+type+'" class="is-number text-center">' + i18n('Eras.'+(parseInt(era)+1)+'.short') + '</span><br><small>'+FH.HTML.Format(erasTotal[era])+'</small></th>')
 		}
 		table.push('<th data-type="prodgroup'+type+'" class="is-number">' + i18n('Boxes.Productions.Headings.size') + '</th>')
 		table.push('</tr>')
@@ -1396,10 +1396,10 @@ let Productions = {
 			groupedBuildings.forEach(building => {
 				rowB.push('<tr>')
 				rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"  class="' + (MainParser.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
+				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"  class="' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
 				for (const era of eras) {
 					rowB.push('<td data-number="'+building[era]+'" class="text-center">')
-					rowB.push(HTML.Format(building[era]))
+					rowB.push(FH.HTML.Format(building[era]))
 					rowB.push('</td>')
 				}
 				rowB.push('<td data-number="'+(building.building.size.length*building.building.size.width)+'">'+building.building.size.length+'x'+building.building.size.width+'</td>')
@@ -1438,21 +1438,21 @@ let Productions = {
 			groupedBuildings.forEach(building => {
 				rowB.push('<tr>')
 				rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" class="' + (MainParser.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
+				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" class="' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
 				if (type.includes('att') || type.includes('def')) {
-					rowB.push('<td data-number="'+building.boosts.all*building.amount+'" class="text-center">'+ (building.boosts.all !== 0 ? HTML.Format(building.boosts.all*building.amount) : '') +'</td>')
-					rowB.push('<td data-number="'+building.boosts.battleground*building.amount+'" class="text-center">'+ (building.boosts.battleground !== 0 ? HTML.Format(building.boosts.battleground*building.amount) : '') +'</td>')
-					rowB.push('<td data-number="'+building.boosts.guild_expedition*building.amount+'" class="text-center">'+ (building.boosts.guild_expedition !== 0 ? HTML.Format(building.boosts.guild_expedition*building.amount) : '') +'</td>')
-					rowB.push('<td data-number="'+building.boosts.guild_raids*building.amount+'" class="text-center">'+ (building.boosts.guild_raids !== 0 ? HTML.Format(building.boosts.guild_raids*building.amount) : '') +'</td>')
+					rowB.push('<td data-number="'+building.boosts.all*building.amount+'" class="text-center">'+ (building.boosts.all !== 0 ? FH.HTML.Format(building.boosts.all*building.amount) : '') +'</td>')
+					rowB.push('<td data-number="'+building.boosts.battleground*building.amount+'" class="text-center">'+ (building.boosts.battleground !== 0 ? FH.HTML.Format(building.boosts.battleground*building.amount) : '') +'</td>')
+					rowB.push('<td data-number="'+building.boosts.guild_expedition*building.amount+'" class="text-center">'+ (building.boosts.guild_expedition !== 0 ? FH.HTML.Format(building.boosts.guild_expedition*building.amount) : '') +'</td>')
+					rowB.push('<td data-number="'+building.boosts.guild_raids*building.amount+'" class="text-center">'+ (building.boosts.guild_raids !== 0 ? FH.HTML.Format(building.boosts.guild_raids*building.amount) : '') +'</td>')
 				}
 				else if (type === "items") {
 					rowB.push('<td colspan="4">'+Productions.showBuildingItems(false, building.building)[0]+'</td>')
 				}
 				else {
 					if (building.currentValues === building.values) 
-						rowB.push('<td colspan="4" data-number="'+building.currentValues+'">'+HTML.Format(building.currentValues)+'</td>')
+						rowB.push('<td colspan="4" data-number="'+building.currentValues+'">'+FH.HTML.Format(building.currentValues)+'</td>')
 					else {
-						rowB.push('<td colspan="4" data-number="'+building.currentValues+'">'+HTML.Format(building.currentValues)+'/'+(groupedBuildings.hasRandomProductions ? 'Ø' : '')+HTML.Format(building.values)+'</td>')
+						rowB.push('<td colspan="4" data-number="'+building.currentValues+'">'+FH.HTML.Format(building.currentValues)+'/'+(groupedBuildings.hasRandomProductions ? 'Ø' : '')+FH.HTML.Format(building.values)+'</td>')
 					}
 				}
 				rowB.push('<td data-number="'+(building.building.size.length*building.building.size.width)+'">'+building.building.size.length+'x'+building.building.size.width+'</td>')
@@ -1571,12 +1571,12 @@ let Productions = {
 					Uera = Uera + (Utype.includes("next") && Uera<Technologies.getMaxEra() ? 1 : 0)
 					prod.amount += UAmount
 					if (!current && building.type === "greatbuilding") {
-						let m = Object.values(MainParser.CityMapData).filter(x=>x.type=="military")
+						let m = Object.values(FH.Main.CityMapData).filter(x=>x.type=="military")
 						let RAmount = UAmount/m.length
 						m.forEach (x => {
-							let Rtype = MainParser.CityEntities[x.cityentity_id].available_products[0].unit_class
-							if (MainParser.CityEntities[x.cityentity_id].available_products[0].unit_type_id=="rogue") Rtype="rogue"   //Banners + Drummers???
-							let Rera = Technologies.Eras[MainParser.CityEntities[x.cityentity_id].requirements.min_era]
+							let Rtype = FH.Main.CityEntities[x.cityentity_id].available_products[0].unit_class
+							if (FH.Main.CityEntities[x.cityentity_id].available_products[0].unit_type_id=="rogue") Rtype="rogue"   //Banners + Drummers???
+							let Rera = Technologies.Eras[FH.Main.CityEntities[x.cityentity_id].requirements.min_era]
 							prod.units.push({type:Rtype.replace(/next./,""),amount:0,random:RAmount,era:Rtype=="rogue"?0:Rera})
 						})
 					} else {
@@ -1874,23 +1874,23 @@ let Productions = {
 		let $ProductionsRating = $('#ProductionsRating');
 
 		if ($ProductionsRating.length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'ProductionsRating',
 				title: i18n('Boxes.ProductionsRating.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'Productions.RSettings()',
-				custom_buttons: [{class: "window-popout", callback: "Productions.ratingPopOut();"}],
+				settings: Productions.RSettings,
+				custom_buttons: [{class: "window-popout", callback: Productions.ratingPopOut}],
 			});
 			
-			helper.preloader.show('#ProductionsRating');
+			FH.helper.preloader.show('#ProductionsRating');
 			
-			HTML.AddCssFile('productions');
+			FH.HTML.AddCssFile('productions');
 
 			$('body').on('click', '.toggle-tab', async function () {
-				helper.preloader.show('#ProductionsRating');
+				FH.helper.preloader.show('#ProductionsRating');
 				Productions.RatingCurrentTab = $(this).data('value');
 
 				Productions.CalcRatingBody(era);
@@ -1898,7 +1898,7 @@ let Productions = {
 			Productions.CalcRatingBody(era);
 
 		} else {
-			HTML.CloseOpenBox('ProductionsRating');
+			FH.HTML.CloseOpenBox('ProductionsRating');
 		}
 
 	},
@@ -1946,12 +1946,12 @@ let Productions = {
 		let ratedBuildings = [];
 		let h = [];
 		let withAllies = Productions.efficiencySettings.showallies;
-		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(MainParser.CityMapData),withAllies));
+		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData),withAllies));
 		Productions.setChainsAndSets(Productions.BuildingsAll);
 
 		// grab special buildings
 		if (!Productions.AdditionalSpecialBuildings) {
-			let spB = Object.values(MainParser.CityEntities).filter(x=> (x.is_special && !["O_","U_","V_","H_","Y_"].includes(x.id.substring(0,2))) || x.id.substring(0,11) === "W_MultiAge_")
+			let spB = Object.values(FH.Main.CityEntities).filter(x=> (x.is_special && !["O_","U_","V_","H_","Y_"].includes(x.id.substring(0,2))) || x.id.substring(0,11) === "W_MultiAge_")
 			Productions.AdditionalSpecialBuildings = {}
 			for (x of spB) {
 				Productions.AdditionalSpecialBuildings[x.id] = {id:x.id,name:x.name,selected:false,filter:x.id+";"+x.name}
@@ -1963,7 +1963,7 @@ let Productions = {
 
 		for (let [id,data] of Object.entries(InventoryBuildings)){
 			//if(!id || id.slice(0, 2) !== 'W_') continue; // if starts not with "W_", continue
-			let metaData = MainParser.CityEntities[id];
+			let metaData = FH.Main.CityEntities[id];
 			let building = CityBuildings.createBuilding(metaData, CurrentEra);
 			building.isInInventory = true;
 			Productions.BuildingsAll.push(building);
@@ -1975,10 +1975,10 @@ let Productions = {
 			if (building === undefined || building.type === 'street' || building.type === 'military' || building.id >= 2000000000 || building.type.includes('hub')) continue
 
 			let compare = building.name;
-			if (MainParser.Allies.buildingList?.[building.id] && withAllies) 
-				compare += "+" + Object.keys(MainParser.Allies.buildingList?.[building.id]).join("+");
+			if (FH.Main.Allies.buildingList?.[building.id] && withAllies) 
+				compare += "+" + Object.keys(FH.Main.Allies.buildingList?.[building.id]).join("+");
 			
-			let foundBuildingIndex = uniqueBuildings.findIndex(x => x.name === compare && x.isInInventory === building.isInInventory && !MainParser.Allies.buildingList?.[x.id])
+			let foundBuildingIndex = uniqueBuildings.findIndex(x => x.name === compare && x.isInInventory === building.isInInventory && !FH.Main.Allies.buildingList?.[x.id])
 			if (!withAllies) 
 				foundBuildingIndex = uniqueBuildings.findIndex(x => x.name === compare && x.isInInventory === building.isInInventory)
 			
@@ -2017,7 +2017,7 @@ let Productions = {
 		}
 
 		else if (Productions.RatingCurrentTab === 'Results') {
-			helper.preloader.show('#ProductionsRating');
+			FH.helper.preloader.show('#ProductionsRating');
 
 			ratedBuildings.sort((a,b) => {
 				if (a.rating.totalScore < b.rating.totalScore) return 1
@@ -2130,11 +2130,11 @@ let Productions = {
 				h.push(`<tr class="${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
 				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="text-right">'+Math.round(building.rating.totalScore * 100)+'</td>')
 
-				h.push('<td exportvalue="'+building.name+'" data-text="'+helper.str.cleanup(building.name)+'" class="'+(MainParser.Allies.buildingList?.[building.id]?"ally" : "") +'"><div class="flex-between"><div>');
+				h.push('<td exportvalue="'+building.name+'" data-text="'+FH.helper.str.cleanup(building.name)+'" class="'+(FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'"><div class="flex-between"><div>');
 				if (!building.highlight && !building.isInInventory)
 					h.push('<span class="show-all" data-original-title="'+i18n('Boxes.General.ShowOnMap')+'" data-name="'+building.name+'"><img class="game-cursor" alt="" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>');
 
-				h.push('<span data-meta_id="'+building.entityId+'" data-eff="'+building.rating.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="Tooltips.buildingTT" class="helperTT" '+ MainParser.Allies.tooltip(building.id) + '>'+building.name+'</span>')
+				h.push('<span data-meta_id="'+building.entityId+'" data-eff="'+building.rating.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="Tooltips.buildingTT" class="helperTT" '+ FH.Main.Allies.tooltip(building.id) + '>'+building.name+'</span>')
 
 				let eraShortName = i18n("Eras."+Technologies.Eras[building.eraName]+".short")
 				if (eraShortName !== "-")
@@ -2142,7 +2142,7 @@ let Productions = {
 				h.push("</div></td>");
 				
 				// show amount in city if > 1
-				let buildingAmount = (MainParser.Allies.buildingList?.[building.id] && withAllies ? 1 : (buildingCount[building.entityId+"C"] || 1));
+				let buildingAmount = (FH.Main.Allies.buildingList?.[building.id] && withAllies ? 1 : (buildingCount[building.entityId+"C"] || 1));
 				h.push('<td exportvalue="'+buildingAmount+'" data-number="'+buildingAmount+'"><div class="text-right">')
 				if (buildingAmount > 1) 
 					h.push('<span data-original-title="'+i18n('Boxes.ProductionsRating.CountTooltip')+'">' + buildingCount[building.entityId+"C"]+'x</span>')
@@ -2165,13 +2165,13 @@ let Productions = {
 					// normal boosts
 					if (secondType === null) {
 						h.push(`<td class="text-right${firstType==="units" ? " units":""} buildingvalue" data-number="${Math.round(parseFloat(building.rating[firstType]))}" ${firstType==="units" ? `data-original-title="${randomUnits}"`:""}>`)
-						h.push(HTML.Format(building.rating[firstType]))
+						h.push(FH.HTML.Format(building.rating[firstType]))
 						h.push('</td>')
 
 						let roundingFactor = building.rating[firstType+'-tile'] > 100 || building.rating[firstType+'-tile'] < -100 ? 1 : 100
 						let tileValue = Math.round(building.rating[firstType+'-tile'] * roundingFactor) / roundingFactor
 						h.push(`<td class="text-right${firstType==="units" ? " units":""} tilevalue" data-number="${tileValue}" ${firstType==="units" ? `data-original-title="${randomUnits}"`:""}>`)
-						h.push(HTML.Format(tileValue))
+						h.push(FH.HTML.Format(tileValue))
 						h.push('</td>')
 					}
 					// combined attack boosts
@@ -2182,7 +2182,7 @@ let Productions = {
 						let combinedValue = (firstValue + secondValue);
 
 						h.push(`<td class="text-right buildingvalue" data-number="${combinedValue}">`)
-						h.push(HTML.Format(building.rating[firstType]+building.rating[secondType]))
+						h.push(FH.HTML.Format(building.rating[firstType]+building.rating[secondType]))
 						h.push('</td>')
 
 						// Calculate combined value for tile value - simplified to avoid precision errors
@@ -2199,7 +2199,7 @@ let Productions = {
 						let tileValue = Math.round((roundFirstTile + roundSecondTile) * 10) / 10;
 
 						h.push(`<td class="text-right tilevalue" data-number="${tileValue}">`)
-						h.push(HTML.Format(tileValue))
+						h.push(FH.HTML.Format(tileValue))
 						h.push('</td>')
 					}
 				}
@@ -2499,7 +2499,7 @@ let Productions = {
 				}
 			});
 
-			helper.preloader.hide('#ProductionsRating');
+			FH.helper.preloader.hide('#ProductionsRating');
 			//$('#ProductionsRatingBody').fadeIn(501);
 
 			if (Productions.RatingSearchTerm !== "") {
@@ -2763,8 +2763,8 @@ let Productions = {
 
 	RSettings: () => {
 		let c = [];
-		c.push(`<p class="text-left">${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('.ratingtable table'),'csv','EfficiencyRating')">CSV</button>`);
-		c.push(`<button class="btn" onclick="HTML.ExportTable($('.ratingtable table'),'json','EfficiencyRating')">JSON</button></span></p>`);
+		c.push(`<p class="text-left">${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('.ratingtable table'),'csv','EfficiencyRating')">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('.ratingtable table'),'json','EfficiencyRating')">JSON</button></span></p>`);
 
 		$('#ProductionsRatingSettingsBox').html(c.join(''));
 	},
@@ -2792,7 +2792,7 @@ let Productions = {
 
 	showItemSources:()=>{
 		if ( $('#ItemSources').length === 0 ) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'ItemSources',
 				title: i18n('Boxes.ItemSources.Title'),
 				auto_close: true,
@@ -2811,19 +2811,19 @@ let Productions = {
 						</thead>
 						<tbody class="itemSourcesList">`
 							for (let item of Object.values(items)) {
-								h += `<tr><td onclick="Productions.updateItemSources(${JSON.stringify(item).replaceAll('"',"'")})" data-text="${helper.str.cleanup(item.name)}">${srcLinks.icons(item.icon)} ${item.name}<div class="innerTable" id="item-${helper.str.cleanup(item.name)}"></div></td></tr>`
+								h += `<tr><td onclick="Productions.updateItemSources(${JSON.stringify(item).replaceAll('"',"'")})" data-text="${FH.helper.str.cleanup(item.name)}">${srcLinks.icons(item.icon)} ${item.name}<div class="innerTable" id="item-${FH.helper.str.cleanup(item.name)}"></div></td></tr>`
 							}
         			h +=`</tbody>
 					</table>
 				</div>`
         $('#ItemSourcesBody').html(h)
         $('#ItemSourcesBody .sortable-table').tableSorter()
-		HTML.FilterTable('#ItemSourcesBody .filterTable')
+		FH.HTML.FilterTable('#ItemSourcesBody .filterTable')
 	},
 
 
 	buildingItemList: () => {
-		let temp = Object.assign({},...Object.values(MainParser.CityEntities).filter(b=>b.id[0]==="W").map(x=>({[x.id]:[...JSON.stringify(x).matchAll(/"id":"([^"]*?)"[^()[\]{}]*?"name":"([^"]*?)"[^()[\]{}]*?"iconAssetName":"([^"]*?)"[^{}]*?"__class__":"(GenericReward|TimedReward)"/gm)].map(a=>({id:a[1],name:a[2],icon:a[3]}))})))
+		let temp = Object.assign({},...Object.values(FH.Main.CityEntities).filter(b=>b.id[0]==="W").map(x=>({[x.id]:[...JSON.stringify(x).matchAll(/"id":"([^"]*?)"[^()[\]{}]*?"name":"([^"]*?)"[^()[\]{}]*?"iconAssetName":"([^"]*?)"[^{}]*?"__class__":"(GenericReward|TimedReward)"/gm)].map(a=>({id:a[1],name:a[2],icon:a[3]}))})))
 
 		let gl = Object.values(GoodsList).map(g=>g.id)
 		let items = {}
@@ -2852,7 +2852,7 @@ let Productions = {
 
 
 	getBuildingsByBoosts: (boostArray = []) => {
-		let buildings = Object.values(MainParser.CityEntities).filter(b=>b.id[0]==="W")
+		let buildings = Object.values(FH.Main.CityEntities).filter(b=>b.id[0]==="W")
 		let boostList = {};
 		boostArray.forEach(boost => boostList[boost] = [])
 		for (let building of buildings) {
@@ -2880,7 +2880,7 @@ let Productions = {
 
 	createBuildingBoostList: (boostArray = []) => {
 		if ( $('#BoostList').length === 0 ) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'BoostList',
 				title: i18n('Boxes.BoostList.Title'),
 				auto_close: true,
@@ -2910,12 +2910,12 @@ let Productions = {
 				</div>`
         $('#BoostListBody').html(h)
         $('#BoostListBody .sortable-table').tableSorter()
-		HTML.FilterTable('#BoostListBody .filterTable')
+		FH.HTML.FilterTable('#BoostListBody .filterTable')
 	},
 
 
 	updateItemSources:(item)=>{
-		let itemId = '#item-'+helper.str.cleanup(item.name)
+		let itemId = '#item-'+FH.helper.str.cleanup(item.name)
 		$(itemId).parent('td').toggleClass('open')
 		if ($(itemId).html() !== '') {
 			$(itemId).html('')
@@ -2923,7 +2923,7 @@ let Productions = {
 		}
 		h=`<ul class="foe-table">`
 		for (b of item.buildings) {
-			h+=`<li class="helperTT" data-era=${CurrentEra} data-callback_tt="Tooltips.buildingTT" data-meta_id="${b}">${MainParser.CityEntities[b].name}</li>`
+			h+=`<li class="helperTT" data-era=${CurrentEra} data-callback_tt="Tooltips.buildingTT" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
 		}
 		h+=`</ul>`
 		$(itemId).html(h)
@@ -2952,7 +2952,7 @@ let Productions = {
 							<script src="${FH.extUrl}vendor/tableSorter/table-sorter.js"></script>
 							<script src="${FH.extUrl}js/foeproxy.js"></script>
 							<script src="${FH.extUrl}js/web/_main/js/_main.js"></script>
-							<script src="${FH.extUrl}js/web/_helper/js/_helper.js"></script>
+							<script src="${FH.extUrl}js/web/_helper/js/_FH.helper.js"></script>
 							<script src="${FH.extUrl}js/web/productions/js/popout.js"></script>
 						</html>`;
 
@@ -2964,12 +2964,12 @@ let Productions = {
 		window.popoutReady = () => {
 			winObj.Productions = Productions;
 			winObj.i18n = i18n;
-			winObj.helper = helper;
+			winObj.helper = FH.helper;
 			winObj.SaveSettings = SaveSettings;
 			winObj.StartUpDone = Promise.resolve();
 			winObj.srcLinks = srcLinks;
 			winObj.QIActions = { TT: () => {} }; // stub to prevent throw on line 56
-			winObj.HTML = {
+			winObj.FH.HTML= {
 				AddCssFile: (name) => {
 					const link = winObj.document.createElement('link');
 					link.rel = 'stylesheet';

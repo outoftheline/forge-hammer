@@ -180,7 +180,7 @@
 		"name": "ShowBuildingsExpired",
 		"status": true,
 		"group": "Extension",
-		"button":"MainParser.Inactives.showSettings()",
+		"button":"FH.Main.Inactives.showSettings()",
 		"cssClass": "spacer",
 		"sort": 9
 	},

@@ -190,7 +190,7 @@ let Technologies = {
     },
     maxEra:null,
     getMaxEra:()=>{ // 1 more than "InnoEra"
-        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(MainParser.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
+        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(FH.Main.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
         return Technologies.maxEra;
     },
 
@@ -220,23 +220,23 @@ let Technologies = {
     Show: ()=> {
 		if ($('#technologies').length === 0) {
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'technologies',
 				title: i18n('Boxes.Technologies.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
                 resize: true,
-                settings: 'Technologies.ShowSettingsButton()'
+                settings: Technologies.ShowSettingsButton
 			});
 
 			// CSS in den DOM prügeln
-			HTML.AddCssFile('technologies');
+			FH.HTML.AddCssFile('technologies');
 
 			Technologies.SelectedEraID = CurrentEraID;
 
 		} else {
-			HTML.CloseOpenBox('technologies');
+			FH.HTML.CloseOpenBox('technologies');
         }
 
         $('#technologies').on('click', '.ignoreprevera', function () {
@@ -426,9 +426,9 @@ let Technologies = {
                     h.push('<tr>');
                     h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ GoodsData[ResourceName]['id'] +'"></span></td>');
                     h.push('<td>' + GoodsData[ResourceName]['name'] + '</td>');
-                    h.push('<td>' + HTML.Format(Required) + '</td>');
-                    h.push('<td>' + HTML.Format(Stock) + '</td>');
-                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + HTML.Format(Diff) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Required) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
+                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');
                     h.push('</tr>');
                 }
             }
@@ -448,8 +448,8 @@ let Technologies = {
         let h = [];
         h.push(`<p class="text-left">${i18n('Boxes.General.Export')}: 
         <span class="btn-group">
-        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
-        <button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>
+        <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
+        <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>
         </span>
         </p>`);
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-HTML.AddCssFile('battle-assist');
+FH.HTML.AddCssFile('battle-assist');
 FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
 	// if setting is true?
@@ -210,7 +210,7 @@ let BattleAssist = {
 	 *
     ShowNextEraDialog: (nT=false) => {
         
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistNextEraDialog',
             'title': i18n('Boxes.BattleAssist.Title'),
             'auto_close': true,
@@ -227,7 +227,7 @@ let BattleAssist = {
 	 * @constructor
 	 */
     ShowRogueDialog: () => {
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistRogueDialog',
             'title': i18n('Boxes.BattleAssist.Title'),
             'class': 'window-warning',
@@ -235,7 +235,7 @@ let BattleAssist = {
             'dragdrop': false,
             'minimize': false
         });
-        //if (MainParser.ABTests["foe_abtest_army_ux"].group != "control_group") $('#battleAssistRogueDialog').addClass("ABnew")
+        //if (FH.Main.ABTests["foe_abtest_army_ux"].group != "control_group") $('#battleAssistRogueDialog').addClass("ABnew")
         $('#battleAssistRogueDialogBody').html(`${i18n('Boxes.BattleAssist.Text.Rogue')}`);
     },
     
@@ -246,7 +246,7 @@ let BattleAssist = {
 	 */
     ShowArmyAdvice: (advice) => {
         if ($('#battleAssistArmyAdvice').length == 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'battleAssistArmyAdvice',
                 'title': i18n('Boxes.BattleAssistArmyAdvice.Title'),
                 'auto_close': true,
@@ -266,7 +266,7 @@ let BattleAssist = {
     ShowAddAdvice: () => {
         if ($('#battleAssistAAConfig').length !== 0) return;
         if ($('#battleAssistAddAdvice').length !== 0) return;
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistAddAdvice',
             'title': i18n('Boxes.BattleAssistAddAdvice.Title'),
             'auto_close': true,
@@ -299,14 +299,14 @@ let BattleAssist = {
         
         // Don't create a new box while another one is still open
         if ($('#battleAssistAAConfig').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'battleAssistAAConfig',
                 title: i18n('Boxes.BattleAssistAAConfig.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize : true,
-                settings: 'BattleAssist.ShowAASettingsButton()'
+                settings: BattleAssist.ShowAASettingsButton
             });
         }
         let html=`<div class="explanation closed" onclick="BattleAssist.AAExp()">${i18n('Boxes.BattleAssistAAConfig.Exp')}</div>`;

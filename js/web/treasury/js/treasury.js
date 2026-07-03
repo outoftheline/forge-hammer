@@ -19,16 +19,16 @@ let Treasury = {
         Treasury.LastNewLogs = Logs;
 
         if ($('#treasury').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'treasury',
                 'title': i18n('Boxes.Treasury.Title'),
                 'auto_close': true,
                 'dragdrop': true,
-                settings: 'Treasury.ShowSettings()'
+                settings: Treasury.ShowSettings
             });
 
             // CSS in den DOM prügeln
-            HTML.AddCssFile('treasury');
+            FH.HTML.AddCssFile('treasury');
 
             $('#treasury').on('click', '.button-reset', function () {
                 Treasury.Logs = [];
@@ -56,7 +56,7 @@ let Treasury = {
         let h = [];
 
         h.push('<strong>' + i18n('Boxes.Treasury.Message') + '</strong><br>');
-        h.push(i18n('Boxes.Treasury.RowNumber') + ': ' + HTML.Format(Treasury.Logs.length) + '<br>');
+        h.push(i18n('Boxes.Treasury.RowNumber') + ': ' + FH.HTML.Format(Treasury.Logs.length) + '<br>');
         h.push('<span class="btn button-reset">' + i18n('Boxes.Treasury.Reset') + '</span>');
         h.push('<span class="btn button-export">' + i18n('Boxes.Treasury.Export') + '</span>');
 
@@ -99,7 +99,7 @@ let Treasury = {
         let ExportString = h.join('\r\n');
         let BOM = "\uFEFF";
         let Blob1 = new Blob([BOM + ExportString], { type: "application/octet-binary;charset=ANSI" });
-        MainParser.ExportFile(Blob1, 'GuildTreasury-'+moment().format('YYYY-MM-DD')+'.csv');
+        FH.Main.ExportFile(Blob1, 'GuildTreasury-'+moment().format('YYYY-MM-DD')+'.csv');
     },
 
     /**

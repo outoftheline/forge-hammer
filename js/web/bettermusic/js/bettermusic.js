@@ -338,9 +338,9 @@ let betterMusic = {
         htmltext += `</table>`;
         
         if ($('#betterMusicDialog').length === 0) {
-            HTML.AddCssFile('bettermusic');
+            FH.HTML.AddCssFile('bettermusic');
     
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'betterMusicDialog',
                 title: i18n('Boxes.BetterMusic.Title'),
                 auto_close: true,
@@ -475,7 +475,7 @@ let betterMusic = {
     },
 
     CloseBox: () => {
-        HTML.CloseOpenBox('betterMusicDialog');
+        FH.HTML.CloseOpenBox('betterMusicDialog');
         betterMusic.close();
     },
 

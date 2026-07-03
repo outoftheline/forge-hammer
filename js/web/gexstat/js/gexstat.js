@@ -14,8 +14,8 @@ FH.proxy.addHandler('ChampionshipService', 'getOverview', (data, postData) => {
 // GEX member statistic
 FH.proxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
 	// Inno sends response data two times... so prevent double processing with ResponseBlockTime
-	if (data && data.responseData && (+MainParser.getCurrentDate() - GexStat.ResponseBlockTime) > 2000) {
-		GexStat.ResponseBlockTime = +MainParser.getCurrentDate();
+	if (data && data.responseData && (+FH.Main.getCurrentDate() - GexStat.ResponseBlockTime) > 2000) {
+		GexStat.ResponseBlockTime = +FH.Main.getCurrentDate();
 		GexStat.GexData = data.responseData; // Store GEX data for cost calculations
 		GexStat.UpdateData('participation', data.responseData);
 	}
@@ -76,22 +76,22 @@ let GexStat = {
 	BuildBox: (event) => {
 
 		if ($('#GexStat').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GexStat',
 				title: i18n('Boxes.GexStat.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'GexStat.GexStatSettings()'
+				settings: GexStat.GexStatSettings
 			});
 
 			GexStat.showPreloader('#GexStat');
 
-			HTML.AddCssFile('gexstat');
+			FH.HTML.AddCssFile('gexstat');
 		}
 		else if (!event) {
-			HTML.CloseOpenBox('GexStat');
+			FH.HTML.CloseOpenBox('GexStat');
 			return;
 		}
 
@@ -165,7 +165,7 @@ let GexStat = {
 					participants: Object.values(rankingdata),
 					currentGuildID: ExtGuildID,
 					currentGuildRank: currentGuildRank,
-					lastupdate: MainParser.getCurrentDate()
+					lastupdate: FH.Main.getCurrentDate()
 				});
 
 				if ($('#GexStatBody').length)
@@ -215,7 +215,7 @@ let GexStat = {
 					countMember: countMember,
 					activeMembers: activeMembers,
 					currentGuildID: ExtGuildID,
-					lastupdate: MainParser.getCurrentDate()
+					lastupdate: FH.Main.getCurrentDate()
 				});
 
 				// Reset available GexWeeks
@@ -279,7 +279,7 @@ let GexStat = {
 			h.push(`<td class="td-rank"><span class="winner-rank rank-${rankClass}"><span>${participant.rank}</span></span></td>`);
 			h.push(`<td>` +
 				`<div class="clanflag"><img alt="" src="${srcLinks.get('/shared/clanflags/' + participant.flag + '.jpg', true)}" /></div>` +
-				`<div class="claninfo"><span class="clanname">${MainParser.GetGuildLink(participant['guildId'], participant['name'], participant['worldId'])}</span><br /> ` +
+				`<div class="claninfo"><span class="clanname">${FH.Main.GetGuildLink(participant['guildId'], participant['name'], participant['worldId'])}</span><br /> ` +
 				`<span class="clanworld">${participant.worldName}</span></div></td>`);
 			h.push(`<td class="progress"><div class="progbar rank-${rankClass}${stripedClass}" style="width: ${progressWidth}%"></div> ${participant.points}%</td>`);
 			h.push(`<td><div class="flex justify-content-between mbottom2"><div>${i18n('Boxes.GexStat.Rank')}: ${participant.worldrank} </div><div>${i18n('Boxes.GexStat.Member')}: ${participant.memberCount}</div></div>` +
@@ -340,7 +340,7 @@ let GexStat = {
 		let aEncounters = GexParticipation.countMember * base;
 		let processing = Number((sEncounters / aEncounters) * 100).toFixed(2);
 
-		h.push(`<div class="participation_overview justify-content-between"><div>${i18n('Boxes.GexStat.Points')}<br />${HTML.Format(GexParticipation.expeditionPoints)}</div>` +
+		h.push(`<div class="participation_overview justify-content-between"><div>${i18n('Boxes.GexStat.Points')}<br />${FH.HTML.Format(GexParticipation.expeditionPoints)}</div>` +
 			`<div class="text-center">${i18n('Boxes.GexStat.Member')}<br />${GexParticipation.countMember}</div>` +
 			`<div class="text-right">${i18n('Boxes.GexStat.Encounters')}<br />${sEncounters}/${aEncounters} ( ${processing}% )</div>` +
 			`</div>`);
@@ -363,11 +363,11 @@ let GexStat = {
 			let encounterClass = ' level' + level;
 			h.push(`<tr>`);
 			h.push(`<td class="text-center is-number" data-number="${member.rank}">${member.rank}</td>`);
-			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${HTML.i18nTooltip(i18n('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
-			h.push(`<td class="case-sensitive" data-text="${helper.str.cleanup(member.name)}">` +
+			h.push(`<td class="text-center is-number" data-number="${level}"><span class="level${encounterClass}" title="${FH.HTML.i18nTooltip(i18n('Boxes.GexStat.Level') + ' ' + level)}"></span></td>`);
+			h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(member.name)}">` +
 				`<div class="avatar"><img src="${srcLinks.GetPortrait(member.avatar)}" /></div>` +
-				`<div class="membername">${MainParser.GetPlayerLink(member.player_id, member.name)}</div></td>`);
-			h.push(`<td class="is-number" data-number="${member.expeditionPoints}">${HTML.Format(member.expeditionPoints)}</td>`);
+				`<div class="membername">${FH.Main.GetPlayerLink(member.player_id, member.name)}</div></td>`);
+			h.push(`<td class="is-number" data-number="${member.expeditionPoints}">${FH.HTML.Format(member.expeditionPoints)}</td>`);
 			h.push(`<td class="is-number" data-number="${level}">${level}</td>`);
 			h.push(`<td class="is-number" data-number="${member.solvedEncounters||0}">${member.solvedEncounters||0}/${base}</td>`);
 			h.push(`<td class="is-number" data-number="${member.trial||0}">${member.trial||0}</td>`);
@@ -457,7 +457,7 @@ let GexStat = {
 
 		}
 
-		await helper.loadChartJS();
+		await FH.helper.loadChartJS();
 
 		const series = await GexStat.GetChartSeries(CourseData);
 
@@ -663,7 +663,7 @@ let GexStat = {
 
 	DeleteOldData: async (deleteOlderThan) => {
 
-		let oldWeekTime = Math.floor(+MainParser.getCurrentDate() / 1000) - deleteOlderThan * 604800;
+		let oldWeekTime = Math.floor(+FH.Main.getCurrentDate() / 1000) - deleteOlderThan * 604800;
 		let db = GexStat.db;
 
 		db.transaction("rw", db.ranking, db.participation, async () => {
@@ -713,8 +713,8 @@ let GexStat = {
 		let disabledExport = '';
 		if (GexStat.CurrentStatGroup === 'Course') { disabledExport = ' disabled'; }
 
-		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
-			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
+		c.push(`<p class="text-left"><button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','csv')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}"${disabledExport}>CSV</button>` +
+			`<button class="btn" onclick="GexStat.ExportContent('${GexStat.CurrentStatGroup}','json')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}"${disabledExport}>JSON</button></p>`);
 		c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="GexStat.SettingsSaveValues()">${i18n('Boxes.GexStat.Save')}</button>`);
 		$('#GexStatSettingsBox').html(c.join(''));
 
@@ -910,7 +910,7 @@ let GexStat = {
 		}
 
 		let Blob1 = new Blob([BOM + FileContent], { type: filetype });
-		MainParser.ExportFile(Blob1, content + '.' + type);
+		FH.Main.ExportFile(Blob1, content + '.' + type);
 
 		$('#GexStatSettingsBox').fadeToggle('fast', function () {
 			$(this).remove();
@@ -1016,7 +1016,7 @@ let GExAttempts = {
 				GExAttempts.state.GEprogress = 0
 				FH.Storage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
-			}, (GExAttempts.state.deactivationTime-GameTime.get()) * 1000);
+			}, (GExAttempts.state.deactivationTime-FH.GameTime.get()) * 1000);
 		}
 
 		//set timer for GE activation if activation time known
@@ -1028,7 +1028,7 @@ let GExAttempts = {
 				GExAttempts.activationTimer = null
 				FH.Storage.setItem('GEx.state',JSON.stringify(GExAttempts.state))
 				GExAttempts.refreshGUI()
-			}, (GExAttempts.state.activationTime-GameTime.get()) * 1000);
+			}, (GExAttempts.state.activationTime-FH.GameTime.get()) * 1000);
 		}
 
 	},
@@ -1042,7 +1042,7 @@ let GExAttempts = {
 		let timer=3600000
 
 		if (time) {
-			timer = (time-GameTime.get()+3600)*1000
+			timer = (time-FH.GameTime.get()+3600)*1000
 			GExAttempts.last = time
 		} else {
 			let amount = Math.floor((moment().unix() - GExAttempts.last + 100)/3600)
@@ -1101,7 +1101,7 @@ let GexStockWarning = {
 		if (parts[0].part <= min) return
 		
 		if ($('#GexStockWarning').length === 0)	{
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GexStockWarning',
 				title: i18n('Settings.GexStockWarning.Title'),
 				auto_close: true,
@@ -1109,7 +1109,7 @@ let GexStockWarning = {
 				resize: true,
 				minimize: true,
 			});
-			HTML.AddCssFile('gexstat');
+			FH.HTML.AddCssFile('gexstat');
 		}
 		let h = `<table class="foe-table">`
 		for (let part of parts) {

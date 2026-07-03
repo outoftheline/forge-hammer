@@ -69,10 +69,10 @@ let CityMap = {
 	 */
 	AscendingBuildings: new Promise((resolve) => {
 		let timer = () => {
-			if (!MainParser.BuildingUpgrades) {
+			if (!FH.Main.BuildingUpgrades) {
 				setTimeout(timer,500)
 			} else {
-				resolve (Object.assign({},...Object.values(MainParser.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
+				resolve (Object.assign({},...Object.values(FH.Main.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
 			}
 		}
 
@@ -101,7 +101,7 @@ let CityMap = {
 		if(null !== outpostScale)
 			CityMap.map.outpostScale = parseInt(outpostScale);
 
-		let Data = MainParser.CityMapData;
+		let Data = FH.Main.CityMapData;
 		if (ActiveMap === "cultural_outpost") 
 			Data = CityMap.CulturalOutpost.data;
 		else if (ActiveMap === "era_outpost") 
@@ -116,9 +116,9 @@ let CityMap = {
 		}
 
 		if( $('#citymap-main').length < 1 ) {
-			HTML.AddCssFile('citymap');
+			FH.HTML.AddCssFile('citymap');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'citymap-main',
 				title: Title,
 				auto_close: true,
@@ -132,7 +132,7 @@ let CityMap = {
 			}, 100);
 		}
 		else if (!event) {
-			HTML.CloseOpenBox('citymap-main');
+			FH.HTML.CloseOpenBox('citymap-main');
 			return;
 		}
 
@@ -146,7 +146,7 @@ let CityMap = {
 	 * Prepares and initializes the main UI box and sidebar for the City Map.
 	 *
 	 * This function:
-	 * - Sets up the HTML structure for the map container and sidebar.
+	 * - Sets up the FH.HTML.structure for the map container and sidebar.
 	 * - Initializes map scale and perspective (view) settings from local storage.
 	 * - Adds event listeners for view changes and scale adjustments.
 	 * - Configures filters and action buttons (e.g., meta info copy, submit box).
@@ -159,7 +159,8 @@ let CityMap = {
 	PrepareBox: (Title,elemId="citymap-main")=> {	
 		let oB = $('#'+elemId+'Body'),
 			wrapper = $('<div id="citymap-wrapper" />'),
-			menu = $('<div id="city-map-menu" />');
+			menu = $('<div id="city-map-menu" />'),
+			menuBottom = $('<div id="city-map-menu-bottom" />');
 
 		/* scale */
 		let scaleUnit = CityMap.map.scale;
@@ -223,9 +224,10 @@ let CityMap = {
 		// Button for submit Box
 		if (ActiveMap === 'main') {
 			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ i18n('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
-			menu.append(
+			menuBottom.append(
 				$('<div class="btn-group" />')
-					.append($('<button class="btn ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
+					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
+					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(i18n('Boxes.CityMap.SendToPlanner')))
 			);
 		}
 		oB.append(wrapper);
@@ -236,7 +238,7 @@ let CityMap = {
 				$("#sidebar").append(CityMap.showQIBuildingList());
 			}
 
-		wrapper.append(menu);
+		wrapper.append(menu).append(menuBottom);
 
 		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost") 
 			$("#sidebar").append(CityMap.showOutpostBuildings());
@@ -333,7 +335,7 @@ let CityMap = {
 			let x = (buildings[b]['x'] || 0) - xOffset;
 			let y = (buildings[b]['y'] || 0) - yOffset;
 			let CityMapEntity = buildings[b],
-				d = MainParser.CityEntities[CityMapEntity['cityentity_id']],
+				d = FH.Main.CityEntities[CityMapEntity['cityentity_id']],
 				BuildingSize = CityMap.GetBuildingSize(CityMapEntity),
 
 				xx = (parseInt(x) * CityMap.map.gridSize),
@@ -347,7 +349,7 @@ let CityMap = {
 				if (ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
-				let collectionString = HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
+				let collectionString = FH.HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
 				let f = $('<span />').addClass('entity ' + d['type'] + collectSoon).css({
 					width: xsize + 'em',
 					height: ysize + 'em',
@@ -394,7 +396,7 @@ let CityMap = {
 		out += '<div class="productions">';
 		for (let [prod, value] of Object.entries(CityMap.QI.stats.resources)) {
 			out += '<span class="'+prod+'">'+srcLinks.icons(prod);
-				out += HTML.Format(value);
+				out += FH.HTML.Format(value);
 			out += "</span> ";
 		}
 		out += '</div><div class="boosts">';
@@ -441,7 +443,7 @@ let CityMap = {
 		}
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)){
-			let building = CityMap.setQIBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setQIBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 			
@@ -478,8 +480,8 @@ let CityMap = {
 			if (building.production !== null) {
 				if (building.type === "goods" || building.type === "military") {
 					out += (building.type === "goods" ? "+20 = " : "+10 = ")
-					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
-					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
+					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+FH.HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
+					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+FH.HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
 				}
 				else {
 					let euphoriaBoost = CityMap.QI.stats.euphoriaBoost;
@@ -497,7 +499,7 @@ let CityMap = {
 							boost = 0;
 						}
 						let boostedValue = Math.round(value*(euphoriaBoost+(boost/100)))
-						out += srcLinks.icons(prod)+HTML.Format(boostedValue)+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(boostedValue)+" ";
 						CityMap.QI.stats.resources[prod] += boostedValue*building.count;
 					}
 				}
@@ -609,7 +611,7 @@ let CityMap = {
 
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)) {
-			let building = CityMap.setOutpostBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setOutpostBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 		}
@@ -644,7 +646,7 @@ let CityMap = {
 				out += "<td>";
 				if (building.production !== null) {
 					for (let [prod, value] of Object.entries(building.production)) {
-						out += srcLinks.icons(prod)+HTML.Format(Math.round(value))+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+" ";
 					}
 				}
 				out += "</td></tr>";
@@ -733,7 +735,7 @@ let CityMap = {
 		if (ActiveMap === 'OtherPlayer')
 			buildingData = CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData))
 		else
-			buildingData = CityBuildings.createBuildings(Object.values(MainParser.CityMapData))
+			buildingData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 
 		// find highest rating in all buildings, do not include roads
 		let buildingsWithoutStreets = Object.values(buildingData).filter((x) => x.type !== "street");
@@ -775,7 +777,7 @@ let CityMap = {
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
 						(building.rating?.totalScore*100 <= (rating30) ? ' rating30' : '')));
 			
-			let f = $('<span '+ MainParser.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
+			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
 				width: xsize + 'em',
 				height: ysize + 'em',
 				left: x + 'em',
@@ -947,7 +949,7 @@ let CityMap = {
 			let str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.buildingAreas[type]}</span>`;
 
 			if (type === 'street') {
-				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
+				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
 			}
 			str = `<li>${str}</li>`;
 			areaStats.push(str);
@@ -1037,11 +1039,11 @@ let CityMap = {
 		$('#grid-outer').toggleClass('showLimited');
 
 		if ($('#citymapExtra').length !== 0) {
-			HTML.CloseOpenBox('citymapExtra');
+			FH.HTML.CloseOpenBox('citymapExtra');
 			return;
 		}
 		
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'citymapExtra',
 			title: i18n('Boxes.CityMap.limited'),
 			dragdrop: true,
@@ -1050,7 +1052,7 @@ let CityMap = {
 		});
 		
 		let limitedBuildings = [];
-		for (let building of Object.values(MainParser.CityBuildingsData)) {
+		for (let building of Object.values(FH.Main.CityBuildingsData)) {
 			if (!building.isLimited) continue;
 			limitedBuildings.push(building);
 		}
@@ -1102,17 +1104,17 @@ let CityMap = {
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
                 break;
             default:
-                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(MainParser.CityMapData);
+                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
-				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
                 break;
         }
-        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
 
-        helper.str.copyToClipboard(
+        FH.helper.str.copyToClipboard(
             JSON.stringify(data)
         ).then(() => {
-            HTML.ShowToastMsg({
+            FH.HTML.ShowToastMsg({
                 head: i18n('Boxes.CityMap.ToastHeadCopyData'),
                 text: i18n('Boxes.CityMap.ToastBodyCopyData'),
                 type: 'info',
@@ -1122,8 +1124,31 @@ let CityMap = {
 	},
 
 
+	openPlanner: () => {
+		let region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
+		let data = { region };
+
+		switch (ActiveMap) {
+			case 'guild_raids':
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+				break;
+			default:
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
+				break;
+		}
+
+		FH.Main.sendExtMessage({
+			type: 'storeData',
+			key: 'foe_planner_pending',
+			data: data
+		}).catch(err => console.error('openPlanner: failed to hand off data', err));
+	},
+
+
 	GetBuildingSize: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		let Ret = {};
 
@@ -1178,7 +1203,7 @@ let CityMap = {
 	 * @returns {number|string} - The era id for the building
 	 */
 	GetBuildingEra: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		// Great building
 		if (CityEntity['type'] === 'greatbuilding') {
@@ -1254,7 +1279,7 @@ let CityMap = {
 
 
 // // // // // // // // // // // // //
-// Data for MainParser.CityBuildingsData
+// Data for FH.Main.CityBuildingsData
 // // // // // // // // // // // // //
 let CityBuildings = {
 	
@@ -1574,7 +1599,7 @@ let CityBuildings = {
 			}
 		}
 		if (withAlly) {
-			let allyStats = MainParser.Allies.getProd(data.id||0)
+			let allyStats = FH.Main.Allies.getProd(data.id||0)
 			if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
 				(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
 					let boost = {
@@ -1632,7 +1657,7 @@ let CityBuildings = {
 		
 		if (state === "producing") {
 			if (data.cityentity_id.includes("CastleSystem")) {
-				return { at: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt, in: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
+				return { at: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt, in: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
 			}
 			return { at: data?.state?.next_state_transition_at, in: data?.state?.next_state_transition_in }
 		}
@@ -1754,7 +1779,7 @@ let CityBuildings = {
 			h = building.size.length,
 			setName = building.setBuilding.name,
 			adjacents = new Set(),
-			allBuildings = Object.values(MainParser.CityBuildingsData);
+			allBuildings = Object.values(FH.Main.CityBuildingsData);
 
 		const getB = (tx, ty) => {
 			return allBuildings.find(b =>
@@ -1815,7 +1840,7 @@ let CityBuildings = {
 				}
 			}
 			if (metaData.type === "main_building") { // add emissary production to town hall
-				MainParser.EmissaryService?.forEach(emissary => {
+				FH.Main.EmissaryService?.forEach(emissary => {
 					let resource = {
 						type: (emissary.bonus.type !== "unit" ? "resources" : emissary.bonus.type),
 						needsMotivation: false,
@@ -1823,7 +1848,7 @@ let CityBuildings = {
 					}
 					productions.push(resource)
 				})
-				MainParser.BonusService?.forEach(bonus => { // guild FP
+				FH.Main.BonusService?.forEach(bonus => { // guild FP
 					if (bonus.type === "daily_strategypoint") {
 						let resource = {
 							type: "resources",
@@ -1837,8 +1862,8 @@ let CityBuildings = {
 			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
 				let currentLevel = Castle.curLevel
 				era = CurrentEra 
-				if (MainParser.CastleSystemLevels[(currentLevel-1)] !== undefined)
-					MainParser.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
+				if (FH.Main.CastleSystemLevels[(currentLevel-1)] !== undefined)
+					FH.Main.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
@@ -2205,14 +2230,14 @@ let CityBuildings = {
 		if (metaData.components[era]) {
 			let lookupRewards = structuredClone(metaData.components[era].lookup?.rewards||{})
 			if (metaData.components?.AllAge?.chain) {
-				MainParser.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
+				FH.Main.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
 				})
 			}
 			let setId = this.setSetBuilding(metaData)?.name;
-			if (setId && MainParser.BuildingSets[setId]) {
-				MainParser.BuildingSets[setId].buildings.forEach(setBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || MainParser.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
+			if (setId && FH.Main.BuildingSets[setId]) {
+				FH.Main.BuildingSets[setId].buildings.forEach(setBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
 				})
 			}
 
@@ -2488,12 +2513,12 @@ let CityBuildings = {
 
 
 	getBuildingById(id) {
-		return Object.values(MainParser.CityBuildingsData).find(x => x.id === id)
+		return Object.values(FH.Main.CityBuildingsData).find(x => x.id === id)
 	},
 
 	
 	getBuildingByCoords(x,y) {	
-		return Object.values(MainParser.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
+		return Object.values(FH.Main.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
 	},
 
 
@@ -2661,30 +2686,30 @@ let CityBuildings = {
 	},
 
 
-	createBuildings(data=Object.values(MainParser.CityMapData),withAllies=true) {	
+	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=true) {	
 		if (ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
 
 		for (let building of data) {
 			if (ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
-			let metaData = Object.values(MainParser.CityEntities).find(x => x.id === building.cityentity_id)
+			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
 			if (ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
 			else
-				MainParser.CityBuildingsData[building.id] = newCityEntity
+				FH.Main.CityBuildingsData[building.id] = newCityEntity
 		}
 
-		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : MainParser.CityBuildingsData) 
+		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
 	},
 
 
 	createBuilding(metaData, era=CurrentEra, data={}, withAlly=true) {	
 		if (typeof(metaData)=="string") {
-			metaData=MainParser.CityEntities[metaData];
+			metaData=FH.Main.CityEntities[metaData];
 		}
 		let entity = {
 			player_id: data.player_id||0,

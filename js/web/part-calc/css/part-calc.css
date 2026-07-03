@@ -313,32 +313,19 @@
 }
 
 
-#calctest {
-	position: absolute;
-	top: 36px;
-	right: 0;
-	background-color: var(--black-65);
-	box-shadow: 0 0 50px 50px var(--black-65);
-	z-index: 555;
-	padding: 1em;
-	text-align: right;
-	width: max-content;
-	color: var(--beige);
+#calcReminder {
+	top: 20px;
 }
 
-#calctest b {
+#calcReminder b {
 	color: var(--text-highlight);
 }
 
-#calctest .content {
+#calcReminder .content {
     border-top: 1px solid var(--table-bg-hover);
 	padding: 2px;
 }
 
-#calctest .gbEntry {
-    text-shadow: 0 0 9px var(--black), 0 1px 6px var(--black);
-}
-
-#calctest .gbEntry:hover {
+#calcReminder .gbEntry:hover {
     text-decoration: line-through;
 }

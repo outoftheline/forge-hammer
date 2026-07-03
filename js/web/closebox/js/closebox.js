@@ -34,13 +34,13 @@ FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 });
 
 /**
- * @type {{ShowAllBoxes: CloseBox.ShowAllBoxes, CloseAllBoxes: CloseBox.CloseAllBoxes, SaveSettings: CloseBox.SaveSettings, InitSettings: CloseBox.InitSettings, HideAllBoxes: CloseBox.HideAllBoxes, Show: CloseBox.Show, Excludes: {BackgroundInfo: {inj: string, name: *}, LiveGildFighting: {inj: string, name: *}}, Settings: {ButtonSize: number, AutoHideOnBattle: boolean, Excludes: *[], BoxAlignment: number, HideAllButton: boolean, CloseAllButton: boolean}, BuildBox: CloseBox.BuildBox, CloseBoxSettings: CloseBox.CloseBoxSettings}}
+ * @type {{ShowAllBoxes: CloseBox.ShowAllBoxes, CloseAllBoxes: CloseBox.CloseAllBoxes, SaveSettings: CloseBox.SaveSettings, InitSettings: CloseBox.InitSettings, HideAllBoxes: CloseBox.HideAllBoxes, Show: CloseBox.Show, Excludes: {BackgroundInfo: {inj: string, name: *}, LiveGuildFighting: {inj: string, name: *}}, Settings: {ButtonSize: number, AutoHideOnBattle: boolean, Excludes: *[], BoxAlignment: number, HideAllButton: boolean, CloseAllButton: boolean}, BuildBox: CloseBox.BuildBox, CloseBoxSettings: CloseBox.CloseBoxSettings}}
  */
 let CloseBox = {
 
     Excludes: {
         BackgroundInfo: { name: i18n('Boxes.Infobox.Title'), inj: 'infobox' },
-        LiveGildFighting: { name: i18n('Menu.Gildfight.Title'), inj: 'guildfights' }
+        LiveGuildFighting: { name: i18n('Menu.Gildfight.Title'), inj: 'guildfights' }
     },
 
     Settings: {
@@ -75,17 +75,17 @@ let CloseBox = {
     BuildBox: () => {
         if ($('#CloseBox').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'CloseBox',
                 title: i18n('Boxes.CloseBox.Title'),
                 auto_close: false,
                 dragdrop: true,
                 resize: false,
                 minimize: false,
-                settings: 'CloseBox.CloseBoxSettings()'
+                settings: CloseBox.CloseBoxSettings
             });
 
-            HTML.AddCssFile('closebox');
+            FH.HTML.AddCssFile('closebox');
         }
 
         CloseBox.Show();

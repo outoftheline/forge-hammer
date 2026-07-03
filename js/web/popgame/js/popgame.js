@@ -133,9 +133,9 @@ let Popgame = {
         Popgame.rewardactive = 0;
         if ($('#Popgame').length === 0) {
             // CSS in den DOM prügeln
-            HTML.AddCssFile('popgame');
+            FH.HTML.AddCssFile('popgame');
             // Box in den DOM
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'Popgame',
                 'title': 'Popgame preview',//i18n('Boxes.Popgame.Title'),
                 'auto_close': true,
@@ -175,7 +175,7 @@ let Popgame = {
     },
 
     Close: () => {
-        HTML.CloseOpenBox('Popgame');
+        FH.HTML.CloseOpenBox('Popgame');
     },
 
     Update: () => {

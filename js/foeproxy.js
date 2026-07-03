@@ -93,7 +93,7 @@ if (typeof globalThis.FH == 'undefined') {
                     metaArray = url.substring(metaURLend).split('-', 2),
                     meta = metaArray[0];
 
-                MainParser.MetaIds[meta] = metaArray[1];
+                FH.Main.MetaIds[meta] = metaArray[1];
 
                 const metaHandler = FH.proxy._getMetaMap()[meta];
 

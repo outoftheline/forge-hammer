@@ -75,7 +75,7 @@ let BonusService = {
 	 */
 	InitBonus: (isGex = false)=> {
 		if($('#bonus-hud').length === 0){
-			HTML.AddCssFile('bonus-service');
+			FH.HTML.AddCssFile('bonus-service');
 
 			// wait 2s
 			BonusService.timeout = setTimeout(()=>{
@@ -246,7 +246,7 @@ let BonusService = {
 					si.addClass('bonus-blink');
 
 					if (bt[i] === 'donequests') {
-						helper.sounds.play("message");
+						FH.helper.sounds.play("message");
 					}
 
 					setTimeout(()=>{
@@ -261,11 +261,11 @@ let BonusService = {
 	 * Überprüft, ob ein Quest erledigt ist
 	 */
 	GetDoneQuestsCount: () => {
-		if (!MainParser.Quests) return 0;
+		if (!FH.Main.Quests) return 0;
 
 		let Ret = 0;
-		for (let i = 0; i < MainParser.Quests.length; i++) {
-			let Quest = MainParser.Quests[i];
+		for (let i = 0; i < FH.Main.Quests.length; i++) {
+			let Quest = FH.Main.Quests[i];
 			if (Quest['category'] === 'outpost') continue;
 			if (Quest['type'] === 'ReplayableSeason_Allies_Milestone') continue;
 			if (Quest['state'] === 'collectReward') Ret += 1;

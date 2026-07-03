@@ -137,7 +137,7 @@ let CompareFriendsThreads = {
 		*/
 
 		if ($('#friendsCompareBox').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'friendsCompareBox',
 				title: i18n('Boxes.CompareFriendsThreads.Title'),
 				auto_close: true,
@@ -146,10 +146,10 @@ let CompareFriendsThreads = {
 				resize: true,
 			});
 
-			HTML.AddCssFile('compare_friends_threads');
+			FH.HTML.AddCssFile('compare_friends_threads');
 
 		} else if(!rebuild) {
-			HTML.CloseOpenBox('friendsCompareBox');
+			FH.HTML.CloseOpenBox('friendsCompareBox');
 		}
 
 		// no threads visited
@@ -197,7 +197,7 @@ let CompareFriendsThreads = {
 
 			t.push(`<td>#${(parseInt(p) + 1)} <img style="max-width: 22px" src="${srcLinks.GetPortrait(Player['Avatar'])}" alt="${Player['PlayerName']}"> ` 
 				+ `${`<span class="activity activity_${Player['Activity']}"></span> ` 
-				+ MainParser.GetPlayerLink(Player['PlayerID'], Player['PlayerName'])}</td>`);
+				+ FH.Main.GetPlayerLink(Player['PlayerID'], Player['PlayerName'])}</td>`);
 
 			for(let x in CompareFriendsThreads.Threads)
 			{

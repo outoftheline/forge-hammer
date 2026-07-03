@@ -14,21 +14,21 @@ const PvPArena = {
     Show: () => {
         if ($('#PvPArena').length === 0) {
             // Box in den DOM
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'PvPArena',
                 title: i18n('Boxes.PvPArena.Title'),
                 auto_close: true,
                 minimize: true,
                 dragdrop: true,
                 resize: true,
-                settings: 'PvPArena.ShowSettings()',
+                settings: PvPArena.ShowSettings,
 			    active_maps:"main"
             });
 
             // CSS in den DOM
-            HTML.AddCssFile('pvparena');
+            FH.HTML.AddCssFile('pvparena');
         } else {
-            HTML.CloseOpenBox('PvPArena');
+            FH.HTML.CloseOpenBox('PvPArena');
         }
 
         PvPArena.BuildBox();
@@ -94,7 +94,7 @@ const PvPArena = {
         for (let i = 0; i < PvPArena[PvPArena.activeTable].length; i++) {
             h.push(`<tr>`);
             h.push(`<td><div class="${PvPArena[PvPArena.activeTable][i].type}"></div></td>`);
-            h.push(`<td class="" data-text="${helper.str.cleanup(PvPArena[PvPArena.activeTable][i].playerName)}">${PvPArena[PvPArena.activeTable][i].playerName}</td>`);
+            h.push(`<td class="" data-text="${FH.helper.str.cleanup(PvPArena[PvPArena.activeTable][i].playerName)}">${PvPArena[PvPArena.activeTable][i].playerName}</td>`);
             h.push(`<td class="is-number text-right text-${PvPArena[PvPArena.activeTable][i].rankingPointsChange < 0 ? 'danger' : 'success'}" data-number="${PvPArena[PvPArena.activeTable][i].rankingPointsChange}">${PvPArena[PvPArena.activeTable][i].rankingPointsChange}</td>`);
             h.push(`</tr>`)
         }

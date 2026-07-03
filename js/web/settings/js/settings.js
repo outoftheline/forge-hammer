@@ -51,9 +51,9 @@ let Settings = {
 	BuildBox: (activeTab = null, activeSubTab = null) => {
 		if ($('#SettingsBox').length < 1) {
 
-			HTML.AddCssFile('settings');
+			FH.HTML.AddCssFile('settings');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'SettingsBox',
 				title: i18n('Boxes.Settings.Title'),
 				auto_close: true,
@@ -61,7 +61,7 @@ let Settings = {
 			});
 
 		} else {
-			HTML.CloseOpenBox('SettingsBox');
+			FH.HTML.CloseOpenBox('SettingsBox');
 		}
 
 		Settings.BuildBody(activeTab, activeSubTab);
@@ -317,7 +317,7 @@ let Settings = {
 			blob1 = new Blob([json], { type: "application/json;charset=utf-8" }),
 			file = `${ExtWorld}-${ExtPlayerID}.json`;
 
-		MainParser.ExportFile(blob1, file);
+		FH.Main.ExportFile(blob1, file);
 	},
 
 
@@ -329,7 +329,7 @@ let Settings = {
 		for (let index = 0; index < _menu.MenuOptions.length; index++) {
 			const element = _menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
-				dp.push('<option value="' + element + '"' + (MainParser.SelectedMenu === element ? ' selected' : '') + '>' + i18n('Menu.' + element) + '</option>');
+				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + i18n('Menu.' + element) + '</option>');
 			}
 		}
 
@@ -455,7 +455,7 @@ let Settings = {
 			}
 		});
 
-		HTML.ShowToastMsg({
+		FH.HTML.ShowToastMsg({
 			head: i18n('Boxes.Settings.DeletedBoxCoordsHead'),
 			text: i18n('Boxes.Settings.DeletedBoxCoordsBody'),
 			type: 'success',
@@ -483,17 +483,17 @@ let Settings = {
 		let dp = [];
 
 		dp.push('<select class="setting-dropdown" id="change-lang">');
-		for (let iso in Languages.PossibleLanguages) {
-			if (!Languages.PossibleLanguages.hasOwnProperty(iso)) {
+		for (let iso in FH.Languages.PossibleLanguages) {
+			if (!FH.Languages.PossibleLanguages.hasOwnProperty(iso)) {
 				break;
 			}
 
-			dp.push('<option value="' + iso + '"' + (MainParser.Language === iso ? ' selected' : '') + '>' + Languages.PossibleLanguages[iso] + '</option>');
+			dp.push('<option value="' + iso + '"' + (FH.Main.Language === iso ? ' selected' : '') + '>' + FH.Languages.PossibleLanguages[iso] + '</option>');
 		}
 		dp.push('</select>');
 
 		if (FH.Storage.getItem('user-language') !== "de") {
-			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
+			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="FH.Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
 		}
 
 		$('#SettingsBoxBody').on('change', '#change-lang', function () {
@@ -529,7 +529,7 @@ let Settings = {
 		$('#SettingsBoxBody').on('change', '#changeSkin', function () {
 			let skin = $(this).val();
 			FH.Storage.setItem('HammerSkin', skin);
-			HTML.ChangeSkinCssFile(skin);
+			FH.HTML.ChangeSkinCssFile(skin);
 		});
 
 		return dp.join('');

@@ -309,13 +309,13 @@ let Stats = {
     },
 
 	DatePickerObj: null,
-	DatePickerStart: moment(MainParser.getCurrentDate()).subtract(6, 'days'),
-	DatePickerEnd: moment(MainParser.getCurrentDateTime()),//.toDate(),
+	DatePickerStart: moment(FH.Main.getCurrentDate()).subtract(6, 'days'),
+	DatePickerEnd: moment(FH.Main.getCurrentDateTime()),//.toDate(),
 
 	minDateFilter: null,
-	maxDateFilter: moment(MainParser.getCurrentDate()).toDate(),
-	DatePickerFrom: null, //moment(MainParser.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
-	DatePickerTo: null, //moment(MainParser.getCurrentDateTime()),//.format('YYYY-MM-DD'),
+	maxDateFilter: moment(FH.Main.getCurrentDate()).toDate(),
+	DatePickerFrom: null, //moment(FH.Main.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
+	DatePickerTo: null, //moment(FH.Main.getCurrentDateTime()),//.format('YYYY-MM-DD'),
 
 	lockDates: [],
 	TodayEntries: null,
@@ -345,14 +345,14 @@ let Stats = {
 				'minimize': true
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 			//moment.locale(18n('Local'));
-			HTML.AddCssFile('stats');
-			HTML.AddCssFile('unit');
+			FH.HTML.AddCssFile('stats');
+			FH.HTML.AddCssFile('unit');
 		}
 		else if (!event)
 		{
-			HTML.CloseOpenBox('stats');
+			FH.HTML.CloseOpenBox('stats');
 			return;
 		}
 
@@ -482,7 +482,7 @@ let Stats = {
 							</div>`);
 
 		Stats.updateOptions();
-		await helper.loadChartJS();
+		await FH.helper.loadChartJS();
 		await Stats.updateCharts(Stats.DatePickerStart, Stats.DatePickerEnd);
 	},
 
@@ -506,17 +506,17 @@ let Stats = {
 				Stats.DatePickerObj = new Litepicker({
 					element: document.getElementById('StatsDatePicker'),
 					format: i18n('Date'),
-					lang: MainParser.Language,
+					lang: FH.Main.Language,
 					singleMode: false,
-					maxDate: MainParser.getCurrentDateTime(),
+					maxDate: FH.Main.getCurrentDateTime(),
 					showWeekNumbers: true,
 					endDate: Stats.DatePickerTo,
 					startDate: Stats.DatePickerFrom,
 					resetButton: true,
 					onSelect: async function (start, end) {
 						// get now if day is today
-						if (end.getDate() === MainParser.getCurrentDate().getDate() && end.getMonth() === MainParser.getCurrentDate().getMonth() && end.getYear() === MainParser.getCurrentDate().getYear()) 
-							end = MainParser.getCurrentDate();
+						if (end.getDate() === FH.Main.getCurrentDate().getDate() && end.getMonth() === FH.Main.getCurrentDate().getMonth() && end.getYear() === FH.Main.getCurrentDate().getYear()) 
+							end = FH.Main.getCurrentDate();
 						else
 							// otherwise, take end of day for end date
 							end.setHours(23);
@@ -708,8 +708,8 @@ let Stats = {
 
 	formatRange: ()=> {
 		let text = undefined;
-		let dateStart = moment(MainParser.getCurrentDateTime()).subtract(10, 'days');
-		let dateEnd = moment(MainParser.getCurrentDateTime());
+		let dateStart = moment(FH.Main.getCurrentDateTime()).subtract(10, 'days');
+		let dateEnd = moment(FH.Main.getCurrentDateTime());
 
 		if (Stats.DatePickerFrom !== null && Stats.DatePickerTo !== null) {
 			dateStart = moment(Stats.DatePickerFrom);
@@ -1318,7 +1318,7 @@ let Stats = {
 											: '';
 								return `<li class="flex between">
 									<span class="legend">${img} <span class="stats-tooltip-swatch" style="background:${color};"></span> ${era} ${ds.label}:</span>
-									<b>${HTML.Format(val)}</b>
+									<b>${FH.HTML.Format(val)}</b>
 								</li>`;
 							});
 
@@ -1552,7 +1552,7 @@ let Stats = {
 					return `<span class="stats-legend-item ${hidden} clickable" data-index="${i}">
 						<span class="stats-legend-swatch" style="background:${color};"></span>
 						${pointImage ? `<span class="stats-legend-img">${pointImage}</span>` : ''}
-						<span class="stats-legend-label">${label}: ${HTML.Format(serieData[i].y)} (${pct}%)</span>
+						<span class="stats-legend-label">${label}: ${FH.HTML.Format(serieData[i].y)} (${pct}%)</span>
 					</span>`;
 				}).join('');
 
@@ -1708,7 +1708,7 @@ let Stats = {
 			};
 			return acc;
 		}, {});
-		const timeNow = MainParser.getCurrentDate();
+		const timeNow = FH.Main.getCurrentDate();
 
 		await IndexDB.getDB();
 
@@ -1729,7 +1729,7 @@ let Stats = {
 	addReward: async (type,amount,reward) => {
 		//console.log(`add ${type} -  ${reward}: ${amount}`);
 		IndexDB.db.statsRewards.add({
-			date: MainParser.getCurrentDate(),
+			date: FH.Main.getCurrentDate(),
 			type: type,
 			amount: amount,
 			reward: reward
@@ -1749,7 +1749,7 @@ let Stats = {
 		if (!GuildFights.CurrentGBGRound) return;
 
 		if ($('#StatsGBG').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'StatsGBG',
 				title: i18n('Boxes.GuildFights.Stats.Title'),
 				auto_close: true,
@@ -1769,12 +1769,12 @@ let Stats = {
 			});
 		}
 		else {
-			HTML.CloseOpenBox('StatsGBG');
+			FH.HTML.CloseOpenBox('StatsGBG');
 			return;
 		}
 
-		HTML.AddCssFile('stats');
-		await helper.loadChartJS();
+		FH.HTML.AddCssFile('stats');
+		await FH.helper.loadChartJS();
 
 		$('#StatsGBGBody').html(`
 			<div class="tabs">
@@ -1846,7 +1846,7 @@ let Stats = {
 		});
 
 		let canvas = document.createElement('canvas');
-		canvas.width = 850;
+		canvas.width = 1050;
 		canvas.height = 450;
 		$('#StatsGBGTabGuilds').empty().append(canvas)
 			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
@@ -1945,7 +1945,7 @@ let Stats = {
 
 						if (i < rankedGuilds.length - 1) {
 							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
-							h.push(`<span class="text-smaller">${HTML.Format(diff)}</span>`);
+							h.push(`<span class="text-smaller">${FH.HTML.Format(diff)}</span>`);
 						}
 					}
 
@@ -1994,7 +1994,7 @@ let Stats = {
 		});
 
 		let canvas = document.createElement('canvas');
-		canvas.width = 850;
+		canvas.width = 1050;
 		canvas.height = 450;
 		$('#StatsGBGTabPlayers').empty().append(canvas)
 			.append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />'))
@@ -2097,7 +2097,7 @@ let Stats = {
 									<span class="stats-tooltip-swatch" style="background:${dataSet.borderColor};"></span>
 									${img} <span>${dataSet.label}:</span>
 								</div>
-								<div class="stats-tooltip-value">${date}: <b>${HTML.Format(item.parsed.y)}</b></div>`;
+								<div class="stats-tooltip-value">${date}: <b>${FH.HTML.Format(item.parsed.y)}</b></div>`;
 
 							let canvasRect = chart.canvas.getBoundingClientRect();
 							let tabRect = document.getElementById('StatsGBGTabPlayers').getBoundingClientRect();
@@ -2194,7 +2194,7 @@ let StockAlarm = {
 
 	trigger: (alm) => {
 		StockAlarm.triggered.push({type:alm.type,id:alm.id})
-		HTML.ShowToastMsg({
+		FH.HTML.ShowToastMsg({
 			head: i18n('Boxes.LowStock.LowStockHeader'),
 			text: replace(replace(i18n('Boxes.LowStock.LowStockMessage'),'%name%',alm.name),'%amount%',alm.value),
 			type: 'warning',
@@ -2242,9 +2242,9 @@ let StockAlarm = {
 		StockAlarm.OptionsA=OA.join();
 		StockAlarm.OptionsT=OT.join();
 		
-		HTML.AddCssFile('stats');
+		FH.HTML.AddCssFile('stats');
         
-        HTML.Box({
+        FH.HTML.Box({
             id: 'LowStock',
             title: i18n('Boxes.LowStock.Title'),
             auto_close: true,

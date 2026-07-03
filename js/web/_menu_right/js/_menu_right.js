@@ -111,7 +111,7 @@ let _menu_right = {
 	CheckButtons: async () => {
 		let activeIdx = 0;
 
-		await ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
+		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
 
 		$('.hud-btn').click(function () {
 			activeIdx = $(this).index('.hud-btn');
@@ -192,7 +192,7 @@ let _menu_right = {
 
 				$('#forgehammer-hud').removeClass('is--sorting');
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
 					head: i18n('Menu.SaveMessage.Title'),
 					text: i18n('Menu.SaveMessage.Desc'),

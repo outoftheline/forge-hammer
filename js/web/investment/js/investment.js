@@ -13,7 +13,7 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 
 	if (data['requestMethod'] !== 'getContributions')
 	{
-		Investment.RequestBlockTime = +MainParser.getCurrentDate();
+		Investment.RequestBlockTime = +FH.Main.getCurrentDate();
 	}
 
 	if (data['requestMethod'] === 'getContributions')
@@ -25,7 +25,7 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 		Investment.Data = data['responseData'];
 
 		Investment.UpdateData(Investment.Data, true).then((e) => {
-		if (Settings.GetSetting('ShowInvestments') && (+MainParser.getCurrentDate() - Investment.RequestBlockTime) > 2000)
+		if (Settings.GetSetting('ShowInvestments') && (+FH.Main.getCurrentDate() - Investment.RequestBlockTime) > 2000)
 			{
 				Investment.BuildBox(true);
 			}
@@ -45,20 +45,20 @@ let Investment = {
 
 	BuildBox: (event)=> {
 		if ($('#Investment').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'Investment',
 				title: i18n('Boxes.Investment.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'Investment.ShowInvestmentSettings()'
+				settings: Investment.ShowInvestmentSettings
 			});
 
-			HTML.AddCssFile('investment');
+			FH.HTML.AddCssFile('investment');
 		}
 		else if(!event) {
-			HTML.CloseOpenBox('Investment');
+			FH.HTML.CloseOpenBox('Investment');
 			return;
 		}
 
@@ -143,7 +143,7 @@ let Investment = {
 		b.push(`<div id="total-fp" class="text-center">${i18n('Boxes.Investment.TotalFP')}<strong class="total-storage-invest">0</strong></div>`);
 		
 		if (showMedals === 1) {
-			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
+			b.push('<div id="total-medals" class="text-center"><span class="invest-tooltip icon medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.MedalsProfit')) + '"></span><strong class="total-medals-reward">0</strong></div>');
 		}
 		b.push(`<div id="hidden-bar" class="hide text-center"><img class="invest-tooltip" src="${FH.extUrl}js/web/investment/images/unvisible.png" title="${i18n('Boxes.Investment.HiddenGB')}" onclick="Investment.ToggleHidden()" /> <strong class="hidden-elements">0</strong></div>`);
 
@@ -166,33 +166,33 @@ let Investment = {
 
 		if (showEntryDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + i18n('Boxes.Investment.Overview.EntryTime') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + i18n('Boxes.Investment.Overview.EntryTime') + '</th>');
 		}
 
 		if (showInvestmentIncreaseDate)
 		{
-			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + i18n('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
+			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + i18n('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
 		}
 
 		h.push('<th class="is-number" data-type="invest-group">' + i18n('Boxes.Investment.Overview.Progress') + '</th>');
 
 		if (showRestFp)
 		{
-			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.RestFPDesc')) + '">' + i18n('Boxes.Investment.Overview.RestFP') + '</th>');
+			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.RestFPDesc')) + '">' + i18n('Boxes.Investment.Overview.RestFP') + '</th>');
 		}
 
 		h.push('<th class="is-number text-center" data-type="invest-group">&nbsp;</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.InvestedDesc')) + '">' + i18n('Boxes.Investment.Overview.Invested') + '</th>' +
-			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.ProfitDesc')) + '" >' + i18n('Boxes.Investment.Overview.Profit') + '</th>');
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.InvestedDesc')) + '">' + i18n('Boxes.Investment.Overview.Invested') + '</th>' +
+			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.ProfitDesc')) + '" >' + i18n('Boxes.Investment.Overview.Profit') + '</th>');
 		
 		if(showMedals)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Medals')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Medals')) + '"></span></th>');
 		}
 		
 		if(showBlueprints)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.HTML.i18nTooltip(i18n('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
 		}
 		
 		h.push('<th class="no-sort"></th></tr></thead><tbody class="invest-group">');
@@ -239,7 +239,7 @@ let Investment = {
 				history = JSON.parse(contribution['fphistory'] || false);
 				for (let i in history) {
 					if (history.hasOwnProperty(i)) {
-						if ((+MainParser.getCurrentDate() - 300 * 1000) < new Date(history[i].date).getTime())
+						if ((+FH.Main.getCurrentDate() - 300 * 1000) < new Date(history[i].date).getTime())
 						{
 							newerClass = 'new';
 						}
@@ -259,8 +259,8 @@ let Investment = {
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
-				`<td class="case-sensitive" data-text="${helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${MainParser.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
-			h.push('<td class="case-sensitive" data-text="' + helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
+			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${i18n('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
 			if (showEntryDate) {
@@ -293,12 +293,12 @@ let Investment = {
 			
 			if(showMedals)
 			{
-				h.push(`<td class="is-number text-center gbmedals" data-number="${Medals}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${HTML.Format(Medals)}</b></td>`);
+				h.push(`<td class="is-number text-center gbmedals" data-number="${Medals}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${FH.HTML.Format(Medals)}</b></td>`);
 			}
 			
 			if(showBlueprints)
 			{
-				h.push(`<td class="is-number text-center gbblueprints" data-number="${Blueprints}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${HTML.Format(Blueprints)}</b></td>`);
+				h.push(`<td class="is-number text-center gbblueprints" data-number="${Blueprints}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${FH.HTML.Format(Blueprints)}</b></td>`);
 			}
 
 			h.push('<td></td></tr>');
@@ -311,7 +311,7 @@ let Investment = {
 			let uptodateClass = 'uptodate';
 
 			let date = moment(lastupdate).unix();
-			let actdate = moment(MainParser.getCurrentDate()).unix();
+			let actdate = moment(FH.Main.getCurrentDate()).unix();
 			let datediff = actdate - date;
 			let updrequTitle = i18n('Boxes.Investment.UpToDate');
 
@@ -445,7 +445,7 @@ let Investment = {
 				blueprints: Investment['blueprints'],
 				increase: Investment['increase'],
 				ishidden: Investment['ishidden'],
-				date: MainParser.getCurrentDate()
+				date: FH.Main.getCurrentDate()
 			});
 		}
 		else {
@@ -467,12 +467,12 @@ let Investment = {
 
 	UpdateData: async (LGData, FullSync) => {
 
-		let arc = 1 + (MainParser.ArkBonus / 100);
+		let arc = 1 + (FH.Main.ArkBonus / 100);
 		let allGB = await IndexDB.db.investhistory.where('id').above(0).keys();
 		let UpdatedList = false;
 		let playerSyncGbKeys = null;
 		let arcLevelCheck = JSON.parse(FH.Storage.getItem('InvestmentArcBonus'));
-		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != MainParser.ArkBonus ? true : false;
+		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != FH.Main.ArkBonus ? true : false;
 
 		for (let i in LGData)
 		{
@@ -513,9 +513,9 @@ let Investment = {
 				let isHidden = 0;
 
 				if (undefined !== LGData[i]['reward']) {
-					Medals = MainParser.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
-					Blueprints = MainParser.round(LGData[i]['reward']['blueprints'] !== undefined ? LGData[i]['reward']['blueprints'] * arc : 0);
-					CurrentErtrag = MainParser.round(LGData[i]['reward']['strategy_point_amount'] !== undefined ? LGData[i]['reward']['strategy_point_amount'] * arc : 0);
+					Medals = FH.Main.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
+					Blueprints = FH.Main.round(LGData[i]['reward']['blueprints'] !== undefined ? LGData[i]['reward']['blueprints'] * arc : 0);
+					CurrentErtrag = FH.Main.round(LGData[i]['reward']['strategy_point_amount'] !== undefined ? LGData[i]['reward']['strategy_point_amount'] * arc : 0);
 					Profit = CurrentErtrag;
 				}
 
@@ -545,7 +545,7 @@ let Investment = {
 
 					let data = {
 						current_progress: CurrentProgress,
-						date: MainParser.getCurrentDate(),
+						date: FH.Main.getCurrentDate(),
 						increase: increase
 					}
 
@@ -629,9 +629,9 @@ let Investment = {
 		// Set Update Date + ArcBonus in local Storage
 		if(FullSync){
 			let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
-			InvestmentSettings['lastupdate'] = MainParser.getCurrentDate();
+			InvestmentSettings['lastupdate'] = FH.Main.getCurrentDate();
 			FH.Storage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
-			FH.Storage.setItem('InvestmentArcBonus', MainParser.ArkBonus);
+			FH.Storage.setItem('InvestmentArcBonus', FH.Main.ArkBonus);
 		}
 	},
 
