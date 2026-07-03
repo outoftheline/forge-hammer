@@ -26,7 +26,7 @@ Translation = {
 
 			FH.HTML.Box({
 				id: 'Translation',
-				title: i18n('Boxes.Translation.Title'),
+				title: FH.t('Boxes.Translation.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -34,31 +34,31 @@ Translation = {
 			});		
 			let html = `
 				<div id="TranslationHead" class="p5">
-					<label for="TargetLanguage">${i18n('Boxes.Translation.TargetLanguage')}</label>
+					<label for="TargetLanguage">${FH.t('Boxes.Translation.TargetLanguage')}</label>
 					<select id="TargetLanguage">
-						<option value="" disabled selected>${i18n('Boxes.Translation.SelectLanguage')}...</option>
+						<option value="" disabled selected>${FH.t('Boxes.Translation.SelectLanguage')}...</option>
 						${Object.entries(Languages.PossibleLanguages).map(([code, name])=>`<option value="${code}">${name}</option>`).join('')}
 					</select>
-					<input type="text" id="TranslationSearch" placeholder="${i18n('Boxes.Translation.SearchPlaceholder')}" length="50"/>
-					<label for="ComparisonLanguage">${i18n('Boxes.Translation.ComparisonLanguage')}</label>
+					<input type="text" id="TranslationSearch" placeholder="${FH.t('Boxes.Translation.SearchPlaceholder')}" length="50"/>
+					<label for="ComparisonLanguage">${FH.t('Boxes.Translation.ComparisonLanguage')}</label>
 					<select id="ComparisonLanguage">
 						${Object.entries(Languages.PossibleLanguages).map(([code, name])=>`<option value="${code}" ${code === 'de' ? 'selected' : ''}>${name}</option>`).join('')}
 					</select>
 					<select id="CopyReference">
-						${Translation.CopyRefOptions.map((x)=>`<option value="${x}" ${Translation.CopyReference==x ? 'selected':""}>${i18n('Boxes.Translation.Reference.'+x)}</option>`).join("")}
+						${Translation.CopyRefOptions.map((x)=>`<option value="${x}" ${Translation.CopyReference==x ? 'selected':""}>${FH.t('Boxes.Translation.Reference.'+x)}</option>`).join("")}
 					</select>
 					<br />
 					<input type="checkbox" id="ShowOnlyMissing" />
-					<label for="ShowOnlyMissing">${i18n('Boxes.Translation.ShowOnlyMissing')}</label>
+					<label for="ShowOnlyMissing">${FH.t('Boxes.Translation.ShowOnlyMissing')}</label>
 					<input type="checkbox" id="ShowOnlyUpdated" />
-					<label for="ShowOnlyUpdated">${i18n('Boxes.Translation.ShowOnlyUpdated')}</label>
+					<label for="ShowOnlyUpdated">${FH.t('Boxes.Translation.ShowOnlyUpdated')}</label>
 				</div>
 				<table id="TranslationTable" class="foe-table">
 					<thead>
 						<tr>
-							<th>${i18n('Boxes.Translation.Key')}</th>
-							<th>${i18n('Boxes.Translation.Reference')}</th>
-							<th>${i18n('Boxes.Translation.Target')}</th>
+							<th>${FH.t('Boxes.Translation.Key')}</th>
+							<th>${FH.t('Boxes.Translation.Reference')}</th>
+							<th>${FH.t('Boxes.Translation.Target')}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -83,9 +83,9 @@ Translation = {
 						</ul>
 					</div>
 					<div class="p5">
-						<span class="btn btn-default" id="CopyJSON">${i18n('Boxes.Translation.CopyJSON')}</span>
-						<span class="btn btn-default" id="TempStorage">${i18n('Boxes.Translation.TempStorage')}</span>
-						<span class="btn btn-default" id="ClearStorage">${i18n('Boxes.Translation.ClearStorage')}</span>
+						<span class="btn btn-default" id="CopyJSON">${FH.t('Boxes.Translation.CopyJSON')}</span>
+						<span class="btn btn-default" id="TempStorage">${FH.t('Boxes.Translation.TempStorage')}</span>
+						<span class="btn btn-default" id="ClearStorage">${FH.t('Boxes.Translation.ClearStorage')}</span>
 					</div>
 				</div>
 			`
@@ -159,7 +159,7 @@ Translation = {
 			let newValue = textarea.val();
 			if (newValue.trim() === '') newValue = '';
 			if (newValue.length < originalValue.length) {
-				if (!confirm(i18n('Boxes.Translation.EditValuePrompt'))) {
+				if (!confirm(FH.t('Boxes.Translation.EditValuePrompt'))) {
 					newValue = originalValue;
 				}
 			}

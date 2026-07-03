@@ -30,7 +30,7 @@ let Outposts = {
 		if( $('#outpostConsumables').length === 0 ) {
 			let args = {
 				id: 'outpostConsumables',
-				title: i18n('Boxes.Outpost.Title'),
+				title: FH.t('Boxes.Outpost.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -196,7 +196,7 @@ let Outposts = {
 
 		// FH.HTML.erstellen
 
-		$('#outpostConsumablesHeader > .title').text(i18n('Boxes.Outpost.TitleShort') + OutpostData.contentName);
+		$('#outpostConsumablesHeader > .title').text(FH.t('Boxes.Outpost.TitleShort') + OutpostData.contentName);
 
 		/** output FH.HTML.teile-liste
 		 * @type {string[]}
@@ -206,12 +206,12 @@ let Outposts = {
 		// Kopfzeile
 
 		// summen checkbox
-		t.push('<p class="info-line"><span><label>' + i18n('Boxes.Outpost.ShowSums') + '<input type="checkbox" onclick="Outposts.asSum(this.checked)"'+(displaySums?' checked':'')+'/></label></span><span>');
+		t.push('<p class="info-line"><span><label>' + FH.t('Boxes.Outpost.ShowSums') + '<input type="checkbox" onclick="Outposts.asSum(this.checked)"'+(displaySums?' checked':'')+'/></label></span><span>');
 
 		// Durchlauf Informationen
 		if (currentRun) {
 			t.push(
-				FH.HTML.i18nReplacer(i18n('Boxes.Outpost.infoLine'), {
+				FH.helper.str.Replacer(FH.t('Boxes.Outpost.infoLine'), {
 					runNumber: (currentRun.id||0)+1,
 					chanceX4: FH.Main.round(currentRun.productionBonusProbability * 100)
 				})
@@ -244,7 +244,7 @@ let Outposts = {
 					t.push(
 						'<td>'
 						+ '<input type="checkbox" onclick="Outposts.listAllTiles(this.checked)"'+(displayAllTiles?' checked':'')+'/>'
-						+ i18n('Boxes.Outpost.nextTile')
+						+ FH.t('Boxes.Outpost.nextTile')
 						+ '</td>'
 					);
 				} else {
@@ -258,7 +258,7 @@ let Outposts = {
 						t.push('<td class="text-center">'
 							+ '<label><input type="radio" value="#off" name="foe_helper_'+tileID+'" '
 							+ (plannedTiles[tileID] == null ? ' checked' : '')
-							+ '/><span class="outpost_tile_off">'+i18n('Boxes.Outpost.tileNotPlanned')+'</span></label>'
+							+ '/><span class="outpost_tile_off">'+FH.t('Boxes.Outpost.tileNotPlanned')+'</span></label>'
 							+ '</td>'
 						);
 					} else {
@@ -299,8 +299,8 @@ let Outposts = {
 
 		// Überschriften
 		t.push('<tr>');
-		t.push('<th>' + i18n('Boxes.Outpost.TitleBuildings') + '</th>');
-		t.push('<th class="text-center">' + i18n('Boxes.Outpost.TitleFree') + '</th>');
+		t.push('<th>' + FH.t('Boxes.Outpost.TitleBuildings') + '</th>');
+		t.push('<th class="text-center">' + FH.t('Boxes.Outpost.TitleFree') + '</th>');
 
 		// Güter durchgehen
 		for (let resourceID of resourceIDs)
@@ -441,7 +441,7 @@ let Outposts = {
 			if (found) {
 				t.push('<tr class="total-row">');
 
-				t.push('<td><strong>' + i18n('Boxes.Outpost.ExpansionsSum') + '</strong></td><td></td>');
+				t.push('<td><strong>' + FH.t('Boxes.Outpost.ExpansionsSum') + '</strong></td><td></td>');
 
 				for (let resourceID of resourceIDs) {
 					const resourceCost = plannedTilesCostSum[resourceID];
@@ -481,7 +481,7 @@ let Outposts = {
 		// Benötigt
 		t.push('<tr class="total-row">');
 
-		t.push('<td>' + i18n('Boxes.Outpost.DescRequired') + '</td><td></td>');
+		t.push('<td>' + FH.t('Boxes.Outpost.DescRequired') + '</td><td></td>');
 
 		for (let resourceID of resourceIDs) {
 			t.push('<td class="text-center">' + FH.HTML.Format(sums[resourceID]) + '</td>');
@@ -492,7 +492,7 @@ let Outposts = {
 		// Vorhanden
 		t.push('<tr class="resource-row">');
 
-		t.push('<td>' + i18n('Boxes.Outpost.DescInStock') + '</td><td></td>');
+		t.push('<td>' + FH.t('Boxes.Outpost.DescInStock') + '</td><td></td>');
 
 		for (let resourceID of resourceIDs) {
 			t.push('<td class="text-center">' + FH.HTML.Format(currStock[resourceID]) + '</td>');
@@ -504,7 +504,7 @@ let Outposts = {
 		// Überschuss/Fehlt
 		t.push('<tr class="total-row">');
 
-		t.push('<td><strong>' + i18n('Boxes.Outpost.DescStillMissing') + '</strong></td><td colspan=""></td>');
+		t.push('<td><strong>' + FH.t('Boxes.Outpost.DescStillMissing') + '</strong></td><td colspan=""></td>');
 
 		for (let resourceID of resourceIDs) {
 			let difference = currStock[resourceID] - sums[resourceID];
@@ -512,7 +512,7 @@ let Outposts = {
 			if (currentRun) {
 				difference2 = (resourceID !== goodProductionResourceId) ? Math.floor((difference)/(1 + 3*currentRun.productionBonusProbability)) : currStock[resourceID] - Math.floor((sums[resourceID])/(1 + 3*currentRun.productionBonusProbability));
 			}
-			t.push('<td class="text-center text-' + (difference < 0 ? 'danger' : 'success') + ((resourceID !== 'diplomacy' && difference < 0 && difference2 != null) ? '" title="' + FH.HTML.Format(difference2) + " " + i18n('Boxes.Outpost.including4x'): '') + '">' + FH.HTML.Format(difference) + '</td>');
+			t.push('<td class="text-center text-' + (difference < 0 ? 'danger' : 'success') + ((resourceID !== 'diplomacy' && difference < 0 && difference2 != null) ? '" title="' + FH.HTML.Format(difference2) + " " + FH.t('Boxes.Outpost.including4x'): '') + '">' + FH.HTML.Format(difference) + '</td>');
 			
 		}
 
@@ -637,7 +637,7 @@ let Outposts = {
 			winHtml = `<!DOCTYPE html>
 						<html>
 							<head id="popout-${id}-head">
-								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
+								<title>PopOut Test - ${FH.t('Boxes.Outpost.Title')}</title>
 								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
 								<link rel="stylesheet" href="${FH.extUrl}css/${skinCss}.css">
 								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">

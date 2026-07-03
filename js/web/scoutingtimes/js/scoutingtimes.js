@@ -158,18 +158,18 @@ let scoutingTimes = {
         }
 
         let i = 0;
-        let htmltext = `<table class="foe-table"><tr><th>${i18n('Boxes.scoutingTimes.ProvinceName')}</th><th>${i18n('Boxes.scoutingTimes.ScoutingCost')}</th><th>${i18n('Boxes.scoutingTimes.ScoutingTime')}</th></tr>`;
+        let htmltext = `<table class="foe-table"><tr><th>${FH.t('Boxes.scoutingTimes.ProvinceName')}</th><th>${FH.t('Boxes.scoutingTimes.ScoutingCost')}</th><th>${FH.t('Boxes.scoutingTimes.ScoutingTime')}</th></tr>`;
         
         while (toscout.length > 0) {
             let p = toscout.pop();
             let province = scoutingTimes.Provinces[p];
             if (province.isScouted) {
-                htmltext += `<tr class="scouted" title="${i18n('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td><td></td><td></td></tr>`;
+                htmltext += `<tr class="scouted" title="${FH.t('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td><td></td><td></td></tr>`;
                 i += 1;
             }
             if ((province.travelTime|0)>0) {
                 i += 1;
-                htmltext += `<tr title="${i18n('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td>`;
+                htmltext += `<tr title="${FH.t('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td>`;
                 htmltext += (p === scoutingTimes.target) ? `<td class="scouting">...<img  src="${srcLinks.get("/city/gui/citymap_icons/tavern_shop_boost_scout_small_icon.png", true)}" alt="">...` : `<td><img  src="${srcLinks.get("/shared/icons/money.png", true)}" alt=""> ${province.travelTime > 1 ? scoutingTimes.numberWithCommas(province.scoutingCost) : 0}</td>`;
                 htmltext += `<td><img  src="${srcLinks.get("/shared/icons/icon_time.png", true)}" alt="">`;
                 htmltext += ` ${scoutingTimes.format(province.travelTime)}`;
@@ -178,7 +178,7 @@ let scoutingTimes = {
         }
        
         htmltext += `</table>`;
-        //htmltext += `<div style="color:var(--text-bright); text-align:center;">${i18n('Boxes.scoutingTimes.Warning')}</div>`
+        //htmltext += `<div style="color:var(--text-bright); text-align:center;">${FH.t('Boxes.scoutingTimes.Warning')}</div>`
         
         if (i > 0) {
             if ($('#mapScoutingTimesDialog').length === 0) {
@@ -186,7 +186,7 @@ let scoutingTimes = {
         
                 FH.HTML.Box({
                     id: 'mapScoutingTimesDialog',
-                    title: i18n('Boxes.scoutingTimes.Title'),
+                    title: FH.t('Boxes.scoutingTimes.Title'),
                     auto_close: true,
                     dragdrop: true,
                     minimize: true,
@@ -287,8 +287,8 @@ let scoutingTimes = {
 		let autoOpen = Settings.GetSetting('ShowScoutingTimes');
 
         let h = [];
-        h.push(`<p><label><input id="autoStartScout" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><button onclick="scoutingTimes.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><label><input id="autoStartScout" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+        h.push(`<p><button onclick="scoutingTimes.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#mapScoutingTimesDialogSettingsBox').html(h.join(''));
     },

@@ -194,8 +194,8 @@ let _menu_right = {
 
 				FH.HTML.ShowToastMsg({
 					show: 'force',
-					head: i18n('Menu.SaveMessage.Title'),
-					text: i18n('Menu.SaveMessage.Desc'),
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
 					type: 'success',
 					hideAfter: 5000
 				});

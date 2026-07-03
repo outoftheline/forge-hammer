@@ -236,13 +236,13 @@ let betterMusic = {
     },
     playStatus: false,
     Scenes: {
-        "main": {Name: i18n('Boxes.BetterMusic.Main'), TitleList: []},
-        "settlement":{Name: i18n('Boxes.BetterMusic.Settlement'), TitleList: []},
-        "colony":{Name: i18n('Boxes.BetterMusic.Colony'), TitleList: []},
-        "ge":{Name: i18n('Boxes.BetterMusic.GE'), TitleList: []},
-        "gbg":{Name: i18n('Boxes.BetterMusic.GBG'), TitleList: []},
-        "battle":{Name: i18n('Boxes.BetterMusic.Battle'), TitleList: []},
-        "map":{Name: i18n('Boxes.BetterMusic.Map'), TitleList: []},
+        "main": {Name: FH.t('Boxes.BetterMusic.Main'), TitleList: []},
+        "settlement":{Name: FH.t('Boxes.BetterMusic.Settlement'), TitleList: []},
+        "colony":{Name: FH.t('Boxes.BetterMusic.Colony'), TitleList: []},
+        "ge":{Name: FH.t('Boxes.BetterMusic.GE'), TitleList: []},
+        "gbg":{Name: FH.t('Boxes.BetterMusic.GBG'), TitleList: []},
+        "battle":{Name: FH.t('Boxes.BetterMusic.Battle'), TitleList: []},
+        "map":{Name: FH.t('Boxes.BetterMusic.Map'), TitleList: []},
     },
     PossibleTracks: {
         "FoE_CityTrack_Vs2": {Volume:1, Name:"Stone Age - Early Middle Ages", Age:1, Agelimit: 4},
@@ -295,31 +295,31 @@ let betterMusic = {
 
                 
         let htmltext = `<div class="flex">`;
-        htmltext += `<div id="musicSettingsGeneral" class="musicSettings"><h1>${i18n('Boxes.BetterMusic.GeneralSettings')}</h1>`;
-        htmltext += `<label for="musicSettingsVolume">${i18n('Boxes.BetterMusic.Volume')} <input id="musicSettingsVolume" type="range" min="0" max="1" step ="0.05" value="${betterMusic.Settings.Volume}" oninput="betterMusic.newVolume(Number(this.value))"></label> <br>`;
-        htmltext += `<input id="musicSettingsPlayOnClose" type="checkbox" ${betterMusic.Settings.PlayOnStart ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.PlayOnStart = this.checked"><label for="musicSettingsPlayOnClose">${i18n('Boxes.BetterMusic.Auto')}</label></div>`;
+        htmltext += `<div id="musicSettingsGeneral" class="musicSettings"><h1>${FH.t('Boxes.BetterMusic.GeneralSettings')}</h1>`;
+        htmltext += `<label for="musicSettingsVolume">${FH.t('Boxes.BetterMusic.Volume')} <input id="musicSettingsVolume" type="range" min="0" max="1" step ="0.05" value="${betterMusic.Settings.Volume}" oninput="betterMusic.newVolume(Number(this.value))"></label> <br>`;
+        htmltext += `<input id="musicSettingsPlayOnClose" type="checkbox" ${betterMusic.Settings.PlayOnStart ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.PlayOnStart = this.checked"><label for="musicSettingsPlayOnClose">${FH.t('Boxes.BetterMusic.Auto')}</label></div>`;
         
-        htmltext += `<div id="musicSettingsTitle" class="musicSettings"><h1>${i18n('Boxes.BetterMusic.TitleSettings')}</h1>`;
-        htmltext += `<label for="musicSettingsTransitionTime">${i18n('Boxes.BetterMusic.Transition')} <input id="musicSettingsTransitionTime" type="range" min="0" max="5000" step ="500" value="${betterMusic.Settings.TransitionTime}" oninput="betterMusic.Settings.TransitionTime = Number(this.value)"></label><br>`;
-        htmltext += `<input id="musicSettingsFinish" type="checkbox" ${betterMusic.Settings.Finish ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Finish = this.checked"><label for="musicSettingsFinish">${i18n('Boxes.BetterMusic.Finish')}</label></div>`;
+        htmltext += `<div id="musicSettingsTitle" class="musicSettings"><h1>${FH.t('Boxes.BetterMusic.TitleSettings')}</h1>`;
+        htmltext += `<label for="musicSettingsTransitionTime">${FH.t('Boxes.BetterMusic.Transition')} <input id="musicSettingsTransitionTime" type="range" min="0" max="5000" step ="500" value="${betterMusic.Settings.TransitionTime}" oninput="betterMusic.Settings.TransitionTime = Number(this.value)"></label><br>`;
+        htmltext += `<input id="musicSettingsFinish" type="checkbox" ${betterMusic.Settings.Finish ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Finish = this.checked"><label for="musicSettingsFinish">${FH.t('Boxes.BetterMusic.Finish')}</label></div>`;
         htmltext += `</div>`;
 
-        htmltext += `<div id="musicSettingsScenes" class="musicSettings"><h1 class="text-center">${i18n('Boxes.BetterMusic.SceneSettings')}</h1>`
+        htmltext += `<div id="musicSettingsScenes" class="musicSettings"><h1 class="text-center">${FH.t('Boxes.BetterMusic.SceneSettings')}</h1>`
         htmltext += `<div class="flex">`;
         htmltext += `<div class="text-right">`;
-        htmltext += `<label for="musicSettingsMainCity">${i18n('Boxes.BetterMusic.InCity')} </label><select id="musicSettingsMainCity" type="select" oninput="betterMusic.Settings.MainCity = this.selectedIndex"><option value="0" ${betterMusic.Settings.MainCity === 0 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.IgnoreEra')} </option><option value="1" ${betterMusic.Settings.MainCity === 1 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.ToEra')} </option><option value="2" ${betterMusic.Settings.MainCity === 2 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.CurrentEra')} </option></select><br>`;
-        htmltext += `<label for="musicSettingsColony">${i18n('Boxes.BetterMusic.InColony')} </label>`;
-        htmltext += `<select id="musicSettingsColony" type="select" oninput="betterMusic.Settings.Colony = this.selectedIndex"><option value="0" ${betterMusic.Settings.Colony === 0 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.IgnoreEra')}</option><option value="1" ${betterMusic.Settings.Colony === 1 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.ToEra')}</option><option value="2" ${betterMusic.Settings.Colony === 2 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.CurrentEra')}</option></select>`;
+        htmltext += `<label for="musicSettingsMainCity">${FH.t('Boxes.BetterMusic.InCity')} </label><select id="musicSettingsMainCity" type="select" oninput="betterMusic.Settings.MainCity = this.selectedIndex"><option value="0" ${betterMusic.Settings.MainCity === 0 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.IgnoreEra')} </option><option value="1" ${betterMusic.Settings.MainCity === 1 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.ToEra')} </option><option value="2" ${betterMusic.Settings.MainCity === 2 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.CurrentEra')} </option></select><br>`;
+        htmltext += `<label for="musicSettingsColony">${FH.t('Boxes.BetterMusic.InColony')} </label>`;
+        htmltext += `<select id="musicSettingsColony" type="select" oninput="betterMusic.Settings.Colony = this.selectedIndex"><option value="0" ${betterMusic.Settings.Colony === 0 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.IgnoreEra')}</option><option value="1" ${betterMusic.Settings.Colony === 1 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.ToEra')}</option><option value="2" ${betterMusic.Settings.Colony === 2 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.CurrentEra')}</option></select>`;
         htmltext += `</div>`;
         htmltext += `<div>`;
-        htmltext += `<input id="musicSettingsTavern" type="checkbox" ${betterMusic.Settings.Tavern ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Tavern = this.checked"><label for="musicSettingsTavern">${i18n('Boxes.BetterMusic.TavernT')}</label>`;
-        htmltext += `<input id="musicSettingsPvp" type="checkbox" ${betterMusic.Settings.Pvp ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Pvp = this.checked"><label for="musicSettingsPvp">${i18n('Boxes.BetterMusic.PvPT')}</label>`;
-        htmltext += `<input id="musicSettingsIgnoreSettlement" type="checkbox" ${betterMusic.Settings.IgnoreSettlement ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.IgnoreSettlement = this.checked"><label for="musicSettingsIgnoreSettlement">${i18n('Boxes.BetterMusic.IgnoreSettlement')}</label>`;
-        htmltext += `<input id="musicSettingsEvents" type="checkbox" ${betterMusic.Settings.Events ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Events = this.checked"><label for="musicSettingsEvents">${i18n('Boxes.BetterMusic.EventT')}</label>`;
+        htmltext += `<input id="musicSettingsTavern" type="checkbox" ${betterMusic.Settings.Tavern ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Tavern = this.checked"><label for="musicSettingsTavern">${FH.t('Boxes.BetterMusic.TavernT')}</label>`;
+        htmltext += `<input id="musicSettingsPvp" type="checkbox" ${betterMusic.Settings.Pvp ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Pvp = this.checked"><label for="musicSettingsPvp">${FH.t('Boxes.BetterMusic.PvPT')}</label>`;
+        htmltext += `<input id="musicSettingsIgnoreSettlement" type="checkbox" ${betterMusic.Settings.IgnoreSettlement ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.IgnoreSettlement = this.checked"><label for="musicSettingsIgnoreSettlement">${FH.t('Boxes.BetterMusic.IgnoreSettlement')}</label>`;
+        htmltext += `<input id="musicSettingsEvents" type="checkbox" ${betterMusic.Settings.Events ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Events = this.checked"><label for="musicSettingsEvents">${FH.t('Boxes.BetterMusic.EventT')}</label>`;
         htmltext += `</div>`;
         htmltext += `</div>`;
 
-        htmltext += `<table id="musicSettingsScenesX" class="foe-table"><caption style="font-weight: bold; font-size: initial; padding-top: 10px;">${i18n('Boxes.BetterMusic.Scenes')}</caption><thead class="sticky">><tr><th>${i18n('Boxes.BetterMusic.TitleName')}</th>`;
+        htmltext += `<table id="musicSettingsScenesX" class="foe-table"><caption style="font-weight: bold; font-size: initial; padding-top: 10px;">${FH.t('Boxes.BetterMusic.Scenes')}</caption><thead class="sticky">><tr><th>${FH.t('Boxes.BetterMusic.TitleName')}</th>`;
         
         for (let scene in betterMusic.Scenes) {
             htmltext += `<th><span>${betterMusic.Scenes[scene].Name}</span></th>`;
@@ -342,7 +342,7 @@ let betterMusic = {
     
             FH.HTML.Box({
                 id: 'betterMusicDialog',
-                title: i18n('Boxes.BetterMusic.Title'),
+                title: FH.t('Boxes.BetterMusic.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,

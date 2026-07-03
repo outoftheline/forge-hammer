@@ -44,7 +44,7 @@ let Recurring = {
 
             FH.HTML.Box({
                 'id': 'RecurringQuestsBox',
-                'title': i18n('Boxes.RecurringQuests.Title'),
+                'title': FH.t('Boxes.RecurringQuests.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -96,14 +96,14 @@ let Recurring = {
 	 */
     BuildBox: () => {
         let h = [];
-        h.push(`<div>${i18n('Boxes.RecurringQuests.Warning')}</div>`);
+        h.push(`<div>${FH.t('Boxes.RecurringQuests.Warning')}</div>`);
 
         h.push(`<table id="recurringTable" class="foe-table${!!Recurring.data.hideTasks?' hideTasks':''}">`);
 
         h.push('<thead class="sticky">');
         h.push('<tr>');
-        h.push(`<th onclick="Recurring.hideTasks()">${i18n('Boxes.RecurringQuests.Table.Quest')} ⇋</th>`);
-        h.push(`<th onclick="Recurring.hideTasks()">${i18n('Boxes.RecurringQuests.Table.Tasks')} ⇋</th>`);
+        h.push(`<th onclick="Recurring.hideTasks()">${FH.t('Boxes.RecurringQuests.Table.Quest')} ⇋</th>`);
+        h.push(`<th onclick="Recurring.hideTasks()">${FH.t('Boxes.RecurringQuests.Table.Tasks')} ⇋</th>`);
         h.push('<th><img src="' + srcLinks.get("/shared/icons/premium.png", true) + '" alt="" width="20px" height="20px">?</th>');
         h.push('</tr>');
         h.push('</thead>');
@@ -163,7 +163,7 @@ let Recurring = {
 
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<label><input type="checkbox" oninput="Recurring.SaveSettings(this.checked)" ${Recurring.data.showCounter?'checked':''}/>${i18n('Boxes.RecurringQuests.showCounter')}<label>`);
+        h.push(`<label><input type="checkbox" oninput="Recurring.SaveSettings(this.checked)" ${Recurring.data.showCounter?'checked':''}/>${FH.t('Boxes.RecurringQuests.showCounter')}<label>`);
         $('#RecurringQuestsBoxSettingsBox').html(h.join(''));
     },
 
@@ -182,9 +182,9 @@ let Recurring = {
                 let d= conditions.find(item => item.id==c).description;
                 let img= srcLinks.getQuest(conditions.find(item => item.id==c).iconType);
                 t += `<span>${tAdd} <img src="${img}"> ${d}</span>`;
-                tAdd = `<pre style="display:inline">&emsp;&emsp;</pre>${i18n('Boxes.RecurringQuests.OR')} `;
+                tAdd = `<pre style="display:inline">&emsp;&emsp;</pre>${FH.t('Boxes.RecurringQuests.OR')} `;
             }
-            tAdd = `${i18n('Boxes.RecurringQuests.AND')}`;
+            tAdd = `${FH.t('Boxes.RecurringQuests.AND')}`;
         }
         return t;
     },
@@ -195,9 +195,9 @@ let Recurring = {
             if (!groups[x]) continue;
             for (let c of groups[x].conditionIds) {
                 t += tAdd + conditions.find(item => item.id==c).description;
-                tAdd = `\n${i18n('Boxes.RecurringQuests.OR')} `;
+                tAdd = `\n${FH.t('Boxes.RecurringQuests.OR')} `;
             }
-            tAdd = `\n-------\n${i18n('Boxes.RecurringQuests.AND')} `;
+            tAdd = `\n-------\n${FH.t('Boxes.RecurringQuests.AND')} `;
         }
         return t;
     },

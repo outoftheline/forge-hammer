@@ -109,7 +109,7 @@ let shopAssist = {
         
 			FH.HTML.Box({
 				id: 'shopAssist',
-				title: i18n('Boxes.ShopAssist.Title'),
+				title: FH.t('Boxes.ShopAssist.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -130,15 +130,15 @@ let shopAssist = {
 		let newFilter = {};
 		for (let res of shopAssist.shopMeta[shopAssist.storeId].resources) {
 			newFilter[res] = shopAssist.currencyfilter[res] ?? true;
-			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${i18n('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${FH.HTML.Format(ResourceStock[res]||0)}${srcLinks.icons(res)}</span>`
+			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${FH.t('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${FH.HTML.Format(ResourceStock[res]||0)}${srcLinks.icons(res)}</span>`
 		}
 		shopAssist.currencyfilter = newFilter;
 		h += `<thead>
 				<tr>
 					<th colspan=5>
-						<input type="checkbox" id="shopAssistFav" class="clickable"><label for="shopAssistFav" class="clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyFavourites")}</label>
-						<input type="checkbox" id="shopAssistUnlock" class="clickable"><label for="shopAssistUnlock" class="clickable">&nbsp;${i18n("Boxes.ShopAssist.onlyUnlocked")}</label>
-						<input type="text" id="shopAssistSearch" placeholder="${i18n('General.Search')}">
+						<input type="checkbox" id="shopAssistFav" class="clickable"><label for="shopAssistFav" class="clickable">&nbsp;${FH.t("Boxes.ShopAssist.onlyFavourites")}</label>
+						<input type="checkbox" id="shopAssistUnlock" class="clickable"><label for="shopAssistUnlock" class="clickable">&nbsp;${FH.t("Boxes.ShopAssist.onlyUnlocked")}</label>
+						<input type="text" id="shopAssistSearch" placeholder="${FH.t('General.Search')}">
 					</th>
 					<th colspan=3>
 						${resources}
@@ -147,12 +147,12 @@ let shopAssist = {
 				<tr>
 					<th>★</th>
 					<th></th>
-					<th>${i18n("Boxes.ShopAssist.Item")}</th>
+					<th>${FH.t("Boxes.ShopAssist.Item")}</th>
 					<th>🔒</th>
-					<th>${i18n("Boxes.ShopAssist.Inventory")}</th>
-					<th>${i18n("Boxes.ShopAssist.Single")}</th>
-					<th>${i18n("Boxes.ShopAssist.Missing")}</th>
-					<th>${i18n("Boxes.ShopAssist.Max")}</th>
+					<th>${FH.t("Boxes.ShopAssist.Inventory")}</th>
+					<th>${FH.t("Boxes.ShopAssist.Single")}</th>
+					<th>${FH.t("Boxes.ShopAssist.Missing")}</th>
+					<th>${FH.t("Boxes.ShopAssist.Max")}</th>
 				</tr>
 			</thead>`
 		let hasFavourites =  Object.keys(shopAssist.favourites?.[shopAssist.storeId]||{}).length>0;
@@ -274,7 +274,7 @@ let shopAssist = {
 				</td>`
 				//costs full
 				if (neededFragments < slot.reward.requiredAmount) { 
-					let allTT = '<table class="foe-table shopAssistTable"><tr><th>' + i18n("Boxes.ShopAssist.Full") + `</th></tr><tr>`;
+					let allTT = '<table class="foe-table shopAssistTable"><tr><th>' + FH.t("Boxes.ShopAssist.Full") + `</th></tr><tr>`;
 					costs = "";
 					canBuy = true;
 					fullBuys = Math.floor(slot.reward.requiredAmount / slot.reward.amount);
@@ -320,7 +320,7 @@ let shopAssist = {
 			h += `</tr>`
 			//costs all
 			if (limitedBuys > 0 && limitedBuys < Infinity && limitedBuys > maxBuys) {
-				let allTT = '<table class="foe-table shopAssistTable"><tr><th>' + i18n("Boxes.ShopAssist.All") + `</th></tr><tr>`;
+				let allTT = '<table class="foe-table shopAssistTable"><tr><th>' + FH.t("Boxes.ShopAssist.All") + `</th></tr><tr>`;
 				costs = "";
 				canBuy = true;
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
@@ -522,12 +522,12 @@ let shopAssist = {
 
 		for (let b of buildingIds) {		
 			if (buildingIds.length<=limit) {
-				head +=`<td style="width:100%; vertical-align:top"><h2><span>${meta[b].name}  ${eff[b] ? `(${i18n("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
+				head +=`<td style="width:100%; vertical-align:top"><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
 				body += `<td style="width:100%; vertical-align:top">`;
 				body += await Tooltips.BuildingData(meta[b],CurrentEra,null, eff);
 				body += `</td>`
 			} else {
-				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${i18n("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`
+				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`
 			}
 		}
 		if (buildingIds.length<=limit) {
@@ -572,8 +572,8 @@ let shopAssist = {
 				let shopId = key.split("#")[0];
 				FH.HTML.ShowToastMsg({
 					show: 'force',
-					head: i18n('Boxes.ShopAssist.Shop') + ' - ' + (shopAssist.shopMeta?.[shopId]?.name||""),
-					text: i18n('Boxes.ShopAssist.canBeBought')+": " + slot.reward.name,
+					head: FH.t('Boxes.ShopAssist.Shop') + ' - ' + (shopAssist.shopMeta?.[shopId]?.name||""),
+					text: FH.t('Boxes.ShopAssist.canBeBought')+": " + slot.reward.name,
 					type: 'success',
 					hideAfter: 60000
 				});
@@ -586,8 +586,8 @@ let shopAssist = {
 		let autoOpen = Settings.GetSetting('ShowShopAssist');
 
         let h = [];
-        h.push(`<p><label><input id="shopAssistAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><button onclick="shopAssist.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><label><input id="shopAssistAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+        h.push(`<p><button onclick="shopAssist.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#shopAssistSettingsBox').html(h.join(''));
     },

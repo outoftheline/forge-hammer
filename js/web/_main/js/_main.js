@@ -33,7 +33,7 @@ if (duplicateDetected) {
 }
 
 setTimeout(() => {
-	if ((typeof i18n.create != "undefined" || !!(window.GetFights)) && !duplicateDetected) {
+	if ((typeof i18n != "undefined" || !!(window.GetFights)) && !duplicateDetected) {
 		DuplicateWarning();
 	}
 }, 5000);
@@ -124,10 +124,10 @@ let GameTime = {
 	}
 }
 
-let i18n = (key) => {
-	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || i18nData[key] || key;
+let TranslationData = null;
+let t = (key) => {
+	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key] || key;
 }
-let i18nData = null;
 
 (async () => {
 	try {
@@ -140,11 +140,12 @@ let i18nData = null;
 		if (FH.BaseData.GuiLng !== 'en') 
 			Object.assign(data, await fetch(FH.extUrl + 'js/web/_languages/json/' + FH.BaseData.GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
 
-		i18nData = data;
+		TranslationData = data;
 	} catch (err) {
-		console.error('i18n translation loading error:', err);
+		console.error('translation loading error:', err);
 	}
 })();
+FH.t = t;
 
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world
@@ -271,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Player- und Gilden-ID setzen
 	FH.proxy.addHandler('StartupService', 'getData', (data, postData) => {
         	
-		moment.locale(i18n('Local'));
+		moment.locale(FH.t('Local'));
 		window.addEventListener("error", function (e) {
 			console.error(e.error);
 			e.preventDefault();
@@ -925,7 +926,6 @@ let Main = {
 	DebugMode: false,
 	Language: 'en',
 	SelectedMenu: 'RightBar',
-	i18n: null,
 	BonusService: null,
 	EmissaryService: null,
 	PlayerPortraits: [],
@@ -981,8 +981,8 @@ let Main = {
 
 			FH.HTML.ShowToastMsg({
 				show: true,
-				head: i18n('Menu.NewVersion.Title'),
-				text: i18n('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
+				head: FH.t('Menu.NewVersion.Title'),
+				text: FH.t('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
 				type: 'success',
 				allowToastClose: true,
 				hideAfter: 30000,
@@ -1028,10 +1028,10 @@ let Main = {
 		if (timeout == longTimeout) {
 			let div = document.createElement('div');
 			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
-				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${i18n("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
-				<h2>Forge Hammer: ${i18n("DBCreationWarning.Title")}</h2> </br>
-				${i18n("DBCreationWarning.ExplanationLine1")}<br> 
-				${i18n("DBCreationWarning.ExplanationLine2")}</br></br>
+				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
+				<h2>Forge Hammer: ${FH.t("DBCreationWarning.Title")}</h2> </br>
+				${FH.t("DBCreationWarning.ExplanationLine1")}<br> 
+				${FH.t("DBCreationWarning.ExplanationLine2")}</br></br>
 				<div style="position:relative;height:75px;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>
 			</div>`;
 			document.body.appendChild(div);
@@ -1230,9 +1230,9 @@ let Main = {
 	 */
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let PlayerLink = FH.HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
+			let PlayerLink = FH.helper.str.Replacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				PlayerLink = FH.HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
+				PlayerLink = FH.helper.str.Replacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
 
 			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${FH.HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
 		}
@@ -1252,9 +1252,9 @@ let Main = {
 		if(!WorldId) WorldId = ExtWorld;
 
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = FH.HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			let GuildLink = FH.helper.str.Replacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = FH.HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
+				GuildLink = FH.helper.str.Replacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
 
 			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
 		}
@@ -1271,7 +1271,7 @@ let Main = {
 	 */
 	GetBuildingLink: (BuildingID, BuildingName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let BuildingLink = FH.HTML.i18nReplacer(BuildingsLinkFormat, {'buildingid': BuildingID });
+			let BuildingLink = FH.helper.str.Replacer(BuildingsLinkFormat, {'buildingid': BuildingID });
 
 			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${LinkIcon}</a>`;
 		}
@@ -1386,7 +1386,7 @@ let Main = {
 		});
 
 		ExtPlayerAvatar = d.portrait_id;
-		await ExistenceConfirmed('Main.CityEntities||srcLinks.FileList||Infoboard||EventHandler||i18nData');
+		await ExistenceConfirmed('Main.CityEntities||srcLinks.FileList||Infoboard||EventHandler||TranslationData');
 	
 		Infoboard.Init();
 		EventHandler.Init();
@@ -1497,7 +1497,7 @@ let Main = {
 			if ($('#AllyList').length === 0) {
 				FH.HTML.Box({
 					id: 'AllyList',
-					title: i18n('Boxes.AllyList.Title'),
+					title: FH.t('Boxes.AllyList.Title'),
 					auto_close: true,
 					dragdrop: true,
 					minimize: true,
@@ -1585,19 +1585,19 @@ let Main = {
 			})
 
 			html=`<div class="dark-bg">
-				<select id="AllyFilter"><option value="">${i18n('Boxes.AllyList.All')}</option>`
+				<select id="AllyFilter"><option value="">${FH.t('Boxes.AllyList.All')}</option>`
 				for (let r of Object.values(Main.Allies.rarities)) {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
 				}
 			html+=`</select></div>`
 			html+=`<table id="AllyListTable" class="foe-table">`
 			html+=`<thead class="sticky"><tr class="sorter-header sort2">
-							<th class="no-sort">${i18n('Boxes.AllyList.Ally')}</th>
-							<th class="is-number" data-type="ally-list">${i18n('Boxes.AllyList.Level')}</th>`;
+							<th class="no-sort">${FH.t('Boxes.AllyList.Ally')}</th>
+							<th class="is-number" data-type="ally-list">${FH.t('Boxes.AllyList.Level')}</th>`;
 							for (const b of boostList) {
 								html+= `<th class="is-number" data-type="ally-list"><span class="resicon ${b.type}-${b.feature}"></span></th>`
 							}
-					html+=`<th class="no-sort">${i18n('Boxes.AllyList.Building')}</th>
+					html+=`<th class="no-sort">${FH.t('Boxes.AllyList.Building')}</th>
 					</tr>
 				</thead>
 				<tbody class="ally-list">`;
@@ -1733,8 +1733,8 @@ let Main = {
 			let autoOpen = Settings.GetSetting('ShowAllyList');
 
 			let h = [];
-			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-			h.push(`<p><button onclick="Main.Allies.SaveSettings()" id="save-bghelper-settings" >${i18n('Boxes.Settings.Save')}</button></p>`);
+			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+			h.push(`<p><button onclick="Main.Allies.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 			$('#AllyListSettingsBox').html(h.join(''));
 		},
@@ -2195,7 +2195,7 @@ let Main = {
 			//create instant alert for currently expired buildings		
 			if (list.length > 0) {
 					const data = {
-					title: i18n("InactiveBuildingsAlert.title"),
+					title: FH.t("InactiveBuildingsAlert.title"),
 					body: list.map(x=>Main.CityEntities[Main.CityMapData[x].cityentity_id].name).join("\n"),
 					expires: moment().add(1,"seconds").valueOf(),
 					repeat: -1,
@@ -2218,7 +2218,7 @@ let Main = {
 				// set alerts for limited buildings that will run out in the future and that have no alert yet
 				if (!LB[building.id] && Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime) {
 					const data = {
-						title: i18n("InactiveBuildingsAlert.title"),
+						title: FH.t("InactiveBuildingsAlert.title"),
 						body: Main.CityEntities[Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.targetCityEntityId].name,
 						expires: (Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000,
 						repeat: -1,
@@ -2247,7 +2247,7 @@ let Main = {
 			if ($('#inactivesSettingsBox').length === 0) {
 				FH.HTML.Box({
 					id: 'inactivesSettingsBox',
-					title: i18n('Boxes.InactivesSettings.Title'),
+					title: FH.t('Boxes.InactivesSettings.Title'),
 					auto_close: true,
 					dragdrop: true,
 					minimize: true,
@@ -2261,15 +2261,15 @@ let Main = {
 
 		updateSettings:()=>{ 
 			let t=[];
-			//t.push(`<h2>${i18n('Boxes.InactivesSettings.Ignored')}</h2>`);
-			t.push(`<h2>${i18n('Boxes.InactivesSettings.Toggle')}</h2>`);
+			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.Ignored')}</h2>`);
+			t.push(`<h2>${FH.t('Boxes.InactivesSettings.Toggle')}</h2>`);
 			for (let id of Main.Inactives.ignore) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.NoAlert')}">🤐${Main.CityEntities[id].name}</span></br>`);
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.NoAlert')}">🤐${Main.CityEntities[id].name}</span></br>`);
 			}
-			//t.push(`<h2>${i18n('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
+			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
 			
 			for (let id of Main.Inactives.list) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.AlertActive')}">⚠️${Main.CityEntities[id].name}</span></br>`);
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.AlertActive')}">⚠️${Main.CityEntities[id].name}</span></br>`);
 			}
 			
 			
@@ -2308,7 +2308,6 @@ if (window.FHBgApiHandler !== undefined && window.FHBgApiHandler instanceof Func
 
 FH.Main = Main;
 FH.ExistenceConfirmed = ExistenceConfirmed;
-window.i18n = i18n;
 FH.GameTime = GameTime;
 
 console.log('Forge Hammer version ' + FH.BaseData.extVersion + ' started' + '. ID: ' + FH.BaseData.extID);

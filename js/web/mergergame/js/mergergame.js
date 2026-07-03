@@ -294,7 +294,7 @@ let mergerGame = {
 				blocker.id = 'mergerGameResetBlocker';
 				blocker.className = mergerGame.event+" helper-blocker";
 				blocker.src = srcLinks.get("/city/gui/great_building_bonus_icons/great_building_bonus_plunder_repel.png", true);
-				blocker.title = i18n("Boxes.MergerGame.KeysLeft."+mergerGame.event);
+				blocker.title = FH.t("Boxes.MergerGame.KeysLeft."+mergerGame.event);
 				$('#game_body')[0].append(blocker);
 				$('#mergerGameResetBlocker').on("click",()=>{$('#mergerGameResetBlocker').remove()});
 			} 
@@ -378,20 +378,20 @@ let mergerGame = {
 		}
 		html=``;
 		/*
-		html = `<table class="foe-table ${mergerGame.hideDaily ? 'hideDaily':''}" id="MGstatus"><tr><th title="${i18n("Boxes.MergerGame.Status.Title")}">${i18n("Boxes.MergerGame.Status")}</th>`
-		html += `<th onclick="$('#MGstatus').toggleClass('hideDaily'); mergerGame.hideDaily=!mergerGame.hideDaily" title="${i18n("Boxes.MergerGame.Round.Title")}">${i18n("Boxes.MergerGame.Round")}</th>`
-		html += `<th onclick="$('#MGstatus').toggleClass('hideDaily'); mergerGame.hideDaily=!mergerGame.hideDaily" title="${i18n("Boxes.MergerGame.Day.Title")}">${i18n("Boxes.MergerGame.Day")}</th>`
-		html += `<th style="border-left: 1px solid var(--border-tab)" title="${i18n("Boxes.MergerGame.Simulation.Title")}">${i18n("Boxes.MergerGame.Simulation")}</th>`
-		html += `<th colspan="2" style="border-left: 1px solid var(--border-tab)" title="${i18n("Boxes.MergerGame.NextSpawn.Title")}">${i18n("Boxes.MergerGame.NextSpawn")}</th></tr>`
+		html = `<table class="foe-table ${mergerGame.hideDaily ? 'hideDaily':''}" id="MGstatus"><tr><th title="${FH.t("Boxes.MergerGame.Status.Title")}">${FH.t("Boxes.MergerGame.Status")}</th>`
+		html += `<th onclick="$('#MGstatus').toggleClass('hideDaily'); mergerGame.hideDaily=!mergerGame.hideDaily" title="${FH.t("Boxes.MergerGame.Round.Title")}">${FH.t("Boxes.MergerGame.Round")}</th>`
+		html += `<th onclick="$('#MGstatus').toggleClass('hideDaily'); mergerGame.hideDaily=!mergerGame.hideDaily" title="${FH.t("Boxes.MergerGame.Day.Title")}">${FH.t("Boxes.MergerGame.Day")}</th>`
+		html += `<th style="border-left: 1px solid var(--border-tab)" title="${FH.t("Boxes.MergerGame.Simulation.Title")}">${FH.t("Boxes.MergerGame.Simulation")}</th>`
+		html += `<th colspan="2" style="border-left: 1px solid var(--border-tab)" title="${FH.t("Boxes.MergerGame.NextSpawn.Title")}">${FH.t("Boxes.MergerGame.NextSpawn")}</th></tr>`
 		//Energy/fooballs
-		html += `<tr><td title="${i18n("Boxes.MergerGame.Energy."+mergerGame.event)}">`
+		html += `<tr><td title="${FH.t("Boxes.MergerGame.Energy."+mergerGame.event)}">`
 		html += `<img src="${srcLinks.get(mergerGame.eventData[mergerGame.event].energy,true)}"></td>`
-		html += `<td title="${i18n("Boxes.MergerGame.EfficiencyTargetProgress."+mergerGame.event)+Math.floor(totalValue)+"/"+(Math.floor(mergerGame.state.energyUsed*targetEfficiency)||0)}">${mergerGame.state.energyUsed} </td>`
+		html += `<td title="${FH.t("Boxes.MergerGame.EfficiencyTargetProgress."+mergerGame.event)+Math.floor(totalValue)+"/"+(Math.floor(mergerGame.state.energyUsed*targetEfficiency)||0)}">${mergerGame.state.energyUsed} </td>`
 		html += `<td>${mergerGame.state.energyUsed+mergerGame.state.daily.energyUsed}</td>`
 		html += `<td style="border-left: 1px solid var(--border-tab)"></td>`
 		html += `<td colspan="2" style="border-left: 1px solid var(--border-tab)">${mergerGame.spawnCost}</td></tr>`
 		//Progress
-		html += `<tr><td title="${i18n("Boxes.MergerGame.ProgressCollected")}">`
+		html += `<tr><td title="${FH.t("Boxes.MergerGame.ProgressCollected")}">`
 		html += `<img src="${srcLinks.get(mergerGame.eventData[mergerGame.event].progress,true)}"></td>`
 		html += `<td>${mergerGame.state.progress} / ${mergerGame.state.maxProgress}</td>`
 		html += `<td>${mergerGame.state.progress + mergerGame.state.daily.progress}</td>`
@@ -399,7 +399,7 @@ let mergerGame = {
 		html += `<td title="min - max (avg)" style="border-left: 1px solid var(--border-tab); text-align:right">${mergerGame.simResult.progress.min} - ${mergerGame.simResult.progress.max}</td>`
 		html += `<td title="min - max (avg)" style="text-align:left">(${mergerGame.simResult.progress.average})</td></tr>`
 		//Keys/badges
-		html += `<tr><td title="${i18n("Boxes.MergerGame.Keys."+mergerGame.event)}">`
+		html += `<tr><td title="${FH.t("Boxes.MergerGame.Keys."+mergerGame.event)}">`
 		html += `<img src="${keyimg(mergerGame.colors[2],"full")}">`
 		html += `<img style="margin-left: -15px" src="${keyimg(mergerGame.colors[1],"full")}">`
 		html += `<img style="margin-left: -15px" src="${keyimg(mergerGame.colors[0],"full")}"></td>`
@@ -409,9 +409,9 @@ let mergerGame = {
 		html += `<td title="min - max (avg)" style="border-left: 1px solid var(--border-tab); text-align:right">${mergerGame.simResult.keys.min} - ${mergerGame.simResult.keys.max}</td>`
 		html += `<td title="min - max (avg)" style="text-align:left">(${mergerGame.simResult.keys.average})</td></tr>`
 		//Efficiency
-		html += `<tr><td title="${i18n("Boxes.MergerGame.Efficiency."+mergerGame.event)}">`
+		html += `<tr><td title="${FH.t("Boxes.MergerGame.Efficiency."+mergerGame.event)}">`
 		html += `<img src="${srcLinks.get(mergerGame.eventData[mergerGame.event].progress,true)}">/<img src="${srcLinks.get(mergerGame.eventData[mergerGame.event].energy,true)}"></td>`
-		html += `<td style="font-weight:bold; color: ${effcolor(efficiency)}" title="${i18n("Boxes.MergerGame.EfficiencyTotalProgress") + Math.floor(efficiency*mergerGame.settings.availableCurrency)}">${efficiency} </td>`
+		html += `<td style="font-weight:bold; color: ${effcolor(efficiency)}" title="${FH.t("Boxes.MergerGame.EfficiencyTotalProgress") + Math.floor(efficiency*mergerGame.settings.availableCurrency)}">${efficiency} </td>`
 		html += `<td style="font-weight:bold; color: ${effcolor(dailyEff)}">${dailyEff.toFixed(2)} </td>`
 		html += `<td style="border-left: 1px solid var(--border-tab); color: ${effcolor(simEff)}">${simEff}</td>`
 		html += `<td title="min - max (avg)" style="border-left: 1px solid var(--border-tab); text-align:right"><span style="color: ${effcolor(simMinEff)}">${simMinEff}</span> - <span style="color: ${effcolor(simMaxEff)}">${simMaxEff}</span></td>`
@@ -444,19 +444,19 @@ let mergerGame = {
 	ShowSettingsButton: () => {
         let h = [];
 		h.push(`<table class="foe-table">`)
-        //h.push(`<tr><td>${i18n('Boxes.MergerGame.KeyValue.'+mergerGame.event)}</td>`);
+        //h.push(`<tr><td>${FH.t('Boxes.MergerGame.KeyValue.'+mergerGame.event)}</td>`);
         //h.push(`<td><input type="Number" id="MGkeyValue" oninput="mergerGame.SaveSettings()" value="${mergerGame.settings.keyValue}"></td></tr>`);
-        //h.push(`<tr><td>${i18n('Boxes.MergerGame.availableCurrency.'+mergerGame.event)}</td>`);
+        //h.push(`<tr><td>${FH.t('Boxes.MergerGame.availableCurrency.'+mergerGame.event)}</td>`);
         //h.push(`<td><input type="Number" id="MGavailableCurrency" oninput="mergerGame.SaveSettings()" value="${mergerGame.settings.availableCurrency}"></td></tr>`);
-        //h.push(`<tr><td>${i18n('Boxes.MergerGame.targetProgress')}</td>`);
+        //h.push(`<tr><td>${FH.t('Boxes.MergerGame.targetProgress')}</td>`);
         //h.push(`<td><input type="Number" id="MGtargetProgress" oninput="mergerGame.SaveSettings()" value="${mergerGame.settings.targetProgress}"></td></tr>`);
-        //h.push(`<tr><td>${i18n('Boxes.MergerGame.hideOverlay')}</td>`);
+        //h.push(`<tr><td>${FH.t('Boxes.MergerGame.hideOverlay')}</td>`);
         //h.push(`<td><input type="checkbox" id="MGhideOverlay" oninput="mergerGame.SaveSettings()"${mergerGame.settings.hideOverlay ? ' checked' : ''}></td></tr>`);
-        //h.push(`<tr><td>${i18n('Boxes.MergerGame.useAverage')}</td>`);
+        //h.push(`<tr><td>${FH.t('Boxes.MergerGame.useAverage')}</td>`);
         //h.push(`<td><input type="Number" id="MGuseAverage" oninput="mergerGame.SaveSettings()" value="${mergerGame.settings.useAverage || 0}"></td></tr>`);
-        h.push(`<tr><td>${i18n('Boxes.MergerGame.opticalTaskWarning')}</td>`);
+        h.push(`<tr><td>${FH.t('Boxes.MergerGame.opticalTaskWarning')}</td>`);
         h.push(`<td><input type="checkbox" id="opticalTaskWarning" oninput="mergerGame.SaveSettings()"${mergerGame.settings.opticalTaskWarning ? ' checked' : ''}></td></tr>`);
-        h.push(`<tr><td>${i18n('Boxes.MergerGame.audibleTaskWarning')}</td>`);
+        h.push(`<tr><td>${FH.t('Boxes.MergerGame.audibleTaskWarning')}</td>`);
         h.push(`<td><input type="checkbox" id="audibleTaskWarning" oninput="mergerGame.SaveSettings()"${mergerGame.settings.audibleTaskWarning ? ' checked' : ''}></td></tr>`);
 		h.push(`</table>`)
         $('#mergerGameDialogSettingsBox').html(h.join(''));
@@ -508,14 +508,14 @@ let mergerGame = {
 			}, 200);
 			$(`<div id="mergerGameTaskWarning" class="mergerGameTaskWarning">
 					<div class="foeHelper">
-						${i18n("Global.BoxTitle")}
+						${FH.t("Global.BoxTitle")}
 					</div>
-					${i18n("Boxes.MergerGame.TaskReady")} ➤
+					${FH.t("Boxes.MergerGame.TaskReady")} ➤
 					<div class="CurrencyOverflowWarning">
-						${i18n("Boxes.MergerGame.CurrencyOverflowWarning")} ▲▲▲
+						${FH.t("Boxes.MergerGame.CurrencyOverflowWarning")} ▲▲▲
 					</div>
 					<div class="WorldChallengeOverflowWarning">
-						${i18n("Boxes.MergerGame.WorldChallengeOverflowWarning")} ▼▼▼
+						${FH.t("Boxes.MergerGame.WorldChallengeOverflowWarning")} ▼▼▼
 					</div>
 				</div>`)
 				.appendTo('body')

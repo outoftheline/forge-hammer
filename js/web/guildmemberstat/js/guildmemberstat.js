@@ -195,7 +195,7 @@ let GuildMemberStat = {
 		if ($('#GuildMemberStat').length === 0) {
 			FH.HTML.Box({
 				id: 'GuildMemberStat',
-				title: i18n('Boxes.GuildMemberStat.Title'),
+				title: FH.t('Boxes.GuildMemberStat.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -840,14 +840,14 @@ let GuildMemberStat = {
 		GuildMemberStat.hasUpdateProgress = false;
 
 		h.push('<div class="tabs dark-bg"><ul id="gmsTabs" class="horizontal">');
-		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'Member' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Member"><span>${i18n('Boxes.GuildMemberStat.GuildMembers')}</span></a></li>`);
-		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'Eras' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Eras"><span>${i18n('Boxes.GuildMemberStat.Eras')}</span></a></li>`);
-		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GreatBuildings' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GreatBuildings"><span>${i18n('Boxes.GuildMemberStat.GreatBuildings')}</span></a></li>`);
-		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GuildBuildings' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GuildBuildings"><span>${i18n('Boxes.GuildMemberStat.GuildBuildings')}</span></a></li>`);
-		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GuildGoods' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GuildGoods"><span>${i18n('Boxes.GuildMemberStat.GuildGoods')}</span></a></li>`);
+		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'Member' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Member"><span>${FH.t('Boxes.GuildMemberStat.GuildMembers')}</span></a></li>`);
+		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'Eras' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Eras"><span>${FH.t('Boxes.GuildMemberStat.Eras')}</span></a></li>`);
+		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GreatBuildings' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GreatBuildings"><span>${FH.t('Boxes.GuildMemberStat.GreatBuildings')}</span></a></li>`);
+		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GuildBuildings' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GuildBuildings"><span>${FH.t('Boxes.GuildMemberStat.GuildBuildings')}</span></a></li>`);
+		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GuildGoods' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GuildGoods"><span>${FH.t('Boxes.GuildMemberStat.GuildGoods')}</span></a></li>`);
 
 		if (GuildMemberStat.Settings.showSearchbar) {
-			h.push(`<li style="float:right"><input type="text" name="filter" id="gms-filter-input" placeholder="${i18n('Boxes.GuildMemberStat.Search')}" /></li>`);
+			h.push(`<li style="float:right"><input type="text" name="filter" id="gms-filter-input" placeholder="${FH.t('Boxes.GuildMemberStat.Search')}" /></li>`);
 		}
 
 		h.push(`</ul></div>`);
@@ -856,23 +856,23 @@ let GuildMemberStat = {
 		h.push('<thead class="sticky">' +
 			'<tr class="sorter-header">' +
 			`<th class="is-number" data-type="gms-group"></th>` +
-			`<th class="case-sensitive" data-type="gms-group">${i18n('Boxes.GuildMemberStat.Member')}</th>` +
-			`<th class="is-number" data-type="gms-group">${i18n('Boxes.GuildMemberStat.Points')}</th>`);
+			`<th class="case-sensitive" data-type="gms-group">${FH.t('Boxes.GuildMemberStat.Member')}</th>` +
+			`<th class="is-number" data-type="gms-group">${FH.t('Boxes.GuildMemberStat.Points')}</th>`);
 
 		if (GuildMemberStat.Settings.showBattlesWon) {
-			h.push(`<th class="is-number" data-type="gms-group">${i18n('Boxes.GuildMemberStat.Battles')}</th>`);
+			h.push(`<th class="is-number" data-type="gms-group">${FH.t('Boxes.GuildMemberStat.Battles')}</th>`);
 		}
 
-		h.push(`<th class="is-number" data-type="gms-group">${i18n('Boxes.GuildMemberStat.Eras')}</th>`);
+		h.push(`<th class="is-number" data-type="gms-group">${FH.t('Boxes.GuildMemberStat.Eras')}</th>`);
 
 		if (GuildMemberStat.hasGuildMemberRights) {
-			h.push(`<th class="is-number gms-tooltip" data-type="gms-group" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.MemberActiviy'))}"><span class="activity"></span></th>`);
+			h.push(`<th class="is-number gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.MemberActiviy'))}"><span class="activity"></span></th>`);
 		}
 
 		h.push(`<th style="display:none"></th>` +
-			`<th class="is-number text-center gms-tooltip" data-type="gms-group"  title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GuildMessages'))}"><span class="messages"></span></th>` +
-			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GexParticipation'))}"><span class="gex"></span></th>` +
-			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GbgParticipation'))}"><span class="gbg"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group"  title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildMessages'))}"><span class="messages"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GexParticipation'))}"><span class="gex"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GbgParticipation'))}"><span class="gbg"></span></th>` +
 			'</tr>' +
 			'</thead><tbody class="gms-group">');
 
@@ -1003,7 +1003,7 @@ let GuildMemberStat = {
 			GuildMemberStat.MemberDict[MemberID]['name'] = member['name'];
 			GuildMemberStat.MemberDict[MemberID]['deleted'] = deletedMember;
 
-			h.push(`<tr id="gms${x}" class="${deletedMember ? 'strikeout gms-tooltip ' : 'clickable '}${stateClass}" " data-id="${MemberID}" ${deletedMember ? 'title="' + FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.MemberLeavedGuild')) + '"' : ''}>
+			h.push(`<tr id="gms${x}" class="${deletedMember ? 'strikeout gms-tooltip ' : 'clickable '}${stateClass}" " data-id="${MemberID}" ${deletedMember ? 'title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.MemberLeavedGuild')) + '"' : ''}>
 				<td class="is-number text-center${rankDiffClass}" data-number="${!deletedMember ? rank : member['score']}">${!deletedMember ? '#' + (rank - deletedCount) : ''}</td>
 				<td class="case-sensitive copyable" data-text="${FH.helper.str.cleanup(member['name'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(member.avatar)}" alt="${member['name']}"> <span>${FH.Main.GetPlayerLink(member['player_id'], member['name'])}</span></td>
 				<td class="is-number" data-number="${member['score']}">${FH.HTML.Format(member['score'])}${scoreDiff > 0 || scoreDiff < 0 ? '<span class="prev_score ' + scoreDiffClass + '">' + (scoreDiff > 0 ? '+' : '') + FH.HTML.FormatNumberShort(scoreDiff) + '</span>' : ''}</td>`);
@@ -1013,7 +1013,7 @@ let GuildMemberStat = {
 					h.push(`<td class="is-number" data-number="${member['won_battles']}">${FH.HTML.Format(member['won_battles'] ? member['won_battles'] : 0)}${battleDiff > 0 ? '<span class="prev_score green">+' + FH.HTML.Format(battleDiff) + '</span>' : ''}</td>`);
 				}
 
-			h.push(`<td class="is-number" data-number="${Technologies.Eras[member['era']]}">${i18n('Eras.' + Technologies.Eras[member['era']]+'.short')}</td>
+			h.push(`<td class="is-number" data-number="${Technologies.Eras[member['era']]}">${FH.t('Eras.' + Technologies.Eras[member['era']]+'.short')}</td>
 					<td style="display:none" class="is-number" data-number="${member['guildgoods']}">${member['guildgoods']}</td>`);
 
 			if (GuildMemberStat.hasGuildMemberRights)
@@ -1024,7 +1024,7 @@ let GuildMemberStat = {
 				<td class="is-number text-center" data-number="${gbgActivityCount}">${gbgActivityCount}</td>
 			</tr>`);
 
-			exportData.push([(rank - deletedCount), member['player_id'], member['name'], member['score'], Technologies.Eras[member['era']], i18n('Eras.' + Technologies.Eras[member['era']]+'.short'), member['guildgoods'], ActWarnCount, forumActivityCount, gexActivityCount, gbgActivityCount, member['won_battles'], deletedMember ? 0 : 1]);
+			exportData.push([(rank - deletedCount), member['player_id'], member['name'], member['score'], Technologies.Eras[member['era']], FH.t('Eras.' + Technologies.Eras[member['era']]+'.short'), member['guildgoods'], ActWarnCount, forumActivityCount, gexActivityCount, gbgActivityCount, member['won_battles'], deletedMember ? 0 : 1]);
 
 		}
 
@@ -1040,7 +1040,7 @@ let GuildMemberStat = {
 				uptodateClass = 'updaterequired';
 			}
 
-			h.push(`<div class="last-update-message"><span class="icon ${uptodateClass}"></span> <span class="${uptodateClass}">${moment(GuildMemberStat.Settings.lastupdate).format(i18n('DateTime'))}</span></div>`);
+			h.push(`<div class="last-update-message"><span class="icon ${uptodateClass}"></span> <span class="${uptodateClass}">${moment(GuildMemberStat.Settings.lastupdate).format(FH.t('DateTime'))}</span></div>`);
 		}
 
 		$('#GuildMemberStatBody').html(h.join('')).promise().done(function () {
@@ -1104,13 +1104,13 @@ let GuildMemberStat = {
 				<div><img src="${srcLinks.GetPortrait(memberData.avatar)}" style="padding: 0 10px 0 0;width:75px;"></div>
 				<div>
 				<h1>${GuildMemberStat.MemberDict[id].name}</h1>
-				${i18n('Eras.'+Technologies.Eras[memberData.era])}
+				${FH.t('Eras.'+Technologies.Eras[memberData.era])}
 				<div class="average">
 					<span class="gex"></span> 
 					<span class="gbg"></span> 
 					<span class="qi"></span> 
 					<span class="goods"></span> 
-				<i class="info-tip" data-original-title="${i18n('Boxes.GuildMemberStat.MemberDetail.Info')}">i</i></div>
+				<i class="info-tip" data-original-title="${FH.t('Boxes.GuildMemberStat.MemberDetail.Info')}">i</i></div>
 				</div>
 			</div>
 			</div>
@@ -1119,12 +1119,12 @@ let GuildMemberStat = {
 		
 		if (Member.activity !== undefined) {
 			d.push(`<div class="fham-accordion warnings">
-				<div class="fham-accordion-head">${i18n('Boxes.GuildMemberStat.Inactivity')}</div>
+				<div class="fham-accordion-head">${FH.t('Boxes.GuildMemberStat.Inactivity')}</div>
 				<div class="fham-accordion-body">
 				<table class="foe-table">
 					<thead class="sticky"><tr>
-						<th>${i18n('Boxes.GuildMemberStat.Inactivity')}</th>
-						<th>${i18n('Boxes.GuildMemberStat.Date')}</th>
+						<th>${FH.t('Boxes.GuildMemberStat.Inactivity')}</th>
+						<th>${FH.t('Boxes.GuildMemberStat.Date')}</th>
 						</tr></thead>
 					<tbody class="copyable">`);
 
@@ -1138,7 +1138,7 @@ let GuildMemberStat = {
 						for (let k in warnlist) {
 							if (!warnlist.hasOwnProperty(k)) break;
 							d.push(`<tr><td><img class="small" src="${FH.extUrl}js/web/guildmemberstat/images/act_${warnlist[k].activity}.png" /> #${(warnlist.length - parseInt(k))}<span class="hidden-text">&nbsp;-&nbsp;${activityWarnState[warnlist[k].activity]}</span></td>
-								<td>${moment(warnlist[k].date).format(i18n('Date'))}</td></tr>`);
+								<td>${moment(warnlist[k].date).format(FH.t('Date'))}</td></tr>`);
 						}
 					}
 				}
@@ -1149,11 +1149,11 @@ let GuildMemberStat = {
 		
 		if (Member.gex !== undefined) {
 			d.push(`<div class="fham-accordion gex">
-				<div class="fham-accordion-head">${i18n('Boxes.General.Guild_Expedition.short')}</div>
+				<div class="fham-accordion-head">${FH.t('Boxes.General.Guild_Expedition.short')}</div>
 				<div class="fham-accordion-body">
 				<table class="foe-table">
-				<thead class="sticky"><tr><th><span class="gex"></span> ${i18n('Boxes.GuildMemberStat.GEXWeek')}</th><th>${i18n('Boxes.GuildMemberStat.Rank')}</th>
-				<th>${i18n('Boxes.GuildMemberStat.Level')}</th><th>${i18n('Boxes.GuildMemberStat.GexTrial')}</th></th></tr></thead><tbody>`);
+				<thead class="sticky"><tr><th><span class="gex"></span> ${FH.t('Boxes.GuildMemberStat.GEXWeek')}</th><th>${FH.t('Boxes.GuildMemberStat.Rank')}</th>
+				<th>${FH.t('Boxes.GuildMemberStat.Level')}</th><th>${FH.t('Boxes.GuildMemberStat.GexTrial')}</th></th></tr></thead><tbody>`);
 
 			let gex = Member.gex;
 			for (let i in gex) {
@@ -1162,13 +1162,13 @@ let GuildMemberStat = {
 				let gexenddate = moment.unix(gex[i].gexweek);
 				let gexstartdate = moment.unix(gex[i].gexweek).subtract(7, 'd');
 				let gexweek = gexstartdate.format('YYYY-ww');
-				let gexdate = gexstartdate.format(i18n('Date'));
+				let gexdate = gexstartdate.format(FH.t('Date'));
 				let activeGexClass = gex[i].gexweek >= currentTime ? ' activeCircle' : '';
-				let tooltip = gexstartdate.format(i18n('Date')) + ' - ' + gexenddate.format(i18n('Date'));
-				let strDate = GuildMemberStat.Settings.gexgbgDateFormat === 'date' ? gexdate : (GuildMemberStat.Settings.gexgbgDateFormat === 'enddate' ? gexenddate.format(i18n('Date')) : gexweek);
+				let tooltip = gexstartdate.format(FH.t('Date')) + ' - ' + gexenddate.format(FH.t('Date'));
+				let strDate = GuildMemberStat.Settings.gexgbgDateFormat === 'date' ? gexdate : (GuildMemberStat.Settings.gexgbgDateFormat === 'enddate' ? gexenddate.format(FH.t('Date')) : gexweek);
 
 				d.push(`<tr>
-					<td><span class="gms-tooltip" title="${FH.HTML.i18nTooltip(tooltip)}">${strDate}</span><span class="${activeGexClass}"></span></td>
+					<td><span class="gms-tooltip" title="${FH.HTML.Tooltip(tooltip)}">${strDate}</span><span class="${activeGexClass}"></span></td>
 					<td>${gex[i].rank}</td>
 					<td>${FH.HTML.Format(gex[i].solvedEncounters)}</td>
 					<td>${FH.HTML.Format(gex[i].trial||0)}</td>
@@ -1182,8 +1182,8 @@ let GuildMemberStat = {
 		
 		if (Member.gbg !== undefined) {
 			d.push(`<div class="fham-accordion gbg">
-				<div class="fham-accordion-head">${i18n('Boxes.General.Guild_Battlegrounds.short')}</div>
-				<div class="fham-accordion-body"><table class="foe-table"><thead class="sticky"><tr><th><span class="gbg"></span> ${i18n('Boxes.GuildMemberStat.GBFRound')}</th><th>${i18n('Boxes.GuildMemberStat.Rank')}</th><th>${i18n('Boxes.GuildMemberStat.Battles')}</th><th>${i18n('Boxes.GuildMemberStat.Negotiations')}</th></tr></thead><tbody>`);
+				<div class="fham-accordion-head">${FH.t('Boxes.General.Guild_Battlegrounds.short')}</div>
+				<div class="fham-accordion-body"><table class="foe-table"><thead class="sticky"><tr><th><span class="gbg"></span> ${FH.t('Boxes.GuildMemberStat.GBFRound')}</th><th>${FH.t('Boxes.GuildMemberStat.Rank')}</th><th>${FH.t('Boxes.GuildMemberStat.Battles')}</th><th>${FH.t('Boxes.GuildMemberStat.Negotiations')}</th></tr></thead><tbody>`);
 
 			let gbg = Member['gbg'];
 
@@ -1193,16 +1193,16 @@ let GuildMemberStat = {
 				let activeGbgClass = gbg[i].gbgid >= currentTime ? ' activeCircle' : '';
 				let gbgenddate = moment.unix(gbg[i].gbgid);
 				let gbgstartdate = moment.unix(gbg[i].gbgid).subtract(11, 'd');
-				let tooltip = gbgstartdate.format(i18n('Date')) + ' - ' + gbgenddate.format(i18n('Date'));
+				let tooltip = gbgstartdate.format(FH.t('Date')) + ' - ' + gbgenddate.format(FH.t('Date'));
 				let week = moment.unix(gbg[i].gbgid).week();
 				let lastweek = week - 1;
 
 				week = (week.toString().length === 1) ? '0' + week : week;
 				lastweek = (lastweek.toString().length === 1) ? '0' + lastweek : lastweek;
 
-				let strDate = GuildMemberStat.Settings.gexgbgDateFormat === 'date' ? gbgstartdate.format(i18n('Date')) : (GuildMemberStat.Settings.gexgbgDateFormat === 'enddate' ? gbgenddate.format(i18n('Date')) : `${moment.unix(gbg[i].gbgid).year()} - ${lastweek}/${week}`);
+				let strDate = GuildMemberStat.Settings.gexgbgDateFormat === 'date' ? gbgstartdate.format(FH.t('Date')) : (GuildMemberStat.Settings.gexgbgDateFormat === 'enddate' ? gbgenddate.format(FH.t('Date')) : `${moment.unix(gbg[i].gbgid).year()} - ${lastweek}/${week}`);
 
-				d.push(`<tr><td><span class="gms-tooltip" title="${FH.HTML.i18nTooltip(tooltip)}">${strDate}</span><span class="${activeGbgClass}"></span></td>` +
+				d.push(`<tr><td><span class="gms-tooltip" title="${FH.HTML.Tooltip(tooltip)}">${strDate}</span><span class="${activeGbgClass}"></span></td>` +
 					`<td>${gbg[i].rank}</td>` +
 					`<td>${FH.HTML.Format(gbg[i].battlesWon)}</td>` +
 					`<td>${FH.HTML.Format(gbg[i].negotiationsWon)}</td>` +
@@ -1218,12 +1218,12 @@ let GuildMemberStat = {
 		let playedSeasons = 0;
 		let qi = [];
 		qi.push(`<div class="fham-accordion qi">
-			<div class="fham-accordion-head">${i18n('Boxes.General.Quantum_Incursion.short')}</div>
+			<div class="fham-accordion-head">${FH.t('Boxes.General.Quantum_Incursion.short')}</div>
 			<div class="fham-accordion-body">
 				<table class="foe-table"><thead class="sticky"><tr>
-					<th>${i18n('Boxes.General.Season')}</th>
-					<th>${i18n('Boxes.GuildMemberStat.Rank')}</th>
-					<th>${i18n('Boxes.QiProgress.Progress')}</th>
+					<th>${FH.t('Boxes.General.Season')}</th>
+					<th>${FH.t('Boxes.GuildMemberStat.Rank')}</th>
+					<th>${FH.t('Boxes.QiProgress.Progress')}</th>
 				</tr></thead><tbody>`);
 
 		let qiData = await QiProgress.db.history.toArray();
@@ -1252,8 +1252,8 @@ let GuildMemberStat = {
 
 			d.push(`<div class="fham-accordion guildbuildings">
 				<div class="fham-accordion-head">Guild Buildings</div>
-				<div class="fham-accordion-body">${i18n('Boxes.GuildMemberStat.GuildSupportBuildings')} 
-				<small>(${i18n('Boxes.GuildMemberStat.LastUpdate')} ${guildbuildings?.date ? moment(guildbuildings.date).fromNow() : '-'})</small>`);
+				<div class="fham-accordion-body">${FH.t('Boxes.GuildMemberStat.GuildSupportBuildings')} 
+				<small>(${FH.t('Boxes.GuildMemberStat.LastUpdate')} ${guildbuildings?.date ? moment(guildbuildings.date).fromNow() : '-'})</small>`);
 
 			// Group GuildGoods buildings by name and their era
 			let guildGoodsBuildings = guildbuildings['buildings'].filter(function (data) { return data.resources !== undefined }).reduce(function (res, obj) {
@@ -1283,7 +1283,7 @@ let GuildMemberStat = {
 			}, { __array: [] }).__array.sort(function (a, b) { return a.name.localeCompare(b.name) });
 
 			if (guildGoodsBuildings.length) {
-				d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable"><thead class="sticky"><tr><th colspan="3" class="wsnw"><i>${i18n('Boxes.GuildMemberStat.GuildGoods')}</i></th></tr></thead><tbody>`);
+				d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable"><thead class="sticky"><tr><th colspan="3" class="wsnw"><i>${FH.t('Boxes.GuildMemberStat.GuildGoods')}</i></th></tr></thead><tbody>`);
 
 				guildGoodsBuildings.forEach(plbuilding => {
 					let goodslist = '';
@@ -1306,18 +1306,18 @@ let GuildMemberStat = {
 						LevelString = '(' + plbuilding.level + ')';
 					}
 					else {
-						LevelString = '(' + i18n('Eras.' + plbuilding.level +'.short') + ')';
+						LevelString = '(' + FH.t('Eras.' + plbuilding.level +'.short') + ')';
 					}
 
 					d.push(`<tr><td>${countBuilding} x ${plbuilding.name.replace(/\#[0-9]+\#/, '')} ${LevelString}</td><td class="text-right">${goodslist !== '' ? `<span class="goods-count">${goodCount / 5}x</span>${goodslist}` : ''}</td><td class="text-right">${FH.HTML.Format(goodCount)}</td></tr>`);
 				});
 
-				d.push(`<tr><td class="text-bright">${i18n('Boxes.GuildMemberStat.TotalGuildGoods')}</td><td></td><td class="text-right text-bright">${FH.HTML.Format(totalGoods)}</td></tr>`);
+				d.push(`<tr><td class="text-bright">${FH.t('Boxes.GuildMemberStat.TotalGuildGoods')}</td><td></td><td class="text-right text-bright">${FH.HTML.Format(totalGoods)}</td></tr>`);
 				d.push(`</tbody></table></div>`);
 			}
 
 			if (guildPowerBuildings.length) {
-				d.push(`<div class="detail-item guildgoods"><table class="copyable"><thead class="sticky"><tr><th colspan="2"><i>${i18n('Boxes.GuildMemberStat.GuildPower')}</i></th></tr></thead><tbody>`);
+				d.push(`<div class="detail-item guildgoods"><table class="copyable"><thead class="sticky"><tr><th colspan="2"><i>${FH.t('Boxes.GuildMemberStat.GuildPower')}</i></th></tr></thead><tbody>`);
 
 				guildPowerBuildings.forEach(plbuilding => {
 					let countBuilding = typeof plbuilding.count != 'undefined' ? plbuilding.count : 1;
@@ -1326,7 +1326,7 @@ let GuildMemberStat = {
 					d.push(`<tr><td>${countBuilding} x  ${plbuilding.name}</td><td class="text-right">${FH.HTML.Format(powerCount)}</td></tr>`);
 				});
 
-				d.push(`<tr><td class="text-bright">${i18n('Boxes.GuildMemberStat.TotalGuildPower')}</td><td class="text-right text-bright">${FH.HTML.Format(totalPower)}</td></tr>`);
+				d.push(`<tr><td class="text-bright">${FH.t('Boxes.GuildMemberStat.TotalGuildPower')}</td><td class="text-right text-bright">${FH.HTML.Format(totalPower)}</td></tr>`);
 				d.push(`</tbody></table></div></div>`);
 			}
 
@@ -1335,9 +1335,9 @@ let GuildMemberStat = {
 
 		$('#GuildMemberDetail' + id + 'Body').append(d.join(''));
 
-		$('#GuildMemberDetail' + id + 'Body .summary .gex').text(gexNumber).attr('data-original-title', FH.HTML.i18nReplacer(i18n('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': Member.gex?.length||0 }));
-		$('#GuildMemberDetail' + id + 'Body .summary .gbg').text(FH.HTML.Format(gbgNumber)).attr('data-original-title', FH.HTML.i18nReplacer(i18n('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': Member.gbg?.length||0 }));
-		$('#GuildMemberDetail' + id + 'Body .summary .qi').text(FH.HTML.Format(qiNumber)).attr('data-original-title', FH.HTML.i18nReplacer(i18n('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': playedSeasons||0 }));
+		$('#GuildMemberDetail' + id + 'Body .summary .gex').text(gexNumber).attr('data-original-title', FH.helper.str.Replacer(FH.t('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': Member.gex?.length||0 }));
+		$('#GuildMemberDetail' + id + 'Body .summary .gbg').text(FH.HTML.Format(gbgNumber)).attr('data-original-title', FH.helper.str.Replacer(FH.t('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': Member.gbg?.length||0 }));
+		$('#GuildMemberDetail' + id + 'Body .summary .qi').text(FH.HTML.Format(qiNumber)).attr('data-original-title', FH.helper.str.Replacer(FH.t('Boxes.GuildMemberStat.MemberDetail.Average'), { 'seasons': playedSeasons||0 }));
 		$('#GuildMemberDetail' + id + 'Body .summary .goods').text(FH.HTML.Format(totalGoods));
 
 		$('#GuildMemberDetail' + id + 'Body .fham-accordion-head').on('click', function () {
@@ -1402,10 +1402,10 @@ let GuildMemberStat = {
 			d.push(`<table id="GuildErasTable" class="foe-table">` +
 				`<thead class="sticky"><tr class="sorter-header">` +
 				`<th class="is-number" data-type="gms-era">#</th>` +
-				`<th class="case-sensitive" data-type="gms-era">${i18n('Boxes.GuildMemberStat.Eras')}</th>` +
-				`<th class="is-number text-center" data-type="gms-era">${i18n('Boxes.GuildMemberStat.GuildMembers')}</th>`);
-			d.push(`<th class="is-number ${hasTreasuryTotals ? 'text-right' : 'text-center'}" data-type="gms-era">${i18n('Boxes.GuildMemberStat.TreasuryGoods')}</th>`);
-			d.push(`<th class="is-number text-right" data-type="gms-era">${i18n('Boxes.GuildMemberStat.Points')}</th>` +
+				`<th class="case-sensitive" data-type="gms-era">${FH.t('Boxes.GuildMemberStat.Eras')}</th>` +
+				`<th class="is-number text-center" data-type="gms-era">${FH.t('Boxes.GuildMemberStat.GuildMembers')}</th>`);
+			d.push(`<th class="is-number ${hasTreasuryTotals ? 'text-right' : 'text-center'}" data-type="gms-era">${FH.t('Boxes.GuildMemberStat.TreasuryGoods')}</th>`);
+			d.push(`<th class="is-number text-right" data-type="gms-era">${FH.t('Boxes.GuildMemberStat.Points')}</th>` +
 				`<th class="expand-all closed"></th></tr>` +
 				`</thead><tbody class="gms-era copyable">`);
 
@@ -1420,21 +1420,21 @@ let GuildMemberStat = {
 
 				d.push(`<tr id="era${EraGroup[era].eraId}" data-id="${EraGroup[era].eraId}" class="hasdetail">` +
 					`<td class="is-number" data-number="${EraGroup[era].eraId}">${EraGroup[era].eraId}</td>` +
-					`<td class="case-sensitive" data-text="${i18n('Eras.' + EraGroup[era].eraId)}">${i18n('Eras.' + EraGroup[era].eraId)}</td>` +
+					`<td class="case-sensitive" data-text="${FH.t('Eras.' + EraGroup[era].eraId)}">${FH.t('Eras.' + EraGroup[era].eraId)}</td>` +
 					`<td class="is-number text-center" data-number="${countEra}">${countEra}</td>`);
 
 				if (hasTreasuryTotals) {
 					eraTotals = TreasuryGoodsData['totals'].hasOwnProperty([EraGroup[era].era]) ? TreasuryGoodsData.totals[EraGroup[era].era] : 0;
-					d.push(`<td title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.LastUpdate')) + ' ' + moment(TreasuryGoodsData.updated).fromNow()}" class="is-number text-right gms-tooltip" data-number="${eraTotals}">${FH.HTML.Format(eraTotals)}</td>`);
+					d.push(`<td title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.LastUpdate')) + ' ' + moment(TreasuryGoodsData.updated).fromNow()}" class="is-number text-right gms-tooltip" data-number="${eraTotals}">${FH.HTML.Format(eraTotals)}</td>`);
 				}
 				else {
-					d.push(`<td title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GuildTreasuryNotification'))}" class="gms-tooltip is-number text-center" data-number="${EraGroup[era].eraId}">-</td>`);
+					d.push(`<td title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildTreasuryNotification'))}" class="gms-tooltip is-number text-center" data-number="${EraGroup[era].eraId}">-</td>`);
 				}
 
 				d.push(`<td class="is-number text-right" data-number="${EraGroup[era].score}">${FH.HTML.Format(EraGroup[era].score)}</td><td></td>` +
 					`</tr>`);
 
-				ExportContent.push([EraGroup[era].eraId, i18n('Eras.' + EraGroup[era].eraId), countEra, eraTotals, EraGroup[era].score])
+				ExportContent.push([EraGroup[era].eraId, FH.t('Eras.' + EraGroup[era].eraId), countEra, eraTotals, EraGroup[era].score])
 			};
 			d.push(`</tbody></table>`);
 		}
@@ -1510,14 +1510,14 @@ let GuildMemberStat = {
 				let h = [];
 
 				h.push(`<tr class="detailview dark-bg"><td colspan="${e.find("td").length}"><div class="detail-wrapper"><div class="detail-item">` +
-					`<table><thead class="sticky"><tr><th>${i18n('Boxes.GuildMemberStat.Rank')}</th><th>${i18n('Boxes.GuildMemberStat.Member')}</th><th>${i18n('Boxes.GuildMemberStat.Eras')}</th><th class="text-right">${i18n('Boxes.GuildMemberStat.Points')}</th></tr></thead><tbody>`);
+					`<table><thead class="sticky"><tr><th>${FH.t('Boxes.GuildMemberStat.Rank')}</th><th>${FH.t('Boxes.GuildMemberStat.Member')}</th><th>${FH.t('Boxes.GuildMemberStat.Eras')}</th><th class="text-right">${FH.t('Boxes.GuildMemberStat.Points')}</th></tr></thead><tbody>`);
 
 				if (EraGroup[eraId].members !== undefined) {
 
 					let EraMembers = EraGroup[eraId].members.sort(function (a, b) { return a.score > b.score });
 
 					EraMembers.forEach(member => {
-						h.push(`<tr><td>${member.rank[1]}</td><td>${FH.Main.GetPlayerLink(member.player_id, member.name)}</td><td>${i18n('Eras.' + eraId)}</td><td class="text-right">${FH.HTML.Format(member.score)}</td></tr>`);
+						h.push(`<tr><td>${member.rank[1]}</td><td>${FH.Main.GetPlayerLink(member.player_id, member.name)}</td><td>${FH.t('Eras.' + eraId)}</td><td class="text-right">${FH.HTML.Format(member.score)}</td></tr>`);
 					});
 
 				}
@@ -1527,12 +1527,12 @@ let GuildMemberStat = {
 				if (TreasuryGoodsData !== null && typeof TreasuryGoodsData[EraGroup[eraId].era] !== 'undefined') {
 					let EraTreasuryGoods = TreasuryGoodsData[EraGroup[eraId].era];
 
-					h.push(`<div class="detail-item"><table><thead class="sticky"><tr><th colspan="3">${i18n('Boxes.GuildMemberStat.EraTreasuryGoods')}</th></tr></thead><tbody>`);
+					h.push(`<div class="detail-item"><table><thead class="sticky"><tr><th colspan="3">${FH.t('Boxes.GuildMemberStat.EraTreasuryGoods')}</th></tr></thead><tbody>`);
 					EraTreasuryGoods.forEach(good => {
 						h.push(`<tr><td class="goods-image"><span class="goods-sprite sprite-35 ${good.good}"></span></td><td>${good.name}</td><td class="text-right">${FH.HTML.Format(good.value)}</td></tr>`);
 					});
 
-					h.push(`<tr><td colspan="3" class="text-right"><i>${i18n('Boxes.GuildMemberStat.LastUpdate') + ' ' + moment(TreasuryGoodsData.updated).fromNow()}</i></td></tr>`);
+					h.push(`<tr><td colspan="3" class="text-right"><i>${FH.t('Boxes.GuildMemberStat.LastUpdate') + ' ' + moment(TreasuryGoodsData.updated).fromNow()}</i></td></tr>`);
 					h.push(`</tbody></table></div>`);
 
 				}
@@ -1563,7 +1563,7 @@ let GuildMemberStat = {
 		ExportContent.push(['building', 'level', 'eraId', 'era', 'member', 'guildPower', 'guildGoods']);
 
 		// add notification for how to update guild building statisitc
-		d.push(`<div class="view_notification">${i18n('Boxes.GuildMemberStat.GuildBuildingNotification')} <button style="float:right" id="toggleBuildingView" class="btn">${i18n('Boxes.GuildMemberStat.ChangeView')}</button></div>`);
+		d.push(`<div class="view_notification">${FH.t('Boxes.GuildMemberStat.GuildBuildingNotification')} <button style="float:right" id="toggleBuildingView" class="btn">${FH.t('Boxes.GuildMemberStat.ChangeView')}</button></div>`);
 
 		if (gmsBuildingDict === undefined || gmsBuildingDict.length <= 0) {
 			$("#gmsContentWrapper").html(d.join(''));
@@ -1636,7 +1636,7 @@ let GuildMemberStat = {
 		d.push(`<div class="detail-wrapper buildinglist grouped show">`);
 
 		if (guildGoodsBuildings.length) {
-			d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable sticky"><thead><tr><th colspan="3"><i>${i18n('Boxes.GuildMemberStat.GuildGoods')}</i></th></tr></thead><tbody>`);
+			d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable sticky"><thead><tr><th colspan="3"><i>${FH.t('Boxes.GuildMemberStat.GuildGoods')}</i></th></tr></thead><tbody>`);
 
 			guildGoodsBuildings.forEach(plbuilding => {
 				let countBuilding = typeof plbuilding.count != 'undefined' ? plbuilding.count : 1;
@@ -1645,12 +1645,12 @@ let GuildMemberStat = {
 				d.push(`<tr><td class="text-right">${countBuilding} x</td><td>${plbuilding.name}</td><td class="text-right">${FH.HTML.Format(goodCount)}</td></tr>`);
 			});
 
-			d.push(`<tr><td></td><td class="text-bright">${i18n('Boxes.GuildMemberStat.TotalGuildGoods')}</td><td class="text-right text-bright">${FH.HTML.Format(totalGoods)}</td></tr>`);
+			d.push(`<tr><td></td><td class="text-bright">${FH.t('Boxes.GuildMemberStat.TotalGuildGoods')}</td><td class="text-right text-bright">${FH.HTML.Format(totalGoods)}</td></tr>`);
 			d.push(`</tbody></table></div>`);
 		}
 
 		if (guildPowerBuildings.length) {
-			d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable sticky"><thead><tr><th colspan="3"><i>${i18n('Boxes.GuildMemberStat.GuildPower')}</i></th></tr></thead><tbody>`);
+			d.push(`<div class="detail-item guildgoods"><table class="foe-table copyable sticky"><thead><tr><th colspan="3"><i>${FH.t('Boxes.GuildMemberStat.GuildPower')}</i></th></tr></thead><tbody>`);
 
 			guildPowerBuildings.forEach(plbuilding => {
 				let countBuilding = typeof plbuilding.count != 'undefined' ? plbuilding.count : 1;
@@ -1659,7 +1659,7 @@ let GuildMemberStat = {
 				d.push(`<tr><td class="text-right">${countBuilding} x</td><td>${plbuilding.name}</td><td class="text-right">${FH.HTML.Format(powerCount)}</td></tr>`);
 			});
 
-			d.push(`<tr><td></td><td class="text-bright">${i18n('Boxes.GuildMemberStat.TotalGuildPower')}</td><td class="text-right text-bright">${FH.HTML.Format(totalPower)}</td></tr>`);
+			d.push(`<tr><td></td><td class="text-bright">${FH.t('Boxes.GuildMemberStat.TotalGuildPower')}</td><td class="text-right text-bright">${FH.HTML.Format(totalPower)}</td></tr>`);
 			d.push(`</tbody></table></div>`);
 		}
 
@@ -1668,12 +1668,12 @@ let GuildMemberStat = {
 		d.push(`<div class="detail-wrapper buildinglist detail hide">`);
 		d.push(`<div class="detail-item guildbuildings"><table id="guildbuildingslist" class="foe-table"><thead class="sticky"><tr class="sorter-header">` +
 			`<th class="is-number" data-type="gms-gbl">#</th>` +
-			`<th class="case-sensitive" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.GuildBuildings')}</th>` +
-			`<th class="is-number text-center" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.Level')}</th>` +
-			`<th class="case-sensitive" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.Member')}</th>` +
-			`<th class="is-number" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.Eras')}</th>` +
-			`<th class="is-number text-center" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.GuildGoods')}</th>` +
-			`<th class="is-number text-center" data-type="gms-gbl">${i18n('Boxes.GuildMemberStat.GuildPower')}</th>` +
+			`<th class="case-sensitive" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.GuildBuildings')}</th>` +
+			`<th class="is-number text-center" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.Level')}</th>` +
+			`<th class="case-sensitive" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.Member')}</th>` +
+			`<th class="is-number" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.Eras')}</th>` +
+			`<th class="is-number text-center" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.GuildGoods')}</th>` +
+			`<th class="is-number text-center" data-type="gms-gbl">${FH.t('Boxes.GuildMemberStat.GuildPower')}</th>` +
 			`</tr></thead><tbody class="gms-gbl copyable">`);
 
 		let bCounter = 1;
@@ -1693,15 +1693,15 @@ let GuildMemberStat = {
 
 			}
 
-			ExportContent.push([plbuilding.name, (plbuilding.level !== null ? plbuilding.level : ''), Technologies.Eras[plbuilding.era], i18n('Eras.' + Technologies.Eras[plbuilding.era]), plbuilding.member, (plbuilding.power !== undefined ? plbuilding.power.value : 0), (plbuilding.resources !== undefined ? plbuilding.resources.totalgoods : 0)]);
+			ExportContent.push([plbuilding.name, (plbuilding.level !== null ? plbuilding.level : ''), Technologies.Eras[plbuilding.era], FH.t('Eras.' + Technologies.Eras[plbuilding.era]), plbuilding.member, (plbuilding.power !== undefined ? plbuilding.power.value : 0), (plbuilding.resources !== undefined ? plbuilding.resources.totalgoods : 0)]);
 
-			d.push(`<tr${plbuilding.gbid === undefined ? ` class="outdated" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GuildBuildingNotification'))}"` : ''}">` +
+			d.push(`<tr${plbuilding.gbid === undefined ? ` class="outdated" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildBuildingNotification'))}"` : ''}">` +
 				`<td class="is-number" data-number="${bCounter}">${bCounter++}</td>` +
 				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(plbuilding.name)}">${plbuilding.name}</td>` +
 				`<td class="is-number text-center" data-number="${level}">${FH.HTML.Format(level)}</td>` +
 				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(plbuilding.member)}">${FH.Main.GetPlayerLink(plbuilding.player_id, plbuilding.member)}</td>` +
-				`<td class="is-number" data-number="${Technologies.Eras[plbuilding.era]}">${plbuilding.era !== undefined ? i18n('Eras.' + Technologies.Eras[plbuilding.era]) : '-'}</td>` +
-				`<td class="is-number text-center gms-tooltip" data-number="${goodCount}" title="${FH.HTML.i18nTooltip(goodslist !== '' ? `<span class="goods-count">${goodCount / 5}x</span>${goodslist}` : '')}">${FH.HTML.Format(goodCount)}</td>` +
+				`<td class="is-number" data-number="${Technologies.Eras[plbuilding.era]}">${plbuilding.era !== undefined ? FH.t('Eras.' + Technologies.Eras[plbuilding.era]) : '-'}</td>` +
+				`<td class="is-number text-center gms-tooltip" data-number="${goodCount}" title="${FH.HTML.Tooltip(goodslist !== '' ? `<span class="goods-count">${goodCount / 5}x</span>${goodslist}` : '')}">${FH.HTML.Format(goodCount)}</td>` +
 				`<td class="is-number text-center" data-number="${powerCount}">${FH.HTML.Format(powerCount)}</td></tr>`);
 		});
 
@@ -1758,7 +1758,7 @@ let GuildMemberStat = {
 		}, {});
 
 		// add notification for how to update guild building statisitc and Treasury Goods List
-		d.push(`<div class="view_notification">1. ${i18n('Boxes.GuildMemberStat.GuildBuildingNotification')}<br />2. ${i18n('Boxes.GuildMemberStat.GuildTreasuryNotification')}</div>`);
+		d.push(`<div class="view_notification">1. ${FH.t('Boxes.GuildMemberStat.GuildBuildingNotification')}<br />2. ${FH.t('Boxes.GuildMemberStat.GuildTreasuryNotification')}</div>`);
 
 		if (ErasGuildGoods === null) {
 			$("#gmsContentWrapper").html(d.join(''));
@@ -1766,7 +1766,7 @@ let GuildMemberStat = {
 			return;
 		}
 
-		d.push(`<table id="TreasuryGoodsTable" class="foe-table"><thead class="sticky"><tr><th>${i18n('Boxes.GuildMemberStat.Eras')}</th><th> ${i18n('Boxes.GuildMemberStat.ProducedTreasuryGoods')}</th><th> ${i18n('Boxes.GuildMemberStat.TreasuryGoods')}</th></thead><tbody>`);
+		d.push(`<table id="TreasuryGoodsTable" class="foe-table"><thead class="sticky"><tr><th>${FH.t('Boxes.GuildMemberStat.Eras')}</th><th> ${FH.t('Boxes.GuildMemberStat.ProducedTreasuryGoods')}</th><th> ${FH.t('Boxes.GuildMemberStat.TreasuryGoods')}</th></thead><tbody>`);
 
 		ExportContent.push(['eraID', 'era', 'good', 'produceable', 'instock']);
 
@@ -1791,13 +1791,13 @@ let GuildMemberStat = {
 
 			if (Technologies.EraNames[eraId] === undefined) continue;
 
-			let currentEra = i18n('Eras.' + eraId);
+			let currentEra = FH.t('Eras.' + eraId);
 			let exportGood = {};
 
 			let countEra = typeof EraGroup[eraId]?.members?.length != 'undefined' ? EraGroup[eraId]?.members?.length : 0;
 
 
-			d.push(`<tr><td>${i18n('Eras.' + eraId)}<br>(${countEra} ${i18n('Boxes.GuildMemberStat.GuildMembers')})</td>`);
+			d.push(`<tr><td>${FH.t('Eras.' + eraId)}<br>(${countEra} ${FH.t('Boxes.GuildMemberStat.GuildMembers')})</td>`);
 
 			// Goods from Guild Building productions
 			if (ErasGuildGoods[eraId] !== undefined) {
@@ -1820,7 +1820,7 @@ let GuildMemberStat = {
 				d.push(`</td>`);
 			}
 			else {
-				d.push(`<td class="detail text-center dark gms-tooltip" title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GuildBuildingNotification'))}">-</td>`);
+				d.push(`<td class="detail text-center dark gms-tooltip" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildBuildingNotification'))}">-</td>`);
 			}
 
 			// In stock guild good for the era
@@ -1845,7 +1845,7 @@ let GuildMemberStat = {
 
 			}
 			else {
-				d.push(`<td class="detail text-center gms-tooltip" ${TreasuryGoodsData === null ? `title="${FH.HTML.i18nTooltip(i18n('Boxes.GuildMemberStat.GuildTreasuryNotification'))}"` : ''}>-</td>`);
+				d.push(`<td class="detail text-center gms-tooltip" ${TreasuryGoodsData === null ? `title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildTreasuryNotification'))}"` : ''}>-</td>`);
 			}
 
 			d.push(`</td></tr>`);
@@ -1883,7 +1883,7 @@ let GuildMemberStat = {
 		let GreatBuildings = await GuildMemberStat.GetGuildMemberBuildings('greatbuildings');
 		let allMemberIds = Object.keys(GuildMemberStat.MemberDict);
 
-		d.push(`<div class="view_notification">${i18n('Boxes.GuildMemberStat.GuildBuildingNotification')} <button style="float:right" id="toggleGreatBuildingView" class="btn">${i18n('Boxes.GuildMemberStat.ChangeView')}</button></div>`);
+		d.push(`<div class="view_notification">${FH.t('Boxes.GuildMemberStat.GuildBuildingNotification')} <button style="float:right" id="toggleGreatBuildingView" class="btn">${FH.t('Boxes.GuildMemberStat.ChangeView')}</button></div>`);
 
 		if (GreatBuildings === null) {
 			$("#gmsContentWrapper").html(d.join(''));
@@ -1949,10 +1949,10 @@ let GuildMemberStat = {
 
 		d.push(`<div class="detail-wrapper greatbuildinglist grouped show">`);
 		d.push(`<table id="gblist" class="foe-table"><thead class="sticky"><tr class="sorter-header">` +
-			`<th class="case-sensitive" data-type="gms-greatbl">${i18n('Boxes.GuildMemberStat.GreatBuildings')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl">${i18n('Boxes.GuildMemberStat.Available')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl">${i18n('Boxes.GuildMemberStat.MinLevel')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl">${i18n('Boxes.GuildMemberStat.MaxLevel')}</th>` +
+			`<th class="case-sensitive" data-type="gms-greatbl">${FH.t('Boxes.GuildMemberStat.GreatBuildings')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl">${FH.t('Boxes.GuildMemberStat.Available')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl">${FH.t('Boxes.GuildMemberStat.MinLevel')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl">${FH.t('Boxes.GuildMemberStat.MaxLevel')}</th>` +
 			`<th></th></tr></thead><tbody class="gms-greatbl">`);
 
 		for (let x = 0; x < GBOverview.length; x++) {
@@ -1970,12 +1970,12 @@ let GuildMemberStat = {
 
 		d.push(`<div class="detail-wrapper greatbuildinglist detail hide">`);
 		d.push(`<table id="gblist_detail" class="foe-table"><thead class="sticky"><tr class="sorter-header">` +
-			`<th class="case-sensitive" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.GreatBuildings')}</th>` +
-			`<th class="case-sensitive" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.Member')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.Level')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.UnlockedLevel')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.FpInvested')}</th>` +
-			`<th class="is-number text-center" data-type="gms-greatbl-detail">${i18n('Boxes.GuildMemberStat.FpForLevelUp')}</th>` +
+			`<th class="case-sensitive" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.GreatBuildings')}</th>` +
+			`<th class="case-sensitive" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.Member')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.Level')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.UnlockedLevel')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.FpInvested')}</th>` +
+			`<th class="is-number text-center" data-type="gms-greatbl-detail">${FH.t('Boxes.GuildMemberStat.FpForLevelUp')}</th>` +
 			`<th></th></tr></thead><tbody class="gms-greatbl-detail">`);
 
 		GreatBuildingsDetail = GreatBuildingsDetail.sort(function (a, b) {
@@ -2046,11 +2046,11 @@ let GuildMemberStat = {
 
 					d.push(`<div class="detail-item gb_player"><div>` +
 						`<table id="gb_detail_${id}" class="foe-table sortable-table"><thead class="sticky"><tr class="sorter-header subsort">` +
-						`<th class="case-sensitive" data-type="gms-dgb${id}">${i18n('Boxes.GuildMemberStat.Member')}</th>` +
-						`<th class="is-number text-center" data-type="gms-dgb${id}">${i18n('Boxes.GuildMemberStat.Level')}</th>` +
-						`<th class="is-number text-center" data-type="gms-dgb${id}">${i18n('Boxes.GuildMemberStat.UnlockedLevel')}</th>` +
-						`<th class="is-number text-center" data-type="gms-dgb${id}">${i18n('Boxes.GuildMemberStat.FpInvested')}</th>` +
-						`<th class="is-number text-center" data-type="gms-dgb${id}">${i18n('Boxes.GuildMemberStat.FpForLevelUp')}</th>` +
+						`<th class="case-sensitive" data-type="gms-dgb${id}">${FH.t('Boxes.GuildMemberStat.Member')}</th>` +
+						`<th class="is-number text-center" data-type="gms-dgb${id}">${FH.t('Boxes.GuildMemberStat.Level')}</th>` +
+						`<th class="is-number text-center" data-type="gms-dgb${id}">${FH.t('Boxes.GuildMemberStat.UnlockedLevel')}</th>` +
+						`<th class="is-number text-center" data-type="gms-dgb${id}">${FH.t('Boxes.GuildMemberStat.FpInvested')}</th>` +
+						`<th class="is-number text-center" data-type="gms-dgb${id}">${FH.t('Boxes.GuildMemberStat.FpForLevelUp')}</th>` +
 						`</tr></thead><tbody class="gms-dgb${id}">`);
 
 					for (let i in player) {
@@ -2070,7 +2070,7 @@ let GuildMemberStat = {
 						NoGbMember = NoGbMember.filter(member => { return !GuildMemberStat.MemberDict[member].deleted });
 						NoGbMember = NoGbMember.sort(function (a, b) { return GuildMemberStat.MemberDict[a].name.localeCompare(GuildMemberStat.MemberDict[b].name) });
 
-						d.push(`<div class="no_gb_member copyable"><span class="text-bright"><i>${FH.HTML.i18nReplacer(i18n('Boxes.GuildMemberStat.MemberWithoutGB'), { 'greatbuilding': GBOverview[id]['name'] })}</i>: </span>`);
+						d.push(`<div class="no_gb_member copyable"><span class="text-bright"><i>${FH.helper.str.Replacer(FH.t('Boxes.GuildMemberStat.MemberWithoutGB'), { 'greatbuilding': GBOverview[id]['name'] })}</i>: </span>`);
 						for (let i = 0; i < NoGbMember.length; i++)
 						{
 							d.push(FH.Main.GetPlayerLink(NoGbMember[i], GuildMemberStat.MemberDict[NoGbMember[i]].name));
@@ -2176,37 +2176,37 @@ let GuildMemberStat = {
 		let deleteAfterDays = [-1, 3, 7, 14, 31, 0]
 		let Settings = GuildMemberStat.Settings;
 
-		c.push(`<p class="text-left"><input id="gmsAutoStartOnUpdate" name="autostartonupdate" value="1" type="checkbox" ${(Settings.autoStartOnUpdate === 1) ? ' checked="checked"' : ''} /> <label for="gmsAutoStartOnUpdate">${i18n('Boxes.GuildMemberStat.AutoStartOnUpdate')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gmsShowSearchbar" name="showsearchbar" value="1" type="checkbox" ${(Settings.showSearchbar === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowSearchbar">${i18n('Boxes.GuildMemberStat.ShowSearchbar')}</label></p>`);
-		c.push(`<hr><p class="text-left"><span class="settingtitle">${i18n('Boxes.GuildMemberStat.GuildMembers')}</span><input id="gmsShowDeletedMembers" name="showdeletedmembers" value="1" type="checkbox" ${(Settings.showDeletedMembers === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowDeletedMembers">${i18n('Boxes.GuildMemberStat.ShowDeletedMembers')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gmsShowBattlesWon" name="showbattleswon" value="1" type="checkbox" ${(Settings.showBattlesWon === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowBattlesWon">${i18n('Boxes.GuildMemberStat.ShowBattlesWon')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gmsShowZeroValues" name="showzerovalues" value="1" type="checkbox" ${(Settings.showZeroValues === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowZeroValues">${i18n('Boxes.GuildMemberStat.ShowZeroValues')}</label></p>`);
-		c.push(`<p class="text-left">${i18n('Boxes.GuildMemberStat.GexGbgDateFormat')} <select id="gmsGexGbgDateFormat" name="gexgbgdateformat">` +
-			`<option value="week" ${Settings.gexgbgDateFormat === 'week' ? ' selected="selected"' : ''}>${i18n('Boxes.GuildMemberStat.CalendarWeek')}</option>` +
-			`<option value="date" ${Settings.gexgbgDateFormat === 'date' ? ' selected="selected"' : ''}>${i18n('Boxes.GuildMemberStat.StartDate')}</option>` +
-			`<option value="enddate" ${Settings.gexgbgDateFormat === 'enddate' ? ' selected="selected"' : ''}>${i18n('Boxes.GuildMemberStat.EndDate')}</option>` +
+		c.push(`<p class="text-left"><input id="gmsAutoStartOnUpdate" name="autostartonupdate" value="1" type="checkbox" ${(Settings.autoStartOnUpdate === 1) ? ' checked="checked"' : ''} /> <label for="gmsAutoStartOnUpdate">${FH.t('Boxes.GuildMemberStat.AutoStartOnUpdate')}</label></p>`);
+		c.push(`<p class="text-left"><input id="gmsShowSearchbar" name="showsearchbar" value="1" type="checkbox" ${(Settings.showSearchbar === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowSearchbar">${FH.t('Boxes.GuildMemberStat.ShowSearchbar')}</label></p>`);
+		c.push(`<hr><p class="text-left"><span class="settingtitle">${FH.t('Boxes.GuildMemberStat.GuildMembers')}</span><input id="gmsShowDeletedMembers" name="showdeletedmembers" value="1" type="checkbox" ${(Settings.showDeletedMembers === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowDeletedMembers">${FH.t('Boxes.GuildMemberStat.ShowDeletedMembers')}</label></p>`);
+		c.push(`<p class="text-left"><input id="gmsShowBattlesWon" name="showbattleswon" value="1" type="checkbox" ${(Settings.showBattlesWon === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowBattlesWon">${FH.t('Boxes.GuildMemberStat.ShowBattlesWon')}</label></p>`);
+		c.push(`<p class="text-left"><input id="gmsShowZeroValues" name="showzerovalues" value="1" type="checkbox" ${(Settings.showZeroValues === 1) ? ' checked="checked"' : ''} /> <label for="gmsShowZeroValues">${FH.t('Boxes.GuildMemberStat.ShowZeroValues')}</label></p>`);
+		c.push(`<p class="text-left">${FH.t('Boxes.GuildMemberStat.GexGbgDateFormat')} <select id="gmsGexGbgDateFormat" name="gexgbgdateformat">` +
+			`<option value="week" ${Settings.gexgbgDateFormat === 'week' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildMemberStat.CalendarWeek')}</option>` +
+			`<option value="date" ${Settings.gexgbgDateFormat === 'date' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildMemberStat.StartDate')}</option>` +
+			`<option value="enddate" ${Settings.gexgbgDateFormat === 'enddate' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildMemberStat.EndDate')}</option>` +
 			`</select></p>`);
-		c.push(`<p class="text-left">${i18n('Boxes.GuildMemberStat.DeleteExMembersAfter')} <select id="gmsDeleteOlderThan" name="deleteolderthan">`);
+		c.push(`<p class="text-left">${FH.t('Boxes.GuildMemberStat.DeleteExMembersAfter')} <select id="gmsDeleteOlderThan" name="deleteolderthan">`);
 
 		deleteAfterDays.forEach(days => {
 			let option = '';
 
-			if (days === -1) { option = i18n('Boxes.GuildMemberStat.Instantly'); }
-			else if (days === 0) { option = i18n('Boxes.GuildMemberStat.Never'); }
-			else { option = days + ' ' + i18n('Boxes.GuildMemberStat.Days'); }
+			if (days === -1) { option = FH.t('Boxes.GuildMemberStat.Instantly'); }
+			else if (days === 0) { option = FH.t('Boxes.GuildMemberStat.Never'); }
+			else { option = days + ' ' + FH.t('Boxes.GuildMemberStat.Days'); }
 
 			c.push(`<option value="${days}" ${Settings.deleteOlderThan === days ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 
 		c.push(`</select>`);
-		c.push(`<p class="text-left">${i18n('Boxes.GuildMemberStat.ResetMessageCounter')} ` +
+		c.push(`<p class="text-left">${FH.t('Boxes.GuildMemberStat.ResetMessageCounter')} ` +
 			`<select id="gmsResetMessageCounter" name="resetmessagecounter">`);
-			c.push(`<option value="0">${i18n('Boxes.GuildMemberStat.ConfirmNo')}</option>`);
-			c.push(`<option value="reset">${i18n('Boxes.GuildMemberStat.ConfirmYes')}</option>`);
+			c.push(`<option value="0">${FH.t('Boxes.GuildMemberStat.ConfirmNo')}</option>`);
+			c.push(`<option value="reset">${FH.t('Boxes.GuildMemberStat.ConfirmYes')}</option>`);
 		c.push(`</select></p>`);
-		c.push(`<hr><button id="save-GuildMemberStat-settings" class="btn saveSettings" onclick="GuildMemberStat.SettingsSaveValues()">${i18n('Boxes.Investment.Overview.SettingsSave')}</button>`);
-		c.push(`<hr><p class="text-left">${i18n('Boxes.General.Export')}: <button class="btn" onclick="GuildMemberStat.ExportContent('${GuildMemberStat.CurrentStatGroup}','csv')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="GuildMemberStat.ExportContent('${GuildMemberStat.CurrentStatGroup}','json')" title="${FH.HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></p>`);
+		c.push(`<hr><button id="save-GuildMemberStat-settings" class="btn saveSettings" onclick="GuildMemberStat.SettingsSaveValues()">${FH.t('Boxes.Investment.Overview.SettingsSave')}</button>`);
+		c.push(`<hr><p class="text-left">${FH.t('Boxes.General.Export')}: <button class="btn" onclick="GuildMemberStat.ExportContent('${GuildMemberStat.CurrentStatGroup}','csv')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="GuildMemberStat.ExportContent('${GuildMemberStat.CurrentStatGroup}','json')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></p>`);
 
 		$('#GuildMemberStatSettingsBox').html(c.join(''));
 	},

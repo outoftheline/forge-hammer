@@ -154,7 +154,7 @@ let Parts = {
 
 			FH.HTML.Box({
 				id: 'OwnPartBox',
-				title: i18n('Boxes.OwnpartCalculator.Title'),
+				title: FH.t('Boxes.OwnpartCalculator.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -761,7 +761,7 @@ let Parts = {
 		
         // Level is locked
 		if (PlayerID === ExtPlayerID && FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.level === FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.max_level) {
-			h.push('<div class="lg-not-possible" data-text="'+i18n('Boxes.Calculator.LGNotOpen')+'"></div>');
+			h.push('<div class="lg-not-possible" data-text="'+FH.t('Boxes.Calculator.LGNotOpen')+'"></div>');
 		}
 		h.push(`<div id="gbCosts">`);
 
@@ -778,7 +778,7 @@ let Parts = {
 			if (Level) 
 				h.push((Level-1) + ' &rarr; ' + (Level));
 			else // Level unknown
-				h.push(i18n('Boxes.OwnpartCalculator.OldLevel'));
+				h.push(FH.t('Boxes.OwnpartCalculator.OldLevel'));
 		}
 		else {
 			if (Parts.IsNextLevel) 
@@ -826,13 +826,13 @@ let Parts = {
 		h.push(`<table id="OwnPartTable" class="foe-table" style="margin-top:2px">
 			<thead>
 			<tr>
-				<th>${i18n('Boxes.OwnpartCalculator.Order')}</th>
-				<th class="text-center"><span class="forgepoints" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Deposit'))}"></th>
-				<th class="text-center">${i18n('Boxes.OwnpartCalculator.Done')}</th>`);
-					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
-					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${FH.HTML.i18nTooltip(i18n('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
-					if (!minView) h.push(`<th class="text-center">${i18n('Boxes.OwnpartCalculator.Ext')}</th>`);
-					if (!minView) h.push(`<th class="text-center">${i18n('Boxes.OwnpartCalculator.Arc')}</th>`);
+				<th>${FH.t('Boxes.OwnpartCalculator.Order')}</th>
+				<th class="text-center"><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.Deposit'))}"></th>
+				<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Done')}</th>`);
+					if (printsEnabled) h.push(`<th class="text-center"><span class="blueprint" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.BPs'))}"></span></th>`);
+					if (medalsEnabled) h.push(`<th class="text-center"><span class="medal" title="${FH.HTML.Tooltip(FH.t('Boxes.OwnpartCalculator.Meds'))}"></span></th>`);
+					if (!minView) h.push(`<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Ext')}</th>`);
+					if (!minView) h.push(`<th class="text-center">${FH.t('Boxes.OwnpartCalculator.Arc')}</th>`);
 			h.push(`</tr>
 			</thead>
 			
@@ -854,7 +854,7 @@ let Parts = {
 				if (IncludeStart) EigenCounter += EigenStart;
 				h.push('<tr>');
 				let OwnPartStartText = (Eigens[i] > 0 ? opt(Eigens[i], EigenCounter): '-');
-				h.push('<td>' + i18n('Boxes.OwnpartCalculator.OwnPart') + '</td>');
+				h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 				h.push('<td class="text-center"><span class="' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
 				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
 				if (printsEnabled && medalsEnabled) h.push('<td colspan="4"></td>');
@@ -866,7 +866,7 @@ let Parts = {
 				if (Eigens[i] > 0) {
 					h.push('<tr>');
 					let OwnPartText = opt(Eigens[i], EigenCounter);
-					h.push('<td>' + i18n('Boxes.OwnpartCalculator.OwnPart') + '</td>');
+					h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 					h.push('<td class="text-center ' + (PlayerID === ExtPlayerID ? 'success' : 'yellow-text') + '">' + OwnPartText + '</td>');
 					if (printsEnabled && medalsEnabled) h.push('<td colspan="5"></td>');
 					else if (printsEnabled || medalsEnabled) h.push('<td colspan="4"></td>');
@@ -893,10 +893,10 @@ let Parts = {
 					'</td>');
 				
 				if (Parts.LeveltLG[i]) {
-					h.push(`<td class="text-center"><strong class="error">${i18n("Boxes.OwnpartCalculator.levelt")}</strong></td>`);
+					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.levelt")}</strong></td>`);
 				}
 				else if (Parts.DangerPlaces[i] > 5) {
-					h.push(`<td class="text-center"><strong class="error">${i18n("Boxes.OwnpartCalculator.danger")} (${FH.HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
+					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.danger")} (${FH.HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
 				}
 				else {
 					h.push('<td class="text-center">-</td>');
@@ -947,7 +947,7 @@ let Parts = {
 			EigenCounter += Eigens[5];
 			h.push('<tr>');
 			let OwnPartRestText = opt(Eigens[5], EigenCounter);
-			h.push('<td>' + i18n('Boxes.OwnpartCalculator.OwnPart') + '</td>');
+			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 			h.push('<td class="text-center ' + (PlayerID === ExtPlayerID ? 'success' : 'yellow-text') + '">' + OwnPartRestText + '</td>');
 			h.push('<td colspan="5"></td>');
 			h.push('</tr>');
@@ -960,19 +960,19 @@ let Parts = {
 		h.push('<div class="dark-bg" style="padding:5px">');
 
 		h.push(`<div class="text-center">
-			${i18n('Boxes.OwnpartCalculator.ExistingPayments')}: 
-			<input id="lockexistingpayments" class="lockexistingpayments game-cursor" ${(Parts.LockExistingPlaces ? 'checked' : '')} type="checkbox">${i18n('Boxes.OwnpartCalculator.Lock')}
-			<input id="trustexistingpayments" class="trustexistingpayments game-cursor" ${(Parts.TrustExistingPlaces ? 'checked' : '')} type="checkbox"> ${i18n('Boxes.OwnpartCalculator.Trust')}
+			${FH.t('Boxes.OwnpartCalculator.ExistingPayments')}: 
+			<input id="lockexistingpayments" class="lockexistingpayments game-cursor" ${(Parts.LockExistingPlaces ? 'checked' : '')} type="checkbox">${FH.t('Boxes.OwnpartCalculator.Lock')}
+			<input id="trustexistingpayments" class="trustexistingpayments game-cursor" ${(Parts.TrustExistingPlaces ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.OwnpartCalculator.Trust')}
 			</div>`);
 
 		if (!minView) {
 			h.push('<table style="width: 100%"><tr>');
-			h.push('<td>' + i18n('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === ExtPlayerID ? '' : 'success') + '">' + FH.HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
-			h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal) + '</strong></td>');
+			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === ExtPlayerID ? '' : 'success') + '">' + FH.HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
+			h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal) + '</strong></td>');
 			h.push('</tr><tr>');
-			h.push('<td>' + i18n('Boxes.OwnpartCalculator.LGTotalFP') + ': <strong>' + FH.HTML.Format(Total) + '</strong></td>');
+			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.LGTotalFP') + ': <strong>' + FH.HTML.Format(Total) + '</strong></td>');
 			if (EigenStart > 0) {
-				h.push('<td class="text-right">' + i18n('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
+				h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
 			}
 			else {
 				h.push('<td></td>');
@@ -994,7 +994,7 @@ let Parts = {
 			
 			if (!minView) {
 				h.push('<div class="text-center d-flex" style="padding:3px 0;">');
-				h.push('<em>' + i18n('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up" class="copy-fp clickable" data-copy="' + rest + '">' + FH.HTML.Format(rest) + '</span> ' + i18n('Boxes.Calculator.FP') + '</em>');
+				h.push('<em>' + FH.t('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up" class="copy-fp clickable" data-copy="' + rest + '">' + FH.HTML.Format(rest) + '</span> ' + FH.t('Boxes.Calculator.FP') + '</em>');
 				h.push('</div>');
 			}
 			
@@ -1003,16 +1003,16 @@ let Parts = {
 			h.push('<span id="OwnPartCalcGBSettings" class="fh-icon-settings"></span>'); 
 			h.push('<div class="btn-group">');
 			if (Parts.SafePlaces.length > 0 || Parts.CopyModeAll) { //Copy bzw. Note Button nur einblenden wenn zumindest ein Platz safe ist
-				h.push('<span class="btn btn-slim button-own">' + i18n('Boxes.OwnpartCalculator.CopyValues') + '</span>');
-				if (FH.Main.CurrentGB.Entity['player_id'] === ExtPlayerID) h.push('<span class="btn btn-slim button-save-own">' + i18n('Boxes.OwnpartCalculator.Note') + '</span>');
+				h.push('<span class="btn btn-slim button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span>');
+				if (FH.Main.CurrentGB.Entity['player_id'] === ExtPlayerID) h.push('<span class="btn btn-slim button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>');
 			}
 			else {
-				h.push(i18n('Boxes.OwnpartCalculator.NoPlaceSafe'));
+				h.push(FH.t('Boxes.OwnpartCalculator.NoPlaceSafe'));
 			}
 			h.push('</div></div>');
 
 			h.push(`<div class="btn-group">
-				<span class="btn btn-slim button-powerleveling">${i18n('Boxes.OwnpartCalculator.PowerLeveling')}</span>
+				<span class="btn btn-slim button-powerleveling">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
 				</div>`);
 			h.push('</div>');
 			h.push('</div>');
@@ -1028,7 +1028,7 @@ let Parts = {
 					if (i < Keys.length - 1) GBList += ', ';
 				}
 				
-				h.push('<div class="text-center dark-bg d-flex" style="padding:5px 0;"><em style="max-width:350px"><strong>' + FH.HTML.i18nReplacer(i18n('Boxes.OwnpartCalculator.GBsNoted'), { 'GBCount': SaveCopyLength }) + ':</strong> ' + GBList + '</em></div>');
+				h.push('<div class="text-center dark-bg d-flex" style="padding:5px 0;"><em style="max-width:350px"><strong>' + FH.helper.str.Replacer(FH.t('Boxes.OwnpartCalculator.GBsNoted'), { 'GBCount': SaveCopyLength }) + ':</strong> ' + GBList + '</em></div>');
 			}
 		}
 
@@ -1119,7 +1119,7 @@ let Parts = {
 
 		h.push('<span class="icon-close"></span>');
 		h.push('<section class="p5">');
-		h.push('<strong>' + i18n('Boxes.OwnpartCalculator.Preview') + '</strong><br>');
+		h.push('<strong>' + FH.t('Boxes.OwnpartCalculator.Preview') + '</strong><br>');
 		Parts.CopyString = Parts.GetCopyString();
 		h.push('<input type="text" id="copystring" value="' + Parts.CopyString + '">');
 		
@@ -1127,39 +1127,39 @@ let Parts = {
 
 		h.push('<section class="p2">');
 		if (PlayerID === ExtPlayerID) {
-			h.push('<div class="flex between"><span>' + i18n('Boxes.OwnpartCalculator.PlayerName') + ':</span><input type="text" id="player-name" value="' + Parts.CopyPlayerName + '"></div>');
+			h.push('<div class="flex between"><span>' + FH.t('Boxes.OwnpartCalculator.PlayerName') + ':</span><input type="text" id="player-name" value="' + Parts.CopyPlayerName + '"></div>');
 		}
 		else {
-			h.push('<div><span>' + i18n('Boxes.OwnpartCalculator.PlayerName') + ':</span>' + Parts.CopyPlayerName + '</div>');
+			h.push('<div><span>' + FH.t('Boxes.OwnpartCalculator.PlayerName') + ':</span>' + Parts.CopyPlayerName + '</div>');
 		}
-		h.push('<div class="flex between"><span>' + i18n('Boxes.OwnpartCalculator.BuildingName') + ':</span><input type="text" id="build-name" value="' + (Parts.CopyBuildingName) + '"></div>');
+		h.push('<div class="flex between"><span>' + FH.t('Boxes.OwnpartCalculator.BuildingName') + ':</span><input type="text" id="build-name" value="' + (Parts.CopyBuildingName) + '"></div>');
 		h.push('</section>');
 
 		h.push('<section class="p2">');
-		h.push('<strong>' + i18n('Boxes.OwnpartCalculator.IncludeData') + '</strong>');
+		h.push('<strong>' + FH.t('Boxes.OwnpartCalculator.IncludeData') + '</strong>');
 		let Options = '<div class="checkboxes">' +
-			'<label class="form-check-label game-cursor" for="options-player"><input type="checkbox" class="form-check-input" id="options-player" data-options="player" ' + (Parts.CopySettings.includePlayer ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsPlayer') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-gb"><input type="checkbox" class="form-check-input" id="options-gb" data-options="gb" ' + (Parts.CopySettings.includeGB ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsGB') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-level"><input type="checkbox" class="form-check-input" id="options-level" data-options="level" ' + (Parts.CopySettings.includeLevel ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsLevel') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-fp"><input type="checkbox" class="form-check-input" id="options-fp" data-options="fp" ' + (Parts.CopySettings.includeFP ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsFP') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-descending"><input type="checkbox" class="form-check-input" id="options-descending" data-options="descending" ' + (Parts.CopySettings.descending ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsDescending') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-levelup"><input type="checkbox" class="form-check-input" id="options-levelup" data-options="levelup" ' + (Parts.CopySettings.includeLevelString ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsLevelUp') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-ownpart"><input type="checkbox" class="form-check-input" id="options-ownpart" data-options="ownpart" ' + (Parts.CopySettings.includeOwnPart ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsOwnPart') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-player"><input type="checkbox" class="form-check-input" id="options-player" data-options="player" ' + (Parts.CopySettings.includePlayer ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsPlayer') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-gb"><input type="checkbox" class="form-check-input" id="options-gb" data-options="gb" ' + (Parts.CopySettings.includeGB ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsGB') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-level"><input type="checkbox" class="form-check-input" id="options-level" data-options="level" ' + (Parts.CopySettings.includeLevel ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsLevel') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-fp"><input type="checkbox" class="form-check-input" id="options-fp" data-options="fp" ' + (Parts.CopySettings.includeFP ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsFP') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-descending"><input type="checkbox" class="form-check-input" id="options-descending" data-options="descending" ' + (Parts.CopySettings.descending ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsDescending') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-levelup"><input type="checkbox" class="form-check-input" id="options-levelup" data-options="levelup" ' + (Parts.CopySettings.includeLevelString ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsLevelUp') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-ownpart"><input type="checkbox" class="form-check-input" id="options-ownpart" data-options="ownpart" ' + (Parts.CopySettings.includeOwnPart ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsOwnPart') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="options-prep"><input type="checkbox" class="form-check-input" id="options-prep" data-options="prep" ' + (Parts.CopyPreP ? 'checked' : '') + '> <span>P(xx)</span></label>' +
-			'<label class="form-check-label game-cursor" for="options-danger"><input type="checkbox" class="form-check-input" id="options-danger" data-options="danger" ' + (Parts.CopySettings.includeDanger ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.OptionsDanger') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-danger"><input type="checkbox" class="form-check-input" id="options-danger" data-options="danger" ' + (Parts.CopySettings.includeDanger ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsDanger') + '</span></label>' +
 			'</div>';
 
 		h.push(Options)
 
 		if (Parts.CopySettings.includeDanger) {
-			let DangerOptions = '<strong>' + i18n('Boxes.OwnpartCalculator.OptionsDanger') + '</strong>' +
-			'<div><span>' + i18n('Boxes.OwnpartCalculator.OptionsDangerPrefix') + ':</span><input type="text" class="form-text-input" id="options-danger-prefix" data-options="danger-prefix" value="' + Parts.CopySettings.dangerPrefix + '"></div>' +
-			'<div><span>' + i18n('Boxes.OwnpartCalculator.OptionsDangerSuffix') + ':</span><input type="text" class="form-text-input" id="options-danger-suffix" data-options="danger-suffix" value="' + Parts.CopySettings.dangerSuffix + '"></div>';
+			let DangerOptions = '<strong>' + FH.t('Boxes.OwnpartCalculator.OptionsDanger') + '</strong>' +
+			'<div><span>' + FH.t('Boxes.OwnpartCalculator.OptionsDangerPrefix') + ':</span><input type="text" class="form-text-input" id="options-danger-prefix" data-options="danger-prefix" value="' + Parts.CopySettings.dangerPrefix + '"></div>' +
+			'<div><span>' + FH.t('Boxes.OwnpartCalculator.OptionsDangerSuffix') + ':</span><input type="text" class="form-text-input" id="options-danger-suffix" data-options="danger-suffix" value="' + Parts.CopySettings.dangerSuffix + '"></div>';
 
 			h.push(DangerOptions);
 		}
 		h.push('</section><section class="p2">');
-		h.push('<strong>' + i18n('Boxes.OwnpartCalculator.Places') + '</strong>');
+		h.push('<strong>' + FH.t('Boxes.OwnpartCalculator.Places') + '</strong>');
 
 		let cb = '<div class="checkboxes">' +
 			'<label class="form-check-label game-cursor" for="chain-p1"><input type="checkbox" class="form-check-input" id="chain-p1" data-place="1" ' + (Parts.CopyPlaces[0] ? 'checked' : '') + '> <span>1</span></label>' +
@@ -1167,17 +1167,17 @@ let Parts = {
 			'<label class="form-check-label game-cursor" for="chain-p3"><input type="checkbox" class="form-check-input" id="chain-p3" data-place="3" ' + (Parts.CopyPlaces[2] ? 'checked' : '') + '> <span>3</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-p4"><input type="checkbox" class="form-check-input" id="chain-p4" data-place="4" ' + (Parts.CopyPlaces[3] ? 'checked' : '') + '> <span>4</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-p5"><input type="checkbox" class="form-check-input" id="chain-p5" data-place="5" ' + (Parts.CopyPlaces[4] ? 'checked' : '') + '> <span>5</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.All') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-auto"><input type="checkbox" class="form-check-input" id="chain-auto" data-place="auto" ' + (Parts.CopyModeAuto ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.Auto') + '</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-auto-unsafe"><input type="checkbox" class="form-check-input" id="chain-auto-unsafe" data-place="auto-unsafe" ' + (Parts.CopyModeAutoUnsafe ? 'checked' : '') + '> <span>' + i18n('Boxes.OwnpartCalculator.AutoWithUnsafe') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="chain-auto"><input type="checkbox" class="form-check-input" id="chain-auto" data-place="auto" ' + (Parts.CopyModeAuto ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.Auto') + '</span></label>' +
+			'<label class="form-check-label game-cursor" for="chain-auto-unsafe"><input type="checkbox" class="form-check-input" id="chain-auto-unsafe" data-place="auto-unsafe" ' + (Parts.CopyModeAutoUnsafe ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.AutoWithUnsafe') + '</span></label>' +
 		'</div>';
 
 		h.push(cb);
 		h.push('</section>')
 		h.push('<div class="btn-outer text-center" style="margin-top: 10px">');
-		h.push('<span class="btn button-own">' + i18n('Boxes.OwnpartCalculator.CopyValues') + '</span> ');
+		h.push('<span class="btn button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span> ');
 		if (FH.Main.CurrentGB.Entity['player_id'] === ExtPlayerID) 
-			h.push('<span class="btn button-save-own">' + i18n('Boxes.OwnpartCalculator.Note') + '</span>'); 
+			h.push('<span class="btn button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>'); 
 		h.push('</div>');
 
 		$OwnPartBox.append( $('<div class="OwnPartBoxBackgroundBody settingsbox-wrapper" />').append(h.join('')) );
@@ -1210,7 +1210,7 @@ let Parts = {
 
 		if (Parts.CopySettings.includeGB) Ret.push(Parts.CopyBuildingName);
 
-		if (Parts.CopySettings.includeLevelString) Ret.push(i18n('Boxes.OwnpartCalculator.OptionsLevelUp'));
+		if (Parts.CopySettings.includeLevelString) Ret.push(FH.t('Boxes.OwnpartCalculator.OptionsLevelUp'));
 
 		if (Parts.CopySettings.includeLevel) Ret.push(Level + '→' + (Level + 1));
 
@@ -1237,13 +1237,13 @@ let Parts = {
 			}
 		}
 		else if (PlaceAuto) {
-			Ret.push(i18n('Boxes.OwnpartCalculator.NoPlaceSafe'));
+			Ret.push(FH.t('Boxes.OwnpartCalculator.NoPlaceSafe'));
 		}
 		else if (PlaceAutoUnsafe) {
-			Ret.push(i18n('Boxes.OwnpartCalculator.NoPlaceAvailable'));
+			Ret.push(FH.t('Boxes.OwnpartCalculator.NoPlaceAvailable'));
 		}
 		
-		if (Parts.CopySettings.includeOwnPart) Ret.push(i18n('Boxes.OwnpartCalculator.OwnPartShort') + '(' + OwnPart + ')');
+		if (Parts.CopySettings.includeOwnPart) Ret.push(FH.t('Boxes.OwnpartCalculator.OwnPartShort') + '(' + OwnPart + ')');
 
 		return Ret.join(' ');
 	},
@@ -1287,7 +1287,7 @@ let Parts = {
 		if ($('#PowerLevelingBox').length === 0) {
 			FH.HTML.Box({
 				'id': 'PowerLevelingBox',
-				'title': i18n('Boxes.PowerLeveling.Title'),
+				'title': FH.t('Boxes.PowerLeveling.Title'),
 				'auto_close': true,
 				'dragdrop': true,
 				'minimize': true,
@@ -1464,7 +1464,7 @@ let Parts = {
 				h.push('<td class="no-select">' + FH.HTML.Format(FH.Main.round(DoubleCollections[i])) + '</td>');
 			}
 			h.push('<td><strong class="info no-select">' + FH.HTML.Format(FH.Main.round(EigenNettos[i])) + '</strong></td>');
-			h.push('<td><span class="hidden-text">' + i + '</span><span class="btn btn-slim button-powerlevel-copy">' + i18n('Boxes.PowerLeveling.CopyValues') + '</span></td>');
+			h.push('<td><span class="hidden-text">' + i + '</span><span class="btn btn-slim button-powerlevel-copy">' + FH.t('Boxes.PowerLeveling.CopyValues') + '</span></td>');
 			h.push('</tr>');
 		}
 	},
@@ -1517,9 +1517,9 @@ let Parts = {
 		h.push('<h1 class="text-center">' + CityEntity['name'] + '</h1>')
 
 		h.push('<div class="d-flex justify-content-center">');
-		h.push('<div style="margin: 5px 10px 0 0;">' + i18n('Boxes.PowerLeveling.StartLevel') + ': <input type="number" id="startLevel" step="1" min=0" max="1000" value="' + StartLevel + '"></div>');
-		h.push('<div style="margin: 5px 10px 0 0;">' + i18n('Boxes.PowerLeveling.EndLevel') + ': <input type="number" id="endLevel" step="1" min=10" max="1000" value="' + EndLevel + '"></div>');
-		h.push('<div>' + i18n('Boxes.PowerLeveling.OwnPartSum') +': <strong class="info" id="PowerLevelingBoxOwnPartSum">'+ FH.HTML.Format(FH.Main.round(OwnPartSum)) + '</strong></div>')
+		h.push('<div style="margin: 5px 10px 0 0;">' + FH.t('Boxes.PowerLeveling.StartLevel') + ': <input type="number" id="startLevel" step="1" min=0" max="1000" value="' + StartLevel + '"></div>');
+		h.push('<div style="margin: 5px 10px 0 0;">' + FH.t('Boxes.PowerLeveling.EndLevel') + ': <input type="number" id="endLevel" step="1" min=10" max="1000" value="' + EndLevel + '"></div>');
+		h.push('<div>' + FH.t('Boxes.PowerLeveling.OwnPartSum') +': <strong class="info" id="PowerLevelingBoxOwnPartSum">'+ FH.HTML.Format(FH.Main.round(OwnPartSum)) + '</strong></div>')
 		h.push('</div>');
 		h.push('</div>');
 
@@ -1527,17 +1527,17 @@ let Parts = {
 
 		h.push('<thead class="sticky">');
 		h.push('<tr>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.Level') + '</th>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.P1') + '</th>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.P2') + '</th>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.P3') + '</th>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.P4') + '</th>');
-		h.push('<th>' + i18n('Boxes.PowerLeveling.P5') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.Level') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.P1') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.P2') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.P3') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.P4') + '</th>');
+		h.push('<th>' + FH.t('Boxes.PowerLeveling.P5') + '</th>');
 		if (HasDoubleCollection) {
-			h.push('<th class="no-select">' + i18n('Boxes.PowerLeveling.OwnPartBrutto') + '</th>');
-			h.push('<th class="no-select">' + i18n('Boxes.PowerLeveling.DoubleCollection') + '</th>');
+			h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.OwnPartBrutto') + '</th>');
+			h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.DoubleCollection') + '</th>');
 		}
-		h.push('<th class="no-select">' + i18n('Boxes.PowerLeveling.OwnPartNetto') + '</th>');
+		h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.OwnPartNetto') + '</th>');
 		h.push('<th></th>');
 		h.push('</tr>');
 		h.push('</thead>');
@@ -1570,7 +1570,7 @@ let Parts = {
 			minView = FH.Storage.getItem('OwnPartMinView') || 'false',
 			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'true',
 			includeStart = FH.Storage.getItem('OwnPartIncludeStart') || 'true',
-			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${i18n('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
+			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
 		
 		if(sB) {
 			buttons = JSON.parse(sB);
@@ -1596,22 +1596,22 @@ let Parts = {
 		c.push(nV);
 
 		c.push(`<p class="bbd p5">
-				<input type="checkbox" id="autoOpen" class="autoOpen game-cursor" ${((autoOpen == 'true') ? 'checked' : '')}> <label for="autoOpen">${i18n('Settings.ShowOwnPartAutoOpen.Desc')}</label><br>
-				<input type="checkbox" id="openonaliengb" class="openonaliengb game-cursor" ${((allGB == 'true') ? 'checked' : '')}> <label for="openonaliengb">${i18n('Settings.ShowOwnPartOnAllGBs.Desc')}</label><br>
-				<input type="checkbox" id="showmedals" class="showmedals game-cursor" ${((showMedals == 'true') ? 'checked' : '')}> <label for="showmedals">${i18n('Settings.ShowOwnPartMedals.Desc')}</label><br>
-				<input type="checkbox" id="showprints" class="showprints game-cursor" ${((showPrints == 'true') ? 'checked' : '')}> <label for="showprints">${i18n('Settings.ShowOwnPartBP.Desc')}</label><br>
-				<input type="checkbox" id="minview" class="minview game-cursor" ${((minView == 'true') ? 'checked' : '')}> <label for="minview">${i18n('Settings.ShowOwnPartMinView.Desc')}</label><br>
-				<input id="copyformatpergb" class="copyformatpergb game-cursor" ${(Parts.CopyFormatPerGB ? 'checked' : '')} type="checkbox"> <label for="copyformatpergb">${i18n('Boxes.OwnpartCalculator.CopyFormatPerGB')}</label><br>
-				<input type="checkbox" id="includeStart" class="includeStart game-cursor" ${((includeStart == 'true') ? 'checked' : '')}> <label for="includeStart">${i18n('Settings.ShowOwnPartIncludeStart.Desc')}</label>
+				<input type="checkbox" id="autoOpen" class="autoOpen game-cursor" ${((autoOpen == 'true') ? 'checked' : '')}> <label for="autoOpen">${FH.t('Settings.ShowOwnPartAutoOpen.Desc')}</label><br>
+				<input type="checkbox" id="openonaliengb" class="openonaliengb game-cursor" ${((allGB == 'true') ? 'checked' : '')}> <label for="openonaliengb">${FH.t('Settings.ShowOwnPartOnAllGBs.Desc')}</label><br>
+				<input type="checkbox" id="showmedals" class="showmedals game-cursor" ${((showMedals == 'true') ? 'checked' : '')}> <label for="showmedals">${FH.t('Settings.ShowOwnPartMedals.Desc')}</label><br>
+				<input type="checkbox" id="showprints" class="showprints game-cursor" ${((showPrints == 'true') ? 'checked' : '')}> <label for="showprints">${FH.t('Settings.ShowOwnPartBP.Desc')}</label><br>
+				<input type="checkbox" id="minview" class="minview game-cursor" ${((minView == 'true') ? 'checked' : '')}> <label for="minview">${FH.t('Settings.ShowOwnPartMinView.Desc')}</label><br>
+				<input id="copyformatpergb" class="copyformatpergb game-cursor" ${(Parts.CopyFormatPerGB ? 'checked' : '')} type="checkbox"> <label for="copyformatpergb">${FH.t('Boxes.OwnpartCalculator.CopyFormatPerGB')}</label><br>
+				<input type="checkbox" id="includeStart" class="includeStart game-cursor" ${((includeStart == 'true') ? 'checked' : '')}> <label for="includeStart">${FH.t('Settings.ShowOwnPartIncludeStart.Desc')}</label>
 			</p>
-			<button id="save-calculator-settings" class="btn saveSettings" onclick="Parts.SettingsSaveValues()">${i18n('Boxes.Calculator.Settings.Save')}</button>`);
+			<button id="save-calculator-settings" class="btn saveSettings" onclick="Parts.SettingsSaveValues()">${FH.t('Boxes.Calculator.Settings.Save')}</button>`);
 
 		$('#OwnPartBoxSettingsBox').html(c.join(''));
 	},
 
 
 	SettingsInsertNewRow: ()=> {
-		let nV = `<p class="new-row">${i18n('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
+		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
 
 		$(nV).insertAfter( $('.new-row:eq(-1)') );
 	},

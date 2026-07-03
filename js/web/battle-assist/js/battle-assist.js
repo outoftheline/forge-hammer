@@ -212,12 +212,12 @@ let BattleAssist = {
         
         FH.HTML.Box({
             'id': 'battleAssistNextEraDialog',
-            'title': i18n('Boxes.BattleAssist.Title'),
+            'title': FH.t('Boxes.BattleAssist.Title'),
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        $('#battleAssistNextEraDialogBody').html(`${i18n('Boxes.BattleAssist.Text.NextEra')}`);
+        $('#battleAssistNextEraDialogBody').html(`${FH.t('Boxes.BattleAssist.Text.NextEra')}`);
         if (nT) $('#battleAssistNextEraDialog').addClass('BattleAssistNoTournamnt');
     },
 
@@ -229,14 +229,14 @@ let BattleAssist = {
     ShowRogueDialog: () => {
         FH.HTML.Box({
             'id': 'battleAssistRogueDialog',
-            'title': i18n('Boxes.BattleAssist.Title'),
+            'title': FH.t('Boxes.BattleAssist.Title'),
             'class': 'window-warning',
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
         //if (FH.Main.ABTests["foe_abtest_army_ux"].group != "control_group") $('#battleAssistRogueDialog').addClass("ABnew")
-        $('#battleAssistRogueDialogBody').html(`${i18n('Boxes.BattleAssist.Text.Rogue')}`);
+        $('#battleAssistRogueDialogBody').html(`${FH.t('Boxes.BattleAssist.Text.Rogue')}`);
     },
     
     /**
@@ -248,7 +248,7 @@ let BattleAssist = {
         if ($('#battleAssistArmyAdvice').length == 0) {
             FH.HTML.Box({
                 'id': 'battleAssistArmyAdvice',
-                'title': i18n('Boxes.BattleAssistArmyAdvice.Title'),
+                'title': FH.t('Boxes.BattleAssistArmyAdvice.Title'),
                 'auto_close': true,
                 'dragdrop': false,
                 'minimize': false,
@@ -268,12 +268,12 @@ let BattleAssist = {
         if ($('#battleAssistAddAdvice').length !== 0) return;
         FH.HTML.Box({
             'id': 'battleAssistAddAdvice',
-            'title': i18n('Boxes.BattleAssistAddAdvice.Title'),
+            'title': FH.t('Boxes.BattleAssistAddAdvice.Title'),
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        $('#battleAssistAddAdviceBody').html(`<div onclick="BattleAssist.ShowArmyAdviceConfig()">${i18n('Boxes.BattleAssistAddAdvice')}</div>`);
+        $('#battleAssistAddAdviceBody').html(`<div onclick="BattleAssist.ShowArmyAdviceConfig()">${FH.t('Boxes.BattleAssistAddAdvice')}</div>`);
     },
 
 
@@ -301,7 +301,7 @@ let BattleAssist = {
         if ($('#battleAssistAAConfig').length === 0) {
             FH.HTML.Box({
                 id: 'battleAssistAAConfig',
-                title: i18n('Boxes.BattleAssistAAConfig.Title'),
+                title: FH.t('Boxes.BattleAssistAAConfig.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -309,10 +309,10 @@ let BattleAssist = {
                 settings: BattleAssist.ShowAASettingsButton
             });
         }
-        let html=`<div class="explanation closed" onclick="BattleAssist.AAExp()">${i18n('Boxes.BattleAssistAAConfig.Exp')}</div>`;
-        html += `<h1>${i18n('Boxes.BattleAssistAAConfig.RecentOpponents')}</h1>`;
+        let html=`<div class="explanation closed" onclick="BattleAssist.AAExp()">${FH.t('Boxes.BattleAssistAAConfig.Exp')}</div>`;
+        html += `<h1>${FH.t('Boxes.BattleAssistAAConfig.RecentOpponents')}</h1>`;
         if (BattleAssist.armyRecent.length>0) {
-            html += `<table class="foe-table"><tr><th>${i18n('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Bonus')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
+            html += `<table class="foe-table"><tr><th>${FH.t('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Bonus')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
             for (let recent of BattleAssist.armyRecent) {
                 html += `<tr><td><div class="BattleWave">`
                 for (let unit of recent.wave1) {
@@ -344,10 +344,10 @@ let BattleAssist = {
             }
             html += `</table>`
         }
-        html += `<h1>${i18n('Boxes.BattleAssistAAConfig.AllConfigs')}</h1>`;
+        html += `<h1>${FH.t('Boxes.BattleAssistAAConfig.AllConfigs')}</h1>`;
         
         if (Object.keys(BattleAssist.armyAdvice).length>0) {
-            html += `<table class="foe-table"><tr><th>${i18n('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
+            html += `<table class="foe-table"><tr><th>${FH.t('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
             for (let [id,advice] of Object.entries(BattleAssist.armyAdvice)) {
                 if (!advice) break;
                 html += `<tr><td><div class="BattleWave">`
@@ -459,24 +459,24 @@ let BattleAssist = {
         let elem = $('#battleAssistAAConfig .explanation')[0];
         elem.classList.toggle("closed");
         if (elem.classList.contains("closed")) {
-            elem.innerHTML = i18n('Boxes.BattleAssistAAConfig.Exp');
+            elem.innerHTML = FH.t('Boxes.BattleAssistAAConfig.Exp');
         } else {
-            elem.innerHTML = i18n('Boxes.BattleAssistAAConfig.Explanation');
+            elem.innerHTML = FH.t('Boxes.BattleAssistAAConfig.Explanation');
         }
         
     },
     ShowAASettingsButton: () => {
 
         let h = [];
-		h.push(`<p>${i18n('Boxes.BattleAssistAAConfig.when')}<p>`)
+		h.push(`<p>${FH.t('Boxes.BattleAssistAAConfig.when')}<p>`)
         h.push(`<table class="foe-table"><tr><td>`)
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.lostUnits')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.lostUnits')}</td><td>`);
         h.push(`<input type="Number" id="AAlostUnits" oninput="BattleAssist.SaveAASettings()" value="${BattleAssist.AASettings.lostUnits}"></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.lostHP')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.lostHP')}</td><td>`);
         h.push(`<input type="Number" id="AAlostHP" oninput="BattleAssist.SaveAASettings()" value="${BattleAssist.AASettings.lostHP}"></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.battleLost')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.battleLost')}</td><td>`);
         h.push(`<input type="checkbox" id="AAbattleLost" oninput="BattleAssist.SaveAASettings()"${BattleAssist.AASettings.battleLost ? ' checked' : ''}></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.battleSurrendered')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.battleSurrendered')}</td><td>`);
         h.push(`<input type="checkbox" id="AAbattleSurrendered" oninput="BattleAssist.SaveAASettings()"${BattleAssist.AASettings.battleSurrendered ? ' checked' : ''}></td></tr></table>`);
          
 		$('#battleAssistAAConfigSettingsBox').html(h.join(''));

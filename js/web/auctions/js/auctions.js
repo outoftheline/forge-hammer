@@ -56,7 +56,7 @@ let Auction = {
 		if ($('#auctionSettingsBox').length === 0) {
 			FH.HTML.Box({
 				id: 'auctionSettingsBox',
-				title: i18n('Boxes.AuctionSettings.Title'),
+				title: FH.t('Boxes.AuctionSettings.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -66,9 +66,9 @@ let Auction = {
 			FH.HTML.AddCssFile('auctions');
 		} 
         let t=[];
-        t.push(`<button id="AuctionHelpBtn" class="btn">${i18n('Boxes.AuctionSettings.Help')}</button>`);
-        t.push(`<div id="AuctionHelp" style="display:none"><ul><li>${i18n('Boxes.AuctionSettings.Help1')}</li><li>${i18n('Boxes.AuctionSettings.Help2')}</li><li>${i18n('Boxes.AuctionSettings.Help3')}</li><li>${i18n('Boxes.AuctionSettings.Help4')}</li><li>${i18n('Boxes.AuctionSettings.Help5')}</li></div> `);
-        t.push(`<table><tr><th>${i18n('Boxes.AuctionSettings.Bid')}</th><th>${i18n('Boxes.AuctionSettings.Add')}</th><th>${i18n('Boxes.AuctionSettings.Factor')}</th></tr>`)
+        t.push(`<button id="AuctionHelpBtn" class="btn">${FH.t('Boxes.AuctionSettings.Help')}</button>`);
+        t.push(`<div id="AuctionHelp" style="display:none"><ul><li>${FH.t('Boxes.AuctionSettings.Help1')}</li><li>${FH.t('Boxes.AuctionSettings.Help2')}</li><li>${FH.t('Boxes.AuctionSettings.Help3')}</li><li>${FH.t('Boxes.AuctionSettings.Help4')}</li><li>${FH.t('Boxes.AuctionSettings.Help5')}</li></div> `);
+        t.push(`<table><tr><th>${FH.t('Boxes.AuctionSettings.Bid')}</th><th>${FH.t('Boxes.AuctionSettings.Add')}</th><th>${FH.t('Boxes.AuctionSettings.Factor')}</th></tr>`)
         for (let i = 0; i<Auction.diff.length;i++) {
             t.push(`<tr><td>${i+1}</td><td><Input class="AuctionInput" data-type="Add" data-id="${i}" type="number" value="${Auction.diff[i]}"></td><td><Input class="AuctionInput" data-type="Mult" data-id="${i}" type="number" value="${Auction.fak[i]}"></td></tr>`)
 

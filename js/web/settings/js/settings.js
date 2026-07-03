@@ -55,7 +55,7 @@ let Settings = {
 
 			FH.HTML.Box({
 				id: 'SettingsBox',
-				title: i18n('Boxes.Settings.Title'),
+				title: FH.t('Boxes.Settings.Title'),
 				auto_close: true,
 				dragdrop: true
 			});
@@ -81,7 +81,7 @@ let Settings = {
 				childLis = [],
 				childDivs = [];
 
-			parentLis.push(`<li><a href="#tab-${i}"><span>${i18n('Settings.Tab.' + g)}</span></a></li>`);
+			parentLis.push(`<li><a href="#tab-${i}"><span>${FH.t('Settings.Tab.' + g)}</span></a></li>`);
 
 			for (let x in grps) {
 				if (!grps.hasOwnProperty(x) || grps[x].hidden) break;
@@ -112,7 +112,7 @@ let Settings = {
 				}
 				if (button) {
 					let b = $('<div />').addClass('button-wrapper').append(
-						$(`<button class="btn" id="${x}Button" onclick="${button}">${i18n('Settings.' + d['name'] + '.Button')}</button>`)
+						$(`<button class="btn" id="${x}Button" onclick="${button}">${FH.t('Settings.' + d['name'] + '.Button')}</button>`)
 					);
 
 					cs.append(b);
@@ -120,21 +120,21 @@ let Settings = {
 				if (status !== undefined) {
 					cs.append(
 						$('<span />').addClass('check '+(status ? '' : 'unchecked')).append(
-							$('<span />').addClass('toogle-word').text(status ? i18n('Boxes.Settings.Active') : i18n('Boxes.Settings.Inactive'))
+							$('<span />').addClass('toogle-word').text(status ? FH.t('Boxes.Settings.Active') : FH.t('Boxes.Settings.Inactive'))
 						).append(
 							$('<input class="setting-check game-cursor" type="checkbox" data-id="'+d['name']+'" '+(status ? 'checked' : '')+'/>')
 						)
 					)
 				}
 
-				cd.html(i18n(`Settings.${d['name']}.Desc`));
-				ct.text(i18n(`Settings.${d['name']}.Title`));
+				cd.html(FH.t(`Settings.${d['name']}.Desc`));
+				ct.text(FH.t(`Settings.${d['name']}.Title`));
 
 				childLis.push(`<li class="${d['cssClass']||""}">`);
 				if (d.link)
-					childLis.push(`<a href="${FH.extUrl}${d.link}" target="_blank">${i18n('Settings.Entry.' + d['name'])}</a>`);
+					childLis.push(`<a href="${FH.extUrl}${d.link}" target="_blank">${FH.t('Settings.Entry.' + d['name'])}</a>`);
 				else
-					childLis.push(`<a href="#subtab-${cnt}">${i18n('Settings.Entry.' + d['name'])}</a>`);
+					childLis.push(`<a href="#subtab-${cnt}">${FH.t('Settings.Entry.' + d['name'])}</a>`);
 				childLis.push(`</li>`);
 
 				let h = c.append(cr.append(ct, cd, cs));
@@ -195,7 +195,7 @@ let Settings = {
 			return;
 		}
 
-		$(el).prev().text(v === true ? i18n('Boxes.Settings.Active') : i18n('Boxes.Settings.Inactive'));
+		$(el).prev().text(v === true ? FH.t('Boxes.Settings.Active') : FH.t('Boxes.Settings.Inactive'));
 
 		if (v === true) {
 			$(el).closest('span.check').removeClass('unchecked');
@@ -226,16 +226,16 @@ let Settings = {
 
 	VersionInfo: () => {
 		let v = '<ul>';
-		v +=	FH.BaseData.extVersion.includes('beta') ? `` : `<li><b>${i18n('Settings.Version.Link').replace('__version__', '')}</b></li>`;
-		v +=	`<li><a href="${FH.extUrl}content/about.html" target="_blank">${i18n('Settings.About.Title')}</a></li>
-				<li><a href="${FH.extUrl}content/help.html" target="_blank">${i18n('Settings.Help.Title')}</a></li>
+		v +=	FH.BaseData.extVersion.includes('beta') ? `` : `<li><b>${FH.t('Settings.Version.Link').replace('__version__', '')}</b></li>`;
+		v +=	`<li><a href="${FH.extUrl}content/about.html" target="_blank">${FH.t('Settings.About.Title')}</a></li>
+				<li><a href="${FH.extUrl}content/help.html" target="_blank">${FH.t('Settings.Help.Title')}</a></li>
 				</ul>
-				<p>${i18n('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${FH.extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
+				<p>${FH.t('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${FH.extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
 				<div class="info-box">
-					<span><b>${i18n('Boxes.General.Version')}</b> ${FH.BaseData.extVersion}</span>
-					<span><b>${i18n('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
-					<span><b>${i18n('Settings.Version.GuildId')}</b> ${(ExtGuildID ? ExtGuildID : 'N/A')}</span>
-					<span><b>${i18n('Settings.Version.World')}</b> ${ExtWorld}</span>
+					<span><b>${FH.t('Boxes.General.Version')}</b> ${FH.BaseData.extVersion}</span>
+					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
+					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(ExtGuildID ? ExtGuildID : 'N/A')}</span>
+					<span><b>${FH.t('Settings.Version.World')}</b> ${ExtWorld}</span>
 				</div>`;
 		return v;
 	},
@@ -267,12 +267,12 @@ let Settings = {
 		};
 
 		let v = `<ul class="gameFilters foe-table">
-			<li><span>${i18n('Boxes.Settings.GameFilters.Brightness')}</span> <input type="range" name="brightness" id="gamebrightness" min="0.1" max="1.5" step="0.01" value="${filters.brightness}" /> <output for="gamebrightness">${filters.brightness}</output></li>
-			<li><span>${i18n('Boxes.Settings.GameFilters.Contrast')}</span> <input type="range" name="contrast" id="gamecontrast" min="0.5" max="1.5" step="0.01" value="${filters.contrast}" /> <output for="gamecontrast">${filters.contrast}</output></li>
-			<li><span>${i18n('Boxes.Settings.GameFilters.Saturation')}</span> <input type="range" name="saturation" id="gamesaturation" min="0" max="1.5" step="0.01" value="${filters.saturation}" /> <output for="gamesaturation">${filters.saturation}</output></li>
-			<li><span>${i18n('Boxes.Settings.GameFilters.Hue')}</span> <input type="range" name="hue" id="gamehue" min="0" max="360" step="1" value="${filters.hue}" /> <output for="gamehue">${filters.hue}</output></li>
+			<li><span>${FH.t('Boxes.Settings.GameFilters.Brightness')}</span> <input type="range" name="brightness" id="gamebrightness" min="0.1" max="1.5" step="0.01" value="${filters.brightness}" /> <output for="gamebrightness">${filters.brightness}</output></li>
+			<li><span>${FH.t('Boxes.Settings.GameFilters.Contrast')}</span> <input type="range" name="contrast" id="gamecontrast" min="0.5" max="1.5" step="0.01" value="${filters.contrast}" /> <output for="gamecontrast">${filters.contrast}</output></li>
+			<li><span>${FH.t('Boxes.Settings.GameFilters.Saturation')}</span> <input type="range" name="saturation" id="gamesaturation" min="0" max="1.5" step="0.01" value="${filters.saturation}" /> <output for="gamesaturation">${filters.saturation}</output></li>
+			<li><span>${FH.t('Boxes.Settings.GameFilters.Hue')}</span> <input type="range" name="hue" id="gamehue" min="0" max="360" step="1" value="${filters.hue}" /> <output for="gamehue">${filters.hue}</output></li>
 		</ul>
-		<button class="btn resetColors my-5">${i18n('Boxes.General.Reset')}</button>`;
+		<button class="btn resetColors my-5">${FH.t('Boxes.General.Reset')}</button>`;
 
 		$('#SettingsBoxBody')
 			.off('change.gameFilters click.gameFilters')
@@ -292,7 +292,7 @@ let Settings = {
 
 
 	ExportView: () => {
-		return `<p><button class="btn" onclick="DBExport.BuildBox()">${i18n('Settings.ExportSettings.OpenImportExportTool')}</button></p>`;
+		return `<p><button class="btn" onclick="DBExport.BuildBox()">${FH.t('Settings.ExportSettings.OpenImportExportTool')}</button></p>`;
 	},
 
 
@@ -329,7 +329,7 @@ let Settings = {
 		for (let index = 0; index < _menu.MenuOptions.length; index++) {
 			const element = _menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
-				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + i18n('Menu.' + element) + '</option>');
+				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + FH.t('Menu.' + element) + '</option>');
 			}
 		}
 
@@ -410,12 +410,12 @@ let Settings = {
 					FH.Storage.setItem(key, parts[key]);
 				});
 
-				alert(i18n('Settings.ExportImport.Reload'));
+				alert(FH.t('Settings.ExportImport.Reload'));
 				location.reload();
 			}
 
 			reader.onerror = function (evt) {
-				alert(i18n('Settings.ExportImport.Error'));
+				alert(FH.t('Settings.ExportImport.Error'));
 			}
 		}
 	},
@@ -426,7 +426,7 @@ let Settings = {
 		let dp = [];
 		
 		dp.push('<div class="p5">');
-		dp.push('<b>'+i18n('Settings.EventHelper.Advanced')+'</b>')
+		dp.push('<b>'+FH.t('Settings.EventHelper.Advanced')+'</b>')
 		for (let [setting, value] of Object.entries(eventHelperSettings)) {
 			let savedSetting = FH.Storage.getItem(setting);
 			if (savedSetting !== null) {
@@ -434,13 +434,13 @@ let Settings = {
 			}
 			dp.push('<div>');
 			dp.push( '<span class="check ' + (value ? '' : 'unchecked') + '">' +
-				'<span class="toogle-word">' + (value ? i18n('Boxes.Settings.Active') : i18n('Boxes.Settings.Inactive')) + '</span>' +
+				'<span class="toogle-word">' + (value ? FH.t('Boxes.Settings.Active') : FH.t('Boxes.Settings.Inactive')) + '</span>' +
 				'<input name="'+setting+'" data-id="'+setting+'" class="setting-check game-cursor" type="checkbox" ' + (value ? 'checked' : '') + ' />' +
 			'</span>');
-			dp.push(i18n('Settings.'+setting)+'</div>');
+			dp.push(FH.t('Settings.'+setting)+'</div>');
 		}
 		dp.push('</div>');
-		dp.push('<br/><b>'+i18n('Settings.EventHelper.All')+'</b><br/>');
+		dp.push('<br/><b>'+FH.t('Settings.EventHelper.All')+'</b><br/>');
 		return dp.join('');
 	},
 
@@ -456,8 +456,8 @@ let Settings = {
 		});
 
 		FH.HTML.ShowToastMsg({
-			head: i18n('Boxes.Settings.DeletedBoxCoordsHead'),
-			text: i18n('Boxes.Settings.DeletedBoxCoordsBody'),
+			head: FH.t('Boxes.Settings.DeletedBoxCoordsHead'),
+			text: FH.t('Boxes.Settings.DeletedBoxCoordsBody'),
 			type: 'success',
 			hideAfter: 4000
 		});
@@ -493,7 +493,7 @@ let Settings = {
 		dp.push('</select>');
 
 		if (FH.Storage.getItem('user-language') !== "de") {
-			dp.push(`<hr />${i18n('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="FH.Translation.Show()">${i18n('Settings.ChangeLanguage.Translate')}</a>`);
+			dp.push(`<hr />${FH.t('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="FH.Translation.Show()">${FH.t('Settings.ChangeLanguage.Translate')}</a>`);
 		}
 
 		$('#SettingsBoxBody').on('change', '#change-lang', function () {
@@ -718,7 +718,7 @@ let Settings = {
 		for (let pos in positions) {
 			if (!positions.hasOwnProperty(pos)) { break; }
 
-			elements.push(`<option value="${positions[pos]}"${(settingPos === positions[pos] ? ' selected' : '')}>${i18n('Menu.Notification.Position.' + positions[pos])}</option>`);
+			elements.push(`<option value="${positions[pos]}"${(settingPos === positions[pos] ? ' selected' : '')}>${FH.t('Menu.Notification.Position.' + positions[pos])}</option>`);
 		}
 
 		elements.push('</select>');
@@ -731,8 +731,8 @@ let Settings = {
 			FH.Storage.setItem('NotificationsPosition', pos);
 
 			$.toast({
-				heading: i18n('Settings.NotificationPosition.ToastTestHeader'),
-				text: i18n('Settings.NotificationPosition.ToastTestBody'),
+				heading: FH.t('Settings.NotificationPosition.ToastTestHeader'),
+				text: FH.t('Settings.NotificationPosition.ToastTestBody'),
 				icon: 'success',
 				hideAfter: 6000,
 				position: pos,

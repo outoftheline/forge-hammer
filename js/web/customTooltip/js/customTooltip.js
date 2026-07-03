@@ -121,7 +121,7 @@ let Tooltips = {
 
 
         let h = `<div class="buildingTT">
-                <h2><span>${meta.name}  ${eff ? `(${i18n("Boxes.Kits.Efficiency")}: ${eff})`:''}</span>${upgrades}</h2>
+                <h2><span>${meta.name}  ${eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})`:''}</span>${upgrades}</h2>
                 <table class="foe-table">
                 <tr><td class="imgContainer"><img src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}"></td>`+
                 `<td style="width:100%; vertical-align:top"">`;
@@ -235,12 +235,12 @@ let Tooltips = {
 
             if (levels?.AllAge?.socialInteraction?.interactionType) {
                 if (levels?.AllAge?.socialInteraction?.interactionType === "motivate") {
-                    motMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+i18n("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
-                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${i18n("Boxes.Tooltip.Building.canMotivate")}</td></tr>`
+                    motMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+FH.t("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
+                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${FH.t("Boxes.Tooltip.Building.canMotivate")}</td></tr>`
                 }
                 else if (levels?.AllAge?.socialInteraction?.interactionType === "polish") {
                     polMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+"when"+srcLinks.icons("when_motivated")}</span>`
-                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${i18n("Boxes.Tooltip.Building.canPolish")}</td></tr>`
+                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${FH.t("Boxes.Tooltip.Building.canPolish")}</td></tr>`
                 }
             }
             //Chains
@@ -263,16 +263,16 @@ let Tooltips = {
                     }
                 }
                 if (a.__class__==="AffectsEnvironmentAbility" && a.action?.type==="add_unique_inhabitant")
-                    traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${a.action.animationId}/${a.action.animationId}_south_00.png`,true)}">◄ ${i18n("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(a.action.animationId)})</td></tr>`
+                    traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${a.action.animationId}/${a.action.animationId}_south_00.png`,true)}">◄ ${FH.t("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(a.action.animationId)})</td></tr>`
             }
             if (levels?.AllAge?.environmentEffect?.effects) {
                 for (let e of levels?.AllAge?.environmentEffect?.effects||[]) {
                     if (e.type === "add_unique_inhabitant")
-                        traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${e.name}/${e.name}_south_00.png`,true)}">◄ ${i18n("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(e.name)})</td></tr>`
+                        traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${e.name}/${e.name}_south_00.png`,true)}">◄ ${FH.t("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(e.name)})</td></tr>`
                 }
             }
             if (levels?.AllAge?.cityLimit) {
-                traits+=`<tr><td>${srcLinks.icons("icon_unique_building")}${i18n("Boxes.Tooltip.Building.isUnique")} (${Object.values(FH.Main.CityMapData).filter(x => FH.Main.CityEntities?.[x.cityentity_id]?.components?.AllAge?.cityLimit?.buildingFamily == levels?.AllAge?.cityLimit?.buildingFamily).length+"/"+FH.Main.BuildingFamilyLimits?.[levels?.AllAge?.cityLimit?.buildingFamily] || 1})</td></tr>`
+                traits+=`<tr><td>${srcLinks.icons("icon_unique_building")}${FH.t("Boxes.Tooltip.Building.isUnique")} (${Object.values(FH.Main.CityMapData).filter(x => FH.Main.CityEntities?.[x.cityentity_id]?.components?.AllAge?.cityLimit?.buildingFamily == levels?.AllAge?.cityLimit?.buildingFamily).length+"/"+FH.Main.BuildingFamilyLimits?.[levels?.AllAge?.cityLimit?.buildingFamily] || 1})</td></tr>`
             }
             
             for (let r of levels.AllAge?.ally?.rooms || []) {
@@ -282,9 +282,9 @@ let Tooltips = {
                     if (r.allyType === allydata.type && (!r.rarity?.value || r.rarity?.value === allydata.rarity)) break
                     allydata = null
                 }
-                ally += `<tr><td>${srcLinks.icons("historical_allies_slot_tooltip_icon_" + (allydata ? "full" :"empty"))}<div>${FH.Main.Allies.types[r.allyType]?.name + (r.rarity?.value ? (" ("+i18n("Boxes.Productions.AllyRarity."+r.rarity?.value)+")"):"")}`
+                ally += `<tr><td>${srcLinks.icons("historical_allies_slot_tooltip_icon_" + (allydata ? "full" :"empty"))}<div>${FH.Main.Allies.types[r.allyType]?.name + (r.rarity?.value ? (" ("+FH.t("Boxes.Productions.AllyRarity."+r.rarity?.value)+")"):"")}`
                 if (allydata) {
-                    ally+=`<div class="allyName"><span>${FH.Main.Allies.meta[allydata.allyId]?.name}</span><span>(${i18n("Boxes.Productions.AllyRarity."+allydata.rarity)} - ${i18n("General.Level")} ${allydata.level})</span></div>`
+                    ally+=`<div class="allyName"><span>${FH.Main.Allies.meta[allydata.allyId]?.name}</span><span>(${FH.t("Boxes.Productions.AllyRarity."+allydata.rarity)} - ${FH.t("General.Level")} ${allydata.level})</span></div>`
                     //productions:
                     for (b of allydata.currentLevel?.boosts||allydata.boosts||[]) {
                         ally+=`${srcLinks.icons(b.type+feature[b.targetedFeature])} ${b.value + Boosts.percent(b.type)}`
@@ -295,7 +295,7 @@ let Tooltips = {
             }
 
             if (levels.AllAge.eraRequirement?.era && era =="") {
-                era = srcLinks.icons("era") + " " + i18n("Eras."+(Technologies.Eras[levels.AllAge.eraRequirement?.era]))
+                era = srcLinks.icons("era") + " " + FH.t("Eras."+(Technologies.Eras[levels.AllAge.eraRequirement?.era]))
             }
 
             if (era != "") out += "<tr><td>" + era + "</td></tr>"
@@ -307,7 +307,7 @@ let Tooltips = {
                     let ratings = Productions.rateBuildings([meta.id,levels.AllAge.limited.config.targetCityEntityId],true,era)?.map(x=>Math.round(100 * x?.rating?.totalScore)||0)
                     efficiencyDifference = ratings[0]-ratings[1] //Eff1-Eff2 = efficiencyDifference = efficiency - efficiencyAfter --> effAfter = efficiency - efficiencyDifference
                 }
-                out += `<tr><td class="limited">${srcLinks.icons("limited_building_downgrade") + FH.Main.CityEntities[levels.AllAge.limited.config.targetCityEntityId].name} (${i18n("Boxes.Tooltip.Building.after")} ${formatTime(levels.AllAge.limited.config.expireTime)})${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference): ""}</td></tr>`
+                out += `<tr><td class="limited">${srcLinks.icons("limited_building_downgrade") + FH.Main.CityEntities[levels.AllAge.limited.config.targetCityEntityId].name} (${FH.t("Boxes.Tooltip.Building.after")} ${formatTime(levels.AllAge.limited.config.expireTime)})${efficiencyDifference ? " → "+FH.t("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference): ""}</td></tr>`
             }   
 
             if (await CityBuildings.canAscend(meta.id)) {
@@ -317,7 +317,7 @@ let Tooltips = {
                     //console.log(JSON.stringify(ratings) )
                     efficiencyDifference = ratings[0]-ratings[1]
                 }
-                out += `<tr><td class="limited">${srcLinks.icons("limited_building_upgrade") + FH.Main.CityEntities[ascendedId].name}${efficiencyDifference ? " → "+i18n("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference) :""}</td></tr>`
+                out += `<tr><td class="limited">${srcLinks.icons("limited_building_upgrade") + FH.Main.CityEntities[ascendedId].name}${efficiencyDifference ? " → "+FH.t("Boxes.Kits.Efficiency")+": " + (efficiency - efficiencyDifference) :""}</td></tr>`
 
             }
 
@@ -364,7 +364,7 @@ let Tooltips = {
                     if (product.type == "resources") {
                         for (let [res,amount] of Object.entries(product.playerResources?.resources||{})) {
                             if (amount !=0) {
-                                prods+=`<tr><td>${srcLinks.icons(resMapper(res,"goods")) + range(amount,maxProductions?.[oIndex]?.products?.[pIndex]?.playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + i18n("Boxes.Tooltip.Building.perEra"):"") + t + ((["supplies","coins","money"].includes(res) && !product.onlyWhenMotivated) ? motMod : "") + (product.onlyWhenMotivated?ifMot:"")}</td></tr>`
+                                prods+=`<tr><td>${srcLinks.icons(resMapper(res,"goods")) + range(amount,maxProductions?.[oIndex]?.products?.[pIndex]?.playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + FH.t("Boxes.Tooltip.Building.perEra"):"") + t + ((["supplies","coins","money"].includes(res) && !product.onlyWhenMotivated) ? motMod : "") + (product.onlyWhenMotivated?ifMot:"")}</td></tr>`
                             }
                         }
                     }
@@ -400,7 +400,7 @@ let Tooltips = {
                             if (random.product.type == "resources") {
                                 for (let [res,amount] of Object.entries(random.product.playerResources?.resources||{})) {
                                     if (amount !=0) 
-                                        prods+=srcLinks.icons(resMapper(res,"goods")) + range(amount,maxProductions?.[oIndex]?.products?.[pIndex]?.products?.[rIndex]?.product?.playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + i18n("Boxes.Tooltip.Building.perEra"):"")
+                                        prods+=srcLinks.icons(resMapper(res,"goods")) + range(amount,maxProductions?.[oIndex]?.products?.[pIndex]?.products?.[rIndex]?.product?.playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + FH.t("Boxes.Tooltip.Building.perEra"):"")
                                 }
                             }
                             if (random.product.type == "guildResources") {
@@ -461,7 +461,7 @@ let Tooltips = {
                         if (product.type == "resources") {
                             for (let [res,amount] of Object.entries(product.playerResources?.resources||{})) {
                                 if (amount !=0) 
-                                    prods+=`<tr><td>${b.level + "x" + srcLinks.icons(chain.chainId)} ► ${srcLinks.icons(resMapper(res,"goods")) + span(amount) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + i18n("Boxes.Tooltip.Building.perEra"):"")}</td></tr>`
+                                    prods+=`<tr><td>${b.level + "x" + srcLinks.icons(chain.chainId)} ► ${srcLinks.icons(resMapper(res,"goods")) + span(amount) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + FH.t("Boxes.Tooltip.Building.perEra"):"")}</td></tr>`
                             }
                         }
                         if (product.type == "guildResources") {
@@ -507,7 +507,7 @@ let Tooltips = {
                     if (product.type == "resources") {
                         for (let [res,amount] of Object.entries(product.playerResources?.resources||{})) {
                             if (amount !=0) 
-                                prods+=`<tr><td>${b.level + "x" + srcLinks.icons(chain.chainId)} ► ${srcLinks.icons(resMapper(res,"goods")) + range(amount,chainMax?.config?.bonuses[i].productions[pIndex].playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + i18n("Boxes.Tooltip.Building.perEra"):"")}</td></tr>`
+                                prods+=`<tr><td>${b.level + "x" + srcLinks.icons(chain.chainId)} ► ${srcLinks.icons(resMapper(res,"goods")) + range(amount,chainMax?.config?.bonuses[i].productions[pIndex].playerResources?.resources?.[res]) + (res == "each_special_goods_up_to_age" ?"&nbsp;" + FH.t("Boxes.Tooltip.Building.perEra"):"")}</td></tr>`
                         }
                     }
                     if (product.type == "guildResources") {
@@ -535,24 +535,24 @@ let Tooltips = {
             }
             
             if (set != "") out += "<tr><td>" + set + "</td></tr>"
-            if (ally!="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.allyRooms")}</th></tr>`+ally
-            if (provides!="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
-            if (prods!="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.produces")} ${pCount==1 ? "("+formatTime(levels.AllAge.production?.options?.[0].time || levels?.[minEra].production?.options?.[0].time)+")":""}</th></tr>`+prods
-            if (costs !="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
+            if (ally!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.allyRooms")}</th></tr>`+ally
+            if (provides!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
+            if (prods!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.produces")} ${pCount==1 ? "("+formatTime(levels.AllAge.production?.options?.[0].time || levels?.[minEra].production?.options?.[0].time)+")":""}</th></tr>`+prods
+            if (costs !="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
             
-            out+=`<tr><th>${i18n("Boxes.Tooltip.Building.size+time")}</th></tr>`
+            out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>`
             out+=`<tr><td class="multiCol"><div>${srcLinks.icons("size")} ${levels.AllAge.placement.size.y+"x"+levels.AllAge.placement.size.x}</div>`
             out+=levels.AllAge?.constructionTime?.time ? `<div>${srcLinks.icons("icon_time")}${formatTime(levels.AllAge.constructionTime.time)}</div>`:``
             if (levels.AllAge.streetConnectionRequirement?.requiredLevel) {
                 if (levels.AllAge.streetConnectionRequirement?.requiredLevel == 2)
-                    out+=`<div>${srcLinks.icons("street_required")} ${i18n("Boxes.Tooltip.Building.road2")}</div>`
+                    out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
                 else if (levels.AllAge.streetConnectionRequirement?.requiredLevel == 1)
-                    out+=`<div>${srcLinks.icons("road_required")} ${i18n("Boxes.Tooltip.Building.road")}</div>`
+                    out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
                     
             }
             out+=`</td></tr>`
             
-            if (traits != "") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
+            if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
  
         } else {
             
@@ -591,27 +591,27 @@ let Tooltips = {
                     set =srcLinks.icons(a.setId) + FH.Main.BuildingSets[a.setId].name
                 }
                 if (a.__class__=="PolishableAbility") {
-                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${i18n("Boxes.Tooltip.Building.canPolish")}</td></tr>`
-                    polMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+i18n("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
+                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${FH.t("Boxes.Tooltip.Building.canPolish")}</td></tr>`
+                    polMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+FH.t("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
                 }
                 if (a.__class__ == "MotivatableAbility") {
-                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${i18n("Boxes.Tooltip.Building.canMotivate")}</td></tr>`
-                    motMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+i18n("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
+                    traits+=`<tr><td><span style="width:24px; margin-right:3px; text-align:center">${srcLinks.icons("when_motivated")}</span>${FH.t("Boxes.Tooltip.Building.canMotivate")}</td></tr>`
+                    motMod = `<span class="ifMot">${srcLinks.icons("reward_x2")+FH.t("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
                 }
                 if (a.__class__ == "AddCoinsToSupplyProductionWhenMotivatedAbility") {
-                    motMod = `<span class="ifMot">${"+"+srcLinks.icons("money")+i18n("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
+                    motMod = `<span class="ifMot">${"+"+srcLinks.icons("money")+FH.t("Boxes.Tooltip.Building.when")+srcLinks.icons("when_motivated")}</span>`
                 }
                 if (a.__class__=="NotPlunderableAbility") {
-                    traits+=`<tr><td>`+srcLinks.icons("eventwindow_plunder_repel") + i18n("Boxes.Tooltip.Building.noPlunder")+`</td></tr>`                   
+                    traits+=`<tr><td>`+srcLinks.icons("eventwindow_plunder_repel") + FH.t("Boxes.Tooltip.Building.noPlunder")+`</td></tr>`                   
                 }
                 if (a.__class__=="AffectedByLifeSupportAbility") {
-                    traits+=`<tr><td>`+srcLinks.icons("life_support") + i18n("Boxes.Tooltip.Building.lifeSupport")+`</td></tr>`                   
+                    traits+=`<tr><td>`+srcLinks.icons("life_support") + FH.t("Boxes.Tooltip.Building.lifeSupport")+`</td></tr>`                   
                 }
                 if (a.__class__=="DisplayInfoTextAbility") {
                     info += a.text
                 }
                 if (a.__class__=="AffectsEnvironmentAbility" && a.action?.type=="add_unique_inhabitant") 
-                    traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${a.action.animationId}/${a.action.animationId}_south_00.png`,true)}">◄ ${i18n("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(a.action.animationId)})</td></tr>`
+                    traits += `<tr><td><img class="inhabitant" src="${srcLinks.get(`/city/inhabitants/${a.action.animationId}/${a.action.animationId}_south_00.png`,true)}">◄ ${FH.t("Boxes.Tooltip.Building.addInhabitant")} (${capFirsts(a.action.animationId)})</td></tr>`
                 if (a.boostHints){
                     for (let b of a.boostHints||[]){
                         if (b.boostHintEraMap?.AllAge) {
@@ -627,7 +627,7 @@ let Tooltips = {
             }
 
             if (meta?.requirements?.min_era && meta?.requirements?.min_era != "MultiAge" && era =="") {
-                era = `${srcLinks.icons("era") + " " + i18n("Eras."+(Technologies.Eras[meta.requirements.min_era]))}`
+                era = `${srcLinks.icons("era") + " " + FH.t("Eras."+(Technologies.Eras[meta.requirements.min_era]))}`
             }
             
             if (era != "") out += "<tr><td>" + era + "</td></tr>"
@@ -800,21 +800,21 @@ let Tooltips = {
                 if (amount>0) costs += `<div>${srcLinks.icons(resource) + " " + span(amount)}</div>`
             }
             provides=provides+boosts
-            if (provides!="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
-            if (prods!="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.produces")} ${meta?.available_products?.length==1 ? "("+formatTime(meta.available_products[0].production_time)+")":""}</th></tr>`+prods
-            if (costs !="") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
+            if (provides!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
+            if (prods!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.produces")} ${meta?.available_products?.length==1 ? "("+formatTime(meta.available_products[0].production_time)+")":""}</th></tr>`+prods
+            if (costs !="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
             
-            out+=`<tr><th>${i18n("Boxes.Tooltip.Building.size+time")}</th></tr>`
+            out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>`
             out+=`<tr><td class="multiCol"><div>${srcLinks.icons("size")} ${meta.length+"x"+meta.width}</div>`
             out+=meta.construction_time?`<div>${srcLinks.icons("icon_time")}${formatTime(meta.construction_time)}</div>`:``
             if (meta.requirements?.street_connection_level == 2)
-                out+=`<div>${srcLinks.icons("street_required")} ${i18n("Boxes.Tooltip.Building.road2")}</div>`
+                out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
             else if (meta.requirements?.street_connection_level == 1)
-                out+=`<div>${srcLinks.icons("road_required")} ${i18n("Boxes.Tooltip.Building.road")}</div>`
+                out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
         
             out+=`</td></tr>`
             
-            if (traits != "") out+=`<tr><th>${i18n("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
+            if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
             
         }
         out+=`</table>`
@@ -880,9 +880,9 @@ let QIActions = {
 		while (next < moment().unix()) next += 3600
 
 		tooltip=`<div style="text-align:center">`
-        tooltip+=`<h1>${i18n("Global.BoxTitle")}</h1>`
+        tooltip+=`<h1>${FH.t("Global.BoxTitle")}</h1>`
 		tooltip+=`<p style="margin: 3px">${srcLinks.icons("guild_raids_action_points")}&nbsp;${FH.HTML.Format(hourly)} ${moment.unix(next).fromNow()}</p>`
-		tooltip+=`<h2>${i18n("Boxes.QIActions.FullAt")}</h2>`
+		tooltip+=`<h2>${FH.t("Boxes.QIActions.FullAt")}</h2>`
 		tooltip+=`<p>${moment.unix(fullAt).format('lll')}</p></div>`
 
 		return tooltip
