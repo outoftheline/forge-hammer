@@ -244,10 +244,9 @@
 	},
 	{
 		"name": "LoadBeta2",
+		"callback": "LoadBeta",
 		"group": "About",
-		"button":"window.open('https://github.com/mainIine/foe-helfer-extension/archive/refs/heads/beta.zip', '_blank').focus();",
-		"sort": 19,
-		"hidden": true
+		"sort": 27
 	},
 
 	{

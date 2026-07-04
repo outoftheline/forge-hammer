@@ -40,7 +40,7 @@ let Notes = {
 		let items = entries.map(entry => {
 			let excerptLines = entry.lines
 				.filter(b => b.type === 'text' && b.value.trim())
-				.map(b => $('<div>').html(b.value).text().trim())
+				.map(b => $('<div>').html(FH.HTML.escapeHtml(b.value)).text().trim())
 				.join(' ');
 			let excerpt = excerptLines.length > 150 ? excerptLines.slice(0, 150) + '\u2026' : excerptLines;
 
@@ -51,7 +51,7 @@ let Notes = {
 				: '';
 
 			return `<li class="p5 bbd clickable" data-time="${entry.time}">
-				<h2 class="flex between"><span>${entry.title}</span> ${checkSummary}</h2>
+				<h2 class="flex between"><span>${FH.HTML.escapeHtml(entry.title)}</span> ${checkSummary}</h2>
 				<span>${excerpt}</span>
 			</li>`;
 		}).join('');
@@ -88,13 +88,13 @@ let Notes = {
 	viewNote: (entry) => {
 		let lines = entry.lines.map((line, i) => {
 			if (line.type === 'text') 
-				return `<div class="note-text">${line.value.replace(/\n/g, '<br>')}</div>`;
-			
+				return `<div class="note-text">${Notes.convertBuildingToImage(FH.HTML.escapeHtml(line.value)).replace(/\n/g, '<br>')}</div>`;
+
 			if (line.type === 'check') {
 				let checked = line.checked ? 'checked' : '';
 				return `<label>
 					<input type="checkbox" ${checked} data-index="${i}" />
-					<span>${line.label}</span>
+					<span>${Notes.convertBuildingToImage(FH.HTML.escapeHtml(line.label))}</span>
 				</label>`;
 			}
 			return '';
@@ -107,7 +107,7 @@ let Notes = {
 				<button class="btn btn-mid btn-delete icon" id="deleteNote"></button></div>
 			</div>
 			<div class="note-view p5">
-				<h2>${entry.title}</h2>
+				<h2>${FH.HTML.escapeHtml(entry.title)}</h2>
 				${lines}
 			</div>
 		`);
@@ -170,7 +170,7 @@ let Notes = {
 				<button class="btn btn-mid" id="cancelEdit">${FH.t('Boxes.General.Cancel')}</button>
 				<button class="btn btn-mid btn-green" id="saveNote">${FH.t('Boxes.General.Save')}</button>
 			</div>
-			<input id="editTitle" class="my-5 p5" type="text" placeholder="${FH.t('Boxes.Notes.NewHeadline')}" value="${entry.title}" />
+			<input id="editTitle" class="my-5 p5" type="text" placeholder="${FH.t('Boxes.Notes.NewHeadline')}" value="${FH.HTML.escapeHtml(entry.title)}" />
 			<textarea id="editNoteContent" class="p5" placeholder="${FH.t('Boxes.Notes.NewText')}"></textarea>
 		`);
 
@@ -266,6 +266,12 @@ let Notes = {
 		flushText();
 
 		return content;
+	},
+
+	convertBuildingToImage: (text) => {
+		return text.replace(/:([a-zA-Z0-9_-]+):/g, (match, name) => {
+			return `<img src="${srcLinks.get("/city/buildings/" + name + ".png", true)}" alt="${name}" class="note-icon">`;
+		});
 	},
     
 

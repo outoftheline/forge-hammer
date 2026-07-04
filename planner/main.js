@@ -145,20 +145,8 @@ window.PlannerApp = window.PlannerApp || {};
         app.showStoredBuildings();
     }
 
-    // switch width and height
-    function swapBuildingDimensions(b) {
-        const widthTemp = b.width;
-        b.width  = b.height;
-        b.height = widthTemp;
-
-        b.hasLabel = !(b.meta.type === 'street' || b.height === app.SIZE || b.width === app.SIZE);
-    }
-
-
     function createRotatedBuilding(data, meta) {
-        const building = new app.MapBuilding(data, meta);
-        if (state.rotated) swapBuildingDimensions(building);
-        return building;
+        return new app.MapBuilding(data, meta);
     }
 
     function buildingsFromEntries(entries) {
@@ -306,67 +294,15 @@ window.PlannerApp = window.PlannerApp || {};
         }
     }
 
-    // 90° clockwise rotation
+    // 90° clockwise view rotation. Purely a view-state toggle now — actual
+    // building/expansion data is never touched (see draw.js redrawMap /
+    // getMapBoundsPx / screenToWorld for the render + input side of this).
     function rotateLayout() {
         if (!state.mapData) return;
 
-        const clockwise = !state.rotated;
+        state.rotated = !state.rotated;
 
-        let maxY = 0, maxX = 0;
-        for (const exp of state.mapData) {
-            const right  = (exp.x || 0) + exp.width;
-            const bottom = (exp.y || 0) + exp.length;
-            if (right  > maxX) maxX = right;
-            if (bottom > maxY) maxY = bottom;
-        }
-
-        // rotate expansions
-        for (const exp of state.mapData) {
-            const oldX      = exp.x      || 0;
-            const oldY      = exp.y      || 0;
-            const oldWidth  = exp.width;
-            const oldLength = exp.length;
-
-            if (clockwise) {
-                exp.x      = maxY - (oldY + oldLength);
-                exp.y      = oldX;
-            } else {
-                exp.x      = oldY;
-                exp.y      = maxX - (oldX + oldWidth);
-            }
-            exp.width  = oldLength;
-            exp.length = oldWidth;
-        }
-
-        // rotate buildings on canvas + in storage
-        function rotateBuilding(b) {
-            const tileX = Math.round(b.x / app.SIZE);
-            const tileY = Math.round(b.y / app.SIZE);
-            const tileW = Math.round(b.width  / app.SIZE);
-            const tileH = Math.round(b.height / app.SIZE);
-
-            if (clockwise) {
-                b.data.x = maxY - (tileY + tileH);
-                b.data.y = tileX;
-            } else {
-                b.data.x = tileY;
-                b.data.y = maxX - (tileX + tileW);
-            }
-
-            b.x = b.data.x * app.SIZE;
-            b.y = b.data.y * app.SIZE;
-
-            swapBuildingDimensions(b);
-        }
-
-        for (const b of state.mapBuildings) 
-            rotateBuilding(b);
-        for (const b of state.storedBuildings) 
-            rotateBuilding(b);
-
-        state.rotated = clockwise;
-
-        // cancel any action 
+        // cancel any action
         state.activeBuilding    = null;
         state.placingBuilding   = null;
         state.dragCopy          = null;
@@ -376,8 +312,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.camX = 0;
         state.camY = 0;
 
-        app.rebuildGridLayer();
-        app.rebuildOccupiedTiles();
         app.redrawMap();
         app.updateStats();
         app.showStoredBuildings();
@@ -399,12 +333,11 @@ window.PlannerApp = window.PlannerApp || {};
                 x: b.data.x,
                 y: b.data.y
             })),
-            // Grid shape + orientation at capture time. Rotating doesn't
-            // push its own history entry, but a move made while rotated
-            // still needs to be replayed against a matching grid — without
-            // this, undo/redo across an intervening rotate corrupts
-            // positions/dimensions instead of just skipping past the rotate.
-            mapData: state.mapData ? JSON.parse(JSON.stringify(state.mapData)) : state.mapData,
+            // Rotation is now a pure view flag — positions/dimensions in
+            // mapBuildings/storedBuildings above are always canonical and
+            // never depend on it, so restoring it is just for a consistent
+            // view across undo/redo, not for correctness (mapData itself
+            // is never mutated by rotating, so it doesn't need capturing).
             rotated: !!state.rotated
         };
     }
@@ -444,10 +377,9 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function applySnapshot(snapshot) {
-        // Restore grid shape + rotation BEFORE rebuilding buildings, so
-        // buildingsFromEntries applies dimensions matching the orientation
-        // the saved x/y positions actually belong to.
-        if (snapshot.mapData) state.mapData = snapshot.mapData;
+        // Just restores the view orientation to match what was on screen
+        // when the snapshot was taken — buildingsFromEntries below always
+        // produces canonical, unrotated dimensions regardless of this flag.
         state.rotated = !!snapshot.rotated;
 
         state.mapBuildings    = buildingsFromEntries(snapshot.mapBuildings);
