@@ -47,7 +47,7 @@
 		"name": "ShowArmyAdvice",
 		"status": false,
 		"group": "Auto",
-		"button":"BattleAssist.ShowArmyAdviceConfig()",
+		"button":"FH.BattleAssist.ShowArmyAdviceConfig()",
 		"sort": 24
 	},
 	{

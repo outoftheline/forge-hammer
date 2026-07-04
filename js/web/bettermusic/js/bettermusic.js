@@ -3,7 +3,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-
+{
 FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     //on startUp
     let first = false;
@@ -235,6 +235,9 @@ let betterMusic = {
         }
     },
     playStatus: false,
+    setPlayStatus : (x=true) =>{
+        betterMusic.playStatus = x;
+    },
     Scenes: {
         "main": {Name: FH.t('Boxes.BetterMusic.Main'), TitleList: []},
         "settlement":{Name: FH.t('Boxes.BetterMusic.Settlement'), TitleList: []},
@@ -551,5 +554,5 @@ let betterMusic = {
     }
 
 };
-
-
+FH.betterMusic = {CloseBox: betterMusic.CloseBox, ShowDialog: betterMusic.ShowDialog, setPlayStatus: betterMusic.setPlayStatus, ShowDialog: betterMusic.ShowDialog, TrackSelector: betterMusic.TrackSelector}
+}

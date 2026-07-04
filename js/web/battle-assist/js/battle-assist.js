@@ -2,6 +2,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
+{
 FH.HTML.AddCssFile('battle-assist');
 FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
@@ -543,4 +544,5 @@ let BattleAssist = {
         if ($('#battleAssistAAConfig').length > 0) BattleAssist.ShowArmyAdviceConfig();
     }
 };
-
+FH.BattleAssist = {ShowArmyAdviceConfig: BattleAssist.ShowArmyAdviceConfig};
+}

@@ -787,9 +787,9 @@ _menu = {
 
 		let btn_sp = $('<span />').bind('click', function () {
 			if ($('#betterMusicDialog').length > 0) {
-				betterMusic.CloseBox();
+				FH.betterMusic.CloseBox();
 			} else {
-				betterMusic.ShowDialog();
+				FH.betterMusic.ShowDialog();
 			}		
 
 		});
@@ -804,10 +804,10 @@ _menu = {
 			if ($('#musicControl-Btn').hasClass('hud-btn-red') === false) {
 				$('#musicControl-Btn').toggleClass('musicmuted');
 				if ($('#musicControl-Btn').hasClass('musicmuted')) {
-					betterMusic.pause();
+					FH.betterMusic.pause();
 				} else {
-					betterMusic.playStatus = true;
-					betterMusic.TrackSelector();
+					FH.betterMusic.setPlayStatus(true);
+					FH.betterMusic.TrackSelector();
 				}
 			}
 		});
