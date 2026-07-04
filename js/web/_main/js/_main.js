@@ -75,7 +75,7 @@ let ExistenceConfirmed = async (varlist)=>{
 	function checkForJQuery() {
 		if (typeof jQuery !== 'undefined') {
 			clearInterval(intval);
-			window.dispatchEvent(new CustomEvent('forgeHammer#jQuery-loaded'));
+			window.dispatchEvent(new CustomEvent('forgehammer#jQuery-loaded'));
 		}
 	}
 	intval = setInterval(checkForJQuery, 1);
@@ -107,7 +107,7 @@ FH.Players = {
 };
 FH.RessourceStock = [];
 FH.StartUpDone = new Promise(resolve => 
-		window.addEventListener('forgeHammer#StartUpDone', resolve, {once: true, passive: true}));
+		window.addEventListener('forgehammer#StartUpDone', resolve, {once: true, passive: true}));
 FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
 
 FH.Links = {
@@ -1377,7 +1377,7 @@ let Main = {
 		Infoboard.Init();
 		EventHandler.Init();
 		
-		window.dispatchEvent(new CustomEvent('forgeHammer#StartUpDone'))
+		window.dispatchEvent(new CustomEvent('forgehammer#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
 		FH.Storage.removeItem('AllProvinces');

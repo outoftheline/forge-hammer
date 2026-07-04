@@ -806,7 +806,7 @@ _menu = {
 				if ($('#musicControl-Btn').hasClass('musicmuted')) {
 					FH.betterMusic.pause();
 				} else {
-					FH.betterMusic.setPlayStatus(true);
+					FH.betterMusic.playStatus = true;
 					FH.betterMusic.TrackSelector();
 				}
 			}

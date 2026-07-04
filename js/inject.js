@@ -16,15 +16,15 @@ function scriptLoaded (src, base) {
 	scripts[base].splice(scripts[base].indexOf(src),1);
 	if (scripts.internal.length == 1) {
 		scripts.internal.splice(scripts.internal.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('forgeHammer#loaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#loaded'));
 	}
 	if (scripts.main.length == 1) {
 		scripts.main.splice(scripts.main.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('forgeHammer#mainloaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#mainloaded'));
 	}
 	if (scripts.vendor.length == 1) {
 		scripts.vendor.splice(scripts.vendor.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('forgeHammer#vendors-loaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#vendors-loaded'));
 	}
 };
 
@@ -69,12 +69,12 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 	// check whether jQuery has been loaded in the DOM
 	// => Catch jQuery Loaded event
 	const jQueryLoading = new Promise(resolve => {
-		window.addEventListener('forgeHammer#jQuery-loaded', evt => {
+		window.addEventListener('forgehammer#jQuery-loaded', evt => {
 			resolve();
 		}, {capture: false, once: true, passive: true});
 	});
 	const mainLoaded = new Promise(resolve => {
-		window.addEventListener('forgeHammer#mainloaded', evt => {
+		window.addEventListener('forgehammer#mainloaded', evt => {
 			resolve();
 		}, {capture: false, once: true, passive: true});
 	});
@@ -203,7 +203,7 @@ function inject (extUrl = chrome.runtime.getURL('')) {
 
 		} catch (err) {
 			// make sure that the packet buffer in the FH.proxy does not fill up in the event of an incomplete loading.
-			window.dispatchEvent(new CustomEvent('forgeHammer#error-loading'));
+			window.dispatchEvent(new CustomEvent('forgehammer#error-loading'));
 		}
 	}
 
