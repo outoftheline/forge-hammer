@@ -955,7 +955,7 @@ let GexStat = {
 }
 
 FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
-	GExAttempts.setCount(ResourceStock.guild_expedition_attempt || 0)
+	GExAttempts.setCount(FH.RessourceStock.guild_expedition_attempt || 0)
 });
 
 FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {

@@ -328,8 +328,8 @@ let Market = {
                     NeedGoodID = Trade['need']['good_id'],
                     OfferEra = Technologies.Eras[FH.Goods.Data[OfferGoodID]['era']],
                     NeedEra = Technologies.Eras[FH.Goods.Data[NeedGoodID]['era']],
-                    OfferTT = FH.helper.str.Replacer(FH.t('Boxes.Market.OfferTT'), { 'era': FH.t('Eras.' + OfferEra), 'stock': FH.HTML.Format(ResourceStock[OfferGoodID]) }),
-                    NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(ResourceStock[NeedGoodID]) }),
+                    OfferTT = FH.helper.str.Replacer(FH.t('Boxes.Market.OfferTT'), { 'era': FH.t('Eras.' + OfferEra), 'stock': FH.HTML.Format(FH.RessourceStock[OfferGoodID]) }),
+                    NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(FH.RessourceStock[NeedGoodID]) }),
                     CurrentPos = (Trade['merchant']['is_self'] ? OwnPos : Pos);
 
                 h.push('<tr>');
@@ -403,7 +403,7 @@ let Market = {
         }
 
         // only Affordable
-        if (Market.OnlyAffordable && Trade.need.value > (ResourceStock[Trade.need.good_id] || 0)) {
+        if (Market.OnlyAffordable && Trade.need.value > (FH.RessourceStock[Trade.need.good_id] || 0)) {
             return false;
         }
 
@@ -448,7 +448,7 @@ let Market = {
             let CurrentOfferValue = (IsOwnOffer ? Trade['need']['value'] : Trade['offer']['value']),
                 CurrentNeedValue = (IsOwnOffer ? Trade['offer']['value'] : Trade['need']['value']);
 
-            if (ResourceStock[OfferGoodID] + CurrentOfferValue/2 < ResourceStock[NeedGoodID] - CurrentNeedValue/2) { //Stock is higher
+            if (FH.RessourceStock[OfferGoodID] + CurrentOfferValue/2 < FH.RessourceStock[NeedGoodID] - CurrentNeedValue/2) { //Stock is higher
                 if (!Market.TradeFairStock) {
                     return false;
                 }

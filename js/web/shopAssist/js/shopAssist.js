@@ -130,7 +130,7 @@ let shopAssist = {
 		let newFilter = {};
 		for (let res of shopAssist.shopMeta[shopAssist.storeId].resources) {
 			newFilter[res] = shopAssist.currencyfilter[res] ?? true;
-			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${FH.t('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${FH.HTML.Format(ResourceStock[res]||0)}${srcLinks.icons(res)}</span>`
+			resources += `<span class="shopResource ${newFilter[res]?"active":""} clickable" data-original-title="${FH.t('Boxes.ShopAssist.filterCurrency')}" data-currency="${res}">${FH.HTML.Format(FH.RessourceStock[res]||0)}${srcLinks.icons(res)}</span>`
 		}
 		shopAssist.currencyfilter = newFilter;
 		h += `<thead>
@@ -251,7 +251,7 @@ let shopAssist = {
 			let canBuy = true;
 			Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 				let cost = Math.ceil(amount*(1-(slot.discount||0)));
-				if (ResourceStock[res] == undefined || ResourceStock[res]<cost) 
+				if (FH.RessourceStock[res] == undefined || FH.RessourceStock[res]<cost) 
 					canBuy = false;
 				costs += `<div class="text-right${isdiscounted ? " shopDiscount":""}">` + FH.HTML.Format(cost) + srcLinks.icons(res) + "</div>"
 			})
@@ -264,7 +264,7 @@ let shopAssist = {
 				canBuy = true;
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 					let cost = neededBuys * Math.ceil(amount*(1-(slot.discount||0)));
-					if ((ResourceStock[res] || 0) < cost) 
+					if ((FH.RessourceStock[res] || 0) < cost) 
 						canBuy = false;
 					costs += `<div class="text-right">${FH.HTML.Format(cost) + srcLinks.icons(res)}</div>`
 				})
@@ -280,7 +280,7 @@ let shopAssist = {
 					fullBuys = Math.floor(slot.reward.requiredAmount / slot.reward.amount);
 					Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 						let cost = fullBuys * Math.ceil(amount*(1-(slot.discount||0)));
-						if ((ResourceStock[res] || 0) < cost) canBuy = false;
+						if ((FH.RessourceStock[res] || 0) < cost) canBuy = false;
 						costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 					})
 					allTT += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"}">
@@ -298,7 +298,7 @@ let shopAssist = {
 			let maxBuys = Math.min(slot.flag?.value=="increasingCosts" ? 1 : Infinity,limitedBuys);
 			if (maxBuys > 0) {
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
-					maxBuys = Math.min(maxBuys,Math.floor((ResourceStock[res] || 0) / Math.ceil(amount*(1-(slot.discount||0)))));
+					maxBuys = Math.min(maxBuys,Math.floor((FH.RessourceStock[res] || 0) / Math.ceil(amount*(1-(slot.discount||0)))));
 				})
 			}
 			if (maxBuys != Infinity && maxBuys > 0) {
@@ -325,7 +325,7 @@ let shopAssist = {
 				canBuy = true;
 				Object.entries(slot.baseCost?.resources||{}).forEach(([res, amount])=>{
 					let cost = limitedBuys * Math.ceil(amount*(1-(slot.discount||0)));
-					if ((ResourceStock[res] || 0) < cost) canBuy = false;
+					if ((FH.RessourceStock[res] || 0) < cost) canBuy = false;
 					costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 				})
 				allTT += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"}">
@@ -452,7 +452,7 @@ let shopAssist = {
 			stock = Object.values(Unit?.Cache?.counts||{}).find(x=>x.unitTypeId === reward.unit.unitTypeId)?.unattached || "???";
 		if (reward.type == "resource") 	{
 			let id = /#(.*?)#/.exec(reward.id)?.[1];
-			stock = ResourceStock[id]
+			stock = FH.RessourceStock[id]
 		}
 		if (stock === null)
 			stock = Object.values(FH.Main.Inventory).find(x=>x.item.id === reward.id || x.item.reward?.id && x.item.reward?.id===/(^.*?#(\(.*?\)|[^#])*)/.exec(reward.id)?.[1])?.inStock || 0;
@@ -563,7 +563,7 @@ let shopAssist = {
 			let canBuy = true;
 			for (let [res, amount] of Object.entries(slot.baseCost?.resources||{})) {
 				let cost = Math.ceil(amount*(1-(slot.discount||0)))
-				if (ResourceStock[res] > cost) continue
+				if (FH.RessourceStock[res] > cost) continue
 				canBuy = false;
 				break;
 			}

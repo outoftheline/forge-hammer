@@ -447,7 +447,7 @@ let Parts = {
 
 
 	CalcBody: async (NextLevel) => {
-		await StartUpDone;
+		await FH.StartUpDone;
 		if (FH.Main.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
 
 		let openPayReminder = FH.Storage.getItem('CalcGBReminder');

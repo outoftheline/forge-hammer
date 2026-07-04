@@ -162,7 +162,7 @@ let Negotiation = {
 				let GoodInfo = GoodsOrdered[i],
 					GoodName = GoodInfo.resourceId,
 					GoodAmount = GoodInfo.amount,
-					Stock = ResourceStock[GoodName],
+					Stock = FH.RessourceStock[GoodName],
 					TextClass;
 
 				let maxRequired = GoodInfo.canOccur.length * GoodAmount;
@@ -534,7 +534,7 @@ let Negotiation = {
 			Negotiation.TryCount = forcedTryCount;
 		}
 		else {
-			Negotiation.TryCount = ResourceStock['negotiation_game_turn'];
+			Negotiation.TryCount = FH.RessourceStock['negotiation_game_turn'];
 		}
 		if (Negotiation.TryCount > 5) {
 			Negotiation.TryCountIsGreaterThan5 = true;
@@ -929,7 +929,7 @@ let Negotiation = {
 				Value = EraID * 100;
             }
 
-			let Stock = ResourceStock[GoodName];
+			let Stock = FH.RessourceStock[GoodName];
 			if (Stock === undefined || Stock === 0)
 			{
 				Value += 99;

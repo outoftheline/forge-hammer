@@ -419,7 +419,7 @@ let Technologies = {
                 let ResourceName = OutputList[i];
                 if (RequiredResources[ResourceName] !== undefined) {
                     let Required = RequiredResources[ResourceName];
-                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : ResourceStock[ResourceName]);
+                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : FH.RessourceStock[ResourceName]);
                     if (Stock === undefined) Stock = 0;
                     let Diff = Stock - Required;
 

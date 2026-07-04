@@ -399,19 +399,19 @@ let Castle = {
             Castle.curCastlePoints = FH.Storage.getItem('CastleCurCastlePoints') || 0;
         }
 
-        if (ResourceStock.castle_points)
+        if (FH.RessourceStock.castle_points)
         {
-            const increased = ResourceStock.castle_points > Castle.curCastlePoints;
+            const increased = FH.RessourceStock.castle_points > Castle.curCastlePoints;
             let diff = 0;
 
             if (Castle.curCastlePoints > 0 && increased)
             {
-                Castle.curCastlePointsDiff = { rid: rid, diff: ResourceStock.castle_points - Castle.curCastlePoints };
+                Castle.curCastlePointsDiff = { rid: rid, diff: FH.RessourceStock.castle_points - Castle.curCastlePoints };
                 diff = Castle.curCastlePointsDiff.diff;
                 Castle.SetCastlePointLog(Castle.curCastlePointsDiff);
             }
 
-            Castle.curCastlePoints = ResourceStock.castle_points;
+            Castle.curCastlePoints = FH.RessourceStock.castle_points;
 
             if (increased)
             {

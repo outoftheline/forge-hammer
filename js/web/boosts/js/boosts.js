@@ -202,7 +202,7 @@ let Boosts = {
         next:null,
         id:null,
         add: async (buildings)=>{
-            await StartUpDone
+            await FH.StartUpDone
             let addToList = (boost)=>{
                 if (!Array.isArray(boost.type)) boost.type=[boost.type]
                 for (type of boost.type||[boost.type]) {

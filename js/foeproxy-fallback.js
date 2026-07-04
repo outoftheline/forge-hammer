@@ -6,7 +6,7 @@
         const s = document.createElement('script');
         s.src = proxySrc;
         s.id = 'foeproxy-injected-script';
-        s.setAttribute('data-injected-by', 'foe-helper-fallback');
+        s.setAttribute('data-injected-by', 'FH-fallback');
 
         s.addEventListener('load', function () {
             this.remove();

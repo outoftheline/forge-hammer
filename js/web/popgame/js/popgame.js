@@ -70,7 +70,7 @@ FH.proxy.addHandler('PopGameService', 'popTile', (data, postData) => {
     Popgame.prevC=null;
     Popgame.Update();
     Popgame.CoordsCheck(x, y);
-    if (ResourceStock[`${Popgame.event}_pop_moves`] <= 0) Popgame.Close();
+    if (FH.RessourceStock[`${Popgame.event}_pop_moves`] <= 0) Popgame.Close();
 });
 
 FH.proxy.addHandler('PopGameService', 'useBooster', (data, postData) => {
