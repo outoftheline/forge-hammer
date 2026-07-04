@@ -15,6 +15,10 @@
     color: var(--text-highlight);
 }
 
+#Notes .note-view img {
+    height: 22px;
+}
+
 #noteView label {
     display: block;
 }

@@ -88,13 +88,13 @@ let Notes = {
 	viewNote: (entry) => {
 		let lines = entry.lines.map((line, i) => {
 			if (line.type === 'text') 
-				return `<div class="note-text">${line.value.replace(/\n/g, '<br>')}</div>`;
-			
+				return `<div class="note-text">${Notes.convertBuildingToImage(line.value).replace(/\n/g, '<br>')}</div>`;
+
 			if (line.type === 'check') {
 				let checked = line.checked ? 'checked' : '';
 				return `<label>
 					<input type="checkbox" ${checked} data-index="${i}" />
-					<span>${line.label}</span>
+					<span>${Notes.convertBuildingToImage(line.label)}</span>
 				</label>`;
 			}
 			return '';
@@ -266,6 +266,12 @@ let Notes = {
 		flushText();
 
 		return content;
+	},
+
+	convertBuildingToImage: (text) => {
+		return text.replace(/:([a-zA-Z0-9_-]+):/g, (match, name) => {
+			return `<img src="${srcLinks.get("/city/buildings/" + name + ".png", true)}" alt="${name}" class="note-icon">`;
+		});
 	},
     
 
