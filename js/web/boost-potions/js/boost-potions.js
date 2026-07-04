@@ -59,7 +59,7 @@ let BoostPotions = {
 		if( $('#BoostPotions').length < 1 ){
 			let div = $('<div />').attr({
 				id: 'BoostPotions',
-				class: `game-cursor ${ActiveMap}`
+				class: `game-cursor ${FH.ActiveMap}`
 			}).append(`<div class="shortest"></div><div class="list"><div class="active"></div><div class="table"></div></div>`);
 
 			$('body').append(div);
@@ -83,7 +83,7 @@ let BoostPotions = {
 			a=true;
 			let e=BoostPotions.active[b].expire;
 			if ((d<e && d!=null) || !e) continue;
-			if (!BoostPotions.activeMapRelevance[all ? "all" : BoostPotions.active[b].target].includes(ActiveMap)) continue;
+			if (!BoostPotions.activeMapRelevance[all ? "all" : BoostPotions.active[b].target].includes(FH.ActiveMap)) continue;
 			d=e;
 			$('#BoostPotions .shortest').html(shortest+`<span><img src="${srcLinks.get(`/shared/icons/${b}.png`,true)}">${h==0 ? "" : h+":"}${m<10 ? "0"+m:m}:${s<10 ? "0"+s:s}</span>`).addClass("boosted");
 		}
@@ -130,7 +130,7 @@ let BoostPotions = {
 		}
 		table += `</tr>`
 		for (let target of ["all","battleground","guild_expedition","guild_raids"]) {
-			if (!BoostPotions.activeMapRelevance[target].includes(ActiveMap)) continue;
+			if (!BoostPotions.activeMapRelevance[target].includes(FH.ActiveMap)) continue;
 			table += `<tr><td><img src="${srcLinks.get(target=="all"?"/shared/icons/quest_icons/icon_quest_battle.png":`/shared/icons/booster_target_${target}.png`,true)}"></td>`;
 			for (let t of Object.keys(BoostPotions.list)) {
 				table += `<td>`

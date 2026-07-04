@@ -125,7 +125,7 @@ let Boosts = {
 
     InitLB: async (LBs) => {
         
-        let boosts=LBs.filter(x=>x.bonus?.type && x.player_id == ExtPlayerID).map(x=>
+        let boosts=LBs.filter(x=>x.bonus?.type && x.player_id == FH.Player.ID).map(x=>
             ({
                 entityId: x.entityId||x.id,
                 origin: "greatBuilding",
@@ -137,8 +137,8 @@ let Boosts = {
         Boosts.Add(boosts)
     },
     InitQIAP: async () => {
-        await FH.ExistenceConfirmed('GoodsData.guild_raids_action_points');
-        QIActions.capacity  = (GoodsData.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity'];
+        await FH.ExistenceConfirmed('FH.Goods.Data.guild_raids_action_points');
+        QIActions.capacity  = (FH.Goods.Data.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity'];
 
     },
     getFeatureType: (bonus) => {

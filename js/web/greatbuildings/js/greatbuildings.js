@@ -285,8 +285,8 @@ let GreatBuildings = {
         let h = [];
         h.push('<div class="text-center dark-bg header">');
         h.push('<strong class="title">' + FH.t('Boxes.GreatBuildings.SuggestionTitle') + '</strong><br>');
-        if (LastMapPlayerID !== ExtPlayerID) {
-            h.push('<strong class="player-name"><span>' + PlayerDict[LastMapPlayerID]['PlayerName'] + '</span></strong>');
+        if (FH.LastMapPlayerID !== FH.Player.ID) {
+            h.push('<strong class="player-name"><span>' + FH.Players.Dict[FH.LastMapPlayerID]['PlayerName'] + '</span></strong>');
         }
         h.push('<br><strong>')
         h.push(FH.t('Boxes.GreatBuildings.ArcBonus') + ' ');
@@ -307,15 +307,15 @@ let GreatBuildings = {
         h.push('<br>');
 
         if (GreatBuildings.ShowGoods) { //Güterwert - Boxen ausblenden, wenn Güter deaktiviert
-            h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + CurrentEraID) }) + ' ');
+            h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + FH.CurrentEraID) }) + ' ');
             h.push('<input type="number" id="goodsValue0" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue0 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
             if (GreatBuildings.GoodsValue0 > 0) {
                 h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue0 * 100) / 100 }) + ')</small>')
             }
             h.push('<br>');
 
-            if (CurrentEraID >= 3) { //Ab Eisenzeit => Star Gazer liefert Bronzezeitgüter
-                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (CurrentEraID - 1)) }) + ' ');
+            if (FH.CurrentEraID >= 3) { //Ab Eisenzeit => Star Gazer liefert Bronzezeitgüter
+                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (FH.CurrentEraID - 1)) }) + ' ');
                 h.push('<input type="number" id="goodsValue1" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue1 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue1 > 0) {
                     h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue1 * 100) / 100 }) + ')</small>')
@@ -323,8 +323,8 @@ let GreatBuildings = {
                 h.push('<br>');
             }
 
-            if (CurrentEraID >= 10) { //Ab Moderne => Unveredelte Güter
-                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (CurrentEraID - 3)) }) + ' ');
+            if (FH.CurrentEraID >= 10) { //Ab Moderne => Unveredelte Güter
+                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (FH.CurrentEraID - 3)) }) + ' ');
                 h.push('<input type="number" id="goodsValue3" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue3 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue3 > 0) {
                     h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue3 * 100) / 100 }) + ')</small>')
@@ -365,7 +365,7 @@ let GreatBuildings = {
         h.push('</tr>');
         h.push('</thead>');
 
-        let CurrentCityMapData = (LastMapPlayerID === ExtPlayerID ? FH.Main.CityMapData : CityMap.OtherPlayer.mapData);
+        let CurrentCityMapData = (FH.LastMapPlayerID === FH.Player.ID ? FH.Main.CityMapData : CityMap.OtherPlayer.mapData);
 
         let AllROIResults = [],
             IsNewGBs = [];
@@ -374,7 +374,7 @@ let GreatBuildings = {
             let GBData = GreatBuildings.GreatBuildingsData[i];
 
             if (GBData.ID === 'X_OceanicFuture_Landmark3') {
-                if (LastMapPlayerID == ExtPlayerID) {
+                if (FH.LastMapPlayerID == FH.Player.ID) {
                     GreatBuildings.RefreshGalaxyBuildings();
                 }
                 else { // Keine Galaxy für andere Spieler weil keine FP Daten vorhanden sind
@@ -475,7 +475,7 @@ let GreatBuildings = {
                     GoodsValue = GreatBuildings.GoodsValue1;
                 }
                 else { //Standard goods production
-                    if (CurrentEraID >= 10) { //ModernEra or higher => unrefined goods
+                    if (FH.CurrentEraID >= 10) { //ModernEra or higher => unrefined goods
                         GoodsValue = GreatBuildings.GoodsValue3;
                         GoodsProductions[j] *= 2;
                     }
@@ -671,8 +671,8 @@ let GreatBuildings = {
                     FP = Production['motivatedproducts']['strategy_points'];
                     if (!FP) FP = 0;
 
-                    for (j = 0; j < GoodsList.length; j++) {
-                        let GoodID = GoodsList[j]['id'];
+                    for (j = 0; j < FH.Goods.List.length; j++) {
+                        let GoodID = FH.Goods.List[j]['id'];
                         if (Production['motivatedproducts'][GoodID]) {
                             GoodsSum += Production['motivatedproducts'][GoodID];
                         }

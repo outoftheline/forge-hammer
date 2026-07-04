@@ -71,7 +71,7 @@ let MarketOffers = {
             Market.TradeDisadvantage = true;
 
             Market.Offer = 6 * Math.floor(GoodIndex/5) + 2 + GoodIndex%5;
-            Market.OfferSelect = GoodsList[GoodIndex]['name'];
+            Market.OfferSelect = FH.Goods.List[GoodIndex]['name'];
 
             Market.Need = 0;
             Market.NeedSelect = null;
@@ -100,7 +100,7 @@ let MarketOffers = {
             Market.OfferSelect = null;
 
             Market.Need = 6 * Math.floor(GoodIndex / 5) + 2 + GoodIndex % 5;
-            Market.NeedSelect = GoodsList[GoodIndex]['name'];
+            Market.NeedSelect = FH.Goods.List[GoodIndex]['name'];
 
             Market.Show(true);
         });
@@ -132,8 +132,8 @@ let MarketOffers = {
         h.push('</tr>');
         h.push('</thead>');
 
-        for (let i = 0; i < GoodsList.length; i++) {
-            let CurrentGood = GoodsList[i],
+        for (let i = 0; i < FH.Goods.List.length; i++) {
+            let CurrentGood = FH.Goods.List[i],
                 Era = Technologies.Eras[CurrentGood['era']],
                 GoodID = CurrentGood['id'],
                 Inventory = ResourceStock[GoodID],
@@ -170,8 +170,8 @@ let MarketOffers = {
         OfferSums = [];
         NeedSums = [];
 
-        for (let i = 0; i < GoodsList.length; i++) {
-            let GoodID = GoodsList[i]['id'];
+        for (let i = 0; i < FH.Goods.List.length; i++) {
+            let GoodID = FH.Goods.List[i]['id'];
 
             OfferCounts[GoodID] = 0;
             NeedCounts[GoodID] = 0;
@@ -309,8 +309,8 @@ let MarketOffers = {
 
             let OfferGoodID = Event['offer']['good_id'],
                 NeedGoodID = Event['need']['good_id'],
-                OfferEra = Technologies.Eras[GoodsData[OfferGoodID]['era']],
-                NeedEra = Technologies.Eras[GoodsData[NeedGoodID]['era']],
+                OfferEra = Technologies.Eras[FH.Goods.Data[OfferGoodID]['era']],
+                NeedEra = Technologies.Eras[FH.Goods.Data[NeedGoodID]['era']],
                 OfferTT = FH.helper.str.Replacer(FH.t('Boxes.Market.OfferTT'), { 'era': FH.t('Eras.' + OfferEra), 'stock': FH.HTML.Format(ResourceStock[OfferGoodID]) }),
                 NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(ResourceStock[NeedGoodID]) }),
                 PlayerID = Event['playerid'],
@@ -321,12 +321,12 @@ let MarketOffers = {
             h.push('<tr>');
             h.push('<td class="is-number" data-number="' + (Event['date'].getTime()) + '">' + (Event['date'] ? moment.unix(Event['date'] / 1000).format(FH.t('DateTime')) : FH.t('Boxes.MarketOffersEvents.DateNA')) + '</td>');
 
-            h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[OfferGoodID]['id'] + '"></span></td>');
-            h.push('<td data-text="' + FH.helper.str.cleanup(GoodsData[OfferGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
+            h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[OfferGoodID]['id'] + '"></span></td>');
+            h.push('<td data-text="' + FH.helper.str.cleanup(FH.Goods.Data[OfferGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + FH.Goods.Data[OfferGoodID]['name'] + '</strong></td>');
             h.push('<td class="is-number" data-number="' + Event['offer']['value'] + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + Event['offer']['value'] + '</strong></td>');
 
-            h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] + '"></span></td>');
-            h.push('<td data-text="' + FH.helper.str.cleanup(GoodsData[NeedGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
+            h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[NeedGoodID]['id'] + '"></span></td>');
+            h.push('<td data-text="' + FH.helper.str.cleanup(FH.Goods.Data[NeedGoodID]['name']) + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + FH.Goods.Data[NeedGoodID]['name'] + '</strong></td>');
             h.push('<td class="is-number" data-number="' + Event['need']['value'] + '"><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + Event['need']['value'] + '</strong></td>');
 
             h.push('<td class="text-center" data-number="' + Event['offer']['value'] / Event['need']['value'] + '">' + FH.HTML.Format(FH.Main.round(Event['offer']['value'] / Event['need']['value'] * 100) / 100) + '</td>');

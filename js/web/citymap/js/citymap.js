@@ -102,15 +102,15 @@ let CityMap = {
 			CityMap.map.outpostScale = parseInt(outpostScale);
 
 		let Data = FH.Main.CityMapData;
-		if (ActiveMap === "cultural_outpost") 
+		if (FH.ActiveMap === "cultural_outpost") 
 			Data = CityMap.CulturalOutpost.data;
-		else if (ActiveMap === "era_outpost") 
+		else if (FH.ActiveMap === "era_outpost") 
 			Data = CityMap.EraOutpost.data;
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			Data = CityMap.QI.data;
 			Title = FH.t('Boxes.General.Quantum_Incursion.short')+' '+FH.t('Boxes.General.Level')+' '+CityMap.QI.level;
 		}
-		else if (ActiveMap === "OtherPlayer") {
+		else if (FH.ActiveMap === "OtherPlayer") {
 			Data = CityMap.OtherPlayer.mapData;
 			Title = CityMap.OtherPlayer.name;
 		}
@@ -164,7 +164,7 @@ let CityMap = {
 
 		/* scale */
 		let scaleUnit = CityMap.map.scale;
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") 
 			scaleUnit = CityMap.map.outpostScale;
 
 		wrapper
@@ -177,8 +177,8 @@ let CityMap = {
 
 		$('#'+elemId+'Header > .title').attr('id', 'map' + CityMap.hashCode(Title));
 
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
-			oB.addClass('outpost').addClass(ActiveMap)
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+			oB.addClass('outpost').addClass(FH.ActiveMap)
 		}
 
 		/* change view */
@@ -209,7 +209,7 @@ let CityMap = {
 			let unit = parseInt($('#scale-view option:selected').data('scale'));
 			$('#grid-outer').attr('data-unit', unit);
 
-			if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
+			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
 				FH.Storage.setItem('OutpostMapScale', unit);
 				CityMap.map.outpostScale = unit;
 			}
@@ -222,7 +222,7 @@ let CityMap = {
 		});
 
 		// Button for submit Box
-		if (ActiveMap === 'main') {
+		if (FH.ActiveMap === 'main') {
 			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
@@ -232,7 +232,7 @@ let CityMap = {
 		}
 		oB.append(wrapper);
 
-		if (ActiveMap === "guild_raids")
+		if (FH.ActiveMap === "guild_raids")
 			if (CityMap.QI.data) {
 				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(FH.t('Boxes.CityMap.CopyMetaInfos')));
 				$("#sidebar").append(CityMap.showQIBuildingList());
@@ -240,13 +240,13 @@ let CityMap = {
 
 		wrapper.append(menu).append(menuBottom);
 
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost") 
 			$("#sidebar").append(CityMap.showOutpostBuildings());
 		
-		if (ActiveMap === "cultural_outpost")
+		if (FH.ActiveMap === "cultural_outpost")
 			$('#citymap-wrapper').append('<span class="btn btn-mid openOverview" onClick="Outposts.BuildInfoBox()">'+FH.t('Menu.OutP.Title')+'</span>');
 
-		if (ActiveMap === 'OtherPlayer') {
+		if (FH.ActiveMap === 'OtherPlayer') {
 			let townhall = (Object.values(CityMap.OtherPlayer.mapData).find(x => x.type === 'main_building'));
 			CityMap.OtherPlayer.eraName = townhall.cityentity_id?.split('_')[1] || townhall.entityId?.split('_')[1];
 
@@ -257,19 +257,19 @@ let CityMap = {
 
 	BuildGrid: () => {	
 		let ua = CityMap.Main.unlockedAreas;
-		if (ActiveMap === "OtherPlayer")
+		if (FH.ActiveMap === "OtherPlayer")
 			ua = CityMap.OtherPlayer.unlockedAreas;
 		let xOffset = 0;
 		let yOffset = 0;
-		if (ActiveMap === "cultural_outpost") {
+		if (FH.ActiveMap === "cultural_outpost") {
 			ua = CityMap.CulturalOutpost.areas;
 			xOffset = 500;
 		}
-		else if (ActiveMap === "era_outpost") {
+		else if (FH.ActiveMap === "era_outpost") {
 			ua = CityMap.EraOutpost.areas;
 			yOffset = 500;
 		}
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			ua = CityMap.QI.areas;
 			yOffset = 500;
 			xOffset = 500;
@@ -305,7 +305,7 @@ let CityMap = {
 
 		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
-			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			let key = Object.keys(cssPosition).find(x => x == [FH.ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
 				$('#grid-outer').css({
 					'top': cssPosition[key].top+'px',
@@ -318,14 +318,14 @@ let CityMap = {
 
 		let buildings = CityMap.CulturalOutpost.data;
 		let xOffset = 0, yOffset = 0;
-		if (ActiveMap === "era_outpost") {
+		if (FH.ActiveMap === "era_outpost") {
 			buildings = CityMap.EraOutpost.data;
 			yOffset = 500;
 		}
-		else if (ActiveMap === "cultural_outpost") {
+		else if (FH.ActiveMap === "cultural_outpost") {
 			xOffset = 500;
 		}
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			buildings = CityMap.QI.data;
 			xOffset = 500;
 			yOffset = 500;
@@ -346,7 +346,7 @@ let CityMap = {
 				let collectSoon = "";
 				let thresholdTime = 10800;
 				let hours = CityMapEntity.state?.next_state_transition_in ? Math.round(CityMapEntity.state.next_state_transition_in/60/60*100) : 0;
-				if (ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
+				if (FH.ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
 				let collectionString = FH.helper.str.Replacer(FH.t('Boxes.CityMap.CollectSoon'), {hours: hours/100})
@@ -371,7 +371,7 @@ let CityMap = {
 		$('#grid-outer').draggable({
 			stop: function( event, ui ) {
 				let mapOffsets = {
-					[ActiveMap+'_'+CityMap.map.view]: ui.position
+					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
 				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
@@ -560,7 +560,7 @@ let CityMap = {
 		/// cultural settlements
 		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia
 		/// era settlements
-		if (ActiveMap === "era_outpost") populationName = "colonists";
+		if (FH.ActiveMap === "era_outpost") populationName = "colonists";
 
 		// for buildings adding pop
 		let population = Object.keys(data.staticResources?.resources).find(x => x.includes(populationName))
@@ -573,7 +573,7 @@ let CityMap = {
 		let diplomacy = data.staticResources?.resources?.diplomacy || 0;
 
 		let building = {};
-		if (ActiveMap === "cultural_outpost")
+		if (FH.ActiveMap === "cultural_outpost")
 			building = {
 				name: data.name,
 				population: population || 0,
@@ -582,7 +582,7 @@ let CityMap = {
 				type: data.type,
 				entityId: data.asset_id,
 			};
-		else if (ActiveMap === "era_outpost")
+		else if (FH.ActiveMap === "era_outpost")
 			building = {
 				name: data.name,
 				population: population || 0,
@@ -598,7 +598,7 @@ let CityMap = {
 
 	showOutpostBuildings: () => {
 		let buildings = Object.values(CityMap.CulturalOutpost.data);
-		if (ActiveMap === "era_outpost")
+		if (FH.ActiveMap === "era_outpost")
 			buildings = Object.values(CityMap.EraOutpost.data);
 
 		let uniques = {};
@@ -626,7 +626,7 @@ let CityMap = {
 		out += `<thead><tr>
 			<th colspan="2">${FH.t('Boxes.CityMap.Building')}</th>
 			<th class="population textright"></th>
-			<th><span class="goods-sprite ${(ActiveMap !== "era_outpost"?'diplomacy':'')}"></span></th>
+			<th><span class="goods-sprite ${(FH.ActiveMap !== "era_outpost"?'diplomacy':'')}"></span></th>
 			<th>${FH.t('Boxes.CityMap.Boosts')}</th></tr></thead>`
 		out += "<tbody>"
 
@@ -673,14 +673,14 @@ let CityMap = {
 
 
 	SetMapBuildings: async (Data = null)=> {
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
 			CityMap.SetOutpostBuildings();
 			return;
 		}
 
 		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
-			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			let key = Object.keys(cssPosition).find(x => x == [FH.ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
 				$('#grid-outer').css({
 					'top': cssPosition[key].top+'px',
@@ -732,7 +732,7 @@ let CityMap = {
 			MaxY = 71;
 
 		let buildingData;
-		if (ActiveMap === 'OtherPlayer')
+		if (FH.ActiveMap === 'OtherPlayer')
 			buildingData = CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData))
 		else
 			buildingData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
@@ -749,7 +749,7 @@ let CityMap = {
 		let rating20 = buildingRatings[parseInt(buildingRatings.length/5)];
 		let rating30 = buildingRatings[parseInt(buildingRatings.length/3)];
 
-		let unlockedAreas = (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
+		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 
 		// create building elements
 		for (const building of Object.values(buildingData)) {
@@ -848,9 +848,9 @@ let CityMap = {
 			if (building.eraName) {
 				let era = Technologies.Eras[building.eraName]
 
-				if (era < CurrentEraID && building.type !== "greatbuilding" && era !== 0) {
+				if (era < FH.CurrentEraID && building.type !== "greatbuilding" && era !== 0) {
 					f.addClass('oldBuildings')
-					let eraDiff = CurrentEraID - era
+					let eraDiff = FH.CurrentEraID - era
 					
 					switch(eraDiff){
 						case 1:
@@ -886,7 +886,7 @@ let CityMap = {
 		$('#grid-outer').draggable({
 			stop: function( event, ui ) {
 				let mapOffsets = {
-					[ActiveMap+'_'+CityMap.map.view]: ui.position
+					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
 				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
@@ -903,7 +903,7 @@ let CityMap = {
 
 
 	getAreas: ()=>{
-		let unlockedAreas = (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
+		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 		let total = (((unlockedAreas?.length || 1) -1) * 16) + 256, // x + (4*4) + 16*16
 			occupied = CityMap.metrics.areaOccupied,
 			txtFree = (total - occupied);
@@ -922,7 +922,7 @@ let CityMap = {
 		}
 
 
-		if (ActiveMap !== 'OtherPlayer') {
+		if (FH.ActiveMap !== 'OtherPlayer') {
 			$('.building-stats').html(
 				'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
 				'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
@@ -967,11 +967,11 @@ let CityMap = {
 
 		areaStats.push('<li class="ratings clickable">')
 			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${FH.t('Boxes.CityMap.ShowWorstBuildings')}</label>`)
-			if (ActiveMap !== 'OtherPlayer') 
+			if (FH.ActiveMap !== 'OtherPlayer') 
 				areaStats.push('<span onclick="Productions.ShowRating()" class="clickable"></span>')
 		areaStats.push('</li>')
 
-		if (ActiveMap !== 'OtherPlayer') {
+		if (FH.ActiveMap !== 'OtherPlayer') {
 			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
 			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${FH.t('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
 			if (CityMap.metrics.hasCollectableBuildings)
@@ -1098,7 +1098,7 @@ let CityMap = {
 
 	copyMetaInfos: () => {
         let data = {};
-        switch (ActiveMap) {
+        switch (FH.ActiveMap) {
             case 'guild_raids':
                 data.CityMapData = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
@@ -1125,10 +1125,10 @@ let CityMap = {
 
 
 	openPlanner: () => {
-		let region = String(ExtWorld).replace(/\d+$/, '') || 'unknown';
+		let region = String(FH.World).replace(/\d+$/, '') || 'unknown';
 		let data = { region };
 
-		switch (ActiveMap) {
+		switch (FH.ActiveMap) {
 			case 'guild_raids':
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
@@ -1207,11 +1207,11 @@ let CityMap = {
 
 		// Great building
 		if (CityEntity['type'] === 'greatbuilding') {
-			return CurrentEraID;
+			return FH.CurrentEraID;
 		}
 		// AllAge
 		else if (CityMapEntity['cityentity_id'].indexOf("AllAge") > -1) {
-			return CurrentEraID;
+			return FH.CurrentEraID;
 		}
 		// Multi era
 		else if (CityMapEntity['level']) {
@@ -1231,12 +1231,12 @@ let CityMap = {
 
 				// AllAge => Current era
 				if (era === 0) {
-					era = CurrentEraID;
+					era = FH.CurrentEraID;
 				}
 				return era;
 			}
 			else {
-				return CurrentEraID;
+				return FH.CurrentEraID;
 			}
 		}
 	},
@@ -1861,13 +1861,13 @@ let CityBuildings = {
 			}
 			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
 				let currentLevel = Castle.curLevel
-				era = CurrentEra 
+				era = FH.CurrentEra 
 				if (FH.Main.CastleSystemLevels[(currentLevel-1)] !== undefined)
 					FH.Main.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
-							if (reward.id.search("goods") !== -1 && reward.id.search("CurrentEra") !== -1)
+							if (reward.id.search("goods") !== -1 && reward.id.search("FH.CurrentEra") !== -1)
 								resources = { 'random_good_of_age': amount }
 							else if (reward.id.search("goods") !== -1 && reward.id.search("PreviousEra") !== -1)
 								resources = { 'random_good_of_previous_age': amount }
@@ -2545,7 +2545,7 @@ let CityBuildings = {
 
 				if (production.type === 'resources' || production.type === 'special_goods') {
 					Object.keys(production.resources).forEach(resourceName => {
-						let good = GoodsList.find(x => x.id === resourceName)
+						let good = FH.Goods.List.find(x => x.id === resourceName)
 						let specialGood = FHResourcesList.find(x => x.id === resourceName && x.abilities.specialResource?.type === "specialResource")
 						let goodEra = Technologies.InnoEras[building.eraName]
 						let isGood = false
@@ -2636,7 +2636,7 @@ let CityBuildings = {
 				if (production.type !== 'guildResources' || production.resources === undefined) continue;
 
 				for (let resourceName of Object.keys(production?.resources)) {
-					let good = GoodsList.find(x => x.id === resourceName);
+					let good = FH.Goods.List.find(x => x.id === resourceName);
 					let goodEra = Technologies.InnoEras[building.eraName];
 					let isGood = false;
 
@@ -2687,27 +2687,27 @@ let CityBuildings = {
 
 
 	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=true) {	
-		if (ActiveMap === 'OtherPlayer') {
+		if (FH.ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
 
 		for (let building of data) {
-			if (ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
+			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
 			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
-			if (ActiveMap === 'OtherPlayer') 
+			if (FH.ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
 			else
 				FH.Main.CityBuildingsData[building.id] = newCityEntity
 		}
 
-		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
+		return (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
 	},
 
 
-	createBuilding(metaData, era=CurrentEra, data={}, withAlly=true) {	
+	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=true) {	
 		if (typeof(metaData)=="string") {
 			metaData=FH.Main.CityEntities[metaData];
 		}
@@ -2719,7 +2719,7 @@ let CityBuildings = {
 			allyRoom: metaData.components?.AllAge?.ally?.rooms[0]?.allyType || null,
 			name: metaData.name,
 			type: this.setType(metaData),
-			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? CurrentEra : era),
+			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? FH.CurrentEra : era),
 			isSpecial: this.isSpecialBuilding(metaData),
 			isLimited: this.isLimitedBuilding(metaData),
 			isInInventory: false,

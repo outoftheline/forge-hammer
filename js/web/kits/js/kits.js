@@ -704,7 +704,7 @@ let Kits = {
 		let sO = {}
 		for (let s of Object.values(FH.Main.SelectionKits)) {
 			Kits.Names[s.selectionKitId] = s.name
-			for (let c of s.options || s.eraOptions[CurrentEra].options) {
+			for (let c of s.options || s.eraOptions[FH.CurrentEra].options) {
 				id = (c.item.cityEntityId||c.item.upgradeItemId)
 				if (!id)
 					continue
@@ -1071,7 +1071,7 @@ let Kits = {
 
 	InventoryTooltip: (e) => {
         const id = e?.currentTarget?.dataset?.id || e?.currentTarget?.parentElement?.dataset?.id;
-		let lng = ExtWorld.substring(0, 2);
+		let lng = FH.World.substring(0, 2);
 		const mapper = {
 			'us': 'en',
 			'xs': 'en',

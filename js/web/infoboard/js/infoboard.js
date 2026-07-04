@@ -394,7 +394,7 @@ let Info = {
             }
             else if (d['attachment']['type'] === 'trade_offer') {
                 // Handelsangebot
-                message = `<div class="offer"><span title="${GoodsData[d['attachment']['offeredResource']]['name']}" class="goods-sprite sprite-50 ${d['attachment']['offeredResource']}"></span> <span>x<strong>${d['attachment']['offeredAmount']}</strong></span> <span class="sign">&#187</span> <span title="${GoodsData[d['attachment']['neededResource']]['name']}" class="goods-sprite sprite-50 ${d['attachment']['neededResource']}"></span> <span>x<strong>${d['attachment']['neededAmount']}</strong></span></div>`;
+                message = `<div class="offer"><span title="${FH.Goods.Data[d['attachment']['offeredResource']]['name']}" class="goods-sprite sprite-50 ${d['attachment']['offeredResource']}"></span> <span>x<strong>${d['attachment']['offeredAmount']}</strong></span> <span class="sign">&#187</span> <span title="${FH.Goods.Data[d['attachment']['neededResource']]['name']}" class="goods-sprite sprite-50 ${d['attachment']['neededResource']}"></span> <span>x<strong>${d['attachment']['neededAmount']}</strong></span></div>`;
             }
         }
 
@@ -608,9 +608,9 @@ let Info = {
             msg: FH.helper.str.Replacer(
                 FH.t('Boxes.Infobox.Messages.Trade'), {
                 'player': PlayerLink,
-                'offer': GoodsData[d['offer']['good_id']]['name'],
+                'offer': FH.Goods.Data[d['offer']['good_id']]['name'],
                 'offerValue': d['offer']['value'],
-                'need': GoodsData[d['need']['good_id']]['name'],
+                'need': FH.Goods.Data[d['need']['good_id']]['name'],
                 'needValue': d['need']['value']
             }
             )
@@ -622,7 +622,7 @@ let Info = {
      * Ein Gildenmitglied hat in der GEX gekämpft
      */
     GuildExpeditionService_receiveContributionNotification: (d) => {
-        if (d['player']['player_id'] === ExtPlayerID) {
+        if (d['player']['player_id'] === FH.Player.ID) {
             return false;
         }
 
@@ -659,10 +659,10 @@ let Info = {
     },
 
     GuildRaidsMapService_updateState: (d) => {
-        if (d.causingPlayerId === ExtPlayerID) return false;
+        if (d.causingPlayerId === FH.Player.ID) return false;
 
         let nodeID = d.state.nodeId;
-        let PlayerLink = FH.Main.GetPlayerLink(d.causingPlayerId, PlayerDict[d.causingPlayerId]?.PlayerName) || '';
+        let PlayerLink = FH.Main.GetPlayerLink(d.causingPlayerId, FH.Players.Dict[d.causingPlayerId]?.PlayerName) || '';
         let nodeData = QiProgress.QiMap.nodes?.find(x => x.id === nodeID);
         let image = ('qi-'+nodeData.type?.type) || 'qi';
         if (nodeData.type?.armyType !== undefined)

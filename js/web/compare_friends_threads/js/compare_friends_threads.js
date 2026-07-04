@@ -184,7 +184,7 @@ let CompareFriendsThreads = {
 		t.push('</thead>');
 		t.push('<tbody>');
 
-		let PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsFriend'] === true));
+		let PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsFriend'] === true));
 
 		PlayerList = PlayerList.sort(function (a, b) {
 			return b['Score'] - a['Score'];

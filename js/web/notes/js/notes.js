@@ -33,7 +33,7 @@ let Notes = {
 
 	BuildContent: async () => {
 		let entries = await Notes.db.entries
-			.where('player_id').equals(ExtPlayerID)
+			.where('player_id').equals(FH.Player.ID)
 			.reverse()
 			.sortBy('time');
 
@@ -77,7 +77,7 @@ let Notes = {
 
 
 	openNote: async (time) => {
-		let entry = await Notes.db.entries.get([ExtPlayerID, time]);
+		let entry = await Notes.db.entries.get([FH.Player.ID, time]);
 		if (!entry) return;
 
 		Notes.viewNote(entry);
@@ -153,7 +153,7 @@ let Notes = {
 
 	openEdit: (entry) => {
 		let data = entry === null
-			? { player_id: ExtPlayerID, time: null, title: '', lines: [] }
+			? { player_id: FH.Player.ID, time: null, title: '', lines: [] }
 			: entry;
 
 		Notes.editNote(data);
@@ -225,7 +225,7 @@ let Notes = {
 
 	DeleteNote: async (time) => {
 		try {
-			await Notes.db.entries.delete([ExtPlayerID, time]);
+			await Notes.db.entries.delete([FH.Player.ID, time]);
 			$('#noteView').hide();
 			$('#noteEdit').hide();
 			await Notes.BuildContent();

@@ -26,7 +26,7 @@ FH.proxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
 });
 
 FH.proxy.addHandler("GreatBuildingsService","getConstruction", (data,postData) => {
-	if ($('#OwnPartBox').length === 0 && FH.Storage.getItem('CalcAutoOpen') == 'true' && postData[0].requestData[1] !== ExtPlayerID) {
+	if ($('#OwnPartBox').length === 0 && FH.Storage.getItem('CalcAutoOpen') == 'true' && postData[0].requestData[1] !== FH.Player.ID) {
 		Parts.View = 'calculator';
 		Parts.Show();
 	}
@@ -455,15 +455,15 @@ let Parts = {
 			Calculator.showToPay();
 		}
 			
-		if (FH.Main.CurrentGB.Entity.player_id !== ExtPlayerID)  // cannot use the other view
+		if (FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID)  // cannot use the other view
 			$('#OwnPartBox .window-viewswitch').removeClass('inactive');
 		else
 			$('#OwnPartBox .window-viewswitch').addClass('inactive');
 
 		// load other calculator if selected
 		let useThisCalculator = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs'));
-		if ((!useThisCalculator && FH.Main.CurrentGB.Entity.player_id !== ExtPlayerID && !(Parts.View === 'partcalc')) 
-			|| (Parts.View === 'calculator' && FH.Main.CurrentGB.Entity.player_id !== ExtPlayerID)) {
+		if ((!useThisCalculator && FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID && !(Parts.View === 'partcalc')) 
+			|| (Parts.View === 'calculator' && FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID)) {
 			Calculator.Show();
 			return;
 		}
@@ -498,7 +498,7 @@ let Parts = {
 				Parts.CopyOwnPlayerName = SavedCopyOwnPlayerName
 			}
 			else {
-				Parts.CopyOwnPlayerName = ExtPlayerName;
+				Parts.CopyOwnPlayerName = FH.Player.Name;
 			}
 
 			Parts.CopyFormatPerGB = (FH.Storage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true');
@@ -739,11 +739,11 @@ let Parts = {
 			BPRewards[i] = 0;
 
 		let PlayerName = undefined;
-		if (PlayerID === ExtPlayerID) {
-			PlayerName = ExtPlayerName
+		if (PlayerID === FH.Player.ID) {
+			PlayerName = FH.Player.Name
 		}
 		else { //LG eines anderen Spielers
-			PlayerName = PlayerDict[PlayerID]['PlayerName'];
+			PlayerName = FH.Players.Dict[PlayerID]['PlayerName'];
 		}
 		
 		for (let i = 0; i < 5; i++) {
@@ -760,7 +760,7 @@ let Parts = {
 		}
 		
         // Level is locked
-		if (PlayerID === ExtPlayerID && FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.level === FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.max_level) {
+		if (PlayerID === FH.Player.ID && FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.level === FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.max_level) {
 			h.push('<div class="lg-not-possible" data-text="'+FH.t('Boxes.Calculator.LGNotOpen')+'"></div>');
 		}
 		h.push(`<div id="gbCosts">`);
@@ -769,7 +769,7 @@ let Parts = {
 			<div class="flex gap" style="justify-content:space-between;align-items:end;margin-bottom:5px;">
 			<div class="lb-info">
 			<h1>${CityEntity['name']}</h1>`);
-		if (PlayerName) h.push(`<span class="activity activity_${PlayerDict[PlayerID]['Activity']}"></span> ${FH.Main.GetPlayerLink(PlayerID, PlayerName)}`);
+		if (PlayerName) h.push(`<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span> ${FH.Main.GetPlayerLink(PlayerID, PlayerName)}`);
 		h.push('</div>');
 
 		h.push('<div class="level-switch">');
@@ -839,9 +839,9 @@ let Parts = {
 			<tbody>`);
 		let IncludeStart = FH.Storage.getItem('OwnPartIncludeStart') != 'false';
 		let opt = (platz, gesamt)=>{
-			let ret = `<strong class="${PlayerID==ExtPlayerID ? "copy-fp clickable":""}" data-copy="${platz}">${FH.HTML.Format(platz)}</strong>`;
+			let ret = `<strong class="${PlayerID==FH.Player.ID ? "copy-fp clickable":""}" data-copy="${platz}">${FH.HTML.Format(platz)}</strong>`;
 			if (gesamt > platz) {
-				ret += ` <small class="${IncludeStart || PlayerID!=ExtPlayerID ? "":"copy-fp clickable"}" data-copy="${gesamt}">(=${FH.HTML.Format(gesamt)})</small>`;
+				ret += ` <small class="${IncludeStart || PlayerID!=FH.Player.ID ? "":"copy-fp clickable"}" data-copy="${gesamt}">(=${FH.HTML.Format(gesamt)})</small>`;
 			}
 			return ret;
 		}
@@ -855,7 +855,7 @@ let Parts = {
 				h.push('<tr>');
 				let OwnPartStartText = (Eigens[i] > 0 ? opt(Eigens[i], EigenCounter): '-');
 				h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
-				h.push('<td class="text-center"><span class="' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
+				h.push('<td class="text-center"><span class="' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
 				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
 				if (printsEnabled && medalsEnabled) h.push('<td colspan="4"></td>');
 				else if (printsEnabled || medalsEnabled) h.push('<td colspan="3"></td>');
@@ -867,7 +867,7 @@ let Parts = {
 					h.push('<tr>');
 					let OwnPartText = opt(Eigens[i], EigenCounter);
 					h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
-					h.push('<td class="text-center ' + (PlayerID === ExtPlayerID ? 'success' : 'yellow-text') + '">' + OwnPartText + '</td>');
+					h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'yellow-text') + '">' + OwnPartText + '</td>');
 					if (printsEnabled && medalsEnabled) h.push('<td colspan="5"></td>');
 					else if (printsEnabled || medalsEnabled) h.push('<td colspan="4"></td>');
 					else if (!minView) h.push('<td colspan="3"></td>');
@@ -882,11 +882,11 @@ let Parts = {
 
 			if (Parts.PlaceAvailables[i]) {
 				let copyvalue = Parts.Maezens[i];
-				if (AlreadyPaid && PlayerID !== ExtPlayerID)
+				if (AlreadyPaid && PlayerID !== FH.Player.ID)
 					copyvalue = Math.max(Parts.Maezens[i]-AlreadyPaid, 0);
 
 				h.push('<td class="text-center">' + 
-					'<strong class="' + (PlayerID === ExtPlayerID ? '' : 'success' + (Parts.Maezens[i] > 0 ? ' copy-fp clickable' : '')) + '" ' + 
+					'<strong class="' + (PlayerID === FH.Player.ID ? '' : 'success' + (Parts.Maezens[i] > 0 ? ' copy-fp clickable' : '')) + '" ' + 
 						'data-copy="' + (copyvalue > 0 ? copyvalue : '') + '">' + 
 							(Parts.Maezens[i] > 0 ? FH.HTML.Format(Parts.Maezens[i]) : '-') + 
 						'</strong >' + 
@@ -948,7 +948,7 @@ let Parts = {
 			h.push('<tr>');
 			let OwnPartRestText = opt(Eigens[5], EigenCounter);
 			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
-			h.push('<td class="text-center ' + (PlayerID === ExtPlayerID ? 'success' : 'yellow-text') + '">' + OwnPartRestText + '</td>');
+			h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'yellow-text') + '">' + OwnPartRestText + '</td>');
 			h.push('<td colspan="5"></td>');
 			h.push('</tr>');
 		}
@@ -967,12 +967,12 @@ let Parts = {
 
 		if (!minView) {
 			h.push('<table style="width: 100%"><tr>');
-			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === ExtPlayerID ? '' : 'success') + '">' + FH.HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
-			h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal) + '</strong></td>');
+			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.PatronPart') + ': <strong class="' + (PlayerID === FH.Player.ID ? '' : 'success') + '">' + FH.HTML.Format(MaezenTotal + ExtTotal) + '</strong></td>');
+			h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + ': <strong data-copy="'+(EigenTotal)+'" class="clickable copy-fp ' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal) + '</strong></td>');
 			h.push('</tr><tr>');
 			h.push('<td>' + FH.t('Boxes.OwnpartCalculator.LGTotalFP') + ': <strong>' + FH.HTML.Format(Total) + '</strong></td>');
 			if (EigenStart > 0) {
-				h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === ExtPlayerID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
+				h.push('<td class="text-right">' + FH.t('Boxes.OwnpartCalculator.OwnPartRemaining') + ': <strong data-copy="'+(EigenTotal - EigenStart)+'" class="clickable copy-fp ' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + FH.HTML.Format(EigenTotal - EigenStart) + '</strong></td>');
 			}
 			else {
 				h.push('<td></td>');
@@ -1004,7 +1004,7 @@ let Parts = {
 			h.push('<div class="btn-group">');
 			if (Parts.SafePlaces.length > 0 || Parts.CopyModeAll) { //Copy bzw. Note Button nur einblenden wenn zumindest ein Platz safe ist
 				h.push('<span class="btn btn-slim button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span>');
-				if (FH.Main.CurrentGB.Entity['player_id'] === ExtPlayerID) h.push('<span class="btn btn-slim button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>');
+				if (FH.Main.CurrentGB.Entity['player_id'] === FH.Player.ID) h.push('<span class="btn btn-slim button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>');
 			}
 			else {
 				h.push(FH.t('Boxes.OwnpartCalculator.NoPlaceSafe'));
@@ -1041,13 +1041,13 @@ let Parts = {
 
 
 	SwitchCalculator: () => {
-		if ($('#gbCosts').length > 0 && FH.Main.CurrentGB.Entity.player_id !== ExtPlayerID) { // is PartCalc, so show the other one
+		if ($('#gbCosts').length > 0 && FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID) { // is PartCalc, so show the other one
 			$('#OwnPartBox .window-viewswitch').removeClass('inactive');
 			Parts.View = 'calculator';
 			Parts.CalcBody();
 			return;
 		}
-		else if ($('#gbCosts').length > 0 && FH.Main.CurrentGB.Entity.player_id === ExtPlayerID) {
+		else if ($('#gbCosts').length > 0 && FH.Main.CurrentGB.Entity.player_id === FH.Player.ID) {
 			$('#OwnPartBox .window-viewswitch').addClass('inactive');
 		}
 		Parts.View = 'partcalc';
@@ -1115,7 +1115,7 @@ let Parts = {
 
 		let PlayerID = FH.Main.CurrentGB.Entity['player_id'];
 
-		Parts.CopyPlayerName = (PlayerID === ExtPlayerID ? Parts.CopyOwnPlayerName : PlayerDict[PlayerID]['PlayerName']);
+		Parts.CopyPlayerName = (PlayerID === FH.Player.ID ? Parts.CopyOwnPlayerName : FH.Players.Dict[PlayerID]['PlayerName']);
 
 		h.push('<span class="icon-close"></span>');
 		h.push('<section class="p5">');
@@ -1126,7 +1126,7 @@ let Parts = {
 		h.push('</section>');
 
 		h.push('<section class="p2">');
-		if (PlayerID === ExtPlayerID) {
+		if (PlayerID === FH.Player.ID) {
 			h.push('<div class="flex between"><span>' + FH.t('Boxes.OwnpartCalculator.PlayerName') + ':</span><input type="text" id="player-name" value="' + Parts.CopyPlayerName + '"></div>');
 		}
 		else {
@@ -1176,7 +1176,7 @@ let Parts = {
 		h.push('</section>')
 		h.push('<div class="btn-outer text-center" style="margin-top: 10px">');
 		h.push('<span class="btn button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span> ');
-		if (FH.Main.CurrentGB.Entity['player_id'] === ExtPlayerID) 
+		if (FH.Main.CurrentGB.Entity['player_id'] === FH.Player.ID) 
 			h.push('<span class="btn button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>'); 
 		h.push('</div>');
 
@@ -1188,10 +1188,10 @@ let Parts = {
 
 	GetStorageKey: (SettingName, EntityID) => {
 		if (EntityID) {
-			return 'OwnPart_' + SettingName + '_' + EntityID + '_' + ExtPlayerID;
+			return 'OwnPart_' + SettingName + '_' + EntityID + '_' + FH.Player.ID;
 		}
 		else {
-			return 'OwnPart_' + SettingName + '_' + ExtPlayerID;
+			return 'OwnPart_' + SettingName + '_' + FH.Player.ID;
 		}
 	},
 
@@ -1555,7 +1555,7 @@ let Parts = {
 	ShowCalculatorSettings: ()=> {
 		// load other calculators settings if selected
 		let useThisCalculator = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs'))
-		if (!useThisCalculator && FH.Main.CurrentGB.Entity.player_id !== ExtPlayerID) {
+		if (!useThisCalculator && FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID) {
 			Calculator.ShowCalculatorSettings();
 			return;	
 		}

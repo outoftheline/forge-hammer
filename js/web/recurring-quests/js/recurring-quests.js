@@ -17,7 +17,7 @@ FH.proxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
                 if (quest.genericRewards[0].subType == "medals" || quest.genericRewards[0].subType == "premium") {
                     Recurring.data.Questlist[quest.id].diamonds = true;
                 }
-                if (!Recurring.data.Questlist[quest.id].era) Recurring.data.Questlist[quest.id].era = CurrentEraID;
+                if (!Recurring.data.Questlist[quest.id].era) Recurring.data.Questlist[quest.id].era = FH.CurrentEraID;
                 if (!Recurring.data.Questlist[quest.id].conditions) {
                     Recurring.data.Questlist[quest.id].conditions = quest.successConditions;
                     Recurring.data.Questlist[quest.id].groups = quest.successConditionGroups;
@@ -78,14 +78,14 @@ let Recurring = {
         Recurring.data.count = 0;
         for (let q in Recurring.data.Questlist) {
             if (!Recurring.data.Questlist[q]) continue;
-            if (Recurring.data.Questlist[q].era == CurrentEraID) {
+            if (Recurring.data.Questlist[q].era == FH.CurrentEraID) {
                 if (!Recurring.data.Questlist[q].diamonds){
                     Recurring.data.filter.push(q);
                     Recurring.data.count++;
                 } else {
                     Recurring.data.filter2.push(q);
                 }
-            } else if (CurrentEraID - Recurring.data.Questlist[q].era > 1) {
+            } else if (FH.CurrentEraID - Recurring.data.Questlist[q].era > 1) {
                 delete Recurring.data.Questlist[q];
             }
         }

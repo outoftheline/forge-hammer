@@ -233,9 +233,9 @@ let Settings = {
 				<p>${FH.t('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${FH.extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
 				<div class="info-box">
 					<span><b>${FH.t('Boxes.General.Version')}</b> ${FH.BaseData.extVersion}</span>
-					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
-					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(ExtGuildID ? ExtGuildID : 'N/A')}</span>
-					<span><b>${FH.t('Settings.Version.World')}</b> ${ExtWorld}</span>
+					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${FH.Player.ID}</span>
+					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(FH.Guild.ID ? FH.Guild.ID : 'N/A')}</span>
+					<span><b>${FH.t('Settings.Version.World')}</b> ${FH.World}</span>
 				</div>`;
 		return v;
 	},
@@ -315,7 +315,7 @@ let Settings = {
 
 		let json = JSON.stringify(settings),
 			blob1 = new Blob([json], { type: "application/json;charset=utf-8" }),
-			file = `${ExtWorld}-${ExtPlayerID}.json`;
+			file = `${FH.World}-${FH.Player.ID}.json`;
 
 		FH.Main.ExportFile(blob1, file);
 	},

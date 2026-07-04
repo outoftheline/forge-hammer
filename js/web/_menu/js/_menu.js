@@ -486,7 +486,7 @@ let _menu = {
 			}
 		});
 
-		btn_playerProfile.append('<img src="'+srcLinks.GetPortrait(ExtPlayerAvatar)+'" />');
+		btn_playerProfile.append('<img src="'+srcLinks.GetPortrait(FH.Player.Avatar)+'" />');
 
 		return btn_playerProfileBG.append(btn_playerProfile);
 	},

@@ -493,7 +493,7 @@ let shopAssist = {
 		let buildingIds=e?.currentTarget?.dataset?.ids.split(",")
         if (!buildingIds) return
 
-        let eff = Object.assign({},...Productions.rateBuildings(buildingIds,true,CurrentEra)?.map(x=>({[x.entityId]:Math.round(100 * x.rating?.totalScore||0)})))
+        let eff = Object.assign({},...Productions.rateBuildings(buildingIds,true,FH.CurrentEra)?.map(x=>({[x.entityId]:Math.round(100 * x.rating?.totalScore||0)})))
 		let meta = Object.assign({},...buildingIds.map(x=>({[x]:FH.Main.CityEntities[x]})))
 
 		let upgrades = Object.assign({},...buildingIds.map(x=>{
@@ -524,7 +524,7 @@ let shopAssist = {
 			if (buildingIds.length<=limit) {
 				head +=`<td style="width:100%; vertical-align:top"><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
 				body += `<td style="width:100%; vertical-align:top">`;
-				body += await Tooltips.BuildingData(meta[b],CurrentEra,null, eff);
+				body += await Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff);
 				body += `</td>`
 			} else {
 				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`

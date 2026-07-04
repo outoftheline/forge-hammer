@@ -94,7 +94,7 @@ let HiddenRewards = {
 
             // prüfen ob der Spieler in seiner Stadt eine zweispurige Straße hat
             if (position === 'cityRoadBig') {
-                if (CurrentEraID >= Technologies.Eras.ProgressiveEra) SkipEvent = false
+                if (FH.CurrentEraID >= Technologies.Eras.ProgressiveEra) SkipEvent = false
                 twolane = true
             }
             else {

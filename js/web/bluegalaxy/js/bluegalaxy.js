@@ -159,12 +159,12 @@ let BlueGalaxy = {
                         FP += 10 * parseInt(product.resources.amount)
 
                     if (product.type == "resources" || product.type == "guildResources")
-                        for (let j = 0; j < GoodsList.length; j++) {
-                            let GoodID = GoodsList[j]['id'];
-                            let GoodEra = GoodsList[j]['era'];
+                        for (let j = 0; j < FH.Goods.List.length; j++) {
+                            let GoodID = FH.Goods.List[j]['id'];
+                            let GoodEra = FH.Goods.List[j]['era'];
                             if (product.resources[GoodID]) {
                                 if (product.type == "resources")
-                                    if(GoodEra == CurrentEra) {
+                                    if(GoodEra == FH.CurrentEra) {
                                         GoodsSum += product.resources[GoodID]
                                     } else {
                                         OlderGoodsSum += product.resources[GoodID]
