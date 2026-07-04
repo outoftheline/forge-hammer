@@ -71,7 +71,7 @@ let srcLinks = {
         CSfilename += "-" + CS + "." + filenameP[1];
         
         if (full){
-            return FH.Main.InnoCDN + 'assets' + CSfilename;
+            return FH.Links.InnoCDN + 'assets' + CSfilename;
         }
         return CSfilename;
     },

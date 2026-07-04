@@ -120,7 +120,8 @@ FH.Links = {
 		foestats: 'https://foestats.com/__server__/__world__/guilds/__guildid__'
 	},
 	Building: 'https://forgeofempires.fandom.com/wiki/__buildingid__',
-	Icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>'
+	Icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>',
+	InnoCDN: 'https://foede.innogamescdn.com/',
 }
 
 let GameTime = {
@@ -227,11 +228,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addMetaHandler("building_families", (xhr,postData) => {
 		Main.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
 	})	
-	// Castle-System-Levels
-	FH.proxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
-		Main.CastleSystemLevels = JSON.parse(xhr.responseText);
-	});
-
 	// Allies
 	FH.proxy.addMetaHandler('allies', (xhr, postData) => {
 		Main.Allies.setMeta(JSON.parse(xhr.responseText));
@@ -270,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const idx = requestData.url.indexOf("/assets/shared/avatars/Portraits");
 
 		if (idx !== -1) {
-			Main.InnoCDN = requestData.url.substring(0, idx + 1);
+			FH.Links.InnoCDN = requestData.url.substring(0, idx + 1);
 			let portraits = {};
 
 			$(xhr.responseText).find('portrait').each(function () {
@@ -381,11 +377,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
 		QiProgress.QiMap = data.responseData;
 	})
-
-	// CastleSystem rewards
-	FH.proxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
-		Main.CastleSystemChest = data.responseData;
-	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Karte wird gewechselt zum Außenposten
@@ -925,9 +916,6 @@ FH.Beta = {
 FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
 let Main = {
-	activateDownload: false,
-	savedFight: null,
-	DebugMode: false,
 	Language: 'en',
 	SelectedMenu: 'RightBar',
 	BonusService: null,
@@ -937,10 +925,8 @@ let Main = {
 	MetaIds: {},
 	MetaUrls: {},
 	CityEntities: null,
-	CastleSystemLevels: null,
 	StartUpType: null,
 	OpenConversation: null,
-	CastleSystemChest: null,
 	CurrentGB: {
 		Entity: undefined,
 		Rankings: undefined,
@@ -963,8 +949,6 @@ let Main = {
 	SelectionKits: null,
 	
 	BuildingFamilyLimits: null,
-	
-	InnoCDN: 'https://foede.innogamescdn.com/',
 
 	/**
 	* Version specific StartUp Code
@@ -1392,21 +1376,11 @@ let Main = {
 	
 		Infoboard.Init();
 		EventHandler.Init();
-		setTimeout(Main.forceLoadCityEntities, 15000);
 		
 		window.dispatchEvent(new CustomEvent('forgeHammer#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
 		FH.Storage.removeItem('AllProvinces');
-	},
-
-
-	forceLoadCityEntities: () => {
-		if (Main.CityEntities) return;
-		//console.log('Forcing load of CityEntities');
-		let xhr = new XMLHttpRequest();
-        xhr.open("GET", Main.MetaUrls['city_entities'], true);
-        xhr.send();
 	},
 
 

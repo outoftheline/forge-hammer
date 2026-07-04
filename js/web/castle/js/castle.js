@@ -60,6 +60,10 @@ FH.proxy.addHandler('ItemAuctionService', 'getAuction', (data, postData) => {
     }
 
 });
+// Castle-System-Levels
+FH.proxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
+    Castle.Levels = JSON.parse(xhr.responseText);
+});
 
 
 // Read Shop Items and possible Reward
@@ -283,6 +287,12 @@ FH.proxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) 
 
 });
 
+
+// CastleSystem rewards
+FH.proxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
+    Castle.Chest = data.responseData;
+});
+
 /**
  * @type {{curCastlePoints: undefined, AuctionWinningReward: number, curCastlePointsDiff: {}, UpdateCastleData: Castle.UpdateCastleData, DailyWinningBattlesReward: number, RewardGroups: {Shop: number, Daily: number, Gex: number, AntiqueDealer: number, Challenge: number}, curWinningBattles: undefined, BuildBox: Castle.BuildBox, curDailyChallenge: undefined, curLevel: number, SevenDayChallengeReward: number, ShowLog: Castle.ShowLog, NextNegotiationPoints: undefined, SevenDayChallenge: number, Settings: {showSummary: boolean, showGroupNames: boolean, logDays: number}, ShowProgressTable: Castle.ShowProgressTable, DailyWinningBattles: number, ShopGemstonesDivisor: number, DailyChallengeReward: number, CastleSettings: Castle.CastleSettings, MaxDailyNegotiationsReward: number, MaxGexLastOfSections: number, curNegotiations: undefined, DailyCastlePoints: number, Show: Castle.Show, DailyChallenge: number, MaxDailyWinningBattlesReward: number, ShopTradeCoinsDivisor: number, SetCastlePointLog: Castle.SetCastlePointLog, curDailyCastlePoints: undefined, DailyNegotiations: number, curShopItems: undefined, startOfDay: *, DailyNegotiationsReward: number, curGexLastOfSection: undefined, UpdateCastlePointsLog: Castle.UpdateCastlePointsLog, SettingsSaveValues: Castle.SettingsSaveValues, CurrentView: string, UpdateCastlePoints: Castle.UpdateCastlePoints, dailyPointsCollectionAvailableAt: undefined, curSevenDayChallenge: undefined, NextWinningBattlesPoints: undefined, CastlePointLog: undefined, GexLastOfSectionsIds: number[], CreateRewardList: (function(): *[]), ShowCastlePoints: Castle.ShowCastlePoints, WeeklyGexLastOfSection: number, curAuctionWinning: undefined}}
  */
@@ -336,6 +346,8 @@ let Castle = {
 
     CastlePointLog: undefined,
     CurrentView: 'overview',
+    Levels: null,
+    Chest: null,
 
     BuildBox: () => {
 
@@ -857,7 +869,7 @@ let Castle = {
 
         if ($('#Castle #casPointsWrapper').length === 1)
         {
-            let CastleLimit = FH.Main.CastleSystemLevels[Castle.curLevel].requiredPoints;
+            let CastleLimit = Castle.Levels[Castle.curLevel].requiredPoints;
 
             $('#Castle #casPointsWrapper').html(`
                 <div><span>${FH.t('Boxes.Castle.CastlePoints')}: ${FH.HTML.Format(Castle.curCastlePoints)} / ${FH.HTML.Format(CastleLimit)}</span>

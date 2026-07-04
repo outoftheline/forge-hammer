@@ -1657,7 +1657,7 @@ let CityBuildings = {
 		
 		if (state === "producing") {
 			if (data.cityentity_id.includes("CastleSystem")) {
-				return { at: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt, in: FH.Main.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
+				return { at: Castle.Chest.dailyRewardCollectionAvailableAt, in: Castle.Chest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
 			}
 			return { at: data?.state?.next_state_transition_at, in: data?.state?.next_state_transition_in }
 		}
@@ -1862,8 +1862,8 @@ let CityBuildings = {
 			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
 				let currentLevel = Castle.curLevel
 				era = FH.CurrentEra 
-				if (FH.Main.CastleSystemLevels[(currentLevel-1)] !== undefined)
-					FH.Main.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
+				if (Castle.Levels[(currentLevel-1)] !== undefined)
+					Castle.Levels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
