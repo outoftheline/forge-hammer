@@ -49,8 +49,8 @@ FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData
 				GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
 				GuildFights.curDateEndFilter = moment.unix(GuildFights.CurrentGBGRound).format('YYYYMMDD');
 			}
-
-			GuildFights.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
+			if (data.responseData['stateId'] !== 'trialSelection')
+				GuildFights.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
 		}
 	},500)
 });

@@ -715,7 +715,7 @@ let Calculator = {
 			let escapedLine = before.replace(/"/g, '&quot;');
 
 			if (!match) {
-				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}"><b>${before}</b></div>`);
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${before}</div>`);
 			} 
 			else {
 				let info = before.slice(0, match.length).trimEnd();
