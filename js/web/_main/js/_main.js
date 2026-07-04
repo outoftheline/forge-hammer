@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// --------------------------------------------------------------------------------------------------
 	// goods translations
 	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		FH.Goods.Data = Object.assign({}, ...Object.entries(data.responseData).map((x) => ({ [x.id]: x })));
+		FH.Goods.Data = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 	});
 
 
