@@ -32,7 +32,7 @@ Dexie.delete('foe_helper_alerts_database');
 
 // xhr listener: store gbg sector unlock times
 // xhr listener: antique dealer (get the auction timer)
-
+{
 const BattlegroundSectorNames = {
 	volcano_archipelago: {
 		0: {title: "A1", name: "Mati Tudokk"},
@@ -160,6 +160,84 @@ const BattlegroundSectorNames = {
 		60: {title: "F5D", name: "Gleoleaterra"}
 	}
 };
+
+
+/**
+ * Observable pattern using subscribe/unsubscribe (instead of add/remove observer). The notify is private
+ * and executes every second after TimeManager.start(). Subscribers should implement 'update(unix timestamp)'
+ */
+let TimeManager = function(){
+
+	// private
+	let tmp = {
+		interval: null,
+		time: null,
+		observers: [],
+		/**
+		 * Returns true iff the given object is in the list of observers
+		 * @param o
+		 * @returns {boolean}
+		 */
+		isSubscribed: (o) => { return ( tmp.observers.filter(observer => observer === o).length === 1 ); },
+		notify: (data) => {
+			tmp.observers.forEach( observer => {
+				if (observer.update){ observer.update(data); }
+				else { /* throw and error */ }
+			});
+		}
+	};
+
+	// public
+	let pub = {
+
+		/**
+		 * Starts the "clock"
+		 */
+		start: ()=> {
+			pub.stop();
+			tmp.interval = setInterval( function(){ tmp.notify( Date.now() ); }, 1000 );
+		},
+
+		/**
+		 * Stops the "clock"
+		 */
+		stop: ()=> {
+			if ( tmp.interval != null ){
+				clearInterval( tmp.interval );
+				tmp.interval = null;
+			}
+		},
+
+		/**
+		 * Adds the provided object to the observers of this observable object
+		 * @param o
+		 */
+		subscribe: (o)=> {
+			if ( !tmp.isSubscribed(o) ){
+				tmp.observers.push(o);
+			}
+		},
+
+		/**
+		 * Removes the provided objects from the observers (if it is among them)
+		 * @param o
+		 */
+		unsubscribe: (o)=> {
+			tmp.observers = tmp.observers.filter(observer => observer !== o);
+		},
+	};
+
+	return pub;
+
+}();
+
+// class Timer {
+//     constructor(){}
+//     update(t){ console.log(t); }
+// }
+// let timer = new Timer();
+// TimeManager.subscribe(timer);
+TimeManager.start();
 
 let Alerts = function(){
 	let tmp = {};
@@ -1658,80 +1736,6 @@ FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	Alerts.update.data.timers( data['responseData'] );
 });
 
+FH.Alerts = Alerts;
 
-/**
- * Observable pattern using subscribe/unsubscribe (instead of add/remove observer). The notify is private
- * and executes every second after TimeManager.start(). Subscribers should implement 'update(unix timestamp)'
- */
-let TimeManager = function(){
-
-	// private
-	let tmp = {
-		interval: null,
-		time: null,
-		observers: [],
-		/**
-		 * Returns true iff the given object is in the list of observers
-		 * @param o
-		 * @returns {boolean}
-		 */
-		isSubscribed: (o) => { return ( tmp.observers.filter(observer => observer === o).length === 1 ); },
-		notify: (data) => {
-			tmp.observers.forEach( observer => {
-				if (observer.update){ observer.update(data); }
-				else { /* throw and error */ }
-			});
-		}
-	};
-
-	// public
-	let pub = {
-
-		/**
-		 * Starts the "clock"
-		 */
-		start: ()=> {
-			pub.stop();
-			tmp.interval = setInterval( function(){ tmp.notify( Date.now() ); }, 1000 );
-		},
-
-		/**
-		 * Stops the "clock"
-		 */
-		stop: ()=> {
-			if ( tmp.interval != null ){
-				clearInterval( tmp.interval );
-				tmp.interval = null;
-			}
-		},
-
-		/**
-		 * Adds the provided object to the observers of this observable object
-		 * @param o
-		 */
-		subscribe: (o)=> {
-			if ( !tmp.isSubscribed(o) ){
-				tmp.observers.push(o);
-			}
-		},
-
-		/**
-		 * Removes the provided objects from the observers (if it is among them)
-		 * @param o
-		 */
-		unsubscribe: (o)=> {
-			tmp.observers = tmp.observers.filter(observer => observer !== o);
-		},
-	};
-
-	return pub;
-
-}();
-
-// class Timer {
-//     constructor(){}
-//     update(t){ console.log(t); }
-// }
-// let timer = new Timer();
-// TimeManager.subscribe(timer);
-TimeManager.start();
+}

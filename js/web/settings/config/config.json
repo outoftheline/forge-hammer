@@ -109,7 +109,7 @@
 		"name": "Auctions",
 		"status": false,
 		"group": "Boxes",
-		"button":"Auction.BuildBody()",
+		"button":"FH.Auction.BuildBody()",
 		"sort": 9
 	},
 	{

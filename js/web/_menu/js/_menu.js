@@ -696,7 +696,7 @@ _menu = {
 		let btn = _menu.MakeButton('alerts');
 
 		let btn_sp = $('<span />').on('click', function () {
-			Alerts.show();
+			FH.Alerts.show();
 		});
 
 		return btn.append(btn_sp);

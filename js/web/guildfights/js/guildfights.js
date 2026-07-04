@@ -1740,7 +1740,7 @@ let GuildFights = {
 			}
 
 			// fetch all alerts and search the id
-			return Alerts.getAll().then((resp) => {
+			return FH.Alerts.getAll().then((resp) => {
 				if (resp.length === 0) {
 					resolve();
 				}

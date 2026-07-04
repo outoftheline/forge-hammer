@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		Main.ABTests=Object.assign({}, ...data.responseData.active_ab_tests.map((x) => ({ [x.test_name]: x })));
 	
 		Stats.Init();
-		Alerts.init();
+		FH.Alerts.init();
 	});
 
 	//Metadata file links
