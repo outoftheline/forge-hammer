@@ -417,7 +417,7 @@ let Investment = {
 
 
 	RefreshInvestmentDB: async (Investment) => {
-		await IndexDB.addUserFromPlayersDictIfNotExists(Investment['playerId'], true);
+		await IndexDB.addUserFromPlayerDictIfNotExists(Investment['playerId'], true);
 
 		let CurrentInvest = await IndexDB.db.investhistory
 			.where({
