@@ -31,7 +31,7 @@ FH.proxy.addHandler('CollectingMinigameService', 'submitMove', (data, postData) 
             if(AztecsHelper.ResourcesLeft == 0){
                 if (!$('#minigame_aztecs-Btn').hasClass('hud-btn-red')) {
                     $('#minigame_aztecs-Btn').addClass('hud-btn-red');
-                    _menu.toolTipp($('#minigame_aztecs-Btn'),"Aztec Helper", '<em id="minigame_aztecs-Btn-closed" class="tooltip-error">Opens automatically when starting a aztec mini game<br></em>Aztec Minigame Helper -BETA-');
+                    FH.menu.toolTipp($('#minigame_aztecs-Btn'),"Aztec Helper", '<em id="minigame_aztecs-Btn-closed" class="tooltip-error">Opens automatically when starting a aztec mini game<br></em>Aztec Minigame Helper -BETA-');
                 }
                 if ($('#aztecsHelper').length === 1){
                     FH.HTML.CloseOpenBox('aztecsHelper');
@@ -593,7 +593,7 @@ let AztecsHelper = {
         if(AztecsHelper.MovesLeft == 0 && $('#aztecsHelper').length > 0){
             if (!$('#minigame_aztecs-Btn').hasClass('hud-btn-red')) {
                 $('#minigame_aztecs-Btn').addClass('hud-btn-red');
-                _menu.toolTipp($('#minigame_aztecs-Btn'),"Aztec Helper", '<em id="minigame_aztecs-Btn-closed" class="tooltip-error">Opens automatically when starting a aztec mini game<br></em>Aztec Minigame Helper -BETA-');
+                FH.menu.toolTipp($('#minigame_aztecs-Btn'),"Aztec Helper", '<em id="minigame_aztecs-Btn-closed" class="tooltip-error">Opens automatically when starting a aztec mini game<br></em>Aztec Minigame Helper -BETA-');
             }
             FH.HTML.CloseOpenBox('aztecsHelper');
         }

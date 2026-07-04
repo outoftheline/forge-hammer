@@ -477,7 +477,7 @@ let Negotiation = {
 		if (responseData.context === Negotiation.CONST_Context_GBG) {
 			if (! $('#negotiation-Btn').hasClass('hud-btn-red')) {
 				$('#negotiation-Btn').addClass('hud-btn-red');
-				_menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
+				FH.menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
 			}
 			return; //No Negotiation helper for GBG
 		}

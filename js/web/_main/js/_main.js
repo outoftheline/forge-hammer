@@ -830,7 +830,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		await FH.StartUpDone;	
 		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 		Main.SelectedMenu = MenuSetting || 'RightBar';
-		_menu.CallSelectedMenu(Main.SelectedMenu);
+		FH.menu.CallSelectedMenu(Main.SelectedMenu);
 		
 		Main.setLanguage();
 		Main.setGameFilters();

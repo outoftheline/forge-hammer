@@ -331,8 +331,8 @@ let Settings = {
 
 		dp.push('<select class="setting-dropdown" id="change-menu">');
 
-		for (let index = 0; index < _menu.MenuOptions.length; index++) {
-			const element = _menu.MenuOptions[index];
+		for (let index = 0; index < FH.menu.MenuOptions.length; index++) {
+			const element = FH.menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
 				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + FH.t('Menu.' + element) + '</option>');
 			}
@@ -565,7 +565,7 @@ let Settings = {
 				FH.Storage.removeItem('MenuLength');
 			}
 
-			_menu.SetMenuHeight(true);
+			FH.menu.SetMenuHeight(true);
 		});
 
 		return ip;
@@ -633,7 +633,7 @@ let Settings = {
 	 */
 	MenuContent: () => {
 		let bl = $('<div />'),
-			menuItems = Array.from(_menu.Items),
+			menuItems = Array.from(FH.menu.Items),
 			HiddenItems = FH.Storage.getItem('MenuHiddenItems'),
 			hiddenArray = [];
 
@@ -650,14 +650,14 @@ let Settings = {
 			if(name === 'settings') continue;
 
 			// is there a function?
-			if (_menu[name + '_Btn']) {
+			if (FH.menu[name + '_Btn']) {
 				let btnBG = $('<div />')
 					.attr({ id: `setting-${name}-Btn` })
 					.addClass('hud-btn')
 					.addClass(hiddenArray.includes(name) ? 'hud-btn-red' : '');
-				let btnData = _menu.ItemsData.find(x => x.id === name);
+				let btnData = FH.menu.ItemsData.find(x => x.id === name);
 
-				let btn = $(`<span onclick="_menu.ToggleItemVisibility('${name}')" data-original-title="<b>${btnData?.title||""}</b><br>${btnData?.description.replace(/<[^>]+>/g, '')||""}"></span>`);
+				let btn = $(`<span onclick="FH.menu.ToggleItemVisibility('${name}')" data-original-title="<b>${btnData?.title||""}</b><br>${btnData?.description.replace(/<[^>]+>/g, '')||""}"></span>`);
 		
 				btnBG.append(btn);
 				bl.append(btnBG);
