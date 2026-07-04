@@ -336,7 +336,7 @@ if (typeof globalThis.FH == 'undefined') {
             _proxyRequestAction('all', 'all', postData);
         }
 
-        window.addEventListener('foe-helper#loaded', () => {
+        window.addEventListener('forgeHammer#loaded', () => {
             while (FH.proxy._getXhrQueue() && FH.proxy._getXhrQueue().length > 0) {
                 let xhrRequest = FH.proxy._getXhrQueue().shift();
                 FH.proxy._xhrOnLoadHandlerExec.call(xhrRequest);
@@ -350,7 +350,7 @@ if (typeof globalThis.FH == 'undefined') {
             wsQueue = null;
         }, { capture: false, once: true, passive: true });
 
-        window.addEventListener('foe-helper#error-loading', () => {
+        window.addEventListener('forgeHammer#error-loading', () => {
             FH.proxy._setXhrQueue(null);
             wsQueue = null;
             proxyEnabled = false;

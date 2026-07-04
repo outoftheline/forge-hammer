@@ -284,7 +284,7 @@ FH.proxy.addHandler('ChallengeService', 'getActiveChallenges', (data, postData) 
 });
 
 /**
- * @type {{curCastlePoints: undefined, AuctionWinningReward: number, curCastlePointsDiff: {}, UpdateCastleData: Castle.UpdateCastleData, DailyWinningBattlesReward: number, RewardGroups: {Shop: number, Daily: number, Gex: number, AntiqueDealer: number, Challenge: number}, curWinningBattles: undefined, BuildBox: Castle.BuildBox, curDailyChallenge: undefined, curLevel: number, SevenDayChallengeReward: number, ShowLog: Castle.ShowLog, NextNegotiationPoints: undefined, SevenDayChallenge: number, Settings: {showSummary: boolean, showGroupNames: boolean, logDays: number}, ShowProgressTable: Castle.ShowProgressTable, DailyWinningBattles: number, ShopGemstonesDivisor: number, DailyChallengeReward: number, CastleSettings: Castle.CastleSettings, MaxDailyNegotiationsReward: number, MaxGexLastOfSections: number, curNegotiations: undefined, DailyCastlePoints: number, Show: Castle.Show, DailyChallenge: number, MaxDailyWinningBattlesReward: number, ShopTradeCoinsDivisor: number, SetCastlePointLog: Castle.SetCastlePointLog, curDailyCastlePoints: undefined, DailyNegotiations: number, curShopItems: undefined, startOfDay: *, DailyNegotiationsReward: number, curGexLastOfSection: undefined, UpdateCastlePointsLog: Castle.UpdateCastlePointsLog, SettingsSaveValues: Castle.SettingsSaveValues, CurrentView: string, UpdateCastlePoints: Castle.UpdateCastlePoints, dailyPointsCollectionAvailableAt: undefined, curSevenDayChallenge: undefined, NextWinningBattlesPoints: undefined, CastlePointLog: undefined, GexLastOfSectionsIds: number[], CreateRewardList: (function(): *[]), ShowCastlePoints: Castle.ShowCastlePoints, WeeklyGexLastOfSection: number, curAuctionWinning: undefined, UnlockedFeatures: undefined}}
+ * @type {{curCastlePoints: undefined, AuctionWinningReward: number, curCastlePointsDiff: {}, UpdateCastleData: Castle.UpdateCastleData, DailyWinningBattlesReward: number, RewardGroups: {Shop: number, Daily: number, Gex: number, AntiqueDealer: number, Challenge: number}, curWinningBattles: undefined, BuildBox: Castle.BuildBox, curDailyChallenge: undefined, curLevel: number, SevenDayChallengeReward: number, ShowLog: Castle.ShowLog, NextNegotiationPoints: undefined, SevenDayChallenge: number, Settings: {showSummary: boolean, showGroupNames: boolean, logDays: number}, ShowProgressTable: Castle.ShowProgressTable, DailyWinningBattles: number, ShopGemstonesDivisor: number, DailyChallengeReward: number, CastleSettings: Castle.CastleSettings, MaxDailyNegotiationsReward: number, MaxGexLastOfSections: number, curNegotiations: undefined, DailyCastlePoints: number, Show: Castle.Show, DailyChallenge: number, MaxDailyWinningBattlesReward: number, ShopTradeCoinsDivisor: number, SetCastlePointLog: Castle.SetCastlePointLog, curDailyCastlePoints: undefined, DailyNegotiations: number, curShopItems: undefined, startOfDay: *, DailyNegotiationsReward: number, curGexLastOfSection: undefined, UpdateCastlePointsLog: Castle.UpdateCastlePointsLog, SettingsSaveValues: Castle.SettingsSaveValues, CurrentView: string, UpdateCastlePoints: Castle.UpdateCastlePoints, dailyPointsCollectionAvailableAt: undefined, curSevenDayChallenge: undefined, NextWinningBattlesPoints: undefined, CastlePointLog: undefined, GexLastOfSectionsIds: number[], CreateRewardList: (function(): *[]), ShowCastlePoints: Castle.ShowCastlePoints, WeeklyGexLastOfSection: number, curAuctionWinning: undefined}}
  */
 let Castle = {
 
@@ -336,8 +336,6 @@ let Castle = {
 
     CastlePointLog: undefined,
     CurrentView: 'overview',
-    UnlockedFeatures: undefined,
-
 
     BuildBox: () => {
 
@@ -399,19 +397,19 @@ let Castle = {
             Castle.curCastlePoints = FH.Storage.getItem('CastleCurCastlePoints') || 0;
         }
 
-        if (ResourceStock.castle_points)
+        if (FH.RessourceStock.castle_points)
         {
-            const increased = ResourceStock.castle_points > Castle.curCastlePoints;
+            const increased = FH.RessourceStock.castle_points > Castle.curCastlePoints;
             let diff = 0;
 
             if (Castle.curCastlePoints > 0 && increased)
             {
-                Castle.curCastlePointsDiff = { rid: rid, diff: ResourceStock.castle_points - Castle.curCastlePoints };
+                Castle.curCastlePointsDiff = { rid: rid, diff: FH.RessourceStock.castle_points - Castle.curCastlePoints };
                 diff = Castle.curCastlePointsDiff.diff;
                 Castle.SetCastlePointLog(Castle.curCastlePointsDiff);
             }
 
-            Castle.curCastlePoints = ResourceStock.castle_points;
+            Castle.curCastlePoints = FH.RessourceStock.castle_points;
 
             if (increased)
             {

@@ -21,7 +21,7 @@ let Tooltips = {
     targetElement:null,
     
     init: async () => {
-        await StartUpDone
+        await FH.StartUpDone
 
 		FH.HTML.AddCssFile('customTooltip');
         let container = document.createElement("div");
@@ -826,7 +826,7 @@ let Tooltips = {
 //QI Actions
 
 FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
-	QIActions.count = ResourceStock.guild_raids_action_points || 0
+	QIActions.count = FH.RessourceStock.guild_raids_action_points || 0
 });
 
 FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
@@ -842,7 +842,7 @@ FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
 })
 
 FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-    QIActions.hourlyBase = FHResourcesList.find(x=>x.id=="guild_raids_action_points").abilities.autoRefill.refillAmount
+    QIActions.hourlyBase = FH.Goods.Data?.["guild_raids_action_points"]?.abilities?.autoRefill?.refillAmount || 0;
 });
 
 

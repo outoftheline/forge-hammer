@@ -75,7 +75,7 @@ let ExistenceConfirmed = async (varlist)=>{
 	function checkForJQuery() {
 		if (typeof jQuery !== 'undefined') {
 			clearInterval(intval);
-			window.dispatchEvent(new CustomEvent('foe-helper#jQuery-loaded'));
+			window.dispatchEvent(new CustomEvent('forgeHammer#jQuery-loaded'));
 		}
 	}
 	intval = setInterval(checkForJQuery, 1);
@@ -99,22 +99,16 @@ FH.Goods={
 	Data: {},
 	List:{},
 }
-window.FHResourcesList = [];
 FH.Players = {
 	Dict: {},
 	NeighborsUpdated : false,
 	GuildUpdated : false,
 	FriendsUpdated : false,
 };
-window.ResourceStock = [];
-window.MainMenuLoaded = false;
-window.LGCurrentLevelMedals = undefined;
-window.IsLevelScroll = false;
-window.EventCountdown = false;
-window.StartUpDone = new Promise(resolve => 
-		window.addEventListener('foe-helper#StartUpDone', resolve, {once: true, passive: true}));
-window.UnlockedFeatures = [];
-window.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
+FH.RessourceStock = [];
+FH.StartUpDone = new Promise(resolve => 
+		window.addEventListener('forgeHammer#StartUpDone', resolve, {once: true, passive: true}));
+FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
 
 FH.Links = {
 	Player:{
@@ -183,6 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 (function () {
+	let MainMenuLoaded = false,
+		LGCurrentLevelMedals = undefined,
+		IsLevelScroll = false;
+
 
 	// globale Handler
 	// die Gebäudenamen übernehmen
@@ -335,10 +333,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		CityMap.Main.unlockedAreas = data.responseData.city_map.unlocked_areas;
 		CityMap.Main.blockedAreas = data.responseData.city_map.blocked_areas;
 
-		// EventCountdown
-		let eventCountDownFeature = data.responseData.feature_flags?.features.filter((v) => { return (v.feature === "event_start_countdown") });
-		EventCountdown = eventCountDownFeature?.length > 0 ? eventCountDownFeature[0]["time_string"] : false;
-
 		// Unlocked features
 		if (data.responseData.unlocked_features) {
 			Main.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
@@ -359,11 +353,6 @@ document.addEventListener("DOMContentLoaded", function () {
 	
 		Stats.Init();
 		Alerts.init();
-	});
-
-	// ResourcesList
-	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		FHResourcesList = data.responseData;
 	});
 
 	//Metadata file links
@@ -815,14 +804,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// player goods
 	FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
-		ResourceStock = data.responseData.resources; // Keep this updated
+		FH.RessourceStock = data.responseData.resources; // Keep this updated
 		Outposts.CollectResources();
 		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 	FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
 		if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
-		ResourceStock = data.responseData.resources.resources;
+		FH.RessourceStock = data.responseData.resources.resources;
 		Outposts.CollectResources();
 		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
@@ -847,7 +836,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	
 		MainMenuLoaded = true;
-		await StartUpDone;	
+		await FH.StartUpDone;	
 		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 		Main.SelectedMenu = MenuSetting || 'RightBar';
 		_menu.CallSelectedMenu(Main.SelectedMenu);
@@ -869,7 +858,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Goods Update after accepted Trade
 		if (requestMethod === "newEvent" && responseData.type === "trade_accepted") {
-			ResourceStock[responseData.need.good_id] += responseData.need.value;
+			FH.RessourceStock[responseData.need.good_id] += responseData.need.value;
 			FH.proxy.triggerFoeHelperHandler("ResourcesUpdated");
 		}
 		// Inventory Update, e.g. when receiving FP packages from GB leveling	
@@ -1405,7 +1394,7 @@ let Main = {
 		EventHandler.Init();
 		setTimeout(Main.forceLoadCityEntities, 15000);
 		
-		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
+		window.dispatchEvent(new CustomEvent('forgeHammer#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
 		FH.Storage.removeItem('AllProvinces');

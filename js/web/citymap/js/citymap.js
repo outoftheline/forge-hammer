@@ -2171,10 +2171,9 @@ let CityBuildings = {
 						if (production.type === "resources") {
 							resource.resources = production.playerResources.resources;
 							
-							// check if first resource is a special good and change the type accordingly
-							let specialGood = FHResourcesList.find(x => x.id === Object.keys(production.playerResources?.resources)[0] && x.abilities.specialResource?.type === "specialResource")
-							if (specialGood)
+							if (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource") {
 								resource.type = "special_goods";
+							}
 						}
 						else if (production.type === "guildResources")
 							resource.resources = production.guildResources.resources
@@ -2546,7 +2545,7 @@ let CityBuildings = {
 				if (production.type === 'resources' || production.type === 'special_goods') {
 					Object.keys(production.resources).forEach(resourceName => {
 						let good = FH.Goods.List.find(x => x.id === resourceName)
-						let specialGood = FHResourcesList.find(x => x.id === resourceName && x.abilities.specialResource?.type === "specialResource")
+						let specialGood = (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource")
 						let goodEra = Technologies.InnoEras[building.eraName]
 						let isGood = false
 

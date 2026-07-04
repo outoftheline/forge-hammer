@@ -473,17 +473,17 @@ const Profile = {
         cr.push('</div>');
 		cr.push('<div class="stock pad text-center">');
 		cr.push('<span class="removable"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />'+FH.HTML.Format(StrategyPoints.InventoryFP || 0)+'</span>');
-		cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(ResourceStock.medals)+'"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_medals.png`,true)+'" />'+FH.HTML.FormatNumberShort(ResourceStock.medals || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.medals)+'"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_medals.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.medals || 0,true,'en-EN')+'</span>');
 		
 		
 		let currentGoods = 0, previousGoods = 0, nextGoods = 0;
 		for (let good of Object.values(FH.Goods.Data)) {
 			if (good.era === FH.CurrentEra)
-				currentGoods += (ResourceStock[good.id] || 0);
+				currentGoods += (FH.RessourceStock[good.id] || 0);
 			if (good.era === Technologies.EraNames[FH.CurrentEraID-1])
-				previousGoods += (ResourceStock[good.id] || 0);
+				previousGoods += (FH.RessourceStock[good.id] || 0);
 			if (good.era === Technologies.EraNames[FH.CurrentEraID+1])
-				nextGoods += (ResourceStock[good.id] || 0);
+				nextGoods += (FH.RessourceStock[good.id] || 0);
 		}
 		cr.push('<div class="goods">');
 		if (previousGoods > 0)
@@ -494,9 +494,9 @@ const Profile = {
 			cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(nextGoods)+'"><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + FH.HTML.FormatNumberShort(nextGoods,true,'en-EN') + '</span> ');
 		cr.push('</div>');
 
-		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(ResourceStock.tavern_silver)+'"><img src="'+srcLinks.get(`/shared/icons/eventwindow_tavern.png`,true)+'" />'+FH.HTML.FormatNumberShort(ResourceStock.tavern_silver || 0,true,'en-EN')+'</span>');
-		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(ResourceStock.gemstones)+'"><img src="'+srcLinks.get(`/shared/icons/gemstones.png`,true)+'" />'+FH.HTML.Format(ResourceStock.gemstones || 0)+'</span>');
-		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(ResourceStock.trade_coins)+'"><img src="'+srcLinks.get(`/shared/gui/antiquedealer/antiquedealer_currency_trade_coins.png`,true)+'" />'+FH.HTML.FormatNumberShort(ResourceStock.trade_coins || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.tavern_silver)+'"><img src="'+srcLinks.get(`/shared/icons/eventwindow_tavern.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.tavern_silver || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.gemstones)+'"><img src="'+srcLinks.get(`/shared/icons/gemstones.png`,true)+'" />'+FH.HTML.Format(FH.RessourceStock.gemstones || 0)+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.trade_coins)+'"><img src="'+srcLinks.get(`/shared/gui/antiquedealer/antiquedealer_currency_trade_coins.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.trade_coins || 0,true,'en-EN')+'</span>');
 		
 		cr.push('</div>');
 

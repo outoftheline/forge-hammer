@@ -121,13 +121,13 @@ let StrategyPoints = {
 
 	ShowFPBar: ()=>{
 
-		$('#fp-bar').removeClass(possibleMaps).addClass(FH.ActiveMap);
+		$('#fp-bar').removeClass(FH.possibleMaps).addClass(FH.ActiveMap);
 		if( $('.fp-bar-main').length === 0){
 			$('#fp-bar').addClass(`game-cursor`).append(`<div class="fp-bar-main"><div class="number"></div><div class="bars"></div></div>`);
 		}
 		// necessary to wait for gift in gg + diplomatic gift
 		setTimeout(()=>{
-			const availableFPs = (ResourceStock['strategy_points'] !== undefined ? ResourceStock['strategy_points'] : 0);
+			const availableFPs = (FH.RessourceStock['strategy_points'] !== undefined ? FH.RessourceStock['strategy_points'] : 0);
 			const $main = $('.fp-bar-main')
 			$main.find('.number').text(availableFPs);
 			$main.removeClass('full');
@@ -165,7 +165,7 @@ let StrategyPoints = {
 			currentlyCosts += factor;
 		}
 
-		for(let money = ResourceStock.money; money >= currentlyCosts; money--) {
+		for(let money = FH.RessourceStock.money; money >= currentlyCosts; money--) {
 			currentlyCosts += factor;
 			money -= currentlyCosts;
 			amount++;
@@ -227,7 +227,7 @@ let StrategyPoints = {
 	 * @constructor
 	 */
 	get AvailableFP() {
-		let Ret = (ResourceStock['strategy_points'] !== undefined ? ResourceStock['strategy_points'] : 0);
+		let Ret = (FH.RessourceStock['strategy_points'] !== undefined ? FH.RessourceStock['strategy_points'] : 0);
 		Ret += StrategyPoints.InventoryFP;
 		return Ret;
 	},

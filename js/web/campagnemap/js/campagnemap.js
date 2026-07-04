@@ -150,7 +150,7 @@ let KampagneMap = {
 
                 if (RequiredResources[ResourceName] !== undefined) {
                     let Required = RequiredResources[ResourceName],
-                    	Stock = ResourceStock[ResourceName];
+                    	Stock = FH.RessourceStock[ResourceName];
 
                     if (Stock === undefined)
                     	Stock = 0;
