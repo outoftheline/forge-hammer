@@ -15,8 +15,12 @@
     color: var(--text-highlight);
 }
 
+#Notes .note-text:has(img), #Notes label:has(img) {
+    line-height: 28px;
+}
+
 #Notes .note-view img {
-    height: 22px;
+    height: 30px;
 }
 
 #noteView label {
