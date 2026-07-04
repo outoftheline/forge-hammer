@@ -115,12 +115,19 @@ window.StartUpDone = new Promise(resolve =>
 		window.addEventListener('foe-helper#StartUpDone', resolve, {once: true, passive: true}));
 window.UnlockedFeatures = [];
 window.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
-window.PlayerLinkFormat = 'https://foe.scoredb.io/__world__/Player/__playerid__';
-window.PlayerLinkFormat2 = 'https://foestats.com/__server__/__world__/players/__playerid__';
-window.GuildLinkFormat = 'https://foe.scoredb.io/__world__/Guild/__guildid__';
-window.GuildLinkFormat2 = 'https://foestats.com/__server__/__world__/guilds/__guildid__';
-window.BuildingsLinkFormat = 'https://forgeofempires.fandom.com/wiki/__buildingid__';
-window.LinkIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>';
+
+FH.Links = {
+	Player:{
+		scoredb: 'https://foe.scoredb.io/__world__/Player/__playerid__',
+		foestats: 'https://foestats.com/__server__/__world__/players/__playerid__'
+	},
+	Guild:{
+		scoredb: 'https://foe.scoredb.io/__world__/Guild/__guildid__',
+		foestats: 'https://foestats.com/__server__/__world__/guilds/__guildid__'
+	},
+	Building: 'https://forgeofempires.fandom.com/wiki/__buildingid__',
+	Icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>'
+}
 
 let GameTime = {
 	Offset: 0,
@@ -601,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// --------------------------------------------------------------------------------------------------
 	// goods translations
 	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		FH.Goods.Data = Object.assign({}, ...Object.entries(data.responseData).map((x) => ({ [x.id]: x })));
+		FH.Goods.Data = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 	});
 
 
@@ -1238,11 +1245,11 @@ let Main = {
 	 */
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let PlayerLink = FH.helper.str.Replacer(PlayerLinkFormat, { 'world': FH.World.toUpperCase(), 'playerid': PlayerID });
+			let PlayerLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': FH.World.toUpperCase(), 'playerid': PlayerID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				PlayerLink = FH.helper.str.Replacer(PlayerLinkFormat2, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'playerid': PlayerID });
+				PlayerLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'playerid': PlayerID });
 
-			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${FH.HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${FH.HTML.escapeHtml(PlayerName)} ${FH.Links.Icon}</a>`;
 		}
 		else {
 			return FH.HTML.escapeHtml(PlayerName);
@@ -1258,11 +1265,11 @@ let Main = {
 	 */
 	GetGuildLink: (GuildID, GuildName, WorldId=FH.World) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = FH.helper.str.Replacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			let GuildLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = FH.helper.str.Replacer(GuildLinkFormat2, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
+				GuildLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
 
-			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${FH.Links.Icon}</a>`;
 		}
 		else {
 			return FH.HTML.escapeHtml(GuildName);
@@ -1277,9 +1284,9 @@ let Main = {
 	 */
 	GetBuildingLink: (BuildingID, BuildingName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let BuildingLink = FH.helper.str.Replacer(BuildingsLinkFormat, {'buildingid': BuildingID });
+			let BuildingLink = FH.helper.str.Replacer(FH.Links.Building, {'buildingid': BuildingID });
 
-			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${FH.Links.Icon}</a>`;
 		}
 		else {
 			return BuildingName;
