@@ -189,7 +189,7 @@ let GBGBuildings = {
 			s["maxCosts"]=max;
 			s["avgCosts"]=avg;
 			s["absCosts"]=abs;
-			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.helper.str.Replacer(FH.t('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:FH.t("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
+			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.helper.str.Replacer(FH.t('Boxes.GBGBuildings.relativeCosts'),{good:FH.Goods.Data[x.good].name,amount:(x.rel*100).toPrecision(2),era:FH.t("Eras."+Technologies.Eras[FH.Goods.Data[x.good].era])})).join("\n");
 		}
 		let sortby = "maxCosts"
 		sets.sort((a,b)=> a.absCosts - b.absCosts);

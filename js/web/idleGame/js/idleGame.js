@@ -860,7 +860,7 @@ let idleGame = {
 
 		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'create',
 			data: data,
 		}).then((aId) => {

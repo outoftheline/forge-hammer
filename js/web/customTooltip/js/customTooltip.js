@@ -834,7 +834,7 @@ FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) 
 });
 
 FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
-	if (ActiveMap==="guild_raids") {
+	if (FH.ActiveMap==="guild_raids") {
 		$('#QIActions').show();
 	} else {
 		$('#QIActions').hide();

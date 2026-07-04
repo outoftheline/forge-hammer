@@ -539,12 +539,12 @@ let betterMusic = {
             if (betterMusic.PossibleTracks[title]?.banned) continue;
             if (scene==="settlement" && (betterMusic.PossibleTracks[title].Settlement != Outposts?.OutpostData?.content) && (betterMusic.PossibleTracks[title].Settlement != undefined) && (!betterMusic.IgnoreSettlement)) continue;
             if (scene==="colony" && (
-                ((betterMusic.PossibleTracks[title].Agelimit < CurrentEraID || betterMusic.PossibleTracks[title].Age > CurrentEraID ) && betterMusic.Settings.Colony == 2) ||
-                (betterMusic.PossibleTracks[title].Age > CurrentEraID && betterMusic.Settings.Colony == 1)
+                ((betterMusic.PossibleTracks[title].Agelimit < FH.CurrentEraID || betterMusic.PossibleTracks[title].Age > FH.CurrentEraID ) && betterMusic.Settings.Colony == 2) ||
+                (betterMusic.PossibleTracks[title].Age > FH.CurrentEraID && betterMusic.Settings.Colony == 1)
                 )) continue;
             if (scene==="main" && (
-                (betterMusic.Settings.MainCity == 2 && (betterMusic.PossibleTracks[title].Agelimit < CurrentEraID || betterMusic.PossibleTracks[title].Age > CurrentEraID )) ||
-                (betterMusic.Settings.MainCity == 1 && betterMusic.PossibleTracks[title].Age > CurrentEraID)
+                (betterMusic.Settings.MainCity == 2 && (betterMusic.PossibleTracks[title].Agelimit < FH.CurrentEraID || betterMusic.PossibleTracks[title].Age > FH.CurrentEraID )) ||
+                (betterMusic.Settings.MainCity == 1 && betterMusic.PossibleTracks[title].Age > FH.CurrentEraID)
                 )) continue;
             if (betterMusic.Settings.Scenes[scene][title]) betterMusic.Scenes[scene].TitleList.push(title);
         }

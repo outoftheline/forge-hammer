@@ -331,13 +331,13 @@ let DBExport = {
             let Filename = dbName.split(/_/);
             let ImportPlayerID = Array.isArray(Filename) ? parseInt(Filename.pop()) : undefined;
 
-            if (ExtPlayerID !== ImportPlayerID)
+            if (FH.Player.ID !== ImportPlayerID)
             {
                 $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.WrongDBPlayerID')}</span></p>`);
                 return 0;
             }
 
-            if (ExtWorld !== World)
+            if (FH.World !== World)
             {
                 $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.WrongDBWorld')}</span></p>`);
                 return 0;
@@ -423,10 +423,10 @@ let DBExport = {
             let localStorageBlob = new Blob([localStorageJSON], { type: "application/json" });
             $("#dbex-loading-data .message span.progress").html((++exportState) + ' / ' + exportCounter);
             if (exportCounter > 1) {
-                zip.file(ExtWorld + '_localStorage_' + moment().format("YYYYMMDD-HHmmss") + ".json", localStorageBlob);
+                zip.file(FH.World + '_localStorage_' + moment().format("YYYYMMDD-HHmmss") + ".json", localStorageBlob);
             }
             else {
-                download(localStorageBlob, ExtWorld + '_localStorage_' + moment().format("YYMMDD-HHmm") + "_" + ExtPlayerID + ".json", "application/json");
+                download(localStorageBlob, FH.World + '_localStorage_' + moment().format("YYMMDD-HHmm") + "_" + FH.Player.ID + ".json", "application/json");
             }
 
         }
@@ -442,10 +442,10 @@ let DBExport = {
                 try {
                     const blob = await DexieDB.export({ prettyJson: true, filter: (table, value, key) => table !== 'buildingMeta',progressCallback });
                     if (exportCounter > 1) {
-                        zip.file(ExtWorld + '_' + DexieDB.name + ".json", blob);
+                        zip.file(FH.World + '_' + DexieDB.name + ".json", blob);
                     }
                     else {
-                        download(blob, ExtWorld + '_' + DexieDB.name + ".json", "application/json")
+                        download(blob, FH.World + '_' + DexieDB.name + ".json", "application/json")
                     }
                     $("#dbex-loading-data .message span.progress").html((++exportState) + ' / ' + exportCounter);
                     await DexieDB.close();
@@ -460,7 +460,7 @@ let DBExport = {
         {
             zip.generateAsync({ type: "blob", compression: "DEFLATE" })
                 .then(function (blob) {
-                    download(blob, ExtWorld + "_foe_helper_export_" + moment().format("YYMMDD-HHmm") + "_" + ExtPlayerID + ".zip", "application/zip");
+                    download(blob, FH.World + "_foe_helper_export_" + moment().format("YYMMDD-HHmm") + "_" + FH.Player.ID + ".zip", "application/zip");
                     DBExport.hidePreloader();
                 });
         }

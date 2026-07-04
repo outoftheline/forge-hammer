@@ -177,7 +177,7 @@ let Alerts = function(){
 		get: (id) => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'get',
 				id: +id,
 			});
@@ -190,7 +190,7 @@ let Alerts = function(){
 		getAll: () => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'getAll',
 			});
 		},
@@ -203,7 +203,7 @@ let Alerts = function(){
 		create: (data) => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'create',
 				data: data,
 			});
@@ -218,7 +218,7 @@ let Alerts = function(){
 		setData: (id, data) => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'setData',
 				data: data,
 				id: +id,
@@ -233,7 +233,7 @@ let Alerts = function(){
 		delete: (id) => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'delete',
 				id: +id,
 			});
@@ -246,7 +246,7 @@ let Alerts = function(){
 		preview: (data) => {
 			return FH.Main.sendExtMessage({
 				type: 'alerts',
-				playerId: ExtPlayerID,
+				playerId: FH.Player.ID,
 				action: 'preview',
 				data: data,
 			});

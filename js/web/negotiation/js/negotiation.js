@@ -719,7 +719,7 @@ let Negotiation = {
 
 	goodButtonCompare: (goodA, goodB) => {
 		function goodValue(good) {
-			const data = GoodsData[good];
+			const data = FH.Goods.Data[good];
 			if (data.era === 'AllAge') return 100;
 			const special = !!data.abilities.specialResource;
 			const era = Technologies.Eras[data.era];
@@ -920,7 +920,7 @@ let Negotiation = {
 				Value = 100;
 			}
 			else {
-				let Good = GoodsData[GoodName];
+				let Good = FH.Goods.Data[GoodName];
 				let Era = Good['era'];
 
 				let EraID = Technologies.Eras[Era];
@@ -1111,7 +1111,7 @@ let NegotiationDebugger = {
 
 		if (data.selected >= 0) {
 			h.push('<div style="display: grid; grid-template-columns: repeat(auto-fill, 40px);background-color: rgba(200,200,200,0.4);border: 1px solid rgb(243, 214, 160);margin:5px;">');
-			for (let goodData of GoodsList) {
+			for (let goodData of FH.Goods.List) {
 				let good = goodData.id || 'empty';
 				h.push(`<span onclick="NegotiationDebugger.selectGood('${good}')" style="box-sizing: border-box;width: 40px${data.goods[data.selected]===good?'; border: 1px solid red':''}" class="${goodSpriteClass(good)}"></span>`);
 			}

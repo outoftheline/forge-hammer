@@ -13,9 +13,9 @@ FH.proxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
 
 FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	if ($('#PlayerProfileButton').length !== 0) {
-        $('#PlayerProfileButton span').attr('class',ActiveMap);
+        $('#PlayerProfileButton span').attr('class',FH.ActiveMap);
 
-        if (ActiveMap === "OtherPlayer")
+        if (FH.ActiveMap === "OtherPlayer")
             $('#PlayerProfileButton').attr('onclick','Profile.showOtherPlayer()');
         else
             $('#PlayerProfileButton').attr('onclick','Profile.show()');
@@ -59,8 +59,8 @@ const Profile = {
 			});
 
 			$('body').append(div).promise().done(function() {
-                let showProfile = ActiveMap === 'OtherPlayer' ? 'Profile.showOtherPlayer()' : 'Profile.show()';
-				div.append('<span class="'+ActiveMap+'" data-original-title="'+FH.t('Boxes.PlayerProfile.Tooltip')+'"><img class="clickable" src="'+srcLinks.GetPortrait(ExtPlayerAvatar)+'" /></span>')
+                let showProfile = FH.ActiveMap === 'OtherPlayer' ? 'Profile.showOtherPlayer()' : 'Profile.show()';
+				div.append('<span class="'+FH.ActiveMap+'" data-original-title="'+FH.t('Boxes.PlayerProfile.Tooltip')+'"><img class="clickable" src="'+srcLinks.GetPortrait(FH.Player.Avatar)+'" /></span>')
 					.attr('onclick', showProfile);
                 $('#PlayerProfileButton [data-original-title]').tooltip({
                         useFoEHelperSkin: true,
@@ -80,7 +80,7 @@ const Profile = {
 
 		FH.HTML.Box({
 			id: 'PlayerProfile',
-			title: ExtPlayerName,
+			title: FH.Player.Name,
 			auto_close: true,
 			dragdrop: true,
             class: 'playerprofile'
@@ -171,7 +171,7 @@ const Profile = {
         cl.push('<div class="leftInfo showMore">');
         cl.push('<img class="decoration" src="'+srcLinks.get(`/shared/gui/window/window_decoration_side.png`,true)+'" />');
         cl.push('<div class="header flex">');
-        cl.push('<img src="'+srcLinks.get(`/city/buildings/H_SS_${CurrentEra}_Townhall.png`,true)+'" />');
+        cl.push('<img src="'+srcLinks.get(`/city/buildings/H_SS_${FH.CurrentEra}_Townhall.png`,true)+'" />');
         cl.push('</div>');
         
         cl.push('<div class="expansions secondary">');
@@ -241,19 +241,19 @@ const Profile = {
             cl.push('</span>');
         }
         // goods
-        if (Profile.goods[CurrentEraID-2] || Profile.goods[CurrentEraID-1] || Profile.goods[CurrentEraID]) {
+        if (Profile.goods[FH.CurrentEraID-2] || Profile.goods[FH.CurrentEraID-1] || Profile.goods[FH.CurrentEraID]) {
             cl.push('<span class="removable">');
-                if (Profile.goods[CurrentEraID-2]) {
+                if (Profile.goods[FH.CurrentEraID-2]) {
                     cl.push(' <img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + 
-                    FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-2])) || 0));
+                    FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-2])) || 0));
                 }
-                if (Profile.goods[CurrentEraID-1]) {
+                if (Profile.goods[FH.CurrentEraID-1]) {
                     cl.push('<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />');
-                    cl.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-1])) || 0));
+                    cl.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-1])) || 0));
                 }
-                if (Profile.goods[CurrentEraID]) {
+                if (Profile.goods[FH.CurrentEraID]) {
                     cl.push(' <img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + 
-                    FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID])) || 0));
+                    FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID])) || 0));
                 }
                 if (Boosts.Sums.goods_production > 0)
                     cl.push('<span class="boost"> '+Boosts.Sums.goods_production + '% </span>');
@@ -303,7 +303,7 @@ const Profile = {
 
 
     buildMainContent(isRebuilt) {
-        let player = PlayerDict[ExtPlayerID];
+        let player = FH.Players.Dict[FH.Player.ID];
         let cc = [];
             cc.push('<div class="centerInfo">');
             cc.push('<img class="decoration" src="'+srcLinks.get(`/shared/gui/teaser/ui/teaser_decoration_bottom.png`,true)+'" />');
@@ -315,7 +315,7 @@ const Profile = {
             cc.push('</div>');
                 cc.push('<div>');
                 cc.push('<h1>'+player.PlayerName+'</h1>');
-                cc.push('<span>'+FH.t('Eras.'+CurrentEraID)+'</span><br>');
+                cc.push('<span>'+FH.t('Eras.'+FH.CurrentEraID)+'</span><br>');
                 cc.push('<span class="ranking">'+FH.HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
                 cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
                 cc.push('</div>');
@@ -365,20 +365,20 @@ const Profile = {
                 cc.push('</span><span class="hidden-text">&numsp;</span>');
             }
             // goods
-            if (Profile.goods[CurrentEraID-2] || Profile.goods[CurrentEraID-1] || Profile.goods[CurrentEraID]) {
+            if (Profile.goods[FH.CurrentEraID-2] || Profile.goods[FH.CurrentEraID-1] || Profile.goods[FH.CurrentEraID]) {
                 cc.push('<span class="removable">');
                     cc.push('<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+FH.t('Boxes.BlueGalaxy.Goods')+':</span>');
-                    if (Profile.goods[CurrentEraID-2]) {
+                    if (Profile.goods[FH.CurrentEraID-2]) {
                         cc.push('<span class="hidden-text">⬅️</span> <img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + 
-                        FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-2])) || 0));
+                        FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-2])) || 0));
                     }
-                    if (Profile.goods[CurrentEraID-1]) {
+                    if (Profile.goods[FH.CurrentEraID-1]) {
                         cc.push('<span class="hidden-text">⬇️</span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />');
-                        cc.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-1])) || 0));
+                        cc.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-1])) || 0));
                     }
-                    if (Profile.goods[CurrentEraID]) {
+                    if (Profile.goods[FH.CurrentEraID]) {
                         cc.push('<span class="hidden-text">➡️</span> <img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + 
-                        FH.HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID])) || 0));
+                        FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID])) || 0));
                     }
                     if (Boosts.Sums.goods_production > 0)
                         cc.push('<span class="hidden-text">&nbsp;</span><span class="boost"> '+Boosts.Sums.goods_production + '% </span>');
@@ -477,12 +477,12 @@ const Profile = {
 		
 		
 		let currentGoods = 0, previousGoods = 0, nextGoods = 0;
-		for (let good of Object.values(GoodsData)) {
-			if (good.era === CurrentEra)
+		for (let good of Object.values(FH.Goods.Data)) {
+			if (good.era === FH.CurrentEra)
 				currentGoods += (ResourceStock[good.id] || 0);
-			if (good.era === Technologies.EraNames[CurrentEraID-1])
+			if (good.era === Technologies.EraNames[FH.CurrentEraID-1])
 				previousGoods += (ResourceStock[good.id] || 0);
-			if (good.era === Technologies.EraNames[CurrentEraID+1])
+			if (good.era === Technologies.EraNames[FH.CurrentEraID+1])
 				nextGoods += (ResourceStock[good.id] || 0);
 		}
 		cr.push('<div class="goods">');
@@ -540,7 +540,7 @@ const Profile = {
 
 		FH.HTML.Box({
 			id: 'OtherPlayerProfile',
-			title: ExtPlayerName,
+			title: FH.Player.Name,
 			auto_close: true,
 			dragdrop: true,
             class: 'playerprofile other'

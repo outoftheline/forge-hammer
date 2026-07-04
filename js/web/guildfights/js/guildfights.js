@@ -755,7 +755,7 @@ let GuildFights = {
 			tF += playerNew['battlesWon'];
 			tA += playerNew['attrition']
 
-			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === ExtPlayerID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
+			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
 			b.push('<td style="display:none;">' + playerNew.player_id + '.</td>');
 
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
@@ -1239,7 +1239,7 @@ let GuildFights = {
 		let nextup = [],
 			mapdata = GuildFights.MapData.map.provinces,
 			gbgGuilds = GuildFights.MapData['battlegroundParticipants'],
-			own = gbgGuilds.find(e => e.clan.id === ExtGuildID),
+			own = gbgGuilds.find(e => e.clan.id === FH.Guild.ID),
 			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		GuildFights.showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
@@ -1361,7 +1361,7 @@ let GuildFights = {
 		let content = [],
 			provinces = GuildFights.MapData.map.provinces,
 			guilds = GuildFights.MapData.battlegroundParticipants,
-			own = guilds.find(x => x.clan.id === ExtGuildID),
+			own = guilds.find(x => x.clan.id === FH.Guild.ID),
 			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		content.push('<div id="gbgowned"><table class="foe-table">');
@@ -1599,7 +1599,7 @@ let GuildFights = {
 
 			let c = null;
 
-			if (gbgGuilds[i]['clan']['id'] === ExtGuildID) {
+			if (gbgGuilds[i]['clan']['id'] === FH.Guild.ID) {
 				c = GuildFights.Colors.find(o => (o['id'] === 'own_guild_colour'));
 			} else {
 				c = GuildFights.Colors.find(o => (o['id'] === gbgGuilds[i]['colour']));
@@ -1786,7 +1786,7 @@ let GuildFights = {
 
 		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'create',
 			data: data,
 		}).then((aId) => {
@@ -1808,7 +1808,7 @@ let GuildFights = {
 		let alert = GuildFights.Alerts.find((a) => a.provId == provId);
 		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'delete',
 			id: alert.alertId,
 		}).then(() => {

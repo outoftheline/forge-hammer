@@ -323,7 +323,7 @@ let Productions = {
 
 
 	init: () => {
-		if (ActiveMap === 'OtherPlayer') return
+		if (FH.ActiveMap === 'OtherPlayer') return
 
 		FH.Main.CityBuildingsData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 		Productions.CombinedCityMapData = FH.Main.CityBuildingsData
@@ -552,7 +552,7 @@ let Productions = {
 							Productions.BuildingsProducts.strategy_points.push(saveBuilding)
 						}
 						Object.keys(production.resources).forEach(name => {
-							let good = GoodsList.find(x => x.id === name)
+							let good = FH.Goods.List.find(x => x.id === name)
 							if (good !== undefined) {
 								if (Productions.BuildingsProducts.goods.find(x => x.id === building.id) === undefined)
 									Productions.BuildingsProducts["goods"].push(saveBuilding)
@@ -683,7 +683,7 @@ let Productions = {
 
 		buildingIds.forEach(b => {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id === ExtPlayerID) {
+			if (building.player_id === FH.Player.ID) {
 			rowA.push('<tr>')
 			rowA.push('<td>')
 				rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
@@ -789,7 +789,7 @@ let Productions = {
 			if (type !== 'goods' && type !== 'clan_goods' && type !== 'guild_raids') {
 				for (const b of buildingIds) {
 					let building = CityBuildings.getBuildingById(b.id)
-					if (building?.player_id !== ExtPlayerID) continue;
+					if (building?.player_id !== FH.Player.ID) continue;
 					// makes random productions with resources and others disappear from the item list
 					if (type === 'items' && Productions.showBuildingItems(true, building)[0] === "" || building.chainBuilding?.type === "linked") continue;
 
@@ -831,13 +831,13 @@ let Productions = {
 
 							if (generalProductionByCategory.units.length>0 || currentProductionByCategory.units.length>0) {
 								if (currentProductionByCategory.units.length > 0) 
-									rowA.push(currentProductionByCategory.units.map(x=>`${x.amount}<span class="unit_skill ${x.type} ${x.era>CurrentEraID?"next_era":""}" title="${FH.t("Boxes.Units." + x.type)}"></span> `).join(" "))
+									rowA.push(currentProductionByCategory.units.map(x=>`${x.amount}<span class="unit_skill ${x.type} ${x.era>FH.CurrentEraID?"next_era":""}" title="${FH.t("Boxes.Units." + x.type)}"></span> `).join(" "))
 								else 
 									rowA.push(" - ")
 									rowA.push(" / ")
 
 								if (generalProductionByCategory.units.length > 0) 
-									rowA.push(generalProductionByCategory.units.map(x=>`${x.amount?x.amount:""}${x.amount && x. random ? "+":""}${x.random ? "Ø"+x.random:""}<span class="unit_skill ${x.type} ${x.era>CurrentEraID?"next_era":""}" title="${FH.t("Boxes.Units." + x.type)}"></span> `).join(" "))
+									rowA.push(generalProductionByCategory.units.map(x=>`${x.amount?x.amount:""}${x.amount && x. random ? "+":""}${x.random ? "Ø"+x.random:""}<span class="unit_skill ${x.type} ${x.era>FH.CurrentEraID?"next_era":""}" title="${FH.t("Boxes.Units." + x.type)}"></span> `).join(" "))
 								else 
 									rowA.push(" - ")
 							} else {
@@ -1063,7 +1063,7 @@ let Productions = {
 		let eras = [];
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id);
-			if (building.player_id !== ExtPlayerID) continue;
+			if (building.player_id !== FH.Player.ID) continue;
 			
 			let allGoods = {};
 			if (guildGoods)
@@ -1112,7 +1112,7 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id);
-			if (building.player_id !== ExtPlayerID) continue;
+			if (building.player_id !== FH.Player.ID) continue;
 
 			rowA.push('<tr>')
 			rowA.push('<td>')
@@ -1276,7 +1276,7 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id !== ExtPlayerID) continue; 
+			if (building.player_id !== FH.Player.ID) continue; 
 
 			rowA.push('<tr>')
 			rowA.push('<td>')
@@ -1592,7 +1592,7 @@ let Productions = {
 						prod.amount = production.resources?.all_goods_of_age
 					else {
 						if (production.resources !== undefined) {
-							let good = GoodsList.find(x => x.id === Object.keys(production.resources)[0])
+							let good = FH.Goods.List.find(x => x.id === Object.keys(production.resources)[0])
 							if (good !== undefined)
 								prod.amount = production.resources[good.id]*5 // multiply found good by 5
 						}
@@ -1854,8 +1854,8 @@ let Productions = {
 			return FH.t('Boxes.Productions.goods_boost');
         }
 		else {
-			if(GoodType && GoodsData[GoodType]){
-				return GoodsData[GoodType]['name'];
+			if(GoodType && FH.Goods.Data[GoodType]){
+				return FH.Goods.Data[GoodType]['name'];
 			} else {
 				return GoodType;
 			}
@@ -1867,10 +1867,10 @@ let Productions = {
 		if (!Productions.Rating.Data) 
 			Productions.Rating.load();
 
-		if (ActiveMap === 'OtherPlayer' && !external) 
+		if (FH.ActiveMap === 'OtherPlayer' && !external) 
 			return;
 
-		let era = (eraName === null) ? CurrentEra : eraName;
+		let era = (eraName === null) ? FH.CurrentEra : eraName;
 		let $ProductionsRating = $('#ProductionsRating');
 
 		if ($ProductionsRating.length === 0) {
@@ -1958,13 +1958,13 @@ let Productions = {
 			}
 		}
 		let InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory();
-		if (ActiveMap === 'OtherPlayer')
+		if (FH.ActiveMap === 'OtherPlayer')
 			InventoryBuildings = [];
 
 		for (let [id,data] of Object.entries(InventoryBuildings)){
 			//if(!id || id.slice(0, 2) !== 'W_') continue; // if starts not with "W_", continue
 			let metaData = FH.Main.CityEntities[id];
-			let building = CityBuildings.createBuilding(metaData, CurrentEra);
+			let building = CityBuildings.createBuilding(metaData, FH.CurrentEra);
 			building.isInInventory = true;
 			Productions.BuildingsAll.push(building);
 			buildingCount[id+"I"] = data.amount||1;
@@ -2065,7 +2065,7 @@ let Productions = {
 				h.push('<label for="showhighlighted" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')+'"><input type="checkbox" id="showhighlighted" />' + FH.t('Boxes.ProductionsRating.ShowHighlighted') + '</label>')
 				h.push('<div>');
 				h.push('<label for="gBs" data-original-title="'+FH.t('Boxes.ProductionsRating.NoGBsExplanation')+'"><input type="checkbox" id="gBs" /><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" /></label>');
-				if (ActiveMap !== 'OtherPlayer') {
+				if (FH.ActiveMap !== 'OtherPlayer') {
 					h.push('<div class="inventory">'+
 						'<label for="inventorybuildings" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowInventoryBuildingsExplanation')+'"><input type="checkbox" id="inventorybuildings" /><img class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png"></label>'+
 						'<label for="inventorybuildingscore" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryBuildingScoreExplanation')+'">' + FH.t('Boxes.ProductionsRating.InventoryBuildingScore') + ': <input type="number" size="6" value="'+(Productions.efficiencySettings.inventorybuildingscore*100)+'" id="inventorybuildingscore" /></label>'+
@@ -2583,7 +2583,7 @@ let Productions = {
 	rateBuildings: (uniqueBuildings,additional=false,era=null) => {
 		let ratedBuildings = [];
 		if (additional) {
-			uniqueBuildings = uniqueBuildings.map(x=>CityBuildings.createBuilding(x,era||CurrentEra));
+			uniqueBuildings = uniqueBuildings.map(x=>CityBuildings.createBuilding(x,era||FH.CurrentEra));
 		}
 		for (const building of uniqueBuildings) {
 			// do not include wishingwell type buildings
@@ -2667,7 +2667,7 @@ let Productions = {
 
 		else if (type.includes("goods") && !type.includes("guild_raids_")) {
 			let allGoods = CityBuildings.getBuildingGoodsByEra(false, building);
-			let era = (ActiveMap === "OtherPlayer" ? CityMap.OtherPlayer.eraName : CurrentEra)
+			let era = (FH.ActiveMap === "OtherPlayer" ? CityMap.OtherPlayer.eraName : FH.CurrentEra)
 
 			if (allGoods !== undefined) {
 				let prevEra = Technologies.InnoEras[era]-1;
@@ -2825,7 +2825,7 @@ let Productions = {
 	buildingItemList: () => {
 		let temp = Object.assign({},...Object.values(FH.Main.CityEntities).filter(b=>b.id[0]==="W").map(x=>({[x.id]:[...JSON.stringify(x).matchAll(/"id":"([^"]*?)"[^()[\]{}]*?"name":"([^"]*?)"[^()[\]{}]*?"iconAssetName":"([^"]*?)"[^{}]*?"__class__":"(GenericReward|TimedReward)"/gm)].map(a=>({id:a[1],name:a[2],icon:a[3]}))})))
 
-		let gl = Object.values(GoodsList).map(g=>g.id)
+		let gl = Object.values(FH.Goods.List).map(g=>g.id)
 		let items = {}
 
 		for (let [building,list] of Object.entries(temp)) {
@@ -2857,7 +2857,7 @@ let Productions = {
 		boostArray.forEach(boost => boostList[boost] = [])
 		for (let building of buildings) {
 			let buildingAABoost = building.components?.AllAge?.boosts?.boosts;
-			let buildingCABoost = building.components?.[CurrentEra]?.boosts?.boosts;
+			let buildingCABoost = building.components?.[FH.CurrentEra]?.boosts?.boosts;
 			if (buildingAABoost === undefined && buildingCABoost === undefined) continue;
 
 			for (let boost of boostArray) {
@@ -2901,7 +2901,7 @@ let Productions = {
 							for (let [group, buildings] of Object.entries(groupedBuildings)) {
 								h += '<tr><td><h2><span class="boost '+group+'"></span> '+FH.t('Boxes.BoostList.'+group)+'</h2><ul>'
 								for (let building of buildings) {
-									h += '<li class="helperTT" data-era="'+CurrentEra+'" data-callback_tt="Tooltips.buildingTT" data-meta_id="'+building.entityId+'">'+building.name+'</li>'
+									h += '<li class="helperTT" data-era="'+FH.CurrentEra+'" data-callback_tt="Tooltips.buildingTT" data-meta_id="'+building.entityId+'">'+building.name+'</li>'
 								}
 								h += '</ul></td></tr>';
 							}
@@ -2923,7 +2923,7 @@ let Productions = {
 		}
 		h=`<ul class="foe-table">`
 		for (b of item.buildings) {
-			h+=`<li class="helperTT" data-era=${CurrentEra} data-callback_tt="Tooltips.buildingTT" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
+			h+=`<li class="helperTT" data-era=${FH.CurrentEra} data-callback_tt="Tooltips.buildingTT" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
 		}
 		h+=`</ul>`
 		$(itemId).html(h)

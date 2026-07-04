@@ -92,7 +92,7 @@ let StrategyPoints = {
 		let width = window.innerWidth,
 			elem = $('#fp-bar').children().length;
 
-		switch (ActiveMap){
+		switch (FH.ActiveMap){
 			case 'gex':
 				if((elem === 3 && width <= 1313) || (elem === 2 && width <= 1170) || elem === 1 && width < 970)
 				{
@@ -121,7 +121,7 @@ let StrategyPoints = {
 
 	ShowFPBar: ()=>{
 
-		$('#fp-bar').removeClass(possibleMaps).addClass(ActiveMap);
+		$('#fp-bar').removeClass(possibleMaps).addClass(FH.ActiveMap);
 		if( $('.fp-bar-main').length === 0){
 			$('#fp-bar').addClass(`game-cursor`).append(`<div class="fp-bar-main"><div class="number"></div><div class="bars"></div></div>`);
 		}
@@ -191,7 +191,7 @@ let StrategyPoints = {
 		if( $('#fp-bar').length < 1 ){
 			let div = $('<div />').attr({
 				id: 'fp-bar',
-				class: `game-cursor ${ActiveMap}`
+				class: `game-cursor ${FH.ActiveMap}`
 			}).append( `<div class="fp-storage">0</div>` );
 
 			$('body').append(div);

@@ -221,7 +221,7 @@ let Outposts = {
 		// Münzen und aktuelle Münz-Produktion
 		t.push(
 			'</span><span><strong>'
-			+ GoodsData[primaryResourceId].name + ': ' + FH.HTML.Format(ResourceStock[primaryResourceId]||0)
+			+ FH.Goods.Data[primaryResourceId].name + ': ' + FH.HTML.Format(ResourceStock[primaryResourceId]||0)
 			+ '</strong> (+ '
 			+ (current5HProductionRate > 0 ? FH.HTML.Format(FH.Main.round(current5HProductionRate)) : '???')
 			+ `/5h)`
@@ -307,7 +307,7 @@ let Outposts = {
 		{
 			let IconID = resourceID;
 			if (['barley', 'pottery', 'flowers', 'sacrificial_offerings','fresh_fish','coconuts','kava','catamarans'].includes(resourceID)) IconID = 'fine_' + IconID;
-			t.push(`<th class="text-center"><span class="goods-sprite sprite-50 ${IconID} goods-name" title="${GoodsData[resourceID].name}"></span></th>`);
+			t.push(`<th class="text-center"><span class="goods-sprite sprite-50 ${IconID} goods-name" title="${FH.Goods.Data[resourceID].name}"></span></th>`);
 		}
 
 		t.push('</tr>');
