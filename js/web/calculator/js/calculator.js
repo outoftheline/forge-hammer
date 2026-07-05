@@ -80,12 +80,12 @@ let Calculator = {
 			Calculator.ClanName = undefined;
 		}
 
-		if (Calculator.PlayerName === undefined && PlayerDict[PlayerID] !== undefined) {
-			Calculator.PlayerName = PlayerDict[PlayerID].PlayerName;
+		if (Calculator.PlayerName === undefined && FH.Players.Dict[PlayerID] !== undefined) {
+			Calculator.PlayerName = FH.Players.Dict[PlayerID].PlayerName;
 		}
-		if (PlayerDict[PlayerID] !== undefined && PlayerDict[PlayerID].ClanName !== undefined) {
-			Calculator.ClanId = PlayerDict[PlayerID].ClanId;
-			Calculator.ClanName = PlayerDict[PlayerID].ClanName;
+		if (FH.Players.Dict[PlayerID] !== undefined && FH.Players.Dict[PlayerID].ClanName !== undefined) {
+			Calculator.ClanId = FH.Players.Dict[PlayerID].ClanId;
+			Calculator.ClanName = FH.Players.Dict[PlayerID].ClanName;
 		}
 
         // BuildingName could not be loaded from the BuildingInfo
@@ -100,7 +100,7 @@ let Calculator = {
  
 			if (Calculator.PlayerName) {
 				h.push(`<span class="player-name">
-					<span class="activity activity_${PlayerDict[PlayerID]['Activity']}"></span>
+					<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span>
 					${FH.Main.GetPlayerLink(PlayerID, Calculator.PlayerName)}`);
 
 				if (Calculator.ClanName) {
@@ -202,7 +202,7 @@ let Calculator = {
 		// Step through ranks, search for own contribution
 		for (let i = 0; i < FH.Main.CurrentGB.Rankings.length; i++) {
 			const entry = FH.Main.CurrentGB.Rankings[i];
-			if (entry.player.player_id !== undefined && entry.player.player_id === ExtPlayerID) {
+			if (entry.player.player_id !== undefined && entry.player.player_id === FH.Player.ID) {
 				selfRankIndex = i;
 				selfContribution = (isNaN(parseInt(entry.forge_points))) ? 0 : parseInt(entry.forge_points);
 				break;
@@ -262,7 +262,7 @@ let Calculator = {
 				continue;
 			}
 
-			if (entry.player.player_id !== undefined && entry.player.player_id === ExtPlayerID)
+			if (entry.player.player_id !== undefined && entry.player.player_id === FH.Player.ID)
 				isSelf = true;
 
 			if (entry.forge_points !== undefined)
@@ -537,7 +537,7 @@ let Calculator = {
 				for (let cond of Quest.successConditions) {
 					let CurrentProgress = cond.currentProgress || 0;
 					let MaxProgress = cond.maxProgress;
-					if (cond.iconType=="icon_quest_alchemie" && ((CurrentEraID <= 3 && MaxProgress >= 3) || (MaxProgress > 15 && CurrentEraID <=15) || MaxProgress>=100)) { // Unterscheidung Buyquests von UseQuests: Bronze/Eiszeit haben nur UseQuests, Rest hat Anzahl immer >15, Buyquests immer <=15
+					if (cond.iconType=="icon_quest_alchemie" && ((FH.CurrentEraID <= 3 && MaxProgress >= 3) || (MaxProgress > 15 && FH.CurrentEraID <=15) || MaxProgress>=100)) { // Unterscheidung Buyquests von UseQuests: Bronze/Eiszeit haben nur UseQuests, Rest hat Anzahl immer >15, Buyquests immer <=15
 						let RecurringQuestString;
 						if (MaxProgress - CurrentProgress !== 0) {
 							RecurringQuestString = FH.HTML.Format(MaxProgress - CurrentProgress) + FH.t('Boxes.Calculator.FP');
@@ -715,7 +715,7 @@ let Calculator = {
 			let escapedLine = before.replace(/"/g, '&quot;');
 
 			if (!match) {
-				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}"><b>${before}</b></div>`);
+				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${before}</div>`);
 			} 
 			else {
 				let info = before.slice(0, match.length).trimEnd();

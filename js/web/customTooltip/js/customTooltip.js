@@ -21,7 +21,7 @@ let Tooltips = {
     targetElement:null,
     
     init: async () => {
-        await StartUpDone
+        await FH.StartUpDone
 
 		FH.HTML.AddCssFile('customTooltip');
         let container = document.createElement("div");
@@ -826,7 +826,7 @@ let Tooltips = {
 //QI Actions
 
 FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
-	QIActions.count = ResourceStock.guild_raids_action_points || 0
+	QIActions.count = FH.RessourceStock.guild_raids_action_points || 0
 });
 
 FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
@@ -834,7 +834,7 @@ FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) 
 });
 
 FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
-	if (ActiveMap==="guild_raids") {
+	if (FH.ActiveMap==="guild_raids") {
 		$('#QIActions').show();
 	} else {
 		$('#QIActions').hide();
@@ -842,7 +842,7 @@ FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
 })
 
 FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-    QIActions.hourlyBase = FHResourcesList.find(x=>x.id=="guild_raids_action_points").abilities.autoRefill.refillAmount
+    QIActions.hourlyBase = FH.Goods.Data?.["guild_raids_action_points"]?.abilities?.autoRefill?.refillAmount || 0;
 });
 
 
@@ -874,7 +874,8 @@ let QIActions = {
 	},
 
 	TT:()=>{
-		let hourly = QIActions.hourlyBase + Boosts.Sums["guild_raids_action_points_collection"] 
+		let hourly = QIActions.hourlyBase + Boosts.Sums["guild_raids_action_points_collection"]
+        while (QIActions.last < moment().unix() - 3600) QIActions.last += 3600
 		let fullAt = Math.ceil((QIActions.capacity + (Boosts.Sums["guild_raids_action_points_capacity"]||0) - QIActions.count)/hourly)*3600 + QIActions.last
 		let next = QIActions.last + 3600
 		while (next < moment().unix()) next += 3600

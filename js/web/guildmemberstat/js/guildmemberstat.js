@@ -306,7 +306,7 @@ let GuildMemberStat = {
 						let goodSum = Resources;
 
 						if (EntityEra !== null) {
-							goods = Object.values(GoodsData).filter(function (Good) {
+							goods = Object.values(FH.Goods.Data).filter(function (Good) {
 								return Good.era === EntityEra && Good.abilities.goodsProduceable !== undefined;
 							}).map(function (row) {
 								return { good_id: row.id, value: goodSum / 5 };
@@ -339,7 +339,7 @@ let GuildMemberStat = {
 							{
 								goodSum += products[p]['guildResources']['resources']['all_goods_of_age'];
 
-								goods = Object.values(GoodsData).filter(function (Good) {
+								goods = Object.values(FH.Goods.Data).filter(function (Good) {
 									return Good.era === EntityEra && Good.abilities.goodsProduceable !== undefined;
 								}).map(function (row) {
 									return { good_id: row.id, value: products[p]['guildResources']['resources']['all_goods_of_age'] / 5 };
@@ -367,7 +367,7 @@ let GuildMemberStat = {
 							if (products[p]['guildResources']['resources']['all_goods_of_age']) {
 								goodSum += products[p]['guildResources']['resources']['all_goods_of_age'];
 
-								goods = Object.values(GoodsData).filter(function (Good) {
+								goods = Object.values(FH.Goods.Data).filter(function (Good) {
 									return Good.era === EntityEra && Good.abilities.goodsProduceable !== undefined;
 								}).map(function (row) {
 									return { good_id: row.id, value: products[p]['guildResources']['resources']['all_goods_of_age'] / 5 };
@@ -400,7 +400,7 @@ let GuildMemberStat = {
 		GuildMemberStat.InitSettings();
 		GuildMemberStat.MemberDict = {};
 
-		GuildMemberStat.hasGuildMemberRights = (ExtGuildPermission & GuildMemberStat.GuildPermission_Leader) > 0 || (ExtGuildPermission & GuildMemberStat.GuildPermission_Founder) > 0;
+		GuildMemberStat.hasGuildMemberRights = (FH.Guild.Permission & GuildMemberStat.GuildPermission_Leader) > 0 || (FH.Guild.Permission & GuildMemberStat.GuildPermission_Founder) > 0;
 
 		switch (source) {
 			case 'clandata':
@@ -454,8 +454,8 @@ let GuildMemberStat = {
 				// Update Own Guild support buildings
 				if (FH.Main.CityMapData && Object.keys(FH.Main.CityMapData).length > 0) {
 					let self = {
-						player_id: ExtPlayerID,
-						era: CurrentEra
+						player_id: FH.Player.ID,
+						era: FH.CurrentEra
 					}
 					await GuildMemberStat.ReadGuildMemberBuildings({ city_map: { entities: Object.values(FH.Main.CityMapData) } }, self);
 				}
@@ -1292,7 +1292,7 @@ let GuildMemberStat = {
 					totalGoods += goodCount;
 					if (plbuilding.resources.goods !== undefined && plbuilding.resources.goods !== null) {
 						goodslist = plbuilding.resources.goods.map(good => {
-							return `<span title="${good.value} x ${GoodsData[good.good_id]['name']}" class="goods-sprite sprite-35 ${good.good_id}"></span> `;
+							return `<span title="${good.value} x ${FH.Goods.Data[good.good_id]['name']}" class="goods-sprite sprite-35 ${good.good_id}"></span> `;
 						}).join('');
 
 					}
@@ -1688,7 +1688,7 @@ let GuildMemberStat = {
 
 			if (plbuilding.resources && plbuilding.resources.goods && plbuilding.resources.goods !== null) {
 				goodslist = plbuilding.resources.goods.map(good => {
-					return `<span title="${good.value} x ${GoodsData[good.good_id]['name']}" class="goods-sprite sprite-35 ${good.good_id}"></span> `;
+					return `<span title="${good.value} x ${FH.Goods.Data[good.good_id]['name']}" class="goods-sprite sprite-35 ${good.good_id}"></span> `;
 				}).join('');
 
 			}
@@ -1744,7 +1744,7 @@ let GuildMemberStat = {
 				if (!(eraId in res)) {
 					res[eraId] = {};
 					obj.resources.goods.forEach(good => {
-						res[eraId][good.good_id] = { good: good.good_id, name: GoodsData[good.good_id].name, value: good.value };
+						res[eraId][good.good_id] = { good: good.good_id, name: FH.Goods.Data[good.good_id].name, value: good.value };
 					});
 				}
 				else {
@@ -1787,7 +1787,7 @@ let GuildMemberStat = {
 		}, []);
 
 		for (let eraId = Technologies.Eras.IronAge; eraId < Technologies.Eras.NextEra; eraId++) {
-			if (GoodsList.length < 5 * (eraId - 1)) break; // Era does not exist yet
+			if (FH.Goods.List.length < 5 * (eraId - 1)) break; // Era does not exist yet
 
 			if (Technologies.EraNames[eraId] === undefined) continue;
 
@@ -2254,8 +2254,8 @@ let GuildMemberStat = {
 
 		for (let i in d) {
 			if (d.hasOwnProperty(i)) {
-				let era = GoodsData[i]['era'];
-				let name = GoodsData[i]['name'];
+				let era = FH.Goods.Data[i]['era'];
+				let name = FH.Goods.Data[i]['name'];
 
 				if (!(era in GuildMemberStat.TreasuryGoodsData)) {
 					GuildMemberStat.TreasuryGoodsData[era] = [];

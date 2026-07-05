@@ -2,6 +2,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
+{
 FH.HTML.AddCssFile('battle-assist');
 FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
@@ -30,7 +31,7 @@ FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
             alive.push(unit.unitTypeId);
         } else {
             const unitEra = Unit.Types.find(e => e.unitTypeId === unit.unitTypeId)?.minEra;
-            if (CurrentEraID && Technologies.Eras[unitEra] > CurrentEraID)
+            if (FH.CurrentEraID && Technologies.Eras[unitEra] > FH.CurrentEraID)
             	nextEraUnitDead = true;
         }
     }
@@ -77,7 +78,7 @@ FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) 
     if (bt=="pvp_arena") {
         opponent = BattleAssist.ArenaOpponents[data.responseData?.battleType?.difficulty]
         if (!opponent) return;
-        let wave1 = data.responseData.state.unitsOrder.filter(x=>x.ownerId!=ExtPlayerID).map(x=>x.unitTypeId)
+        let wave1 = data.responseData.state.unitsOrder.filter(x=>x.ownerId!=FH.Player.ID).map(x=>x.unitTypeId)
         BattleAssist.processArmies(wave1,null,opponent.bonus,bt);
         opId = "pvp_arena%"+opponent.id;
     }
@@ -543,4 +544,5 @@ let BattleAssist = {
         if ($('#battleAssistAAConfig').length > 0) BattleAssist.ShowArmyAdviceConfig();
     }
 };
-
+FH.BattleAssist = {ShowArmyAdviceConfig: BattleAssist.ShowArmyAdviceConfig};
+}

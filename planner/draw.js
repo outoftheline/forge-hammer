@@ -43,20 +43,7 @@ window.PlannerApp = window.PlannerApp || {};
         ctx.lineWidth = 2;
     }
 
-    function getCanvasPointElem(evt) {
-        const rect = canvas.getBoundingClientRect();
-        const cssX = evt.clientX - rect.left;
-        const cssY = evt.clientY - rect.top;
-
-        return {
-            x: cssX / state.zoomScale + state.camX,
-            y: cssY / state.zoomScale + state.camY
-        };
-    }
-
-    function rebuildGridLayer() {
-        const dpr = getDpr();
-
+    function getMapBoundsPx() {
         let maxX = 0, maxY = 0;
         if (state.mapData) {
             for (const exp of state.mapData) {
@@ -66,6 +53,32 @@ window.PlannerApp = window.PlannerApp || {};
                 if (bottom > maxY) maxY = bottom;
             }
         }
+        return { width: maxX, height: maxY };
+    }
+
+    function screenToWorld(cssX, cssY) {
+        const x = cssX / state.zoomScale + state.camX;
+        const y = cssY / state.zoomScale + state.camY;
+
+        if (!state.rotated) return { x, y };
+
+        const bounds = getMapBoundsPx();
+        return {
+            x: y,
+            y: bounds.height - x
+        };
+    }
+
+    function getCanvasPointElem(evt) {
+        const rect = canvas.getBoundingClientRect();
+        return screenToWorld(evt.clientX - rect.left, evt.clientY - rect.top);
+    }
+
+    function rebuildGridLayer() {
+        const dpr = getDpr();
+        const bounds = getMapBoundsPx();
+        const maxX = bounds.width;
+        const maxY = bounds.height;
 
         state.gridCanvas = document.createElement('canvas');
         state.gridCanvas.width  = Math.max(1, Math.round(maxX * dpr));
@@ -168,13 +181,19 @@ window.PlannerApp = window.PlannerApp || {};
             -state.camY * dpr * state.zoomScale
         );
 
+        if (state.rotated) {
+            const bounds = getMapBoundsPx();
+            ctx.transform(0, 1, -1, 0, bounds.height, 0);
+        }
+
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
         ctx.font = FONT;
         ctx.lineWidth = 1 / state.zoomScale;
 
         if (state.gridCanvas) {
-            ctx.drawImage(state.gridCanvas, 0, 0);
+            const bounds = getMapBoundsPx();
+            ctx.drawImage(state.gridCanvas, 0, 0, bounds.width, bounds.height);
         }
 
         for (const building of state.mapBuildings) {
@@ -207,14 +226,13 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function zoomAtScreenPoint(newZoomScale, screenX, screenY) {
-        const pointBefore = {
-            x: screenX / state.zoomScale + state.camX,
-            y: screenY / state.zoomScale + state.camY
-        };
+        const pointBefore = screenToWorld(screenX, screenY);
 
         state.zoomScale = newZoomScale;
-        state.camX = pointBefore.x - screenX / state.zoomScale;
-        state.camY = pointBefore.y - screenY / state.zoomScale;
+
+        const pointAfter = screenToWorld(screenX, screenY);
+        state.camX += pointBefore.x - pointAfter.x;
+        state.camY += pointBefore.y - pointAfter.y;
 
         redrawMap();
     }
@@ -306,6 +324,8 @@ window.PlannerApp = window.PlannerApp || {};
     app.ctx = ctx;
     app.getDpr = getDpr;
     app.resizeCanvasToCSSSize = resizeCanvasToCSSSize;
+    app.getMapBoundsPx = getMapBoundsPx;
+    app.screenToWorld = screenToWorld;
     app.getCanvasPointElem = getCanvasPointElem;
     app.rebuildGridLayer = rebuildGridLayer;
     app.drawExpansion = drawExpansion;

@@ -1087,9 +1087,9 @@ let HTML = {
 };
 
 FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
-	$('.MapActivityCheck:not(.ActiveOn'+ActiveMap+")").remove();
+	$('.MapActivityCheck:not(.ActiveOn'+FH.ActiveMap+")").remove();
 	$('.MapActivityHide').hide();
-	$('.MapActivityHide.ActiveOn'+ActiveMap).show();
+	$('.MapActivityHide.ActiveOn'+FH.ActiveMap).show();
 
 });
 return HTML;

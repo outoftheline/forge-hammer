@@ -526,7 +526,7 @@ let mergerGame = {
 		if (worldChallenge.currentPoints + wcSum > worldChallenge.requiredPoints)
 			$('#mergerGameTaskWarning').addClass('showWorldChallengeOverflowWarning');
 		for (let [r,amount] of Object.entries(rewardsSum)) {
-			if ((GoodsData[r].abilities?.resourceCap?.amount || Infinity) < amount +  ResourceStock[r])
+			if ((FH.Goods.Data[r].abilities?.resourceCap?.amount || Infinity) < amount +  FH.RessourceStock[r])
 				$('#mergerGameTaskWarning').addClass('showCurrencyOverflowWarning');
 		}
 	}

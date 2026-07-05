@@ -479,7 +479,7 @@ let Investment = {
 			if (LGData.hasOwnProperty(i))
 			{
 				let PlayerID = LGData[i]['player']['player_id'];
-				if (PlayerID === ExtPlayerID) continue;
+				if (PlayerID === FH.Player.ID) continue;
 				// if update started from Player GB Overview
 				// get all available investment from Storage to check if already leveled
 				if (!FullSync && playerSyncGbKeys === null) {

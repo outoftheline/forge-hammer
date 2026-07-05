@@ -156,13 +156,13 @@ let EventPresents = {
                     // warning for currency overflow
                     if (present.reward.subType === (currencyName1) || present.reward.subType === (currencyName2)) {
                         let currency = present.reward.subType;
-                        let currencyInfo = FHResourcesList.find(x => x.id == currency);
+                        let currencyInfo = FH.Goods.Data[currency];
                         let currencyCapAmount = currencyInfo?.abilities?.resourceCap?.amount || null;
                         if (currencyCapAmount) {
-                            if (ResourceStock[currency] === (currencyCapAmount-1))
+                            if (FH.RessourceStock[currency] === (currencyCapAmount-1))
                                 warning = true;
                         }
-                        h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${ResourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
+                        h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${FH.RessourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
                     }
                     h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + FH.extUrl + 'images/hud/open-eye.png" alt="">' : '')}
                     </td>`);

@@ -1,5 +1,5 @@
 function initPopout() {
-    let era = CurrentEra;
+    let era = FH.CurrentEra;
 
     // manually set up tooltip container
     let container = document.createElement("div");

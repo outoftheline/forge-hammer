@@ -374,7 +374,7 @@ let Discord = {
 
 		let e = {
 				url: url,
-				message: msg + " \n-# " + ExtPlayerName
+				message: msg + " \n-# " + FH.Player.Name
 			};
 
 		Discord.PrepareMessageForSend(e);
@@ -542,7 +542,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + " \n-# " + ExtPlayerName
+			message: msg + " \n-# " + FH.Player.Name
 		});
 	},
 
@@ -554,7 +554,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + "-# " + ExtPlayerName
+			message: msg + "-# " + FH.Player.Name
 		});
 	},
 
@@ -564,7 +564,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + " \n-# " + ExtPlayerName
+			message: msg + " \n-# " + FH.Player.Name
 		});
 	},
 
@@ -576,7 +576,7 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + "-# " + ExtPlayerName
+			message: msg + "-# " + FH.Player.Name
 		});
 	}
 };

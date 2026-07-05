@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 //const util  = require('util');
-
+{
 FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
     if (data.responseData['updatedEntities']) {
 
@@ -159,12 +159,12 @@ let BlueGalaxy = {
                         FP += 10 * parseInt(product.resources.amount)
 
                     if (product.type == "resources" || product.type == "guildResources")
-                        for (let j = 0; j < GoodsList.length; j++) {
-                            let GoodID = GoodsList[j]['id'];
-                            let GoodEra = GoodsList[j]['era'];
+                        for (let j = 0; j < FH.Goods.List.length; j++) {
+                            let GoodID = FH.Goods.List[j]['id'];
+                            let GoodEra = FH.Goods.List[j]['era'];
                             if (product.resources[GoodID]) {
                                 if (product.type == "resources")
-                                    if(GoodEra == CurrentEra) {
+                                    if(GoodEra == FH.CurrentEra) {
                                         GoodsSum += product.resources[GoodID]
                                     } else {
                                         OlderGoodsSum += product.resources[GoodID]
@@ -334,9 +334,10 @@ let BlueGalaxy = {
         let h = [];
         h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${FH.t('Boxes.Settings.Autostart')}</label></p>`);
         h.push(`<p><input id="showBGFragments" name="showBGFragments" value="1" type="checkbox" ${(showBGFragments === true) ? ' checked="checked"' : ''} /> <label for="showBGFragments">${FH.t('Boxes.Settings.showBGFragments')}</label></p>`);
-        h.push(`<p><button onclick="BlueGalaxy.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><button id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#bluegalaxySettingsBox').html(h.join(''));
+        $('#save-bghelper-settings').on('click', BlueGalaxy.SaveSettings);
     },
 
 
@@ -359,3 +360,5 @@ let BlueGalaxy = {
 		$(`#bluegalaxySettingsBox`).remove();
     },
 };
+FH.BlueGalaxy = {CalcBody: BlueGalaxy.CalcBody, Show: BlueGalaxy.Show, SetCounter: BlueGalaxy.SetCounter};
+}

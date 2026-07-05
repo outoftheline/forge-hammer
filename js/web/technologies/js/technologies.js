@@ -19,9 +19,9 @@ FH.proxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
 
 FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
 	let era = data.responseData.technology.era;
-    if (Technologies.Eras[era] > CurrentEraID) {
-        CurrentEraID = Technologies.EraNames[era];
-        CurrentEra = era;
+    if (Technologies.Eras[era] > FH.CurrentEraID) {
+        FH.CurrentEraID = Technologies.EraNames[era];
+        FH.CurrentEra = era;
     }
 });
 
@@ -233,7 +233,7 @@ let Technologies = {
 			// CSS in den DOM prügeln
 			FH.HTML.AddCssFile('technologies');
 
-			Technologies.SelectedEraID = CurrentEraID;
+			Technologies.SelectedEraID = FH.CurrentEraID;
 
 		} else {
 			FH.HTML.CloseOpenBox('technologies');
@@ -320,10 +320,10 @@ let Technologies = {
             if (!Tech['isResearched'] && !Tech['isTeaser']) {
                 let EraID = Technologies.Eras[Tech['era']];
 
-                if (EraID < CurrentEraID && Technologies.IgnorePrevEra) continue; // Vorherige ZA ausblenden
-                if (EraID >= CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) continue; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
+                if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) continue; // Vorherige ZA ausblenden
+                if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) continue; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
 
-                if (EraID >= CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
+                if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
 
                     if (RequiredResources.strategy_points === undefined)
                     	RequiredResources.strategy_points = 0;
@@ -343,7 +343,7 @@ let Technologies = {
             }
         }
 
-        let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, CurrentEraID),
+        let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, FH.CurrentEraID),
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
         h.push(`<div class="dark-bg p5" style="margin-bottom: 3px">
@@ -380,52 +380,52 @@ let Technologies = {
             // Reihenfolge der Ausgabe generieren
             let OutputList = ['strategy_points', 'money', 'supplies'];
             for (let i = 0; i < 70; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'promethium';
             for (let i = 70; i < 75; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'orichalcum';
             for (let i = 75; i < 80; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'mars_ore';
             for (let i = 80; i < 85; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'asteroid_ice';
             for (let i = 85; i < 90; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'venus_carbon';
             for (let i = 90; i < 95; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'unknown_dna';
             for (let i = 95; i < 100; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'crystallized_hydrocarbons';
             for (let i = 100; i < 105; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'dark_matter';
-            for (let i = 105; i < GoodsList.length; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+            for (let i = 105; i < FH.Goods.List.length; i++) {
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
 
             for (let i = 0; i < OutputList.length; i++) {
                 let ResourceName = OutputList[i];
                 if (RequiredResources[ResourceName] !== undefined) {
                     let Required = RequiredResources[ResourceName];
-                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : ResourceStock[ResourceName]);
+                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : FH.RessourceStock[ResourceName]);
                     if (Stock === undefined) Stock = 0;
                     let Diff = Stock - Required;
 
                     h.push('<tr>');
-                    h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ GoodsData[ResourceName]['id'] +'"></span></td>');
-                    h.push('<td>' + GoodsData[ResourceName]['name'] + '</td>');
+                    h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ FH.Goods.Data[ResourceName]['id'] +'"></span></td>');
+                    h.push('<td>' + FH.Goods.Data[ResourceName]['name'] + '</td>');
                     h.push('<td>' + FH.HTML.Format(Required) + '</td>');
                     h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
                     h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');

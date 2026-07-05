@@ -108,7 +108,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 	else if (event === 'default') {	// default is hiddenreward or leaguereward or flying island incidents
 		event = 'hiddenReward';
 
-		if (ActiveMap == 'cultural_outpost') {
+		if (FH.ActiveMap == 'cultural_outpost') {
 			event = 'shards';
 		}
 		if (postData[0].requestMethod === 'useItem') {
@@ -185,7 +185,7 @@ FH.proxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) =
 		return;
 	}
 
-	const player = PlayerDict[postData[0]['requestData'][0]];
+	const player = FH.Players.Dict[postData[0]['requestData'][0]];
 
 	StrategyPoints.insertIntoDB({
 		event: 'satDown',
@@ -214,7 +214,7 @@ FH.proxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 
 			if (PlunderReward['product'] && PlunderReward['product']['resources'] && PlunderReward['product']['resources']['strategy_points']) {
 				let PlunderedFP = PlunderReward['product']['resources']['strategy_points'];
-				const player = PlayerDict[FPCollector.lastVisitedPlayer];
+				const player = FH.Players.Dict[FPCollector.lastVisitedPlayer];
 				const entity = FH.Main.CityEntities[FPCollector.lastPlunderedEntity];
 
 				StrategyPoints.insertIntoDB({

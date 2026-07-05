@@ -32,7 +32,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 
 		if (rewardIncidentSource === 'hidden_reward') {
 			//split flying island incidents from Ad-chests
-			if (ActiveMap == 'cultural_outpost'){
+			if (FH.ActiveMap == 'cultural_outpost'){
 				rewardIncidentSource = 'shards';
 			}
 		}
@@ -191,13 +191,13 @@ FH.proxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 
 	await IndexDB.db.statsTreasureClanD.put({
 		date: moment().startOf('day').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r.resources
 	});
 
 	await IndexDB.db.statsTreasureClanH.put({
 		date: moment().startOf('hour').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r.resources
 	});
 	
@@ -213,13 +213,13 @@ FH.proxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 
 	await IndexDB.db.statsTreasureClanD.put({
 		date: moment().startOf('day').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r
 	});
 
 	await IndexDB.db.statsTreasureClanH.put({
 		date: moment().startOf('hour').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r
 	});
 	
@@ -228,7 +228,7 @@ FH.proxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 
 // Player Army log
 FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
-	if (ActiveMap !== 'main') {
+	if (FH.ActiveMap !== 'main') {
 		return;
 	}
 
@@ -293,14 +293,14 @@ let Stats = {
 			let EraName = Technologies.EraNames[Era];
 			if (!EraName) continue;
 
-			if (GoodsList.length < 5 * (Era - 1)) break; // Era does not exist yet
+			if (FH.Goods.List.length < 5 * (Era - 1)) break; // Era does not exist yet
 
 			Stats.PlayableEras.push(EraName);
 			Stats.ResMap[EraName] = [];
 
 			for (let i = 0; i < 5; i++) {
-				if (GoodsList[(Era - 2) * 5 + i]) {
-					let g = GoodsList[(Era - 2) * 5 + i].id
+				if (FH.Goods.List[(Era - 2) * 5 + i]) {
+					let g = FH.Goods.List[(Era - 2) * 5 + i].id
 					Stats.ResMap[EraName].push(g);
 					Stats.goodsSubTypes.push(g);
 				}
@@ -359,10 +359,10 @@ let Stats = {
 		// If not selected any era, preselect 2 last eras of user
 		if (!Object.keys(Stats.state.eras).length) {
 			Stats.state.eras = {
-				[Technologies.EraNames[CurrentEraID]]: true,
+				[Technologies.EraNames[FH.CurrentEraID]]: true,
 			};
-			if (CurrentEraID > 2) {
-				Stats.state.eras[Technologies.EraNames[CurrentEraID - 1]] = true;
+			if (FH.CurrentEraID > 2) {
+				Stats.state.eras[Technologies.EraNames[FH.CurrentEraID - 1]] = true;
 			}
 		}
 
@@ -415,10 +415,10 @@ let Stats = {
 						// If changed to player's treasure select 2 last eras
 						Stats.state.eras = {};
 						Stats.state.eras = {
-							[Technologies.EraNames[CurrentEraID]]: true,
+							[Technologies.EraNames[FH.CurrentEraID]]: true,
 						};
-						if (CurrentEraID > 2) {
-							Stats.state.eras[Technologies.EraNames[CurrentEraID - 1]] = true;
+						if (FH.CurrentEraID > 2) {
+							Stats.state.eras[Technologies.EraNames[FH.CurrentEraID - 1]] = true;
 						}
 
 					} else if (isChangedToClanTreasure) {
@@ -566,18 +566,18 @@ let Stats = {
 
 		const btnSelectMyEra = Stats.RenderButton({
 			name: FH.t('Boxes.Stats.BtnMyEra'),
-			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID],
+			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[FH.CurrentEraID],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
-			value: Technologies.EraNames[CurrentEraID]
+			value: Technologies.EraNames[FH.CurrentEraID]
 		});
 
 		const btnSelectNextEra = Stats.RenderButton({
 			name: FH.t('Boxes.Stats.BtnNextEra'),
-			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID + 1],
+			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[FH.CurrentEraID + 1],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
-			value: Technologies.EraNames[CurrentEraID + 1]
+			value: Technologies.EraNames[FH.CurrentEraID + 1]
 		});
 
 		const btnSelectAll = Stats.RenderButton({
@@ -593,11 +593,11 @@ let Stats = {
 			name: FH.t('Boxes.Stats.BtnLastEras'),
 			title: FH.t('Boxes.Stats.BtnLastErasTitle'),
 			isActive: (selectedEras.length === 2 &&
-				selectedEras.includes(Technologies.EraNames[CurrentEraID]) &&
-				selectedEras.includes(Technologies.EraNames[CurrentEraID - 1])),
+				selectedEras.includes(Technologies.EraNames[FH.CurrentEraID]) &&
+				selectedEras.includes(Technologies.EraNames[FH.CurrentEraID - 1])),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
 			dataType: 'selectEras',
-			value: Technologies.EraNames[CurrentEraID] + ',' + Technologies.EraNames[CurrentEraID - 1]
+			value: Technologies.EraNames[FH.CurrentEraID] + ',' + Technologies.EraNames[FH.CurrentEraID - 1]
 		});
 
 		const btnSelectAllEra = Stats.RenderButton({
@@ -683,8 +683,8 @@ let Stats = {
 					<span class="btn-group">
 					${btnSelectAllEra}
 					${btnSelectMyEra}
-					${Technologies.EraNames[CurrentEraID + 1] ? btnSelectNextEra : ''}
-					${CurrentEraID > 2 ? btnSelectTwoLastEra : ''}
+					${Technologies.EraNames[FH.CurrentEraID + 1] ? btnSelectNextEra : ''}
+					${FH.CurrentEraID > 2 ? btnSelectTwoLastEra : ''}
 					${btnSelectAll}
 					${btnSelectNoEra}
 					</span>
@@ -988,7 +988,7 @@ let Stats = {
 			.reduce((acc, it) => acc.concat(it), []);
 
 		const series = selectedResources.map(it => {
-			const goodsData = (GoodsData[it] || {name: it})
+			const goodsData = (FH.Goods.Data[it] || {name: it})
 			return {
 				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
@@ -1080,7 +1080,7 @@ let Stats = {
 			.reduce((acc, it) => acc.concat(it), []);
 
 		const series = selectedResources.map(it => {
-			const goodsData = (GoodsData[it] || {name: it})
+			const goodsData = (FH.Goods.Data[it] || {name: it})
 			return {
 				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
@@ -2221,7 +2221,7 @@ let StockAlarm = {
 		let OA = [];
 		era="";
 		setClass = true;
-		for (x of GoodsList) {
+		for (x of FH.Goods.List) {
 			if (era != x.era) {
 				setClass = !setClass;
 				era = x.era;

@@ -3,6 +3,7 @@
 window.PlannerApp = window.PlannerApp || {};
 
 (function (app) {
+    const state = app.state;
     const SIZE = 30;
     const FONT_SIZE = 15;
     const FONT = FONT_SIZE + 'px Arial';
@@ -95,17 +96,29 @@ window.PlannerApp = window.PlannerApp || {};
         drawName(context) {
             if (!this.hasLabel) return;
 
+            context.save();
+
+            if (state.rotated) {
+                const cx = this.x + this.width / 2;
+                const cy = this.y + this.height / 2;
+                context.translate(cx, cy);
+                context.rotate(-Math.PI / 2);
+                context.translate(-cx, -cy);
+            }
+
             context.fillStyle = '#000';
             context.font = this.isSelected ? ('bold ' + FONT) : FONT;
+
+            const boxWidth = state.rotated ? this.height : this.width;
 
             const text = context.measureText(this.name);
             let sizeOffset = FONT_SIZE + Math.ceil(FONT_SIZE * 0.4);
 
-            if (text.width < this.width) {
+            if (text.width < boxWidth) {
                 context.fillText(this.name, this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.3));
                 sizeOffset = FONT_SIZE - 2;
             } else if (this.height > SIZE && this.width > SIZE) {
-                const ratio = Math.ceil(text.width / (this.width - 30));
+                const ratio = Math.ceil(text.width / (boxWidth - 30));
                 let textStart = 0;
                 let textEnd = Math.ceil(this.name.length / ratio);
 
@@ -116,13 +129,12 @@ window.PlannerApp = window.PlannerApp || {};
                 context.fillText(this.name.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(FONT_SIZE * 0.2));
             }
 
-            // dont change dimensions shown
             const metaDims  = app.getMetaSize(this.meta);
             const totalSize = metaDims.height + 'x' + metaDims.width;
             context.font = '12px Arial';
             context.fillText(totalSize, this.x + this.width / 2, this.y + this.height / 2 + sizeOffset);
 
-            context.font = FONT;
+            context.restore();
         }
     }
 

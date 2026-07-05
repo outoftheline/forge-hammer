@@ -113,7 +113,7 @@ let KampagneMap = {
             	if(!Rewards.hasOwnProperty(RewardTyp)){
             		break;
 				}
-                h.push('<div><strong> ' + Rewards[RewardTyp] + ' ' + GoodsData[RewardTyp]['name'] + '</strong></div>');
+                h.push('<div><strong> ' + Rewards[RewardTyp] + ' ' + FH.Goods.Data[RewardTyp]['name'] + '</strong></div>');
             }
 
             h.push('</div>');
@@ -132,17 +132,17 @@ let KampagneMap = {
             let OutputList = ['strategy_points', 'money', 'supplies'];
 
             for (let i = 0; i < 70; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'promethium';
 
             for (let i = 70; i < 75; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'orichalcum';
 
-            for (let i = 75; i < GoodsList.length; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+            for (let i = 75; i < FH.Goods.List.length; i++) {
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
 
             for (let i = 0; i < OutputList.length; i++) {
@@ -150,7 +150,7 @@ let KampagneMap = {
 
                 if (RequiredResources[ResourceName] !== undefined) {
                     let Required = RequiredResources[ResourceName],
-                    	Stock = ResourceStock[ResourceName];
+                    	Stock = FH.RessourceStock[ResourceName];
 
                     if (Stock === undefined)
                     	Stock = 0;
@@ -158,7 +158,7 @@ let KampagneMap = {
                     let Diff = Stock - Required;
 
                     h.push('<tr>');
-                    h.push('<td>' + GoodsData[ResourceName]['name'] + '</td>');
+                    h.push('<td>' + FH.Goods.Data[ResourceName]['name'] + '</td>');
                     h.push('<td>' + FH.HTML.Format(Required) + '</td>');
                     h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
                     h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');

@@ -162,7 +162,7 @@ let Negotiation = {
 				let GoodInfo = GoodsOrdered[i],
 					GoodName = GoodInfo.resourceId,
 					GoodAmount = GoodInfo.amount,
-					Stock = ResourceStock[GoodName],
+					Stock = FH.RessourceStock[GoodName],
 					TextClass;
 
 				let maxRequired = GoodInfo.canOccur.length * GoodAmount;
@@ -477,7 +477,7 @@ let Negotiation = {
 		if (responseData.context === Negotiation.CONST_Context_GBG) {
 			if (! $('#negotiation-Btn').hasClass('hud-btn-red')) {
 				$('#negotiation-Btn').addClass('hud-btn-red');
-				_menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
+				FH.menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
 			}
 			return; //No Negotiation helper for GBG
 		}
@@ -534,7 +534,7 @@ let Negotiation = {
 			Negotiation.TryCount = forcedTryCount;
 		}
 		else {
-			Negotiation.TryCount = ResourceStock['negotiation_game_turn'];
+			Negotiation.TryCount = FH.RessourceStock['negotiation_game_turn'];
 		}
 		if (Negotiation.TryCount > 5) {
 			Negotiation.TryCountIsGreaterThan5 = true;
@@ -719,7 +719,7 @@ let Negotiation = {
 
 	goodButtonCompare: (goodA, goodB) => {
 		function goodValue(good) {
-			const data = GoodsData[good];
+			const data = FH.Goods.Data[good];
 			if (data.era === 'AllAge') return 100;
 			const special = !!data.abilities.specialResource;
 			const era = Technologies.Eras[data.era];
@@ -920,7 +920,7 @@ let Negotiation = {
 				Value = 100;
 			}
 			else {
-				let Good = GoodsData[GoodName];
+				let Good = FH.Goods.Data[GoodName];
 				let Era = Good['era'];
 
 				let EraID = Technologies.Eras[Era];
@@ -929,7 +929,7 @@ let Negotiation = {
 				Value = EraID * 100;
             }
 
-			let Stock = ResourceStock[GoodName];
+			let Stock = FH.RessourceStock[GoodName];
 			if (Stock === undefined || Stock === 0)
 			{
 				Value += 99;
@@ -1111,7 +1111,7 @@ let NegotiationDebugger = {
 
 		if (data.selected >= 0) {
 			h.push('<div style="display: grid; grid-template-columns: repeat(auto-fill, 40px);background-color: rgba(200,200,200,0.4);border: 1px solid rgb(243, 214, 160);margin:5px;">');
-			for (let goodData of GoodsList) {
+			for (let goodData of FH.Goods.List) {
 				let good = goodData.id || 'empty';
 				h.push(`<span onclick="NegotiationDebugger.selectGood('${good}')" style="box-sizing: border-box;width: 40px${data.goods[data.selected]===good?'; border: 1px solid red':''}" class="${goodSpriteClass(good)}"></span>`);
 			}

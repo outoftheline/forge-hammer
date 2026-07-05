@@ -85,10 +85,10 @@ let Treasury = {
             CurrentLine.push(CurrentLog['player']['player_id']);
             CurrentLine.push(CurrentLog['player']['name'].replace(/;/g, ''));
             let GoodID = CurrentLog['resource'];
-            let EraName = GoodsData[GoodID]['era'];
+            let EraName = FH.Goods.Data[GoodID]['era'];
             let EraID = Technologies.Eras[EraName];
             CurrentLine.push((EraID + '').padStart(2, '0') + ' - ' + FH.t('Eras.' + EraID).replace(/;/g, ''));
-            CurrentLine.push(GoodsData[GoodID]['name'].replace(/;/g, ''));
+            CurrentLine.push(FH.Goods.Data[GoodID]['name'].replace(/;/g, ''));
             CurrentLine.push(CurrentLog['amount']);
             CurrentLine.push(CurrentLog['action'].replace(/;/g, ''));
             CurrentLine.push(typeof CurrentLog['createdAt'] == "object" ? CurrentLog['createdAt'].toLocaleString().replace(/,/g,"") : CurrentLog['createdAt'].replace(/;/g, ''));

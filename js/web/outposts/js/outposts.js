@@ -141,7 +141,7 @@ let Outposts = {
 		;
 
 		/** @type {FoE_JSON_Goods} */
-		const currStock = Object.fromEntries(resourceIDs.map(id => [id, ResourceStock[id] || 0]));
+		const currStock = Object.fromEntries(resourceIDs.map(id => [id, FH.RessourceStock[id] || 0]));
 
 		/** @type {FoE_JSON_Goods} */
 		let sums = Object.fromEntries(resourceIDs.map(id => [id, 0]));
@@ -221,7 +221,7 @@ let Outposts = {
 		// Münzen und aktuelle Münz-Produktion
 		t.push(
 			'</span><span><strong>'
-			+ GoodsData[primaryResourceId].name + ': ' + FH.HTML.Format(ResourceStock[primaryResourceId]||0)
+			+ FH.Goods.Data[primaryResourceId].name + ': ' + FH.HTML.Format(FH.RessourceStock[primaryResourceId]||0)
 			+ '</strong> (+ '
 			+ (current5HProductionRate > 0 ? FH.HTML.Format(FH.Main.round(current5HProductionRate)) : '???')
 			+ `/5h)`
@@ -307,7 +307,7 @@ let Outposts = {
 		{
 			let IconID = resourceID;
 			if (['barley', 'pottery', 'flowers', 'sacrificial_offerings','fresh_fish','coconuts','kava','catamarans'].includes(resourceID)) IconID = 'fine_' + IconID;
-			t.push(`<th class="text-center"><span class="goods-sprite sprite-50 ${IconID} goods-name" title="${GoodsData[resourceID].name}"></span></th>`);
+			t.push(`<th class="text-center"><span class="goods-sprite sprite-50 ${IconID} goods-name" title="${FH.Goods.Data[resourceID].name}"></span></th>`);
 		}
 
 		t.push('</tr>');
@@ -342,7 +342,7 @@ let Outposts = {
 					for (let CostResourceName in sums) {
 						if (CostResourceName === 'diplomacy' || CostResourceName === goodProductionResourceId) continue;
 
-						resourceCost += Math.max(Math.ceil((sums[CostResourceName] - (ResourceStock[CostResourceName] | 0)) / 5) * (goodProductionResourceId === 'egyptians_loot' ? 50 : 1000), 0);
+						resourceCost += Math.max(Math.ceil((sums[CostResourceName] - (FH.RessourceStock[CostResourceName] | 0)) / 5) * (goodProductionResourceId === 'egyptians_loot' ? 50 : 1000), 0);
 					}
 				}
 				const resourceInStock = currStock[resourceID];
@@ -368,7 +368,7 @@ let Outposts = {
 						let CostResourceName = resourceIDs[CostResource];
 						if (CostResourceName === 'diplomacy' || CostResourceName === goodProductionResourceId) continue;
 
-						resourceSumAfter += Math.max(Math.ceil((sums[CostResourceName] - (ResourceStock[CostResourceName] | 0)) / 5) * (goodProductionResourceId === 'egyptians_loot' ? 50 : 1000), 0);
+						resourceSumAfter += Math.max(Math.ceil((sums[CostResourceName] - (FH.RessourceStock[CostResourceName] | 0)) / 5) * (goodProductionResourceId === 'egyptians_loot' ? 50 : 1000), 0);
 					}
 				}
 				else {

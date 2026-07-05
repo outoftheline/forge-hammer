@@ -416,7 +416,7 @@ let IndexDB = {
 
 
     /**
-     * Add user from PlayerDict if not added, without era information
+     * Add user from FH.Players.Dict if not added, without era information
      *
      * @param playerId
      * @param updateDate
@@ -425,7 +425,7 @@ let IndexDB = {
     addUserFromPlayerDictIfNotExists: async(playerId, updateDate) => {
         const playerFromDB = await IndexDB.db.players.get(playerId);
         if (!playerFromDB) {
-            let player = PlayerDict[playerId];
+            let player = FH.Players.Dict[playerId];
             if (player) {
                 await IndexDB.db.players.add({
                     id: playerId,

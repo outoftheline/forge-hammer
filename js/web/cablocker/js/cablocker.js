@@ -23,7 +23,7 @@ CABlocker = {
             $('#CollectAllOverlay').remove();
             CABlocker.setTimer();
         });
-        if (ActiveMap != 'main') $('#CollectAllOverlay').hide();
+        if (FH.ActiveMap != 'main') $('#CollectAllOverlay').hide();
     },
     checkBuildings: () => {
         if (!Settings.GetSetting('BlockCollectAll')) return;
@@ -66,7 +66,7 @@ CABlocker = {
     },
     checkFP: async () => {
         await FH.ExistenceConfirmed('FH.Main.Quests');
-        if ((ResourceStock.strategy_points||0) <= (GoodsData?.strategy_points?.abilities?.collectingRestricted?.maxAmount||99)) return false;
+        if ((FH.RessourceStock.strategy_points||0) <= (FH.Goods.Data?.strategy_points?.abilities?.collectingRestricted?.maxAmount||99)) return false;
         CABlocker.addBlocker();
         return true;
     }

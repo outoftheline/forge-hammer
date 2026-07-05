@@ -233,11 +233,16 @@ let Settings = {
 				<p>${FH.t('Settings.Version.Donate')}</p> <a class="kofi" href="https://ko-fi.com/forgehammer" target="_blank"><img src="${FH.extUrl}images/kofi.png" height="22" /> Support us on Ko-fi! </a>
 				<div class="info-box">
 					<span><b>${FH.t('Boxes.General.Version')}</b> ${FH.BaseData.extVersion}</span>
-					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${ExtPlayerID}</span>
-					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(ExtGuildID ? ExtGuildID : 'N/A')}</span>
-					<span><b>${FH.t('Settings.Version.World')}</b> ${ExtWorld}</span>
+					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${FH.Player.ID}</span>
+					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(FH.Guild.ID ? FH.Guild.ID : 'N/A')}</span>
+					<span><b>${FH.t('Settings.Version.World')}</b> ${FH.World}</span>
 				</div>`;
 		return v;
+	},
+
+
+	LoadBeta: () => {
+		return `<a href="https://github.com/outoftheline/forge-hammer/archive/refs/heads/develop.zip" class="btn">${FH.t('Settings.LoadBeta2.Button')}</a>`;
 	},
 
 
@@ -315,7 +320,7 @@ let Settings = {
 
 		let json = JSON.stringify(settings),
 			blob1 = new Blob([json], { type: "application/json;charset=utf-8" }),
-			file = `${ExtWorld}-${ExtPlayerID}.json`;
+			file = `${FH.World}-${FH.Player.ID}.json`;
 
 		FH.Main.ExportFile(blob1, file);
 	},
@@ -326,8 +331,8 @@ let Settings = {
 
 		dp.push('<select class="setting-dropdown" id="change-menu">');
 
-		for (let index = 0; index < _menu.MenuOptions.length; index++) {
-			const element = _menu.MenuOptions[index];
+		for (let index = 0; index < FH.menu.MenuOptions.length; index++) {
+			const element = FH.menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
 				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + FH.t('Menu.' + element) + '</option>');
 			}
@@ -560,7 +565,7 @@ let Settings = {
 				FH.Storage.removeItem('MenuLength');
 			}
 
-			_menu.SetMenuHeight(true);
+			FH.menu.SetMenuHeight(true);
 		});
 
 		return ip;
@@ -628,7 +633,7 @@ let Settings = {
 	 */
 	MenuContent: () => {
 		let bl = $('<div />'),
-			menuItems = Array.from(_menu.Items),
+			menuItems = Array.from(FH.menu.Items),
 			HiddenItems = FH.Storage.getItem('MenuHiddenItems'),
 			hiddenArray = [];
 
@@ -645,14 +650,14 @@ let Settings = {
 			if(name === 'settings') continue;
 
 			// is there a function?
-			if (_menu[name + '_Btn']) {
+			if (FH.menu[name + '_Btn']) {
 				let btnBG = $('<div />')
 					.attr({ id: `setting-${name}-Btn` })
 					.addClass('hud-btn')
 					.addClass(hiddenArray.includes(name) ? 'hud-btn-red' : '');
-				let btnData = _menu.ItemsData.find(x => x.id === name);
+				let btnData = FH.menu.ItemsData.find(x => x.id === name);
 
-				let btn = $(`<span onclick="_menu.ToggleItemVisibility('${name}')" data-original-title="<b>${btnData?.title||""}</b><br>${btnData?.description.replace(/<[^>]+>/g, '')||""}"></span>`);
+				let btn = $(`<span onclick="FH.menu.ToggleItemVisibility('${name}')" data-original-title="<b>${btnData?.title||""}</b><br>${btnData?.description.replace(/<[^>]+>/g, '')||""}"></span>`);
 		
 				btnBG.append(btn);
 				bl.append(btnBG);

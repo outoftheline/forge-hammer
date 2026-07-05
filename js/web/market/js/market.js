@@ -208,7 +208,7 @@ let Market = {
 
 							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++)
                             {
-                                if (GoodsList.length < 5 * (era + 1)) break; // Era does not exist yet
+                                if (FH.Goods.List.length < 5 * (era + 1)) break; // Era does not exist yet
 								ID += 1;
 
 								h.push(`<span class="custom-option era${(Market.Offer === ID ? ' selected' : '')}" data-value="${ID}">${FH.t('Eras.' + (era + Technologies.Eras.BronzeAge))}</span>`);
@@ -216,7 +216,7 @@ let Market = {
 								for (let i = 0; i < 5; i++)
 								{
 									ID += 1;
-									h.push(`<span class="custom-option${(Market.Offer === ID ? ' selected' : '')}" data-value="${ID}">${GoodsList[5*era + i]['name']}</span>`);
+									h.push(`<span class="custom-option${(Market.Offer === ID ? ' selected' : '')}" data-value="${ID}">${FH.Goods.List[5*era + i]['name']}</span>`);
 								}
 							}
 
@@ -250,7 +250,7 @@ let Market = {
 
 							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++)
                             {
-                                if (GoodsList.length < 5 * (era + 1)) break; // Era does not exist yet
+                                if (FH.Goods.List.length < 5 * (era + 1)) break; // Era does not exist yet
 
 								ID += 1;
 
@@ -261,7 +261,7 @@ let Market = {
 								for (let i = 0; i < 5; i++) {
 									ID += 1;
 									h.push(`<span class="custom-option${(Market.Need === ID ? ' selected' : '')}" data-value="${ID}">
-												${GoodsList[5*era + i]['name']}
+												${FH.Goods.List[5*era + i]['name']}
 											</span>`);
 								}
 							}
@@ -326,18 +326,18 @@ let Market = {
             if (Market.TestFilter(Trade)) {
                 let OfferGoodID = Trade['offer']['good_id'],
                     NeedGoodID = Trade['need']['good_id'],
-                    OfferEra = Technologies.Eras[GoodsData[OfferGoodID]['era']],
-                    NeedEra = Technologies.Eras[GoodsData[NeedGoodID]['era']],
-                    OfferTT = FH.helper.str.Replacer(FH.t('Boxes.Market.OfferTT'), { 'era': FH.t('Eras.' + OfferEra), 'stock': FH.HTML.Format(ResourceStock[OfferGoodID]) }),
-                    NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(ResourceStock[NeedGoodID]) }),
+                    OfferEra = Technologies.Eras[FH.Goods.Data[OfferGoodID]['era']],
+                    NeedEra = Technologies.Eras[FH.Goods.Data[NeedGoodID]['era']],
+                    OfferTT = FH.helper.str.Replacer(FH.t('Boxes.Market.OfferTT'), { 'era': FH.t('Eras.' + OfferEra), 'stock': FH.HTML.Format(FH.RessourceStock[OfferGoodID]) }),
+                    NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(FH.RessourceStock[NeedGoodID]) }),
                     CurrentPos = (Trade['merchant']['is_self'] ? OwnPos : Pos);
 
                 h.push('<tr>');
-                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[OfferGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + GoodsData[OfferGoodID]['name'] + '</strong></td>');
+                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[OfferGoodID]['id'] +'"></span></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + FH.Goods.Data[OfferGoodID]['name'] + '</strong></td>');
                 h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
-                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodsData[NeedGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + GoodsData[NeedGoodID]['name'] + '</strong></td>');
+                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[NeedGoodID]['id'] +'"></span></td>');
+                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + FH.Goods.Data[NeedGoodID]['name'] + '</strong></td>');
                 h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
                 h.push('<td class="text-center">' + FH.HTML.Format(FH.Main.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
                 h.push('<td>' + Trade['merchant']['name'] + '</td>');
@@ -403,7 +403,7 @@ let Market = {
         }
 
         // only Affordable
-        if (Market.OnlyAffordable && Trade.need.value > (ResourceStock[Trade.need.good_id] || 0)) {
+        if (Market.OnlyAffordable && Trade.need.value > (FH.RessourceStock[Trade.need.good_id] || 0)) {
             return false;
         }
 
@@ -422,8 +422,8 @@ let Market = {
         
         let OfferGoodID = Trade['offer']['good_id'],
             NeedGoodID = Trade['need']['good_id'],
-            OfferEra = Technologies.Eras[GoodsData[OfferGoodID]['era']],
-            NeedEra = Technologies.Eras[GoodsData[NeedGoodID]['era']],
+            OfferEra = Technologies.Eras[FH.Goods.Data[OfferGoodID]['era']],
+            NeedEra = Technologies.Eras[FH.Goods.Data[NeedGoodID]['era']],
             EraDiff = OfferEra - NeedEra;
 
         if (EraDiff > 0 && !Market.TradeForHigher) {
@@ -448,7 +448,7 @@ let Market = {
             let CurrentOfferValue = (IsOwnOffer ? Trade['need']['value'] : Trade['offer']['value']),
                 CurrentNeedValue = (IsOwnOffer ? Trade['offer']['value'] : Trade['need']['value']);
 
-            if (ResourceStock[OfferGoodID] + CurrentOfferValue/2 < ResourceStock[NeedGoodID] - CurrentNeedValue/2) { //Stock is higher
+            if (FH.RessourceStock[OfferGoodID] + CurrentOfferValue/2 < FH.RessourceStock[NeedGoodID] - CurrentNeedValue/2) { //Stock is higher
                 if (!Market.TradeFairStock) {
                     return false;
                 }
@@ -487,11 +487,11 @@ let Market = {
         let AllowedGoods = [];
         if (ID === 0) {
             for (let i = 0; i < 5; i++) {
-                AllowedGoods.push(GoodsList[EraIndex * 5 + i]['id']);
+                AllowedGoods.push(FH.Goods.List[EraIndex * 5 + i]['id']);
             }
         }
         else {
-            AllowedGoods.push(GoodsList[EraIndex * 5 + ID - 1]['id']);
+            AllowedGoods.push(FH.Goods.List[EraIndex * 5 + ID - 1]['id']);
         }
 
         for (let i = 0; i < AllowedGoods.length; i++) {

@@ -216,7 +216,7 @@ let EventHandler = {
 		let OldLocale = moment.locale();
 		moment.locale('en-US');
 
-		const lang = ExtWorld.substr(0, 2);
+		const lang = FH.World.substr(0, 2);
 		const matcher = EventHandler.DateShapes(lang);
 
 		const capitalize = (s) => {
@@ -386,13 +386,13 @@ let EventHandler = {
 
 		/* Calculation */
 		if (!EventHandler.CurrentPlayerGroup) {
-			if (PlayerDictFriendsUpdated) {
+			if (FH.Players.FriendsUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Friends';
 			}
-			else if (PlayerDictGuildUpdated) {
+			else if (FH.Players.GuildUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Guild';
 			}
-			else if (PlayerDictNeighborsUpdated) {
+			else if (FH.Players.NeighborsUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Neighbors';
 			}
 			else {
@@ -446,9 +446,9 @@ let EventHandler = {
 		
 		h.push('<div class="tabs"><ul class="horizontal">');
 
-		h.push('<li class="' + (!PlayerDictNeighborsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Neighbors' ? 'active' : '') + '"><a class="toggle-players" data-value="Neighbors"><span>' + FH.t('Boxes.MoppelHelper.Neighbors') + '</span></a></li>');
-		h.push('<li class="' + (!PlayerDictGuildUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Guild' ? 'active' : '') + '"><a class="toggle-players" data-value="Guild"><span>' + FH.t('Boxes.MoppelHelper.GuildMembers') + '</span></a></li>');
-		h.push('<li class="' + (!PlayerDictFriendsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Friends' ? 'active' : '') + '"><a class="toggle-players" data-value="Friends"><span>' + FH.t('Boxes.MoppelHelper.Friends') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.NeighborsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Neighbors' ? 'active' : '') + '"><a class="toggle-players" data-value="Neighbors"><span>' + FH.t('Boxes.MoppelHelper.Neighbors') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.GuildUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Guild' ? 'active' : '') + '"><a class="toggle-players" data-value="Guild"><span>' + FH.t('Boxes.MoppelHelper.GuildMembers') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.FriendsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Friends' ? 'active' : '') + '"><a class="toggle-players" data-value="Friends"><span>' + FH.t('Boxes.MoppelHelper.Friends') + '</span></a></li>');
 
 		h.push('</ul></div></div>');
 
@@ -484,28 +484,28 @@ let EventHandler = {
 		let PlayerList = [];
 
 		if (EventHandler.CurrentPlayerGroup === 'Friends') {
-			if (!PlayerDictFriendsUpdated) {
+			if (!FH.Players.FriendsUpdated) {
 				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.FriendsSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
             }
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsFriend'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsFriend'] === true));
 		}
 		else if (EventHandler.CurrentPlayerGroup === 'Guild') {
-			if (!PlayerDictGuildUpdated) {
+			if (!FH.Players.GuildUpdated) {
 				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.GuildSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
 			}
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsGuildMember'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsGuildMember'] === true));
 		}
 		else if (EventHandler.CurrentPlayerGroup === 'Neighbors') {
-			if (!PlayerDictNeighborsUpdated) {
+			if (!FH.Players.NeighborsUpdated) {
 				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.NeighborsSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
 			}
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsNeighbor'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsNeighbor'] === true));
 		}
 
 		PlayerList = PlayerList.sort(function (a, b) {

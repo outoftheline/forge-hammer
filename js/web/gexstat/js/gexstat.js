@@ -138,7 +138,7 @@ let GexStat = {
 					return res;
 				}, {});
 
-				let currentGuildRank = rankdata[ExtGuildID] && rankdata[ExtGuildID].rank ? rankdata[ExtGuildID].rank : 0;
+				let currentGuildRank = rankdata[FH.Guild.ID] && rankdata[FH.Guild.ID].rank ? rankdata[FH.Guild.ID].rank : 0;
 
 				participants.forEach(guild => {
 
@@ -163,7 +163,7 @@ let GexStat = {
 				await GexStat.db.ranking.put({
 					gexweek: gexid,
 					participants: Object.values(rankingdata),
-					currentGuildID: ExtGuildID,
+					currentGuildID: FH.Guild.ID,
 					currentGuildRank: currentGuildRank,
 					lastupdate: FH.Main.getCurrentDate()
 				});
@@ -214,7 +214,7 @@ let GexStat = {
 					solvedEncounters: sumEncounters,
 					countMember: countMember,
 					activeMembers: activeMembers,
-					currentGuildID: ExtGuildID,
+					currentGuildID: FH.Guild.ID,
 					lastupdate: FH.Main.getCurrentDate()
 				});
 
@@ -444,7 +444,7 @@ let GexStat = {
 
 			if (!gexweek.currentGuildRank && hasParticipants) {
 				let rankdata = gexweek.participants.filter(function (d) {
-					return d.guildId === ExtGuildID;
+					return d.guildId === FH.Guild.ID;
 				});
 
 				CourseData.rankData.push(rankdata[0].rank);
@@ -955,7 +955,7 @@ let GexStat = {
 }
 
 FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
-	GExAttempts.setCount(ResourceStock.guild_expedition_attempt || 0)
+	GExAttempts.setCount(FH.RessourceStock.guild_expedition_attempt || 0)
 });
 
 FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) => {
@@ -1115,7 +1115,7 @@ let GexStockWarning = {
 		for (let part of parts) {
 			h+=`<tr>
 			<td>${srcLinks.icons(part.resource)}</td>
-			<td>${GoodsData[part.resource].name} (${FH.t("Eras."+Technologies.Eras[GoodsData[part.resource].era]+".short")})</td>
+			<td>${FH.Goods.Data[part.resource].name} (${FH.t("Eras."+Technologies.Eras[FH.Goods.Data[part.resource].era]+".short")})</td>
 			<td>${part.part}%</td>
 			</tr>`
 		}
