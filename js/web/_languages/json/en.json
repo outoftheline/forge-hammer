@@ -528,6 +528,7 @@
   "Boxes.GuildFights.GBGTargetsPosition": "Position for targets",
   "Boxes.GuildFights.GBGTargetsPositionBottom": "bottom",
   "Boxes.GuildFights.GBGTargetsPositionLeft": "left",
+  "Boxes.GuildFights.GBGTargetsPositionTop": "top",
   "Boxes.GuildFights.GBGTargetsShow": "Show targets",
   "Boxes.GuildFights.LastSnapshot": " - Last snapshot: __time__ ago",
   "Boxes.GuildFights.Negotiations": "Negotiations",
