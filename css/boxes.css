@@ -1855,7 +1855,7 @@ SettingsBox */
 	box-shadow: 0 0 4px 4px var(--black-50);
 	min-width: 120px;
 	max-width: 280px;
-	z-index: 1000;
+	z-index: 5006;
 	font-size: 90%;
 }
 
@@ -2551,40 +2551,59 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 #GBGTargets {
 	position: absolute;
-    bottom: 6px;
-    left: 240px;
+	box-sizing: border-box;
     z-index: 2000;
-	width: 160px;
 	color: #fffc;
 	text-shadow: 0 1px 1px var(--black);
 	display: flex;
-	flex-direction: column-reverse;
 	z-index: 200;
 	text-align: left;
 	gap: 12px;
-	padding: 6px;
+	padding: 12px;
 	pointer-events: none;
 }
 
-#GBGTargets div {
-	width: inherit;
+#GBGTargets.pos-bottom {
+    bottom: 0;
+    left: 223px;
+	width: calc(100% - 223px);
+	background: linear-gradient(0, var(--black-65) 30%, transparent);
+	align-items: end;
+	overflow: hidden;
+	flex-wrap: nowrap;
 }
 
-#GBGTargets small {
-	text-transform: uppercase;
-    font-weight: bold;
-    font-size: 9px;
-    letter-spacing: 1px;
+#GBGTargets.pos-left {
+    bottom: 149px;
+    left: 9px;
+	width: 144px;
+	background: linear-gradient(90deg, var(--black-65) 30%, transparent);
+	align-items: end;
+	flex-direction: column;
 }
 
-#GBGTargets span {
-	    background-color: var(--black-50);
+#GBGTargets .gbgTarget {
+	width: 120px;
+}
+
+#GBGTargets .progress > div {
+	height: 4px;
+	margin-bottom: 2px;
+}
+
+#GBGTargets .title, #GBGTargets .signal-countdown {
+	background-color: var(--black-65);
+	backdrop-filter: blur(2px);
     padding: 0 4px;
-    display: inline-block;
     border-radius: 4px;
 }
 
-#GBGTargets b {
+#GBGTargets .title {
+    display: flex;
+	align-items: center;
+}
+
+#GBGTargets .title b {
 	font-size: 250%;
 }
 
