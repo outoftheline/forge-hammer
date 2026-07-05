@@ -2,7 +2,7 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-
+{
 // GEX started
 FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	BonusService.InitBonus(true);
@@ -272,4 +272,6 @@ let BonusService = {
 		}
 		return Ret;
     }
+}
+FH.BonusService = {Bonuses: BonusService.Bonuses};
 }
