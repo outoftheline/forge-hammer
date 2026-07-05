@@ -166,9 +166,9 @@ let Boosts = {
             }
             
             if (b.origin === "inventory_item") {
-                BoostPotions.activate(b.type,{expire:b.expireTime,target:b.targetedFeature||"all",value:b.value})    
+                FH.BoostPotions.activate(b.type,{expire:b.expireTime,target:b.targetedFeature||"all",value:b.value})    
                 if (b.expireTime) {
-                    BoostPotions.TimeOut?.add(b)
+                    FH.BoostPotions.TimeOut?.add(b)
                 }
             }
 

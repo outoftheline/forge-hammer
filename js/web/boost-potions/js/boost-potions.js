@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-
+{
 // GEX started
 FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	BoostPotions.Show();
@@ -163,3 +163,5 @@ let BoostPotions = {
 	},
 
 };
+FH.BoostPotions = {activate: BoostPotions.activate}
+}
