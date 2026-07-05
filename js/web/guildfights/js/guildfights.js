@@ -271,8 +271,6 @@ let GuildFights = {
 			let provinceId = data.provinceId||0;
 			if (data.signal === "focus") {
 				let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
-
-				// no point signaling a focus on something the guild already owns
 				if (province?.ownerId === GuildFights.MapData.currentParticipantId) return;
 
 				GuildFights.Signals.push({provinceId: provinceId, signal: "focus"});
@@ -347,7 +345,7 @@ let GuildFights = {
 			let entry = container.find(`#target-${provinceId}`);
 
 			if (entry.length === 0) {
-				entry = $(`<div id="target-${provinceId}" class="gbgTarget">
+				entry = $(`<div id="target-${provinceId}" class="gbgTarget${unlocked ? ' open':''}">
 					<div class="progress"></div>
 					<span class="title">
 					<img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/> 
@@ -357,6 +355,8 @@ let GuildFights = {
 				</div>`);
 			}
 			else {
+				if (unlocked)
+					entry.addClass('open');
 				entry.find('.signal-countdown').text(title);
 			}
 
@@ -418,7 +418,7 @@ let GuildFights = {
 
 
 	HandlePlayerLeaderboard: async (d) => {
-		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
+		// always have two for reference
 		if (FH.Storage.getItem('GuildFights.NewAction') !== null) {
 			GuildFights.PrevAction = JSON.parse(FH.Storage.getItem('GuildFights.NewAction'));
 			GuildFights.PrevActionTimestamp = parseInt(FH.Storage.getItem('GuildFights.NewActionTimestamp'));
@@ -2012,6 +2012,7 @@ let GuildFights = {
 		<p><label for="gbgTargetsPosition">${FH.t('Boxes.GuildFights.GBGTargetsPosition')}</label> 
 		<select id="gbgTargetsPosition" name="gbgTargetsPosition">
 			<option value="bottom" ${gbgTargetsPosition === 'bottom' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionBottom')}</option>
+			<option value="top" ${gbgTargetsPosition === 'top' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionTop')}</option>
 			<option value="left" ${gbgTargetsPosition === 'left' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionLeft')}</option>
 		</select></p>
 

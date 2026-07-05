@@ -526,6 +526,7 @@
   "Boxes.GuildFights.GBGTargetsPosition": "Postion für Markierungen",
   "Boxes.GuildFights.GBGTargetsPositionBottom": "Unten",
   "Boxes.GuildFights.GBGTargetsPositionLeft": "Links",
+  "Boxes.GuildFights.GBGTargetsPositionTop": "Oben",
   "Boxes.GuildFights.GBGTargetsShow": "Zeige Markierungen",
   "Boxes.GuildFights.Fights": "Kämpfe",
   "Boxes.GuildFights.LastSnapshot": " - letzter Snapshot vor __time__",
