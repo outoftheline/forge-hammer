@@ -27,7 +27,7 @@ buildingMetaDB.version(1).stores({
 
 plannerDB.version(1).stores({
 	plans: "++id,world,planName,playerId,playerName,boostJSON,date",	
-	buildings: "[planId+id],planId,buildingId,x,y,type,JSON"
+	buildings: "[planId+buildingId],planId,buildingId,x,y,type,JSON"
 });
 
 // separate code from global scope
