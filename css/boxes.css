@@ -1146,10 +1146,7 @@ FP-Bar */
 #fp-bar.guild_raids {
 	left: 461px;
 }
-#fp-bar.gg {
-	left: 324px;
-}
-#fp-bar.gg .fp-bar-main, #fp-bar.gg .buyable-fp, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
+#fp-bar.gg, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
 	display: none;
 }
 #fp-bar.gex {
@@ -2566,8 +2563,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 #GBGTargets.pos-bottom {
     bottom: 0;
     left: 223px;
-	width: calc(100% - 223px);
-	background: linear-gradient(0, var(--black-65) 30%, transparent);
 	align-items: end;
 	overflow: hidden;
 	flex-wrap: nowrap;
@@ -2577,7 +2572,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
     bottom: 149px;
     left: 9px;
 	width: 144px;
-	background: linear-gradient(90deg, var(--black-65) 30%, transparent);
 	align-items: end;
 	flex-direction: column;
 }
