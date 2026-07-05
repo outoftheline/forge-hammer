@@ -796,6 +796,10 @@ p { margin: 0 0 10px 0; }
 	background-image: url('../images/menu/discord.png');
 }
 
+[id$=gbgActionLog-Btn] span {
+	background-image: url('../images/menu/gbg_action_log.png');
+}
+
 /***********************************************************************************/
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -2084,6 +2088,12 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .hud-btn #gex-attempt-count[data-number^="8"] {
+	background-color: var(--red);
+    box-shadow: 0 0 1px 1px var(--danger-red);
+}
+
+/* Red state for JS-toggled HUD counters (e.g. GBG Action Log collection age) */
+.hud-btn span.hud-counter.hud-counter-red {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
