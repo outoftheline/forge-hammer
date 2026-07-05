@@ -666,7 +666,7 @@ _menu = {
 		let btn = _menu.MakeButton('blueGalaxy');
 
 		let btn_sp = $('<span />').on('click', function () {
-			BlueGalaxy.Show();
+			FH.BlueGalaxyShow();
 		});
 
 		return btn.append(btn_sp, $('<span id="hidden-blue-galaxy-count" class="hud-counter">0</span>'));
@@ -1045,7 +1045,7 @@ let _menu_bottom = {
 		});
 
 		HiddenRewards.SetCounter();
-		BlueGalaxy.SetCounter();
+		FH.BlueGalaxy.SetCounter();
 	},
 
 	/**
@@ -1232,7 +1232,7 @@ let _menu_box = {
 		});
 
 		HiddenRewards.SetCounter();
-		BlueGalaxy.SetCounter();
+		FH.BlueGalaxy.SetCounter();
 	},
 
 
@@ -1458,7 +1458,7 @@ let _menu_right = {
 		});
 
 		HiddenRewards.SetCounter();
-		BlueGalaxy.SetCounter();
+		FH.BlueGalaxy.SetCounter();
 	},
 
 

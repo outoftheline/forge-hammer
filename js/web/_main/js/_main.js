@@ -1949,7 +1949,7 @@ let Main = {
 		Main.SetArkBonus2();
 
 		if ($('#bluegalaxy').length > 0) {
-			BlueGalaxy.CalcBody(Buildings);
+			FH.BlueGalaxy.CalcBody(Buildings);
 		}
 
 		FPCollector.CityMapDataNew = Buildings;
