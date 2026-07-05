@@ -1150,10 +1150,7 @@ FP-Bar */
 #fp-bar.guild_raids {
 	left: 461px;
 }
-#fp-bar.gg {
-	left: 324px;
-}
-#fp-bar.gg .fp-bar-main, #fp-bar.gg .buyable-fp, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
+#fp-bar.gg, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
 	display: none;
 }
 #fp-bar.gex {
@@ -2576,8 +2573,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 #GBGTargets.pos-bottom {
     bottom: 0;
     left: 223px;
-	width: calc(100% - 223px);
-	background: linear-gradient(0, var(--black-65) 30%, transparent);
 	align-items: end;
 	overflow: hidden;
 	flex-wrap: nowrap;
@@ -2587,13 +2582,16 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
     bottom: 149px;
     left: 9px;
 	width: 144px;
-	background: linear-gradient(90deg, var(--black-65) 30%, transparent);
 	align-items: end;
 	flex-direction: column;
 }
 
 #GBGTargets .gbgTarget {
 	width: 120px;
+}
+
+#GBGTargets .gbgTarget.open .signal-countdown {
+	display: none;
 }
 
 #GBGTargets .progress > div {
@@ -2606,6 +2604,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	backdrop-filter: blur(2px);
     padding: 0 4px;
     border-radius: 4px;
+	border-radius: 4px 4px 0 0;
 }
 
 #GBGTargets .title {
@@ -2620,6 +2619,55 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 #GBGTargets img {
 	height: 30px;
     vertical-align: text-bottom;
+}
+
+#GBGTargets.pos-top {
+    top: 4px;
+    left: 324px;
+	gap: 2px;
+	padding: 0;
+	max-width: calc(50% - 363px);
+    overflow-x: hidden;
+	height: 66px;
+	color: var(--beige);
+}
+
+#GBGTargets.pos-top .gbgTarget {
+	width: 70px;
+	position: relative;
+}
+#GBGTargets.pos-top .gbgTarget b {
+	font-weight: normal;
+}
+#GBGTargets.pos-top .signal-countdown, #GBGTargets.pos-top .title {
+	border: 1px solid #664421;
+}
+#GBGTargets.pos-top .signal-countdown {
+	font-size: 90%;
+	display: block;
+	margin-top: -1px;
+	border-radius: 0 0 4px 4px;
+}
+
+#GBGTargets.pos-top .progress {
+	position: absolute;
+	top: 28px;
+	left: 0;
+	width: 70px;
+}
+
+#GBGTargets.pos-top img {
+	height: 22px;
+	padding: 1px 1px 1px 0;
+}
+
+#GBGTargets.pos-top .title b {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#GBGTargets.pos-top #target-overflow {
+	display: none;
 }
 
 .unit_skill.rogue::before {background-position: calc(-144px*var(--unit_scale)) calc(-48px*var(--unit_scale))}

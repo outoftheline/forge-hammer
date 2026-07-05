@@ -524,7 +524,7 @@ let shopAssist = {
 			if (buildingIds.length<=limit) {
 				head +=`<td style="width:100%; vertical-align:top"><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
 				body += `<td style="width:100%; vertical-align:top">`;
-				body += await Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff);
+				body += await FH.Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff);
 				body += `</td>`
 			} else {
 				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`

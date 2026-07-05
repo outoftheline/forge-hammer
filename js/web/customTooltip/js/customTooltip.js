@@ -13,7 +13,7 @@ How-to set tooltip for Element x:
 e.g.:
  `<td class="helperTT" data-callback_tt="Tooltips.buildingTT">Ipsum Lorem</td>`;
 */
-
+{
 let Tooltips = {
 
     Container:null,
@@ -37,7 +37,18 @@ let Tooltips = {
         $('body').on("pointerenter",".helperTT", async (e)=>{
             if (e.currentTarget.dataset.callback_tt) {
                 Tooltips.activate()
-                let f=eval(e.currentTarget.dataset.callback_tt)
+                // resolve function path like "Namespace.fn" without using eval
+                let p = e.currentTarget.dataset.callback_tt.split('.');
+                let f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
+                if (!f) {
+                    const first = p.shift()
+                    if ('QIActions' == first) 
+                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions)
+                    else if ('Tooltips' == first) 
+                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips)
+                    else
+                        f = e.currentTarget.dataset.callback_tt;
+                }
                 if (typeof(f) == "function") {
                     let content = await(f(e));
                     if (content) {
@@ -90,6 +101,7 @@ let Tooltips = {
         Tooltips.Container.style.display = "none";
     },
     followMouse:(event)=>{
+        if (!Tooltips.containerActive) return;
         Tooltips.Container.style.left = (event.x+10) + "px";
         Tooltips.Container.style.top = (event.y+10) + "px";
         Tooltips.checkposition()
@@ -887,7 +899,11 @@ let QIActions = {
 		tooltip+=`<p>${moment.unix(fullAt).format('lll')}</p></div>`
 
 		return tooltip
-	}
+	},
+
+    setCapacity:(cap)=>{
+        QIActions.capacity=cap;
+    }
 }
 
 //GBG Rewards Stream
@@ -905,4 +921,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 });
 
 
-Tooltips.init()
+Tooltips.init();
+FH.Tooltips = {deactivate: Tooltips.deactivate, BuildingData: Tooltips.BuildingData};
+FH.QIActions = {setCapacity: QIActions.setCapacity};
+}

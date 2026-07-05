@@ -22,10 +22,10 @@ FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
 });
 
 FH.proxy.addFoeHelperHandler('BonusUpdated', data => {
-    for (let i = 0; i < BonusService.Bonuses.length; i++) {
-        if (BonusService.Bonuses[i]['type'] === 'double_collection') {
-            BlueGalaxy.DoubleCollections = BonusService.Bonuses[i]['amount'] | 0;
-            BlueGalaxy.GalaxyFactor = BonusService.Bonuses[i]['value'] / 100;
+    for (let i = 0; i < FH.BonusService.Bonuses.length; i++) {
+        if (FH.BonusService.Bonuses[i]['type'] === 'double_collection') {
+            BlueGalaxy.DoubleCollections = FH.BonusService.Bonuses[i]['amount'] | 0;
+            BlueGalaxy.GalaxyFactor = FH.BonusService.Bonuses[i]['value'] / 100;
             break;
         }
     }
