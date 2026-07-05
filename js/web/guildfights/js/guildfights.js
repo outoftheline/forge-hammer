@@ -318,7 +318,7 @@ let GuildFights = {
 			return lockedA - lockedB;
 		});
 
-		const maxSignals = 5;
+		const maxSignals = 4;
 		let visibleSignals = sortedSignals.slice(0, maxSignals),
 			overflowSignals = sortedSignals.slice(maxSignals);
 
@@ -331,7 +331,7 @@ let GuildFights = {
 			let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
 			let unlocked = remaining === null || remaining <= 0;
 
-			let title = "NOW!";
+			let title = "!!!";
 			if (remaining > 1800 * 1000) {
 				title = FH.t('Boxes.GuildFights.Time') +" "+ countDownDate.format('HH:mm');
 			}

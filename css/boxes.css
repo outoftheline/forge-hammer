@@ -2591,12 +2591,16 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	margin-bottom: 2px;
 }
 
-#GBGTargets .title {
+#GBGTargets .title, #GBGTargets .signal-countdown {
 	background-color: var(--black-65);
+	backdrop-filter: blur(2px);
     padding: 0 4px;
+    border-radius: 4px;
+}
+
+#GBGTargets .title {
     display: flex;
 	align-items: center;
-    border-radius: 4px;
 }
 
 #GBGTargets .title b {
