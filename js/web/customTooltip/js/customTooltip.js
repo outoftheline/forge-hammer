@@ -41,9 +41,10 @@ let Tooltips = {
                 let p = e.currentTarget.dataset.callback_tt.split('.');
                 let f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
                 if (!f) {
-                    if ('QIActions' == p.shift()) 
+                    const first = p.shift()
+                    if ('QIActions' == first) 
                         f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions)
-                    else if ('Tooltips' == p.shift()) 
+                    else if ('Tooltips' == first) 
                         f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips)
                     else
                         f = e.currentTarget.dataset.callback_tt;
