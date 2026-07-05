@@ -30,6 +30,11 @@ FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data =>
 	GuildFights.HandleSignals(data.responseData);
 });
 
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+	if (FH.ActiveMap !== 'gg') 
+		$('#GBGTargets').remove();
+});
+
 FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
 	if (data.responseData.stateId === 'unsubscribed') return;
 	GuildFights.GlobalRankingTimeout = setTimeout(()=>{
@@ -294,7 +299,7 @@ let GuildFights = {
 	ShowSignals: () => {
 		let signals = GuildFights.Signals || [];
 
-		if (!signals.length || !GuildFights.showGbgTargets) {
+		if (!signals.length || !GuildFights.showGbgTargets || FH.ActiveMap !== 'gg') {
 			$('#GBGTargets').remove();
 			return;
 		}
