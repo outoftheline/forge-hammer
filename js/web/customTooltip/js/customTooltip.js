@@ -38,10 +38,16 @@ let Tooltips = {
             if (e.currentTarget.dataset.callback_tt) {
                 Tooltips.activate()
                 // resolve function path like "Namespace.fn" without using eval
-                const functionFromString = (path) => {
-                    return path.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
-                };
-                let f = functionFromString(e.currentTarget.dataset.callback_tt);
+                let p = e.currentTarget.dataset.callback_tt.split('.');
+                let f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
+                if (!f) {
+                    if ('QIActions' == p.shift()) 
+                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions)
+                    else if ('Tooltips' == p.shift()) 
+                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips)
+                    else
+                        f = e.currentTarget.dataset.callback_tt;
+                }
                 if (typeof(f) == "function") {
                     let content = await(f(e));
                     if (content) {
@@ -892,7 +898,11 @@ let QIActions = {
 		tooltip+=`<p>${moment.unix(fullAt).format('lll')}</p></div>`
 
 		return tooltip
-	}
+	},
+
+    setCapacity:(cap)=>{
+        QIActions.capacity=cap;
+    }
 }
 
 //GBG Rewards Stream
@@ -912,4 +922,5 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 
 Tooltips.init();
 FH.Tooltips = {deactivate: Tooltips.deactivate, BuildingData: Tooltips.BuildingData};
+FH.QIActions = {setCapacity: QIActions.setCapacity};
 }

@@ -138,7 +138,7 @@ let Boosts = {
     },
     InitQIAP: async () => {
         await FH.ExistenceConfirmed('FH.Goods.Data.guild_raids_action_points');
-        QIActions.capacity  = (FH.Goods.Data.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity'];
+        FH.QIActions.setCapacity((FH.Goods.Data.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity']);
 
     },
     getFeatureType: (bonus) => {
