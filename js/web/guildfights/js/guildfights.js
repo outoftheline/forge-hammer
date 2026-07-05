@@ -1735,7 +1735,7 @@ let GuildFights = {
 	GetAlerts: async () => {
 		return new Promise(async (resolve, reject) => {
 			// is alert.js included?
-			if (!Alerts) {
+			if (!FH.Alerts) {
 				resolve();
 			}
 
