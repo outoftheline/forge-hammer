@@ -666,7 +666,7 @@ _menu = {
 		let btn = _menu.MakeButton('blueGalaxy');
 
 		let btn_sp = $('<span />').on('click', function () {
-			FH.BlueGalaxyShow();
+			FH.BlueGalaxy.Show();
 		});
 
 		return btn.append(btn_sp, $('<span id="hidden-blue-galaxy-count" class="hud-counter">0</span>'));
