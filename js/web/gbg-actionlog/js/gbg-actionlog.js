@@ -1,15 +1,6 @@
 /*
- * *************************************************************************************
- *
- * Copyright (C) 2022 FoE-Helper team - All Rights Reserved
- * You may use, distribute and modify this code under the
- * terms of the AGPL license.
- *
- * See file LICENSE.md or go to
- * https://github.com/mainIine/foe-helfer-extension/blob/master/LICENSE.md
- * for full license details.
- *
- * *************************************************************************************
+ * Copyright (C) 2026 Forge Hammer & Arklur
+ * See LICENSE.md for full license details.
  */
 
 FH.proxy.addHandler('GuildBattlegroundService', 'getActions', (data, postData) => {
@@ -1216,7 +1207,7 @@ let GBGActionLog = {
         let hourLabel = (h) => String(h).padStart(2, '0');
 
         // Single sortable header row; only the Player column carries a filter
-        let head = '<tr class="sorter-header" data-type="gbgalActivityBody">';
+        let head = '<tr class="sorter-header sort2" data-type="gbgalActivityBody">';
         head += `<th data-type="gbgalActivityBody" data-export="${FH.t('Boxes.GBGActionLog.Player')}">${FH.t('Boxes.GBGActionLog.Player')}${GBGActionLog.filterControl(0, 'multiselect', { options: players.map(p => FH.HTML.escapeHtml(p)) })}</th>`;
         for (let h = 0; h < 24; h++) {
             head += `<th class="is-number gbgal-hourcol" data-type="gbgalActivityBody" data-export="${hourLabel(h)}">${hourLabel(h)}</th>`;
