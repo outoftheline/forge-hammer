@@ -4,10 +4,37 @@
  */
 
 {
-if (typeof FH === 'undefined') {
-	window.FH = {};	
-} else {
-	FH.Translation = (()=>{
+Languages = {
+	PossibleLanguages: {
+		'bs': 'Bosanski',
+		'ca': 'Català',
+		'cs': 'Český',
+		'de': 'Deutsch',
+		'dk': 'Dansk',
+		'el': 'Ελληνικά',
+		'en': 'English',
+		'es': 'Español',
+		'fi': 'Suomi',
+		'fr': 'Français',
+		'hu': 'Magyar',
+		'it': 'Italiano',
+		'ja': '日本語',
+		//'nb_NO': 'Norsk bokmål',
+		'nl': 'Nederlands',
+		//'nn': 'Nynorsk',
+		'pl': 'Polski',
+		'pt': 'Português',
+		'pt-br': 'Português do Brasil',
+		'ro': 'Română',
+		'ru': 'Русский',
+		'sk': 'Slovenčina',
+		'sr_Latn': 'Srpski (latinica)',
+		'sv': 'Svenska',
+		'tr': 'Türkçe',
+		'uk': 'Українська',
+	},
+};
+
 Translation = {
 	targetData: null,
 	referenceData: null,
@@ -234,38 +261,10 @@ Translation = {
 		}
 	}
 };
-return Translation;
-})();
+if (typeof FH === 'undefined') {
+	window.FH = {};	
+} else {
+	FH.Translation = Translation;
 }
-FH.Languages = {
-	PossibleLanguages: {
-		'bs': 'Bosanski',
-		'ca': 'Català',
-		'cs': 'Český',
-		'de': 'Deutsch',
-		'dk': 'Dansk',
-		'el': 'Ελληνικά',
-		'en': 'English',
-		'es': 'Español',
-		'fi': 'Suomi',
-		'fr': 'Français',
-		'hu': 'Magyar',
-		'it': 'Italiano',
-		'ja': '日本語',
-		//'nb_NO': 'Norsk bokmål',
-		'nl': 'Nederlands',
-		//'nn': 'Nynorsk',
-		'pl': 'Polski',
-		'pt': 'Português',
-		'pt-br': 'Português do Brasil',
-		'ro': 'Română',
-		'ru': 'Русский',
-		'sk': 'Slovenčina',
-		'sr_Latn': 'Srpski (latinica)',
-		'sv': 'Svenska',
-		'tr': 'Türkçe',
-		'uk': 'Українська',
-	},
-};
-
+FH.Languages = Languages;
 }
