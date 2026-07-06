@@ -1,0 +1,302 @@
+/*
+ * **************************************************************************************
+ * Copyright (C) 2022 FoE-Helper team - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the AGPL license.
+ *
+ * See file LICENSE.md or go to
+ * https://github.com/mainIine/foe-helfer-extension/blob/master/LICENSE.md
+ * for full license details.
+ *
+ * **************************************************************************************
+ */
+
+
+ #GBGActionLog {
+	width: 800px;
+	height: 400px;
+}
+
+#GBGActionLogBody {
+	overflow: auto;
+	position: relative; /* scope the initial loading overlay (.loading-data) to the body */
+}
+
+/* Let the tab strip + control bars grow to the widest table so their background spans the
+   full width when the table scrolls horizontally; min-width keeps them filling a narrow window */
+#GBGActionLogBody .gbgal-tabs {
+	width: max-content;
+	min-width: 100%;
+}
+
+#GBGActionLogBody thead tr.sorter-header th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+}
+
+#GBGActionLogBody thead .gbg-log-filter {
+	width: 100%;
+	box-sizing: border-box;
+	font-weight: normal;
+}
+
+/* Range inputs keep their natural width so From/To line up (matches the Details Time popup) */
+#GBGActionLogBody thead .gbg-flt-from,
+#GBGActionLogBody thead .gbg-flt-to {
+	width: auto;
+}
+
+/* Number range inputs only need room for a few digits + spinner */
+#GBGActionLogBody thead .gbg-log-popup input[type="number"] {
+	width: 4em;
+}
+
+#GBGActionLogBody .gbg-log-filterbtn {
+	cursor: pointer;
+	padding: 0 3px;
+	margin-left: 4px;
+	font-weight: normal;
+}
+
+#GBGActionLogBody .gbg-log-filterbtn {
+	opacity: .5;
+}
+
+#GBGActionLogBody .gbg-log-filterbtn:hover {
+	opacity: 1;
+}
+
+/* active filter: column currently has a value */
+#GBGActionLogBody .gbg-log-filterbtn.gbg-flt-on {
+	opacity: 1;
+	color: var(--text-dark);
+	background-color: var(--golden);
+}
+
+#GBGActionLogBody .gbg-log-popup {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 5;
+	transform: translateZ(0); /* own paint layer: avoids a stale-paint glitch inside the sticky header */
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 6px;
+	white-space: nowrap;
+	background: var(--bg-light);
+	color: var(--text-dark);
+	border: 1px solid var(--text-dark);
+	border-radius: 4px;
+	box-shadow: 0 1px 1px var(--black-50);
+}
+
+#GBGActionLogBody .gbg-log-popup label {
+	display: flex;
+	justify-content: space-between;
+	gap: 6px;
+}
+
+/* Details tab: multi-select column filter (checkbox list), styled like the .dropdown list rows.
+   Flush rows + separators; cap height so long lists scroll */
+#GBGActionLogBody .gbg-log-popup[data-match="multiselect"] {
+	max-height: 240px;
+	overflow-y: auto;
+	gap: 0;
+}
+
+#GBGActionLogBody .gbg-log-popup[data-match="multiselect"] label {
+	justify-content: flex-start;
+	align-items: center;
+	font-weight: normal;
+	padding: 0.2rem;
+}
+
+#GBGActionLogBody .gbg-log-popup[data-match="multiselect"] label + label {
+	border-top: 1px solid var(--text-medium);
+}
+
+#GBGActionLogBody .gbg-log-popup[data-match="multiselect"] label:hover {
+	background-color: var(--bg-medium);
+	color: var(--text-dark);
+}
+
+#GBGActionLogBody thead .gbg-log-popup[data-match="multiselect"] .gbg-log-filter {
+	width: auto;
+}
+
+#GBGActionLogBody .gbgal-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 4px;
+}
+
+/* Details tab: row counter, pushed to the right end of the toolbar */
+#GBGActionLogBody .gbgal-detail-table-kpi {
+	margin-left: auto;
+	white-space: nowrap;
+	font-weight: bold;
+}
+
+#GBGActionLogBody .gbgal-empty {
+	padding: 10px;
+}
+
+/* Batches tab: rows where logCount hit the 200-entry cap (older entries may be missing) — strong red so they stand out */
+#GBGActionLogBody table.foe-table tr.gbgal-cap-hit td {
+    background-color: var(--att);
+    border-top-color: var(--red);
+    border-bottom-color: var(--red);
+    font-weight: bold;
+}
+
+/* Report + Activity tabs: date-range + action control bar above the table.
+   font-size matches the shared .dropdown box (1rem) so all controls line up */
+#GBGActionLogBody .gbgal-report-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 12px;
+	margin: 4px;
+	padding: 6px 8px;
+	background: var(--black-50);
+	font-size: 1rem;
+}
+
+/* Bold only the direct field labels (From/To). The ":" labels (Action/Show) use
+   .gbgal-report-actions-label; the child combinator keeps nested .dropdown labels normal-weight */
+#GBGActionLogBody .gbgal-report-controls > label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: bold;
+}
+
+/* Date inputs sized like the .dropdown box (form controls don't inherit font) */
+#GBGActionLogBody .gbgal-report-controls input[type="date"] {
+	font-size: 1rem;
+	font-weight: normal;
+}
+
+#GBGActionLogBody .gbgal-report-actions {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 10px;
+}
+
+#GBGActionLogBody .gbgal-report-actions-label {
+	font-weight: bold;
+}
+
+/* Report tab: action multi-select reuses the shared .dropdown component (see css/boxes.css) */
+#GBGActionLogBody .gbg-report-action-dd {
+	width: 11rem;
+	text-align: left;
+}
+
+/* keep the drop list above the table's sticky header (Report + Activity action dropdowns) */
+#GBGActionLogBody .gbgal-action-dd ul {
+	z-index: 6;
+}
+
+/* Settings popup (wrench icon): stacked labels + full-width format inputs */
+#GBGActionLogSettingsBox label {
+	display: block;
+	margin-bottom: 2px;
+	font-weight: bold;
+}
+
+#GBGActionLogSettingsBox input[type="text"] {
+	width: 100%;
+	box-sizing: border-box;
+	text-align: left;
+}
+
+#GBGActionLogSettingsBox input[type="number"] {
+	width: 5em;
+}
+
+#GBGActionLogSettingsBox .gbgal-set-hint {
+	opacity: .8;
+	font-size: 90%;
+}
+
+/* Activity tab: hour-of-day heatmap. Compact, centred hour cells */
+#GBGActionLogBody .gbgal-hourcol {
+	text-align: center;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+/* Per-cell intensity scale (5 buckets, faint yellow -> deep red); td wins over foe-table row striping */
+#GBGActionLogBody td.gbgal-heat-1 { background-color: rgba(254, 220, 0, .25); color: var(--text-dark); }
+#GBGActionLogBody td.gbgal-heat-2 { background-color: rgba(254, 220, 0, .55); color: var(--text-dark); }
+#GBGActionLogBody td.gbgal-heat-3 { background-color: rgba(247, 148, 29, .80); color: var(--text-dark); }
+#GBGActionLogBody td.gbgal-heat-4 { background-color: rgba(199, 44, 44, .88); color: #fff; }
+#GBGActionLogBody td.gbgal-heat-5 { background-color: rgba(147, 9, 9, .95); color: #fff; }
+
+/* Activity tab: guild-total footer row, held at the bottom (tableSorter only sorts tbody) */
+#GBGActionLogBody .gbgal-activity-total td {
+	font-weight: bold;
+	border-top: 2px solid var(--text-medium);
+}
+
+/* Native select + inputs aligned with the .dropdown component's light box (see css/boxes.css) */
+#GBGActionLogBody select,
+#GBGActionLogBody input[type="text"],
+#GBGActionLogBody input[type="number"],
+#GBGActionLogBody input[type="date"],
+#GBGActionLogBody input[type="datetime-local"] {
+	background-color: var(--bg-light);
+	color: var(--text-dark);
+	border: 1px solid var(--text-dark);
+	border-radius: 4px;
+	padding: .2rem;
+}
+
+/* Details tab: leading icon on Actor type / Actor name cells. Sized to the row text and
+   decorative — the icon adds no textContent, so column filters and CSV export stay unaffected */
+#GBGActionLogBody td .gbgal-cell-icon {
+	height: 1.4em;
+	width: auto;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
+/* Details tab: Building column colour swatch (rectangle), coloured by type below (all tiers of each type share one colour) */
+#GBGActionLogBody .gbgal-bld-rect {
+	display: inline-block;
+	width: 1.6em;
+	height: 1em;
+	vertical-align: middle;
+	margin-right: 5px;
+	border: 1px solid var(--black-50);
+	border-radius: 2px;
+}
+#GBGActionLogBody .gbgal-bld-barracks { background-color: #f93939; }
+#GBGActionLogBody .gbgal-bld-outpost  { background-color: #a25206; }
+#GBGActionLogBody .gbgal-bld-camp     { background-color: #36a960; }
+#GBGActionLogBody .gbgal-bld-other    { background-color: var(--beige); }
+
+/* Details tab: Action column colour swatch (rectangle). Good/bad/neutral by action code below;
+   unmatched codes keep the base rule, so the swatch falls back to the current font colour */
+#GBGActionLogBody .gbgal-act-rect {
+	display: inline-block;
+	width: 1.6em;
+	height: 1em;
+	vertical-align: middle;
+	margin-right: 5px;
+	border: 1px solid var(--black-50);
+	border-radius: 2px;
+	background-color: currentColor;
+}
+
+#GBGActionLogBody .gbgal-act-bld-placed { background-color: #1df71d; }
+#GBGActionLogBody .gbgal-act-bld-dstr   { background-color: #fedc00; }
+#GBGActionLogBody .gbgal-act-prov-conq  { background-color: #ffffff; }
+#GBGActionLogBody .gbgal-act-prov-lost  { background-color: #000000; }
+#GBGActionLogBody .gbgal-act-att-ign    { background-color: #ff0000 }
+#GBGActionLogBody .gbgal-act-other      { background-color: var(--beige); }

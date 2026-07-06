@@ -298,6 +298,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		GuildFights.checkForDB(FH.Player.ID);
 		QiProgress.checkForDB(FH.Player.ID);
 		Notes.checkForDB(FH.Player.ID);
+		GBGActionLog.checkForDB(FH.Player.ID);
 
 		// which tab is active in StartUp Object?
 		let vals = {

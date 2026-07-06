@@ -796,6 +796,10 @@ p { margin: 0 0 10px 0; }
 	background-image: url('../images/menu/discord.png');
 }
 
+[id$=gbgActionLog-Btn] span {
+	background-image: url('../images/menu/gbg_action_log.png');
+}
+
 /***********************************************************************************/
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -2085,6 +2089,12 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
 
+/* Red state for JS-toggled HUD counters (e.g. GBG Action Log collection age) */
+.hud-btn span.hud-counter.hud-counter-red {
+	background-color: var(--red);
+    box-shadow: 0 0 1px 1px var(--danger-red);
+}
+
 
 #forgehammer-hud.hud-right {
 	right: 0;
@@ -2587,6 +2597,8 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 #GBGTargets .progress > div {
 	height: 4px;
 	margin-bottom: 2px;
+	box-shadow: 0 0 1px 1px #0005;
+	border-radius: 1px;
 }
 
 #GBGTargets .title, #GBGTargets .signal-countdown {
@@ -2594,7 +2606,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	backdrop-filter: blur(2px);
     padding: 0 4px;
     border-radius: 4px;
-	border-radius: 4px 4px 0 0;
 }
 
 #GBGTargets .title {
@@ -2612,7 +2623,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets.pos-top {
-    top: 4px;
+    top: 3px;
     left: 324px;
 	gap: 2px;
 	padding: 0;
@@ -2631,7 +2642,19 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 #GBGTargets.pos-top .signal-countdown, #GBGTargets.pos-top .title {
 	border: 1px solid #664421;
+	border-radius: 4px 4px 0 0;
 }
+
+#GBGTargets.pos-top img {
+	height: 23px;
+	padding: 1px 1px 1px 0;
+}
+
+#GBGTargets.pos-top .title b {
+	font-size: 18px;
+	font-weight: bold;
+}
+
 #GBGTargets.pos-top .signal-countdown {
 	font-size: 90%;
 	display: block;
@@ -2644,16 +2667,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	top: 28px;
 	left: 0;
 	width: 70px;
-}
-
-#GBGTargets.pos-top img {
-	height: 22px;
-	padding: 1px 1px 1px 0;
-}
-
-#GBGTargets.pos-top .title b {
-	font-size: 18px;
-	font-weight: bold;
 }
 
 #GBGTargets.pos-top #target-overflow {
