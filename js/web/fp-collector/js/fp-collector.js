@@ -260,7 +260,7 @@ FH.proxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 
 // double Collection by Blue Galaxy contains [id, type]  - NEW Version
 FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
-	let BonusId = FH.BonusService.Bonuses.find(object => object.type === 'double_collection')?.id;
+	let BonusId = FH.BonusService.getBonuses().find(object => object.type === 'double_collection')?.id;
 	if (!BonusId) return;
   	for (let j in data['responseData']['bonus']) {
 		if (!data['responseData']['bonus'].hasOwnProperty(j)) continue;

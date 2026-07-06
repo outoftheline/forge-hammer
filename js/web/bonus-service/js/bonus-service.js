@@ -271,7 +271,10 @@ let BonusService = {
 			if (Quest['state'] === 'collectReward') Ret += 1;
 		}
 		return Ret;
-    }
+    },
+	getBonuses: () => {
+		return BonusService.Bonuses;
+	}
 }
-FH.BonusService = {Bonuses: BonusService.Bonuses};
+FH.BonusService = {getBonuses: BonusService.getBonuses};
 }
