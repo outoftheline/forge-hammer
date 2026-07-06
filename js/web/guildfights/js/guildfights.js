@@ -21,10 +21,10 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postDat
 	GuildFights.HandleGuildLeaderboard(data.responseData);
 });
 
-/*FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
+FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
 	if (data.responseData.action === "province_conquered")
-		console.log(data.responseData.provinceId);
-});*/
+		GuildFights.HandleSignals(data.responseData);
+});
 
 FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
 	GuildFights.HandleSignals(data.responseData);
@@ -69,20 +69,17 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	$('#gildFight-Btn').removeClass('hud-btn-red');
 	$('#selectorCalc-Btn-closed').remove();
 
-	if ($('#ProvinceMap').length > 0) {
+	if ($('#ProvinceMap').length > 0) 
 		ProvinceMap.RefreshSector();
-	}
 
-	// update box when open
-	if ($('#LiveGuildFighting').length > 0) {
+	if ($('#LiveGuildFighting').length > 0) 
 		GuildFights.BuildFightContent();
-	}
 
 	setTimeout(function () {
 		if (GuildFights.autoOpen && $('#LiveGuildFighting').length === 0) {
 			GuildFights.ShowGuildBox();
 		}
-	}, 750);
+	}, 800);
 
 	GuildFights.HandleSignals();
 });
@@ -265,8 +262,10 @@ let GuildFights = {
 
 
 	HandleSignals: (data = null) => {
-		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		if (!GuildFights.showGbgTargets) return;
 
+		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		
 		if (data) {
 			let provinceId = data.provinceId||0;
 			if (data.signal === "focus") {
@@ -275,7 +274,7 @@ let GuildFights = {
 
 				GuildFights.Signals.push({provinceId: provinceId, signal: "focus"});
 			}
-			else if (data.signal === undefined) {
+			else if (data.signal === undefined || data.signal === "ignore") {
 				let signal = GuildFights.Signals.findIndex(prov => prov.provinceId === provinceId);
             	if (signal !== -1) GuildFights.Signals.splice(signal, 1);
 			}
