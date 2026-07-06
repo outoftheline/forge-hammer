@@ -1293,6 +1293,7 @@
   "Boxes.Tooltip.Building.road2": "zweispurige Straße benötigt",
   "Boxes.Tooltip.Building.size+time": "Größe und Bauzeit",
   "Boxes.Tooltip.Building.traits": "Merkmale",
+  "Boxes.Tooltip.Building.upgradesAutomatically": "Automatisch im aktuellen Zeitalter",
   "Boxes.Tooltip.Building.when": "wenn",
   "Boxes.Tooltip.Efficiency.description": "Folgende Kombinationen sind möglich",
   "Boxes.Translation.ClearStorage": "Zwischenspeicher leeren",
