@@ -1,14 +1,6 @@
 /*
- * **************************************************************************************
- * Copyright (C) 2022 FoE-Helper team - All Rights Reserved
- * You may use, distribute and modify this code under the
- * terms of the AGPL license.
- *
- * See file LICENSE.md or go to
- * https://github.com/mainIine/foe-helfer-extension/blob/master/LICENSE.md
- * for full license details.
- *
- * **************************************************************************************
+ * Copyright (C) 2026 Forge Hammer & Arklur
+ * See LICENSE.md for full license details.
  */
 
 
@@ -18,7 +10,7 @@
 }
 
 #GBGActionLogBody {
-	overflow: auto;
+	overflow-y: auto;
 	position: relative; /* scope the initial loading overlay (.loading-data) to the body */
 }
 
@@ -146,9 +138,9 @@
 
 /* Batches tab: rows where logCount hit the 200-entry cap (older entries may be missing) — strong red so they stand out */
 #GBGActionLogBody table.foe-table tr.gbgal-cap-hit td {
-    background-color: var(--att);
-    border-top-color: var(--red);
-    border-bottom-color: var(--red);
+    background-color: var(--table-bg-error);
+    border-top-color: var(--table-bt-error);
+    border-bottom-color: var(--table-bb-error);
     font-weight: bold;
 }
 
@@ -229,6 +221,7 @@
 	text-align: center;
 	padding-left: 5px;
 	padding-right: 5px;
+	text-shadow: none;
 }
 
 /* Per-cell intensity scale (5 buckets, faint yellow -> deep red); td wins over foe-table row striping */
@@ -266,37 +259,23 @@
 	margin-right: 4px;
 }
 
-/* Details tab: Building column colour swatch (rectangle), coloured by type below (all tiers of each type share one colour) */
-#GBGActionLogBody .gbgal-bld-rect {
+/* Details tab: Building & Action column colour swatch (rectangle), coloured by type below (all tiers of each type share one colour) */
+#GBGActionLogBody .gbgal-bld-rect, #GBGActionLogBody .gbgal-act-rect {
 	display: inline-block;
-	width: 1.6em;
+	width: 1em;
 	height: 1em;
 	vertical-align: middle;
 	margin-right: 5px;
-	border: 1px solid var(--black-50);
 	border-radius: 2px;
 }
-#GBGActionLogBody .gbgal-bld-barracks { background-color: #f93939; }
-#GBGActionLogBody .gbgal-bld-outpost  { background-color: #a25206; }
-#GBGActionLogBody .gbgal-bld-camp     { background-color: #36a960; }
+#GBGActionLogBody .gbgal-bld-barracks { background-color: #be1a1a; }
+#GBGActionLogBody .gbgal-bld-outpost  { background-color: #6b3f16; }
+#GBGActionLogBody .gbgal-bld-camp     { background-color: #36a983; }
 #GBGActionLogBody .gbgal-bld-other    { background-color: var(--beige); }
 
-/* Details tab: Action column colour swatch (rectangle). Good/bad/neutral by action code below;
-   unmatched codes keep the base rule, so the swatch falls back to the current font colour */
-#GBGActionLogBody .gbgal-act-rect {
-	display: inline-block;
-	width: 1.6em;
-	height: 1em;
-	vertical-align: middle;
-	margin-right: 5px;
-	border: 1px solid var(--black-50);
-	border-radius: 2px;
-	background-color: currentColor;
-}
-
-#GBGActionLogBody .gbgal-act-bld-placed { background-color: #1df71d; }
-#GBGActionLogBody .gbgal-act-bld-dstr   { background-color: #fedc00; }
-#GBGActionLogBody .gbgal-act-prov-conq  { background-color: #ffffff; }
-#GBGActionLogBody .gbgal-act-prov-lost  { background-color: #000000; }
-#GBGActionLogBody .gbgal-act-att-ign    { background-color: #ff0000 }
+#GBGActionLogBody .gbgal-act-bld-placed { background-color: #25cc25; }
+#GBGActionLogBody .gbgal-act-bld-dstr   { background-color: #eed21e; }
+#GBGActionLogBody .gbgal-act-prov-conq  { background-color: #dfdfdf; }
+#GBGActionLogBody .gbgal-act-prov-lost  { background-color: #111111; }
+#GBGActionLogBody .gbgal-act-att-ign    { background-color: #c00f0f }
 #GBGActionLogBody .gbgal-act-other      { background-color: var(--beige); }
