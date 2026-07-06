@@ -260,6 +260,12 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 		Main.Allies.updateAllyList();
 	});
+	FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+		$('.MapActivityCheck:not(.ActiveOn'+FH.ActiveMap+")").remove();
+		$('.MapActivityHide').hide();
+		$('.MapActivityHide.ActiveOn'+FH.ActiveMap).show();
+
+	})
 
 	// Portrait-Mapping für Spieler Avatare
 	FH.proxy.addRawHandler((xhr, requestData) => {

@@ -17,7 +17,7 @@ let peoples = [
 let ranking = helper.arr.multisort(peoples, ['points', 'name'], ['DESC','ASC']);
 
 */
-FH.helper = (() => {
+{
 let helper = {};
 helper.str = {
 	/**
@@ -216,10 +216,6 @@ helper.loadChartJS = () => {
 
 	return helper._chartJSPromise;
 };
-return helper;
-}) ()
-
-FH.HTML = (() => {
 let HTML = {
 
 	customFunctions: [],
@@ -1085,12 +1081,6 @@ let HTML = {
 		}
 	},
 };
-
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
-	$('.MapActivityCheck:not(.ActiveOn'+FH.ActiveMap+")").remove();
-	$('.MapActivityHide').hide();
-	$('.MapActivityHide.ActiveOn'+FH.ActiveMap).show();
-
-});
-return HTML;
-}) ()
+FH.helper = helper;
+FH.HTML = HTML;
+}

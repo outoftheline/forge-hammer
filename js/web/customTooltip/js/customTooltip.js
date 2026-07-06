@@ -41,13 +41,25 @@ let Tooltips = {
                 let p = e.currentTarget.dataset.callback_tt.split('.');
                 let f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
                 if (!f) {
-                    const first = p.shift()
-                    if ('QIActions' == first) 
-                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions)
-                    else if ('Tooltips' == first) 
-                        f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips)
-                    else
-                        f = e.currentTarget.dataset.callback_tt;
+                    switch (p.shift()) {
+                        case 'QIActions':
+                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions);
+                            break;
+                        case 'Tooltips':
+                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips);
+                            break;
+                        case 'Kits':
+                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Kits);
+                            break;
+                        case 'shopAssist':
+                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, shopAssist);
+                            break;
+                        case 'Productions':
+                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Productions);
+                            break;
+                        default:
+                            f = e.currentTarget.dataset.callback_tt;
+                    }
                 }
                 if (typeof(f) == "function") {
                     let content = await(f(e));
@@ -286,7 +298,14 @@ let Tooltips = {
             if (levels?.AllAge?.cityLimit) {
                 traits+=`<tr><td>${srcLinks.icons("icon_unique_building")}${FH.t("Boxes.Tooltip.Building.isUnique")} (${Object.values(FH.Main.CityMapData).filter(x => FH.Main.CityEntities?.[x.cityentity_id]?.components?.AllAge?.cityLimit?.buildingFamily == levels?.AllAge?.cityLimit?.buildingFamily).length+"/"+FH.Main.BuildingFamilyLimits?.[levels?.AllAge?.cityLimit?.buildingFamily] || 1})</td></tr>`
             }
-            
+            const flagList = {        
+                4:  ["icon_age",         "upgradesAutomatically"],
+                32: ["icon_fsp_disabled","fspDisabled"],
+            }
+            let f = meta?.components?.AllAge?.flags?.flags || 0
+            for (let [bit, [icon, label]] of Object.entries(flagList)) {
+                if (f & bit) traits+=`<tr><td>${srcLinks.icons(icon)}${FH.t("Boxes.Tooltip.Building."+label)}</td></tr>`
+            }  
             for (let r of levels.AllAge?.ally?.rooms || []) {
                 let allydata = null
                 for (a of allies||[]) {
@@ -555,13 +574,17 @@ let Tooltips = {
             out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>`
             out+=`<tr><td class="multiCol"><div>${srcLinks.icons("size")} ${levels.AllAge.placement.size.y+"x"+levels.AllAge.placement.size.x}</div>`
             out+=levels.AllAge?.constructionTime?.time ? `<div>${srcLinks.icons("icon_time")}${formatTime(levels.AllAge.constructionTime.time)}</div>`:``
-            if (levels.AllAge.streetConnectionRequirement?.requiredLevel) {
-                if (levels.AllAge.streetConnectionRequirement?.requiredLevel == 2)
+            switch (levels.AllAge.streetConnectionRequirement?.requiredLevel || 0) {
+                case 2:
                     out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
-                else if (levels.AllAge.streetConnectionRequirement?.requiredLevel == 1)
+                    break;
+                case 1:
                     out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
-                    
+                    break;
+                default:
+                    out+=`<div><img class="game-cursor" src="${FH.extUrl + 'js/web/x_img/noroad.png'}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
             }
+
             out+=`</td></tr>`
             
             if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
@@ -819,11 +842,16 @@ let Tooltips = {
             out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>`
             out+=`<tr><td class="multiCol"><div>${srcLinks.icons("size")} ${meta.length+"x"+meta.width}</div>`
             out+=meta.construction_time?`<div>${srcLinks.icons("icon_time")}${formatTime(meta.construction_time)}</div>`:``
-            if (meta.requirements?.street_connection_level == 2)
-                out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
-            else if (meta.requirements?.street_connection_level == 1)
-                out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
-        
+            switch (meta.requirements?.street_connection_level || 0) {
+                case 2:
+                    out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
+                    break;
+                case 1:
+                    out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
+                    break;
+                default:
+                    out+=`<div><img class="game-cursor" src="${FH.extUrl + 'js/web/x_img/noroad.png'}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
+            }
             out+=`</td></tr>`
             
             if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
