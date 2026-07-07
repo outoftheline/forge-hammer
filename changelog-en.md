@@ -1,6 +1,9 @@
 # Changelog
  
 ## Version 1.2
+### New
+- added 
+
 ### Updated
 - Stats: CSV export added to all line graphs: player resources, guild resources, units, GBG guild victory points, GBG player progression
 - Stats: GBG player progression was moved to the GBG window and only current season will be shown from now on

@@ -38,9 +38,8 @@ let Tooltips = {
         $('body').on("pointerenter",".helperTT", async (e)=>{
             if (e.currentTarget.dataset.callback_tt) {
                 Tooltips.activate()
-                // resolve function path like "Namespace.fn" without using eval
-                let f = e.currentTarget.dataset.callback_tt.split('.');
-                if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f]
+                let f = e.currentTarget.dataset.callback_tt;
+                if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
                 if (typeof(f) == "function") {
                     let content = await(f(e));
                     if (content) {
@@ -565,7 +564,7 @@ let Tooltips = {
                     out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
                     break;
                 default:
-                    out+=`<div><img class="game-cursor" src="${FH.extUrl + 'js/web/x_img/noroad.png'}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
+                    out+=`<div><img class="game-cursor" src="${srcLinks.get("/shared/gui/buffbar/buffbar_icon_buff_unconnected.png", true)}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
             }
 
             out+=`</td></tr>`
@@ -833,7 +832,7 @@ let Tooltips = {
                     out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
                     break;
                 default:
-                    out+=`<div><img class="game-cursor" src="${FH.extUrl + 'js/web/x_img/noroad.png'}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
+                    out+=`<div><img class="game-cursor" src="${srcLinks.get("/shared/gui/buffbar/buffbar_icon_buff_unconnected.png", true)}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
             }
             out+=`</td></tr>`
             
