@@ -600,7 +600,10 @@ let GuildFights = {
 				h.push(`<div id="gbgLogFilter">
 							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${FH.t('Boxes.GuildFights.Stats.Open')}</button>
 							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<div class="btn-group">
 							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
+							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')} ${GBGActionLog.refreshMenuBadge()}</button>
+							</div>
 						</div>`);
 			}
 			h.push(`</div>`);
