@@ -42,10 +42,12 @@
 }
 
 #GuildPlayersBody .btn-mid span {
-	padding: 0 2px;
+	padding: 0 3px;
+	border-radius: 3px;
+	background-color: var(--black-50);
 }
 #GuildPlayersBody .btn-mid .counter-red {
-	background-color: var(--table-bg-error);
+	background-color: var(--table-bb-error);
 }
 
 #GuildPlayersBody tr th span,

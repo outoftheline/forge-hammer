@@ -58,7 +58,7 @@ let GBGActionLog = {
 	 */
 	refreshMenuBadge: () => {
 		let last = GBGActionLog.lastCollected();
-		if (!last) return;
+		if (!last) return '';
 
 		let hours = Math.floor((moment().unix() - last) / 3600);
         if (hours > 0)
