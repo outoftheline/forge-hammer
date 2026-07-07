@@ -8,9 +8,12 @@
 - GBG: Added option to open the window automatically when you visit the map
 - Shop Assistant: Added search
 - Notes: Added setting to open them automatically on game start
+- Building Tooltips: now displays when a buildings production can not be accelerated by FSP and whether it upgrades automatically to current era (Thanks @WOLFIE). Furthermore, it is now indicated when a building does not require a road
+- Translations: fr (Thanks @Damrus le Cruel) and it (Thanks @Alej92415) were updated
 
 ### Bug fixes
 - GBG Overview: Data without entries could be shown in the history
+- Translations: were not properly saved
 
 ---
  

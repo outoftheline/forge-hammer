@@ -8,9 +8,12 @@
 - Gefechte: Option zum automatischen Öffnen hinzugefügt
 - Shops: Suchfeld hinzugefügt
 - Notizen: Einstellung für automatisches Öffnen beim Spielstart hinzugefügt
+- Gebäudetooltips: Es wird nun angezeigt, dass Gebäude nicht mittest SPA beschleunigt werden können und ob sie sich automatisch dem Zeitaler anpassen (Danke an WOLFI) weiterhin wurde ein Hinweis ergänzt, wenn ein Gebäude keine Straße benötigt
+- Übersetzungen: fr (Danke an Damrus le Cruel) und it (Danke an Alej92415) aktualisiert
 
 ### Bug Fixes
 - Gefechte: Es konnten leere Einträge in der Gefechtshistorie angezeigt werden
+- Übersetzungen: wurden unter anderem nicht korrekt gespeichert
 
 ---
  
