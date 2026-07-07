@@ -2634,7 +2634,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets.pos-top .gbgTarget {
-	width: 70px;
+	width: 71px;
 	position: relative;
 }
 #GBGTargets.pos-top .gbgTarget b {
@@ -2656,7 +2656,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets.pos-top .signal-countdown {
-	font-size: 90%;
+	font-size: 85%;
 	display: block;
 	margin-top: -1px;
 	border-radius: 0 0 4px 4px;
