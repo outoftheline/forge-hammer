@@ -39,7 +39,15 @@
 #GuildPlayersDetailViewBody tr th {
 	background-color: rgba(0, 0, 0, 0.45);
 	line-height: 25px;
+}
 
+#GuildPlayersBody .btn-mid span {
+	padding: 0 3px;
+	border-radius: 3px;
+	background-color: var(--black-50);
+}
+#GuildPlayersBody .btn-mid .counter-red {
+	background-color: var(--table-bb-error);
 }
 
 #GuildPlayersBody tr th span,
@@ -344,6 +352,8 @@
 	width: 26px;
 }
 
+
+
 /*************************************************************************************************************/
 
 #ProvinceMapBody {
@@ -437,4 +447,3 @@
 	height: 48px;
 	overflow: auto;
 }
-

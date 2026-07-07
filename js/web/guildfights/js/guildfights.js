@@ -320,9 +320,8 @@ let GuildFights = {
 			return lockedA - lockedB;
 		});
 
-		const maxSignals = 4;
-		let visibleSignals = sortedSignals.slice(0, maxSignals),
-			overflowSignals = sortedSignals.slice(maxSignals);
+		const maxSignals = 5;
+		let visibleSignals = sortedSignals.slice(0, maxSignals);
 
 		for (let signal of visibleSignals) {
 			let provinceId = signal.provinceId||0;
@@ -332,10 +331,12 @@ let GuildFights = {
 			let countDownDate = province.lockedUntil ? moment.unix(province.lockedUntil - 2) : null;
 			let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
 			let unlocked = remaining === null || remaining <= 0;
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 			let title = "!!!";
+			
 			if (remaining > 1800 * 1000) {
-				title = FH.t('Boxes.GuildFights.Time') +" "+ countDownDate.format('HH:mm');
+				title = FH.t('Boxes.GuildFights.Time') +" "+ countDownDate.add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds").format('HH:mm');
 			}
 			else if (!unlocked) {
 				title = FH.t('Boxes.GuildFights.Count') +" "+ moment.utc(remaining).format('mm:ss');
@@ -363,22 +364,6 @@ let GuildFights = {
 
 			if (unlocked)
 				GuildFights.UpdateSignalProgress(entry.find('.progress'), province.conquestProgress || []);
-		}
-
-		if (overflowSignals.length > 0) {
-			activeSignals.add('target-overflow');
-
-			let names = overflowSignals.map(signal => {
-				let province = GuildFights.MapData.map.provinces.find(x => x.id === (signal.provinceId||0));
-				return province?.title || signal.provinceId;
-			}).join(', ');
-
-			let overflowEntry = container.find('#target-overflow');
-			if (overflowEntry.length === 0)
-				overflowEntry = $(`<div id="target-overflow" class="signal-overflow"></div>`);
-
-			overflowEntry.text(`+${overflowSignals.length} ${FH.t('Boxes.GuildFights.GBGTargetsMore')}: ${names}`);
-			overflowEntry.appendTo(container);
 		}
 
 		container.children().each(function () {
@@ -615,7 +600,10 @@ let GuildFights = {
 				h.push(`<div id="gbgLogFilter">
 							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${FH.t('Boxes.GuildFights.Stats.Open')}</button>
 							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<div class="btn-group">
 							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
+							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')} ${GBGActionLog.refreshMenuBadge()}</button>
+							</div>
 						</div>`);
 			}
 			h.push(`</div>`);
@@ -1985,7 +1973,7 @@ let GuildFights = {
 		let showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
 		let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
 		let showGbgTargets = LiveFightSettings?.showGbgTargets ?? 1;
-		let gbgTargetsPosition = LiveFightSettings?.gbgTargetsPosition || 'bottom';
+		let gbgTargetsPosition = LiveFightSettings?.gbgTargetsPosition || 'top';
 		let showServerTime = LiveFightSettings?.showServerTime ?? 0;
 		let gbgAlertOffset = LiveFightSettings?.gbgAlertOffset ?? 30;
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';

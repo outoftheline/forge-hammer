@@ -53,22 +53,19 @@ let GBGActionLog = {
 	badgeTimer: null,
 
 	/**
-	 * Refreshes the HUD button badge (#gbgal-collect-age): shows the whole hours elapsed since the
-	 * last collection, coloured red once that reaches the configured threshold. Hidden until the
-	 * first collection. No-op while the HUD button isn't in the DOM.
+	 * shows the whole hours elapsed since the last collection, coloured red once that
+     * reaches the configured threshold. Hidden until the first collection. 
 	 */
 	refreshMenuBadge: () => {
-		let $badge = $('#gbgal-collect-age');
-		if (!$badge.length) return;
-
 		let last = GBGActionLog.lastCollected();
-		if (!last) { $badge.hide(); return; }
+		if (!last) return '';
 
 		let hours = Math.floor((moment().unix() - last) / 3600);
-		$badge.text(hours)
-			.attr('data-number', hours)
-			.toggleClass('hud-counter-red', hours >= GBGActionLog.redAfterHours())
-			.show();
+        if (hours > 0)
+		    return `<span data-number="${hours}" ${hours >= GBGActionLog.redAfterHours() ? `class="counter-red"` : ``}>
+                    ${hours}
+                    </span>`;
+        return '';
 	},
 
 	/** Keeps the HUD badge current as time passes (hours granularity, so a coarse tick is enough) */

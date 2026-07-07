@@ -43,7 +43,6 @@ _menu = {
 		'alerts',
 		'guildMemberstat',
 		'gexStat',
-		'gbgActionLog',
 		'castle',
 		'music',
 		'musicControl',
@@ -320,7 +319,6 @@ _menu = {
 		{ id: 'compare_friends_threads', title: FH.t('Menu.CompareFriendsThreads.Title'), description: FH.t('Menu.CompareFriendsThreads.Desc') },
 		{ id: 'castle', title: FH.t('Menu.Castle.Title'), description: FH.t('Menu.Castle.Desc') },
 		{ id: 'gexStat', title: FH.t('Menu.GexStat.Title'), description: FH.t('Menu.GexStat.Desc') },
-		{ id: 'gbgActionLog', title: FH.t('Menu.GBGActionLog.Title'), description: FH.t('Menu.GBGActionLog.Desc') },
 		{ id: 'investment', title: FH.t('Menu.Investment.Title'), description: FH.t('Menu.Investment.Desc') },
 		{ id: 'alerts', title: FH.t('Menu.Alerts.Title'), description: FH.t('Menu.Alerts.Desc') },
 		{ id: 'fpCollector', title: FH.t('Menu.fpCollector.Title'), description: FH.t('Menu.fpCollector.Desc') },
@@ -747,16 +745,6 @@ _menu = {
 			}
 		});
 		return btn.append(btn_sp, $(`<span id="gex-attempt-count" class="hud-counter">${GExAttempts.count||0}</span>`)).ready(GExAttempts.refreshGUI);
-	},
-
-	gbgActionLog_Btn: () => {
-		let btn = _menu.MakeButton('gbgActionLog');
-
-		let btn_sp = $('<span />').on('click', function () {
-			GBGActionLog.toggleWindow();
-		});
-
-		return btn.append(btn_sp, $(`<span id="gbgal-collect-age" class="hud-counter"></span>`)).ready(GBGActionLog.refreshMenuBadge);
 	},
 
 	castle_Btn: () => {

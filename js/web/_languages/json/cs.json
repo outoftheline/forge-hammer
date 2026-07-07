@@ -1093,7 +1093,7 @@
   "Menu.OutP.Desc": "Přehled potřebných surovin (po druzích) k dokončení osady.",
   "Menu.OutP.DescWarningBuildings": "<em id=\"outPW\" class=\"tooltip-error\">Neprovedeno: Nejprve otevřete osadu!<br></em>Přehled potřebných zdrojů (po druzích) k dokončení osady.",
   "Menu.OutP.DescWarningOutpostData": "<em id=\"outPW\" class=\"tooltip-error\">Neprovedeno: Přejděte do osady a aktualizujte hru (F5)</em>",
-  "Menu.OutP.Title": "Přehled \"Osada\"",
+  "Menu.OutP.Title": "Přehled Osada",
   "Menu.OwnpartCalculator.Desc": "Připravte si plán, kolik Vám kamarádi přispějí na jednotlivé pozice a zkopírujte si hodnoty pro Vaši VB",
   "Menu.OwnpartCalculator.Title": "Kalkulačka VB",
   "Menu.OwnpartCalculator.Warning": "Neprovedeno: Nejprve otevřete nějakou svoji VB!",
