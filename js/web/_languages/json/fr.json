@@ -270,6 +270,10 @@
   "Boxes.CityMap.random_production": "Aléatoire",
   "Boxes.CityMap.residential": "Résidentiel",
   "Boxes.CityMap.roadless": "Bâtiments sans routes",
+  "Boxes.CityMap.SendToPlanner": {
+    "s": "Envoi au planificateur",
+    "r": "Send to planner"
+  },
   "Boxes.CityMap.SetBuildings": "Bâtiments en kit",
   "Boxes.CityMap.ShowAscendableBuildings": "Bâtiments améliorables",
   "Boxes.CityMap.ShowDecayedBuildings": "Bâtiments limités échus",
@@ -415,12 +419,244 @@
   "Boxes.FPCollector.Total": "Total collecté :",
   "Boxes.FPCollector.wildlife_event": "Événement du parc animalier",
   "Boxes.FPCollector.winter_event": "Événement d'hiver",
+  "Boxes.GBGActionLog.Action.attacked_ignored": {
+    "s": "Signal stop ignoré",
+    "r": "Stop sign ignored"
+  },
+  "Boxes.GBGActionLog.Action.building_destroyed": {
+    "s": "Bâtiment détruit",
+    "r": "Building destroyed"
+  },
+  "Boxes.GBGActionLog.Action.building_placed": {
+    "s": "Bâtiment placé",
+    "r": "Building placed"
+  },
+  "Boxes.GBGActionLog.Action.province_conquered": {
+    "s": "Secteur pris",
+    "r": "Sector taken"
+  },
+  "Boxes.GBGActionLog.Action.province_lost": {
+    "s": "Secteur perdu",
+    "r": "Sector lost"
+  },
+  "Boxes.GBGActionLog.ActionCode": {
+    "s": "Action",
+    "r": "Action"
+  },
+  "Boxes.GBGActionLog.ActionTime": {
+    "s": "Heure",
+    "r": "Time"
+  },
+  "Boxes.GBGActionLog.ActivityEmpty": {
+    "s": "Pas trouvé de joueur pour les dates sélectionnées et les actions",
+    "r": "No matching player activity for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.ActorName": {
+    "s": "Nom de l'acteur",
+    "r": "Actor name"
+  },
+  "Boxes.GBGActionLog.ActorType": {
+    "s": "Type de l'acteur",
+    "r": "Actor type"
+  },
+  "Boxes.GBGActionLog.ActorType.guild": {
+    "s": "Guilde",
+    "r": "Guild"
+  },
+  "Boxes.GBGActionLog.ActorType.player": {
+    "s": "Joueur",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.BatchesEmpty": {
+    "s": "pas de données log encore collectée",
+    "r": "No data collections logged yet."
+  },
+  "Boxes.GBGActionLog.Building": {
+    "s": "Bâtiment",
+    "r": "Building"
+  },
+  "Boxes.GBGActionLog.DateFormat": {
+    "s": "Format de date",
+    "r": "Date format"
+  },
+  "Boxes.GBGActionLog.DateTimeFormat": {
+    "s": "Format de date et heure",
+    "r": "Date & time format"
+  },
+  "Boxes.GBGActionLog.Filter": {
+    "s": "Filtre",
+    "r": "Filter"
+  },
+  "Boxes.GBGActionLog.FilteredTimeRange": {
+    "s": "portée de l'heure",
+    "r": "Time range"
+  },
+  "Boxes.GBGActionLog.FirstLogTime": {
+    "s": "1ère entrée",
+    "r": "First entry"
+  },
+  "Boxes.GBGActionLog.FormatHint": {
+    "s": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). laisser vide pour le défault",
+    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
+  },
+  "Boxes.GBGActionLog.From": {
+    "s": "De",
+    "r": "From"
+  },
+  "Boxes.GBGActionLog.GroupIndex": {
+    "s": "Index du groupe",
+    "r": "Group Index"
+  },
+  "Boxes.GBGActionLog.LastLogTime": {
+    "s": "Dernière entrée",
+    "r": "Last entry"
+  },
+  "Boxes.GBGActionLog.LogCount": {
+    "s": "compte des nouvelles entrées",
+    "r": "New entry count"
+  },
+  "Boxes.GBGActionLog.LogDate": {
+    "s": "Collecté à ",
+    "r": "Collected at"
+  },
+  "Boxes.GBGActionLog.Map": {
+    "s": "Carte",
+    "r": "Map"
+  },
+  "Boxes.GBGActionLog.Map.volcano_archipelago": {
+    "s": "Archipel du volcan",
+    "r": "Volcano Archipelago"
+  },
+  "Boxes.GBGActionLog.Map.waterfall_archipelago": {
+    "s": "Archipel de la cascade",
+    "r": "Waterfall Archipelago"
+  },
+  "Boxes.GBGActionLog.Metric": {
+    "s": "Afficher",
+    "r": "Show"
+  },
+  "Boxes.GBGActionLog.MetricCount": {
+    "s": "Compte des actions",
+    "r": "Action count"
+  },
+  "Boxes.GBGActionLog.MetricDays": {
+    "s": "Jours actifs",
+    "r": "Active days"
+  },
+  "Boxes.GBGActionLog.Player": {
+    "s": "Joueur",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.RangeCapActivity": {
+    "s": "L'onglet Activité est limité à 1-mois de portée. Ajusté à :",
+    "r": "The Activity tab is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapBatches": {
+    "s": "L'onglet Lot est limité à 2-semaaines de portée. Ajusté à :",
+    "r": "The Batches tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapDetails": {
+    "s": "L'onglet Détail est limité à -2 semaines de portées. Ajusté à : ",
+    "r": "The Details tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapReport": {
+    "s": "Le rapport journalier est limité à 1-mois de portée. Ajusté à : ",
+    "r": "The Daily Report is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapTitle": {
+    "s": "portée des dates limitées",
+    "r": "Date range limited"
+  },
+  "Boxes.GBGActionLog.RedAfterHours": {
+    "s": "Aficher le badge du menu en rouge après (heures)",
+    "r": "Turn the menu badge red after (hours)"
+  },
+  "Boxes.GBGActionLog.RedAfterHoursHint": {
+    "s": "L'icone du menu affiche l'heure depuis la dernière collecte de log; le cercle devient rouge lorsque beaucoup d'heure ont passés.",
+    "r": "The menu icon shows the hours since the last log collection; the circle turns red once this many hours pass."
+  },
+  "Boxes.GBGActionLog.ReportEmpty": {
+    "s": "Pas trouvé de joueur pour les dates sélectionnées et les actions",
+    "r": "No matching player actions for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.Reset": {
+    "s": "Enlever les filtres",
+    "r": "Reset filters"
+  },
+  "Boxes.GBGActionLog.RowCount": {
+    "s": "Lignes",
+    "r": "Rows"
+  },
+  "Boxes.GBGActionLog.Sector": {
+    "s": "Secteur",
+    "r": "Sector"
+  },
+  "Boxes.GBGActionLog.TabActivity": {
+    "s": "Activité par heure",
+    "r": "Activity by Hour"
+  },
+  "Boxes.GBGActionLog.TabBatches": {
+    "s": "lots",
+    "r": "Batches"
+  },
+  "Boxes.GBGActionLog.TabDetails": {
+    "s": "Détails",
+    "r": "Details"
+  },
+  "Boxes.GBGActionLog.TabPlayerDailyReport": {
+    "s": "Rapport journalier du joueur",
+    "r": "Player Daily Report"
+  },
+  "Boxes.GBGActionLog.title": {
+    "s": "Logs des actions CbG",
+    "r": "GBG Action Log"
+  },
+  "Boxes.GBGActionLog.To": {
+    "s": "à",
+    "r": "To"
+  },
+  "Boxes.GBGActionLog.Toast.CurrLoadTime": {
+    "s": "Heure de fin du chargement actuel",
+    "r": "Current load end time"
+  },
+  "Boxes.GBGActionLog.Toast.LogsLoaded": {
+    "s": "Nombres de lgos chargés",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.PrevLoadTime": {
+    "s": "Nombre de Logs chargés",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.Reopen": {
+    "s": "**Ne pas oublier de réouvrir la carte du CbG pour charger les nouveaux logs**",
+    "r": "**Do not forget to reopen the GBG map to load new logs!**"
+  },
+  "Boxes.GBGActionLog.ToastDuration": {
+    "s": "Durée (en seconde) du pop-up de nouvelle entrée",
+    "r": "New-entry popup duration (seconds)"
+  },
+  "Boxes.GBGActionLog.ToastDurationHint": {
+    "s": "Mettre 0 pour désactiver les pop-up.",
+    "r": "Set to 0 to disable the popup."
+  },
+  "Boxes.GBGActionLog.Total": {
+    "s": "Total",
+    "r": "Total"
+  },
+  "Boxes.GBGActionLog.TotalReturned": {
+    "s": "Compter toutes les entrées",
+    "r": "All entry count"
+  },
   "Boxes.GBGBuildings.absoluteCosts": "Coûts absolu",
   "Boxes.GBGBuildings.Costs": "Coûts",
   "Boxes.GBGBuildings.relativeCosts": "__quantité__% de __ressource__ stock (__ère__)",
   "Boxes.GBGBuildings.title": "Bâtiments recommandés",
   "Boxes.GBGBuildings.toBuild": "A construire",
   "Boxes.GBGBuildings.totalChance": "Chance",
+  "Boxes.General.AutoOpen": {
+    "s": "Ouvrir automatiquement",
+    "r": "Open automatically"
+  },
   "Boxes.General.Cancel": "Annuler",
   "Boxes.General.ConfirmDelete": "Confirmer:",
   "Boxes.General.Delete": "Effacer",
@@ -505,6 +741,10 @@
   "Boxes.GreatBuildings.TTGoodCostsColumn": "Répertorie les coûts en PF pour l'achat des ressources nécessaires (s'applique uniquement aux GMs que vous n'avez pas encore construits).",
   "Boxes.GreatBuildings.TTGoodsValue": "Cette valeur est utilisée pour classer les bâtiments produisant des ressources. Combien de PF vaut une ressource pour vous ?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Optionnel : Combien de récompenses en PFs recevez-vous par jour ? Cette information est utilisée pour calculer la rentabilité sur d'autres niveaux d'Arche plus élevés. Pour obtenir une suggestion, se rendre dans : Hôtel de Ville &gt; Nouvelles &gt; Historique des événements &gt; et défiler toutes les pages",
+  "Boxes.GuildFights.AlertOffset": {
+    "s": "Afficher les notifications x secondes avant que le secteur ouvre",
+    "r": "Show notification x amount of seconds before the province opens"
+  },
   "Boxes.GuildFights.Attrition": "Attrition",
   "Boxes.GuildFights.Copy": "Copier",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "Les heures d'attaques pour les secteurs sélectionnés ont été copiés.",
@@ -521,6 +761,30 @@
   "Boxes.GuildFights.DiscordSetup": "Pas de Webhook disponible. Créez-en un d'abord",
   "Boxes.GuildFights.DiscordTemplateBulk": "Modèle pour plusieurs provinces",
   "Boxes.GuildFights.Fights": "Batailles",
+  "Boxes.GuildFights.GBGTargetsMore": {
+    "s": "plus..",
+    "r": "more"
+  },
+  "Boxes.GuildFights.GBGTargetsPosition": {
+    "s": "position des cibles",
+    "r": "Position for targets"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionBottom": {
+    "s": "bas",
+    "r": "bottom"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionLeft": {
+    "s": "gauche",
+    "r": "left"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionTop": {
+    "s": "haut",
+    "r": "top"
+  },
+  "Boxes.GuildFights.GBGTargetsShow": {
+    "s": "Afficher les cibles",
+    "r": "Show targets"
+  },
   "Boxes.GuildFights.LastSnapshot": " - Dernière capture il y a __time__",
   "Boxes.GuildFights.Negotiations": "Négociations",
   "Boxes.GuildFights.NoOwner": "Aucun propriétaire pour le moment",
@@ -840,6 +1104,10 @@
   "Boxes.MoppelHelper.ActivateButton": {
     "s": "Activer ici",
     "r": "Activate here"
+  },
+  "Boxes.MoppelHelper.ActivateDesc": {
+    "s": "Inactif. Veuillez activer le tracking en 1er ! Puis fermer et rouvrir cette fenêtre.",
+    "r": "Inactive, please activate tracking first! Then close and open this window again"
   },
   "Boxes.MoppelHelper.Attacks": "Attaques",
   "Boxes.MoppelHelper.CityProtected": "La cité de ce joueur ne peut pas être attaquées",
@@ -1243,9 +1511,17 @@
   "Boxes.Tooltip.Building.canMotivate": "Peut-être motivé",
   "Boxes.Tooltip.Building.canPolish": "Peut être poli",
   "Boxes.Tooltip.Building.costs": "Coûts",
+  "Boxes.Tooltip.Building.fspDisabled": {
+    "s": "Production instantanée désactivé",
+    "r": "Instant production finish disabled"
+  },
   "Boxes.Tooltip.Building.isUnique": "Bâtiment unique",
   "Boxes.Tooltip.Building.lifeSupport": "est affecté par le système de survie",
   "Boxes.Tooltip.Building.noPlunder": "Ne peut pas être pillé",
+  "Boxes.Tooltip.Building.noroad": {
+    "s": "aucune route requise",
+    "r": "no road required"
+  },
   "Boxes.Tooltip.Building.perEra": "Par ère",
   "Boxes.Tooltip.Building.produces": "Produit",
   "Boxes.Tooltip.Building.provides": "Fournit",
@@ -1253,6 +1529,10 @@
   "Boxes.Tooltip.Building.road2": "route 2 voies requise",
   "Boxes.Tooltip.Building.size+time": "Taille et temps de construction",
   "Boxes.Tooltip.Building.traits": "Caractéristiques",
+  "Boxes.Tooltip.Building.upgradesAutomatically": {
+    "s": "Augmenter automatiquement vers l'ère actuelle",
+    "r": "Upgrades automatically to current era"
+  },
   "Boxes.Tooltip.Building.when": "Quand",
   "Boxes.Tooltip.Efficiency.description": "Les combinaisons suivantes sont possibles",
   "Boxes.Translation.ClearStorage": "Effacer le stockage",
@@ -1338,6 +1618,22 @@
   "Date": "DD MMM YY",
   "DateShort": "DD MMM",
   "DateTime": "DD MMM YY @ HH:mm:ss",
+  "DBCreationWarning.CloseOverlay": {
+    "s": "Fermer",
+    "r": "Close"
+  },
+  "DBCreationWarning.ExplanationLine1": {
+    "s": "La base de donnée est rebâtie ou un grand nombre de bâtiments à reçu une mise à jour. L'extension se chargera quand ce processus sera terminé.",
+    "r": "The database is built anew or a lot of buildings received an update. The extension will load, when this process is finished."
+  },
+  "DBCreationWarning.ExplanationLine2": {
+    "s": "Cet overlay peut être fermé ou se fermera automatiquement quand cela sera fini.",
+    "r": "This overlay may be closed by you or will close automatically, when finished."
+  },
+  "DBCreationWarning.Title": {
+    "s": "Construction de la base de données pour les métadata des bâtiements",
+    "r": "Building the database for building metadata"
+  },
   "Eras.0": "Sans ère",
   "Eras.0.short": "-",
   "Eras.1": "Âge de Pierre",
@@ -1463,6 +1759,14 @@
   "Menu.findGB.Desc": "Crée une liste de tous les GM correspondants que vous rencontrez dans la liste des GM d'autres joueurs ou le classement",
   "Menu.fpCollector.Desc": "Vous montre les PFs reçus au passage, triés par jours.",
   "Menu.fpCollector.Title": "Aperçu Collecteur PF",
+  "Menu.GBGActionLog.Desc": {
+    "s": "Log des actions CbG et rapports",
+    "r": "Log of GBG actions and reports"
+  },
+  "Menu.GBGActionLog.Title": {
+    "s": "Log des actions CbG",
+    "r": "GBG Action Log"
+  },
   "Menu.GexStat.Desc": "Affiche les résultats de l’expédition de votre guilde",
   "Menu.GexStat.Title": "Résultats d’EG",
   "Menu.Gildfight.Desc": "Afficher les batailles courantes et à venir",
