@@ -1151,3 +1151,4 @@ let Kits = {
  * @property {string|object} item
  * @property {boolean} missing
  */
+FH.Tooltips.addCallback('InventoryKits', Kits.InventoryTooltip);

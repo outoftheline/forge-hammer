@@ -2134,7 +2134,7 @@ let Productions = {
 				if (!building.highlight && !building.isInInventory)
 					h.push('<span class="show-all" data-original-title="'+FH.t('Boxes.General.ShowOnMap')+'" data-name="'+building.name+'"><img class="game-cursor" alt="" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>');
 
-				h.push('<span data-meta_id="'+building.entityId+'" data-eff="'+building.rating.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="Tooltips.buildingTT" class="helperTT" '+ FH.Main.Allies.tooltip(building.id) + '>'+building.name+'</span>')
+				h.push('<span data-meta_id="'+building.entityId+'" data-eff="'+building.rating.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT" '+ FH.Main.Allies.tooltip(building.id) + '>'+building.name+'</span>')
 
 				let eraShortName = FH.t("Eras."+Technologies.Eras[building.eraName]+".short")
 				if (eraShortName !== "-")
@@ -2151,7 +2151,7 @@ let Productions = {
 				h.push('<td class="text-center">')
 				// show additional buildings from inventory
 				if ((buildingCount[building.entityId+"I"] !== undefined && !building.isInInventory) || building.isInInventory)
-					h.push('<span data-callback_tt="Kits.InventoryTooltip" data-id="'+building.entityId+'" class="helperTT"><img alt="" class="game-cursor" src="' + srcLinks.get(`/shared/gui/event_hub/event_meta_icon_checkmark.png`,true) + '" /></span> ')
+					h.push('<span data-callback_tt="InventoryKits" data-id="'+building.entityId+'" class="helperTT"><img alt="" class="game-cursor" src="' + srcLinks.get(`/shared/gui/event_hub/event_meta_icon_checkmark.png`,true) + '" /></span> ')
 				h.push('</td>')
 
 				for (const type of combinedRatingTypes) {
@@ -2363,7 +2363,7 @@ let Productions = {
 				let foundBuildings = Object.values(Productions.AdditionalSpecialBuildings).filter(x => regEx.test(x.filter)).sort((a,b)=>(((a.selected !== b.selected) ? (a.selected ? -2 : 2) : 0)+(a.name>b.name?1:-1)))
 
 				for (building of foundBuildings) {
-					$('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era==="AllAge"?"":era)}" data-callback_tt="Tooltips.buildingTT" class="helperTT${building.selected ? " selected":""}">${building.name}</li>`)
+					$('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era==="AllAge"?"":era)}" data-callback_tt="building" class="helperTT${building.selected ? " selected":""}">${building.name}</li>`)
 				}
 			}
 			filterMeta(/./)
@@ -2554,7 +2554,7 @@ let Productions = {
 				h.push('<span class="no-grow resicon ' + type + '"></span>')
 				h.push('<label for="Enabled-'+type+'">' + Productions.GetTypeName(type) + '</label>')
 				if (type=="fsp") h.push(`<span id="ShowFSPCalculator" class="clickable" data-original-title="${FH.t("Boxes.ProductionsRating.ShowFSPCalculator")}">🧮</span>`)
-				h.push('<input type="number" id="ProdPerTile-' + type + '" step="0.01" min="0" max="1000000" class="no-grow helperTT '+(Productions.Rating.Data[type]?.active ? '': 'hidden')+'" value="' + (Productions.Rating.Data[type]?.perTile||0) + '", data-callback_tt="Productions.efficiencyTT", data-type="'+type+'-tile">')
+				h.push('<input type="number" id="ProdPerTile-' + type + '" step="0.01" min="0" max="1000000" class="no-grow helperTT '+(Productions.Rating.Data[type]?.active ? '': 'hidden')+'" value="' + (Productions.Rating.Data[type]?.perTile||0) + '", data-callback_tt="Efficiency", data-type="'+type+'-tile">')
 				h.push('</li>');
 			}
 
@@ -2901,7 +2901,7 @@ let Productions = {
 							for (let [group, buildings] of Object.entries(groupedBuildings)) {
 								h += '<tr><td><h2><span class="boost '+group+'"></span> '+FH.t('Boxes.BoostList.'+group)+'</h2><ul>'
 								for (let building of buildings) {
-									h += '<li class="helperTT" data-era="'+FH.CurrentEra+'" data-callback_tt="Tooltips.buildingTT" data-meta_id="'+building.entityId+'">'+building.name+'</li>'
+									h += '<li class="helperTT" data-era="'+FH.CurrentEra+'" data-callback_tt="building" data-meta_id="'+building.entityId+'">'+building.name+'</li>'
 								}
 								h += '</ul></td></tr>';
 							}
@@ -2923,7 +2923,7 @@ let Productions = {
 		}
 		h=`<ul class="foe-table">`
 		for (b of item.buildings) {
-			h+=`<li class="helperTT" data-era=${FH.CurrentEra} data-callback_tt="Tooltips.buildingTT" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
+			h+=`<li class="helperTT" data-era=${FH.CurrentEra} data-callback_tt="building" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
 		}
 		h+=`</ul>`
 		$(itemId).html(h)
@@ -3023,3 +3023,4 @@ FH.proxy.addHandler('InventoryService', 'useItem', (data, postData) => {
 		}, 250);
 	}
 });
+FH.Tooltips.addCallback('Efficiency', Productions.efficiencyTT);

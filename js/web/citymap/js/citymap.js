@@ -783,7 +783,7 @@ let CityMap = {
 				left: x + 'em',
 				top: y + 'em'
 			})
-				.attr('data-callback_tt','Tooltips.buildingTT')
+				.attr('data-callback_tt','building')
 				.attr('data-era', building.eraName)
 				.attr('data-size', building.size.length + 'x' + building.size.width)
 				.attr('data-id', building.id)

@@ -1610,7 +1610,7 @@ let Main = {
 					   	   	<td ${buildingId!=0?`class="helperTT" 
 								data-id="${buildingId}" 
 								data-era="${Technologies.InnoEraNames[Main.CityMapData[buildingId].level]}"
-								data-callback_tt="Tooltips.buildingTT" 
+								data-callback_tt="building" 
 								`:``}
 							>
 								${r.buildingName || ""}

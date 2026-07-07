@@ -179,7 +179,7 @@ let reconstruction = {
             let width = meta.width||meta.components.AllAge.placement.size.x
             let length = meta.length||meta.components.AllAge.placement.size.y
             let road = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0
-            h+=`<tr class="reconstructionLine helperTT" data-callback_tt="Tooltips.buildingTT" data-page_id="${id}" data-meta_id="${id.split("#")[0]}" ${b.stored==0 ? ' style="display:none"' : ""}>
+            h+=`<tr class="reconstructionLine helperTT" data-callback_tt="building" data-page_id="${id}" data-meta_id="${id.split("#")[0]}" ${b.stored==0 ? ' style="display:none"' : ""}>
                     <td data-text="${FH.helper.str.cleanup(meta.name)}">${meta.name}</td>
                     <td>x${b.stored}</td>
                     <td></td>

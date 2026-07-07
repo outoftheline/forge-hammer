@@ -1,5 +1,6 @@
 [
 	"srcLinks",
+	"customTooltip",
 	"mouseActions",
 	"_languages",
 	"_helper",
@@ -58,7 +59,6 @@
 	"pvparena",
 	"worldchallenge",
 	"boost-potions",
-	"customTooltip",
 	"reconstruction",
 	"boosts",
 	"shopAssist",

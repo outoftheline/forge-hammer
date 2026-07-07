@@ -210,7 +210,7 @@ let shopAssist = {
 				<img src="${(slot.rarity?.value || "none") != "none" ? srcLinks.get("/item_store/store_shared/item_store_rarity_icon_"+slot.rarity.value+".png",true,true):""}" alt="">
 			</td>`
 			//name
-			h+=`<td data-ids="${buildingList}" class="helperTT" data-callback_tt="${buildingList.length>0?'shopAssist.TT':'shopAssist.allTT'}" data-slotid="${slot.slotId}A">${(slot.reward.target?srcLinks.icons("booster_target_"+slot.reward.target):"")+slot.reward.name}</td>`			
+			h+=`<td data-ids="${buildingList}" class="helperTT" data-callback_tt="${buildingList.length>0?'shopAssistSingle':'shopAssistAll'}" data-slotid="${slot.slotId}A">${(slot.reward.target?srcLinks.icons("booster_target_"+slot.reward.target):"")+slot.reward.name}</td>`			
 			if (slot.reward?.assembledReward?.type == "ally") {
 				let allTT = `<table class="foe-table shopAssistTable">
 							<tr><th><img src=${srcLinks.get("/historical_allies/portraits/historical_allies_portrait_ally_"+slot.reward.assembledReward.iconAssetName+".png",true)} style="height:unset">
@@ -601,3 +601,5 @@ let shopAssist = {
 		$(`#shopAssistSettingsBox`).remove();
     },
 };
+FH.Tooltips.addCallback('shopAssistSingle', shopAssist.TT);
+FH.Tooltips.addCallback('shopAssistAll', shopAssist.allTT);

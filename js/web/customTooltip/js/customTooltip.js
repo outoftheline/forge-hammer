@@ -19,6 +19,7 @@ let Tooltips = {
     Container:null,
     containerActive:false,
     targetElement:null,
+    callbacks:{},
     
     init: async () => {
         await FH.StartUpDone
@@ -38,29 +39,8 @@ let Tooltips = {
             if (e.currentTarget.dataset.callback_tt) {
                 Tooltips.activate()
                 // resolve function path like "Namespace.fn" without using eval
-                let p = e.currentTarget.dataset.callback_tt.split('.');
-                let f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, window);
-                if (!f) {
-                    switch (p.shift()) {
-                        case 'QIActions':
-                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, QIActions);
-                            break;
-                        case 'Tooltips':
-                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Tooltips);
-                            break;
-                        case 'Kits':
-                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Kits);
-                            break;
-                        case 'shopAssist':
-                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, shopAssist);
-                            break;
-                        case 'Productions':
-                            f = p.reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : undefined, Productions);
-                            break;
-                        default:
-                            f = e.currentTarget.dataset.callback_tt;
-                    }
-                }
+                let f = e.currentTarget.dataset.callback_tt.split('.');
+                if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f]
                 if (typeof(f) == "function") {
                     let content = await(f(e));
                     if (content) {
@@ -76,7 +56,7 @@ let Tooltips = {
         $('body').on("pointerleave",".helperTT",(e)=>{
             Tooltips.deactivate()
         })    
-        $(`<div id="QIActions" class="helperTT" data-callback_tt="QIActions.TT">${srcLinks.icons("time")}</div>`).appendTo('body').hide();    
+        $(`<div id="QIActions" class="helperTT" data-callback_tt="QIActions">${srcLinks.icons("time")}</div>`).appendTo('body').hide();    
         $(`<div id="RewardsList"></div>`).appendTo('body');    
     },
 
@@ -84,6 +64,9 @@ let Tooltips = {
         if (!content) return
         Tooltips.Container.innerHTML = content;
         Tooltips.checkposition()
+    },
+    addCallback: (id,callback) => {
+        Tooltips.callbacks[id] = callback;
     },
     checkposition: () => {
         try {
@@ -948,8 +931,9 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 
 });
 
-
 Tooltips.init();
-FH.Tooltips = {deactivate: Tooltips.deactivate, BuildingData: Tooltips.BuildingData};
+Tooltips.addCallback("building", Tooltips.buildingTT);
+Tooltips.addCallback("QIActions", QIActions.TT);
+FH.Tooltips = {deactivate: Tooltips.deactivate, BuildingData: Tooltips.BuildingData, addCallback: Tooltips.addCallback};
 FH.QIActions = {setCapacity: QIActions.setCapacity};
 }
