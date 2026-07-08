@@ -266,6 +266,15 @@ let GuildFights = {
 
 		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
 		
+		if (GuildFights.Signals?.length > 0) {
+			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
+				let province = GuildFights.MapData.map.provinces.find(x => x.id === (GuildFights.Signals[i].provinceId || 0));
+				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
+					GuildFights.Signals.splice(i, 1);
+				}
+			}
+		}
+		
 		if (data) {
 			let provinceId = data.provinceId||0;
 			if (data.signal === "focus") {
