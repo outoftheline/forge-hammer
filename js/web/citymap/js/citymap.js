@@ -1128,6 +1128,10 @@ let CityMap = {
 		let region = String(FH.World).replace(/\d+$/, '') || 'unknown';
 		let data = { region };
 
+		data.playerName = FH.Player.Name;
+		data.boostData  = null; // todo
+		data.currentEra = FH.CurrentEra;
+
 		switch (FH.ActiveMap) {
 			case 'guild_raids':
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
@@ -1137,6 +1141,17 @@ let CityMap = {
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
 				break;
+		}
+
+		for (let id in data.CityMapData) {
+			if (!Object.prototype.hasOwnProperty.call(data.CityMapData, id)) continue;
+			let building = data.CityMapData[id];
+			try {
+				let eraId = CityMap.GetBuildingEra(building);
+				building.era = Technologies.EraNames[eraId] || data.currentEra || null;
+			} catch (e) {
+				building.era = data.currentEra || null;
+			}
 		}
 
 		FH.Main.sendExtMessage({

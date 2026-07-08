@@ -1,16 +1,15 @@
 <!--
-**************************************************************************************
   ~ Copyright (C) 2026 FoE-Helper team - All Rights Reserved
   ~ Copyright (C) 2026 Forge Hammer - All Rights Reserved
   ~ See file LICENSE.md for license details.
-**************************************************************************************
 -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Forge Hammer - City Planner</title>
+    <title>City Planner - Forge Hammer</title>
+    <link rel="icon" type="image/x-icon" href="../images/app48.png">
     <link href="planner.css" rel="stylesheet">
 </head>
 
@@ -18,7 +17,7 @@
     <section class="overlay">
         <div class="inner">
             <h1>Forge Hammer - City Planner</h1>
-            <p>Please use the "Send to planner" function in the City Overview of your City before clicking it.</p>
+            <p>Please use the "Send to planner" function in the City Overview.</p>
         </div>
     </section>
 
@@ -26,6 +25,7 @@
     <div class="wrapper">
         <section class="sidebar">
             <h1><img src="../images/app48.png" /> City Planner v0.5</h1>
+            <div id="populationStat">Population (without GBs): <span class="pop-stat">0</span></div>
             <div class="filter">
             <div id="metaSearch">
                 <input id="metaSearchInput" type="text" placeholder="Add a new building…" autocomplete="off">
@@ -60,9 +60,10 @@
             <ul id="storedBuildingsList"></ul>
             
             <div class="group save">
-                <button id="saveState" class="btn">Save</button>
-                <button id="exportState" class="btn">Export</button>
-                <button id="importState" class="btn">Import</button>
+                <button id="save" class="btn">Save</button>
+                <button id="loadPlan" class="btn">Load Plan</button>
+                <button id="export" class="btn">Export</button>
+                <button id="import" class="btn">Import</button>
             </div>
         </section>
         <div class="content">
@@ -83,8 +84,9 @@
                     <button id="storeSelection" class="btn">Selection <span></span></button>
                     <button id="storeAll" class="btn">Everything</button></div>
                     <div class="group">
-                        <button id="removeStreets" class="btn">Remove All Streets</button>
-                        <button id="placeStreet">Place streets</button>
+                        <span class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-road-icon lucide-road"><path d="M12 17v4"/><path d="M12 5V3"/><path d="M12 9v3"/><path d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z"/></svg></span>
+                        <button id="removeStreets" class="btn">Remove All</button>
+                        <button id="placeStreet">Place</button>
                     </div>
                     <input type="file" id="importFileInput" accept=".json" style="display:none">
                     <button id="reset"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
@@ -105,6 +107,16 @@
             </section>
         </div>
     </div>
+    <div id="planListModal" class="modal hidden">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <h2>Saved Plans</h2>
+                <button id="planListClose" class="btn">✕</button>
+            </div>
+            <ul id="planListItems"></ul>
+        </div>
+    </div>
+
     <script src="../vendor/browser-polyfill/browser-polyfill.min.js"></script>
     <script src="../vendor/dexie/dexie.min.js"></script>
     <script src="vars.js"></script>

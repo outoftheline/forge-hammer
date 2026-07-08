@@ -5,12 +5,9 @@ window.PlannerApp = window.PlannerApp || {};
 (function (app) {
     const state = app.state;
 
-    // BASE_KEY stores the large, rarely-changing FoE data (CityEntities etc.).
-    // It is written only when a fresh clipboard paste arrives via init().
-    // LAYOUT_KEY stores only building positions — tiny, written on every mutation.
-    const BASE_KEY    = 'foe_planner_base';
-    const LAYOUT_KEY  = 'foe_planner_layout';
+    const VIEW_KEY = 'foe_planner_view';
     const HISTORY_KEY = 'foe_planner_history';
+    const PLAN_ID_KEY = 'foe_planner_plan_id';
 
     // make sure types are the same as in the game map
     function correctBuildingType(metaData) {
@@ -65,9 +62,21 @@ window.PlannerApp = window.PlannerApp || {};
         state.region = data.region;
         state.cityData = data.CityMapData;
         state.mapData = data.UnlockedAreas;
+        state.currentEra = data.currentEra || null;
+
+        state.originalData = {
+            cityData: data.CityMapData,
+            mapData: data.UnlockedAreas,
+            currentEra: data.currentEra || null
+        };
+
+        state.playerName = data.playerName || state.playerName || 'unknown';
+        const sampleBuilding = Object.values(state.cityData || {})[0];
+        state.playerId = (sampleBuilding && sampleBuilding.player_id !== undefined)
+            ? sampleBuilding.player_id
+            : (state.playerId || 'unknown');
 
         state.metaData = await getCityEntityMetaData(state.region);
-
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
 
         state.rotated = false;
@@ -75,15 +84,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
 
-        try {
-            localStorage.setItem(BASE_KEY, JSON.stringify({
-                region: state.region,
-                cityData: state.cityData,
-                mapData: state.mapData
-            }));
-        } catch (e) {
-            console.warn('Could not cache base data in localStorage:', e);
-        }
+        loadViewState();
 
         app.resizeCanvasToCSSSize();
         app.rebuildGridLayer();
@@ -91,9 +92,228 @@ window.PlannerApp = window.PlannerApp || {};
         app.rebuildOccupiedTiles();
         app.updateStats();
         app.showStoredBuildings();
+
+        state.planId = loadSavedPlanId();
+        await savePlanToDatabase();
     }
 
-    // --- Serialization ---
+    function saveViewState() {
+        try {
+            localStorage.setItem(VIEW_KEY, JSON.stringify({
+                camX: state.camX,
+                camY: state.camY,
+                zoomScale: state.zoomScale,
+                rotated: !!state.rotated
+            }));
+        } catch (e) {
+            console.warn('Could not persist view state:', e);
+        }
+    }
+
+    function loadViewState() {
+        try {
+            const raw = localStorage.getItem(VIEW_KEY);
+            if (!raw) return;
+            const view = JSON.parse(raw);
+            state.camX = view.camX ?? state.camX;
+            state.camY = view.camY ?? state.camY;
+            state.zoomScale = view.zoomScale ?? state.zoomScale;
+            state.rotated = !!view.rotated;
+        } catch (e) {
+            console.warn('Could not restore view state:', e);
+        }
+    }
+
+    // --- Planner database sync ---
+
+    function loadSavedPlanId() {
+        try {
+            const raw = localStorage.getItem(PLAN_ID_KEY);
+            return raw ? JSON.parse(raw) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function saveSavedPlanId(planId) {
+        try {
+            localStorage.setItem(PLAN_ID_KEY, JSON.stringify(planId));
+        } catch (e) {
+            console.warn('Could not persist plan id:', e);
+        }
+    }
+
+
+    async function callBackground(message) {
+        const response = await browser.runtime.sendMessage(message);
+        if (!response || response.ok !== true) {
+            throw new Error((response && response.error) || 'Unknown error from background script');
+        }
+        return response.data;
+    }
+
+
+    function buildPlannerMapData() {
+        let syntheticId = 0;
+
+        const toPlannerBuilding = (building, stored) => ({
+            id: (building.data && building.data.id !== undefined) ? building.data.id : `planner-${syntheticId++}`,
+            x: Math.round(building.x / app.SIZE),
+            y: Math.round(building.y / app.SIZE),
+            type: building.meta.type,
+            cityentity_id: building.meta.id,
+            era: building.data ? building.data.era : undefined,
+            stored: !!stored
+        });
+
+        return [
+            ...state.mapBuildings.map(b => toPlannerBuilding(b, false)),
+            ...(state.storedBuildings || []).map(b => toPlannerBuilding(b, true))
+        ];
+    }
+
+    async function createNewPlanRecord(world, planName, playerId, playerName, boostData, mapData) {
+        const data = await callBackground({
+            type: 'Planner.newPlan',
+            world, planName, playerId, playerName, boostData, mapData,
+            originalData: state.originalData || null
+        });
+        if (data && data.planId !== undefined) {
+            state.planId = data.planId;
+            saveSavedPlanId(state.planId);
+        }
+    }
+
+    async function savePlanToDatabase() {
+        // Nothing loaded yet — nothing to save
+        if (!state.metaData || !Object.keys(state.metaData).length) return false;
+
+        const world = state.region || 'unknown';
+        const planName = state.planName || 'Plan';
+        const playerId = state.playerId || 'unknown';
+        const playerName = state.playerName || 'unknown';
+        const boostData = {};
+        const mapData = buildPlannerMapData();
+
+        try {
+            if (!state.planId) {
+                await createNewPlanRecord(world, planName, playerId, playerName, boostData, mapData);
+            } else {
+                try {
+                    await callBackground({
+                        type: 'Planner.updatePlan',
+                        planId: state.planId,
+                        world, planName, playerId, playerName, boostData, mapData
+                    });
+                } catch (e) {
+                    if (e && /not found/i.test(e.message || '')) {
+                        console.log('Saved plan no longer exists in the database — creating a new one.');
+                        state.planId = null;
+                        saveSavedPlanId(null);
+                        await createNewPlanRecord(world, planName, playerId, playerName, boostData, mapData);
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+            return true;
+        } catch (e) {
+            console.error('Failed to save plan to database:', e);
+            return false;
+        }
+    }
+
+    // --- Loading plans from the database ---
+    function buildingRowsToEntries(rows) {
+        return (rows || []).map(row => {
+            let parsed = {};
+            try { parsed = row.JSON ? JSON.parse(row.JSON) : {}; } catch (e) { parsed = {}; }
+            return {
+                metaId: parsed.cityentity_id,
+                x: row.x,
+                y: row.y,
+                era: parsed.era,
+                stored: !!parsed.stored
+            };
+        });
+    }
+
+    async function loadPlanFromDatabase(planId) {
+        const plan = await callBackground({ type: 'Planner.getPlan', planId });
+        if (!plan) throw new Error('Plan not found');
+
+        const rows = await callBackground({ type: 'Planner.getBuildingList', planId });
+
+        let originalData = null;
+        try { originalData = plan.originalJSON ? JSON.parse(plan.originalJSON) : null; } catch (e) { originalData = null; }
+
+        state.region = plan.world;
+        state.cityData = (originalData && originalData.cityData) || {};
+        state.mapData = (originalData && originalData.mapData) || [];
+        state.currentEra = (originalData && originalData.currentEra) || null;
+        state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
+
+        state.metaData = await getCityEntityMetaData(state.region);
+        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+
+        const entries = buildingRowsToEntries(rows);
+        state.mapBuildings = buildingsFromEntries(entries.filter(e => !e.stored));
+        state.storedBuildings = buildingsFromEntries(entries.filter(e => e.stored));
+
+        state.rotated = false;
+        state.camX = 0;
+        state.camY = 0;
+        state.zoomScale = 0.75;
+        state.history = [];
+        state.future = [];
+        localStorage.removeItem(HISTORY_KEY);
+
+        state.planId = plan.id;
+        state.planName = plan.planName;
+        state.playerId = plan.playerId;
+        state.playerName = plan.playerName;
+        saveSavedPlanId(state.planId);
+
+        loadViewState();
+
+        app.resizeCanvasToCSSSize();
+        app.rebuildGridLayer();
+        app.rebuildOccupiedTiles();
+        app.redrawMap();
+        app.updateStats();
+        app.showStoredBuildings();
+        app.updateUndoRedoButtons();
+
+        return plan;
+    }
+
+
+    async function loadLastSavedPlan() {
+        try {
+            const plans = await callBackground({ type: 'Planner.getPlanList' });
+            if (!plans || !plans.length) return false;
+
+            let latest = plans[0];
+            for (const p of plans) {
+                if ((p.date || 0) > (latest.date || 0)) latest = p;
+            }
+
+            await loadPlanFromDatabase(latest.id);
+            return true;
+        } catch (e) {
+            console.error('Failed to load last saved plan:', e);
+            return false;
+        }
+    }
+
+    async function getPlanList() {
+        return callBackground({ type: 'Planner.getPlanList' });
+    }
+
+    async function removePlanFromDatabase(planId) {
+        return callBackground({ type: 'Planner.removePlan', planId });
+    }
+
 
     // just position + metaId
     function serializeLayout() {
@@ -102,18 +322,21 @@ window.PlannerApp = window.PlannerApp || {};
             mapBuildings: state.mapBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
-                y: b.data.y
+                y: b.data.y,
+                era: b.data.era
             })),
             storedBuildings: state.storedBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
-                y: b.data.y
+                y: b.data.y,
+                era: b.data.era
             })),
             camX: state.camX,
             camY: state.camY,
             zoomScale: state.zoomScale,
             rotated: !!state.rotated,
-            mapData: state.mapData
+            mapData: state.mapData,
+            currentEra: state.currentEra
         };
     }
 
@@ -124,8 +347,9 @@ window.PlannerApp = window.PlannerApp || {};
             region: state.region,
             cityData: state.cityData,
             mapData: state.mapData,
-            mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
-            storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y })),
+            currentEra: state.currentEra,
+            mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
+            storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
             camX: state.camX, camY: state.camY, zoomScale: state.zoomScale,
             rotated: !!state.rotated
         };
@@ -135,6 +359,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.region = saved.region;
         state.cityData = saved.cityData;
         state.mapData = saved.mapData;
+        state.currentEra = saved.currentEra || null;
 
         applyLayout(saved);
         app.resizeCanvasToCSSSize();
@@ -157,6 +382,7 @@ window.PlannerApp = window.PlannerApp || {};
                 cityentity_id: entry.metaId,
                 x: entry.x ?? (entry.data ? entry.data.x : 0) ?? 0,
                 y: entry.y ?? (entry.data ? entry.data.y : 0) ?? 0,
+                era: entry.era ?? (entry.data ? entry.data.era : undefined) ?? state.currentEra ?? null,
             };
             const effectiveMeta = meta.type === 'street'
                 ? { ...meta, width: 1, length: 1 }
@@ -171,132 +397,13 @@ window.PlannerApp = window.PlannerApp || {};
         state.zoomScale = layout.zoomScale ?? 0.75;
         state.rotated   = !!layout.rotated;
         if (layout.mapData) state.mapData = layout.mapData;
+        if (layout.currentEra !== undefined) state.currentEra = layout.currentEra;
         state.mapBuildings    = buildingsFromEntries(layout.mapBuildings);
         state.storedBuildings = buildingsFromEntries(layout.storedBuildings);
     }
 
-    // --- localStorage ---
 
-    function saveState() {
-        try {
-            localStorage.setItem(LAYOUT_KEY, JSON.stringify(serializeLayout()));
-            flashSaveBtn();
-        } catch (e) {
-            console.error('Failed to save layout:', e);
-            alert('Could not save to localStorage (storage may be full).\nUse Export to save a file instead.');
-        }
-    }
-
-    async function loadFromLocalStorage() {
-        try {
-            const rawBase   = localStorage.getItem(BASE_KEY);
-            const rawLayout = localStorage.getItem(LAYOUT_KEY);
-            if (!rawBase) return false;
-
-            const base = JSON.parse(rawBase);
-            state.region = base.region;
-            state.cityData = base.cityData;
-            state.mapData = base.mapData;
-            state.metaData = await getCityEntityMetaData(state.region);
-            state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
-
-            if (rawLayout) applyLayout(JSON.parse(rawLayout));
-
-            loadHistory();
-            app.resizeCanvasToCSSSize();
-            app.rebuildGridLayer();
-            app.rebuildOccupiedTiles();
-            app.redrawMap();
-            app.updateStats();
-            app.showStoredBuildings();
-            return true;
-        } catch (e) {
-            console.error('Failed to load saved state:', e);
-            return false;
-        }
-    }
-
-    // --- File export / import ---
-
-    function exportStateToFile() {
-        const json = JSON.stringify(serializeState());
-        const blob = new Blob([json], { type: 'application/json' });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
-        a.download = 'foe_planner.json';
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    function importStateFromFile(file) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            try {
-                const saved = JSON.parse(e.target.result);
-                await deserializeState(saved);
-                // Imported state replaces everything — old history is stale.
-                state.history = [];
-                state.future  = [];
-                try {
-                    localStorage.setItem(BASE_KEY, JSON.stringify({
-                        region:   state.region,
-                        cityData: state.cityData,
-                        mapData:  state.mapData
-                    }));
-                    localStorage.setItem(LAYOUT_KEY, JSON.stringify(serializeLayout()));
-                    localStorage.removeItem(HISTORY_KEY);
-                } catch (storageErr) {
-                    console.warn('Could not update localStorage after import:', storageErr);
-                }
-                app.dom.submitWindow.classList.add('hidden');
-            } catch (err) {
-                console.error('Import failed:', err);
-                alert('Could not read the save file. Make sure it is a valid FoE Planner export.');
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    function flashSaveBtn() {
-        const btn = app.dom.saveBtn;
-        if (!btn) return;
-        btn.textContent = 'Saved';
-        setTimeout(() => { btn.textContent = 'Save'; }, 1500);
-    }
-
-
-    function restoreOriginalMapAndCity() {
-        try {
-            const rawBase = localStorage.getItem(BASE_KEY);
-            if (!rawBase) return false;
-
-            const base = JSON.parse(rawBase);
-            state.cityData = base.cityData;
-            state.mapData  = base.mapData;
-            return true;
-        } catch (e) {
-            console.warn('Could not restore original map/city data:', e);
-            return false;
-        }
-    }
-
-
-    function clearSavedLayout() {
-        localStorage.removeItem(LAYOUT_KEY);
-        localStorage.removeItem(HISTORY_KEY);
-    }
-
-
-    function autoSave() {
-        if (state.metaData && Object.keys(state.metaData).length) {
-            saveState();
-        }
-    }
-
-    // 90° clockwise view rotation. Purely a view-state toggle now — actual
-    // building/expansion data is never touched (see draw.js redrawMap /
-    // getMapBoundsPx / screenToWorld for the render + input side of this).
+    // 90° clockwise view rotation
     function rotateLayout() {
         if (!state.mapData) return;
 
@@ -316,6 +423,7 @@ window.PlannerApp = window.PlannerApp || {};
         app.updateStats();
         app.showStoredBuildings();
         app.autoSave();
+        saveViewState();
     }
 
     // --- Undo / Redo ---
@@ -326,18 +434,15 @@ window.PlannerApp = window.PlannerApp || {};
             mapBuildings: state.mapBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
-                y: b.data.y
+                y: b.data.y,
+                era: b.data.era
             })),
             storedBuildings: state.storedBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
-                y: b.data.y
+                y: b.data.y,
+                era: b.data.era
             })),
-            // Rotation is now a pure view flag — positions/dimensions in
-            // mapBuildings/storedBuildings above are always canonical and
-            // never depend on it, so restoring it is just for a consistent
-            // view across undo/redo, not for correctness (mapData itself
-            // is never mutated by rotating, so it doesn't need capturing).
             rotated: !!state.rotated
         };
     }
@@ -349,7 +454,6 @@ window.PlannerApp = window.PlannerApp || {};
                 future:  state.future
             }));
         } catch (e) {
-            // History is best-effort — silently ignore if storage is full.
             console.warn('Could not persist undo/redo history:', e);
         }
     }
@@ -377,18 +481,15 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function applySnapshot(snapshot) {
-        // Just restores the view orientation to match what was on screen
-        // when the snapshot was taken — buildingsFromEntries below always
-        // produces canonical, unrotated dimensions regardless of this flag.
         state.rotated = !!snapshot.rotated;
 
-        state.mapBuildings    = buildingsFromEntries(snapshot.mapBuildings);
+        state.mapBuildings = buildingsFromEntries(snapshot.mapBuildings);
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
 
-        state.activeBuilding    = null;
-        state.placingBuilding   = null;
-        state.dragCopy          = null;
-        state.selectionRect     = null;
+        state.activeBuilding = null;
+        state.placingBuilding = null;
+        state.dragCopy = null;
+        state.selectionRect = null;
         state.selectedBuildings = [];
 
         app.rebuildGridLayer();
@@ -423,27 +524,32 @@ window.PlannerApp = window.PlannerApp || {};
         if (redoBtn) redoBtn.disabled = state.future.length === 0;
     }
 
+    // TODO: autosave to the DB after 2mins
+    function autoSave() {}
+
     app.init = init;
-    app.saveState = saveState;
+    app.savePlanToDatabase = savePlanToDatabase;
+    app.loadPlanFromDatabase = loadPlanFromDatabase;
+    app.loadLastSavedPlan = loadLastSavedPlan;
+    app.getPlanList = getPlanList;
+    app.removePlanFromDatabase = removePlanFromDatabase;
+    app.saveViewState = saveViewState;
+    app.loadViewState = loadViewState;
     app.autoSave = autoSave;
     app.pushSnapshot = pushSnapshot;
     app.undo = undo;
     app.redo = redo;
     app.updateUndoRedoButtons = updateUndoRedoButtons;
-    app.exportStateToFile = exportStateToFile;
-    app.importStateFromFile = importStateFromFile;
     app.rotateLayout = rotateLayout;
     app.createRotatedBuilding = createRotatedBuilding;
-    app.restoreOriginalMapAndCity = restoreOriginalMapAndCity;
-    app.clearSavedLayout = clearSavedLayout;
 
-    // check for data from CityMap.openPlanner() use localStorage as fallback
-    // todo: implement something to ask if incoming data should be used or the currently saved data
     (async () => {
         const hasPending = await loadGameCityData();
-        const hasSave = hasPending || await loadFromLocalStorage();
-        if (hasSave) {
+        if (hasPending) {
             app.dom.submitWindow.classList.add('hidden');
+        } else {
+            const loadedFromDb = await loadLastSavedPlan();
+            if (loadedFromDb) app.dom.submitWindow.classList.add('hidden');
         }
 
         app.updateUndoRedoButtons();

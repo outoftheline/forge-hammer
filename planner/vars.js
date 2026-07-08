@@ -31,18 +31,30 @@ window.PlannerApp.dom = {
     oldStreetsEl: document.querySelector('.old .streets'),
     newStreetsEl: document.querySelector('.new .streets'),
     placeStreetBtn: document.querySelector('#placeStreet'),
+    populationEl: document.querySelector('#populationStat .pop-stat'),
 
-    saveBtn: document.querySelector('#saveState'),
-    exportBtn: document.querySelector('#exportState'),
-    importBtn: document.querySelector('#importState'),
+    saveBtn: document.querySelector('#save'),
+    exportBtn: document.querySelector('#export'),
+    importBtn: document.querySelector('#import'),
     importFileInput: document.querySelector('#importFileInput'),
     overlayImportFileInput: document.querySelector('#overlayImportFileInput'),
+
+    loadPlanBtn: document.querySelector('#loadPlan'),
+    planListModal: document.querySelector('#planListModal'),
+    planListClose: document.querySelector('#planListClose'),
+    planListItems: document.querySelector('#planListItems'),
 };
 
 window.PlannerApp.state = {
     metaData: {},
     cityData: {},
     mapData: {},
+
+    planId: null,
+    planName: null,
+    playerId: null,
+    playerName: null,
+    currentEra: null,
 
     occupiedTiles: new Map(),
     mapBuildings: [],

@@ -208,12 +208,29 @@ window.PlannerApp = window.PlannerApp || {};
         drawStreetPreview(ctx);
     }
 
+    function calculatePopulation() {
+        let total = 0;
+        for (const building of state.mapBuildings) {
+            total += (building.population || 0);
+        }
+        return total;
+    }
+
     function updateStats() {
         const oldStreetAmount = Object.values(state.cityData).filter(x => x.type === 'street').length;
         if (dom.oldStreetsEl) dom.oldStreetsEl.textContent = oldStreetAmount;
 
         const streetAmount = state.mapBuildings.filter(x => x.data.type === 'street').length;
         if (dom.newStreetsEl) dom.newStreetsEl.textContent = streetAmount;
+
+        const population = calculatePopulation();
+        if (dom.populationEl) {
+            dom.populationEl.textContent = population;
+            dom.populationEl.classList.toggle('negative', population < 0);
+            dom.populationEl.title = population < 0
+                ? 'Warning: population is negative — this layout needs more residences.'
+                : '';
+        }
     }
 
     function clampZoomToSteps(dir) {
@@ -235,6 +252,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.camY += pointBefore.y - pointAfter.y;
 
         redrawMap();
+        if (app.saveViewState) app.saveViewState();
     }
 
     function zoomIn() {
@@ -335,6 +353,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.drawEmptyMap = drawEmptyMap;
     app.redrawMap = redrawMap;
     app.updateStats = updateStats;
+    app.calculatePopulation = calculatePopulation;
     app.clampZoomToSteps = clampZoomToSteps;
     app.zoomAtScreenPoint = zoomAtScreenPoint;
     app.zoomIn = zoomIn;

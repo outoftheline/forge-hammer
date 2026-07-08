@@ -27,10 +27,10 @@ body, html {
 .overlay .inner {
     position: fixed;
     width: 500px;
-    height: 300px;
+    height: 200px;
     top: 50%;
     left: 50%;
-    margin-top: -150px;
+    margin-top: -100px;
     margin-left: -290px;
     box-sizing: border-box;
     padding: 10px 1em;
@@ -53,6 +53,7 @@ h1 {
     align-items: center;
     gap: 5px;
     padding: 0 5px;
+    font-size: 22px;
 }
 
 textarea, button, input, .btn {
@@ -89,6 +90,10 @@ textarea, button, input, .btn {
     justify-content: space-between;
     align-items: baseline;
     gap: 5px;
+}
+
+.sidebar h1 img {
+    height: 30px;
 }
 
 .sidebar .filter, .sidebar .save {
@@ -381,4 +386,103 @@ button, .btn {
     flex-shrink: 0;
     opacity: 0.6;
     font-size: 80%;
+}
+
+#populationStat {
+    padding: 0 5px;
+}
+
+.pop-stat.negative {
+    color: var(--danger-red, #ff4d4d);
+    font-weight: bold;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4000;
+    background-color: #000a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-inner {
+    width: 480px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #0e171d;
+    border: 1px solid #47677d;
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: medium;
+}
+
+#planListItems {
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#planListItems li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 4px;
+    border-bottom: 1px dotted #47677d;
+    cursor: pointer;
+}
+
+#planListItems li:hover {
+    background-color: #2a3f50;
+}
+
+#planListItems .plan-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#planListItems .plan-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#planListItems .plan-meta {
+    font-size: 80%;
+    opacity: 0.7;
+}
+
+#planListItems .plan-delete {
+    flex-shrink: 0;
+}
+
+#planListItems .empty {
+    opacity: 0.6;
+    padding: 6px 4px;
+    cursor: default;
 }

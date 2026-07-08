@@ -15,6 +15,80 @@ window.PlannerApp = window.PlannerApp || {};
         };
     }
 
+    const InnoEras = {
+        StoneAge: 0, 
+        BronzeAge: 1, 
+        IronAge: 2, 
+        EarlyMiddleAge: 3, 
+        HighMiddleAge: 4,
+        LateMiddleAge: 5, 
+        ColonialAge: 6, 
+        IndustrialAge: 7, 
+        ProgressiveEra: 8,
+        ModernEra: 9, 
+        PostModernEra: 10, 
+        ContemporaryEra: 11, 
+        TomorrowEra: 12,
+        FutureEra: 13, 
+        ArcticFuture: 14, 
+        OceanicFuture: 15, 
+        VirtualFuture: 16,
+        SpaceAgeMars: 17, 
+        SpaceAgeAsteroidBelt: 18, 
+        SpaceAgeVenus: 19,
+        SpaceAgeJupiterMoon: 20, 
+        SpaceAgeTitan: 21, 
+        SpaceAgeSpaceHub: 22, 
+        NextEra: 23
+    };
+
+
+    function getBuildingPopulation(meta, era) {
+        if (!meta) return 0;
+
+        const isGeneric = meta.__class__ === 'GenericCityEntity';
+        const eraId = InnoEras[era];
+
+        if (!isGeneric && Array.isArray(meta.entity_levels) && meta.entity_levels.length > 0) {
+            const level = eraId !== undefined ? meta.entity_levels[eraId] : undefined;
+            if (level) {
+                if (level.required_population) return level.required_population * -1;
+                if (level.provided_population) return level.provided_population;
+                return 0;
+            }
+
+            for (const lvl of meta.entity_levels) {
+                if (!lvl) continue;
+                if (lvl.required_population) return lvl.required_population * -1;
+                if (lvl.provided_population) return lvl.provided_population;
+            }
+            return 0;
+        }
+
+        if (!isGeneric && meta.requirements?.cost?.resources) {
+            if (meta.type === 'decoration') return 0;
+            if (meta.type === 'greatbuilding') return 0; // GB population bonus depends on the chosen offer, not static meta
+            const cost = meta.requirements.cost.resources.population;
+            return cost ? cost * -1 : 0;
+        }
+
+        if (meta.components) {
+            if (era && meta.components[era]?.staticResources?.resources?.resources?.population !== undefined) {
+                return meta.components[era].staticResources.resources.resources.population;
+            }
+
+            const allAge = meta.components.AllAge?.staticResources?.resources?.resources?.population;
+            if (allAge !== undefined) return allAge;
+
+            for (const key of Object.keys(meta.components)) {
+                const pop = meta.components[key]?.staticResources?.resources?.resources?.population;
+                if (pop !== undefined) return pop;
+            }
+        }
+
+        return 0;
+    }
+
     class MapBuilding {
         constructor(data, meta) {
             this.data = data;
@@ -32,6 +106,7 @@ window.PlannerApp = window.PlannerApp || {};
             this.isActive = false;
 
             this.streetReq = this.setNeedsStreet();
+            this.population = getBuildingPopulation(meta, data.era);
             this.fill = this.setFillColor();
             this.stroke = this.setStrokeColor();
             this.hasLabel = !(this.meta.type === 'street' || this.height === SIZE || this.width === SIZE);
@@ -139,5 +214,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     app.getMetaSize = getMetaSize;
+    app.getBuildingPopulation = getBuildingPopulation;
+    app.InnoEras = InnoEras;
     app.MapBuilding = MapBuilding;
 })(window.PlannerApp);

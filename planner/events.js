@@ -254,7 +254,7 @@ window.PlannerApp = window.PlannerApp || {};
             const meta = state.metaById.get(String(placedMetaId));
             if (meta) {
                 state.placingBuilding = app.createRotatedBuilding(
-                    { cityentity_id: meta.id, x: 0, y: 0 },
+                    { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra },
                     meta
                 );
                 state.placingBuilding.isActive = true;
@@ -272,8 +272,6 @@ window.PlannerApp = window.PlannerApp || {};
         app.showStoredBuildings();
         app.updateStats();
         app.autoSave();
-
-        continuePlacingStoredBuilding(placedMetaId);
     }
 
     function getStreetMeta() {
@@ -309,7 +307,8 @@ window.PlannerApp = window.PlannerApp || {};
                 cityentity_id: streetMeta.id,
                 type: 'street',
                 x: tx,
-                y: ty
+                y: ty,
+                era: state.currentEra
             },
             forcedMeta
         );
@@ -461,6 +460,10 @@ window.PlannerApp = window.PlannerApp || {};
             if (!drag) return;
             e.preventDefault();
 
+            if (drag.mode === 'pan') {
+                if (app.saveViewState) app.saveViewState();
+            }
+
             if (drag.mode === 'select') {
                 state.selectionRect = null;
                 const endElem = app.getCanvasPointElem(e);
@@ -565,7 +568,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         // Create a fresh building from meta — not tied to storedBuildings.
         state.placingBuilding = app.createRotatedBuilding(
-            { cityentity_id: meta.id, x: 0, y: 0 },
+            { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra },
             meta
         );
         state.placingBuilding.isActive = true;
@@ -573,6 +576,46 @@ window.PlannerApp = window.PlannerApp || {};
 
         app.clearMetaSearch();
         updatePlacingBuildingPreview();
+    }
+
+    async function refreshPlanListUi() {
+        if (!dom.planListItems) return;
+
+        dom.planListItems.innerHTML = '<li class="empty">Loading…</li>';
+
+        let plans = [];
+        try {
+            plans = await app.getPlanList();
+        } catch (err) {
+            console.error('Failed to load plan list:', err);
+            dom.planListItems.innerHTML = '<li class="empty">Failed to load saved plans.</li>';
+            return;
+        }
+
+        if (!plans || !plans.length) {
+            dom.planListItems.innerHTML = '<li class="empty">No saved plans yet.</li>';
+            return;
+        }
+
+        plans.sort((a, b) => (b.date || 0) - (a.date || 0));
+
+        const html = plans.map(plan => {
+            const dateStr = plan.date ? new Date(plan.date * 1000).toLocaleString() : '';
+            const name = plan.name || 'Unnamed plan';
+            const meta = [plan.world, plan.playerName, dateStr].filter(Boolean).join(' · ');
+
+            return (
+                '<li data-plan-id="' + plan.id + '">' +
+                    '<span class="plan-info">' +
+                        '<span class="plan-name">' + name + '</span>' +
+                        '<span class="plan-meta">' + meta + '</span>' +
+                    '</span>' +
+                    '<button class="btn plan-delete" title="Delete plan">✕</button>' +
+                '</li>'
+            );
+        });
+
+        dom.planListItems.innerHTML = html.join('');
     }
 
     function bindEvents(init) {
@@ -650,11 +693,77 @@ window.PlannerApp = window.PlannerApp || {};
         });
 
         if (dom.saveBtn) {
-            dom.saveBtn.addEventListener('click', () => app.saveState());
+            dom.saveBtn.addEventListener('click', async () => {
+                if (dom.saveBtn.disabled) return;
+
+                const originalText = dom.saveBtn.textContent;
+                dom.saveBtn.disabled = true;
+                dom.saveBtn.textContent = 'Saving…';
+
+                const success = await app.savePlanToDatabase();
+
+                dom.saveBtn.textContent = success ? 'Saved' : 'Failed to save';
+                setTimeout(() => {
+                    dom.saveBtn.textContent = originalText;
+                    dom.saveBtn.disabled = false;
+                }, 1500);
+            });
+        }
+
+        if (dom.loadPlanBtn && dom.planListModal) {
+            dom.loadPlanBtn.addEventListener('click', async () => {
+                dom.planListModal.classList.remove('hidden');
+                await refreshPlanListUi();
+            });
+        }
+
+        if (dom.planListClose && dom.planListModal) {
+            dom.planListClose.addEventListener('click', () => {
+                dom.planListModal.classList.add('hidden');
+            });
+        }
+
+        if (dom.planListModal) {
+            dom.planListModal.addEventListener('click', (e) => {
+                if (e.target === dom.planListModal) dom.planListModal.classList.add('hidden');
+            });
+        }
+
+        if (dom.planListItems) {
+            dom.planListItems.addEventListener('click', async (e) => {
+                const deleteBtn = e.target.closest('.plan-delete');
+                if (deleteBtn) {
+                    const li = deleteBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    const planId = Number(li.dataset.planId);
+                    if (!confirm('Delete this saved plan? This cannot be undone.')) return;
+                    try {
+                        await app.removePlanFromDatabase(planId);
+                        await refreshPlanListUi();
+                    } catch (err) {
+                        console.error('Failed to delete plan:', err);
+                        alert('Failed to delete plan.');
+                    }
+                    return;
+                }
+
+                const li = e.target.closest('li[data-plan-id]');
+                if (!li) return;
+                const planId = Number(li.dataset.planId);
+
+                try {
+                    await app.loadPlanFromDatabase(planId);
+                    dom.planListModal.classList.add('hidden');
+                    dom.submitWindow.classList.add('hidden');
+                } catch (err) {
+                    console.error('Failed to load plan:', err);
+                    alert('Failed to load plan.');
+                }
+            });
         }
 
         if (dom.exportBtn) {
-            dom.exportBtn.addEventListener('click', () => app.exportStateToFile());
+            dom.exportBtn.addEventListener('click', () => app.exportSaveToFile());
         }
 
         if (dom.importBtn) {
