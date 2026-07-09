@@ -4,6 +4,13 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+	if (FH.ActiveMap !== 'gg') {
+		$('#GBGActionLogCount').remove();
+		$('#GBGTargets').remove();
+	}
+});
+
 FH.proxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
 	GuildFights.ProvinceNames = JSON.parse(xhr.responseText);
 });
@@ -28,11 +35,6 @@ FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) 
 
 FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
 	GuildFights.HandleSignals(data.responseData);
-});
-
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
-	if (FH.ActiveMap !== 'gg') 
-		$('#GBGTargets').remove();
 });
 
 FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
@@ -256,6 +258,12 @@ let GuildFights = {
 				}
 			});
 			GuildFights.InjectionLoaded = true;
+
+			
+			let container = $('#GBGActionLogCount');
+			if (container.length === 0)
+				container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
+			container.html(GBGActionLog.refreshMenuBadge());
 		}
 	},
 
@@ -611,7 +619,7 @@ let GuildFights = {
 							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 							<div class="btn-group">
 							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
-							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')} ${GBGActionLog.refreshMenuBadge()}</button>
+							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')}</button>
 							</div>
 						</div>`);
 			}

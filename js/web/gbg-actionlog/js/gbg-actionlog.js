@@ -62,7 +62,7 @@ let GBGActionLog = {
 
 		let hours = Math.floor((moment().unix() - last) / 3600);
         if (hours > 0)
-		    return `<span data-number="${hours}" ${hours >= GBGActionLog.redAfterHours() ? `class="counter-red"` : ``}>
+		    return `<span data-number="${hours}" class="hammer-counter ${hours >= GBGActionLog.redAfterHours() ? `counter-red` : ``}">
                     ${hours}
                     </span>`;
         return '';
