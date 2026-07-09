@@ -2952,7 +2952,7 @@ let Productions = {
 							<script src="${FH.extUrl}vendor/tableSorter/table-sorter.js"></script>
 							<script src="${FH.extUrl}js/foeproxy.js"></script>
 							<script src="${FH.extUrl}js/web/_main/js/_main.js"></script>
-							<script src="${FH.extUrl}js/web/_helper/js/_FH.helper.js"></script>
+							<script src="${FH.extUrl}js/web/_helper/js/_helper.js"></script>
 							<script src="${FH.extUrl}js/web/productions/js/popout.js"></script>
 						</html>`;
 
@@ -2977,9 +2977,9 @@ let Productions = {
 					winObj.document.head.appendChild(link);
 				}
 			};
-			const popoutTooltips = Object.assign({}, Tooltips);
+			const popoutTooltips = Object.assign({}, FH.Tooltips);
 			winObj.Tooltips = popoutTooltips;
-			winObj.Kits = Object.assign({}, Kits);
+			winObj.Kits = Object.assign({}, FH.Kits);
 			winObj.initPopout();
 			$('#ProductionsRating').remove();
 		};
