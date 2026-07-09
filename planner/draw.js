@@ -334,20 +334,25 @@ window.PlannerApp = window.PlannerApp || {};
         const streetState = state.streetPlacement;
         if (!streetState.active || !streetState.previewTiles.length) return;
 
+        const size = streetState.size || 1;
+        const boxSize = SIZE * size;
+
         context.save();
 
         for (const tile of streetState.previewTiles) {
-            const blocked = app.isTileOccupiedByNonStreet(tile.x, tile.y);
+            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size);
+            const px = tile.x * SIZE;
+            const py = tile.y * SIZE;
 
             context.globalAlpha = 0.55;
             context.fillStyle = blocked ? '#ff4d4d' : '#66c440';
-            context.fillRect(tile.x * SIZE, tile.y * SIZE, SIZE, SIZE);
+            context.fillRect(px, py, boxSize, boxSize);
 
             context.globalAlpha = 1;
             context.strokeStyle = blocked ? '#8b0000' : '#1d6b2a';
             context.lineWidth = 2 / state.zoomScale;
             context.setLineDash([6 / state.zoomScale, 4 / state.zoomScale]);
-            context.strokeRect(tile.x * SIZE, tile.y * SIZE, SIZE, SIZE);
+            context.strokeRect(px, py, boxSize, boxSize);
         }
 
         context.restore();

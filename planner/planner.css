@@ -270,13 +270,15 @@ textarea, button, input, .btn {
 
 #map .info {
     position: absolute;
-    bottom: 0.5em;
-    right: 0.5em;
+    bottom: 0;
+    right: 0;
     z-index: 1200;
     pointer-events: none;
-    padding: 0 2px;
+    padding: 5px;
     text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
-    background-color: #0002;
+    background-color: #0003;
+    backdrop-filter: blur(2px);
+    border-radius: 5px 0 0 0;
 }
 
 button, .btn {
@@ -311,7 +313,7 @@ button, .btn {
     height: 100%;
 }
 
-.hidden { display: none; }
+.hidden, #streetSizeGroup { display: none; }
 
 .sideview { transform: rotate(33deg) skew(-30deg,-5deg) }
 
@@ -320,6 +322,16 @@ button, .btn {
     border-color: #66c440;
     color: #fff;
     box-shadow: 0 0 6px #66c44088;
+}
+
+#streetSizeGroup.active {
+    display: flex;
+}
+
+.street-size-btn.active {
+    background-color: #1d6b2a;
+    border-color: #66c440;
+    color: #fff;
 }
 
 /* --- Meta building search --- */

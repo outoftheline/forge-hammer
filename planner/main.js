@@ -78,6 +78,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.metaData = await getCityEntityMetaData(state.region);
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
         state.history = [];
@@ -255,6 +256,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.metaData = await getCityEntityMetaData(state.region);
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         const entries = buildingRowsToEntries(rows);
         state.mapBuildings = buildingsFromEntries(entries.filter(e => !e.stored));
@@ -400,10 +402,9 @@ window.PlannerApp = window.PlannerApp || {};
                 y: entry.y ?? (entry.data ? entry.data.y : 0) ?? 0,
                 era: entry.era ?? (entry.data ? entry.data.era : undefined) ?? state.currentEra ?? null,
             };
-            const effectiveMeta = meta.type === 'street'
-                ? { ...meta, width: 1, length: 1 }
-                : meta;
-            return createRotatedBuilding(data, effectiveMeta);
+            // Use the meta's real footprint (streets can be 1x1 or 2x2) — the
+            // same source of truth drawMap() uses for a freshly opened city.
+            return createRotatedBuilding(data, meta);
         }).filter(Boolean);
     }
 

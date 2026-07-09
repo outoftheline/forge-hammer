@@ -31,6 +31,7 @@ window.PlannerApp.dom = {
     oldStreetsEl: document.querySelector('.old .streets'),
     newStreetsEl: document.querySelector('.new .streets'),
     placeStreetBtn: document.querySelector('#placeStreet'),
+    streetSizeGroup: document.querySelector('#streetSizeGroup'),
     populationEl: document.querySelector('#populationStat .pop-stat'),
 
     saveBtn: document.querySelector('#save'),
@@ -86,7 +87,8 @@ window.PlannerApp.state = {
     streetPlacement: {
         active: false,
         startTile: null,
-        previewTiles: []
+        previewTiles: [],
+        size: 1
     },
 
     history: [], // snapshots for undo, max 5

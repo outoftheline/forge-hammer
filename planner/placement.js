@@ -108,6 +108,25 @@ window.PlannerApp = window.PlannerApp || {};
         return !!(occupant && occupant.meta.type !== 'street');
     }
 
+    function isFootprintOccupiedByNonStreet(tx, ty, size = 1) {
+        for (let dy = 0; dy < size; dy++) {
+            for (let dx = 0; dx < size; dx++) {
+                if (isTileOccupiedByNonStreet(tx + dx, ty + dy)) return true;
+            }
+        }
+        return false;
+    }
+
+    function isFootprintOccupiedByStreet(tx, ty, size = 1) {
+        for (let dy = 0; dy < size; dy++) {
+            for (let dx = 0; dx < size; dx++) {
+                const occupant = state.occupiedTiles.get(tileKey(tx + dx, ty + dy));
+                if (occupant && occupant.meta.type === 'street') return true;
+            }
+        }
+        return false;
+    }
+
     function getStraightLineTiles(startTile, endTile) {
         if (!startTile || !endTile) return [];
 
@@ -152,6 +171,8 @@ window.PlannerApp = window.PlannerApp || {};
     app.isBuildingOutOfBounds = isBuildingOutOfBounds;
     app.hitTestBuilding = hitTestBuilding;
     app.isTileOccupiedByNonStreet = isTileOccupiedByNonStreet;
+    app.isFootprintOccupiedByNonStreet = isFootprintOccupiedByNonStreet;
+    app.isFootprintOccupiedByStreet = isFootprintOccupiedByStreet;
     app.getStraightLineTiles = getStraightLineTiles;
     app.worldToTile = worldToTile;
 })(window.PlannerApp);

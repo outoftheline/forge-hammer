@@ -134,9 +134,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.camY = 0;
         state.zoomScale = 0.75;
 
-        // The reset button already clears the persisted history — clear the
-        // in-memory copy too, so undo can't reach back past the reset into
-        // whatever (possibly rotated) state existed before it.
         state.history = [];
         state.future  = [];
         app.updateUndoRedoButtons();
@@ -155,8 +152,12 @@ window.PlannerApp = window.PlannerApp || {};
         if (state.streetPlacement.active) {
             const point = app.getCanvasPointElem(e);
             const tile = app.worldToTile(point.x, point.y);
+            const size = state.streetPlacement.size || 1;
 
-            if (!state.streetPlacement.startTile) {
+            if (size > 1) {
+                state.streetPlacement.previewTiles = [tile];
+                commitStreetPreview();
+            } else if (!state.streetPlacement.startTile) {
                 state.streetPlacement.startTile = tile;
                 state.streetPlacement.previewTiles = [tile];
             } else {
@@ -197,8 +198,11 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (state.streetPlacement.active) {
             const currentTile = app.worldToTile(state.lastMouseElem.x, state.lastMouseElem.y);
+            const size = state.streetPlacement.size || 1;
 
-            if (state.streetPlacement.startTile) {
+            if (size > 1) {
+                state.streetPlacement.previewTiles = [currentTile];
+            } else if (state.streetPlacement.startTile) {
                 state.streetPlacement.previewTiles = app.getStraightLineTiles(
                     state.streetPlacement.startTile,
                     currentTile
@@ -274,8 +278,48 @@ window.PlannerApp = window.PlannerApp || {};
         app.autoSave();
     }
 
-    function getStreetMeta() {
-        return Object.values(state.metaData).find(x => x.type === 'street') || null;
+    function getStreetMetas() {
+        return Object.values(state.metaData).filter(x => x.type === 'street');
+    }
+
+    function getStreetFootprintSizes() {
+        const sizes = new Set();
+        for (const meta of getStreetMetas()) {
+            const dims = app.getMetaSize(meta);
+            sizes.add(Math.max(dims.width, dims.height) || 1);
+        }
+        return Array.from(sizes).sort((a, b) => a - b);
+    }
+
+    function getStreetMetaForSize(size) {
+        const metas = getStreetMetas();
+        const match = metas.find(meta => {
+            const dims = app.getMetaSize(meta);
+            return Math.max(dims.width, dims.height) === size;
+        });
+        return match || metas[0] || null;
+    }
+
+    function renderStreetSizeOptions() {
+        if (!dom.streetSizeGroup) return;
+
+        const sizes = getStreetFootprintSizes();
+
+        if (sizes.length <= 1) {
+            state.streetPlacement.size = sizes[0] || 1;
+            dom.streetSizeGroup.innerHTML = '';
+            return;
+        }
+
+        if (!sizes.includes(state.streetPlacement.size)) {
+            state.streetPlacement.size = sizes[0];
+        }
+
+        dom.streetSizeGroup.innerHTML = sizes.map(size =>
+            '<button class="btn street-size-btn' + (size === state.streetPlacement.size ? ' active' : '') + '" data-size="' + size + '">' +
+                size + 'x' + size +
+            '</button>'
+        ).join('');
     }
 
     function startStreetPlacement() {
@@ -288,7 +332,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.streetPlacement.active = true;
         state.streetPlacement.startTile = null;
         state.streetPlacement.previewTiles = [];
+        renderStreetSizeOptions();
         dom.placeStreetBtn.classList.add('active');
+        dom.streetSizeGroup.classList.add('active');
         app.redrawMap();
     }
 
@@ -297,11 +343,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.streetPlacement.startTile = null;
         state.streetPlacement.previewTiles = [];
         dom.placeStreetBtn.classList.remove('active');
+        dom.streetSizeGroup.classList.remove('active');
         app.redrawMap();
     }
 
     function createStreetBuildingAtTile(tx, ty, streetMeta) {
-        const forcedMeta = { ...streetMeta, width: 1, length: 1 };
         return app.createRotatedBuilding(
             {
                 cityentity_id: streetMeta.id,
@@ -310,21 +356,20 @@ window.PlannerApp = window.PlannerApp || {};
                 y: ty,
                 era: state.currentEra
             },
-            forcedMeta
+            streetMeta
         );
     }
 
     function commitStreetPreview() {
-        const streetMeta = getStreetMeta();
+        const size = state.streetPlacement.size || 1;
+        const streetMeta = getStreetMetaForSize(size);
         if (!streetMeta) return;
 
         app.pushSnapshot();
 
         for (const tile of state.streetPlacement.previewTiles) {
-            if (app.isTileOccupiedByNonStreet(tile.x, tile.y)) continue;
-
-            const existing = state.occupiedTiles.get(app.tileKey(tile.x, tile.y));
-            if (existing && existing.meta.type === 'street') continue;
+            if (app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size)) continue;
+            if (app.isFootprintOccupiedByStreet(tile.x, tile.y, size)) continue;
 
             const street = createStreetBuildingAtTile(tile.x, tile.y, streetMeta);
             state.mapBuildings.push(street);
@@ -624,6 +669,19 @@ window.PlannerApp = window.PlannerApp || {};
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
 
+        if (dom.streetSizeGroup) {
+            dom.streetSizeGroup.addEventListener('click', (e) => {
+                const btn = e.target.closest('.street-size-btn');
+                if (!btn) return;
+
+                state.streetPlacement.size = Number(btn.dataset.size);
+                state.streetPlacement.startTile = null;
+                state.streetPlacement.previewTiles = [];
+                renderStreetSizeOptions();
+                app.redrawMap();
+            });
+        }
+
         const undoBtn = document.getElementById('undo');
         const redoBtn = document.getElementById('redo');
         if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
@@ -867,4 +925,5 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     app.bindEvents = bindEvents;
+    app.renderStreetSizeOptions = renderStreetSizeOptions;
 })(window.PlannerApp);
