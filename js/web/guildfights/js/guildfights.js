@@ -84,7 +84,7 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	}, 800);
 
 	GuildFights.HandleSignals();
-	
+
 	let container = $('#GBGActionLogCount');
 	if (container.length === 0)
 		container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
@@ -277,6 +277,9 @@ let GuildFights = {
 			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
 				let province = GuildFights.MapData.map.provinces.find(x => x.id === (GuildFights.Signals[i].provinceId || 0));
 				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
+					GuildFights.Signals.splice(i, 1);
+				}
+				if (GuildFights.Signals[i].signal === 'ignore') {
 					GuildFights.Signals.splice(i, 1);
 				}
 			}
