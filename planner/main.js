@@ -81,6 +81,8 @@ window.PlannerApp = window.PlannerApp || {};
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
+        state.deletedBuildings = [];
+        state.selectedStoredMetaId = null;
         state.history = [];
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
@@ -157,19 +159,21 @@ window.PlannerApp = window.PlannerApp || {};
     function buildPlannerMapData() {
         let syntheticId = 0;
 
-        const toPlannerBuilding = (building, stored) => ({
+        const toPlannerBuilding = (building, stored, deleted) => ({
             id: (building.data && building.data.id !== undefined) ? building.data.id : `planner-${syntheticId++}`,
             x: Math.round(building.x / app.SIZE),
             y: Math.round(building.y / app.SIZE),
             type: building.meta.type,
             cityentity_id: building.meta.id,
             era: building.data ? building.data.era : undefined,
-            stored: !!stored
+            stored: !!stored,
+            deleted: !!deleted
         });
 
         return [
-            ...state.mapBuildings.map(b => toPlannerBuilding(b, false)),
-            ...(state.storedBuildings || []).map(b => toPlannerBuilding(b, true))
+            ...state.mapBuildings.map(b => toPlannerBuilding(b, false, false)),
+            ...(state.storedBuildings || []).map(b => toPlannerBuilding(b, true, false)),
+            ...(state.deletedBuildings || []).map(b => toPlannerBuilding(b, true, true))
         ];
     }
 
@@ -234,7 +238,8 @@ window.PlannerApp = window.PlannerApp || {};
                 x: row.x,
                 y: row.y,
                 era: parsed.era,
-                stored: !!parsed.stored
+                stored: !!parsed.stored,
+                deleted: !!parsed.deleted
             };
         });
     }
@@ -259,8 +264,9 @@ window.PlannerApp = window.PlannerApp || {};
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         const entries = buildingRowsToEntries(rows);
-        state.mapBuildings = buildingsFromEntries(entries.filter(e => !e.stored));
-        state.storedBuildings = buildingsFromEntries(entries.filter(e => e.stored));
+        state.mapBuildings = buildingsFromEntries(entries.filter(e => !e.stored && !e.deleted));
+        state.storedBuildings = buildingsFromEntries(entries.filter(e => e.stored && !e.deleted));
+        state.deletedBuildings = buildingsFromEntries(entries.filter(e => e.deleted));
 
         state.rotated = false;
         state.camX = 0;
@@ -333,6 +339,12 @@ window.PlannerApp = window.PlannerApp || {};
                 y: b.data.y,
                 era: b.data.era
             })),
+            deletedBuildings: (state.deletedBuildings || []).map(b => ({
+                metaId: b.meta.id,
+                x: b.data.x,
+                y: b.data.y,
+                era: b.data.era
+            })),
             camX: state.camX,
             camY: state.camY,
             zoomScale: state.zoomScale,
@@ -352,6 +364,7 @@ window.PlannerApp = window.PlannerApp || {};
             currentEra: state.currentEra,
             mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
             storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
+            deletedBuildings: (state.deletedBuildings || []).map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
             camX: state.camX, camY: state.camY, zoomScale: state.zoomScale,
             rotated: !!state.rotated
         };
@@ -415,8 +428,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.rotated   = !!layout.rotated;
         if (layout.mapData) state.mapData = layout.mapData;
         if (layout.currentEra !== undefined) state.currentEra = layout.currentEra;
-        state.mapBuildings    = buildingsFromEntries(layout.mapBuildings);
-        state.storedBuildings = buildingsFromEntries(layout.storedBuildings);
+        state.mapBuildings     = buildingsFromEntries(layout.mapBuildings);
+        state.storedBuildings  = buildingsFromEntries(layout.storedBuildings);
+        state.deletedBuildings = buildingsFromEntries(layout.deletedBuildings);
     }
 
 
@@ -455,6 +469,12 @@ window.PlannerApp = window.PlannerApp || {};
                 era: b.data.era
             })),
             storedBuildings: state.storedBuildings.map(b => ({
+                metaId: b.meta.id,
+                x: b.data.x,
+                y: b.data.y,
+                era: b.data.era
+            })),
+            deletedBuildings: (state.deletedBuildings || []).map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
@@ -502,12 +522,14 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.mapBuildings = buildingsFromEntries(snapshot.mapBuildings);
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
+        state.deletedBuildings = buildingsFromEntries(snapshot.deletedBuildings);
 
         state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
         state.selectionRect = null;
         state.selectedBuildings = [];
+        state.selectedStoredMetaId = null;
 
         app.rebuildGridLayer();
         app.rebuildOccupiedTiles();

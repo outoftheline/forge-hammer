@@ -34,6 +34,61 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings.push(building);
     }
 
+    function isTypingTarget(target) {
+        if (!target) return false;
+        const tag = target.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
+    }
+
+    function deleteStoredBuildings(metaId) {
+        if (!metaId) return;
+
+        const remaining = [];
+        const toDelete = [];
+        for (const b of state.storedBuildings) {
+            if (String(b.meta.id) === String(metaId)) toDelete.push(b);
+            else remaining.push(b);
+        }
+        if (!toDelete.length) return;
+
+        app.pushSnapshot();
+
+        state.storedBuildings = remaining;
+        state.deletedBuildings = (state.deletedBuildings || []).concat(toDelete);
+
+        // cancel building placement
+        if (state.placingBuilding && String(state.placingBuilding.meta.id) === String(metaId)) {
+            state.placingBuilding = null;
+            state.dragCopy = null;
+        }
+
+        state.selectedStoredMetaId = null;
+
+        app.showStoredBuildings();
+        app.redrawMap();
+        app.autoSave();
+    }
+
+    function restoreDeletedBuildings(metaId) {
+        if (!metaId || !state.deletedBuildings || !state.deletedBuildings.length) return;
+
+        const remaining = [];
+        const toRestore = [];
+        for (const b of state.deletedBuildings) {
+            if (String(b.meta.id) === String(metaId)) toRestore.push(b);
+            else remaining.push(b);
+        }
+        if (!toRestore.length) return;
+
+        app.pushSnapshot();
+
+        state.deletedBuildings = remaining;
+        state.storedBuildings = state.storedBuildings.concat(toRestore);
+
+        app.showStoredBuildings();
+        app.autoSave();
+    }
+
     function sortStoredBuildingsByAreaDesc() {
         state.storedBuildings.sort((a, b) => {
             const aSize = app.getMetaSize(a.meta);
@@ -125,7 +180,9 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.mapBuildings = [];
         state.storedBuildings = [];
+        state.deletedBuildings = [];
         state.selectedBuildings = [];
+        state.selectedStoredMetaId = null;
         state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
@@ -686,6 +743,10 @@ window.PlannerApp = window.PlannerApp || {};
         const redoBtn = document.getElementById('redo');
         if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
         if (redoBtn) redoBtn.addEventListener('click', () => app.redo());
+        
+        document.querySelector('.info .close').addEventListener('click', () => {
+            document.querySelector('.info span').classList.toggle('hidden');
+        });
 
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
@@ -697,6 +758,13 @@ window.PlannerApp = window.PlannerApp || {};
             ) {
                 e.preventDefault();
                 app.redo();
+            } else if (
+                (e.key === 'Backspace' || e.key === 'Delete') &&
+                state.selectedStoredMetaId &&
+                !isTypingTarget(e.target)
+            ) {
+                e.preventDefault();
+                deleteStoredBuildings(state.selectedStoredMetaId);
             }
         });
 
@@ -726,6 +794,13 @@ window.PlannerApp = window.PlannerApp || {};
             if (!li) return;
 
             const metaId = li.dataset.id;
+
+            if (li.classList.contains('deleted')) {
+                restoreDeletedBuildings(metaId);
+                return;
+            }
+
+            state.selectedStoredMetaId = metaId;
             li.classList.add('active');
             startPlacingStoredBuilding(metaId);
         });

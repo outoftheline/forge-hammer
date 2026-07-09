@@ -60,7 +60,9 @@ window.PlannerApp.state = {
     occupiedTiles: new Map(),
     mapBuildings: [],
     storedBuildings: [],
+    deletedBuildings: [],
     selectedBuildings: [],
+    selectedStoredMetaId: null,
 
     activeBuilding: null,
     placingBuilding: null,

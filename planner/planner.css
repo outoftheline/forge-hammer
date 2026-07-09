@@ -144,6 +144,34 @@ textarea, button, input, .btn {
     background-color: #fff2;
 }
 
+.sidebar li.section-header {
+    justify-content: flex-start;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px dotted #47677d;
+    font-size: 80%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    cursor: default;
+}
+
+.sidebar li.deleted {
+    opacity: 0.5;
+    text-decoration: line-through;
+    cursor: pointer;
+}
+
+.sidebar li.deleted:hover {
+    opacity: 0.85;
+}
+
+.sidebar li.deleted .restore-icon {
+    flex-shrink: 0;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
 .sidebar li .name::before {
     content: '';
     width: 9px;
@@ -231,40 +259,40 @@ textarea, button, input, .btn {
     gap: 5px;
 }
 
-.buttons .group {
+.group {
     display: inline-flex;
 }
 
-.buttons .group .btn {
+.group .btn {
     border-radius: 0;
     border-left: none;
 }
 
-.buttons .group .btn:first-child {
+.group .btn:first-child {
     border-left: 1px solid #eeea;
     border-radius: 5px 0 0 5px;
 }
 
-.buttons .group .btn:last-child {
+.group .btn:last-child {
     border-radius: 0 5px 5px 0;
 }
 
-.buttons .group.column {
+.group.column {
     flex-direction: column;
 }
 
-.buttons .group.column .btn {
+.group.column .btn {
     border: 1px solid #eeea;
     border-radius: 0;
     border-top: none;
 }
 
-.buttons .group.column .btn:first-child {
+.group.column .btn:first-child {
     border-top: 1px solid #eeea;
     border-radius: 5px 5px 0 0;
 }
 
-.buttons .group.column .btn:last-child {
+.group.column .btn:last-child {
     border-radius: 0 0 5px 5px;
 }
 
@@ -273,12 +301,17 @@ textarea, button, input, .btn {
     bottom: 0;
     right: 0;
     z-index: 1200;
-    pointer-events: none;
     padding: 5px;
     text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
     background-color: #0003;
     backdrop-filter: blur(2px);
     border-radius: 5px 0 0 0;
+    pointer-events: none;
+}
+
+#map .info b {
+    pointer-events: all;
+    cursor: pointer;
 }
 
 button, .btn {
@@ -501,4 +534,16 @@ button, .btn {
     opacity: 0.6;
     padding: 6px 4px;
     cursor: default;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.stretch {
+    justify-content: stretch;
+}
+
+.flex.stretch select {
+    width: stretch;
 }
