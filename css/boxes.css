@@ -2561,7 +2561,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 
 #GBGActionLogCount {
-	position: fixed;
+	position: absolute;
 	top: 380px;
 	left: 10px;
 	z-index: 100;

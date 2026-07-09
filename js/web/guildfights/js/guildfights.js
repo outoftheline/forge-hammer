@@ -84,6 +84,11 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	}, 800);
 
 	GuildFights.HandleSignals();
+	
+	let container = $('#GBGActionLogCount');
+	if (container.length === 0)
+		container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
+	container.html(GBGActionLog.refreshMenuBadge());
 });
 FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
@@ -258,12 +263,6 @@ let GuildFights = {
 				}
 			});
 			GuildFights.InjectionLoaded = true;
-
-			
-			let container = $('#GBGActionLogCount');
-			if (container.length === 0)
-				container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
-			container.html(GBGActionLog.refreshMenuBadge());
 		}
 	},
 
