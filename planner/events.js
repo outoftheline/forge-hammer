@@ -234,7 +234,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (e.altKey || e.ctrlKey) return;
         if (!state.dragCopy.valid) return;
 
-        const placedMetaId = state.placingBuilding.meta.id;
+        const placedMetaId = state.placingBuilding.meta.id || false;
         const fromMeta = state.placingBuilding._fromMeta === true;
 
         app.pushSnapshot();
@@ -269,7 +269,7 @@ window.PlannerApp = window.PlannerApp || {};
             continuePlacingStoredBuilding(placedMetaId);
         }
 
-        app.showStoredBuildings();
+        app.showStoredBuildings(placedMetaId);
         app.updateStats();
         app.autoSave();
     }
@@ -668,6 +668,7 @@ window.PlannerApp = window.PlannerApp || {};
             if (!li) return;
 
             const metaId = li.dataset.id;
+            li.classList.add('active');
             startPlacingStoredBuilding(metaId);
         });
 

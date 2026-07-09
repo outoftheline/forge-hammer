@@ -140,6 +140,10 @@ textarea, button, input, .btn {
     justify-content: space-between;
 }
 
+.sidebar li.active {
+    background-color: #fff2;
+}
+
 .sidebar li .name::before {
     content: '';
     width: 9px;

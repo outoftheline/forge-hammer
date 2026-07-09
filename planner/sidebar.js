@@ -92,16 +92,17 @@ window.PlannerApp = window.PlannerApp || {};
         return arr;
     }
 
-    function showStoredBuildings() {
+    function showStoredBuildings(buildingId = false) {
         let groups = getStoredBuildingGroups();
         groups = filterStoredBuildingGroups(groups);
         groups = sortStoredBuildingGroups(groups);
 
         const html = groups.map(item => {
             const noStreet = item.noStreet ? ' nostreet' : '';
+            let isActive = (buildingId && item.id === buildingId ? ' active' : '');
 
             return (
-                '<li data-id="' + item.id + '" class="' + item.type + noStreet + '">' +
+                '<li data-id="' + item.id + '" class="' + item.type + noStreet + isActive + '">' +
                     '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
                     '<span class="name">' + item.name + '</span>' +
                     ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
