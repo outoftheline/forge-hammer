@@ -121,7 +121,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function resetCity() {
-        app.restoreOriginalMapAndCity();
+        app.restoreCity();
 
         state.mapBuildings = [];
         state.storedBuildings = [];

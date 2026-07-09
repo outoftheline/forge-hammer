@@ -374,6 +374,22 @@ window.PlannerApp = window.PlannerApp || {};
         return new app.MapBuilding(data, meta);
     }
 
+    function restoreCity() {
+        if (!state.originalData) return;
+
+        state.cityData = JSON.parse(JSON.stringify(state.originalData.cityData || {}));
+        state.mapData = JSON.parse(JSON.stringify(state.originalData.mapData || []));
+        state.currentEra = state.originalData.currentEra || null;
+    }
+
+    function clearSavedLayout() {
+        try {
+            localStorage.removeItem(HISTORY_KEY);
+        } catch (e) {
+            console.log('Could not clear saved history:', e);
+        }
+    }
+
     function buildingsFromEntries(entries) {
         return (entries || []).map(entry => {
             const meta = state.metaById.get(entry.metaId);
@@ -542,6 +558,8 @@ window.PlannerApp = window.PlannerApp || {};
     app.updateUndoRedoButtons = updateUndoRedoButtons;
     app.rotateLayout = rotateLayout;
     app.createRotatedBuilding = createRotatedBuilding;
+    app.restoreCity = restoreCity;
+    app.clearSavedLayout = clearSavedLayout;
 
     (async () => {
         const hasPending = await loadGameCityData();
