@@ -92,6 +92,17 @@ window.PlannerApp = window.PlannerApp || {};
         return null;
     }
 
+    function isBuildingOutOfBounds(building, x = building.x, y = building.y) {
+        const rect = getBuildingTileRect(building, x, y);
+
+        for (let ty = rect.y; ty < rect.y + rect.h; ty++) {
+            for (let tx = rect.x; tx < rect.x + rect.w; tx++) {
+                if (!app.isTileInMapData(tx, ty)) return true;
+            }
+        }
+        return false;
+    }
+
     function isTileOccupiedByNonStreet(tx, ty) {
         const occupant = state.occupiedTiles.get(tileKey(tx, ty));
         return !!(occupant && occupant.meta.type !== 'street');
@@ -138,6 +149,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.removeBuildingFromOccupiedTiles = removeBuildingFromOccupiedTiles;
     app.snapToGrid = snapToGrid;
     app.canPlaceAt = canPlaceAt;
+    app.isBuildingOutOfBounds = isBuildingOutOfBounds;
     app.hitTestBuilding = hitTestBuilding;
     app.isTileOccupiedByNonStreet = isTileOccupiedByNonStreet;
     app.getStraightLineTiles = getStraightLineTiles;

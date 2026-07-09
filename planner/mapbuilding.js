@@ -158,6 +158,11 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         draw(context) {
+            const outOfBounds = app.isBuildingOutOfBounds(this);
+
+            context.save();
+            if (outOfBounds) context.globalAlpha = 0.75;
+
             context.fillStyle = this.isSelected ? '#cfe5f0' : this.isActive ? '#66c440' : this.fill;
             context.strokeStyle = this.isSelected ? '#2a4670' : this.stroke;
 
@@ -166,6 +171,8 @@ window.PlannerApp = window.PlannerApp || {};
             context.strokeRect(this.x, this.y, this.width, this.height);
 
             this.drawName(context);
+
+            context.restore();
         }
 
         drawName(context) {

@@ -56,6 +56,20 @@ window.PlannerApp = window.PlannerApp || {};
         return { width: maxX, height: maxY };
     }
 
+    function isTileInMapData(tx, ty) {
+        if (!state.mapData || !state.mapData.length) return false;
+
+        for (const exp of state.mapData) {
+            const ex = (exp.x === undefined || Number.isNaN(exp.x)) ? 0 : exp.x;
+            const ey = (exp.y === undefined || Number.isNaN(exp.y)) ? 0 : exp.y;
+
+            if (tx >= ex && tx < ex + exp.width && ty >= ey && ty < ey + exp.length) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function screenToWorld(cssX, cssY) {
         const x = cssX / state.zoomScale + state.camX;
         const y = cssY / state.zoomScale + state.camY;
@@ -343,6 +357,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.getDpr = getDpr;
     app.resizeCanvasToCSSSize = resizeCanvasToCSSSize;
     app.getMapBoundsPx = getMapBoundsPx;
+    app.isTileInMapData = isTileInMapData;
     app.screenToWorld = screenToWorld;
     app.getCanvasPointElem = getCanvasPointElem;
     app.rebuildGridLayer = rebuildGridLayer;
