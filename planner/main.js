@@ -43,6 +43,33 @@ window.PlannerApp = window.PlannerApp || {};
     // key used by CityMap.openPlanner() via background.js
     const PENDING_KEY = 'foe_planner_pending';
 
+    function sanitizeCityData(cityData) {
+        let playerId;
+        const cleaned = {};
+
+        for (const key in cityData) {
+            if (!cityData.hasOwnProperty(key)) continue;
+            const building = cityData[key];
+
+            if (playerId === undefined && building && building.player_id !== undefined) {
+                playerId = building.player_id;
+            }
+
+            const {
+                state: _state,
+                next_state_transition_at,
+                next_state_transition_in,
+                connected,
+                player_id,
+                ...rest
+            } = building || {};
+
+            cleaned[key] = rest;
+        }
+
+        return { cityData: cleaned, playerId };
+    }
+
     // Checks for new data from CityMap.openPlanner()
     async function loadGameCityData() {
         for (let attempt = 0; attempt < 10; attempt++) {
@@ -60,21 +87,19 @@ window.PlannerApp = window.PlannerApp || {};
 
     async function init(data) {
         state.region = data.region;
-        state.cityData = data.CityMapData;
+        const { cityData, playerId } = sanitizeCityData(data.CityMapData || {});
+        state.cityData = cityData;
         state.mapData = data.UnlockedAreas;
         state.currentEra = data.currentEra || null;
 
         state.originalData = {
-            cityData: data.CityMapData,
+            cityData: state.cityData,
             mapData: data.UnlockedAreas,
             currentEra: data.currentEra || null
         };
 
         state.playerName = data.playerName || state.playerName || 'unknown';
-        const sampleBuilding = Object.values(state.cityData || {})[0];
-        state.playerId = (sampleBuilding && sampleBuilding.player_id !== undefined)
-            ? sampleBuilding.player_id
-            : (state.playerId || 'unknown');
+        state.playerId = (playerId !== undefined) ? playerId : (state.playerId || 'unknown');
 
         state.metaData = await getCityEntityMetaData(state.region);
         state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
@@ -254,7 +279,7 @@ window.PlannerApp = window.PlannerApp || {};
         try { originalData = plan.originalJSON ? JSON.parse(plan.originalJSON) : null; } catch (e) { originalData = null; }
 
         state.region = plan.world;
-        state.cityData = (originalData && originalData.cityData) || {};
+        state.cityData = sanitizeCityData((originalData && originalData.cityData) || {}).cityData;
         state.mapData = (originalData && originalData.mapData) || [];
         state.currentEra = (originalData && originalData.currentEra) || null;
         state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
@@ -372,9 +397,20 @@ window.PlannerApp = window.PlannerApp || {};
 
     async function deserializeState(saved) {
         state.region = saved.region;
-        state.cityData = saved.cityData;
-        state.mapData = saved.mapData;
+        state.cityData = sanitizeCityData(saved.cityData || {}).cityData;
+        state.mapData = saved.mapData || [];
         state.currentEra = saved.currentEra || null;
+
+        state.originalData = {
+            cityData: state.cityData,
+            mapData: state.mapData,
+            currentEra: state.currentEra
+        };
+
+        // check region
+        state.metaData = await getCityEntityMetaData(state.region);
+        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         applyLayout(saved);
         app.resizeCanvasToCSSSize();
@@ -383,6 +419,95 @@ window.PlannerApp = window.PlannerApp || {};
         app.redrawMap();
         app.updateStats();
         app.showStoredBuildings();
+    }
+
+    // --- Export / Import to/from a local .json file ---
+
+    function sanitizeFilename(name) {
+        return (String(name || 'plan')
+            .trim()
+            .replace(/[^a-z0-9_\- ]+/gi, '')
+            .replace(/\s+/g, '-')
+            .slice(0, 60)) || 'plan';
+    }
+
+    function downloadJSON(filename, dataObj) {
+        const blob = new Blob([JSON.stringify(dataObj, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function exportSaveToFile() {
+        try {
+            const data = serializeState();
+            const filename = sanitizeFilename(state.planName || 'city-plan') + '.json';
+            downloadJSON(filename, data);
+        } catch (e) {
+            console.error('Failed to export plan:', e);
+            alert('Failed to export the plan.');
+        }
+    }
+
+    function isValidImportedState(saved) {
+        return !!saved &&
+            typeof saved === 'object' &&
+            Array.isArray(saved.mapBuildings) &&
+            Array.isArray(saved.storedBuildings);
+    }
+
+    async function importStateFromFile(file) {
+        if (!file) return;
+
+        let text;
+        try {
+            text = await file.text();
+        } catch (e) {
+            console.error('Failed to read import file:', e);
+            alert('Could not read the selected file.');
+            return;
+        }
+
+        let saved;
+        try {
+            saved = JSON.parse(text);
+        } catch (e) {
+            alert('That file is not valid JSON.');
+            return;
+        }
+
+        if (!isValidImportedState(saved)) {
+            alert('That file does not look like a valid City Planner export.');
+            return;
+        }
+
+        if (!confirm('Importing will replace your current layout. Continue?')) return;
+
+        try {
+            await deserializeState(saved);
+
+            // clear save states
+            state.planId = null;
+            saveSavedPlanId(null);
+            state.planName = saved.planName || state.planName || 'Imported Plan';
+
+            state.history = [];
+            state.future = [];
+            localStorage.removeItem(HISTORY_KEY);
+            app.updateUndoRedoButtons();
+
+            if (app.dom.submitWindow) app.dom.submitWindow.classList.add('hidden');
+        } catch (e) {
+            console.error('Failed to import plan:', e);
+            alert('Failed to import the plan.');
+        }
     }
 
     function createRotatedBuilding(data, meta) {
@@ -566,6 +691,7 @@ window.PlannerApp = window.PlannerApp || {};
     // TODO: autosave to the DB after 2mins
     function autoSave() {}
 
+    app.sanitizeCityData = sanitizeCityData;
     app.init = init;
     app.savePlanToDatabase = savePlanToDatabase;
     app.loadPlanFromDatabase = loadPlanFromDatabase;
@@ -583,6 +709,11 @@ window.PlannerApp = window.PlannerApp || {};
     app.createRotatedBuilding = createRotatedBuilding;
     app.restoreCity = restoreCity;
     app.clearSavedLayout = clearSavedLayout;
+    app.serializeState = serializeState;
+    app.serializeLayout = serializeLayout;
+    app.deserializeState = deserializeState;
+    app.exportSaveToFile = exportSaveToFile;
+    app.importStateFromFile = importStateFromFile;
 
     (async () => {
         const hasPending = await loadGameCityData();
