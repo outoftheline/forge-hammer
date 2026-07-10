@@ -722,7 +722,7 @@ window.PlannerApp = window.PlannerApp || {};
                         '<span class="plan-name">' + name + '</span>' +
                         '<span class="plan-meta">' + meta + '</span>' +
                     '</span>' +
-                    '<button class="btn plan-delete" title="Delete plan">✕</button>' +
+                    '<button class="btn plan-delete" title="Delete plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
                 '</li>'
             );
         });
@@ -738,10 +738,6 @@ window.PlannerApp = window.PlannerApp || {};
                 if (modal) modal.classList.add('hidden');
                 return;
             }
-
-            if (e.target.classList && e.target.classList.contains('modal')) {
-                e.target.classList.add('hidden');
-            }
         });
 
         document.addEventListener('keydown', (e) => {
@@ -754,6 +750,30 @@ window.PlannerApp = window.PlannerApp || {};
     function openModal(modal) {
         if (modal) modal.classList.remove('hidden');
     }
+
+    function showNewDataModal(hasCurrentPlan) {
+        if (!dom.newDataModal) return;
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.value = 'Plan ' + new Date().toLocaleDateString();
+        }
+
+        if (dom.newDataDiscardBtn) {
+            dom.newDataDiscardBtn.classList.toggle('hidden', !hasCurrentPlan);
+        }
+        if (dom.newDataModalText) {
+            dom.newDataModalText.classList.toggle('hidden', !hasCurrentPlan);
+        }
+
+        openModal(dom.newDataModal);
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.focus();
+            dom.newDataPlanNameInput.select();
+        }
+    }
+
+    app.showNewDataModal = showNewDataModal;
 
     function bindEvents(init) {
 
@@ -900,7 +920,7 @@ window.PlannerApp = window.PlannerApp || {};
                     const li = deleteBtn.closest('li[data-plan-id]');
                     if (!li) return;
                     const planId = Number(li.dataset.planId);
-                    if (!confirm('Delete this saved plan? This cannot be undone.')) return;
+                    if (!confirm('Delete this plan? This cannot be undone.')) return;
                     try {
                         await app.removePlanFromDatabase(planId);
                         await refreshPlanListUi();
@@ -926,6 +946,30 @@ window.PlannerApp = window.PlannerApp || {};
             });
         }
 
+        if (dom.newDataSaveBtn) {
+            dom.newDataSaveBtn.addEventListener('click', async () => {
+                const name = dom.newDataPlanNameInput ? dom.newDataPlanNameInput.value : '';
+                dom.newDataModal.classList.add('hidden');
+                await app.confirmSaveIncomingAsNewPlan(name);
+            });
+        }
+
+        if (dom.newDataDiscardBtn) {
+            dom.newDataDiscardBtn.addEventListener('click', () => {
+                app.discardIncomingData();
+                dom.newDataModal.classList.add('hidden');
+            });
+        }
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    dom.newDataSaveBtn.click();
+                }
+            });
+        }
+
         if (dom.exportBtn) {
             dom.exportBtn.addEventListener('click', () => app.exportSaveToFile());
         }
@@ -945,8 +989,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         document.addEventListener('contextmenu', (e) => {
-            // todo: remove 
-            //e.preventDefault();
+            e.preventDefault();
 
             if (state.streetPlacement.active) {
                 cancelStreetPlacement();

@@ -76,6 +76,11 @@ select option {
     padding: 3px 6px;
 }
 
+.btn.btn-mid {
+    padding: 6px;
+    margin: 2px 0;
+}
+
 .btn:hover {
     background-color: #383028;
 }
@@ -111,7 +116,7 @@ select option {
     width: 100%;
 }
 
-.sidebar .filter input {
+.sidebar .filter input, .modal input {
     width: 100%;
     display: block;
     box-sizing: border-box;
@@ -469,6 +474,10 @@ button, .btn {
     justify-content: center;
 }
 
+.modal .btn {
+    border: none;
+}
+
 .modal.hidden {
     display: none;
 }
@@ -494,7 +503,7 @@ button, .btn {
 }
 
 .modal-header h2 {
-    margin: 0;
+    margin: 0 0 0.5em;
     font-size: medium;
 }
 

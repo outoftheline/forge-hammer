@@ -14,8 +14,8 @@
 </head>
 
 <body>
-    <section class="overlay">
-        <div class="inner">
+    <section id="submitWindow" class="modal">
+        <div class="modal-inner">
             <h1>Forge Hammer - City Planner</h1>
             <p>Please use the "Send to planner" function in the City Overview.</p>
         </div>
@@ -24,7 +24,7 @@
 
     <div class="wrapper">
         <section class="sidebar">
-            <h1><img src="../images/app48.png" /> City Planner v0.6</h1>
+            <h1><img src="../images/app48.png" /> City Planner v0.7</h1>
             <div id="populationStat">Population: <span class="pop-stat">0</span></div>
             <div class="filter">
                 <div id="metaSearch">
@@ -110,6 +110,7 @@
                         </svg></button>
                 </div>
                 <div class="buttons right">
+                    <svg id="howto" class="btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     <div class="group column">
                         <button id="undo" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -153,7 +154,6 @@
                                 <line x1="8" x2="14" y1="11" y2="11" />
                             </svg></button>
                     </div>
-                    <svg id="howto" class="btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     <a href="https://ko-fi.com/forgehammer" target="_blank" title="Support us on Ko-Fi"><img src="../images/kofi.png" width="35" /></a>
                 </div>
                 <div class="info"><span>Drag map by holding ALT key, (de)select buildings with CTRL key, cancel actions
@@ -173,6 +173,21 @@
             <ul id="planListItems"></ul>
         </div>
     </div>
+    <div id="newDataModal" class="modal hidden">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <h2>Incoming Data</h2>
+            </div>
+            <p id="newDataModalText">Do you want to start working with the data you just sent? Your currently saved plan will not be deleted.</p>
+            <div class="flex stretch">
+                <input type="text" id="newDataPlanName" placeholder="New plan name">
+            </div>
+            <div>
+                <button id="newDataSaveBtn" class="btn btn-mid">Save as New Plan</button>
+                <button id="newDataDiscardBtn" class="btn btn-mid">Discard and Continue</button>
+            </div>
+        </div>
+    </div>
     <div id="information" class="modal hidden">
         <div class="modal-inner">
             <div class="modal-header">
@@ -180,7 +195,8 @@
                 <button class="btn modal-close">✕</button>
             </div>
             <ul>
-                <li>Drag the map by using the ALT key</li>
+                <li>Click on a building. When it is highlighted in green, you can drag it and move it to free space.</li>
+                <li>Drag the map by holding the ALT key and using your mouse</li>
                 <li>Select multiple buildings with the CTRL key</li>
                 <li>Delete a building after storing by using the backspace or DEL key</li>
                 <li>Cancel any action with right click</li>

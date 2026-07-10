@@ -3,8 +3,8 @@
 window.PlannerApp = window.PlannerApp || {};
 
 window.PlannerApp.dom = {
-    submitWindow: document.querySelector('.overlay'),
-    submitError: document.querySelector('.overlay .error'),
+    submitWindow: document.querySelector('#submitWindow'),
+    submitError: document.querySelector('#submitWindow .error'),
 
     storeBuildingsBtn: document.querySelector('#storeAll'),
     storeSelectionBtn: document.querySelector('#storeSelection'),
@@ -45,6 +45,12 @@ window.PlannerApp.dom = {
     planListModal: document.querySelector('#planListModal'),
     planListClose: document.querySelector('#planListClose'),
     planListItems: document.querySelector('#planListItems'),
+
+    newDataModal: document.querySelector('#newDataModal'),
+    newDataModalText: document.querySelector('#newDataModalText'),
+    newDataPlanNameInput: document.querySelector('#newDataPlanName'),
+    newDataSaveBtn: document.querySelector('#newDataSaveBtn'),
+    newDataDiscardBtn: document.querySelector('#newDataDiscardBtn'),
 };
 
 window.PlannerApp.state = {
@@ -69,6 +75,8 @@ window.PlannerApp.state = {
     placingBuilding: null,
     dragCopy: null,
     rotated: false,
+
+    pendingIncomingData: null,
 
     zoomScale: 0.75,
     camX: 0,

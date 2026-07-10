@@ -85,7 +85,7 @@ window.PlannerApp = window.PlannerApp || {};
         return false;
     }
 
-    async function init(data) {
+    async function applyCityData(data) {
         state.region = data.region;
         const { cityData, playerId } = sanitizeCityData(data.CityMapData || {});
         state.cityData = cityData;
@@ -106,8 +106,14 @@ window.PlannerApp = window.PlannerApp || {};
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
+        state.mapBuildings = [];
+        state.storedBuildings = [];
         state.deletedBuildings = [];
+        state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
+        state.activeBuilding = null;
+        state.placingBuilding = null;
+        state.dragCopy = null;
         state.history = [];
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
@@ -123,6 +129,35 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.planId = loadSavedPlanId();
         await savePlanToDatabase();
+    }
+
+    async function init(data) {
+        const existingPlanId = loadSavedPlanId();
+
+        if (existingPlanId) {
+            const hasCurrentPlan = !!(state.metaData && Object.keys(state.metaData).length);
+            state.pendingIncomingData = data;
+            if (app.showNewDataModal) app.showNewDataModal(hasCurrentPlan);
+            return;
+        }
+
+        await applyCityData(data);
+    }
+
+    async function confirmSaveIncomingAsNewPlan(planName) {
+        const data = state.pendingIncomingData;
+        if (!data) return;
+
+        state.pendingIncomingData = null;
+        state.planId = null;
+        saveSavedPlanId(null);
+        state.planName = (planName && planName.trim()) || 'New Plan';
+
+        await applyCityData(data);
+    }
+
+    function discardIncomingData() {
+        state.pendingIncomingData = null;
     }
 
     function saveViewState() {
@@ -260,6 +295,7 @@ window.PlannerApp = window.PlannerApp || {};
             let parsed = {};
             try { parsed = row.JSON ? JSON.parse(row.JSON) : {}; } catch (e) { parsed = {}; }
             return {
+                id: row.id !== undefined ? row.id : parsed.id,
                 metaId: parsed.cityentity_id,
                 x: row.x,
                 y: row.y,
@@ -269,6 +305,18 @@ window.PlannerApp = window.PlannerApp || {};
                 deleted: !!parsed.deleted
             };
         });
+    }
+
+    function dedupeMapEntriesByPosition(entries) {
+        const seen = new Set();
+        const result = [];
+        for (const entry of entries) {
+            const key = entry.x + ',' + entry.y;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            result.push(entry);
+        }
+        return result;
     }
 
     async function loadPlanFromDatabase(planId) {
@@ -291,7 +339,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         const entries = buildingRowsToEntries(rows);
-        state.mapBuildings = buildingsFromEntries(entries.filter(e => !e.stored && !e.deleted));
+        state.mapBuildings = buildingsFromEntries(dedupeMapEntriesByPosition(entries.filter(e => !e.stored && !e.deleted)));
         state.storedBuildings = buildingsFromEntries(entries.filter(e => e.stored && !e.deleted));
         state.deletedBuildings = buildingsFromEntries(entries.filter(e => e.deleted));
 
@@ -540,14 +588,13 @@ window.PlannerApp = window.PlannerApp || {};
             const meta = state.metaById.get(entry.metaId);
             if (!meta) return null;
             const data = {
+                id: entry.id ?? (entry.data ? entry.data.id : undefined),
                 cityentity_id: entry.metaId,
                 x: entry.x ?? (entry.data ? entry.data.x : 0) ?? 0,
                 y: entry.y ?? (entry.data ? entry.data.y : 0) ?? 0,
                 era: entry.era ?? (entry.data ? entry.data.era : undefined) ?? state.currentEra ?? null,
                 custom: !!(entry.custom ?? (entry.data ? entry.data.custom : false)),
             };
-            // Use the meta's real footprint (streets can be 1x1 or 2x2) — the
-            // same source of truth drawMap() uses for a freshly opened city.
             return createRotatedBuilding(data, meta);
         }).filter(Boolean);
     }
@@ -594,6 +641,7 @@ window.PlannerApp = window.PlannerApp || {};
     function captureSnapshot() {
         return {
             mapBuildings: state.mapBuildings.map(b => ({
+                id: b.data.id,
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
@@ -601,6 +649,7 @@ window.PlannerApp = window.PlannerApp || {};
                 custom: !!b.custom
             })),
             storedBuildings: state.storedBuildings.map(b => ({
+                id: b.data.id,
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
@@ -608,6 +657,7 @@ window.PlannerApp = window.PlannerApp || {};
                 custom: !!b.custom
             })),
             deletedBuildings: (state.deletedBuildings || []).map(b => ({
+                id: b.data.id,
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
@@ -701,7 +751,10 @@ window.PlannerApp = window.PlannerApp || {};
     function autoSave() {}
 
     app.sanitizeCityData = sanitizeCityData;
+    app.applyCityData = applyCityData;
     app.init = init;
+    app.confirmSaveIncomingAsNewPlan = confirmSaveIncomingAsNewPlan;
+    app.discardIncomingData = discardIncomingData;
     app.savePlanToDatabase = savePlanToDatabase;
     app.loadPlanFromDatabase = loadPlanFromDatabase;
     app.loadLastSavedPlan = loadLastSavedPlan;
@@ -725,13 +778,11 @@ window.PlannerApp = window.PlannerApp || {};
     app.importStateFromFile = importStateFromFile;
 
     (async () => {
+        const loadedFromDb = await loadLastSavedPlan();
+        if (loadedFromDb) app.dom.submitWindow.classList.add('hidden');
+
         const hasPending = await loadGameCityData();
-        if (hasPending) {
-            app.dom.submitWindow.classList.add('hidden');
-        } else {
-            const loadedFromDb = await loadLastSavedPlan();
-            if (loadedFromDb) app.dom.submitWindow.classList.add('hidden');
-        }
+        if (hasPending) app.dom.submitWindow.classList.add('hidden');
 
         app.updateUndoRedoButtons();
         app.bindEvents(init);
