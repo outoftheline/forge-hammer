@@ -13,7 +13,8 @@ function initPopout() {
     $('body').on("pointerenter", ".helperTT", async (e) => {
         if (e.currentTarget.dataset.callback_tt) {
             Tooltips.activate();
-            let f = eval(e.currentTarget.dataset.callback_tt);
+            let f = e.currentTarget.dataset.callback_tt;
+            if (Tooltips.callbacks && Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
             if (typeof f === "function") {
                 let content = await f(e);
                 if (content) Tooltips.set(content);
@@ -206,8 +207,8 @@ function initPopout() {
 
         let foundBuildings = Object.values(Productions.AdditionalSpecialBuildings).filter(x => regEx.test(x.filter)).sort((a, b) => (((a.selected !== b.selected) ? (a.selected ? -2 : 2) : 0) + (a.name > b.name ? 1 : -1)))
 
-        for (building of foundBuildings) {
-            $('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era === "AllAge" ? "" : era)}" data-callback_tt="Tooltips.buildingTT" class="helperTT${building.selected ? " selected" : ""}">${building.name}</li>`)
+        for (let building of foundBuildings) {
+            $('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era === "AllAge" ? "" : era)}" data-callback_tt="building" class="helperTT${building.selected ? " selected" : ""}">${building.name}</li>`)
         }
     }
     filterMeta(/./)
