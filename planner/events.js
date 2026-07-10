@@ -730,8 +730,38 @@ window.PlannerApp = window.PlannerApp || {};
         dom.planListItems.innerHTML = html.join('');
     }
 
+    function bindModalCloseHandlers() {
+        document.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('.modal-close');
+            if (closeBtn) {
+                const modal = closeBtn.closest('.modal');
+                if (modal) modal.classList.add('hidden');
+                return;
+            }
+
+            if (e.target.classList && e.target.classList.contains('modal')) {
+                e.target.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            const openModal = document.querySelector('.modal:not(.hidden)');
+            if (openModal) openModal.classList.add('hidden');
+        });
+    }
+
+    function openModal(modal) {
+        if (modal) modal.classList.remove('hidden');
+    }
+
     function bindEvents(init) {
 
+        bindModalCloseHandlers();
+
+        dom.informationBtn.addEventListener('click', () => {
+            openModal(document.querySelector('#information'));
+        });
         dom.zoomInBtn.addEventListener('click', app.zoomIn);
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
@@ -858,20 +888,8 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (dom.loadPlanBtn && dom.planListModal) {
             dom.loadPlanBtn.addEventListener('click', async () => {
-                dom.planListModal.classList.remove('hidden');
+                openModal(dom.planListModal);
                 await refreshPlanListUi();
-            });
-        }
-
-        if (dom.planListClose && dom.planListModal) {
-            dom.planListClose.addEventListener('click', () => {
-                dom.planListModal.classList.add('hidden');
-            });
-        }
-
-        if (dom.planListModal) {
-            dom.planListModal.addEventListener('click', (e) => {
-                if (e.target === dom.planListModal) dom.planListModal.classList.add('hidden');
             });
         }
 

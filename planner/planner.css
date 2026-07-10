@@ -266,6 +266,7 @@ select option {
     right: 0.5em;
     flex-direction: column;
     gap: 5px;
+    align-items: center;
 }
 
 .group {
@@ -475,6 +476,8 @@ button, .btn {
 .modal-inner {
     width: 480px;
     max-height: 70vh;
+    font-size: 14px;
+    line-height: 18px;
     display: flex;
     flex-direction: column;
     background-color: #0e171d;

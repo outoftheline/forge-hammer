@@ -14,6 +14,7 @@ window.PlannerApp.dom = {
 
     zoomInBtn: document.querySelector('#zoomIn'),
     zoomOutBtn: document.querySelector('#zoomOut'),
+    informationBtn: document.querySelector('#howto'),
 
     canvas: document.getElementById('planner'),
 
