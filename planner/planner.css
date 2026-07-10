@@ -500,11 +500,16 @@ button, .btn {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 0.5em;
 }
 
 .modal-header h2 {
-    margin: 0 0 0.5em;
+    margin: 0;
     font-size: medium;
+}
+
+.modal li {
+    margin: 2px 0;
 }
 
 #planListItems {
