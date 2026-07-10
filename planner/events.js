@@ -40,13 +40,19 @@ window.PlannerApp = window.PlannerApp || {};
         return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
     }
 
-    function deleteStoredBuildings(metaId) {
+    function parseGroupId(groupId) {
+        if (typeof groupId !== 'string') return { metaId: groupId, custom: false };
+        if (groupId.endsWith(':custom')) return { metaId: groupId.slice(0, -7), custom: true };
+        return { metaId: groupId, custom: false };
+    }
+
+    function deleteStoredBuildings(metaId, custom = false) {
         if (!metaId) return;
 
         const remaining = [];
         const toDelete = [];
         for (const b of state.storedBuildings) {
-            if (String(b.meta.id) === String(metaId)) toDelete.push(b);
+            if (String(b.meta.id) === String(metaId) && !!b.custom === !!custom) toDelete.push(b);
             else remaining.push(b);
         }
         if (!toDelete.length) return;
@@ -57,7 +63,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.deletedBuildings = (state.deletedBuildings || []).concat(toDelete);
 
         // cancel building placement
-        if (state.placingBuilding && String(state.placingBuilding.meta.id) === String(metaId)) {
+        if (
+            state.placingBuilding &&
+            String(state.placingBuilding.meta.id) === String(metaId) &&
+            !!state.placingBuilding.custom === !!custom
+        ) {
             state.placingBuilding = null;
             state.dragCopy = null;
         }
@@ -69,13 +79,13 @@ window.PlannerApp = window.PlannerApp || {};
         app.autoSave();
     }
 
-    function restoreDeletedBuildings(metaId) {
+    function restoreDeletedBuildings(metaId, custom = false) {
         if (!metaId || !state.deletedBuildings || !state.deletedBuildings.length) return;
 
         const remaining = [];
         const toRestore = [];
         for (const b of state.deletedBuildings) {
-            if (String(b.meta.id) === String(metaId)) toRestore.push(b);
+            if (String(b.meta.id) === String(metaId) && !!b.custom === !!custom) toRestore.push(b);
             else remaining.push(b);
         }
         if (!toRestore.length) return;
@@ -97,8 +107,8 @@ window.PlannerApp = window.PlannerApp || {};
         });
     }
 
-    function startPlacingStoredBuilding(metaId) {
-        const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId));
+    function startPlacingStoredBuilding(metaId, custom = false) {
+        const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
         if (!stored) return;
 
         if (state.activeBuilding) {
@@ -119,8 +129,8 @@ window.PlannerApp = window.PlannerApp || {};
         updatePlacingBuildingPreview();
     }
 
-    function continuePlacingStoredBuilding(metaId) {
-        const nextStored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId));
+    function continuePlacingStoredBuilding(metaId, custom = false) {
+        const nextStored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
 
         if (!nextStored) {
             state.placingBuilding = null;
@@ -296,6 +306,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (!state.dragCopy.valid) return;
 
         const placedMetaId = state.placingBuilding.meta.id || false;
+        const placedCustom = !!state.placingBuilding.custom;
         const fromMeta = state.placingBuilding._fromMeta === true;
 
         app.pushSnapshot();
@@ -315,7 +326,7 @@ window.PlannerApp = window.PlannerApp || {};
             const meta = state.metaById.get(String(placedMetaId));
             if (meta) {
                 state.placingBuilding = app.createRotatedBuilding(
-                    { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra },
+                    { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
                     meta
                 );
                 state.placingBuilding.isActive = true;
@@ -325,12 +336,12 @@ window.PlannerApp = window.PlannerApp || {};
                 state.dragCopy = null;
             }
         } else {
-            const idx = state.storedBuildings.findIndex(b => String(b.meta.id) === String(placedMetaId));
+            const idx = state.storedBuildings.findIndex(b => String(b.meta.id) === String(placedMetaId) && !!b.custom === !!placedCustom);
             if (idx !== -1) state.storedBuildings.splice(idx, 1);
-            continuePlacingStoredBuilding(placedMetaId);
+            continuePlacingStoredBuilding(placedMetaId, placedCustom);
         }
 
-        app.showStoredBuildings(placedMetaId);
+        app.showStoredBuildings(String(placedMetaId) + (placedCustom ? ':custom' : ''));
         app.updateStats();
         app.autoSave();
     }
@@ -668,9 +679,8 @@ window.PlannerApp = window.PlannerApp || {};
             state.activeBuilding = null;
         }
 
-        // Create a fresh building from meta — not tied to storedBuildings.
         state.placingBuilding = app.createRotatedBuilding(
-            { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra },
+            { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
             meta
         );
         state.placingBuilding.isActive = true;
@@ -764,7 +774,8 @@ window.PlannerApp = window.PlannerApp || {};
                 !isTypingTarget(e.target)
             ) {
                 e.preventDefault();
-                deleteStoredBuildings(state.selectedStoredMetaId);
+                const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
+                deleteStoredBuildings(metaId, custom);
             }
         });
 
@@ -793,16 +804,17 @@ window.PlannerApp = window.PlannerApp || {};
             const li = e.target.closest('li[data-id]');
             if (!li) return;
 
-            const metaId = li.dataset.id;
+            const groupId = li.dataset.id;
+            const { metaId, custom } = parseGroupId(groupId);
 
             if (li.classList.contains('deleted')) {
-                restoreDeletedBuildings(metaId);
+                restoreDeletedBuildings(metaId, custom);
                 return;
             }
 
-            state.selectedStoredMetaId = metaId;
+            state.selectedStoredMetaId = groupId;
             li.classList.add('active');
-            startPlacingStoredBuilding(metaId);
+            startPlacingStoredBuilding(metaId, custom);
         });
 
         dom.canvas.addEventListener('click', handleCanvasClick);

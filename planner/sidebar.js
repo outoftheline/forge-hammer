@@ -12,7 +12,8 @@ window.PlannerApp = window.PlannerApp || {};
         for (const building of (list || state.storedBuildings)) {
             if (building.meta.type === 'street') continue;
 
-            const id = String(building.meta.id);
+            const isCustom = !!building.custom;
+            const id = String(building.meta.id) + (isCustom ? ':custom' : '');
             const dims = app.getMetaSize(building.meta);
             const width = dims.width;
             const height = dims.height;
@@ -20,7 +21,9 @@ window.PlannerApp = window.PlannerApp || {};
             if (!groups.has(id)) {
                 groups.set(id, {
                     id,
+                    metaId: String(building.meta.id),
                     name: building.meta.name,
+                    custom: isCustom,
                     type: building.meta.type,
                     width,
                     height,
@@ -99,21 +102,24 @@ window.PlannerApp = window.PlannerApp || {};
     function showStoredLi(item, activeId) {
         const noStreet = item.noStreet ? ' nostreet' : '';
         const isActive = (activeId && item.id === activeId ? ' active' : '');
+        const name = (item.custom ? '* ' : '') + item.name;
 
         return (
             '<li data-id="' + item.id + '" class="' + item.type + noStreet + isActive + '">' +
                 '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
-                '<span class="name">' + item.name + '</span>' +
+                '<span class="name">' + name + '</span>' +
                 ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
             '</li>'
         );
     }
 
     function showDeletedLi(item) {
+        const name = (item.custom ? '* ' : '') + item.name;
+
         return (
             '<li data-id="' + item.id + '" class="deleted ' + item.type + '" title="Click to restore">' +
                 '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
-                '<span class="name">' + item.name + '</span>' +
+                '<span class="name">' + name + '</span>' +
                 ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
                 '<span class="restore-icon" title="Restore">↺</span>' +
             '</li>'

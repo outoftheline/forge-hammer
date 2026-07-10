@@ -98,6 +98,8 @@ window.PlannerApp = window.PlannerApp || {};
             this.data = data;
             this.meta = meta;
             this.name = meta.name;
+            this.custom = !!(data && data.custom);
+            this.displayName = (this.custom ? '* ' : '') + this.name;
 
             this.x = (data.x * SIZE) || 0;
             this.y = (data.y * SIZE) || 0;
@@ -196,23 +198,24 @@ window.PlannerApp = window.PlannerApp || {};
             context.font = this.isSelected ? ('bold ' + FONT) : FONT;
 
             const boxWidth = state.rotated ? this.height : this.width;
+            const label = this.displayName;
 
-            const text = context.measureText(this.name);
+            const text = context.measureText(label);
             let sizeOffset = FONT_SIZE + Math.ceil(FONT_SIZE * 0.4);
 
             if (text.width < boxWidth) {
-                context.fillText(this.name, this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.3));
+                context.fillText(label, this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.3));
                 sizeOffset = FONT_SIZE - 2;
             } else if (this.height > SIZE && this.width > SIZE) {
                 const ratio = Math.ceil(text.width / (boxWidth - 30));
                 let textStart = 0;
-                let textEnd = Math.ceil(this.name.length / ratio);
+                let textEnd = Math.ceil(label.length / ratio);
 
-                context.fillText(this.name.slice(textStart, textEnd), this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.9));
+                context.fillText(label.slice(textStart, textEnd), this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.9));
                 textStart = textEnd;
-                textEnd = Math.ceil(this.name.length / ratio) + textStart;
-                const more = (textEnd >= this.name.length) ? '' : '…';
-                context.fillText(this.name.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(FONT_SIZE * 0.2));
+                textEnd = Math.ceil(label.length / ratio) + textStart;
+                const more = (textEnd >= label.length) ? '' : '…';
+                context.fillText(label.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(FONT_SIZE * 0.2));
             }
 
             const metaDims  = app.getMetaSize(this.meta);

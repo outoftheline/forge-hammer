@@ -191,6 +191,7 @@ window.PlannerApp = window.PlannerApp || {};
             type: building.meta.type,
             cityentity_id: building.meta.id,
             era: building.data ? building.data.era : undefined,
+            custom: !!building.custom,
             stored: !!stored,
             deleted: !!deleted
         });
@@ -263,6 +264,7 @@ window.PlannerApp = window.PlannerApp || {};
                 x: row.x,
                 y: row.y,
                 era: parsed.era,
+                custom: !!parsed.custom,
                 stored: !!parsed.stored,
                 deleted: !!parsed.deleted
             };
@@ -356,19 +358,22 @@ window.PlannerApp = window.PlannerApp || {};
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             storedBuildings: state.storedBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             deletedBuildings: (state.deletedBuildings || []).map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             camX: state.camX,
             camY: state.camY,
@@ -387,9 +392,9 @@ window.PlannerApp = window.PlannerApp || {};
             cityData: state.cityData,
             mapData: state.mapData,
             currentEra: state.currentEra,
-            mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
-            storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
-            deletedBuildings: (state.deletedBuildings || []).map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era })),
+            mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era, custom: !!b.custom })),
+            storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era, custom: !!b.custom })),
+            deletedBuildings: (state.deletedBuildings || []).map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era, custom: !!b.custom })),
             camX: state.camX, camY: state.camY, zoomScale: state.zoomScale,
             rotated: !!state.rotated
         };
@@ -539,6 +544,7 @@ window.PlannerApp = window.PlannerApp || {};
                 x: entry.x ?? (entry.data ? entry.data.x : 0) ?? 0,
                 y: entry.y ?? (entry.data ? entry.data.y : 0) ?? 0,
                 era: entry.era ?? (entry.data ? entry.data.era : undefined) ?? state.currentEra ?? null,
+                custom: !!(entry.custom ?? (entry.data ? entry.data.custom : false)),
             };
             // Use the meta's real footprint (streets can be 1x1 or 2x2) — the
             // same source of truth drawMap() uses for a freshly opened city.
@@ -591,19 +597,22 @@ window.PlannerApp = window.PlannerApp || {};
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             storedBuildings: state.storedBuildings.map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             deletedBuildings: (state.deletedBuildings || []).map(b => ({
                 metaId: b.meta.id,
                 x: b.data.x,
                 y: b.data.y,
-                era: b.data.era
+                era: b.data.era,
+                custom: !!b.custom
             })),
             rotated: !!state.rotated
         };
