@@ -64,6 +64,9 @@ let GBGActionLog = {
 
         if (hours === false)
 		    hours = Math.floor((moment().unix() - last) / 3600);
+        else if (hours === 0)
+            FH.Storage.setItem(GBGActionLog.settingKeys.collected, moment().unix());
+
         if (hours > 0)
 		    return `<span data-number="${hours}" class="hammer-counter ${hours >= GBGActionLog.redAfterHours() ? `counter-red` : ``}">
                     ${hours}
