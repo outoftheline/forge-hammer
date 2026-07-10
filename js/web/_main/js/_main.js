@@ -95,7 +95,7 @@ FH.Guild = {
 FH.World = window.location.hostname.split('.')[0];
 FH.CurrentEra = null;
 FH.CurrentEraID = null;
-FH.Goods={
+FH.Goods = {
 	Data: {},
 	List:{},
 }
@@ -652,6 +652,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (getConstruction != null) {
 			Rankings = getConstruction.responseData.rankings;
+			if (FH.LastMapPlayerID === FH.Player.ID) {
+				gbCityMapEntity = FH.Main.CityMapData[postData[0].requestData[0]]; // postData[0].requestData[0] = entity id
+			}
 			Bonus['passive'] = getConstruction.responseData.next_passive_bonus; // GB update to do
 			Bonus['production'] = getConstruction.responseData.next_production_bonus; // GB update to do
 			let EraName = getConstruction.responseData.ownerEra;
@@ -691,11 +694,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	// can be removed after game update 1.332
 	FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
 		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: data };
+			gbUpdateData = { Rankings: null, CityMapEntity: data.responseData[0] };
 			// reset gbUpdateData sobald wie möglich (nachdem alle einzelnen Handler ausgeführt wurden)
 			Promise.resolve().then(() => gbUpdateData = null);
 		} else {
-			gbUpdateData.CityMapEntity = data;
+			gbUpdateData.CityMapEntity = data.responseData[0];
 			lgUpdate();
 		}
 		
@@ -709,17 +712,16 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
-		let formattedData = { ...data, responseData: [data.responseData] };
-		gbCityMapEntity = formattedData;
+		gbCityMapEntity = data.responseData;
 
 		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: formattedData };
+			gbUpdateData = { Rankings: null, CityMapEntity: data.responseData };
 		} else {
-			gbUpdateData.CityMapEntity = formattedData;
+			gbUpdateData.CityMapEntity = formattedData.responseData[0];
 			lgUpdate();
 		}
 		
-		if (formattedData.responseData[0]?.player_id === FH.Player.ID) {
+		if (data.responseData[0]?.player_id === FH.Player.ID) {
 			if ($('#OwnPartBox').length > 0) {
 				Main.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
 				Parts.CalcBody();
@@ -784,7 +786,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			LGCurrentLevelMedals = Medals;
 		}
 
-		Main.CurrentGB.Entity = CityMapEntity.responseData[0];
+		Main.CurrentGB.Entity = CityMapEntity;
 		Main.CurrentGB.Rankings = Rankings;
 		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
 		if (!Main.CurrentGB.isPreviousLevel) 
