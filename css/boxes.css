@@ -2562,10 +2562,11 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 #GBGActionLogCount {
 	position: absolute;
-	top: 380px;
+	top: 50%;
 	left: 10px;
 	z-index: 100;
 	pointer-events: none;
+	margin-top: -110px;
 }
 
 #GBGTargets {
