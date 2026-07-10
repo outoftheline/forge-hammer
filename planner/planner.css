@@ -56,11 +56,20 @@ h1 {
     font-size: 22px;
 }
 
-textarea, button, input, .btn {
+textarea, button, input, .btn, select {
     background-color: inherit;
     color: inherit;
-    border: 1px solid #eeeeeeaa;
+    border: 1px solid #eee9;
     border-radius: 5px;
+}
+
+select {
+    padding: 4px 0;
+}
+
+select option {
+    padding: 4px 0;
+    color: #000;
 }
 
 .btn {
@@ -542,6 +551,7 @@ button, .btn {
 
 .flex.stretch {
     justify-content: stretch;
+    gap: 2px;
 }
 
 .flex.stretch select {

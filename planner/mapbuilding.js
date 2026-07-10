@@ -43,11 +43,11 @@ window.PlannerApp = window.PlannerApp || {};
     };
 
 
-    function getBuildingPopulation(meta, era) {
+    function getBuildingPopulation(meta, data) {
         if (!meta) return 0;
 
         const isGeneric = meta.__class__ === 'GenericCityEntity';
-        const eraId = InnoEras[era];
+        const eraId = InnoEras[data.era];
 
         if (!isGeneric && Array.isArray(meta.entity_levels) && meta.entity_levels.length > 0) {
             const level = eraId !== undefined ? meta.entity_levels[eraId] : undefined;
@@ -67,14 +67,18 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (!isGeneric && meta.requirements?.cost?.resources) {
             if (meta.type === 'decoration') return 0;
-            if (meta.type === 'greatbuilding') return 0; // GB population bonus depends on the chosen offer, not static meta
+            if (meta.type === 'greatbuilding') {
+                let cityData = Object.values(state.cityData).find(x => x.cityentity_id === data.cityentity_id)
+                if (cityData.bonus && cityData.bonus.type === "population")
+                    return cityData.bonus.value;
+            };
             const cost = meta.requirements.cost.resources.population;
             return cost ? cost * -1 : 0;
         }
 
         if (meta.components) {
-            if (era && meta.components[era]?.staticResources?.resources?.resources?.population !== undefined) {
-                return meta.components[era].staticResources.resources.resources.population;
+            if (data.era && meta.components[data.era]?.staticResources?.resources?.resources?.population !== undefined) {
+                return meta.components[data.era].staticResources.resources.resources.population;
             }
 
             const allAge = meta.components.AllAge?.staticResources?.resources?.resources?.population;
@@ -106,7 +110,7 @@ window.PlannerApp = window.PlannerApp || {};
             this.isActive = false;
 
             this.streetReq = this.setNeedsStreet();
-            this.population = getBuildingPopulation(meta, data.era);
+            this.population = getBuildingPopulation(meta, data);
             this.fill = this.setFillColor();
             this.stroke = this.setStrokeColor();
             this.hasLabel = !(this.meta.type === 'street' || this.height === SIZE || this.width === SIZE);
