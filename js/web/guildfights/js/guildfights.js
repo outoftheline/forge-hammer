@@ -279,7 +279,7 @@ let GuildFights = {
 				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
 					GuildFights.Signals.splice(i, 1);
 				}
-				if (GuildFights.Signals[i].signal === 'ignore') {
+				if (GuildFights.Signals[i]?.signal === 'ignore') {
 					GuildFights.Signals.splice(i, 1);
 				}
 			}
