@@ -1071,8 +1071,8 @@ let Main = {
 		if (typeof chrome !== 'undefined') {
 			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
 		}
-		else if (FH.bgApiHandler != null) {
-			_responsePromise = FH.bgApiHandler(data);
+		else if (FH.BgApiHandler != null) {
+			_responsePromise = FH.BgApiHandler(data);
 
 		}
 		else {
