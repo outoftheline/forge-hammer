@@ -38,6 +38,11 @@ let Tooltips = {
         $('body').on("pointerenter",".helperTT", async (e)=>{
             if (e.currentTarget.dataset.callback_tt) {
                 Tooltips.activate()
+        
+                Tooltips.Container.style.left = (event.x+10) + "px";
+                Tooltips.Container.style.top = (event.y+10) + "px";
+                Tooltips.checkposition()
+                
                 let f = e.currentTarget.dataset.callback_tt;
                 if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
                 if (typeof(f) == "function") {
@@ -51,7 +56,6 @@ let Tooltips = {
                     Tooltips.set(f);
             }
         })
-
         $('body').on("pointerleave",".helperTT",(e)=>{
             Tooltips.deactivate()
         })    
