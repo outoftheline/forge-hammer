@@ -2065,23 +2065,27 @@ input[type="range"]::-webkit-slider-thumb {
 	margin-top: 10%;
 }
 
-.hud-btn span.hud-counter {
+.hud-btn span.hud-counter, .hammer-counter {
 	width: 15px;
 	height: 15px;
-	position: absolute;
 	padding: 1px;
-	bottom: 4px;
-	top: unset;
-	left: 4px;
-	background-image: none;
-	background-color: var(--hud-counter-color);
 	border-radius: 50%;
 	line-height: 13px;
 	text-align: center;
-    box-shadow: var(--hud-counter-bg);
 	pointer-events: none;
 	font-weight: bold;
 	font-size: 0.8rem;
+	display: block;
+	background-image: none;
+	background-color: var(--hud-counter-color);
+    box-shadow: var(--hud-counter-bg);
+}
+
+.hud-btn span.hud-counter {
+	position: absolute;
+	bottom: 4px;
+	top: unset;
+	left: 4px;
 }
 
 .hud-btn #gex-attempt-count[data-number^="8"] {
@@ -2555,6 +2559,15 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 
+
+#GBGActionLogCount {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	z-index: 100;
+	pointer-events: none;
+	margin-top: -110px;
+}
 
 #GBGTargets {
 	position: absolute;

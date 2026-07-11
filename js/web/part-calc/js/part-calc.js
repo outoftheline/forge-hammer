@@ -471,7 +471,7 @@ let Parts = {
 		let PlayerID = FH.Main.CurrentGB.Entity['player_id'],
 			EntityID = FH.Main.CurrentGB.Entity['cityentity_id'],
 			CityEntity = FH.Main.CityEntities[EntityID],
-			EraName = GreatBuildings.GetEraName(CityEntity['asset_id']),
+			EraName = GreatBuildings.GetEraName(EntityID),
 			Era = Technologies.Eras[EraName];
 
 		let Total; // Total FP of the current level

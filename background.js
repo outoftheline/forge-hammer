@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -28,6 +29,8 @@ buildingMetaDB.version(1).stores({
 plannerDB.version(1).stores({
 	plans: "++id,world,planName,playerId,playerName,boostJSON,date",	
 	buildings: "[planId+buildingId],planId,buildingId,x,y,type,JSON"
+}).upgrade(tx => {
+	return tx.table('buildings').clear();
 });
 
 // separate code from global scope
@@ -500,7 +503,7 @@ plannerDB.version(1).stores({
 				await plannerDB.close();
 				return plan;
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.getPlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
@@ -511,7 +514,7 @@ plannerDB.version(1).stores({
 				await plannerDB.close();
 				return list.map(x=>({id:x.id,name:x.planName,world:x.world,playerName:x.playerName,date:x.date}));
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.getPlanList failed: '+(e && e.message ? e.message : e));
 			}
 		},
@@ -523,11 +526,11 @@ plannerDB.version(1).stores({
 				await plannerDB.close();
 				return;
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.removePlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
-		newPlan: async (world,planName,playerId,playerName,boostData,mapData) => {
+		newPlan: async (world,planName,playerId,playerName,boostData,mapData,originalData) => {
 			try {
 				const plan = {
 					world: world,
@@ -535,7 +538,8 @@ plannerDB.version(1).stores({
 					playerId: playerId,
 					playerName: playerName,
 					boostJSON: JSON.stringify(boostData),
-					date: moment().unix()
+					originalJSON: JSON.stringify(originalData || null), // used to revert everything
+					date: Math.floor(Date.now() / 1000)
 				};
 				await plannerDB.open();
 				const planId = await plannerDB.plans.add(plan);
@@ -560,9 +564,9 @@ plannerDB.version(1).stores({
 
 				if (buildings.length > 0) await plannerDB.buildings.bulkPut(buildings);
 				await plannerDB.close();
-				return;
+				return planId;
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.newPlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
@@ -573,23 +577,21 @@ plannerDB.version(1).stores({
 				if (!existing) throw new Error('plan not found');
 
 				const updatedPlan = {
+					...existing, // keep the originalJSON in there
 					world: world || existing.world,
 					planName: planName || existing.planName,
 					playerId: playerId || existing.playerId,
 					playerName: playerName || existing.playerName,
 					boostJSON: boostData ? JSON.stringify(boostData) : existing.boostJSON,
-					date: moment().unix()
+					date: Math.floor(Date.now() / 1000)
 				};
 				await plannerDB.plans.put(updatedPlan,planId);
-
-				const oldMapDataArr = await plannerDB.buildings.where('planId').equals(planId).toArray();
 				await plannerDB.buildings.where('planId').equals(planId).delete();
-				const oldMapData = Object.assign({}, ...oldMapDataArr.map(x=>({[x.buildingId]:x}))); 
 
 				const buildings = (mapData || []).map((building) => {
 					const buildingId = building.id;
-					const x = oldMapData[buildingId] && oldMapData[buildingId].x || building.x;
-					const y = oldMapData[buildingId] && oldMapData[buildingId].y || building.y;
+					const x = building.x;
+					const y = building.y;
 					const type = building.type;
 					const clone = Object.assign({}, building);
 					delete clone.id; delete clone.x; delete clone.y; delete clone.type;
@@ -608,7 +610,7 @@ plannerDB.version(1).stores({
 				await plannerDB.close();
 				return;    
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.updatePlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
@@ -619,7 +621,7 @@ plannerDB.version(1).stores({
 				await plannerDB.close();
 				return list;
 			} catch (e) {
-				await plannerDB.close().catch(()=>{});
+				plannerDB.close();
 				throw new Error('Planner.getBuildingList failed: '+(e && e.message ? e.message : e));
 			}
 		}
@@ -849,9 +851,9 @@ plannerDB.version(1).stores({
 					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
 				}
 				try {
-					await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const planId = await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData,request.originalData);
 					const plans = await Planner.getPlanList();
-					return APIsuccess(plans);
+					return APIsuccess({ planId, plans });
 				} catch (e) {
 					return APIerror(e && e.message ? e.message : e);
 				}

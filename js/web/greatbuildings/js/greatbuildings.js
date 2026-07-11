@@ -386,7 +386,7 @@ let GreatBuildings = {
             if (!CityEntity) continue; //Great building has been removed from the game => skip
 
             let OwnGB = Object.values(CurrentCityMapData).find(obj => (obj['cityentity_id'] === GBData.ID));
-            let EraName = GreatBuildings.GetEraName(CityEntity['asset_id']);
+            let EraName = GreatBuildings.GetEraName(CityEntity['cityentity_id']);
             let Era = Technologies.Eras[EraName];
             let DoubleCollection = (GBData.ID !== 'X_FutureEra_Landmark1' && GBData.ID !== 'X_AllAge_Expedition' && GBData.ID !== 'X_SpaceAgeVenus_Landmark1');
 
@@ -870,7 +870,8 @@ let GreatBuildings = {
             let Entity = GreatBuildings.GreatBuildingEntityCache.find(obj => (obj['name'] === Event['great_building_name']))
             if (!Entity) continue;
 
-            let EraName = GreatBuildings.GetEraName(Entity['asset_id']),
+            if (Entity['cityentity_id'] === undefined) continue;
+            let EraName = GreatBuildings.GetEraName(Entity['cityentity_id']),
                 Era = Technologies.Eras[EraName],
                 Rank = Event['rank'],
                 Level = Event['level'] - 1,

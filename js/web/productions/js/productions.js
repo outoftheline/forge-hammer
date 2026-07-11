@@ -1917,6 +1917,38 @@ let Productions = {
 		return tooltip
 	},
 
+	popoutBuildingTT: async (e) => {
+		let buildingId = e?.currentTarget?.dataset?.id
+		let id = e?.currentTarget?.dataset?.meta_id || FH.Main?.CityMapData[buildingId]?.cityentity_id
+		if (!id) return
+
+		let era = e?.currentTarget?.dataset?.era || Technologies.InnoEraNames[FH.Main?.CityMapData[buildingId]?.level]
+		let meta = FH.Main.CityEntities[id]
+		let allies = JSON.parse(e?.currentTarget?.dataset?.allies || "null")
+		let eff = Math.round(JSON.parse(e?.currentTarget?.dataset?.eff || "null"))
+		if (!eff && era) eff = Math.round(100 * Productions.rateBuildings([id], true, era)?.[0]?.rating.totalScore || 0)
+
+		let upgrades = ""
+		let upgradeCount = Kits.allBuildingsUpgradeCounts[id] || {}
+		if (Object.keys(upgradeCount).length > 0) {
+			upgrades = '<span class="upgrades"><span class="base">1</span>';
+			for (let i in upgradeCount) {
+				if (!upgradeCount[i]) continue;
+				upgrades += `<span class="${i}">${upgradeCount[i]}</span>`;
+			}
+			upgrades += '</span>';
+		}
+
+		let h = `<div class="buildingTT">
+				<h2><span>${meta.name}  ${eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})`:''}</span>${upgrades}</h2>
+				<table class="foe-table">
+				<tr><td class="imgContainer"><img src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}"></td>`+
+				`<td style="width:100%; vertical-align:top"">`;
+		h += await FH.Tooltips.BuildingData(meta, era, allies, eff);
+		h += "</td></tr></table></div>"
+		return h
+	},
+
 
 	calculateFSP: (type,value) =>{
 		let sum = 0
@@ -2952,7 +2984,7 @@ let Productions = {
 							<script src="${FH.extUrl}vendor/tableSorter/table-sorter.js"></script>
 							<script src="${FH.extUrl}js/foeproxy.js"></script>
 							<script src="${FH.extUrl}js/web/_main/js/_main.js"></script>
-							<script src="${FH.extUrl}js/web/_helper/js/_FH.helper.js"></script>
+							<script src="${FH.extUrl}js/web/_helper/js/_helper.js"></script>
 							<script src="${FH.extUrl}js/web/productions/js/popout.js"></script>
 						</html>`;
 
@@ -2977,9 +3009,14 @@ let Productions = {
 					winObj.document.head.appendChild(link);
 				}
 			};
-			const popoutTooltips = Object.assign({}, Tooltips);
+			const popoutTooltips = Object.assign({}, FH.Tooltips);
+			popoutTooltips.callbacks = {
+				building: Productions.popoutBuildingTT,
+				Efficiency: Productions.efficiencyTT,
+				InventoryKits: Kits.InventoryTooltip
+			};
 			winObj.Tooltips = popoutTooltips;
-			winObj.Kits = Object.assign({}, Kits);
+			winObj.Kits = Object.assign({}, FH.Kits);
 			winObj.initPopout();
 			$('#ProductionsRating').remove();
 		};

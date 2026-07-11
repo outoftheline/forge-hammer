@@ -2,7 +2,8 @@
  
 ## Version 1.2
 ### New
-- added 
+- GBG Log: The action log will now be saved when you open it. Please be aware that the game only saves the last 200 entries, so you need to collect data regularly for it to be somewhat accurate. You can access it from the GBG Overview
+- City planner: A first version is ready! Use the City Overview to send data over. Any descriptions are currently only available in English.
 
 ### Updated
 - Stats: CSV export added to all line graphs: player resources, guild resources, units, GBG guild victory points, GBG player progression
@@ -11,12 +12,13 @@
 - GBG: Added option to open the window automatically when you visit the map
 - Shop Assistant: Added search
 - Notes: Added setting to open them automatically on game start
-- Building Tooltips: now displays when a buildings production can not be accelerated by FSP and whether it upgrades automatically to current era (Thanks @WOLFIE). Furthermore, it is now indicated when a building does not require a road
-- Translations: fr (Thanks @Damrus le Cruel) and it (Thanks @Alej92415) were updated
+- Building Tooltips: now displays when a buildings production can not be accelerated by FSP and whether it upgrades automatically to current era (Thanks @WOLFI). Furthermore, it is now indicated when a building does not require a road
+- Translations: FR (Thanks @Damrus le Cruel) and IT (Thanks @Alej92415) were updated
 
 ### Bug fixes
 - GBG Overview: Data without entries could be shown in the history
 - Translations: were not properly saved
+- Calculator: Was broken again on beta and quickly patched up
 
 ---
  

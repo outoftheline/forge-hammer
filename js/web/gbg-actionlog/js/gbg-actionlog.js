@@ -5,6 +5,10 @@
 
 FH.proxy.addHandler('GuildBattlegroundService', 'getActions', (data, postData) => {
     GBGActionLog.loadActionLog(undefined, data.responseData);
+    
+	let container = $('#GBGActionLogCount');
+	if (container.length !== 0)
+		container.html(GBGActionLog.refreshMenuBadge(0));
 });
 
 let GBGActionLog = {
@@ -50,28 +54,24 @@ let GBGActionLog = {
 		return isNaN(n) ? 0 : n;
 	},
 
-	badgeTimer: null,
-
 	/**
 	 * shows the whole hours elapsed since the last collection, coloured red once that
      * reaches the configured threshold. Hidden until the first collection. 
 	 */
-	refreshMenuBadge: () => {
+	refreshMenuBadge: (hours = false) => {
 		let last = GBGActionLog.lastCollected();
 		if (!last) return '';
 
-		let hours = Math.floor((moment().unix() - last) / 3600);
+        if (hours === false)
+		    hours = Math.floor((moment().unix() - last) / 3600);
+        else if (hours === 0)
+            FH.Storage.setItem(GBGActionLog.settingKeys.collected, moment().unix());
+
         if (hours > 0)
-		    return `<span data-number="${hours}" ${hours >= GBGActionLog.redAfterHours() ? `class="counter-red"` : ``}>
+		    return `<span data-number="${hours}" class="hammer-counter ${hours >= GBGActionLog.redAfterHours() ? `counter-red` : ``}">
                     ${hours}
                     </span>`;
         return '';
-	},
-
-	/** Keeps the HUD badge current as time passes (hours granularity, so a coarse tick is enough) */
-	startBadgeTimer: () => {
-		if (GBGActionLog.badgeTimer) return;
-		GBGActionLog.badgeTimer = setInterval(GBGActionLog.refreshMenuBadge, 60000);
 	},
 
 	/** moment format for date columns (default: language file 'Date') */
@@ -224,10 +224,6 @@ let GBGActionLog = {
                 totalReturned: actionLogs.length
             });
         }
-
-        // Mark this collection (regardless of new entries) so the HUD badge reflects the fresh pull
-        FH.Storage.setItem(GBGActionLog.settingKeys.collected, moment().unix());
-        GBGActionLog.refreshMenuBadge();
 
         let toastSeconds = GBGActionLog.toastSeconds();
         if (toastSeconds > 0) {
@@ -1378,6 +1374,3 @@ let GBGActionLog = {
         countEl.textContent = visible === rows.length ? `${label}: ${rows.length}` : `${label}: ${visible} / ${rows.length}`;
     }
 }
-
-// Keep the HUD "hours since last collection" badge ticking (the button itself refreshes it on creation)
-GBGActionLog.startBadgeTimer();

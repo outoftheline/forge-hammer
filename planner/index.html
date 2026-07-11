@@ -1,110 +1,212 @@
 <!--
-**************************************************************************************
   ~ Copyright (C) 2026 FoE-Helper team - All Rights Reserved
   ~ Copyright (C) 2026 Forge Hammer - All Rights Reserved
   ~ See file LICENSE.md for license details.
-**************************************************************************************
 -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Forge Hammer - City Planner</title>
+    <title>City Planner - Forge Hammer</title>
+    <link rel="icon" type="image/x-icon" href="../images/app48.png">
     <link href="planner.css" rel="stylesheet">
 </head>
 
 <body>
-    <section class="overlay">
-        <div class="inner">
+    <section id="submitWindow" class="modal">
+        <div class="modal-inner">
             <h1>Forge Hammer - City Planner</h1>
-            <p>Please use the "Send to planner" function in the City Overview of your City before clicking it.</p>
+            <p>Please use the "Send to planner" function in the City Overview.</p>
         </div>
     </section>
 
 
     <div class="wrapper">
         <section class="sidebar">
-            <h1><img src="../images/app48.png" /> City Planner v0.5</h1>
+            <h1><img src="../images/app48.png" /> City Planner v0.9</h1>
+            <div id="populationStat">Population: <span class="pop-stat">0</span></div>
             <div class="filter">
-            <div id="metaSearch">
-                <input id="metaSearchInput" type="text" placeholder="Add a new building…" autocomplete="off">
-                <ul id="metaSearchResults"></ul>
-            </div>
-            
-            <input id="buildingFilterText" type="text" placeholder="Find buildings">
+                <div id="metaSearch">
+                    <input id="metaSearchInput" type="text" placeholder="Add a new building…" autocomplete="off">
+                    <ul id="metaSearchResults"></ul>
+                </div>
 
-            <select id="buildingSort">
-                <option value="name-asc">A–Z</option>
-                <option value="name-desc">Z–A</option>
-                <option value="width-asc">y ↑</option>
-                <option value="width-desc">y ↓</option>
-                <option value="height-asc">x ↑</option>
-                <option value="height-desc">x ↓</option>
-            </select>
+                <input id="buildingFilterText" type="text" placeholder="Find buildings">
 
-            <select id="buildingTypeFilter">
-                <option value="all">Types</option>
-                <option value="residential">Residential</option>
-                <option value="production">Production</option>
-                <option value="greatbuilding">GB</option>
-                <option value="military">Military</option>
-            </select>
+                <div class="flex stretch">
+                    <select id="buildingSort">
+                        <option value="name-asc">A–Z</option>
+                        <option value="name-desc">Z–A</option>
+                        <option value="width-asc">y ↑</option>
+                        <option value="width-desc">y ↓</option>
+                        <option value="height-asc">x ↑</option>
+                        <option value="height-desc">x ↓</option>
+                    </select>
 
-            <select id="buildingStreetFilter">
-                <option value="all">Streets</option>
-                <option value="street">With street</option>
-                <option value="nostreet">No streets</option>
-            </select>
+                    <select id="buildingTypeFilter">
+                        <option value="all">Types</option>
+                        <option value="residential">Residential</option>
+                        <option value="production">Production</option>
+                        <option value="greatbuilding">GB</option>
+                        <option value="military">Military</option>
+                    </select>
+
+                    <select id="buildingStreetFilter">
+                        <option value="all">Streets</option>
+                        <option value="street">With street</option>
+                        <option value="nostreet">No streets</option>
+                    </select>
+                </div>
             </div>
             <ul id="storedBuildingsList"></ul>
-            
-            <div class="group save">
-                <button id="saveState" class="btn">Save</button>
-                <button id="exportState" class="btn">Export</button>
-                <button id="importState" class="btn">Import</button>
+
+            <div class="save">
+                <button id="loadPlan" class="btn">Load Plan</button>
+                <div class="group">
+                    <button id="export" class="btn">Export</button>
+                    <button id="import" class="btn">Import</button>
+                </div>
+                <button id="save" class="btn">Save</button>
             </div>
         </section>
         <div class="content">
-            <!--<header>
-                <div class="stats">
-                    <div class="old">
-                        Streets: <span class="streets"></span>
-                    </div>
-                    <div class="new">
-                        Streets: <span class="streets"></span>
-                    </div>
-                </div>
-            </header>-->
             <section id="map">
                 <div class="buttons left">
                     <div class="group">
-                    <span class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg></span>
-                    <button id="storeSelection" class="btn">Selection <span></span></button>
-                    <button id="storeAll" class="btn">Everything</button></div>
-                    <div class="group">
-                        <button id="removeStreets" class="btn">Remove All Streets</button>
-                        <button id="placeStreet">Place streets</button>
+                        <span class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-download-icon lucide-download">
+                                <path d="M12 15V3" />
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <path d="m7 10 5 5 5-5" />
+                            </svg></span>
+                        <button id="storeSelection" class="btn">Selection <span></span></button>
+                        <button id="storeAll" class="btn">Everything</button>
                     </div>
+                    <div class="group">
+                        <span class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-road-icon lucide-road">
+                                <path d="M12 17v4" />
+                                <path d="M12 5V3" />
+                                <path d="M12 9v3" />
+                                <path
+                                    d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z" />
+                            </svg></span>
+                        <button id="removeStreets" class="btn">Remove All</button>
+                        <button id="placeStreet" class="btn">Place</button>
+                    </div>
+                    <div class="group" id="streetSizeGroup"></div>
                     <input type="file" id="importFileInput" accept=".json" style="display:none">
-                    <button id="reset"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+                    <button id="reset"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                            <path d="M3 3v5h5" />
+                        </svg></button>
                 </div>
                 <div class="buttons right">
+                    <svg id="howto" class="btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     <div class="group column">
-                        <button id="undo" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-undo-icon lucide-undo"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
-                        <button id="redo" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-redo-icon lucide-redo"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg></button>
+                        <button id="undo" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-undo-icon lucide-undo">
+                                <path d="M3 7v6h6" />
+                                <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                            </svg></button>
+                        <button id="redo" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-redo-icon lucide-redo">
+                                <path d="M21 7v6h-6" />
+                                <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+                            </svg></button>
                     </div>
-                    <button id="turn90" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rotate-cw-square-icon lucide-rotate-cw-square"><path d="M12 5H6a2 2 0 0 0-2 2v3"/><path d="m9 8 3-3-3-3"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg></button>
+                    <button id="turn90" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-rotate-cw-square-icon lucide-rotate-cw-square">
+                            <path d="M12 5H6a2 2 0 0 0-2 2v3" />
+                            <path d="m9 8 3-3-3-3" />
+                            <path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                        </svg></button>
                     <div class="group column">
-                        <button id="zoomIn" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-in-icon lucide-zoom-in"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg></button>
-                        <button id="zoomOut" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zoom-out-icon lucide-zoom-out"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></svg></button>
+                        <button id="zoomIn" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-zoom-in-icon lucide-zoom-in">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" x2="16.65" y1="21" y2="16.65" />
+                                <line x1="11" x2="11" y1="8" y2="14" />
+                                <line x1="8" x2="14" y1="11" y2="11" />
+                            </svg></button>
+                        <button id="zoomOut" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-zoom-out-icon lucide-zoom-out">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" x2="16.65" y1="21" y2="16.65" />
+                                <line x1="8" x2="14" y1="11" y2="11" />
+                            </svg></button>
                     </div>
+                    <a href="https://ko-fi.com/forgehammer" target="_blank" title="Support us on Ko-Fi"><img src="../images/kofi.png" width="35" /></a>
                 </div>
-                <div class="info">Drag map by holding ALT key, (de)select buildings with CTRL key, cancel actions with right click</div>
-                <div id="canvasWrapper"><div class="shadow"></div><canvas id="planner" width="2500" height="2500"></canvas></div>
+                <div class="info"><span>Drag map by holding ALT key, (de)select buildings with CTRL key, cancel actions
+                        with right click</span> <b class="close">&gt;</b></div>
+                <div id="canvasWrapper">
+                    <div class="shadow"></div><canvas id="planner" width="2500" height="2500"></canvas>
+                </div>
             </section>
         </div>
     </div>
+    <div id="planListModal" class="modal hidden">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <h2>Saved Plans</h2>
+                <button id="planListClose" class="btn modal-close">✕</button>
+            </div>
+            <ul id="planListItems"></ul>
+        </div>
+    </div>
+    <div id="newDataModal" class="modal hidden">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <h2>Incoming Data</h2>
+            </div>
+            <p id="newDataModalText">Do you want to start working with the data you just sent? Your currently saved plan will not be deleted.</p>
+            <div class="flex stretch">
+                <input type="text" id="newDataPlanName" placeholder="New plan name">
+            </div>
+            <div>
+                <button id="newDataSaveBtn" class="btn btn-mid">Save as New Plan</button>
+                <button id="newDataDiscardBtn" class="btn btn-mid">Discard and Continue</button>
+            </div>
+        </div>
+    </div>
+    <div id="information" class="modal hidden">
+        <div class="modal-inner">
+            <div class="modal-header">
+                <h2>How to use this planner</h2>
+                <button class="btn modal-close">✕</button>
+            </div>
+            <p>This is the very first version. Please report any issues you run into. We'll add more features in the future!</p>
+            <ul>
+                <li>Click on a building. When it is highlighted in green, you can drag it and move it to free space on the map or the sidebar to store it.</li>
+                <li>Drag the map by holding the ALT key and using your mouse</li>
+                <li>Select multiple buildings with the CTRL key and store them in the top right corner next to the <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg>
+                </li>
+                <li>Delete a building after storing it by using the backspace or DEL key</li>
+                <li>Cancel any action with <b>right click</b></li>
+            </ul>
+            <p>Buildings added in the planner are marked with a *</p>
+        </div>
+    </div>
+
     <script src="../vendor/browser-polyfill/browser-polyfill.min.js"></script>
     <script src="../vendor/dexie/dexie.min.js"></script>
     <script src="vars.js"></script>
@@ -119,4 +221,5 @@
         - sharing
     -->
 </body>
+
 </html>

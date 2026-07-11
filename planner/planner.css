@@ -27,10 +27,10 @@ body, html {
 .overlay .inner {
     position: fixed;
     width: 500px;
-    height: 300px;
+    height: 200px;
     top: 50%;
     left: 50%;
-    margin-top: -150px;
+    margin-top: -100px;
     margin-left: -290px;
     box-sizing: border-box;
     padding: 10px 1em;
@@ -53,17 +53,32 @@ h1 {
     align-items: center;
     gap: 5px;
     padding: 0 5px;
+    font-size: 22px;
 }
 
-textarea, button, input, .btn {
+textarea, button, input, .btn, select {
     background-color: inherit;
     color: inherit;
-    border: 1px solid #eeeeeeaa;
+    border: 1px solid #eee9;
     border-radius: 5px;
+}
+
+select {
+    padding: 4px 0;
+}
+
+select option {
+    padding: 4px 0;
+    color: #000;
 }
 
 .btn {
     padding: 3px 6px;
+}
+
+.btn.btn-mid {
+    padding: 6px;
+    margin: 2px 0;
 }
 
 .btn:hover {
@@ -91,13 +106,17 @@ textarea, button, input, .btn {
     gap: 5px;
 }
 
+.sidebar h1 img {
+    height: 30px;
+}
+
 .sidebar .filter, .sidebar .save {
     padding: 3px;
     box-sizing: border-box;
     width: 100%;
 }
 
-.sidebar .filter input {
+.sidebar .filter input, .modal input {
     width: 100%;
     display: block;
     box-sizing: border-box;
@@ -133,6 +152,38 @@ textarea, button, input, .btn {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+}
+
+.sidebar li.active {
+    background-color: #fff2;
+}
+
+.sidebar li.section-header {
+    justify-content: flex-start;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px dotted #47677d;
+    font-size: 80%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    cursor: default;
+}
+
+.sidebar li.deleted {
+    opacity: 0.5;
+    text-decoration: line-through;
+    cursor: pointer;
+}
+
+.sidebar li.deleted:hover {
+    opacity: 0.85;
+}
+
+.sidebar li.deleted .restore-icon {
+    flex-shrink: 0;
+    text-decoration: none;
+    margin-left: 4px;
 }
 
 .sidebar li .name::before {
@@ -220,54 +271,62 @@ textarea, button, input, .btn {
     right: 0.5em;
     flex-direction: column;
     gap: 5px;
+    align-items: center;
 }
 
-.buttons .group {
+.group {
     display: inline-flex;
 }
 
-.buttons .group .btn {
+.group .btn {
     border-radius: 0;
     border-left: none;
 }
 
-.buttons .group .btn:first-child {
+.group .btn:first-child {
     border-left: 1px solid #eeea;
     border-radius: 5px 0 0 5px;
 }
 
-.buttons .group .btn:last-child {
+.group .btn:last-child {
     border-radius: 0 5px 5px 0;
 }
 
-.buttons .group.column {
+.group.column {
     flex-direction: column;
 }
 
-.buttons .group.column .btn {
+.group.column .btn {
     border: 1px solid #eeea;
     border-radius: 0;
     border-top: none;
 }
 
-.buttons .group.column .btn:first-child {
+.group.column .btn:first-child {
     border-top: 1px solid #eeea;
     border-radius: 5px 5px 0 0;
 }
 
-.buttons .group.column .btn:last-child {
+.group.column .btn:last-child {
     border-radius: 0 0 5px 5px;
 }
 
 #map .info {
     position: absolute;
-    bottom: 0.5em;
-    right: 0.5em;
+    bottom: 0;
+    right: 0;
     z-index: 1200;
-    pointer-events: none;
-    padding: 0 2px;
+    padding: 5px;
     text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
-    background-color: #0002;
+    background-color: #0003;
+    backdrop-filter: blur(2px);
+    border-radius: 5px 0 0 0;
+    pointer-events: none;
+}
+
+#map .info b {
+    pointer-events: all;
+    cursor: pointer;
 }
 
 button, .btn {
@@ -302,7 +361,7 @@ button, .btn {
     height: 100%;
 }
 
-.hidden { display: none; }
+.hidden, #streetSizeGroup { display: none; }
 
 .sideview { transform: rotate(33deg) skew(-30deg,-5deg) }
 
@@ -311,6 +370,16 @@ button, .btn {
     border-color: #66c440;
     color: #fff;
     box-shadow: 0 0 6px #66c44088;
+}
+
+#streetSizeGroup.active {
+    display: flex;
+}
+
+.street-size-btn.active {
+    background-color: #1d6b2a;
+    border-color: #66c440;
+    color: #fff;
 }
 
 /* --- Meta building search --- */
@@ -381,4 +450,127 @@ button, .btn {
     flex-shrink: 0;
     opacity: 0.6;
     font-size: 80%;
+}
+
+#populationStat {
+    padding: 0 5px;
+}
+
+.pop-stat.negative {
+    color: var(--danger-red, #ff4d4d);
+    font-weight: bold;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4000;
+    background-color: #000a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal .btn {
+    border: none;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-inner {
+    width: 480px;
+    max-height: 70vh;
+    font-size: 14px;
+    line-height: 18px;
+    display: flex;
+    flex-direction: column;
+    background-color: #0e171d;
+    border: 1px solid #47677d;
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: medium;
+}
+
+.modal li {
+    margin: 2px 0;
+}
+
+#planListItems {
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#planListItems li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 4px;
+    border-bottom: 1px dotted #47677d;
+    cursor: pointer;
+}
+
+#planListItems li:hover {
+    background-color: #2a3f50;
+}
+
+#planListItems .plan-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#planListItems .plan-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#planListItems .plan-meta {
+    font-size: 80%;
+    opacity: 0.7;
+}
+
+#planListItems .plan-delete {
+    flex-shrink: 0;
+}
+
+#planListItems .empty {
+    opacity: 0.6;
+    padding: 6px 4px;
+    cursor: default;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.stretch {
+    justify-content: stretch;
+    gap: 2px;
+}
+
+.flex.stretch select {
+    width: stretch;
 }

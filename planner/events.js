@@ -34,6 +34,71 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings.push(building);
     }
 
+    function isTypingTarget(target) {
+        if (!target) return false;
+        const tag = target.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
+    }
+
+    function parseGroupId(groupId) {
+        if (typeof groupId !== 'string') return { metaId: groupId, custom: false };
+        if (groupId.endsWith(':custom')) return { metaId: groupId.slice(0, -7), custom: true };
+        return { metaId: groupId, custom: false };
+    }
+
+    function deleteStoredBuildings(metaId, custom = false) {
+        if (!metaId) return;
+
+        const remaining = [];
+        const toDelete = [];
+        for (const b of state.storedBuildings) {
+            if (String(b.meta.id) === String(metaId) && !!b.custom === !!custom) toDelete.push(b);
+            else remaining.push(b);
+        }
+        if (!toDelete.length) return;
+
+        app.pushSnapshot();
+
+        state.storedBuildings = remaining;
+        state.deletedBuildings = (state.deletedBuildings || []).concat(toDelete);
+
+        // cancel building placement
+        if (
+            state.placingBuilding &&
+            String(state.placingBuilding.meta.id) === String(metaId) &&
+            !!state.placingBuilding.custom === !!custom
+        ) {
+            state.placingBuilding = null;
+            state.dragCopy = null;
+        }
+
+        state.selectedStoredMetaId = null;
+
+        app.showStoredBuildings();
+        app.redrawMap();
+        app.autoSave();
+    }
+
+    function restoreDeletedBuildings(metaId, custom = false) {
+        if (!metaId || !state.deletedBuildings || !state.deletedBuildings.length) return;
+
+        const remaining = [];
+        const toRestore = [];
+        for (const b of state.deletedBuildings) {
+            if (String(b.meta.id) === String(metaId) && !!b.custom === !!custom) toRestore.push(b);
+            else remaining.push(b);
+        }
+        if (!toRestore.length) return;
+
+        app.pushSnapshot();
+
+        state.deletedBuildings = remaining;
+        state.storedBuildings = state.storedBuildings.concat(toRestore);
+
+        app.showStoredBuildings();
+        app.autoSave();
+    }
+
     function sortStoredBuildingsByAreaDesc() {
         state.storedBuildings.sort((a, b) => {
             const aSize = app.getMetaSize(a.meta);
@@ -42,8 +107,8 @@ window.PlannerApp = window.PlannerApp || {};
         });
     }
 
-    function startPlacingStoredBuilding(metaId) {
-        const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId));
+    function startPlacingStoredBuilding(metaId, custom = false) {
+        const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
         if (!stored) return;
 
         if (state.activeBuilding) {
@@ -64,8 +129,8 @@ window.PlannerApp = window.PlannerApp || {};
         updatePlacingBuildingPreview();
     }
 
-    function continuePlacingStoredBuilding(metaId) {
-        const nextStored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId));
+    function continuePlacingStoredBuilding(metaId, custom = false) {
+        const nextStored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
 
         if (!nextStored) {
             state.placingBuilding = null;
@@ -121,11 +186,13 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function resetCity() {
-        app.restoreOriginalMapAndCity();
+        app.restoreCity();
 
         state.mapBuildings = [];
         state.storedBuildings = [];
+        state.deletedBuildings = [];
         state.selectedBuildings = [];
+        state.selectedStoredMetaId = null;
         state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
@@ -134,9 +201,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.camY = 0;
         state.zoomScale = 0.75;
 
-        // The reset button already clears the persisted history — clear the
-        // in-memory copy too, so undo can't reach back past the reset into
-        // whatever (possibly rotated) state existed before it.
         state.history = [];
         state.future  = [];
         app.updateUndoRedoButtons();
@@ -155,8 +219,12 @@ window.PlannerApp = window.PlannerApp || {};
         if (state.streetPlacement.active) {
             const point = app.getCanvasPointElem(e);
             const tile = app.worldToTile(point.x, point.y);
+            const size = state.streetPlacement.size || 1;
 
-            if (!state.streetPlacement.startTile) {
+            if (size > 1) {
+                state.streetPlacement.previewTiles = [tile];
+                commitStreetPreview();
+            } else if (!state.streetPlacement.startTile) {
                 state.streetPlacement.startTile = tile;
                 state.streetPlacement.previewTiles = [tile];
             } else {
@@ -197,8 +265,11 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (state.streetPlacement.active) {
             const currentTile = app.worldToTile(state.lastMouseElem.x, state.lastMouseElem.y);
+            const size = state.streetPlacement.size || 1;
 
-            if (state.streetPlacement.startTile) {
+            if (size > 1) {
+                state.streetPlacement.previewTiles = [currentTile];
+            } else if (state.streetPlacement.startTile) {
                 state.streetPlacement.previewTiles = app.getStraightLineTiles(
                     state.streetPlacement.startTile,
                     currentTile
@@ -234,7 +305,8 @@ window.PlannerApp = window.PlannerApp || {};
         if (e.altKey || e.ctrlKey) return;
         if (!state.dragCopy.valid) return;
 
-        const placedMetaId = state.placingBuilding.meta.id;
+        const placedMetaId = state.placingBuilding.meta.id || false;
+        const placedCustom = !!state.placingBuilding.custom;
         const fromMeta = state.placingBuilding._fromMeta === true;
 
         app.pushSnapshot();
@@ -254,7 +326,7 @@ window.PlannerApp = window.PlannerApp || {};
             const meta = state.metaById.get(String(placedMetaId));
             if (meta) {
                 state.placingBuilding = app.createRotatedBuilding(
-                    { cityentity_id: meta.id, x: 0, y: 0 },
+                    { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
                     meta
                 );
                 state.placingBuilding.isActive = true;
@@ -264,20 +336,58 @@ window.PlannerApp = window.PlannerApp || {};
                 state.dragCopy = null;
             }
         } else {
-            const idx = state.storedBuildings.findIndex(b => String(b.meta.id) === String(placedMetaId));
+            const idx = state.storedBuildings.findIndex(b => String(b.meta.id) === String(placedMetaId) && !!b.custom === !!placedCustom);
             if (idx !== -1) state.storedBuildings.splice(idx, 1);
-            continuePlacingStoredBuilding(placedMetaId);
+            continuePlacingStoredBuilding(placedMetaId, placedCustom);
         }
 
-        app.showStoredBuildings();
+        app.showStoredBuildings(String(placedMetaId) + (placedCustom ? ':custom' : ''));
         app.updateStats();
         app.autoSave();
-
-        continuePlacingStoredBuilding(placedMetaId);
     }
 
-    function getStreetMeta() {
-        return Object.values(state.metaData).find(x => x.type === 'street') || null;
+    function getStreetMetas() {
+        return Object.values(state.metaData).filter(x => x.type === 'street');
+    }
+
+    function getStreetFootprintSizes() {
+        const sizes = new Set();
+        for (const meta of getStreetMetas()) {
+            const dims = app.getMetaSize(meta);
+            sizes.add(Math.max(dims.width, dims.height) || 1);
+        }
+        return Array.from(sizes).sort((a, b) => a - b);
+    }
+
+    function getStreetMetaForSize(size) {
+        const metas = getStreetMetas();
+        const match = metas.find(meta => {
+            const dims = app.getMetaSize(meta);
+            return Math.max(dims.width, dims.height) === size;
+        });
+        return match || metas[0] || null;
+    }
+
+    function renderStreetSizeOptions() {
+        if (!dom.streetSizeGroup) return;
+
+        const sizes = getStreetFootprintSizes();
+
+        if (sizes.length <= 1) {
+            state.streetPlacement.size = sizes[0] || 1;
+            dom.streetSizeGroup.innerHTML = '';
+            return;
+        }
+
+        if (!sizes.includes(state.streetPlacement.size)) {
+            state.streetPlacement.size = sizes[0];
+        }
+
+        dom.streetSizeGroup.innerHTML = sizes.map(size =>
+            '<button class="btn street-size-btn' + (size === state.streetPlacement.size ? ' active' : '') + '" data-size="' + size + '">' +
+                size + 'x' + size +
+            '</button>'
+        ).join('');
     }
 
     function startStreetPlacement() {
@@ -290,7 +400,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.streetPlacement.active = true;
         state.streetPlacement.startTile = null;
         state.streetPlacement.previewTiles = [];
+        renderStreetSizeOptions();
         dom.placeStreetBtn.classList.add('active');
+        dom.streetSizeGroup.classList.add('active');
         app.redrawMap();
     }
 
@@ -299,33 +411,33 @@ window.PlannerApp = window.PlannerApp || {};
         state.streetPlacement.startTile = null;
         state.streetPlacement.previewTiles = [];
         dom.placeStreetBtn.classList.remove('active');
+        dom.streetSizeGroup.classList.remove('active');
         app.redrawMap();
     }
 
     function createStreetBuildingAtTile(tx, ty, streetMeta) {
-        const forcedMeta = { ...streetMeta, width: 1, length: 1 };
         return app.createRotatedBuilding(
             {
                 cityentity_id: streetMeta.id,
                 type: 'street',
                 x: tx,
-                y: ty
+                y: ty,
+                era: state.currentEra
             },
-            forcedMeta
+            streetMeta
         );
     }
 
     function commitStreetPreview() {
-        const streetMeta = getStreetMeta();
+        const size = state.streetPlacement.size || 1;
+        const streetMeta = getStreetMetaForSize(size);
         if (!streetMeta) return;
 
         app.pushSnapshot();
 
         for (const tile of state.streetPlacement.previewTiles) {
-            if (app.isTileOccupiedByNonStreet(tile.x, tile.y)) continue;
-
-            const existing = state.occupiedTiles.get(app.tileKey(tile.x, tile.y));
-            if (existing && existing.meta.type === 'street') continue;
+            if (app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size)) continue;
+            if (app.isFootprintOccupiedByStreet(tile.x, tile.y, size)) continue;
 
             const street = createStreetBuildingAtTile(tile.x, tile.y, streetMeta);
             state.mapBuildings.push(street);
@@ -461,6 +573,10 @@ window.PlannerApp = window.PlannerApp || {};
             if (!drag) return;
             e.preventDefault();
 
+            if (drag.mode === 'pan') {
+                if (app.saveViewState) app.saveViewState();
+            }
+
             if (drag.mode === 'select') {
                 state.selectionRect = null;
                 const endElem = app.getCanvasPointElem(e);
@@ -563,9 +679,8 @@ window.PlannerApp = window.PlannerApp || {};
             state.activeBuilding = null;
         }
 
-        // Create a fresh building from meta — not tied to storedBuildings.
         state.placingBuilding = app.createRotatedBuilding(
-            { cityentity_id: meta.id, x: 0, y: 0 },
+            { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
             meta
         );
         state.placingBuilding.isActive = true;
@@ -575,16 +690,123 @@ window.PlannerApp = window.PlannerApp || {};
         updatePlacingBuildingPreview();
     }
 
+    async function refreshPlanListUi() {
+        if (!dom.planListItems) return;
+
+        dom.planListItems.innerHTML = '<li class="empty">Loading…</li>';
+
+        let plans = [];
+        try {
+            plans = await app.getPlanList();
+        } catch (err) {
+            console.error('Failed to load plan list:', err);
+            dom.planListItems.innerHTML = '<li class="empty">Failed to load saved plans.</li>';
+            return;
+        }
+
+        if (!plans || !plans.length) {
+            dom.planListItems.innerHTML = '<li class="empty">No saved plans yet.</li>';
+            return;
+        }
+
+        plans.sort((a, b) => (b.date || 0) - (a.date || 0));
+
+        const html = plans.map(plan => {
+            const dateStr = plan.date ? new Date(plan.date * 1000).toLocaleString() : '';
+            const name = plan.name || 'Unnamed plan';
+            const meta = [plan.world, plan.playerName, dateStr].filter(Boolean).join(' · ');
+
+            return (
+                '<li data-plan-id="' + plan.id + '">' +
+                    '<span class="plan-info">' +
+                        '<span class="plan-name">' + name + '</span>' +
+                        '<span class="plan-meta">' + meta + '</span>' +
+                    '</span>' +
+                    '<button class="btn plan-delete" title="Delete plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+                '</li>'
+            );
+        });
+
+        dom.planListItems.innerHTML = html.join('');
+    }
+
+    function bindModalCloseHandlers() {
+        document.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('.modal-close');
+            if (closeBtn) {
+                const modal = closeBtn.closest('.modal');
+                if (modal) modal.classList.add('hidden');
+                return;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            const openModal = document.querySelector('.modal:not(.hidden)');
+            if (openModal) openModal.classList.add('hidden');
+        });
+    }
+
+    function openModal(modal) {
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function showNewDataModal(hasCurrentPlan) {
+        if (!dom.newDataModal) return;
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.value = 'Plan ' + new Date().toLocaleDateString();
+        }
+
+        if (dom.newDataDiscardBtn) {
+            dom.newDataDiscardBtn.classList.toggle('hidden', !hasCurrentPlan);
+        }
+        if (dom.newDataModalText) {
+            dom.newDataModalText.classList.toggle('hidden', !hasCurrentPlan);
+        }
+
+        openModal(dom.newDataModal);
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.focus();
+            dom.newDataPlanNameInput.select();
+        }
+    }
+
+    app.showNewDataModal = showNewDataModal;
+
     function bindEvents(init) {
 
+        bindModalCloseHandlers();
+
+        dom.informationBtn.addEventListener('click', () => {
+            openModal(document.querySelector('#information'));
+        });
         dom.zoomInBtn.addEventListener('click', app.zoomIn);
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
+
+        if (dom.streetSizeGroup) {
+            dom.streetSizeGroup.addEventListener('click', (e) => {
+                const btn = e.target.closest('.street-size-btn');
+                if (!btn) return;
+
+                state.streetPlacement.size = Number(btn.dataset.size);
+                state.streetPlacement.startTile = null;
+                state.streetPlacement.previewTiles = [];
+                renderStreetSizeOptions();
+                app.redrawMap();
+            });
+        }
 
         const undoBtn = document.getElementById('undo');
         const redoBtn = document.getElementById('redo');
         if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
         if (redoBtn) redoBtn.addEventListener('click', () => app.redo());
+        
+        document.querySelector('.info .close').addEventListener('click', () => {
+            document.querySelector('.info span').classList.toggle('hidden');
+        });
 
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
@@ -596,6 +818,14 @@ window.PlannerApp = window.PlannerApp || {};
             ) {
                 e.preventDefault();
                 app.redo();
+            } else if (
+                (e.key === 'Backspace' || e.key === 'Delete') &&
+                state.selectedStoredMetaId &&
+                !isTypingTarget(e.target)
+            ) {
+                e.preventDefault();
+                const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
+                deleteStoredBuildings(metaId, custom);
             }
         });
 
@@ -624,8 +854,17 @@ window.PlannerApp = window.PlannerApp || {};
             const li = e.target.closest('li[data-id]');
             if (!li) return;
 
-            const metaId = li.dataset.id;
-            startPlacingStoredBuilding(metaId);
+            const groupId = li.dataset.id;
+            const { metaId, custom } = parseGroupId(groupId);
+
+            if (li.classList.contains('deleted')) {
+                restoreDeletedBuildings(metaId, custom);
+                return;
+            }
+
+            state.selectedStoredMetaId = groupId;
+            li.classList.add('active');
+            startPlacingStoredBuilding(metaId, custom);
         });
 
         dom.canvas.addEventListener('click', handleCanvasClick);
@@ -650,11 +889,89 @@ window.PlannerApp = window.PlannerApp || {};
         });
 
         if (dom.saveBtn) {
-            dom.saveBtn.addEventListener('click', () => app.saveState());
+            dom.saveBtn.addEventListener('click', async () => {
+                if (dom.saveBtn.disabled) return;
+
+                const originalText = dom.saveBtn.textContent;
+                dom.saveBtn.disabled = true;
+                dom.saveBtn.textContent = 'Saving…';
+
+                const success = await app.savePlanToDatabase();
+
+                dom.saveBtn.textContent = success ? 'Saved' : 'Failed to save';
+                setTimeout(() => {
+                    dom.saveBtn.textContent = originalText;
+                    dom.saveBtn.disabled = false;
+                }, 1500);
+            });
+        }
+
+        if (dom.loadPlanBtn && dom.planListModal) {
+            dom.loadPlanBtn.addEventListener('click', async () => {
+                openModal(dom.planListModal);
+                await refreshPlanListUi();
+            });
+        }
+
+        if (dom.planListItems) {
+            dom.planListItems.addEventListener('click', async (e) => {
+                const deleteBtn = e.target.closest('.plan-delete');
+                if (deleteBtn) {
+                    const li = deleteBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    const planId = Number(li.dataset.planId);
+                    if (!confirm('Delete this plan? This cannot be undone.')) return;
+                    try {
+                        await app.removePlanFromDatabase(planId);
+                        await refreshPlanListUi();
+                    } catch (err) {
+                        console.error('Failed to delete plan:', err);
+                        alert('Failed to delete plan.');
+                    }
+                    return;
+                }
+
+                const li = e.target.closest('li[data-plan-id]');
+                if (!li) return;
+                const planId = Number(li.dataset.planId);
+
+                try {
+                    await app.loadPlanFromDatabase(planId);
+                    dom.planListModal.classList.add('hidden');
+                    dom.submitWindow.classList.add('hidden');
+                } catch (err) {
+                    console.error('Failed to load plan:', err);
+                    alert('Failed to load plan.');
+                }
+            });
+        }
+
+        if (dom.newDataSaveBtn) {
+            dom.newDataSaveBtn.addEventListener('click', async () => {
+                const name = dom.newDataPlanNameInput ? dom.newDataPlanNameInput.value : '';
+                dom.newDataModal.classList.add('hidden');
+                await app.confirmSaveIncomingAsNewPlan(name);
+            });
+        }
+
+        if (dom.newDataDiscardBtn) {
+            dom.newDataDiscardBtn.addEventListener('click', () => {
+                app.discardIncomingData();
+                dom.newDataModal.classList.add('hidden');
+            });
+        }
+
+        if (dom.newDataPlanNameInput) {
+            dom.newDataPlanNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    dom.newDataSaveBtn.click();
+                }
+            });
         }
 
         if (dom.exportBtn) {
-            dom.exportBtn.addEventListener('click', () => app.exportStateToFile());
+            dom.exportBtn.addEventListener('click', () => app.exportSaveToFile());
         }
 
         if (dom.importBtn) {
@@ -672,8 +989,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         document.addEventListener('contextmenu', (e) => {
-            // todo: remove 
-            //e.preventDefault();
+            e.preventDefault();
 
             if (state.streetPlacement.active) {
                 cancelStreetPlacement();
@@ -757,4 +1073,5 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     app.bindEvents = bindEvents;
+    app.renderStreetSizeOptions = renderStreetSizeOptions;
 })(window.PlannerApp);

@@ -4,6 +4,13 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+	if (FH.ActiveMap !== 'gg') {
+		$('#GBGActionLogCount').remove();
+		$('#GBGTargets').remove();
+	}
+});
+
 FH.proxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
 	GuildFights.ProvinceNames = JSON.parse(xhr.responseText);
 });
@@ -28,11 +35,6 @@ FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) 
 
 FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
 	GuildFights.HandleSignals(data.responseData);
-});
-
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
-	if (FH.ActiveMap !== 'gg') 
-		$('#GBGTargets').remove();
 });
 
 FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
@@ -82,6 +84,11 @@ FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	}, 800);
 
 	GuildFights.HandleSignals();
+
+	let container = $('#GBGActionLogCount');
+	if (container.length === 0)
+		container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
+	container.html(GBGActionLog.refreshMenuBadge());
 });
 FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
@@ -265,6 +272,18 @@ let GuildFights = {
 		if (!GuildFights.showGbgTargets) return;
 
 		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		
+		if (GuildFights.Signals?.length > 0) {
+			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
+				let province = GuildFights.MapData.map.provinces.find(x => x.id === (GuildFights.Signals[i].provinceId || 0));
+				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
+					GuildFights.Signals.splice(i, 1);
+				}
+				if (GuildFights.Signals[i]?.signal === 'ignore') {
+					GuildFights.Signals.splice(i, 1);
+				}
+			}
+		}
 		
 		if (data) {
 			let provinceId = data.provinceId||0;
@@ -602,7 +621,7 @@ let GuildFights = {
 							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
 							<div class="btn-group">
 							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
-							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')} ${GBGActionLog.refreshMenuBadge()}</button>
+							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')}</button>
 							</div>
 						</div>`);
 			}

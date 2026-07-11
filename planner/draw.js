@@ -56,6 +56,20 @@ window.PlannerApp = window.PlannerApp || {};
         return { width: maxX, height: maxY };
     }
 
+    function isTileInMapData(tx, ty) {
+        if (!state.mapData || !state.mapData.length) return false;
+
+        for (const exp of state.mapData) {
+            const ex = (exp.x === undefined || Number.isNaN(exp.x)) ? 0 : exp.x;
+            const ey = (exp.y === undefined || Number.isNaN(exp.y)) ? 0 : exp.y;
+
+            if (tx >= ex && tx < ex + exp.width && ty >= ey && ty < ey + exp.length) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function screenToWorld(cssX, cssY) {
         const x = cssX / state.zoomScale + state.camX;
         const y = cssY / state.zoomScale + state.camY;
@@ -208,12 +222,29 @@ window.PlannerApp = window.PlannerApp || {};
         drawStreetPreview(ctx);
     }
 
+    function calculatePopulation() {
+        let total = 0;
+        for (const building of state.mapBuildings) {
+            total += (building.population || 0);
+        }
+        return total;
+    }
+
     function updateStats() {
         const oldStreetAmount = Object.values(state.cityData).filter(x => x.type === 'street').length;
         if (dom.oldStreetsEl) dom.oldStreetsEl.textContent = oldStreetAmount;
 
         const streetAmount = state.mapBuildings.filter(x => x.data.type === 'street').length;
         if (dom.newStreetsEl) dom.newStreetsEl.textContent = streetAmount;
+
+        const population = calculatePopulation();
+        if (dom.populationEl) {
+            dom.populationEl.textContent = population;
+            dom.populationEl.classList.toggle('negative', population < 0);
+            dom.populationEl.title = population < 0
+                ? 'Warning: population is negative — this layout needs more residences.'
+                : '';
+        }
     }
 
     function clampZoomToSteps(dir) {
@@ -235,6 +266,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.camY += pointBefore.y - pointAfter.y;
 
         redrawMap();
+        if (app.saveViewState) app.saveViewState();
     }
 
     function zoomIn() {
@@ -302,20 +334,25 @@ window.PlannerApp = window.PlannerApp || {};
         const streetState = state.streetPlacement;
         if (!streetState.active || !streetState.previewTiles.length) return;
 
+        const size = streetState.size || 1;
+        const boxSize = SIZE * size;
+
         context.save();
 
         for (const tile of streetState.previewTiles) {
-            const blocked = app.isTileOccupiedByNonStreet(tile.x, tile.y);
+            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size);
+            const px = tile.x * SIZE;
+            const py = tile.y * SIZE;
 
             context.globalAlpha = 0.55;
             context.fillStyle = blocked ? '#ff4d4d' : '#66c440';
-            context.fillRect(tile.x * SIZE, tile.y * SIZE, SIZE, SIZE);
+            context.fillRect(px, py, boxSize, boxSize);
 
             context.globalAlpha = 1;
             context.strokeStyle = blocked ? '#8b0000' : '#1d6b2a';
             context.lineWidth = 2 / state.zoomScale;
             context.setLineDash([6 / state.zoomScale, 4 / state.zoomScale]);
-            context.strokeRect(tile.x * SIZE, tile.y * SIZE, SIZE, SIZE);
+            context.strokeRect(px, py, boxSize, boxSize);
         }
 
         context.restore();
@@ -325,6 +362,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.getDpr = getDpr;
     app.resizeCanvasToCSSSize = resizeCanvasToCSSSize;
     app.getMapBoundsPx = getMapBoundsPx;
+    app.isTileInMapData = isTileInMapData;
     app.screenToWorld = screenToWorld;
     app.getCanvasPointElem = getCanvasPointElem;
     app.rebuildGridLayer = rebuildGridLayer;
@@ -335,6 +373,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.drawEmptyMap = drawEmptyMap;
     app.redrawMap = redrawMap;
     app.updateStats = updateStats;
+    app.calculatePopulation = calculatePopulation;
     app.clampZoomToSteps = clampZoomToSteps;
     app.zoomAtScreenPoint = zoomAtScreenPoint;
     app.zoomIn = zoomIn;

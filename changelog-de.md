@@ -1,6 +1,10 @@
 # Changelog
  
 ## Version 1.2
+### Neu
+- Gefechtslog: Der Gefechtslog wird nun ausgelesen und gespeichert, dank Arklur! Ihr findet den Button in der Gefechtsübersicht. Bitte beachtet, dass das Spiel nur die letzten 200 Einträge speichert und der Log deshalb nicht vollständig sein wird, wenn die Daten nicht regelmäßig abgerufen werden.
+- Stadtplaner: Eine erste Version des Stadtplaners ist da! Schickt eure Daten in der Stadtübersicht an den Planer und fangt an zu bauen. Aktuell sind alle Beschreibungen noch auf Englisch.
+
 ### Update
 - Statistiken: CSV Export (wieder) hinzugefügt für: Ressourcen, Gildenkasse, Einheiten, GG Siegpunkte, GG Spielerfortschritt
 - Der GG Spielerfortschritt ist nun im GG Fenster in den Statistiken zu finden und zeigt nur noch den Fortschritt der aktuellen Runde
@@ -8,12 +12,13 @@
 - Gefechte: Option zum automatischen Öffnen hinzugefügt
 - Shops: Suchfeld hinzugefügt
 - Notizen: Einstellung für automatisches Öffnen beim Spielstart hinzugefügt
-- Gebäudetooltips: Es wird nun angezeigt, dass Gebäude nicht mittest SPA beschleunigt werden können und ob sie sich automatisch dem Zeitaler anpassen (Danke an WOLFI) weiterhin wurde ein Hinweis ergänzt, wenn ein Gebäude keine Straße benötigt
-- Übersetzungen: fr (Danke an Damrus le Cruel) und it (Danke an Alej92415) aktualisiert
+- Gebäudetooltips: Es wird nun angezeigt, dass Gebäude nicht mit SPA beschleunigt werden können und ob sie sich automatisch dem Zeitaler anpassen (Danke an WOLFI) weiterhin wurde ein Hinweis ergänzt, wenn ein Gebäude keine Straße benötigt
+- Übersetzungen: FR (Danke an Damrus le Cruel) und IT (Danke an Alej92415) aktualisiert
 
 ### Bug Fixes
-- Gefechte: Es konnten leere Einträge in der Gefechtshistorie angezeigt werden
-- Übersetzungen: wurden unter anderem nicht korrekt gespeichert
+- Gefechte: Es konnten leere Einträge in der Gefechtshistorie und manchmal leere Fenster angezeigt werden
+- Übersetzungen: Wurden unter anderem nicht korrekt gespeichert
+- LG Rechner: War auf Beta für eigene LG mal wieder kaputt
 
 ---
  

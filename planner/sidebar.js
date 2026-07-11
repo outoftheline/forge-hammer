@@ -6,13 +6,14 @@ window.PlannerApp = window.PlannerApp || {};
     const state = app.state;
     const dom = app.dom;
 
-    function getStoredBuildingGroups() {
+    function getStoredBuildingGroups(list) {
         const groups = new Map();
 
-        for (const building of state.storedBuildings) {
+        for (const building of (list || state.storedBuildings)) {
             if (building.meta.type === 'street') continue;
 
-            const id = String(building.meta.id);
+            const isCustom = !!building.custom;
+            const id = String(building.meta.id) + (isCustom ? ':custom' : '');
             const dims = app.getMetaSize(building.meta);
             const width = dims.width;
             const height = dims.height;
@@ -20,7 +21,9 @@ window.PlannerApp = window.PlannerApp || {};
             if (!groups.has(id)) {
                 groups.set(id, {
                     id,
+                    metaId: String(building.meta.id),
                     name: building.meta.name,
+                    custom: isCustom,
                     type: building.meta.type,
                     width,
                     height,
@@ -35,6 +38,10 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         return Array.from(groups.values());
+    }
+
+    function getDeletedBuildingGroups() {
+        return getStoredBuildingGroups(state.deletedBuildings || []);
     }
 
     function filterStoredBuildingGroups(groups) {
@@ -92,27 +99,54 @@ window.PlannerApp = window.PlannerApp || {};
         return arr;
     }
 
-    function showStoredBuildings() {
+    function showStoredLi(item, activeId) {
+        const noStreet = item.noStreet ? ' nostreet' : '';
+        const isActive = (activeId && item.id === activeId ? ' active' : '');
+        const name = (item.custom ? '* ' : '') + item.name;
+
+        return (
+            '<li data-id="' + item.id + '" class="' + item.type + noStreet + isActive + '">' +
+                '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
+                '<span class="name">' + name + '</span>' +
+                ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
+            '</li>'
+        );
+    }
+
+    function showDeletedLi(item) {
+        const name = (item.custom ? '* ' : '') + item.name;
+
+        return (
+            '<li data-id="' + item.id + '" class="deleted ' + item.type + '" title="Click to restore">' +
+                '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
+                '<span class="name">' + name + '</span>' +
+                ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
+                '<span class="restore-icon" title="Restore">↺</span>' +
+            '</li>'
+        );
+    }
+
+    function showStoredBuildings(buildingId = false) {
+        const activeId = buildingId || state.selectedStoredMetaId || false;
+
         let groups = getStoredBuildingGroups();
         groups = filterStoredBuildingGroups(groups);
         groups = sortStoredBuildingGroups(groups);
 
-        const html = groups.map(item => {
-            const noStreet = item.noStreet ? ' nostreet' : '';
+        const html = groups.map(item => showStoredLi(item, activeId));
 
-            return (
-                '<li data-id="' + item.id + '" class="' + item.type + noStreet + '">' +
-                    '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
-                    '<span class="name">' + item.name + '</span>' +
-                    ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
-                '</li>'
-            );
-        });
+        const deletedGroups = sortStoredBuildingGroups(getDeletedBuildingGroups());
+        let deletedHtml = '';
+        if (deletedGroups.length) {
+            deletedHtml = '<li class="section-header">Deleted</li>' +
+                deletedGroups.map(showDeletedLi).join('');
+        }
 
-        dom.buildingsListEl.innerHTML = html.join('');
+        dom.buildingsListEl.innerHTML = html.join('') + deletedHtml;
     }
 
     app.getStoredBuildingGroups = getStoredBuildingGroups;
+    app.getDeletedBuildingGroups = getDeletedBuildingGroups;
     app.filterStoredBuildingGroups = filterStoredBuildingGroups;
     app.sortStoredBuildingGroups = sortStoredBuildingGroups;
     app.showStoredBuildings = showStoredBuildings;

@@ -755,3 +755,7 @@ input[id*="ProdPerTile"] {
 #ProductionsRatingBody:not(.showLimited) .limited span[data-callback_tt="InventoryKits"], #items-list th:nth-child(3)::before, #items-list th:nth-child(3)::after {
 	display: none;
 }
+
+.popup-body #HelperWarning {
+	display: none !important;
+}
