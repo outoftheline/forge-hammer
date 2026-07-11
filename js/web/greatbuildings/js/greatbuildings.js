@@ -111,59 +111,59 @@ let GreatBuildings = {
     Show: () => {
         if ($('#greatbuildings').length === 0) {
 
-            let ForderBonus = localStorage.getItem('GreatBuildingsForderBonus');
+            let ForderBonus = FH.Storage.getItem('GreatBuildingsForderBonus');
             if (ForderBonus !== null) {
                 GreatBuildings.ForderBonus = parseFloat(ForderBonus);
             }
 
             for (let i = 0; i < GreatBuildings.GreatBuildingsData.length; i++) {
-                let GoodCosts = localStorage.getItem('GreatBuildingsGoodCosts' + i);
+                let GoodCosts = FH.Storage.getItem('GreatBuildingsGoodCosts' + i);
                 if (GoodCosts !== null) {
                     GreatBuildings.GreatBuildingsData[i]['GoodCosts'] = parseFloat(GoodCosts);
                 }
             }
 
-            let FPPerTile = localStorage.getItem('GreatBuildingsFPPerTile');
+            let FPPerTile = FH.Storage.getItem('GreatBuildingsFPPerTile');
             if (FPPerTile != null) {
                 GreatBuildings.FPPerTile = parseFloat(FPPerTile);
             }
 
 
-            let ShowGoods = localStorage.getItem('GreatBuildingsShowGoods');
+            let ShowGoods = FH.Storage.getItem('GreatBuildingsShowGoods');
             if (ShowGoods === 'true') {
                 GreatBuildings.ShowGoods = true;
             }
 
-            let GoodsValue0 = localStorage.getItem('GreatBuildingsGoodsValue0');
+            let GoodsValue0 = FH.Storage.getItem('GreatBuildingsGoodsValue0');
             if (GoodsValue0 !== null) {
                 GreatBuildings.GoodsValue0 = parseFloat(GoodsValue0);
             }
 
-            let GoodsValue1 = localStorage.getItem('GreatBuildingsGoodsValue1');
+            let GoodsValue1 = FH.Storage.getItem('GreatBuildingsGoodsValue1');
             if (GoodsValue1 !== null) {
                 GreatBuildings.GoodsValue1 = parseFloat(GoodsValue1);
             }
 
-            let GoodsValue3 = localStorage.getItem('GreatBuildingsGoodsValue3');
+            let GoodsValue3 = FH.Storage.getItem('GreatBuildingsGoodsValue3');
             if (GoodsValue3 !== null) {
                 GreatBuildings.GoodsValue3 = parseFloat(GoodsValue3);
             }
 
-            let ShowAttack = localStorage.getItem('GreatBuildingsShowAttack');
+            let ShowAttack = FH.Storage.getItem('GreatBuildingsShowAttack');
             if (ShowAttack === 'true') {
                 GreatBuildings.ShowAttack = true;
             }
 
-            let AttackValue = localStorage.getItem('GreatBuildingsAttackValue');
+            let AttackValue = FH.Storage.getItem('GreatBuildingsAttackValue');
             if (AttackValue !== null) {
                 GreatBuildings.AttackValue = parseFloat(AttackValue);
             }
 
-            GreatBuildings.RewardPerDay = MainParser.round(GreatBuildings.FPRewards / 6);
+            GreatBuildings.RewardPerDay = FH.Main.round(GreatBuildings.FPRewards / 6);
 
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'greatbuildings',
-                title: i18n('Boxes.GreatBuildings.Title'),
+                title: FH.t('Boxes.GreatBuildings.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -171,7 +171,7 @@ let GreatBuildings = {
             });
 
             // CSS in den DOM prügeln
-            HTML.AddCssFile('greatbuildings');
+            FH.HTML.AddCssFile('greatbuildings');
 
             $('#greatbuildings').on('click', '.hidenewgbs', function () {
                 let $this = $(this),
@@ -186,14 +186,14 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#costFactor', function () {
                 GreatBuildings.ForderBonus = parseFloat($('#costFactor').val());
                 if (isNaN(GreatBuildings.ForderBonus)) GreatBuildings.ForderBonus = 0;
-                localStorage.setItem('GreatBuildingsForderBonus', GreatBuildings.ForderBonus);
+                FH.Storage.setItem('GreatBuildingsForderBonus', GreatBuildings.ForderBonus);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#fpPerTile', function () {
                 GreatBuildings.FPPerTile = parseFloat($('#fpPerTile').val());
                 if (isNaN(GreatBuildings.FPPerTile)) GreatBuildings.FPPerTile = 0;
-                localStorage.setItem('GreatBuildingsFPPerTile', GreatBuildings.FPPerTile);
+                FH.Storage.setItem('GreatBuildingsFPPerTile', GreatBuildings.FPPerTile);
                 GreatBuildings.CalcBody();
             });
 
@@ -209,7 +209,7 @@ let GreatBuildings = {
                     v = $this.prop('checked');
 
                 GreatBuildings.ShowGoods = v;
-                localStorage.setItem('GreatBuildingsShowGoods', GreatBuildings.ShowGoods);
+                FH.Storage.setItem('GreatBuildingsShowGoods', GreatBuildings.ShowGoods);
 
                 GreatBuildings.CalcBody();
             });
@@ -217,21 +217,21 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#goodsValue0', function () {
                 GreatBuildings.GoodsValue0 = parseFloat($('#goodsValue0').val());
                 if (isNaN(GreatBuildings.GoodsValue0)) GreatBuildings.GoodsValue0 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue0', GreatBuildings.GoodsValue0);
+                FH.Storage.setItem('GreatBuildingsGoodsValue0', GreatBuildings.GoodsValue0);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#goodsValue1', function () {
                 GreatBuildings.GoodsValue1 = parseFloat($('#goodsValue1').val());
                 if (isNaN(GreatBuildings.GoodsValue1)) GreatBuildings.GoodsValue1 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue1', GreatBuildings.GoodsValue1);
+                FH.Storage.setItem('GreatBuildingsGoodsValue1', GreatBuildings.GoodsValue1);
                 GreatBuildings.CalcBody();
             });
 
             $('#greatbuildings').on('blur', '#goodsValue3', function () {
                 GreatBuildings.GoodsValue3 = parseFloat($('#goodsValue3').val());
                 if (isNaN(GreatBuildings.GoodsValue3)) GreatBuildings.GoodsValue3 = 0;
-                localStorage.setItem('GreatBuildingsGoodsValue3', GreatBuildings.GoodsValue3);
+                FH.Storage.setItem('GreatBuildingsGoodsValue3', GreatBuildings.GoodsValue3);
                 GreatBuildings.CalcBody();
             });
 
@@ -239,7 +239,7 @@ let GreatBuildings = {
                 $('#greatbuildings').on('blur', '#GreatBuildingsGoodCosts' + i, function () {
                     GreatBuildings.GreatBuildingsData[i].GoodCosts = parseFloat($('#GreatBuildingsGoodCosts' + i).val());
                     if (isNaN(GreatBuildings.GreatBuildingsData[i].GoodCosts)) GreatBuildings.GreatBuildingsData[i].GoodCosts = 0;
-                    localStorage.setItem('GreatBuildingsGoodCosts' + i, GreatBuildings.GreatBuildingsData[i].GoodCosts);
+                    FH.Storage.setItem('GreatBuildingsGoodCosts' + i, GreatBuildings.GreatBuildingsData[i].GoodCosts);
                     GreatBuildings.CalcBody();
                 });
             }
@@ -250,7 +250,7 @@ let GreatBuildings = {
                     v = $this.prop('checked');
 
                 GreatBuildings.ShowAttack = v;
-                localStorage.setItem('GreatBuildingsShowAttack', GreatBuildings.ShowAttack);
+                FH.Storage.setItem('GreatBuildingsShowAttack', GreatBuildings.ShowAttack);
 
                 GreatBuildings.CalcBody();
             });
@@ -258,7 +258,7 @@ let GreatBuildings = {
             $('#greatbuildings').on('blur', '#attackValue', function () {
                 GreatBuildings.AttackValue = parseFloat($('#attackValue').val());
                 if (isNaN(GreatBuildings.AttackValue)) GreatBuildings.AttackValue = 0;
-                localStorage.setItem('GreatBuildingsAttackValue', GreatBuildings.AttackValue);
+                FH.Storage.setItem('GreatBuildingsAttackValue', GreatBuildings.AttackValue);
                 GreatBuildings.CalcBody();
             });
 
@@ -272,7 +272,7 @@ let GreatBuildings = {
             });
 
         } else {
-            HTML.CloseOpenBox('greatbuildings');
+            FH.HTML.CloseOpenBox('greatbuildings');
         }
 
         GreatBuildings.CalcBody();       
@@ -284,88 +284,88 @@ let GreatBuildings = {
 
         let h = [];
         h.push('<div class="text-center dark-bg header">');
-        h.push('<strong class="title">' + i18n('Boxes.GreatBuildings.SuggestionTitle') + '</strong><br>');
-        if (LastMapPlayerID !== ExtPlayerID) {
-            h.push('<strong class="player-name"><span>' + PlayerDict[LastMapPlayerID]['PlayerName'] + '</span></strong>');
+        h.push('<strong class="title">' + FH.t('Boxes.GreatBuildings.SuggestionTitle') + '</strong><br>');
+        if (FH.LastMapPlayerID !== FH.Player.ID) {
+            h.push('<strong class="player-name"><span>' + FH.Players.Dict[FH.LastMapPlayerID]['PlayerName'] + '</span></strong>');
         }
         h.push('<br><strong>')
-        h.push(i18n('Boxes.GreatBuildings.ArcBonus') + ' ');
+        h.push(FH.t('Boxes.GreatBuildings.ArcBonus') + ' ');
         h.push('</strong><input type="number" id="costFactor" step="0.1" min="12" max="200" value="' + GreatBuildings.ForderBonus + '">% ');
         h.push('<br><br>')
         h.push('<input id="HideNewGBs" class="hidenewgbs game-cursor" ' + (GreatBuildings.HideNewGBs ? 'checked' : '') + ' type="checkbox">');
-        h.push(i18n('Boxes.GreatBuildings.HideNewGBs'));
+        h.push(FH.t('Boxes.GreatBuildings.HideNewGBs'));
         h.push('<br>');
-        h.push(i18n('Boxes.GreatBuildings.FPPerTile') + ' ');
-        h.push('<input type="number" id="fpPerTile" step="0.01" min="0" max="1000" value="' + GreatBuildings.FPPerTile + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTFPPerTile')) + '">');
+        h.push(FH.t('Boxes.GreatBuildings.FPPerTile') + ' ');
+        h.push('<input type="number" id="fpPerTile" step="0.01" min="0" max="1000" value="' + GreatBuildings.FPPerTile + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTFPPerTile')) + '">');
         h.push('<br>');
-        h.push(i18n('Boxes.GreatBuildings.RewardPerDay') + ' ');
-        h.push('<input type="number" id="rewardPerDay" step="1" min="0" max="1000000" value="' + GreatBuildings.RewardPerDay + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTRewardPerDay')) + '">');
+        h.push(FH.t('Boxes.GreatBuildings.RewardPerDay') + ' ');
+        h.push('<input type="number" id="rewardPerDay" step="1" min="0" max="1000000" value="' + GreatBuildings.RewardPerDay + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTRewardPerDay')) + '">');
         h.push('<br><br>');
 
         h.push('<input id="ShowGoods" class="showgoods game-cursor" ' + (GreatBuildings.ShowGoods ? 'checked' : '') + ' type="checkbox">');
-        h.push(i18n('Boxes.GreatBuildings.ShowGoods'));
+        h.push(FH.t('Boxes.GreatBuildings.ShowGoods'));
         h.push('<br>');
 
         if (GreatBuildings.ShowGoods) { //Güterwert - Boxen ausblenden, wenn Güter deaktiviert
-            h.push(HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsValue'), { eraname: i18n('Eras.' + CurrentEraID) }) + ' ');
-            h.push('<input type="number" id="goodsValue0" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue0 + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+            h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + FH.CurrentEraID) }) + ' ');
+            h.push('<input type="number" id="goodsValue0" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue0 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
             if (GreatBuildings.GoodsValue0 > 0) {
-                h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue0 * 100) / 100 }) + ')</small>')
+                h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue0 * 100) / 100 }) + ')</small>')
             }
             h.push('<br>');
 
-            if (CurrentEraID >= 3) { //Ab Eisenzeit => Star Gazer liefert Bronzezeitgüter
-                h.push(HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsValue'), { eraname: i18n('Eras.' + (CurrentEraID - 1)) }) + ' ');
-                h.push('<input type="number" id="goodsValue1" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue1 + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+            if (FH.CurrentEraID >= 3) { //Ab Eisenzeit => Star Gazer liefert Bronzezeitgüter
+                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (FH.CurrentEraID - 1)) }) + ' ');
+                h.push('<input type="number" id="goodsValue1" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue1 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue1 > 0) {
-                    h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue1 * 100) / 100 }) + ')</small>')
+                    h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue1 * 100) / 100 }) + ')</small>')
                 }
                 h.push('<br>');
             }
 
-            if (CurrentEraID >= 10) { //Ab Moderne => Unveredelte Güter
-                h.push(HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsValue'), { eraname: i18n('Eras.' + (CurrentEraID - 3)) }) + ' ');
-                h.push('<input type="number" id="goodsValue3" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue3 + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTGoodsValue')) + '">');
+            if (FH.CurrentEraID >= 10) { //Ab Moderne => Unveredelte Güter
+                h.push(FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsValue'), { eraname: FH.t('Eras.' + (FH.CurrentEraID - 3)) }) + ' ');
+                h.push('<input type="number" id="goodsValue3" step="0.01" min="0" max="1000" value="' + GreatBuildings.GoodsValue3 + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodsValue')) + '">');
                 if (GreatBuildings.GoodsValue3 > 0) {
-                    h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue3 * 100) / 100 }) + ')</small>')
+                    h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.GoodsPerFP'), { goods: Math.round(1 / GreatBuildings.GoodsValue3 * 100) / 100 }) + ')</small>')
                 }
                 h.push('<br>');
             }
         }
 
         h.push('<input id="ShowAttack" class="showattack game-cursor" ' + (GreatBuildings.ShowAttack ? 'checked' : '') + ' type="checkbox">');
-        h.push(i18n('Boxes.GreatBuildings.ShowAttack'));
+        h.push(FH.t('Boxes.GreatBuildings.ShowAttack'));
         h.push('<br>');
 
         if (GreatBuildings.ShowAttack) { //Güterwert - Boxen ausblenden, wenn Güter deaktiviert
-            h.push(i18n('Boxes.GreatBuildings.AttackValue')) + ' ';
-            h.push('<input type="number" id="attackValue" step="0.01" min="0" max="1000" value="' + GreatBuildings.AttackValue + '" title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTAttackValue')) + '">');
+            h.push(FH.t('Boxes.GreatBuildings.AttackValue')) + ' ';
+            h.push('<input type="number" id="attackValue" step="0.01" min="0" max="1000" value="' + GreatBuildings.AttackValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTAttackValue')) + '">');
             if (GreatBuildings.AttackValue > 0) {
-                h.push('<small> (' + HTML.i18nReplacer(i18n('Boxes.GreatBuildings.AttackPerFP'), { percent: Math.round(1 / GreatBuildings.AttackValue * 100) / 100 }) + ')</small>')
+                h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.AttackPerFP'), { percent: Math.round(1 / GreatBuildings.AttackValue * 100) / 100 }) + ')</small>')
             }
             h.push('<br>');
         }
 
         h.push('<br>');
-        h.push(i18n('Boxes.GreatBuildings.SuggestionDescription'));
+        h.push(FH.t('Boxes.GreatBuildings.SuggestionDescription'));
         h.push('</div>');
 
         h.push('<table class="foe-table">');
 
         h.push('<thead class="sticky">');
         h.push('<tr>');
-        h.push('<th>' + i18n('Boxes.GreatBuildings.GreatBulding') + '</th>');
-        h.push('<th>' + i18n('Boxes.GreatBuildings.Level') + '</th>');
-        h.push('<th>' + i18n('Boxes.GreatBuildings.Costs') + '</th>');
-        h.push('<th>' + i18n('Boxes.GreatBuildings.DailyFP') + '</th>');
-        if (GreatBuildings.ShowGoods) h.push('<th>' + i18n('Boxes.GreatBuildings.DailyGoods') + '</th>');
-        if (GreatBuildings.ShowAttack) h.push('<th>' + i18n('Boxes.GreatBuildings.Attack') + '</th>');
-        h.push('<th>' + i18n('Boxes.GreatBuildings.BreakEven') + '</th>');
-        h.push('<th title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTGoodCostsColumn')) + '">' + i18n('Boxes.GreatBuildings.FPCostGoods') + '</th>');
+        h.push('<th>' + FH.t('Boxes.GreatBuildings.GreatBulding') + '</th>');
+        h.push('<th>' + FH.t('Boxes.GreatBuildings.Level') + '</th>');
+        h.push('<th>' + FH.t('Boxes.GreatBuildings.Costs') + '</th>');
+        h.push('<th>' + FH.t('Boxes.GreatBuildings.DailyFP') + '</th>');
+        if (GreatBuildings.ShowGoods) h.push('<th>' + FH.t('Boxes.GreatBuildings.DailyGoods') + '</th>');
+        if (GreatBuildings.ShowAttack) h.push('<th>' + FH.t('Boxes.GreatBuildings.Attack') + '</th>');
+        h.push('<th>' + FH.t('Boxes.GreatBuildings.BreakEven') + '</th>');
+        h.push('<th title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCostsColumn')) + '">' + FH.t('Boxes.GreatBuildings.FPCostGoods') + '</th>');
         h.push('</tr>');
         h.push('</thead>');
 
-        let CurrentCityMapData = (LastMapPlayerID === ExtPlayerID ? MainParser.CityMapData : CityMap.OtherPlayer.mapData);
+        let CurrentCityMapData = (FH.LastMapPlayerID === FH.Player.ID ? FH.Main.CityMapData : CityMap.OtherPlayer.mapData);
 
         let AllROIResults = [],
             IsNewGBs = [];
@@ -374,7 +374,7 @@ let GreatBuildings = {
             let GBData = GreatBuildings.GreatBuildingsData[i];
 
             if (GBData.ID === 'X_OceanicFuture_Landmark3') {
-                if (LastMapPlayerID == ExtPlayerID) {
+                if (FH.LastMapPlayerID == FH.Player.ID) {
                     GreatBuildings.RefreshGalaxyBuildings();
                 }
                 else { // Keine Galaxy für andere Spieler weil keine FP Daten vorhanden sind
@@ -382,11 +382,11 @@ let GreatBuildings = {
                 }
             }
                         
-            let CityEntity = MainParser.CityEntities[GBData.ID];
+            let CityEntity = FH.Main.CityEntities[GBData.ID];
             if (!CityEntity) continue; //Great building has been removed from the game => skip
 
             let OwnGB = Object.values(CurrentCityMapData).find(obj => (obj['cityentity_id'] === GBData.ID));
-            let EraName = GreatBuildings.GetEraName(CityEntity['asset_id']);
+            let EraName = GreatBuildings.GetEraName(CityEntity['cityentity_id']);
             let Era = Technologies.Eras[EraName];
             let DoubleCollection = (GBData.ID !== 'X_FutureEra_Landmark1' && GBData.ID !== 'X_AllAge_Expedition' && GBData.ID !== 'X_SpaceAgeVenus_Landmark1');
 
@@ -420,7 +420,7 @@ let GreatBuildings = {
                     GoodsValue = GreatBuildings.GoodsValue0;
                 }
                 else if (GBData.ID === 'X_FutureEra_Landmark1') { // Arche
-                    let arc = 1 + MainParser.ArkBonus / 100;
+                    let arc = 1 + FH.Main.ArkBonus / 100;
                     FPProductions[j] = GBData.Rewards[j] * GreatBuildings.RewardPerDay / arc;
                 }
 //                else if (GBData.ID === 'X_AllAge_Expedition') { // Relikttempel
@@ -475,7 +475,7 @@ let GreatBuildings = {
                     GoodsValue = GreatBuildings.GoodsValue1;
                 }
                 else { //Standard goods production
-                    if (CurrentEraID >= 10) { //ModernEra or higher => unrefined goods
+                    if (FH.CurrentEraID >= 10) { //ModernEra or higher => unrefined goods
                         GoodsValue = GreatBuildings.GoodsValue3;
                         GoodsProductions[j] *= 2;
                     }
@@ -583,10 +583,10 @@ let GreatBuildings = {
                         AttackProduction = CurrentROIResult['ROIValues'][BestLevel]['Attack'],
                         AttackValue = CurrentROIResult['AttackValue'],
                         BreakEven = CurrentROIResult['ROIValues'][BestLevel]['ROI'],
-                        BreakEvenString = TotalValueSign + HTML.Format(MainParser.round(BreakEven)),
+                        BreakEvenString = TotalValueSign + FH.HTML.Format(FH.Main.round(BreakEven)),
                         BreakEvenClass = (i === 0 && j === 0 ? 'text-success' : 'text-bright');
-                        CostsTT = (IsNewGBs[Index] ? HTML.i18nReplacer(i18n('Boxes.GreatBuildings.NewGBCostsTT'), { 'goodcosts': CurrentROIResult['BuildCosts'] }) : ''),
-                        FPProductionTT = (IsNewGBs[Index] ? HTML.i18nReplacer(i18n('Boxes.GreatBuildings.NewGBFPProductionTT'), { 'tiles': Math.round(CurrentROIResult['BuildDailyCosts'] / GreatBuildings.FPPerTile * 100)/100, 'fppertile': GreatBuildings.FPPerTile, 'opcost': Math.round(CurrentROIResult['BuildDailyCosts'] * 100)/ 100 }) : '');
+                        CostsTT = (IsNewGBs[Index] ? FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.NewGBCostsTT'), { 'goodcosts': CurrentROIResult['BuildCosts'] }) : ''),
+                        FPProductionTT = (IsNewGBs[Index] ? FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.NewGBFPProductionTT'), { 'tiles': Math.round(CurrentROIResult['BuildDailyCosts'] / GreatBuildings.FPPerTile * 100)/100, 'fppertile': GreatBuildings.FPPerTile, 'opcost': Math.round(CurrentROIResult['BuildDailyCosts'] * 100)/ 100 }) : '');
 
                     let BreakEvenTT;
 
@@ -594,28 +594,28 @@ let GreatBuildings = {
                         HasAttackProduction = (AttackProduction * AttackValue !== 0);
 
                     if (HasGoodsProduction && HasAttackProduction) { //FP + Goods + Attack
-                        BreakEvenTT = HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenTTGoodsAttack'), { 'days': Math.round(BreakEven), 'costs': HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'goodsproduction': Math.round(GoodsProduction * 10) / 10, 'goodsvalue': GoodsValue, 'goodsproductionvalue': Math.round(GoodsProduction * GoodsValue * 10) / 10, 'attackproduction': Math.round(AttackProduction * 10) / 10, 'attackvalue': AttackValue, 'attackproductionvalue': Math.round(AttackProduction * AttackValue * 10) / 10 });
+                        BreakEvenTT = FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenTTGoodsAttack'), { 'days': Math.round(BreakEven), 'costs': FH.HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'goodsproduction': Math.round(GoodsProduction * 10) / 10, 'goodsvalue': GoodsValue, 'goodsproductionvalue': Math.round(GoodsProduction * GoodsValue * 10) / 10, 'attackproduction': Math.round(AttackProduction * 10) / 10, 'attackvalue': AttackValue, 'attackproductionvalue': Math.round(AttackProduction * AttackValue * 10) / 10 });
                     }
                     else if (HasGoodsProduction) { //FP + Goods
-                        BreakEvenTT = HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenTTGoods'), { 'days': Math.round(BreakEven), 'costs': HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'goodsproduction': Math.round(GoodsProduction * 10) / 10, 'goodsvalue': GoodsValue, 'goodsproductionvalue': Math.round(GoodsProduction * GoodsValue * 10) / 10 });
+                        BreakEvenTT = FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenTTGoods'), { 'days': Math.round(BreakEven), 'costs': FH.HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'goodsproduction': Math.round(GoodsProduction * 10) / 10, 'goodsvalue': GoodsValue, 'goodsproductionvalue': Math.round(GoodsProduction * GoodsValue * 10) / 10 });
                     }
                     else if (HasAttackProduction) { //FP + Attack
-                        BreakEvenTT = HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenTTAttack'), { 'days': Math.round(BreakEven), 'costs': HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'attackproduction': Math.round(AttackProduction * 10) / 10, 'attackvalue': AttackValue, 'attackproductionvalue': Math.round(AttackProduction * AttackValue * 10) / 10 });
+                        BreakEvenTT = FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenTTAttack'), { 'days': Math.round(BreakEven), 'costs': FH.HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10, 'attackproduction': Math.round(AttackProduction * 10) / 10, 'attackvalue': AttackValue, 'attackproductionvalue': Math.round(AttackProduction * AttackValue * 10) / 10 });
                     }
                     else { //FP only
-                        BreakEvenTT = HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenTT'), { 'days': Math.round(BreakEven), 'costs': HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10 });
+                        BreakEvenTT = FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenTT'), { 'days': Math.round(BreakEven), 'costs': FH.HTML.Format(Math.round(Costs)), 'fpproduction': Math.round(FPProduction * 10) / 10 });
                     }
                                         
-                    h.push('<td>' + MainParser.CityEntities[GBData.ID]['name'] + '</td>');
+                    h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
                     h.push('<td style="white-space:nowrap">' + CurrentLevel + ' &rarr; ' + (BestLevel + 1) + '</td>');
-                    h.push('<td title="' + HTML.i18nTooltip(CostsTT) + '">' + HTML.Format(MainParser.round(Costs)) + '</td>');
-                    h.push('<td title="' + HTML.i18nTooltip(FPProductionTT) + '">' + FPValueSign + HTML.Format(MainParser.round(FPProduction * 10) / 10) + '</td>');
-                    if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + HTML.Format(MainParser.round(GoodsProduction * 10) / 10) + '</td>');
-                    if (GreatBuildings.ShowAttack) h.push('<td>' + AttackValueSign + HTML.Format(MainParser.round(AttackProduction * 10) / 10) + '</td>');
-                    h.push('<td title="' + HTML.i18nTooltip(BreakEvenTT) + '"><strong class="' + BreakEvenClass + '">' + HTML.i18nReplacer(i18n('Boxes.GreatBuildings.BreakEvenUnit'), { 'days': BreakEvenString }) + '</strong></td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(CostsTT) + '">' + FH.HTML.Format(FH.Main.round(Costs)) + '</td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(FH.Main.round(FPProduction * 10) / 10) + '</td>');
+                    if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + FH.HTML.Format(FH.Main.round(GoodsProduction * 10) / 10) + '</td>');
+                    if (GreatBuildings.ShowAttack) h.push('<td>' + AttackValueSign + FH.HTML.Format(FH.Main.round(AttackProduction * 10) / 10) + '</td>');
+                    h.push('<td title="' + FH.HTML.Tooltip(BreakEvenTT) + '"><strong class="' + BreakEvenClass + '">' + FH.helper.str.Replacer(FH.t('Boxes.GreatBuildings.BreakEvenUnit'), { 'days': BreakEvenString }) + '</strong></td>');
                 }
                 else { //LG zu hoch => Keine Daten mehr verfügbar oder Güterkosten zu hoch
-                    h.push('<td>' + MainParser.CityEntities[GBData.ID]['name'] + '</td>');
+                    h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
                     h.push('<td>-</td>');
                     h.push('<td>-</td>');
                     h.push('<td>-</td>');
@@ -626,7 +626,7 @@ let GreatBuildings = {
 
                 if (j === 0) {
                     if (IsNewGBs[Index]) {
-                        h.push('<td><input title="' + HTML.i18nTooltip(i18n('Boxes.GreatBuildings.TTGoodCosts')) + '" type="number" id="GreatBuildingsGoodCosts' + Index + '" step="1" min="0" max="999999" value="' + GBData.GoodCosts + '"></td>');
+                        h.push('<td><input title="' + FH.HTML.Tooltip(FH.t('Boxes.GreatBuildings.TTGoodCosts')) + '" type="number" id="GreatBuildingsGoodCosts' + Index + '" step="1" min="0" max="999999" value="' + GBData.GoodCosts + '"></td>');
                     }
                     else {
                         h.push('<td class="text-center">-</td>');
@@ -649,12 +649,12 @@ let GreatBuildings = {
     RefreshGalaxyBuildings: () => {
         GreatBuildings.GalaxyBuildings = [];
 
-        let CityMap = Object.values(MainParser.CityMapData);
+        let CityMap = Object.values(FH.Main.CityMapData);
 
         for (let i = 0; i < CityMap.length; i++) {
             let ID = CityMap[i]['id']
             EntityID = CityMap[i]['cityentity_id'],
-                CityEntity = MainParser.CityEntities[EntityID];
+                CityEntity = FH.Main.CityEntities[EntityID];
 
             if (CityEntity['type'] === 'main_building' || CityEntity['type'] === 'greatbuilding') continue;
 
@@ -671,8 +671,8 @@ let GreatBuildings = {
                     FP = Production['motivatedproducts']['strategy_points'];
                     if (!FP) FP = 0;
 
-                    for (j = 0; j < GoodsList.length; j++) {
-                        let GoodID = GoodsList[j]['id'];
+                    for (j = 0; j < FH.Goods.List.length; j++) {
+                        let GoodID = FH.Goods.List[j]['id'];
                         if (Production['motivatedproducts'][GoodID]) {
                             GoodsSum += Production['motivatedproducts'][GoodID];
                         }
@@ -796,7 +796,7 @@ let GreatBuildings = {
 
 
     GetBruttoCosts: (EntityID, Level) => {
-        let CityEntity = MainParser.CityEntities[EntityID];
+        let CityEntity = FH.Main.CityEntities[EntityID];
 
         if (Level < 10) {
             return CityEntity['strategy_points_for_upgrade'][Level];
@@ -808,7 +808,7 @@ let GreatBuildings = {
 
 
     GetLevel: (EntityID, TotalFP) => {
-        let CityEntity = MainParser.CityEntities[EntityID];
+        let CityEntity = FH.Main.CityEntities[EntityID];
 
         let Level10 = CityEntity['strategy_points_for_upgrade'][9];
 
@@ -842,11 +842,11 @@ let GreatBuildings = {
 
         Ret[0] = P1;
         for (let i = 1; i < 5; i++) {
-            Ret[i] = MainParser.round(Ret[i - 1] / (i + 1) / 5) * 5;
+            Ret[i] = FH.Main.round(Ret[i - 1] / (i + 1) / 5) * 5;
         }
 
         for (let i = 0; i < 5; i++) {
-            Ret[i] = MainParser.round(Ret[i] * arcs[i]);
+            Ret[i] = FH.Main.round(Ret[i] * arcs[i]);
         }
 
         return Ret;
@@ -864,13 +864,14 @@ let GreatBuildings = {
             if (Event['type'] !== 'great_building_contribution') continue;
 
             if (!GreatBuildings.GreatBuildingEntityCache) {
-                GreatBuildings.GreatBuildingEntityCache = Object.values(MainParser.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
+                GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
             }
 
             let Entity = GreatBuildings.GreatBuildingEntityCache.find(obj => (obj['name'] === Event['great_building_name']))
             if (!Entity) continue;
 
-            let EraName = GreatBuildings.GetEraName(Entity['asset_id']),
+            if (Entity['cityentity_id'] === undefined) continue;
+            let EraName = GreatBuildings.GetEraName(Entity['cityentity_id']),
                 Era = Technologies.Eras[EraName],
                 Rank = Event['rank'],
                 Level = Event['level'] - 1,
@@ -878,7 +879,7 @@ let GreatBuildings = {
 
             if (Rank > 5) continue;
 
-            let Maezen = GreatBuildings.GetMaezen(Reward, MainParser.ArkBonus);
+            let Maezen = GreatBuildings.GetMaezen(Reward, FH.Main.ArkBonus);
             let FPReward = Maezen[Rank - 1];
 
             GreatBuildings.FPRewards += FPReward;

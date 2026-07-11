@@ -1,5 +1,26 @@
 # Changelog
  
+## Version 1.2
+### Neu
+- Gefechtslog: Der Gefechtslog wird nun ausgelesen und gespeichert, dank Arklur! Ihr findet den Button in der Gefechtsübersicht. Bitte beachtet, dass das Spiel nur die letzten 200 Einträge speichert und der Log deshalb nicht vollständig sein wird, wenn die Daten nicht regelmäßig abgerufen werden.
+- Stadtplaner: Eine erste Version des Stadtplaners ist da! Schickt eure Daten in der Stadtübersicht an den Planer und fangt an zu bauen. Aktuell sind alle Beschreibungen noch auf Englisch.
+
+### Update
+- Statistiken: CSV Export (wieder) hinzugefügt für: Ressourcen, Gildenkasse, Einheiten, GG Siegpunkte, GG Spielerfortschritt
+- Der GG Spielerfortschritt ist nun im GG Fenster in den Statistiken zu finden und zeigt nur noch den Fortschritt der aktuellen Runde
+- GG Statistiken: Siegpunkte können jetzt auf einen Blick verglichen werden
+- Gefechte: Option zum automatischen Öffnen hinzugefügt
+- Shops: Suchfeld hinzugefügt
+- Notizen: Einstellung für automatisches Öffnen beim Spielstart hinzugefügt
+- Gebäudetooltips: Es wird nun angezeigt, dass Gebäude nicht mit SPA beschleunigt werden können und ob sie sich automatisch dem Zeitaler anpassen (Danke an WOLFI) weiterhin wurde ein Hinweis ergänzt, wenn ein Gebäude keine Straße benötigt
+- Übersetzungen: FR (Danke an Damrus le Cruel) und IT (Danke an Alej92415) aktualisiert
+
+### Bug Fixes
+- Gefechte: Es konnten leere Einträge in der Gefechtshistorie und manchmal leere Fenster angezeigt werden
+- Übersetzungen: Wurden unter anderem nicht korrekt gespeichert
+
+---
+ 
 ## Version 1.1
 ### Neu
 - Warnung hinzugefügt, wenn der FoE-Helfer erkannt wurde
@@ -9,7 +30,7 @@
 - GBG: Wenn in der Provinzliste auf eine Provinz gezeigt wird, wird diese nun in der Karte hervorgehoben
 
 ### Bug Fixes
-- Statistiken: Tooltip konnte aus dem Diagram herauslaufen
+- Statistiken: Tooltip konnte aus dem Diagramm herauslaufen
 
 ---
 

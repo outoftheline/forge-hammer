@@ -17,11 +17,8 @@ let peoples = [
 let ranking = helper.arr.multisort(peoples, ['points', 'name'], ['DESC','ASC']);
 
 */
-
-if( typeof helper == 'undefined' ) {
-	var helper = { } ;
-}
-
+{
+let helper = {};
 helper.str = {
 	/**
 	 * Function to copy string to clipboard
@@ -56,6 +53,28 @@ helper.str = {
 
 	cleanup: (textToCleanup) => {
 		return textToCleanup.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/[\W_ ]+/g, '')
+	},
+	/**
+	 * Replaces variables in a string with arguments
+	 *
+	 * @param string
+	 * @param args
+	 * @returns {*}
+	 */
+	Replacer: (string, args) => {
+		if (string === undefined || args === undefined) {
+			return;
+		}
+
+		for (let key in args) {
+			if (!args.hasOwnProperty(key)) {
+				break;
+			}
+
+			const regExp = new RegExp('__' + key + '__', 'g');
+			string = string.replace(regExp, args[key]);
+		}
+		return string;
 	},
 };
 
@@ -130,8 +149,8 @@ helper.permutations = (()=>{
 })();
 
 helper.sounds = {
-	ping: new Audio(extUrl + 'vendor/sounds/ping.mp3'),
-	message: new Audio(extUrl + 'vendor/sounds/'+(localStorage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
+	ping: new Audio(FH.extUrl + 'vendor/sounds/ping.mp3'),
+	message: new Audio(FH.extUrl + 'vendor/sounds/'+(FH.Storage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
 	play: (sound) => {
 		if (Settings.GetSetting('EnableSound')) helper.sounds[sound].play();
 	},
@@ -178,7 +197,7 @@ helper.promisedLoadCode = (src) => {
  */
 helper.loadChartJS = () => {
 	async function load() {
-		const baseUrl = extUrl + 'vendor/';
+		const baseUrl = FH.extUrl + 'vendor/';
 		const sources = [
 			'chartjs/chart.umd.min.js',
 			'chartjs/chartjs-adapter-moment.min.js',
@@ -197,11 +216,16 @@ helper.loadChartJS = () => {
 
 	return helper._chartJSPromise;
 };
-
-
 let HTML = {
 
 	customFunctions: [],
+	callCustomFunction: (id) => {
+		if (HTML.customFunctions[id] && typeof HTML.customFunctions[id] === 'function') {
+			HTML.customFunctions[id]();
+		} else {
+			new Function(`${HTML.customFunctions[id + 'PopOut']}`)();
+		}
+	},
 	IsReversedFloatFormat: undefined,
 
 	/**
@@ -225,13 +249,13 @@ let HTML = {
 		let title = $('<span />').addClass('title');
 		
 		if (args['onlyTitle'] !== true) {
-			title = $('<span />').addClass('title').html((extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
+			title = $('<span />').addClass('title').html((FH.BaseData.extVersion.indexOf("beta") > -1 ? '(Beta) ': '') + args['title'] + ' <small>🔨</small>');
 		}
 		let	buttons = $('<div />').attr('id', args['id'] + 'Buttons').addClass('box-buttons'),
 			head = $('<div />').attr('id', args['id'] + 'Header').attr('class', 'window-head').append(title),
 			body = $('<div />').attr('id', args['id'] + 'Body').attr('class', 'window-body'),
 			div = $('<div />').attr('id', args['id']).attr('class', 'window-box open').append(head).append(body).hide(),
-			cords = localStorage.getItem(args['id'] + 'Cords');
+			cords = FH.Storage.getItem(args['id'] + 'Cords');
 		
 		// close button
 		let close = $('<span />').attr('id', args['id'] + 'close').addClass('window-close');
@@ -275,7 +299,7 @@ let HTML = {
 			let spk = $('<span />').addClass('window-speaker').attr('id', args['speaker']);
 			buttons.prepend(spk);
 
-			$('#' + args['speaker']).addClass(localStorage.getItem(args['speaker']));
+			$('#' + args['speaker']).addClass(FH.Storage.getItem(args['speaker']));
 		}
 		
 		// Position von beweglichen Fenstern initialisieren und Verhindern, dass Fenster außerhalb plaziert werden
@@ -325,7 +349,7 @@ let HTML = {
 
 					$('#' + args['id']).fadeToggle('fast', function () {
 						$(this).remove();
-						Tooltips.deactivate()
+						FH.Tooltips.deactivate()
 						$("div.tooltip").remove();
 					});
 				});
@@ -452,8 +476,8 @@ let HTML = {
 	 * Handle minimizing helper during battle
 	 */
 	MinimizeBeforeBattle: () => {
-		let HideHelperDuringBattle = localStorage.getItem('HideHelperDuringBattle');
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let HideHelperDuringBattle = FH.Storage.getItem('HideHelperDuringBattle');
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 
 		if (HideHelperDuringBattle === 'true' && MenuSetting === 'Box' && $('body').find("#menu_box").hasClass('open')) {
 			HTML.Minimize();
@@ -463,7 +487,7 @@ let HTML = {
 
 
 	MaximizeAfterBattle: () => {
-		let MenuSetting = localStorage.getItem('SelectedMenu');
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
 		if (MenuSetting == 'Box' && HTML.boxWasMinimizedForBattle) {
 			HTML.Maximize();
 			HTML.boxWasMinimizedForBattle = false;
@@ -514,7 +538,7 @@ let HTML = {
 			$(el).css({"--x":cords[0]+"px","--y":cords[1]+"px"})
 
 			if (save === true) {
-				localStorage.setItem(id + 'Cords', JSON.stringify(cords));
+				FH.Storage.setItem(id + 'Cords', JSON.stringify(cords));
 			}
 		}
 
@@ -523,9 +547,7 @@ let HTML = {
 			document.onpointermove = null;
 
 			// is there a callback function after drag&drop
-			if (HTML.customFunctions[id]) {
-				new Function(`${HTML.customFunctions[id]}`)();
-			}
+			HTML.callCustomFunction(id);
 		}
 	},
 
@@ -540,7 +562,7 @@ let HTML = {
 	Resizeable: (id, keepRatio) => {
 		let box = $('#' + id),
 			grip = $('<div />').addClass('window-grippy'),
-			sizeLS = localStorage.getItem(id + 'Size');
+			sizeLS = FH.Storage.getItem(id + 'Size');
 
 		// Size was defined, set
 		if (sizeLS !== null) {
@@ -589,7 +611,7 @@ let HTML = {
 				
 				let size = w + '|' + h;
 
-				localStorage.setItem(id + 'Size', size);
+				FH.Storage.setItem(id + 'Size', size);
 			}
 		};
 
@@ -624,19 +646,19 @@ let HTML = {
 		$(`#${id}`).append(box);
 
 		setTimeout(() => {
-			new Function(`${HTML.customFunctions[id + 'Settings']}`)();
+			HTML.callCustomFunction(id + 'Settings');
 		}, 100);
 	},
 
 
 	PopOutBox: (id) => {
-		new Function(`${HTML.customFunctions[id + 'PopOut']}`)();
+		HTML.callCustomFunction(id + 'PopOut');
 	},
 
 
 	CustomBox: (id,cls) => {
 		setTimeout(() => {
-			new Function(`${HTML.customFunctions[id + cls]}`)();
+			HTML.callCustomFunction(id + cls);
 		}, 100);
 	},
 
@@ -670,8 +692,8 @@ let HTML = {
 			return;
 		}
 
-		let url = extUrl + 'js/web/' + modul + '/',
-			cssUrl = url + 'css/' + modul + '.css?v=' + extVersion;
+		let url = FH.extUrl + 'js/web/' + modul + '/',
+			cssUrl = url + 'css/' + modul + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -685,7 +707,7 @@ let HTML = {
 	ChangeSkinCssFile: (filepath) => {
 		$('#hammerskin').remove();
 
-		let cssUrl = extUrl + 'css/' + filepath + '.css?v=' + extVersion;
+		let cssUrl = FH.extUrl + 'css/' + filepath + '.css?v=' + FH.BaseData.extVersion;
 
 		let css = $('<link />')
 			.attr('href', cssUrl)
@@ -707,7 +729,7 @@ let HTML = {
 			return '-';
 		} else {
 			if (typeof number !== 'number' && isNaN(Number(number))) return "" + number;
-			return Number(number).toLocaleString(i18n('Local'));
+			return Number(number).toLocaleString(FH.t('Local'));
 		}
 	},
 
@@ -722,13 +744,22 @@ let HTML = {
 		if (number === 0 && replaceZero) {
 			return '-';
 		} else {
-			return Intl.NumberFormat(i18n(language), {
+			return Intl.NumberFormat(FH.t(language), {
 				notation: "compact",
 				maximumFractionDigits: 1
-			  }).format(Number(number));
+			}).format(Number(number));
 		}
 	},
 
+	/**
+	 * Replaces " with &quot;
+	 *
+	 * @param string
+	 * @returns {*}
+	 */
+	Tooltip: (string) => {
+		return string.replace(/"/g, "&quot;")
+	},
 
 	/**
 	* Returns strong class for formating mopppel date
@@ -764,41 +795,6 @@ let HTML = {
 			Ret = '0' + Ret;
 		}
 		return Ret;
-	},
-
-
-	/**
-	 * Replaces variables in a string with arguments
-	 *
-	 * @param string
-	 * @param args
-	 * @returns {*}
-	 */
-	i18nReplacer: (string, args) => {
-		if (string === undefined || args === undefined) {
-			return;
-		}
-
-		for (let key in args) {
-			if (!args.hasOwnProperty(key)) {
-				break;
-			}
-
-			const regExp = new RegExp('__' + key + '__', 'g');
-			string = string.replace(regExp, args[key]);
-		}
-		return string;
-	},
-
-
-	/**
-	 * Replaces " with &quot;
-	 *
-	 * @param string
-	 * @returns {*}
-	 */
-	i18nTooltip: (string) => {
-		return string.replace(/"/g, "&quot;")
 	},
 
 
@@ -842,7 +838,6 @@ let HTML = {
 		});
 	},
 
-
 	EnterFullscreen: () => {
 
 	},
@@ -874,8 +869,8 @@ let HTML = {
 			hideAfter: d['hideAfter'],
 			allowToastClose:  d['allowToastClose'],
 			position: Settings.GetSetting('NotificationsPosition', true),
-			extraClass: localStorage.getItem('SelectedMenu') || 'RightBar',
-			stack: localStorage.getItem('NotificationStack') || 4
+			extraClass: FH.Storage.getItem('SelectedMenu') || 'RightBar',
+			stack: FH.Storage.getItem('NotificationStack') || 4
 		});
 	},
 
@@ -887,10 +882,10 @@ let HTML = {
 		const winHtml = `<!DOCTYPE html>
 						<html>
 							<head id="popout-${id}-head">
-								<title>PopOut Test - ${i18n('Boxes.Outpost.Title')}</title>
-								<link rel="stylesheet" href="${extUrl}css/variables.css">
-								<link rel="stylesheet" href="${extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${extUrl}css/goods.css">
+								<title>PopOut Test - ${FH.t('Boxes.Outpost.Title')}</title>
+								<link rel="stylesheet" href="${FH.extUrl}css/variables.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
+								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
 							</head>
 							<body id="popout-${id}-body"></body>
 						</html>`;
@@ -931,7 +926,7 @@ let HTML = {
 				}
 				else {
 					ColumnCount = 1;
-                }
+				}
 
 				if (ColumnCount === 1) {
 					ColumnNames[index] = $(this).data('export')
@@ -942,7 +937,7 @@ let HTML = {
 						ColumnNames[index] = $(this).data('export' + (i + 1));
 						index++;
 					}
-                }
+				}
 			});
 
 			let DataRows = [];
@@ -977,7 +972,7 @@ let HTML = {
 					else {
 						ColumnID += 1;
 					}
-					 ColumnCount;
+					ColumnCount;
 				});
 
 				if(Object.keys(CurrentRow).length > 0) DataRows.push(CurrentRow); //Dont push empty rows
@@ -1001,15 +996,15 @@ let HTML = {
 						let CurrentCell = DataRow[ValidColumnNames[j]];
 						if (CurrentCell !== undefined) {
 							if ($.isNumeric(CurrentCell)) {
-								CurrentCells.push(Number(CurrentCell).toLocaleString(i18n('Local'),{useGrouping:false}));
+								CurrentCells.push(Number(CurrentCell).toLocaleString(FH.t('Local'),{useGrouping:false}));
 							}
 							else {
 								CurrentCells.push(CurrentCell);
-                            }
+							}
 						}
 						else {
 							CurrentCells.push('');
-                        }
+						}
 					}
 					Rows.push(CurrentCells.join(';'));
 				}
@@ -1021,7 +1016,7 @@ let HTML = {
 
 			// with UTF-8 BOM
 			let BlobData = new Blob(["\uFEFF" + FileContent], { type: "application/octet-binary;charset=ANSI" });
-			MainParser.ExportFile(BlobData, FileName + '-' + moment().format('YYYY-MM-DD') + '.' + Format);
+			FH.Main.ExportFile(BlobData, FileName + '-' + moment().format('YYYY-MM-DD') + '.' + Format);
 		});
 	},
 
@@ -1048,7 +1043,7 @@ let HTML = {
 
 	ParseFloatLocalIfPossible: (NumberString) => {
 		if (HTML.IsReversedFloatFormat === undefined) { //FloatFormat bestimmen, wenn noch unbekannt
-			let ExampleNumberString = Number(1.2).toLocaleString(i18n('Local'))
+			let ExampleNumberString = Number(1.2).toLocaleString(FH.t('Local'))
 			if (ExampleNumberString.charAt(1) === ',') {
 				HTML.IsReversedFloatFormat = true;
 			}
@@ -1083,13 +1078,9 @@ let HTML = {
 		}
 		else {
 			return Ret;
-        }
+		}
 	},
 };
-
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
-	$('.MapActivityCheck:not(.ActiveOn'+ActiveMap+")").remove();
-	$('.MapActivityHide').hide();
-	$('.MapActivityHide.ActiveOn'+ActiveMap).show();
-
-});
+FH.helper = helper;
+FH.HTML = HTML;
+}

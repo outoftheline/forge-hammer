@@ -5,10 +5,10 @@
 
 (function () {
 
-let HelperWarning = () => {
+let DuplicateWarning = (helperDetected=true) => {
 	let div = document.createElement('div');
 	div.innerHTML = `<div id="HelperWarning" style="position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000000cc;color:white;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:2rem;text-align:center;flex-direction:column;">
-		<div><h2>FoE-Helper detected!!! </h2> Please remove or deactivate Helper for proper functionality of Forge Hammer in your extension settings!<br>
+		<div><h2>${helperDetected ? 'FoE-Helper' : 'Hammer duplicate'} detected!!! </h2> Please remove or deactivate for proper functionality of Forge Hammer in your extension settings!<br>
 		See <a href="https://github.com/outoftheline/forge-hammer/wiki/Switching-from-FoE-Helper-to-Forge-Hammer" target="_blank">here</a> for more information - see below to access extension settings:</div>
 		<div style="display: grid;grid-template-columns: 1fr 1fr;grid-gap: 1rem;margin-top: 1rem;">
 		<span>Brave </span><span>brave://extensions/</span>
@@ -24,31 +24,24 @@ let HelperWarning = () => {
 
 const duplicateDetected = !!(
 	window.ExtbaseData ||
-	window.MainParser ||
-	window.HelperBeta ||
-	window.ExistenceConfirmed ||
-	window.i18n
+	window.FH?.Basedata
 );
 
 if (duplicateDetected) {
-	HelperWarning();
+	DuplicateWarning(!FH?.BaseData?.isHammer || !window.ExtbaseData?.isHammer || !!window.GetFights);
 	return;
 }
 
 setTimeout(() => {
-	if (typeof window.GetFights != "undefined" && !duplicateDetected) {
-		HelperWarning();
+	if ((typeof i18n != "undefined" || !!(window.GetFights)) && !duplicateDetected) {
+		DuplicateWarning();
 	}
 }, 5000);
 
-window.ExtbaseData = JSON.parse(localStorage.getItem("HelperBaseData")||"{}");
-window.extID = ExtbaseData.extID;
-window.extUrl = ExtbaseData.extUrl;
-window.GuiLng = ExtbaseData.GuiLng;
-window.extVersion = ExtbaseData.extVersion;
-window.isRelease = ExtbaseData.isRelease;
-window.devMode = ExtbaseData.devMode;
-window.loadBeta = ExtbaseData.loadBeta;
+FH.BaseData = JSON.parse(FH.Storage.getItem("ExtBaseData")||"{}");
+FH.BaseData.isHammer = true;
+FH.extUrl = FH.BaseData.extUrl;
+
 
 let ExistenceConfirmed = async (varlist)=>{
 	varlist = varlist.split('||')
@@ -82,44 +75,54 @@ let ExistenceConfirmed = async (varlist)=>{
 	function checkForJQuery() {
 		if (typeof jQuery !== 'undefined') {
 			clearInterval(intval);
-			window.dispatchEvent(new CustomEvent('foe-helper#jQuery-loaded'));
+			window.dispatchEvent(new CustomEvent('forgehammer#jQuery-loaded'));
 		}
 	}
 	intval = setInterval(checkForJQuery, 1);
 }
 
-window.ActiveMap = 'main';
-window.LastMapPlayerID = null;
-window.ExtPlayerID = 0;
-window.ExtPlayerName = null;
-window.ExtPlayerAvatar = null;
-window.ExtGuildID = 0;
-window.ExtGuildPermission = 0;
-window.ExtWorld = window.location.hostname.split('.')[0];
-window.CurrentEra = null;
-window.CurrentEraID = null;
-window.GoodsData = {};
-window.GoodsList = [];
-window.FHResourcesList = [];
-window.PlayerDict = {};
-window.PlayerDictNeighborsUpdated = false;
-window.PlayerDictGuildUpdated = false;
-window.PlayerDictFriendsUpdated = false;
-window.ResourceStock = [];
-window.MainMenuLoaded = false;
-window.LGCurrentLevelMedals = undefined;
-window.IsLevelScroll = false;
-window.EventCountdown = false;
-window.StartUpDone = new Promise(resolve => 
-		window.addEventListener('foe-helper#StartUpDone', resolve, {once: true, passive: true}));
-window.UnlockedFeatures = [];
-window.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
-window.PlayerLinkFormat = 'https://foe.scoredb.io/__world__/Player/__playerid__';
-window.PlayerLinkFormat2 = 'https://foestats.com/__server__/__world__/players/__playerid__';
-window.GuildLinkFormat = 'https://foe.scoredb.io/__world__/Guild/__guildid__';
-window.GuildLinkFormat2 = 'https://foestats.com/__server__/__world__/guilds/__guildid__';
-window.BuildingsLinkFormat = 'https://forgeofempires.fandom.com/wiki/__buildingid__';
-window.LinkIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>';
+FH.ActiveMap = 'main';
+FH.LastMapPlayerID = null;
+FH.Player = {
+	ID:0,
+	Name:null,
+	Avatar:null,
+}
+FH.Guild = {
+	ID:0,
+	Permission:0,
+}
+FH.World = window.location.hostname.split('.')[0];
+FH.CurrentEra = null;
+FH.CurrentEraID = null;
+FH.Goods={
+	Data: {},
+	List:{},
+}
+FH.Players = {
+	Dict: {},
+	NeighborsUpdated : false,
+	GuildUpdated : false,
+	FriendsUpdated : false,
+};
+FH.RessourceStock = [];
+FH.StartUpDone = new Promise(resolve => 
+		window.addEventListener('forgehammer#StartUpDone', resolve, {once: true, passive: true}));
+FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
+
+FH.Links = {
+	Player:{
+		scoredb: 'https://foe.scoredb.io/__world__/Player/__playerid__',
+		foestats: 'https://foestats.com/__server__/__world__/players/__playerid__'
+	},
+	Guild:{
+		scoredb: 'https://foe.scoredb.io/__world__/Guild/__guildid__',
+		foestats: 'https://foestats.com/__server__/__world__/guilds/__guildid__'
+	},
+	Building: 'https://forgeofempires.fandom.com/wiki/__buildingid__',
+	Icon: '<svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "/></g></svg>',
+	InnoCDN: 'https://foede.innogamescdn.com/',
+}
 
 let GameTime = {
 	Offset: 0,
@@ -131,169 +134,177 @@ let GameTime = {
 	}
 }
 
-let i18n = (key) => {
-	return Translation.tempData?.[key]?.s || Translation.tempData?.[key] || i18nData[key] || key;
+let TranslationData = null;
+let t = (key) => {
+	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key] || key;
 }
-let i18nData = null;
 
 (async () => {
 	try {
 		let languages = [];
 
 		// load english fallback
-		let data = await fetch(extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
+		let data = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
 		
 		//overload with gui language
-		if (GuiLng !== 'en') 
-			Object.assign(data, await fetch(extUrl + 'js/web/_languages/json/' + GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
+		if (FH.BaseData.GuiLng !== 'en') 
+			Object.assign(data, await fetch(FH.extUrl + 'js/web/_languages/json/' + FH.BaseData.GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
 
-		i18nData = data;
+		TranslationData = data;
 	} catch (err) {
-		console.error('i18n translation loading error:', err);
+		console.error('translation loading error:', err);
 	}
 })();
+FH.t = t;
 
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world
-	//ExtWorld = window.location.hostname.split('.')[0];
-	localStorage.setItem('current_world', ExtWorld);
+	//FH.World = window.location.hostname.split('.')[0];
+	FH.Storage.setItem('current_world', FH.World);
 
 	// register resize functions
 	window.addEventListener('resize', () => {
-		MainParser.ResizeFunctions();
+		Main.ResizeFunctions();
 	});
 
 	// Detect and process fullscreen
 	$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange', function () {
 		if (!window.screenTop && !window.screenY) {
-			HTML.LeaveFullscreen();
+			FH.HTML.LeaveFullscreen();
 		} else {
-			HTML.EnterFullscreen();
+			FH.HTML.EnterFullscreen();
 		}
 	});
 });
 
 (function () {
+	let MainMenuLoaded = false,
+		LGCurrentLevelMedals = undefined,
+		IsLevelScroll = false;
+
 
 	// globale Handler
 	// die Gebäudenamen übernehmen
 	/* removed as inno changed city entity loading
-	FoEproxy.addMetaHandler('city_entities', (xhr, postData) => {
+	FH.proxy.addMetaHandler('city_entities', (xhr, postData) => {
 		let EntityArray = JSON.parse(xhr.responseText);
-		MainParser.CityEntities = Object.assign({}, ...EntityArray.map((x) => ({ [x.id]: x })));
-		MainParser.correctBuildingType()
-		MainParser.Inactives.check();
+		Main.CityEntities = Object.assign({}, ...EntityArray.map((x) => ({ [x.id]: x })));
+		Main.correctBuildingType()
+		Main.Inactives.check();
 	});
 	*/
-	FoEproxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
-		setTimeout(()=>{MainParser.CityEntityBuilder(buildingUrls)},500);
+		const region = String(FH.World).replace(/\d+$/, '') || 'unknown';
+		setTimeout(()=>{Main.CityEntityBuilder(buildingUrls, region)},500);
 	});
 
 	// Building-Upgrades
-	FoEproxy.addMetaHandler('building_upgrades', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_upgrades', (xhr, postData) => {
 		let BuildingUpgradesArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
-		if (MainParser.SelectionKits != null) Kits.CreateUpgradeSchemes();
+		Main.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
+		if (Main.SelectionKits != null) Kits.CreateUpgradeSchemes();
 	});
 
 	// Building-Sets
-	FoEproxy.addMetaHandler('building_sets', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_sets', (xhr, postData) => {
 		let BuildingSetsArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingSets = Object.assign({}, ...BuildingSetsArray.map((x) => ({ [x.id]: x })));
+		Main.BuildingSets = Object.assign({}, ...BuildingSetsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Building-Chains
-	FoEproxy.addMetaHandler('building_chains', (xhr, postData) => {
+	FH.proxy.addMetaHandler('building_chains', (xhr, postData) => {
 		let BuildingChainsArray = JSON.parse(xhr.responseText);
-		MainParser.BuildingChains = Object.assign({}, ...BuildingChainsArray.map((x) => ({ [x.id]: x })));
+		Main.BuildingChains = Object.assign({}, ...BuildingChainsArray.map((x) => ({ [x.id]: x })));
 	});
 
 	// Selection-Kits
-	FoEproxy.addMetaHandler('selection_kits', (xhr, postData) => {
+	FH.proxy.addMetaHandler('selection_kits', (xhr, postData) => {
 		let SelectKitsArray = JSON.parse(xhr.responseText);
-		MainParser.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
-		if (MainParser.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
+		Main.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
+		if (Main.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
 	});
-	FoEproxy.addMetaHandler("building_families", (xhr,postData) => {
-		MainParser.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
+	FH.proxy.addMetaHandler("building_families", (xhr,postData) => {
+		Main.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
 	})	
-	// Castle-System-Levels
-	FoEproxy.addMetaHandler('castle_system_levels', (xhr, postData) => {
-		MainParser.CastleSystemLevels = JSON.parse(xhr.responseText);
-	});
-
 	// Allies
-	FoEproxy.addMetaHandler('allies', (xhr, postData) => {
-		MainParser.Allies.setMeta(JSON.parse(xhr.responseText));
+	FH.proxy.addMetaHandler('allies', (xhr, postData) => {
+		Main.Allies.setMeta(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addMetaHandler('ally_rarities', (xhr, postData) => {
-		MainParser.Allies.setRarities(JSON.parse(xhr.responseText));
+	FH.proxy.addMetaHandler('ally_rarities', (xhr, postData) => {
+		Main.Allies.setRarities(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addMetaHandler('ally_types', (xhr, postData) => {
-		MainParser.Allies.setTypes(JSON.parse(xhr.responseText));
+	FH.proxy.addMetaHandler('ally_types', (xhr, postData) => {
+		Main.Allies.setTypes(JSON.parse(xhr.responseText));
 	});
 
-	FoEproxy.addHandler('AllyService', 'getAllies', (data, postData) => {
-		MainParser.Allies.getAllies(data.responseData);
+	FH.proxy.addHandler('AllyService', 'getAllies', (data, postData) => {
+		Main.Allies.getAllies(data.responseData);
 		
 		if (!Settings.GetSetting('ShowAllyList')) return;
-		if (postData[0].requestMethod == 'getAllies') MainParser.Allies.showAllyList();
+		if (postData[0].requestMethod == 'getAllies') Main.Allies.showAllyList();
 	});
-	FoEproxy.addHandler('AllyService', 'getAssignedAllies', (data, postData) => {
-		MainParser.Allies.getAllies(data.responseData);
+	FH.proxy.addHandler('AllyService', 'getAssignedAllies', (data, postData) => {
+		Main.Allies.getAllies(data.responseData);
 	});
-	FoEproxy.addHandler('AllyService', 'updateAlly', (data, postData) => {
-		MainParser.Allies.buildingBoostSums = [];
-		MainParser.Allies.updateAlly(data.responseData);
+	FH.proxy.addHandler('AllyService', 'updateAlly', (data, postData) => {
+		Main.Allies.buildingBoostSums = [];
+		Main.Allies.updateAlly(data.responseData);
 	});
-	FoEproxy.addHandler('AllyService', 'addAlly', (data, postData) => {
-		MainParser.Allies.addAlly(data.responseData);
+	FH.proxy.addHandler('AllyService', 'addAlly', (data, postData) => {
+		Main.Allies.addAlly(data.responseData);
 	});
-	FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
-		MainParser.Allies.updateAllyList();
+	FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+		Main.Allies.updateAllyList();
 	});
+	FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+		$('.MapActivityCheck:not(.ActiveOn'+FH.ActiveMap+")").remove();
+		$('.MapActivityHide').hide();
+		$('.MapActivityHide.ActiveOn'+FH.ActiveMap).show();
+
+	})
 
 	// Portrait-Mapping für Spieler Avatare
-	FoEproxy.addRawHandler((xhr, requestData) => {
+	FH.proxy.addRawHandler((xhr, requestData) => {
 		const idx = requestData.url.indexOf("/assets/shared/avatars/Portraits");
 
 		if (idx !== -1) {
-			MainParser.InnoCDN = requestData.url.substring(0, idx + 1);
+			FH.Links.InnoCDN = requestData.url.substring(0, idx + 1);
 			let portraits = {};
 
 			$(xhr.responseText).find('portrait').each(function () {
 				portraits[$(this).attr('name')] = $(this).attr('src');
 			});
 
-			MainParser.PlayerPortraits = portraits;
+			Main.PlayerPortraits = portraits;
 		}
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Player- und Gilden-ID setzen
-	FoEproxy.addHandler('StartupService', 'getData', (data, postData) => {
+	FH.proxy.addHandler('StartupService', 'getData', (data, postData) => {
         	
-		moment.locale(i18n('Local'));
+		moment.locale(FH.t('Local'));
 		window.addEventListener("error", function (e) {
 			console.error(e.error);
 			e.preventDefault();
 		});
 
 		// Player-ID, Gilden-ID und Name setzen
-		MainParser.StartUp(data.responseData.user_data);
+		Main.StartUp(data.responseData.user_data);
 
 		// check if DB exists
-		StrategyPoints.checkForDB(ExtPlayerID);
-		EventHandler.checkForDB(ExtPlayerID);
-		GuildMemberStat.checkForDB(ExtPlayerID);
-		GexStat.checkForDB(ExtPlayerID);
-		GuildFights.checkForDB(ExtPlayerID);
-		QiProgress.checkForDB(ExtPlayerID);
-		Notes.checkForDB(ExtPlayerID);
+		StrategyPoints.checkForDB(FH.Player.ID);
+		EventHandler.checkForDB(FH.Player.ID);
+		GuildMemberStat.checkForDB(FH.Player.ID);
+		GexStat.checkForDB(FH.Player.ID);
+		GuildFights.checkForDB(FH.Player.ID);
+		QiProgress.checkForDB(FH.Player.ID);
+		Notes.checkForDB(FH.Player.ID);
+		GBGActionLog.checkForDB(FH.Player.ID);
 
 		// which tab is active in StartUp Object?
 		let vals = {
@@ -308,36 +319,32 @@ document.addEventListener("DOMContentLoaded", function () {
 			vals.getClanMemberList += (data.responseData.socialbar_list[i].is_guild_member ? 1 : 0);
 		}
 
-		MainParser.UpdatePlayerDict(
+		Main.UpdatePlayerDict(
 			data.responseData.socialbar_list,
 			'PlayerList',
 			Object.keys(vals).reduce((a, b) => vals[a] > vals[b] ? a : b)
 		);
 
 		// Alle Gebäude sichern
-		LastMapPlayerID = ExtPlayerID;
-		MainParser.CityMapData = Object.assign({}, ...data.responseData.city_map.entities.map((x) => ({ [x.id]: x })));
-		MainParser.SetArkBonus2();
+		FH.LastMapPlayerID = FH.Player.ID;
+		Main.CityMapData = Object.assign({}, ...data.responseData.city_map.entities.map((x) => ({ [x.id]: x })));
+		Main.SetArkBonus2();
 		// Güterliste
-		GoodsList = data.responseData.goodsList
+		FH.Goods.List = data.responseData.goodsList
 
 		// freigeschaltete Erweiterungen sichern
 		CityMap.Main.unlockedAreas = data.responseData.city_map.unlocked_areas;
 		CityMap.Main.blockedAreas = data.responseData.city_map.blocked_areas;
 
-		// EventCountdown
-		let eventCountDownFeature = data.responseData.feature_flags?.features.filter((v) => { return (v.feature === "event_start_countdown") });
-		EventCountdown = eventCountDownFeature?.length > 0 ? eventCountDownFeature[0]["time_string"] : false;
-
 		// Unlocked features
 		if (data.responseData.unlocked_features) {
-			MainParser.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
+			Main.UnlockedFeatures = data.responseData.unlocked_features?.map(function(obj) { return obj.feature; });
 		} else {
 			$('script').each((i,s)=>{    
-				if (!s?.innerHTML?.includes("unlockedFeatures")) return
+				if (!s?.innerHTML.includes("unlockedFeatures")) return
 				try {
 					let ulf = JSON.parse([...s.innerHTML.matchAll(/(unlockedFeatures:\ )(.*?)(,\n)/gm)][0][2])
-					if (Array.isArray(ulf)) MainParser.UnlockedFeatures = ulf.map(x=>x.feature);
+					if (Array.isArray(ulf)) Main.UnlockedFeatures = ulf.map(x=>x.feature);
 				} catch (e) {
 
 				}
@@ -345,63 +352,53 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 
 		//A/B Tests
-		MainParser.ABTests=Object.assign({}, ...data.responseData.active_ab_tests.map((x) => ({ [x.test_name]: x })));
+		Main.ABTests=Object.assign({}, ...data.responseData.active_ab_tests.map((x) => ({ [x.test_name]: x })));
 	
 		Stats.Init();
-		Alerts.init();
-	});
-
-	// ResourcesList
-	FoEproxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		FHResourcesList = data.responseData;
+		FH.Alerts.init();
 	});
 
 	//Metadata file links
-	FoEproxy.addHandler('StaticDataService', 'getMetadata', (data, postData) => {
-		MainParser.MetaUrls = Object.assign({},...data.responseData.map(x=>( {[x.identifier]: x.url}) ));
+	FH.proxy.addHandler('StaticDataService', 'getMetadata', (data, postData) => {
+		Main.MetaUrls = Object.assign({},...data.responseData.map(x=>( {[x.identifier]: x.url}) ));
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Bonus notieren, enthält tägliche Rathaus FP
-	FoEproxy.addHandler('BonusService', 'getBonuses', (data, postData) => {
-		MainParser.BonusService = data.responseData;
+	FH.proxy.addHandler('BonusService', 'getBonuses', (data, postData) => {
+		Main.BonusService = data.responseData;
 	});
 
 	// Limited Bonus (Archenbonus, Kraken etc.)
-	FoEproxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
-		MainParser.SetArkBonus(data.responseData);
+	FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
+		Main.SetArkBonus(data.responseData);
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Botschafter notieren, enthält Bonus FPs oder Münzen
-	FoEproxy.addHandler('EmissaryService', 'getAssigned', (data, postData) => {
-		MainParser.EmissaryService = data.responseData;
+	FH.proxy.addHandler('EmissaryService', 'getAssigned', (data, postData) => {
+		Main.EmissaryService = data.responseData;
 	});
 
 	// QI map
-	FoEproxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
+	FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', (data, postData) => {		
 		QiProgress.QiMap = data.responseData;
 	})
 
-	// CastleSystem rewards
-	FoEproxy.addHandler('CastleSystemService', 'getOverview', (data, postData) => {
-		MainParser.CastleSystemChest = data.responseData;
-	});
-
 	// --------------------------------------------------------------------------------------------------
 	// Karte wird gewechselt zum Außenposten
-	FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
-		MainParser.UpdateActiveMap(data.responseData.gridId);
+	FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+		Main.UpdateActiveMap(data.responseData.gridId);
 
-		if (ActiveMap === 'era_outpost') {
+		if (FH.ActiveMap === 'era_outpost') {
 			CityMap.EraOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
 			CityMap.EraOutpost.areas = data.responseData['unlocked_areas'];
 		}
-		else if (ActiveMap === 'guild_raids') {
+		else if (FH.ActiveMap === 'guild_raids') {
 			CityMap.QI.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
 			CityMap.QI.areas = data.responseData['unlocked_areas'];
 		}
-		else if (ActiveMap === 'cultural_outpost') {
+		else if (FH.ActiveMap === 'cultural_outpost') {
 			CityMap.CulturalOutpost.data = Object.assign({}, ...data.responseData['entities'].map((x) => ({ [x.id]: x })));
 			CityMap.CulturalOutpost.areas = data.responseData['unlocked_areas'];
 		}
@@ -409,123 +406,123 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// Stadt wird wieder aufgerufen
-	FoEproxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
 		if (!postData.map(x=>x.requestData?.[0]).includes('main')) { 
 			return;
 		}
 
-		LastMapPlayerID = ExtPlayerID;
+		FH.LastMapPlayerID = FH.Player.ID;
 
-		MainParser.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
-		MainParser.SetArkBonus2();
+		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		Main.SetArkBonus2();
 
-		if (ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
-		MainParser.UpdateActiveMap('main');
+		if (FH.ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
+		Main.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 	});
 
 
 	// main is entered
-	FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
-		MainParser.UpdateActiveMap('main');
+	FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+		Main.UpdateActiveMap('main');
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 	});
 
 	// gex is entered
-	FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
-		MainParser.UpdateActiveMap('gex');
+	FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+		Main.UpdateActiveMap('gex');
 	});
 
 	// GBG is entered
-	FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
-		MainParser.UpdateActiveMap('gg');
+	FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+		Main.UpdateActiveMap('gg');
 	});
 
 	// QI is entered
-	FoEproxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
+	FH.proxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
 		if (!data.responseData?.guildRaidsType) return;
 		if (data.responseData?.__class__ != "GuildRaidsRunningState") return;
 		if (!data.responseData?.endsAt) return;
 
-		MainParser.UpdateActiveMap('guild_raids');
+		Main.UpdateActiveMap('guild_raids');
 		CityMap.QI.level = data.responseData.raidInstance?.difficultyLevel;
 	});
 
 	// visiting another player
-	FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
-		MainParser.UpdateActiveMap('OtherPlayer');
-		LastMapPlayerID = data.responseData.other_player.player_id;
+	FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+		Main.UpdateActiveMap('OtherPlayer');
+		FH.LastMapPlayerID = data.responseData.other_player.player_id;
 		CityMap.OtherPlayer.name = data.responseData.other_player.name;
 		CityMap.OtherPlayer.unlockedAreas = data.responseData.city_map.unlocked_areas;
 		CityMap.OtherPlayer.mapData = Object.assign({}, ...data.responseData.city_map.entities.map(x => ({ [x.id]: x })));
 	});
 
 	// move buildings, use self aid kits
-	FoEproxy.addHandler('CityMapService', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', (data, postData) => {
 		if (data.requestMethod === 'moveEntity' || data.requestMethod === 'moveEntities' || data.requestMethod === 'updateEntity') {
 			let Buildings = data.responseData;
 
-			if (Buildings[0]?.player_id != ExtPlayerID) return; // opened another players GB
-			MainParser.UpdateCityMap(data.responseData);
+			if (Buildings[0]?.player_id != FH.Player.ID) return; // opened another players GB
+			Main.UpdateCityMap(data.responseData);
 		}
 		else if (data.requestMethod === 'placeBuilding') {
 			let building = data.responseData[0];
 			if (building && building.id) {
-				if (ActiveMap === "cultural_outpost") {
+				if (FH.ActiveMap === "cultural_outpost") {
 					CityMap.CulturalOutpost.data[building.id] = building
 					return
 				}
-				else if (ActiveMap === "era_outpost") {
+				else if (FH.ActiveMap === "era_outpost") {
 					CityMap.EraOutpost.data[building.id] = building
 					return
 				}
-				else if (ActiveMap === "guild_raids") {
+				else if (FH.ActiveMap === "guild_raids") {
 					CityMap.QI.data[building.id] = building
 					return
 				}
 
-				MainParser.CityMapData[building.id] = building;
+				Main.CityMapData[building.id] = building;
 			}
 		}
 		else if (data.requestMethod === 'removeBuilding') {
 			let ID = postData[0].requestData[0];
-			if (ActiveMap === "cultural_outpost") {
+			if (FH.ActiveMap === "cultural_outpost") {
 				delete CityMap.CulturalOutpost.data[ID];
 				return
 			}
-			else if (ActiveMap === "era_outpost") {
+			else if (FH.ActiveMap === "era_outpost") {
 				delete CityMap.EraOutpost.data[ID];
 				return
 			}
-			else if (ActiveMap === "guild_raids") {
+			else if (FH.ActiveMap === "guild_raids") {
 				delete CityMap.QI.data[ID];
 				return
 			}
-			if (ID && MainParser.CityMapData[ID]) {
-				delete MainParser.CityMapData[ID];
-				if (MainParser.CityBuildingsData[ID])
-					delete MainParser.CityBuildingsData[ID];
+			if (ID && Main.CityMapData[ID]) {
+				delete Main.CityMapData[ID];
+				if (Main.CityBuildingsData[ID])
+					delete Main.CityBuildingsData[ID];
 			}
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
 	// production is started, collected, aborted
-	FoEproxy.addHandler('CityProductionService', (data, postData) => {
+	FH.proxy.addHandler('CityProductionService', (data, postData) => {
 		if (data.requestMethod === 'pickupProduction' || data.requestMethod === 'pickupAll' || data.requestMethod === 'startProduction' || data.requestMethod === 'cancelProduction') {
 			let Buildings = data.responseData['updatedEntities'];
 			if (!Buildings) return
-			if (ActiveMap != "main") return // do not add outpost buildings
-			MainParser.UpdateCityMap(Buildings)
+			if (FH.ActiveMap != "main") return // do not add outpost buildings
+			Main.UpdateCityMap(Buildings)
 		}
 	});
 
 	// remove a friend
-	FoEproxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
+	FH.proxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
 		let FriendID = data.responseData;
-		if (PlayerDict[FriendID]) {
-			PlayerDict[FriendID]['IsFriend'] = false;
+		if (FH.Players.Dict[FriendID]) {
+			FH.Players.Dict[FriendID]['IsFriend'] = false;
 		}
 
 		if ($('#moppelhelper').length === 0) {
@@ -534,11 +531,11 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	// open a message
-	FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'Conversation');
+	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
+		Main.UpdatePlayerDict(data.responseData, 'Conversation');
 	});
 
-	FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
 
 		// battle finished
 		if ([901,902].includes(data.responseData.error_code)) {
@@ -547,82 +544,82 @@ document.addEventListener("DOMContentLoaded", function () {
 		
 		// not autobattling in either round 1 or 2
 		if (!data.responseData["isAutoBattle"]) {
-			HTML.MinimizeBeforeBattle();
+			FH.HTML.MinimizeBeforeBattle();
 		}
 
 		// round was won with autobattle
 		// winnerBit==1 round won, winnerBit==2 round lost
-		if (data.responseData['state']['winnerBit'] > 0) {
-			HTML.MaximizeAfterBattle();
+		if (data.responseData.state?.winnerBit > 0) {
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
-	FoEproxy.addHandler('BattlefieldService', 'submitMove', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'submitMove', (data, postData) => {
 		// round was won/lost by auto-complete battle during manual turn
 		if (data.responseData['winnerBit'] > 0) {
-			HTML.MaximizeAfterBattle();
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
 	// if battle was interrupted by browser refresh/server restart
-	FoEproxy.addHandler('BattlefieldService', 'continueBattle', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'continueBattle', (data, postData) => {
 		// round in progress was not auto-battle
 		if (!data.responseData["isAutoBattle"]) {
-			HTML.MinimizeBeforeBattle();
+			FH.HTML.MinimizeBeforeBattle();
 		}
 	});
 
 	// if user surrenders
-	FoEproxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
+	FH.proxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
 		if (data.responseData["surrenderBit"] == 1) {
-			HTML.MaximizeAfterBattle();
+			FH.HTML.MaximizeAfterBattle();
 		}
 	});
 
 	// Nachbarn/Gildenmitglieder/Freunde Tab geöffnet
-	FoEproxy.addHandler('OtherPlayerService', 'all', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'all', (data, postData) => {
 		if (data.requestMethod === 'getNeighborList' || data.requestMethod === 'getFriendsList' || data.requestMethod === 'getClanMemberList' || data.requestMethod === 'getAwaitingFriendRequestCount') {
-			MainParser.UpdatePlayerDict(data.responseData, 'PlayerList', data.requestMethod);
+			Main.UpdatePlayerDict(data.responseData, 'PlayerList', data.requestMethod);
 		}
 		if (data.requestMethod === 'getSocialList') {
 			if (data.responseData.neighbours) 
-				MainParser.UpdatePlayerDict(data.responseData.neighbours, 'PlayerList', 'getNeighborList');
+				Main.UpdatePlayerDict(data.responseData.neighbours, 'PlayerList', 'getNeighborList');
 			if (data.responseData.guildMembers) 
-				MainParser.UpdatePlayerDict(data.responseData.guildMembers, 'PlayerList', 'getClanMemberList');
+				Main.UpdatePlayerDict(data.responseData.guildMembers, 'PlayerList', 'getClanMemberList');
 			if (data.responseData.friends) 
-				MainParser.UpdatePlayerDict(data.responseData.friends, 'PlayerList', 'getFriendsList');
+				Main.UpdatePlayerDict(data.responseData.friends, 'PlayerList', 'getFriendsList');
 		}
 	});
 
 
 	// --------------------------------------------------------------------------------------------------
 	// goods translations
-	FoEproxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
-		MainParser.setGoodsData(data.responseData);
+	FH.proxy.addHandler('ResourceService', 'getResourceDefinitions', (data, postData) => {
+		FH.Goods.Data = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
-		MainParser.UpdateInventoryItem(data.responseData);
+	FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
+		Main.UpdateInventoryItem(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItems', (data, postData) => {
-		MainParser.UpdateInventory(data.responseData);
+	FH.proxy.addHandler('InventoryService', 'getItems', (data, postData) => {
+		Main.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItemsByType', (data, postData) => {
-		MainParser.UpdateInventory(data.responseData);
+	FH.proxy.addHandler('InventoryService', 'getItemsByType', (data, postData) => {
+		Main.UpdateInventory(data.responseData);
 	});
 
 
 	// Required by the kits
-	FoEproxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
-		MainParser.UpdateInventoryAmount(data.responseData);
+	FH.proxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
+		Main.UpdateInventoryAmount(data.responseData);
 	});
 
 
@@ -631,8 +628,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Es wurde das LG eines Mitspielers angeklickt, bzw davor die Übersicht
 
 	// GB overview of another player
-	FoEproxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'LGOverview');
+	FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
+		Main.UpdatePlayerDict(data.responseData, 'LGOverview');
 
 		// update investments
 		if (Investment) {
@@ -647,7 +644,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	let gbUpdateData = null;
 	let gbCityMapEntity = null;
 
-	FoEproxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
+	FH.proxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
 		let getConstruction = data.requestMethod === 'getConstruction' ? data : null;
 		let getConstructionRanking = data.requestMethod === 'getConstructionRanking' ? data : null;
 		let contributeForgePoints = data.requestMethod === 'contributeForgePoints' ? data : null;
@@ -687,12 +684,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	});
 
-	FoEproxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
-		MainParser.UpdatePlayerDict(data.responseData, 'LGContributions');
+	FH.proxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
+		Main.UpdatePlayerDict(data.responseData, 'LGContributions');
 	});
 
 	// can be removed after game update 1.332
-	FoEproxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
+	FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
 		if (!gbUpdateData || !gbUpdateData.Rankings) {
 			gbUpdateData = { Rankings: null, CityMapEntity: data };
 			// reset gbUpdateData sobald wie möglich (nachdem alle einzelnen Handler ausgeführt wurden)
@@ -702,16 +699,16 @@ document.addEventListener("DOMContentLoaded", function () {
 			lgUpdate();
 		}
 		
-		if (data.responseData[0]?.player_id === ExtPlayerID) {
+		if (data.responseData[0]?.player_id === FH.Player.ID) {
 			
 			if ($('#OwnPartBox').length > 0) {
-				MainParser.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+				Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
 				Parts.CalcBody();
 			}
 		}
 	});
 
-	FoEproxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
 		let formattedData = { ...data, responseData: [data.responseData] };
 		gbCityMapEntity = formattedData;
 
@@ -722,34 +719,34 @@ document.addEventListener("DOMContentLoaded", function () {
 			lgUpdate();
 		}
 		
-		if (formattedData.responseData[0]?.player_id === ExtPlayerID) {
+		if (formattedData.responseData[0]?.player_id === FH.Player.ID) {
 			if ($('#OwnPartBox').length > 0) {
-				MainParser.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
+				Main.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
 				Parts.CalcBody();
 			}
 		}
 	});
 
-	FoEproxy.addWsHandler('CityMapService', 'updateEntity', data => {
+	FH.proxy.addWsHandler('CityMapService', 'updateEntity', data => {
 		for (let b of data.responseData) {
-			MainParser.CityMapData[b.id]=b;
+			Main.CityMapData[b.id]=b;
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
-	FoEproxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
+	FH.proxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
 		for (let b of data.responseData.updatedEntities||[]) {
-			MainParser.CityMapData[b.id]=b;
+			Main.CityMapData[b.id]=b;
 		}
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	});
 
-	FoEproxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
+	FH.proxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
 		if (postData?.requestData?.[0]?.__class__=="UseItemOnBuildingPayload") {
-			if (MainParser.Inventory[postData?.requestData?.[0]?.itemId].itemAssetName =="store_building") {
+			if (Main.Inventory[postData?.requestData?.[0]?.itemId].itemAssetName =="store_building") {
 				let id= postData?.requestData?.[0]?.mapEntityId
-				if (MainParser.CityMapData[id]) delete MainParser.CityMapData[id]
-				if (MainParser.CityBuildingsData[id]) delete MainParser.CityBuildingsData[id]
+				if (Main.CityMapData[id]) delete Main.CityMapData[id]
+				if (Main.CityBuildingsData[id]) delete Main.CityBuildingsData[id]
 			}
 		}
 	});
@@ -758,7 +755,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	function lgUpdate() {
 		const { CityMapEntity, Rankings, Bonus } = gbUpdateData;
 		gbUpdateData = null;
-		MainParser.CurrentGB.isPreviousLevel = false;
+		Main.CurrentGB.isPreviousLevel = false;
 
 		if (!Rankings) return;
 
@@ -773,7 +770,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 
 			if (Medals !== LGCurrentLevelMedals) {
-				MainParser.CurrentGB.isPreviousLevel = true;
+				Main.CurrentGB.isPreviousLevel = true;
 			}
 		}
 		else {
@@ -787,10 +784,10 @@ document.addEventListener("DOMContentLoaded", function () {
 			LGCurrentLevelMedals = Medals;
 		}
 
-		MainParser.CurrentGB.Entity = CityMapEntity.responseData[0];
-		MainParser.CurrentGB.Rankings = Rankings;
-		Parts.IsPreviousLevel = MainParser.CurrentGB.isPreviousLevel;
-		if (!MainParser.CurrentGB.isPreviousLevel) 
+		Main.CurrentGB.Entity = CityMapEntity.responseData[0];
+		Main.CurrentGB.Rankings = Rankings;
+		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
+		if (!Main.CurrentGB.isPreviousLevel) 
 			Parts.View = '';
 
 		// GB was loaded
@@ -804,17 +801,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// player goods
-	FoEproxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
-		ResourceStock = data.responseData.resources; // Keep this updated
+	FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
+		FH.RessourceStock = data.responseData.resources; // Keep this updated
 		Outposts.CollectResources();
-		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
-	FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
+	FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
 		if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
-		ResourceStock = data.responseData.resources.resources;
+		FH.RessourceStock = data.responseData.resources.resources;
 		Outposts.CollectResources();
-		FoEproxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 
@@ -824,32 +821,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 	// Greatbuildings: LG Belohnungen von Arche in Events zählen
-	FoEproxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
+	FH.proxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
 		if (data.responseData['events']) {
 			GreatBuildings.HandleEventPage(data.responseData['events']);
 		}
 	});
 
 
-	FoEproxy.addHandler('TimeService', 'updateTime', async (data, postData) => {
+	FH.proxy.addHandler('TimeService', 'updateTime', async (data, postData) => {
 		GameTime.set(data.responseData.time);
 		if (MainMenuLoaded) return;
 
 	
 		MainMenuLoaded = true;
-		await StartUpDone;	
-		let MenuSetting = localStorage.getItem('SelectedMenu');
-		MainParser.SelectedMenu = MenuSetting || 'RightBar';
-		_menu.CallSelectedMenu(MainParser.SelectedMenu);
+		await FH.StartUpDone;	
+		let MenuSetting = FH.Storage.getItem('SelectedMenu');
+		Main.SelectedMenu = MenuSetting || 'RightBar';
+		FH.menu.CallSelectedMenu(Main.SelectedMenu);
 		
-		MainParser.setLanguage();
-		MainParser.setGameFilters();
+		Main.setLanguage();
+		Main.setGameFilters();
 		Quests.init();
 	});
 
 
 	// --------------------------------------------------------------------------------------------------
-	FoEproxy.addRawWsHandler((data) => {
+	FH.proxy.addRawWsHandler((data) => {
 		let Msg = data?.[0];
 		if (!Msg || !Msg.requestClass || !Msg.responseData) return;
 
@@ -859,93 +856,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Goods Update after accepted Trade
 		if (requestMethod === "newEvent" && responseData.type === "trade_accepted") {
-			ResourceStock[responseData.need.good_id] += responseData.need.value;
-			FoEproxy.triggerFoeHelperHandler("ResourcesUpdated");
+			FH.RessourceStock[responseData.need.good_id] += responseData.need.value;
+			FH.proxy.triggerFoeHelperHandler("ResourcesUpdated");
 		}
 		// Inventory Update, e.g. when receiving FP packages from GB leveling	
 		if (requestClass === 'InventoryService' && requestMethod === 'getItem') {
-			MainParser.UpdateInventoryItem(responseData);
+			Main.UpdateInventoryItem(responseData);
 		}
 
 		if (requestClass === 'InventoryService' && requestMethod === 'getItemAmount') {
-			MainParser.UpdateInventoryAmount(responseData);
+			Main.UpdateInventoryAmount(responseData);
 
 		}
 	});
 
 	// --------------------------------------------------------------------------------------------------
 	// Quests
-	FoEproxy.addHandler('QuestService', 'getUpdates', (data, PostData) => {
+	FH.proxy.addHandler('QuestService', 'getUpdates', (data, PostData) => {
 		if (PostData[0]?.requestClass === 'QuestService' && PostData[0]?.requestMethod === 'advanceQuest') {
 			FPCollector.HandleAdvanceQuest(PostData[0]);
 		}
 
-		MainParser.Quests = data.responseData;
+		Main.Quests = data.responseData;
 
-		FoEproxy.triggerFoeHelperHandler('QuestsUpdated');
+		FH.proxy.triggerFoeHelperHandler('QuestsUpdated');
 	});
 
 	// Update unlocked features
-	FoEproxy.addHandler('UnlockableFeatureService', 'getUnlockedFeatures', (data, postData) => {
-		MainParser.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
+	FH.proxy.addHandler('UnlockableFeatureService', 'getUnlockedFeatures', (data, postData) => {
+		Main.UnlockedFeatures = data.responseData.map(function(obj) { return obj.feature; });
 	});
 
-	// Alte, nich mehr benötigte localStorage einträge löschen (in 2 min)
-	setTimeout(() => {
-		const keys = Object.keys(localStorage);
-		for (let k of keys) {
-			if (/^(OV_)?[0-9]+\/X_[A-Za-z_]+[0-9]*$/.test(k)) {
-				localStorage.removeItem(k);
-			} else if (/^OtherPlayersMotivation-[0-9]+$/.test(k)) {
-				localStorage.removeItem(k);
-			}
-		}
-	}, 1000 * 60 * 2);
-
 	// Messages: Thread opened
-	FoEproxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		MainParser.OpenConversation = data.responseData;
+	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
+		Main.OpenConversation = data.responseData;
 		Calculator.ConversationContent = data.responseData.messages[0].text;
 	});
 
 	// Messages: Thread closed
-	FoEproxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
-		MainParser.OpenConversation = null;
+	FH.proxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
+		Main.OpenConversation = null;
 		Calculator.ConversationContent = null;
 		Calculator.ConversationContentNew = null;
 	});
 
-	FoEproxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
+	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
 		Calculator.ConversationContentNew = data.responseData.text;
 		//	Calculator.showToPay(Calculator.ConversationContent, Calculator.ConversationContentNew)
 	});
 
 })();
 
-let HelperBeta = {
+FH.Beta = {
 	load: (active) => {
 		if (active !== false) active = true;
-		localStorage.setItem('HelperBetaActive', active);
+		FH.Storage.setItem('BetaActive', active);
 		location.reload();
 	},
 	menu: [
 		'unitsGex',
 		'marketOffers'
 	],
-	active: JSON.parse(localStorage.getItem('HelperBetaActive')) || devMode === 'true' || loadBeta
+	active: JSON.parse(FH.Storage.getItem('BetaActive')) || FH.BaseData.devMode === 'true'
 };
 
+FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
-let MainParser = {
-
-	foeHelperBgApiHandler: /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null),
-
-	activateDownload: false,
-	savedFight: null,
-	DebugMode: false,
+let Main = {
 	Language: 'en',
 	SelectedMenu: 'RightBar',
-	i18n: null,
 	BonusService: null,
 	EmissaryService: null,
 	PlayerPortraits: [],
@@ -953,10 +932,8 @@ let MainParser = {
 	MetaIds: {},
 	MetaUrls: {},
 	CityEntities: null,
-	CastleSystemLevels: null,
 	StartUpType: null,
 	OpenConversation: null,
-	CastleSystemChest: null,
 	CurrentGB: {
 		Entity: undefined,
 		Rankings: undefined,
@@ -979,8 +956,6 @@ let MainParser = {
 	SelectionKits: null,
 	
 	BuildingFamilyLimits: null,
-	
-	InnoCDN: 'https://foede.innogamescdn.com/',
 
 	/**
 	* Version specific StartUp Code
@@ -988,140 +963,97 @@ let MainParser = {
 	*
 	*/
 	VersionSpecificStartupCode: () => {
-		let LastStartedVersion = localStorage.getItem('LastStartedVersion');
-		let LastAgreedVersion = localStorage.getItem('LastAgreedVersion');
+		let LastStartedVersion = FH.Storage.getItem('LastStartedVersion');
+		let LastAgreedVersion = FH.Storage.getItem('LastAgreedVersion');
 
 		if (!LastStartedVersion) {
-			MainParser.StartUpType = 'DeletedSettings';
+			Main.StartUpType = 'DeletedSettings';
 			/* Fresh install or deleted settings */
 			/* Attention: If you do stuff here it might be executed every start when surfing in incognito mode */
 		}
-		else if (LastStartedVersion !== extVersion) {
-			MainParser.StartUpType = 'UpdatedVersion';
-			if (!(!isRelease)) {localStorage.removeItem("LoadBeta")}
+		else if (LastStartedVersion !== FH.BaseData.extVersion) {
+			Main.StartUpType = 'UpdatedVersion';
 
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				show: true,
-				head: i18n('Menu.NewVersion.Title'),
-				text: i18n('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
+				head: FH.t('Menu.NewVersion.Title'),
+				text: FH.t('Menu.NewVersion.Desc') + ' <a href="https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md" target="_blank">ChangeLog</a>',
 				type: 'success',
 				allowToastClose: true,
 				hideAfter: 30000,
 			});
 			/* We have a new version installed and started the first time */
 		}
-		else if (LastAgreedVersion !== extVersion) {
-			MainParser.StartUpType = 'NotAgreed';
+		else if (LastAgreedVersion !== FH.BaseData.extVersion) {
+			Main.StartUpType = 'NotAgreed';
 			/* This is a second start, but the player has not yet agreed to the new prompt */
 		}
 		else {
-			MainParser.StartUpType = 'RegularStart';
+			Main.StartUpType = 'RegularStart';
 			/* Normal start */
 		}
 
-		localStorage.setItem('LastStartedVersion', extVersion);
-		localStorage.setItem('LastAgreedVersion', extVersion); //Comment out this line if you have something the player must agree on
+		FH.Storage.setItem('LastStartedVersion', FH.BaseData.extVersion);
+		FH.Storage.setItem('LastAgreedVersion', FH.BaseData.extVersion); //Comment out this line if you have something the player must agree on
 	},
 
 
 	/**
-	 * Asynchronously builds city entity metadata by fetching and processing data for each provided building URL.
-	 * The function ensures that metadata is fetched and updated only when changes are detected in the hash values
-	 * from the input URLs and existing stored metadata.
-	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values are objects containing
-	 *                                metadata with the following properties:
-	 *                                - `url` {string}: The URL from which the building metadata can be fetched.
-	 *                                - `hash` {string}: A hash representing the state of the metadata for change detection.
+	 * Requests and applies city entity metadata from the background service worker.
+	 *
+	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values contain metadata URLs and hashes.
+	 * @param {string} [region] - The region code for the current world, e.g. "de".
 	 */
-	CityEntityBuilder: async (buildingUrls) => {
-		await IndexDB.getDB();
-		let buildingsOld = await IndexDB.db.buildingMeta.toArray();
-		buildingsOld = Object.assign({}, ...buildingsOld.map(x => ({ [x.id]: x })));
-		let Metadata = {};
-		let updated = [];
-		const ids = Object.keys(buildingUrls);
-		const maxConcurrent = 10; // z.B. 10 gleichzeitige Requests
-		let active = 0;
-		let index = 0;
+	CityEntityBuilder: async (buildingUrls, region = String(FH.World).replace(/\d+$/, '') || 'unknown') => {
+		const urlIds = Object.keys(buildingUrls);
+		const urlCount = urlIds.length;
 
-		function fetchMeta(id, meta, retries = 3) {
-			return new Promise(resolve => {
-				const xhr = new XMLHttpRequest();
-				xhr.open("GET", meta.url, true);
-
-				let timeout = setTimeout(() => {
-					xhr.abort();
-				}, 10000); // 10 Sekunden Timeout
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === XMLHttpRequest.DONE) {
-						clearTimeout(timeout);
-						if (xhr.status === 200) {
-							try {
-								Metadata[id] = JSON.parse(xhr.responseText);
-								updated.push({ id: id, hash: meta.hash, json: xhr.responseText });
-							} catch (e) { Metadata[id] = null; }
-							resolve();
-						} else if (retries > 0) {
-							// Bei Fehler: Retry mit Delay
-							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-						} else {
-							console.warn('Failed to load', meta.url, xhr.status);
-							resolve();
-						}
-					}
-				};
-				xhr.onerror = () => {
-					clearTimeout(timeout);
-					if (retries > 0) {
-						setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-					} else {
-						resolve();
-					}
-				};
-				xhr.send();
-			});
-		}
-
-		async function runNext() {
-			while (active < maxConcurrent && index < ids.length) {
-				const id = ids[index++];
-				const meta = buildingUrls[id];
-				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
-					active++;
-					fetchMeta(id, meta).then(() => {
-						active--;
-						runNext();
-					});
-				} else {
-					try { Metadata[id] = JSON.parse(buildingsOld[id].json); } catch (e) { Metadata[id] = null; }
-				}
-			}
-		}
-
-		await new Promise(resolve => {
-			function checkDone() {
-				if (index >= ids.length && active === 0) resolve();
-				else setTimeout(checkDone, 100);
-			}
-			runNext();
-			checkDone();
+		const precheckResponse = await Main.sendExtMessage({
+			type: 'buildingMetaPreCheck',
+			region,
+			timeout: 1000,
 		});
+		const existingCount = (precheckResponse && typeof precheckResponse.existingCount === 'number') ? precheckResponse.existingCount : 0;
 
-		await IndexDB.db.buildingMeta.bulkPut(updated);
-		MainParser.CityEntities = Metadata;
-		MainParser.correctBuildingType();
-		MainParser.Inactives.check();
+		const missingCount = urlCount - existingCount;
+		const useLongTimeout = missingCount > 300;
+		const longTimeout = 600000
+		const timeout = useLongTimeout ? longTimeout : 30000;
+
+		if (timeout == longTimeout) {
+			let div = document.createElement('div');
+			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
+				<h2>Forge Hammer: ${FH.t("DBCreationWarning.Title")}</h2> </br>
+				${FH.t("DBCreationWarning.ExplanationLine1")}<br> 
+				${FH.t("DBCreationWarning.ExplanationLine2")}</br></br>
+				<div style="position:relative;height:75px;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>
+			</div>`;
+			document.body.appendChild(div);
+		}
+
+		const metadata = await Main.sendExtMessage({
+			type: 'buildingMeta',
+			buildingUrls,
+			region,
+			timeout,
+		});
+		document.getElementById('DBCreationWarning')?.remove()
+
+		Main.CityEntities = metadata || {};
+		Main.correctBuildingType();
+		Main.Inactives.check();
 	},
 
 
 	/**
-	 * Updates the `type` property of each CityEntity in `MainParser.CityEntities` if it is missing.
+	 * Updates the `type` property of each CityEntity in `Main.CityEntities` if it is missing.
 	 */
 	correctBuildingType: () => {
-		for (let i in MainParser.CityEntities) {
-			if (!MainParser.CityEntities.hasOwnProperty(i)) continue;
+		for (let i in Main.CityEntities) {
+			if (!Main.CityEntities.hasOwnProperty(i)) continue;
 
-			let CityEntity = MainParser.CityEntities[i];
+			let CityEntity = Main.CityEntities[i];
 			if (!CityEntity.type) CityEntity.type = CityEntity?.components?.AllAge?.tags?.tags?.find(value => value.hasOwnProperty('buildingType')).buildingType;
         }
 	},
@@ -1133,16 +1065,14 @@ let MainParser = {
 	 * @param {any & {type: string}} data
 	 */
 	sendExtMessage: async (data) => {
-		const bgApiHandler = MainParser.foeHelperBgApiHandler;
-
 		/** @type {null|Promise<{ok:true,data:any}|{ok:false,error:string}|unknown>} */
 		let _responsePromise = null;
 
 		if (typeof chrome !== 'undefined') {
-			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(extID, data, resolve));
+			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
 		}
-		else if (bgApiHandler != null) {
-			_responsePromise = bgApiHandler(data);
+		else if (FH.bgApiHandler != null) {
+			_responsePromise = FH.bgApiHandler(data);
 
 		}
 		else {
@@ -1153,7 +1083,8 @@ let MainParser = {
 
 		const response = await new Promise((resolve, reject) => {
 			responsePromise.then(resolve, reject);
-			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), 1000)
+			const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : (data.type === 'buildingMeta' ? 120000 : 1000);
+			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), timeoutMs);
 		});
 
 		if (typeof response !== 'object' || typeof response.ok !== 'boolean') {
@@ -1171,12 +1102,12 @@ let MainParser = {
 
 
 	setLanguage: () => {
-		MainParser.Language = GuiLng;
+		Main.Language = FH.BaseData.GuiLng;
 	},
 
 
 	setGameFilters: () => {
-		let filters = JSON.parse(localStorage.getItem('hammerGameFilters'));
+		let filters = JSON.parse(FH.Storage.getItem('hammerGameFilters'));
 		if (filters)
 			$('#game-container').css('filter',
 				`brightness(${filters.brightness}) contrast(${filters.contrast}) saturate(${filters.saturation}) hue-rotate(${filters.hue}deg)`
@@ -1192,7 +1123,7 @@ let MainParser = {
 	 * @returns {number}
 	 */
 	getAddedDateTime: (hrs, min = 0) => {
-		let time = MainParser.getCurrentDateTime(),
+		let time = Main.getCurrentDateTime(),
 			h = hrs || 0,
 			m = min || 0,
 
@@ -1210,7 +1141,7 @@ let MainParser = {
 	 * @returns {number}
 	 */
 	getCurrentDateTime: () => {
-		return MainParser.getCurrentDate().getTime();
+		return Main.getCurrentDate().getTime();
 	},
 
 
@@ -1279,10 +1210,10 @@ let MainParser = {
 	 * Check whether an update is necessary
 	 */
 	checkNextUpdate: (ep) => {
-		let s = localStorage.getItem(ep),
-			a = MainParser.getCurrentDateTime();
+		let s = FH.Storage.getItem(ep),
+			a = Main.getCurrentDateTime();
 
-		return MainParser.compareTime(a, s);
+		return Main.compareTime(a, s);
 	},
 
 
@@ -1294,14 +1225,14 @@ let MainParser = {
 	 */
 	GetPlayerLink: (PlayerID, PlayerName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let PlayerLink = HTML.i18nReplacer(PlayerLinkFormat, { 'world': ExtWorld.toUpperCase(), 'playerid': PlayerID });
-			if (localStorage.getItem('linkSite') === 'siteForgedb')
-				PlayerLink = HTML.i18nReplacer(PlayerLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'playerid': PlayerID });
+			let PlayerLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': FH.World.toUpperCase(), 'playerid': PlayerID });
+			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
+				PlayerLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'playerid': PlayerID });
 
-			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${HTML.escapeHtml(PlayerName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${PlayerLink}" target="_blank">${FH.HTML.escapeHtml(PlayerName)} ${FH.Links.Icon}</a>`;
 		}
 		else {
-			return HTML.escapeHtml(PlayerName);
+			return FH.HTML.escapeHtml(PlayerName);
 		}
 	},
 
@@ -1309,21 +1240,19 @@ let MainParser = {
 	/**
 	 * @param {string} GuildID - The unique identifier for the guild.
 	 * @param {string} GuildName - The name of the guild.
-	 * @param {string} [WorldId] - The world identifier. Defaults to `ExtWorld` when not provided.
+	 * @param {string} [WorldId] - The world identifier. Defaults to `FH.World` when not provided.
 	 * @returns {string} - A hyperlink to the guild or the plain text of the guild name, depending on the settings.
 	 */
-	GetGuildLink: (GuildID, GuildName, WorldId) => {
-		if(!WorldId) WorldId = ExtWorld;
-
+	GetGuildLink: (GuildID, GuildName, WorldId=FH.World) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = HTML.i18nReplacer(GuildLinkFormat, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
-			if (localStorage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = HTML.i18nReplacer(GuildLinkFormat2, { 'server': ExtWorld.toLowerCase().replace(/[0-9]/g, ''), 'world': ExtWorld.toLowerCase(), 'guildid': GuildID });
+			let GuildLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
+				GuildLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
 
-			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${HTML.escapeHtml(GuildName)} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${FH.Links.Icon}</a>`;
 		}
 		else {
-			return HTML.escapeHtml(GuildName);
+			return FH.HTML.escapeHtml(GuildName);
 		}
 	},
 
@@ -1331,13 +1260,13 @@ let MainParser = {
 	/**
 	 * @param {string} BuildingID - The unique identifier for the building.
 	 * @param {string} BuildingName - The name of the building to be displayed.
-	 * @returns {string} A string containing either an HTML link or plain text for the building name.
+	 * @returns {string} A string containing either an FH.HTML.link or plain text for the building name.
 	 */
 	GetBuildingLink: (BuildingID, BuildingName) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let BuildingLink = HTML.i18nReplacer(BuildingsLinkFormat, {'buildingid': BuildingID });
+			let BuildingLink = FH.helper.str.Replacer(FH.Links.Building, {'buildingid': BuildingID });
 
-			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${LinkIcon}</a>`;
+			return `<a class="external-link game-cursor" href="${BuildingLink}" target="_blank">${BuildingName} ${FH.Links.Icon}</a>`;
 		}
 		else {
 			return BuildingName;
@@ -1378,7 +1307,7 @@ let MainParser = {
 	send2Server: (data, ep, successCallback) => {
 
 		let req = fetch(
-			ApiURL + ep + '/?player_id=' + ExtPlayerID + '&guild_id=' + ExtGuildID + '&world=' + ExtWorld,
+			ApiURL + ep + '/?player_id=' + FH.Player.ID + '&guild_id=' + FH.Guild.ID + '&world=' + FH.World,
 			{
 				method: 'POST',
 				headers: {
@@ -1410,65 +1339,55 @@ let MainParser = {
 		//console.log("StartUp called");
 		Settings.Init(false);
 
-		MainParser.VersionSpecificStartupCode();
-		ExtGuildID = d['clan_id'];
-		ExtGuildPermission = d['clan_permissions'];
-		//ExtWorld = window.location.hostname.split('.')[0];
-		CurrentEra = d['era'];
-		if (CurrentEra['era']) CurrentEra = CurrentEra['era'];
-		CurrentEraID = Technologies.Eras[CurrentEra];
+		Main.VersionSpecificStartupCode();
+		FH.Guild.ID = d['clan_id'];
+		FH.Guild.Permission = d['clan_permissions'];
+		//FH.World = window.location.hostname.split('.')[0];
+		FH.CurrentEra = d['era'];
+		if (FH.CurrentEra['era']) FH.CurrentEra = FH.CurrentEra['era'];
+		FH.CurrentEraID = Technologies.Eras[FH.CurrentEra];
 
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_guild_id',
-			data: ExtGuildID
+			data: FH.Guild.ID
 		});
-		localStorage.setItem('current_guild_id', ExtGuildID);
+		FH.Storage.setItem('current_guild_id', FH.Guild.ID);
 
-		ExtPlayerID = d['player_id'];
-		MainParser.sendExtMessage({
+		FH.Player.ID = d['player_id'];
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_player_id',
-			data: ExtPlayerID
+			data: FH.Player.ID
 		});
-		localStorage.setItem('current_player_id', ExtPlayerID);
+		FH.Storage.setItem('current_player_id', FH.Player.ID);
 
-		IndexDB.Init(ExtPlayerID);
+		IndexDB.Init(FH.Player.ID);
 
-		MainParser.sendExtMessage({
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_world',
-			data: ExtWorld
+			data: FH.World
 		});
-		localStorage.setItem('current_world', ExtWorld);
+		FH.Storage.setItem('current_world', FH.World);
 
-		ExtPlayerName = d['user_name'];
-		MainParser.sendExtMessage({
+		FH.Player.Name = d['user_name'];
+		Main.sendExtMessage({
 			type: 'storeData',
 			key: 'current_player_name',
-			data: ExtPlayerName
+			data: FH.Player.Name
 		});
 
-		ExtPlayerAvatar = d.portrait_id;
-		await ExistenceConfirmed('MainParser.CityEntities||srcLinks.FileList||Infoboard||EventHandler||i18nData');
+		FH.Player.Avatar = d.portrait_id;
+		await ExistenceConfirmed('Main.CityEntities||srcLinks.FileList||Infoboard||EventHandler||TranslationData');
 	
 		Infoboard.Init();
 		EventHandler.Init();
-		setTimeout(MainParser.forceLoadCityEntities, 15000);
 		
-		window.dispatchEvent(new CustomEvent('foe-helper#StartUpDone'))
+		window.dispatchEvent(new CustomEvent('forgehammer#StartUpDone'))
 		
 		// remove campagnemap storage - can be removed again at some point
-		localStorage.removeItem('AllProvinces');
-	},
-
-
-	forceLoadCityEntities: () => {
-		if (MainParser.CityEntities) return;
-		//console.log('Forcing load of CityEntities');
-		let xhr = new XMLHttpRequest();
-        xhr.open("GET", MainParser.MetaUrls['city_entities'], true);
-        xhr.send();
+		FH.Storage.removeItem('AllProvinces');
 	},
 
 
@@ -1481,8 +1400,8 @@ let MainParser = {
 		buildingBoostSums:[],
 
 		getAllies:(allies)=>{
-			MainParser.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
-			let list = MainParser.Allies.buildingList = {}
+			Main.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
+			let list = Main.Allies.buildingList = {}
 			for (let ally of allies) {
 				if (!ally.mapEntityId) continue
 				if (list[ally.mapEntityId]) 
@@ -1490,41 +1409,41 @@ let MainParser = {
 				else 
 				 	list[ally.mapEntityId] = {[ally.id]:ally.id}
 			}
-			MainParser.Allies.updateAllyList()
+			Main.Allies.updateAllyList()
 		},
 
 		updateAlly:(ally)=>{
 			if (ally.mapEntityId) {
-				let list = MainParser.Allies.buildingList
+				let list = Main.Allies.buildingList
 				if (list[ally.mapEntityId]) 
 					list[ally.mapEntityId][ally.id]=ally.id
 				else 
 				 	list[ally.mapEntityId] = {[ally.id]:ally.id}
 			} else {
-				mapID=MainParser.Allies.allyList[ally.id]?.mapEntityId
+				mapID=Main.Allies.allyList[ally.id]?.mapEntityId
 				if (mapID) {
-					delete MainParser.Allies.buildingList[mapID][ally.id]
-					if (Object.keys(MainParser.Allies.buildingList[mapID]).length==0) delete MainParser.Allies.buildingList[mapID]
+					delete Main.Allies.buildingList[mapID][ally.id]
+					if (Object.keys(Main.Allies.buildingList[mapID]).length==0) delete Main.Allies.buildingList[mapID]
 				}
 			}
-			MainParser.Allies.allyList[ally.id] = ally
-			MainParser.Allies.updateAllyList()
+			Main.Allies.allyList[ally.id] = ally
+			Main.Allies.updateAllyList()
 		},
 
 		addAlly:(ally)=>{
-			MainParser.Allies.allyList[ally.id]=ally
-			MainParser.Allies.updateAllyList()
+			Main.Allies.allyList[ally.id]=ally
+			Main.Allies.updateAllyList()
 		},
 
 		setMeta:(raw)=>{
-			let meta = MainParser.Allies.meta = {} 
+			let meta = Main.Allies.meta = {} 
 			for (ally of raw) {
 				meta[ally.id]=ally
 			}
 		},
 
 		getProd:(CityMapId) => {
-			let M = MainParser.Allies
+			let M = Main.Allies
 			if (!M.buildingList?.[CityMapId]) return null
 			let prod={}
 			Object.values(M.buildingList[CityMapId]).forEach(id=> {
@@ -1535,53 +1454,53 @@ let MainParser = {
 		},
 
 		tooltip:(id)=>{
-			if (!MainParser.Allies.buildingList?.[id]) return ""
-			return `data-allies ="${JSON.stringify(Object.values(MainParser.Allies.buildingList[id]))}"`
+			if (!Main.Allies.buildingList?.[id]) return ""
+			return `data-allies ="${JSON.stringify(Object.values(Main.Allies.buildingList[id]))}"`
 		},
 
 		setRarities:(raw)=>{
-			MainParser.Allies.rarities=Object.assign({}, ...raw.map(r=>({[r.id.value]:r})))
+			Main.Allies.rarities=Object.assign({}, ...raw.map(r=>({[r.id.value]:r})))
 		},
 
 		setTypes:(raw)=>{
-			MainParser.Allies.types=Object.assign({}, ...raw.map(t=>({[t.id]:t})))
+			Main.Allies.types=Object.assign({}, ...raw.map(t=>({[t.id]:t})))
 		},
 
 		getAllieData:(id)=>{
-			let ally = structuredClone(MainParser.Allies.allyList[id])
+			let ally = structuredClone(Main.Allies.allyList[id])
 			ally.rarity=ally.rarity.value
-			ally.name=MainParser.Allies.meta[ally.allyId]?.name
-			ally.typeName=MainParser.Allies.types[ally.type]?.name
-			ally.type=MainParser.Allies.meta[ally.allyId]?.allyType
+			ally.name=Main.Allies.meta[ally.allyId]?.name
+			ally.typeName=Main.Allies.types[ally.type]?.name
+			ally.type=Main.Allies.meta[ally.allyId]?.allyType
 			return ally
 		},
 
 		showAllyList:(closeIfOpen = false)=>{
 
 			if ($('#AllyList').length === 0) {
-				HTML.Box({
+				FH.HTML.Box({
 					id: 'AllyList',
-					title: i18n('Boxes.AllyList.Title'),
+					title: FH.t('Boxes.AllyList.Title'),
 					auto_close: true,
 					dragdrop: true,
 					minimize: true,
 					resize: true,
-					settings: 'MainParser.Allies.ShowSettings()',
+					settings: Main.Allies.ShowSettings,
 					active_maps:"main",				
 				});
 			} else {
 				if (closeIfOpen) {
-					HTML.CloseOpenBox('AllyList');
+					FH.HTML.CloseOpenBox('AllyList');
 					return;
 				}
 			}
-			MainParser.Allies.updateAllyList()
+			Main.Allies.updateAllyList()
 		},
 
 		updateAllyList:()=>{
-			MainParser.Allies.buildingBoostSums=[]	
+			Main.Allies.buildingBoostSums=[]	
 			if ($('#AllyList').length === 0) return;
-			let buildings = Object.assign({},...Object.values(MainParser.CityMapData).map(x=>({id:x.id,metaID:x.cityentity_id,rooms:structuredClone(MainParser.CityEntities[x.cityentity_id]?.components?.AllAge?.ally?.rooms)})).filter(x=>x.rooms!==undefined).map(x=>({[x.id]:x})))
+			let buildings = Object.assign({},...Object.values(Main.CityMapData).map(x=>({id:x.id,metaID:x.cityentity_id,rooms:structuredClone(Main.CityEntities[x.cityentity_id]?.components?.AllAge?.ally?.rooms)})).filter(x=>x.rooms!==undefined).map(x=>({[x.id]:x})))
 			let rooms = {}
 			let unassigned = 0;
 			let boostList = [
@@ -1598,7 +1517,7 @@ let MainParser = {
 				{feature:"guild_expedition",type: "def_boost_attacker"},
 				{feature:"guild_expedition",type: "def_boost_defender"},
 			]
-			Object.values(MainParser.Allies.allyList).forEach(x=>{
+			Object.values(Main.Allies.allyList).forEach(x=>{
 				if (x.mapEntityId) {
 					let rs=buildings[x.mapEntityId].rooms
 					for (let r of rs) {
@@ -1617,7 +1536,7 @@ let MainParser = {
 						allyRarity: x.rarity?.value || "",
 						allyLevel: x.level || null,												
 						allyBoosts: x.currentLevel?.boosts || x.boosts || null,
-						allyName: MainParser.Allies.meta[x.allyId]?.name || "",
+						allyName: Main.Allies.meta[x.allyId]?.name || "",
 					}
 					unassigned++
 				}
@@ -1625,17 +1544,17 @@ let MainParser = {
 			Object.values(buildings).forEach(b=>{
 				for (let [i,r] of Object.entries(b.rooms)) {
 					rooms[b.id+"#" + i] = {
-						buildingName: MainParser.CityEntities[b.metaID].name,
+						buildingName: Main.CityEntities[b.metaID].name,
 						buildingMeta:b.metaID,
-						roomRarity: r.rarity?.value || Object.keys(MainParser.Allies.rarities).join("#"),
+						roomRarity: r.rarity?.value || Object.keys(Main.Allies.rarities).join("#"),
 						allyRarity: r.ally?.rarity?.value || "",
 						allyLevel: r.ally?.level || null,												
 						allyBoosts: r.ally?.currentLevel?.boosts || r.ally?.boosts || null,
-						allyName: MainParser.Allies.meta[r.ally?.allyId]?.name || "",
+						allyName: Main.Allies.meta[r.ally?.allyId]?.name || "",
 					}
 				}
 			})
-			Object.values(MainParser.Inventory).filter(x=>x?.item?.reward?.assembledReward?.type=="ally").forEach(x=>{
+			Object.values(Main.Inventory).filter(x=>x?.item?.reward?.assembledReward?.type=="ally").forEach(x=>{
 				if (!x.inStock) return;
 				rooms[0+"#" + unassigned] = {
 					fragmentsAmount: x.inStock,
@@ -1649,24 +1568,24 @@ let MainParser = {
 			})
 
 			html=`<div class="dark-bg">
-				<select id="AllyFilter"><option value="">${i18n('Boxes.AllyList.All')}</option>`
-				for (let r of Object.values(MainParser.Allies.rarities)) {
+				<select id="AllyFilter"><option value="">${FH.t('Boxes.AllyList.All')}</option>`
+				for (let r of Object.values(Main.Allies.rarities)) {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
 				}
 			html+=`</select></div>`
 			html+=`<table id="AllyListTable" class="foe-table">`
 			html+=`<thead class="sticky"><tr class="sorter-header sort2">
-							<th class="no-sort">${i18n('Boxes.AllyList.Ally')}</th>
-							<th class="is-number" data-type="ally-list">${i18n('Boxes.AllyList.Level')}</th>`;
+							<th class="no-sort">${FH.t('Boxes.AllyList.Ally')}</th>
+							<th class="is-number" data-type="ally-list">${FH.t('Boxes.AllyList.Level')}</th>`;
 							for (const b of boostList) {
 								html+= `<th class="is-number" data-type="ally-list"><span class="resicon ${b.type}-${b.feature}"></span></th>`
 							}
-					html+=`<th class="no-sort">${i18n('Boxes.AllyList.Building')}</th>
+					html+=`<th class="no-sort">${FH.t('Boxes.AllyList.Building')}</th>
 					</tr>
 				</thead>
 				<tbody class="ally-list">`;
 			sortedRooms = Object.entries(rooms).sort((a,b)=>{
-				f=(r)=>{return Object.keys(MainParser.Allies.rarities).indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0)}
+				f=(r)=>{return Object.keys(Main.Allies.rarities).indexOf(r.allyRarity) + (r.buildingName?10:0) + (r.fragmentsAmount?100:0)}
 				return f(a[1])-f(b[1])
 			})
 				
@@ -1678,50 +1597,50 @@ let MainParser = {
 
 				html+=`<tr class="allyRoomRow ${rarities.join(" ")}">
 						   	<td style="white-space:nowrap">
-								${MainParser.Allies.rarityStars(r.allyRarity)}
+								${Main.Allies.rarityStars(r.allyRarity)}
 								${r.allyName || ""}${r.fragmentsAmount?srcLinks.icons("icon_tooltip_fragment") + r.fragmentsAmount+"/"+r.fragmentsNeeded:""}
 							</td>
 						   	<td data-number="${(r.allyLevel || 0)}">${r.allyLevel || ""}</td>`;
 							for (let b of boostList) {
-								let allyB = MainParser.Allies.boostsArray(r.allyBoosts);
+								let allyB = Main.Allies.boostsArray(r.allyBoosts);
 								let boost = allyB.find(x => x.type == b.type && x.feature == b.feature);
 						   		html+=`<td data-number="${(boost ? boost.value : 0)}">${(boost ? boost.value : '-')}</td>`
 							}
 						html+=`
 					   	   	<td ${buildingId!=0?`class="helperTT" 
 								data-id="${buildingId}" 
-								data-era="${Technologies.InnoEraNames[MainParser.CityMapData[buildingId].level]}"
-								data-callback_tt="Tooltips.buildingTT" 
+								data-era="${Technologies.InnoEraNames[Main.CityMapData[buildingId].level]}"
+								data-callback_tt="building" 
 								`:``}
 							>
 								${r.buildingName || ""}
-								${buildingId!=0?`<img class="show-entity" data-id="${buildingId}" src="${ extUrl + 'images/hud/open-eye.png'}">`:""}
+								${buildingId!=0?`<img class="show-entity" data-id="${buildingId}" src="${ FH.extUrl + 'images/hud/open-eye.png'}">`:""}
 							</td>
 							</tr>`;
 				
 				// gather sums of all boosts
 				if (buildingId!=0 && r.allyBoosts !== null) {
 					for (let boost of r.allyBoosts) {
-						let bBoost = MainParser.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.targetedFeature);
+						let bBoost = Main.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.targetedFeature);
 						if (bBoost)
 							bBoost.value += boost.value;
 						else
-							MainParser.Allies.buildingBoostSums.push(structuredClone(boost));
+							Main.Allies.buildingBoostSums.push(structuredClone(boost));
 					}
 				}
 			}
-			MainParser.Allies.buildingBoostSums.sort((a, b) => {
+			Main.Allies.buildingBoostSums.sort((a, b) => {
 				if (a.type < b.type) return -1
 				if (a.type > b.type) return 1
 				return 0
 			});
-			MainParser.Allies.buildingBoostSums.sort((a, b) => {
+			Main.Allies.buildingBoostSums.sort((a, b) => {
 				if (a.targetedFeature < b.targetedFeature) return -1
 				if (a.targetedFeature > b.targetedFeature) return 1
 				return 0
 			});
 			html+=`</tbody><tr><td colspan="19" class="text-center dark-bg">
-				${MainParser.Allies.boosts(MainParser.Allies.buildingBoostSums)}
+				${Main.Allies.boosts(Main.Allies.buildingBoostSums)}
 				</td></tr></table>`
 			
 			$('#AllyListBody').html(html).promise().done(function () {
@@ -1743,7 +1662,7 @@ let MainParser = {
 
 		rarityStars: (r) => {
 			if (!r || r=="") return ""
-			let i = Object.keys(MainParser.Allies.rarities).indexOf(r)
+			let i = Object.keys(Main.Allies.rarities).indexOf(r)
 			if (i==-1) return `<img style="filter: drop-shadow(0px 2px 2px black)"  src="${srcLinks.get(`/shared/icons/when_motivated.png`, true)}">`
 			if (i==0) return `<span style="font-size: large; color: transparent; text-shadow: 0px 0px 4px black;" >☆</span>`
 			let ret=""					
@@ -1797,8 +1716,8 @@ let MainParser = {
 			let autoOpen = Settings.GetSetting('ShowAllyList');
 
 			let h = [];
-			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-			h.push(`<p><button onclick="MainParser.Allies.SaveSettings()" id="save-bghelper-settings" >${i18n('Boxes.Settings.Save')}</button></p>`);
+			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+			h.push(`<p><button onclick="Main.Allies.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 			$('#AllyListSettingsBox').html(h.join(''));
 		},
@@ -1807,7 +1726,7 @@ let MainParser = {
 			let value = false;
 			if ($("#allyListAutoOpen").is(':checked'))
 				value = true;
-			localStorage.setItem('ShowAllyList', value);
+			FH.Storage.setItem('ShowAllyList', value);
 			
 			$(`#AllyListSettingsBox`).remove();
 		},
@@ -1833,35 +1752,35 @@ let MainParser = {
 			}
 		}
 
-		MainParser.updateArkBonus(ArkBonus,"Limited Bonuses");
+		Main.updateArkBonus(ArkBonus,"Limited Bonuses");
 	},
 
 
 	SetArkBonus2: () => {
 		let ArkBonus = 0;
 
-		for (let i of Object.values(MainParser.CityMapData).filter(x => x?.bonus?.type === "contribution_boost")) {
+		for (let i of Object.values(Main.CityMapData).filter(x => x?.bonus?.type === "contribution_boost")) {
 			ArkBonus += i.bonus.value;
 		}
 
-		MainParser.updateArkBonus(ArkBonus,"City Map");
+		Main.updateArkBonus(ArkBonus,"City Map");
 	},
 
 
 	/**
 	 * Updates the ArkBonus value if the new value is greater than the current value stored
-	 * in MainParser.ArkBonus. If the ArkBonus is updated and the current value was greater than 0,
+	 * in Main.ArkBonus. If the ArkBonus is updated and the current value was greater than 0,
 	 * a developer log is optionally shown as a toast message in developer mode.
 	 *
 	 * @param {number} ArkBonus - The new ArkBonus value to set.
 	 * @param {string} Source - A string representing the source or origin of the update.
 	 */
 	updateArkBonus:(ArkBonus, Source)=>{
-		if (ArkBonus > MainParser.ArkBonus) {
-			if (MainParser.ArkBonus > 0) {
-				const s = `SetArkBonus: updated ArkBonus from ${MainParser.ArkBonus} to ${ArkBonus} by ${Source}`;
-				if (devMode === 'true') {
-					HTML.ShowToastMsg({
+		if (ArkBonus > Main.ArkBonus) {
+			if (Main.ArkBonus > 0) {
+				const s = `SetArkBonus: updated ArkBonus from ${Main.ArkBonus} to ${ArkBonus} by ${Source}`;
+				if (FH.BaseData.devMode === 'true') {
+					FH.HTML.ShowToastMsg({
 						show: true,
 						head: 'Developer log',
 						text: s,
@@ -1870,7 +1789,7 @@ let MainParser = {
 					});
 				}
 			}
-			MainParser.ArkBonus = ArkBonus;
+			Main.ArkBonus = ArkBonus;
 		}
 	},
 
@@ -1892,13 +1811,13 @@ let MainParser = {
 				let Message = d['messages'][i];
 
 				if (Message.sender !== undefined) {
-					MainParser.UpdatePlayerDictCore(Message.sender);
+					Main.UpdatePlayerDictCore(Message.sender);
 				}
 			}
 		}
 
 		else if (Source === 'LGOverview' && d[0]) {
-			MainParser.UpdatePlayerDictCore(d[0].player);
+			Main.UpdatePlayerDictCore(d[0].player);
 		}
 
 		else if (Source === 'LGContributions') {
@@ -1906,7 +1825,7 @@ let MainParser = {
 				if (!d.hasOwnProperty(i))
 					continue;
 
-				MainParser.UpdatePlayerDictCore(d[i].player);
+				Main.UpdatePlayerDictCore(d[i].player);
 			}
 		}
 
@@ -1915,17 +1834,17 @@ let MainParser = {
 				if (!d.hasOwnProperty(i))
 					continue;
 
-				MainParser.UpdatePlayerDictCore(d[i]);
+				Main.UpdatePlayerDictCore(d[i]);
 			}
 
 			if (ListType === 'getNeighborList') {
-				PlayerDictNeighborsUpdated = true;
+				FH.Players.NeighborsUpdated = true;
 			}
 			else if (ListType === 'getClanMemberList') {
-				PlayerDictGuildUpdated = true;
+				FH.Players.GuildUpdated = true;
 			}
 			else if (ListType === 'getFriendsList') {
-				PlayerDictFriendsUpdated = true;
+				FH.Players.FriendsUpdated = true;
 			}
 
 			if ($('#moppelhelper').length > 0) {
@@ -1944,43 +1863,28 @@ let MainParser = {
 	UpdatePlayerDictCore: (Player) => {
 
 		let PlayerID = Player['player_id'];
-		let HasGuildPermission = ((ExtGuildPermission & GuildMemberStat.GuildPermission_Leader) > 0 || (ExtGuildPermission & GuildMemberStat.GuildPermission_Founder) > 0);
+		let HasGuildPermission = ((FH.Guild.Permission & GuildMemberStat.GuildPermission_Leader) > 0 || (FH.Guild.Permission & GuildMemberStat.GuildPermission_Founder) > 0);
 
 		if (PlayerID !== undefined) {
-			if (PlayerDict[PlayerID] === undefined) PlayerDict[PlayerID] = {
+			if (FH.Players.Dict[PlayerID] === undefined) FH.Players.Dict[PlayerID] = {
 										Activity: (Player['is_friend'] || (Player['is_guild_member'] && HasGuildPermission)) ? 0 : undefined
 									};
 
-			PlayerDict[PlayerID]['PlayerID'] = PlayerID;
-			if (Player['name'] !== undefined) PlayerDict[PlayerID]['PlayerName'] = Player['name'];
-			if (Player['clan'] !== undefined) PlayerDict[PlayerID]['ClanName'] = Player['clan']['name'];
-			if (Player['clan_id'] !== undefined) PlayerDict[PlayerID]['ClanId'] = Player['clan_id'];
-			if (Player['avatar'] !== undefined) PlayerDict[PlayerID]['Avatar'] = Player['avatar'];
-			if (Player['is_neighbor'] !== undefined) PlayerDict[PlayerID]['IsNeighbor'] = Player['is_neighbor'];
-			if (Player['is_guild_member'] !== undefined) PlayerDict[PlayerID]['IsGuildMember'] = Player['is_guild_member'];
-			if (Player['is_friend'] !== undefined) PlayerDict[PlayerID]['IsFriend'] = Player['is_friend'];
-			if (Player['is_self'] !== undefined) PlayerDict[PlayerID]['IsSelf'] = Player['is_self'];
-			if (Player['score'] !== undefined) PlayerDict[PlayerID]['Score'] = Player['score'];
-			if (Player['won_battles'] !== undefined) PlayerDict[PlayerID]['WonBattles'] = Player['won_battles'];
-			if (Player['activity'] !== undefined) PlayerDict[PlayerID]['Activity'] = Player['activity'];
-			if (Player['era'] !== undefined) PlayerDict[PlayerID]['Era'] = Player['era'];
+			FH.Players.Dict[PlayerID]['PlayerID'] = PlayerID;
+			if (Player['name'] !== undefined) FH.Players.Dict[PlayerID]['PlayerName'] = Player['name'];
+			if (Player['clan'] !== undefined) FH.Players.Dict[PlayerID]['ClanName'] = Player['clan']['name'];
+			if (Player['clan_id'] !== undefined) FH.Players.Dict[PlayerID]['ClanId'] = Player['clan_id'];
+			if (Player['avatar'] !== undefined) FH.Players.Dict[PlayerID]['Avatar'] = Player['avatar'];
+			if (Player['is_neighbor'] !== undefined) FH.Players.Dict[PlayerID]['IsNeighbor'] = Player['is_neighbor'];
+			if (Player['is_guild_member'] !== undefined) FH.Players.Dict[PlayerID]['IsGuildMember'] = Player['is_guild_member'];
+			if (Player['is_friend'] !== undefined) FH.Players.Dict[PlayerID]['IsFriend'] = Player['is_friend'];
+			if (Player['is_self'] !== undefined) FH.Players.Dict[PlayerID]['IsSelf'] = Player['is_self'];
+			if (Player['score'] !== undefined) FH.Players.Dict[PlayerID]['Score'] = Player['score'];
+			if (Player['won_battles'] !== undefined) FH.Players.Dict[PlayerID]['WonBattles'] = Player['won_battles'];
+			if (Player['activity'] !== undefined) FH.Players.Dict[PlayerID]['Activity'] = Player['activity'];
+			if (Player['era'] !== undefined) FH.Players.Dict[PlayerID]['Era'] = Player['era'];
 		}
 	},
-
-
-	/**
-	 * Compose translations for the goods
-	 *
-	 * @param d
-	 */
-	setGoodsData: (d) => {
-		for (let i in d) {
-			if (d.hasOwnProperty(i)) {
-				GoodsData[d[i]['id']] = d[i];
-			}
-		}
-	},
-
 
 	/**
 	 * Updates the inventory
@@ -1988,12 +1892,12 @@ let MainParser = {
 	 * @param Items
 	 */
 	UpdateInventory: (Items) => {
-		//MainParser.Inventory = {};
+		//Main.Inventory = {};
 		for (let i = 0; i < Items.length; i++) {
 			let ID = Items[i]['id'];
-			MainParser.Inventory[ID] = Items[i];
+			Main.Inventory[ID] = Items[i];
 		}
-		FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -2004,8 +1908,8 @@ let MainParser = {
 	 */
 	UpdateInventoryItem: (Item) => {
 		let ID = Item['id'];
-		MainParser.Inventory[ID] = Item;
-		FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+		Main.Inventory[ID] = Item;
+		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -2018,10 +1922,10 @@ let MainParser = {
 			let ID = Item[0],
 			Amount = Item[1];
 			try {
-				MainParser.Inventory[ID].inStock = Amount;
+				Main.Inventory[ID].inStock = Amount;
 			} catch (e) {
 			}
-			FoEproxy.triggerFoeHelperHandler('InventoryUpdated');
+			FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
 	},
 
 
@@ -2033,30 +1937,30 @@ let MainParser = {
 	UpdateCityMap: (Buildings) => {
 		for (let i in Buildings) {
 			if (!Buildings.hasOwnProperty(i)) continue;
-			if (Buildings[i]['player_id'] !== ExtPlayerID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
+			if (Buildings[i]['player_id'] !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
 			let ID = Buildings[i]['id'];
-			if (MainParser.CityMapData[ID]) {
-				MainParser.CityMapData[ID] = Buildings[i];
+			if (Main.CityMapData[ID]) {
+				Main.CityMapData[ID] = Buildings[i];
 			} 
-			if (ActiveMap === "era_outpost") {
+			if (FH.ActiveMap === "era_outpost") {
 				CityMap.EraOutpost.data[ID] = Buildings[i];
 			}
-			else if (ActiveMap === "cultural_outpost") {
+			else if (FH.ActiveMap === "cultural_outpost") {
 				CityMap.CulturalOutpost.data[ID] = Buildings[i];
 			}
-			else if (ActiveMap === "guild_raids") {
+			else if (FH.ActiveMap === "guild_raids") {
 				CityMap.QI.data[ID] = Buildings[i];
 			}
 		}
-		MainParser.SetArkBonus2();
+		Main.SetArkBonus2();
 
 		if ($('#bluegalaxy').length > 0) {
-			BlueGalaxy.CalcBody(Buildings);
+			FH.BlueGalaxy.CalcBody(Buildings);
 		}
 
 		FPCollector.CityMapDataNew = Buildings;
-		FoEproxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
 	},
 
 
@@ -2069,26 +1973,26 @@ let MainParser = {
 	setConversations: (d, refresh = false) => {
 
 		// If the cache is empty, read out the memory.
-		if (MainParser.Conversations.length === 0 && refresh)
+		if (Main.Conversations.length === 0 && refresh)
 		{
-			let StorageHeader = localStorage.getItem('ConversationsHeaders');
+			let StorageHeader = FH.Storage.getItem('ConversationsHeaders');
 			if (StorageHeader !== null) {
-				MainParser.Conversations = JSON.parse(StorageHeader);
+				Main.Conversations = JSON.parse(StorageHeader);
 			}
 		}
 		let day = Math.floor(Date.now()/86400000);
-		let LCUindex = MainParser.Conversations.findIndex((obj) => (obj.id === "__lastCleanup"));
+		let LCUindex = Main.Conversations.findIndex((obj) => (obj.id === "__lastCleanup"));
 		let LCU = day;
 		if (LCUindex === -1) {
-			MainParser.Conversations.forEach( (obj) => obj.lastSeen = day);
-			MainParser.Conversations.push({
+			Main.Conversations.forEach( (obj) => obj.lastSeen = day);
+			Main.Conversations.push({
 				id: "__lastCleanup",
 				LCU: day,
 				lastSeen: day
 			})
 		} else {
-			LCU = MainParser.Conversations[LCUindex]["LCU"];
-			MainParser.Conversations[LCUindex]["lastSeen"] = day;
+			LCU = Main.Conversations[LCUindex]["LCU"];
+			Main.Conversations[LCUindex]["lastSeen"] = day;
 		}
 
 		if (d['teasers'])
@@ -2099,20 +2003,20 @@ let MainParser = {
 					continue;
 				}
 
-				let key = MainParser.Conversations.findIndex((obj) => (obj.id === d['teasers'][k]['id']));
+				let key = Main.Conversations.findIndex((obj) => (obj.id === d['teasers'][k]['id']));
 
 				// Is a key already available?
 				if (key !== -1) {
-					MainParser.Conversations[key]['type'] = d['type'];
-					MainParser.Conversations[key]['title'] = d['teasers'][k]['title'];
-					MainParser.Conversations[key]['hidden'] = d['teasers'][k]['isHidden'];
-					MainParser.Conversations[key]['favorite'] = d['teasers'][k]['isFavorite'];
-					MainParser.Conversations[key]['important'] = d['teasers'][k]['isImportant'];
-					MainParser.Conversations[key]['lastSeen'] = day;
+					Main.Conversations[key]['type'] = d['type'];
+					Main.Conversations[key]['title'] = d['teasers'][k]['title'];
+					Main.Conversations[key]['hidden'] = d['teasers'][k]['isHidden'];
+					Main.Conversations[key]['favorite'] = d['teasers'][k]['isFavorite'];
+					Main.Conversations[key]['important'] = d['teasers'][k]['isImportant'];
+					Main.Conversations[key]['lastSeen'] = day;
 				}
 				// → Create key
 				else {
-					MainParser.Conversations.push({
+					Main.Conversations.push({
 						type: d['type'],
 						id: d['teasers'][k]['id'],
 						title: d['teasers'][k]['title'],
@@ -2127,16 +2031,16 @@ let MainParser = {
 
 		}
 
-		if (MainParser.Conversations.length > 0)
+		if (Main.Conversations.length > 0)
 		{
 			//cleanup of entries that have not been seen for more than a month - executes once per day
 			if (LCU != day) {
-				MainParser.Conversations[LCUindex]["LCU"] = day;
-				MainParser.Conversations = MainParser.Conversations.filter(obj => obj.lastSeen +30 > day);
+				Main.Conversations[LCUindex]["LCU"] = day;
+				Main.Conversations = Main.Conversations.filter(obj => obj.lastSeen +30 > day);
 			}
 			// Dopplungen entfernen und Daten lokal abspeichern
-			MainParser.Conversations = [...new Set(MainParser.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
-			localStorage.setItem('ConversationsHeaders', JSON.stringify(MainParser.Conversations));
+			Main.Conversations = [...new Set(Main.Conversations.map(s => JSON.stringify(s)))].map(s => JSON.parse(s));
+			FH.Storage.setItem('ConversationsHeaders', JSON.stringify(Main.Conversations));
 		}
 	},
 
@@ -2232,26 +2136,26 @@ let MainParser = {
 
 	Inactives: {
 		list:[],
-		ignore: JSON.parse(localStorage.getItem("LimitedBuildingsIgnoreList")||'[]'),
+		ignore: JSON.parse(FH.Storage.getItem("LimitedBuildingsIgnoreList")||'[]'),
 
 		check: () => {
 			//get list of buildings for which an alert is already set
-			let LB = JSON.parse(localStorage.getItem("LimitedBuildingsAlertSet")||'{}')
+			let LB = JSON.parse(FH.Storage.getItem("LimitedBuildingsAlertSet")||'{}')
 			//get list of expired limited buildings in city
-			let list = Object.values(MainParser.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
+			let list = Object.values(Main.CityMapData).filter(value => !!value.decayedFromCityEntityId).map(value => value.id);
 			//remove buildings that were already tracked and that should have just triggered an alert
 			for (let i = list.length-1;i>=0;i--) {
-				if (LB[list[i]] || MainParser.Inactives.ignore.includes(MainParser.CityMapData[list[i]].cityentity_id)) {
+				if (LB[list[i]] || Main.Inactives.ignore.includes(Main.CityMapData[list[i]].cityentity_id)) {
 					list.splice(i,1)
 				}
 			}
-			MainParser.Inactives.list = [...new Set(list.map(x=>MainParser.CityMapData[x].cityentity_id))];
+			Main.Inactives.list = [...new Set(list.map(x=>Main.CityMapData[x].cityentity_id))];
 			
 			//remove tracked buildings if time ran out
 			for (let x in LB) {
 				if (!LB[x]) continue;
 				if (LB[x]<(GameTime-GameTime.Offset)*1000) delete LB[x];
-				localStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+				FH.Storage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 			}
 			if(!Settings.GetSetting('ShowBuildingsExpired')){
 				return;
@@ -2259,8 +2163,8 @@ let MainParser = {
 			//create instant alert for currently expired buildings		
 			if (list.length > 0) {
 					const data = {
-					title: i18n("InactiveBuildingsAlert.title"),
-					body: list.map(x=>MainParser.CityEntities[MainParser.CityMapData[x].cityentity_id].name).join("\n"),
+					title: FH.t("InactiveBuildingsAlert.title"),
+					body: list.map(x=>Main.CityEntities[Main.CityMapData[x].cityentity_id].name).join("\n"),
 					expires: moment().add(1,"seconds").valueOf(),
 					repeat: -1,
 					persistent: true,
@@ -2270,21 +2174,21 @@ let MainParser = {
 					actions: [{title:"OK"}]
 				};
 		
-				MainParser.sendExtMessage({
+				Main.sendExtMessage({
 					type: 'alerts',
-					playerId: ExtPlayerID,
+					playerId: FH.Player.ID,
 					action: 'create',
 					data: data,
 				})
 			}
-			let buildings = Object.values(MainParser.CityMapData)
+			let buildings = Object.values(Main.CityMapData)
 			for (let building of buildings) {
 				// set alerts for limited buildings that will run out in the future and that have no alert yet
-				if (!LB[building.id] && MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime) {
+				if (!LB[building.id] && Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime) {
 					const data = {
-						title: i18n("InactiveBuildingsAlert.title"),
-						body: MainParser.CityEntities[MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.targetCityEntityId].name,
-						expires: (MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000,
+						title: FH.t("InactiveBuildingsAlert.title"),
+						body: Main.CityEntities[Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.targetCityEntityId].name,
+						expires: (Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000,
 						repeat: -1,
 						persistent: true,
 						tag: '',
@@ -2293,14 +2197,14 @@ let MainParser = {
 						actions: [{title:"OK"}]
 					};
 			
-					MainParser.sendExtMessage({
+					Main.sendExtMessage({
 						type: 'alerts',
-						playerId: ExtPlayerID,
+						playerId: FH.Player.ID,
 						action: 'create',
 						data: data,
 					}).then((aId) => {
-						LB[building.id]=(MainParser.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
-						localStorage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
+						LB[building.id]=(Main.CityEntities[building.cityentity_id]?.components?.AllAge?.limited?.config?.expireTime + building.state.constructionFinishedAt - GameTime.Offset)*1000;
+						FH.Storage.setItem("LimitedBuildingsAlertSet",JSON.stringify(LB));
 					})
 				}
 			}
@@ -2309,31 +2213,31 @@ let MainParser = {
 		showSettings: ()=> {
 
 			if ($('#inactivesSettingsBox').length === 0) {
-				HTML.Box({
+				FH.HTML.Box({
 					id: 'inactivesSettingsBox',
-					title: i18n('Boxes.InactivesSettings.Title'),
+					title: FH.t('Boxes.InactivesSettings.Title'),
 					auto_close: true,
 					dragdrop: true,
 					minimize: true,
 					resize: true,
 				});
 	
-				//HTML.AddCssFile('auctions');
+				//FH.HTML.AddCssFile('auctions');
 			}
-			MainParser.Inactives.updateSettings();
+			Main.Inactives.updateSettings();
 		},
 
 		updateSettings:()=>{ 
 			let t=[];
-			//t.push(`<h2>${i18n('Boxes.InactivesSettings.Ignored')}</h2>`);
-			t.push(`<h2>${i18n('Boxes.InactivesSettings.Toggle')}</h2>`);
-			for (let id of MainParser.Inactives.ignore) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.NoAlert')}">🤐${MainParser.CityEntities[id].name}</span></br>`);
+			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.Ignored')}</h2>`);
+			t.push(`<h2>${FH.t('Boxes.InactivesSettings.Toggle')}</h2>`);
+			for (let id of Main.Inactives.ignore) {
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.NoAlert')}">🤐${Main.CityEntities[id].name}</span></br>`);
 			}
-			//t.push(`<h2>${i18n('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
+			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
 			
-			for (let id of MainParser.Inactives.list) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${i18n('Boxes.InactivesSettings.AlertActive')}">⚠️${MainParser.CityEntities[id].name}</span></br>`);
+			for (let id of Main.Inactives.list) {
+				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.AlertActive')}">⚠️${Main.CityEntities[id].name}</span></br>`);
 			}
 			
 			
@@ -2341,43 +2245,40 @@ let MainParser = {
 			
 			$('.inactivesIgnoreToggle').on("click", (e) => {
 				let id = e.target.dataset.id;
-				let i = MainParser.Inactives.ignore.findIndex(x => x==id);
+				let i = Main.Inactives.ignore.findIndex(x => x==id);
 				if (i>=0) {
-					MainParser.Inactives.ignore.splice(i,1);
-					MainParser.Inactives.list.push(id);
+					Main.Inactives.ignore.splice(i,1);
+					Main.Inactives.list.push(id);
 
 				} else {
-					i = MainParser.Inactives.list.findIndex(x => x==id);
-					MainParser.Inactives.list.splice(i,1);
-					MainParser.Inactives.ignore.push(id);
+					i = Main.Inactives.list.findIndex(x => x==id);
+					Main.Inactives.list.splice(i,1);
+					Main.Inactives.ignore.push(id);
 
 				};
-				localStorage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(MainParser.Inactives.ignore));
-				MainParser.Inactives.updateSettings();
+				FH.Storage.setItem("LimitedBuildingsIgnoreList",JSON.stringify(Main.Inactives.ignore));
+				Main.Inactives.updateSettings();
 			});
 		},
 	},
 
 
 	UpdateActiveMap: (map)=>{
-		ActiveMap = map
-		FoEproxy.triggerFoeHelperHandler("ActiveMapUpdated");
+		FH.ActiveMap = map
+		FH.proxy.triggerFoeHelperHandler("ActiveMapUpdated");
 	}
 };
 
-if (window.foeHelperBgApiHandler !== undefined && window.foeHelperBgApiHandler instanceof Function) {
-	MainParser.foeHelperBgApiHandler = window.foeHelperBgApiHandler;
-	delete window.foeHelperBgApiHandler;
+if (window.FHBgApiHandler !== undefined && window.FHBgApiHandler instanceof Function) {
+	FH.BgApiHandler = window.FHBgApiHandler;
+	delete window.FHBgApiHandler;
 }
 
-window.MainParser = MainParser;
-window.HelperBeta = HelperBeta;
-window.ExistenceConfirmed = ExistenceConfirmed;
-window.i18n = i18n;
-window.HelperWarning = HelperWarning;
-window.GameTime = GameTime;
+FH.Main = Main;
+FH.ExistenceConfirmed = ExistenceConfirmed;
+FH.GameTime = GameTime;
 
-console.log('Forge Hammer version ' + extVersion + ' started' + (extVersion.indexOf("beta") > -1 ? ' in Beta Mode': '') + '. ID: ' + extID);
+console.log('Forge Hammer version ' + FH.BaseData.extVersion + ' started' + '. ID: ' + FH.BaseData.extID);
 console.log(navigator.userAgent);
 
 })();

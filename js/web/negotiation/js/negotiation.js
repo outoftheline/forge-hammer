@@ -66,24 +66,24 @@ let Negotiation = {
 		if ($('#negotiationBox').length === 0) {
 
 			// Box in den DOM
-			HTML.Box({
+			FH.HTML.Box({
 				'id': 'negotiationBox',
-				'title': i18n('Boxes.Negotiation.Title'),
+				'title': FH.t('Boxes.Negotiation.Title'),
 				'auto_close': true,
 				'minimize': true,
 				'dragdrop': true,
-				settings: 'Negotiation.ShowSettings()',
+				settings: Negotiation.ShowSettings,
 			});
 
 			// CSS in den DOM prügeln
-			HTML.AddCssFile('negotiation');
+			FH.HTML.AddCssFile('negotiation');
 
 			$('#negotiationBox').on('click', '.negotation-setting', function(){
 				let $this = $(this),
 					id = $this.data('id'),
 					v = $this.prop('checked');
 
-				localStorage.setItem(id, v);
+				FH.Storage.setItem(id, v);
 
 				setTimeout(()=>{
 					Negotiation.StartNegotiation(Negotiation.StartNegotiationBackupData);
@@ -92,7 +92,7 @@ let Negotiation = {
 			});
 
 		} else {
-			HTML.CloseOpenBox('negotiationBox');
+			FH.HTML.CloseOpenBox('negotiationBox');
 		}
 
 		Negotiation.BuildBox();
@@ -130,21 +130,21 @@ let Negotiation = {
 
 		if (Negotiation.CurrentTable !== null) {
 
-			let sceg = localStorage.getItem('NegotiationSaveCurrentEraGoods'),
-				sm = localStorage.getItem('NegotiationSaveMedals');
+			let sceg = FH.Storage.getItem('NegotiationSaveCurrentEraGoods'),
+				sm = FH.Storage.getItem('NegotiationSaveMedals');
 
 			h.push('<thead class="dark-bg">');
 
 			h.push('<tr>');
 			if (CurrentTry === 1) {
-				h.push('<th colspan="2"><label class="game-cursor" for="NegotiationSaveCurrentEraGoods">' + i18n('Boxes.Negotiation.SaveCurrentEraGoods') + '<input id="NegotiationSaveCurrentEraGoods" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveCurrentEraGoods"' + ((sceg === null || sceg === 'true') ? ' checked' : '') + '></label></th>');
-				h.push('<th><label class="game-cursor" for="NegotiationSaveMedals">' + i18n('Boxes.Negotiation.SaveMedals') + '<input id="NegotiationSaveMedals" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveMedals"' + ((sm === null || sm === 'true') ? ' checked' : '') + '></label></th>');
+				h.push('<th colspan="2"><label class="game-cursor" for="NegotiationSaveCurrentEraGoods">' + FH.t('Boxes.Negotiation.SaveCurrentEraGoods') + '<input id="NegotiationSaveCurrentEraGoods" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveCurrentEraGoods"' + ((sceg === null || sceg === 'true') ? ' checked' : '') + '></label></th>');
+				h.push('<th><label class="game-cursor" for="NegotiationSaveMedals">' + FH.t('Boxes.Negotiation.SaveMedals') + '<input id="NegotiationSaveMedals" class="negotation-setting game-cursor" type="checkbox" data-id="NegotiationSaveMedals"' + ((sm === null || sm === 'true') ? ' checked' : '') + '></label></th>');
 			}
 			h.push('<th class="text-right" colspan="' + (CurrentTry === 1 ? '2' : '5') + '"' + '>' + 
-			'<strong class="text-warning"' + (Negotiation.TryCountIsGreaterThan5 ? 'data-title="'+i18n('Boxes.Negotiation.ChanceGreaterThan5') : '')+'">' + 
-				i18n('Boxes.Negotiation.Chance') + ': ' + HTML.Format(MainParser.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
+			'<strong class="text-warning"' + (Negotiation.TryCountIsGreaterThan5 ? 'data-title="'+FH.t('Boxes.Negotiation.ChanceGreaterThan5') : '')+'">' + 
+				FH.t('Boxes.Negotiation.Chance') + ': ' + FH.HTML.Format(FH.Main.round(Negotiation.CurrentTable['c'])) + (Negotiation.TryCountIsGreaterThan5 ? '% ⚠️ - ' : '% - '));
 			h.push('<b style="padding-right: 15px"> ');
-			h.push(i18n('Boxes.Negotiation.Round') + ' ' + (Guesses.length + 1) + '/' + (Negotiation.TryCount));
+			h.push(FH.t('Boxes.Negotiation.Round') + ' ' + (Guesses.length + 1) + '/' + (Negotiation.TryCount));
 			h.push('</b></strong></th>');
 			h.push('</tr>');
 			h.push('</thead>');
@@ -152,7 +152,7 @@ let Negotiation = {
 			h.push('<tbody>');
 			h.push('<tr>');
 
-			h.push('<td class="text-warning">' + i18n('Boxes.Negotiation.Average') + '</td>');
+			h.push('<td class="text-warning">' + FH.t('Boxes.Negotiation.Average') + '</td>');
 
 			h.push('<td colspan="4"><div id="good-sort" ' + (CurrentTry === 1 ? '  class="goods-dragable"' : '') + '>');
 
@@ -162,7 +162,7 @@ let Negotiation = {
 				let GoodInfo = GoodsOrdered[i],
 					GoodName = GoodInfo.resourceId,
 					GoodAmount = GoodInfo.amount,
-					Stock = ResourceStock[GoodName],
+					Stock = FH.RessourceStock[GoodName],
 					TextClass;
 
 				let maxRequired = GoodInfo.canOccur.length * GoodAmount;
@@ -185,15 +185,15 @@ let Negotiation = {
 				}
 
 				if (GoodName === 'money' || GoodName === 'supplies' || GoodName === 'medals') {
-					GoodAmount = MainParser.round(GoodAmount);
+					GoodAmount = FH.Main.round(GoodAmount);
 				}
 				else {
-					GoodAmount = MainParser.round(GoodAmount * 10) / 10;
+					GoodAmount = FH.Main.round(GoodAmount * 10) / 10;
 				}
 
-				h.push('<div class="good" data-slug="' + GoodName + '" title="' + HTML.i18nTooltip(i18n('Boxes.Negotiation.Stock')) + ' ' + HTML.Format(Stock) + '">' +
+				h.push('<div class="good" data-slug="' + GoodName + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.Negotiation.Stock')) + ' ' + FH.HTML.Format(Stock) + '">' +
 					'<span class="goods-sprite ' + GoodName + '"></span><br>' +
-					'<span class="text-' + TextClass + '">' + HTML.Format(GoodAmount) + '</span>' +
+					'<span class="text-' + TextClass + '">' + FH.HTML.Format(GoodAmount) + '</span>' +
 					'</div>');
 			}
 
@@ -203,20 +203,20 @@ let Negotiation = {
 
 			if (Negotiation.CurrentTry === 1) {
 				h.push('<tr>');
-				h.push('<td colspan="5" class="text-center"><small>' + i18n('Boxes.Negotiation.DragDrop') + '</small></td>');
+				h.push('<td colspan="5" class="text-center"><small>' + FH.t('Boxes.Negotiation.DragDrop') + '</small></td>');
 				h.push('</tr>');
 			}
 		}
 		else if (Negotiation.CurrentTable == null && Negotiation.CurrentTry === 1){
 			Negotiation.MessageClass = 'danger';
-			Negotiation.Message = i18n('Boxes.Negotiation.TableLoadError');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TableLoadError');
 		}
 
 		// Verhandlungspartner überschrifteh
 		h.push('<tr class="thead">');
 
 		for (let i = 0; i < Negotiation.PlaceCount; i++) {
-			h.push('<th class="text-center">' + i18n('Boxes.Negotiation.Person') + ' ' + (i + 1) + '</th>');
+			h.push('<th class="text-center">' + FH.t('Boxes.Negotiation.Person') + ' ' + (i + 1) + '</th>');
 		}
 
 		h.push('</tr></tbody>');
@@ -248,10 +248,10 @@ let Negotiation = {
 		}
 
 		if (StockState === 1) {
-			h.push('<p class="text-center text-warning"><strong>' + i18n('Boxes.Negotiation.GoodsLow') + '</strong></p>')
+			h.push('<p class="text-center text-warning"><strong>' + FH.t('Boxes.Negotiation.GoodsLow') + '</strong></p>')
 		}
 		else if (StockState === 2) {
-			h.push('<p class="text-center text-danger"><strong>' + i18n('Boxes.Negotiation.GoodsCritical') + '</strong></p>')
+			h.push('<p class="text-center text-danger"><strong>' + FH.t('Boxes.Negotiation.GoodsCritical') + '</strong></p>')
 		}
 
 		$('#negotiationBoxBody').html(h.join('')).promise().done(function(){
@@ -300,8 +300,8 @@ let Negotiation = {
 		let autoOpen = Settings.GetSetting('AutomaticNegotiation');
 
 		let h = [];
-		h.push(`<p><label><input id="negotiationAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-		h.push(`<p><button onclick="Negotiation.SaveSettings()" id="save-negotiationAutoOpen-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><label><input id="negotiationAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+		h.push(`<p><button onclick="Negotiation.SaveSettings()" id="save-negotiationAutoOpen-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#negotiationBoxSettingsBox').html(h.join(''));
 	},
@@ -310,7 +310,7 @@ let Negotiation = {
 		let value = false;
 		if ($("#negotiationAutoOpen").is(':checked'))
 			value = true;
-		localStorage.setItem('AutomaticNegotiation', value);
+		FH.Storage.setItem('AutomaticNegotiation', value);
 		
 		$(`#negotiationBoxSettingsBox`).remove();
 	},
@@ -378,9 +378,9 @@ let Negotiation = {
 					const color2 = colors[colorIdx+1];
 					const invMix = 1-mix;
 					// Lineare mischung und auf 0-255 beschrenken
-					const colorR = Math.min(255, Math.max(0, MainParser.round(color1[0]*invMix + color2[0]*mix)));
-					const colorG = Math.min(255, Math.max(0, MainParser.round(color1[1]*invMix + color2[1]*mix)));
-					const colorB = Math.min(255, Math.max(0, MainParser.round(color1[2]*invMix + color2[2]*mix)));
+					const colorR = Math.min(255, Math.max(0, FH.Main.round(color1[0]*invMix + color2[0]*mix)));
+					const colorG = Math.min(255, Math.max(0, FH.Main.round(color1[1]*invMix + color2[1]*mix)));
+					const colorB = Math.min(255, Math.max(0, FH.Main.round(color1[2]*invMix + color2[2]*mix)));
 
 					colorVal = `rgba(${colorR}, ${colorG}, ${colorB}, 0.3)`;
 				} else {
@@ -400,7 +400,7 @@ let Negotiation = {
 				if (slotSugestion) {
 					h.push('<td class="text-center">');
 					h.push(`<span class="goods-sprite ${good_id}"></span>`);
-					h.push(`<span class="numberIcon" title="${HTML.i18nReplacer(i18n("Boxes.Negotiation.KeyboardTooltip"), {place: place + 1, slot: (slotSugestion.id+1) % 10})}">${place+1} ${(slotSugestion.id+1) % 10}</span>`);
+					h.push(`<span class="numberIcon" title="${FH.helper.str.Replacer(FH.t("Boxes.Negotiation.KeyboardTooltip"), {place: place + 1, slot: (slotSugestion.id+1) % 10})}">${place+1} ${(slotSugestion.id+1) % 10}</span>`);
 					h.push('</td>');
 				} else {
 					h.push('<td>&nbsp;</td>');
@@ -477,7 +477,7 @@ let Negotiation = {
 		if (responseData.context === Negotiation.CONST_Context_GBG) {
 			if (! $('#negotiation-Btn').hasClass('hud-btn-red')) {
 				$('#negotiation-Btn').addClass('hud-btn-red');
-				_menu.toolTipp('#negotiation-Btn', i18n('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + i18n('Menu.Negotiation.Warning') + '<br></em>' + i18n('Menu.Negotiation.Desc'));
+				FH.menu.toolTipp('#negotiation-Btn', FH.t('Menu.Negotiation.Title'), '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' + FH.t('Menu.Negotiation.Desc'));
 			}
 			return; //No Negotiation helper for GBG
 		}
@@ -534,7 +534,7 @@ let Negotiation = {
 			Negotiation.TryCount = forcedTryCount;
 		}
 		else {
-			Negotiation.TryCount = ResourceStock['negotiation_game_turn'];
+			Negotiation.TryCount = FH.RessourceStock['negotiation_game_turn'];
 		}
 		if (Negotiation.TryCount > 5) {
 			Negotiation.TryCountIsGreaterThan5 = true;
@@ -655,7 +655,7 @@ let Negotiation = {
 			// Verhandlung erfolgreich abgeschlossen
 			Negotiation.CurrentTry = 0;
 			Negotiation.CurrentTable = null;
-			Negotiation.Message = i18n('Boxes.Negotiation.Success');
+			Negotiation.Message = FH.t('Boxes.Negotiation.Success');
 			Negotiation.MessageClass = 'success';
 
 			if (Settings.GetSetting('AutomaticNegotiation') && $('#negotiationBox').length > 0) {
@@ -667,7 +667,7 @@ let Negotiation = {
 			if (Negotiation.CurrentTable) {
 				// keine Tabelle mehr zum abarbeiten da
 				Negotiation.CurrentTable = null;
-				Negotiation.Message = `${i18n('Boxes.Negotiation.WrongGoods')} <button class="btn" onclick="Negotiation.confirmGoodsMissmatch()">${i18n('Boxes.Negotiation.confirmGoodsMissmatch')}</button>`;
+				Negotiation.Message = `${FH.t('Boxes.Negotiation.WrongGoods')} <button class="btn" onclick="Negotiation.confirmGoodsMissmatch()">${FH.t('Boxes.Negotiation.confirmGoodsMissmatch')}</button>`;
 				Negotiation.MessageClass = 'danger';
 				Negotiation.WrongGoodsSelected = true;
 				Negotiation.NeedGoodMissmatchConfirm = true;
@@ -675,9 +675,9 @@ let Negotiation = {
 		} else if (currentTry >= Negotiation.TryCount) {
 			// Versuche aufgebraucht
 			Negotiation.CurrentTable = null;
-			Negotiation.Message = i18n('Boxes.Negotiation.TryEnd');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TryEnd');
 			if (Negotiation.TryCountIsGreaterThan5)
-			Negotiation.Message = i18n('Boxes.Negotiation.TryContinue');
+			Negotiation.Message = FH.t('Boxes.Negotiation.TryContinue');
 			Negotiation.MessageClass = 'warning';
 
 		} else if (Negotiation.CurrentTable) {
@@ -704,7 +704,7 @@ let Negotiation = {
 	ExitNegotiation: () => {
 		Negotiation.CurrentTry = 0;
 		Negotiation.CurrentTable = null;
-		Negotiation.Message = i18n('Boxes.Negotiation.Canceled');
+		Negotiation.Message = FH.t('Boxes.Negotiation.Canceled');
 		Negotiation.MessageClass = 'danger';
 
 		Negotiation.RefreshBox();
@@ -719,7 +719,7 @@ let Negotiation = {
 
 	goodButtonCompare: (goodA, goodB) => {
 		function goodValue(good) {
-			const data = GoodsData[good];
+			const data = FH.Goods.Data[good];
 			if (data.era === 'AllAge') return 100;
 			const special = !!data.abilities.specialResource;
 			const era = Technologies.Eras[data.era];
@@ -806,7 +806,7 @@ let Negotiation = {
 		let found = false;
 
 		// Gehe alle Permutationen der Verhandlungspartner durch (120 bei 5 Personen)
-		for (let permutation of helper.permutations([...new Array(PlaceCount).keys()])) {
+		for (let permutation of FH.helper.permutations([...new Array(PlaceCount).keys()])) {
 			const goodMap = new Array(GoodsOrdered.length).fill(255);
 			const tableGoodMapped = new Array(GoodsOrdered.length).fill(false);
 			let valid = true;
@@ -899,7 +899,7 @@ let Negotiation = {
 			Value = 50;
 		}
 		else if (GoodName === 'medals') {
-			let SaveMedalSetting = localStorage.getItem('NegotiationSaveMedals');
+			let SaveMedalSetting = FH.Storage.getItem('NegotiationSaveMedals');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 75;
 			}
@@ -915,12 +915,12 @@ let Negotiation = {
 			Value = 4000;
 		}
 		else {
-			let SaveMedalSetting = localStorage.getItem('NegotiationSaveCurrentEraGoods');
+			let SaveMedalSetting = FH.Storage.getItem('NegotiationSaveCurrentEraGoods');
 			if (SaveMedalSetting === 'false') { // default true
 				Value = 100;
 			}
 			else {
-				let Good = GoodsData[GoodName];
+				let Good = FH.Goods.Data[GoodName];
 				let Era = Good['era'];
 
 				let EraID = Technologies.Eras[Era];
@@ -929,7 +929,7 @@ let Negotiation = {
 				Value = EraID * 100;
             }
 
-			let Stock = ResourceStock[GoodName];
+			let Stock = FH.RessourceStock[GoodName];
 			if (Stock === undefined || Stock === 0)
 			{
 				Value += 99;
@@ -952,7 +952,7 @@ let Negotiation = {
 
 		// gibt es noch nicht, laden
 		if (Negotiation.Tables[tableName] === undefined) {
-			let url = extUrl + 'js/web/negotiation/tables/';
+			let url = FH.extUrl + 'js/web/negotiation/tables/';
 
 			return fetch(url + tableName + '.zip')
 				.then(function (response) {
@@ -986,7 +986,7 @@ let Negotiation = {
 // --------------------------------------------------------------------------------------------------
 // Negotiation
 
-FoEproxy.addHandler('all','all', (data, postData) => {
+FH.proxy.addHandler('all','all', (data, postData) => {
 	if (data.requestMethod === "startNegotiation") {
 	
 		Negotiation.tempStore = data.responseData;
@@ -1024,7 +1024,7 @@ FoEproxy.addHandler('all','all', (data, postData) => {
 		Negotiation.ExitNegotiation()
 	}
 });
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	if (Negotiation.timeout) {
 		clearTimeout(Negotiation.timeout);
 		Negotiation.timeout=null;
@@ -1057,9 +1057,9 @@ let NegotiationDebugger = {
 		if ($('#negotiationDebuggerBox').length === 0) {
 
 			// Box in den DOM
-			HTML.Box({
+			FH.HTML.Box({
 				'id': 'negotiationDebuggerBox',
-				'title': i18n('Boxes.Negotiation.Title'),
+				'title': FH.t('Boxes.Negotiation.Title'),
 				'minimize': true,
 				'dragdrop': true,
 				'resize': true,
@@ -1068,11 +1068,11 @@ let NegotiationDebugger = {
 			});
 
 			// CSS in den DOM prügeln
-			HTML.AddCssFile('negotiation');
+			FH.HTML.AddCssFile('negotiation');
 
 			NegotiationDebugger.BuildBox();
 		} else {
-			HTML.CloseOpenBox('negotiationDebuggerBox');
+			FH.HTML.CloseOpenBox('negotiationDebuggerBox');
 		}
 	},
 
@@ -1111,7 +1111,7 @@ let NegotiationDebugger = {
 
 		if (data.selected >= 0) {
 			h.push('<div style="display: grid; grid-template-columns: repeat(auto-fill, 40px);background-color: rgba(200,200,200,0.4);border: 1px solid rgb(243, 214, 160);margin:5px;">');
-			for (let goodData of GoodsList) {
+			for (let goodData of FH.Goods.List) {
 				let good = goodData.id || 'empty';
 				h.push(`<span onclick="NegotiationDebugger.selectGood('${good}')" style="box-sizing: border-box;width: 40px${data.goods[data.selected]===good?'; border: 1px solid red':''}" class="${goodSpriteClass(good)}"></span>`);
 			}
@@ -1157,7 +1157,7 @@ let NegotiationDebugger = {
 	},
 
 	/**
-	 * @param {HTMLInputElement} checkbox
+	 * @param {FH.HTML.nputElement} checkbox
 	 */
 	changeAlwaysShowPossibleMatch: (checkbox) => {
 		Negotiation.ContinueListing = checkbox.checked;
@@ -1166,7 +1166,7 @@ let NegotiationDebugger = {
 
 	/**
 	 * @param {number} position
-	 * @param {HTMLInputElement} radioBox
+	 * @param {FH.HTML.nputElement} radioBox
 	 */
 	selectableValueChange: (position, radioBox) => {
 		const values = NegotiationDebugger.data.submitValue;

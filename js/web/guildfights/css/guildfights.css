@@ -39,7 +39,15 @@
 #GuildPlayersDetailViewBody tr th {
 	background-color: rgba(0, 0, 0, 0.45);
 	line-height: 25px;
+}
 
+#GuildPlayersBody .btn-mid span {
+	padding: 0 3px;
+	border-radius: 3px;
+	background-color: var(--black-50);
+}
+#GuildPlayersBody .btn-mid .counter-red {
+	background-color: var(--table-bb-error);
 }
 
 #GuildPlayersBody tr th span,
@@ -156,19 +164,19 @@
 
 /*************************************************************************************************************/
 
-#LiveGildFighting {
+#LiveGuildFighting {
 	left: calc(50vw - 250px);
 	top: calc(50vh - 250px);
 	width: 500px;
 	height: 500px;
 }
 
-#LiveGildFightingBody {
+#LiveGuildFightingBody {
 	overflow: auto;
 	font-size: 90%;
 }
 
-#LiveGildFightingBody .province-color, #LiveGildFightingBody .province-color-round {
+#LiveGuildFightingBody .province-color, #LiveGuildFightingBody .province-color-round {
 	width: 13px;
 	height: 13px;
 	display: inline-block;
@@ -177,7 +185,7 @@
 	top: 2px;
 	position: relative;
 }
-#LiveGildFightingBody .battletype {
+#LiveGuildFightingBody .battletype {
 	width: 9px;
 	height: 9px;
 	box-shadow: 0 1px 1px var(--black-65);
@@ -185,88 +193,88 @@
 	display: inline-block;
 	position: relative;
 }
-#LiveGildFightingBody .battletype.BTattack {
+#LiveGuildFightingBody .battletype.BTattack {
 	background-color: rgb(209, 38, 38);
 }
-#LiveGildFightingBody .battletype.BTdefence {
+#LiveGuildFightingBody .battletype.BTdefence {
 	background-color: rgb(45, 77, 255);
 }
 
-#LiveGildFightingBody .tabs ul li a span {
+#LiveGuildFightingBody .tabs ul li a span {
 	width: 21px;
 	top: 4px;
 	background-size: 90px 20px;
 }
 
-#LiveGildFightingBody .tabs ul li.gbgprogress a span {
+#LiveGuildFightingBody .tabs ul li.gbgprogress a span {
 	background: transparent url('../../stats/images/tabs.png') -237px 2px no-repeat;
 }
 
-#LiveGildFightingBody .tabs ul li.gbgowned a span {
+#LiveGuildFightingBody .tabs ul li.gbgowned a span {
 	background: transparent url('../../stats/images/tabs.png') -326px 2px no-repeat;
 }
 
-#LiveGildFightingBody .tabs ul li.gbgnextup a span {
+#LiveGuildFightingBody .tabs ul li.gbgnextup a span {
 	background: transparent url('../../x_img/hourglass.png') no-repeat;
 	background-size: contain;
 	position: relative;
 }
 
-#LiveGildFightingBody >.btn-group {
+#LiveGuildFightingBody >.btn-group {
 	position: absolute;
 	top: 37px;
 	right: 7px;
 	z-index: 100;
 }
 
-#LiveGildFightingBody #nextup {
+#LiveGuildFightingBody #nextup {
 	overflow: hidden;
 	overflow-y: auto;
 	flex-grow: 2;
 	user-select: text;
 }
 
-#LiveGildFightingBody #nextup .secure .prov-name b {
+#LiveGuildFightingBody #nextup .secure .prov-name b {
 	text-decoration: underline;
 }
 
-#LiveGildFightingBody #nextup .secure .battletype {
+#LiveGuildFightingBody #nextup .secure .battletype {
 	border: 1px solid var(--black-65);
 	margin: -1px;
 }
 
-#LiveGildFightingBody #progress {
+#LiveGuildFightingBody #progress {
 	width: 100%;
 	overflow: hidden;
 	overflow-y: auto;
 }
 
-#LiveGildFightingBody #progress tr td:first-child,
-#LiveGildFightingBody #nextup tr td:first-child {
+#LiveGuildFightingBody #progress tr td:first-child,
+#LiveGuildFightingBody #nextup tr td:first-child {
 	width: 69px;
 }
 
-#LiveGildFightingBody table.foe-table tr.highlight-row {
+#LiveGuildFightingBody table.foe-table tr.highlight-row {
 	background-color: var(--table-bg-darker);
 	color: var(--text-highlight);
 }
 
-#LiveGildFightingBody tr td {
+#LiveGuildFightingBody tr td {
 	transition: background-color .6s;
 }
 
-#LiveGildFightingBody tr.pulse td {
+#LiveGuildFightingBody tr.pulse td {
 	background-color: rgba(208, 200, 172, 0.3);
 	transition: background-color .6s;
 }
 
-#LiveGildFightingBody .attack {
+#LiveGuildFightingBody .attack {
 	display: inline-block;
 	line-height: 23px;
 	margin-right: 5px;
 }
 
-#LiveGildFightingBody .attack:before {
+#LiveGuildFightingBody .attack:before {
 	width: 19px;
 	height: 23px;
 	background-size: contain;
@@ -276,53 +284,53 @@
 	vertical-align: middle;
 }
 
-#LiveGildFightingBody .smaller {
+#LiveGuildFightingBody .smaller {
 	font-size: 8px;
 	bottom: 2px;
 	position: relative;
 }
 
-#LiveGildFightingBody .gbg-red:before {
+#LiveGuildFightingBody .gbg-red:before {
 	background-image: url(../../x_img/gbg-red.png);
 }
 
-#LiveGildFightingBody .gbg-green:before {
+#LiveGuildFightingBody .gbg-green:before {
 	background-image: url(../../x_img/gbg-green.png);
 }
 
-#LiveGildFightingBody .gbg-yellow:before {
+#LiveGuildFightingBody .gbg-yellow:before {
 	background-image: url(../../x_img/gbg-yellow.png);
 }
 
-#LiveGildFightingBody .gbg-teal:before {
+#LiveGuildFightingBody .gbg-teal:before {
 	background-image: url(../../x_img/gbg-teal.png);
 }
 
-#LiveGildFightingBody .gbg-orange:before {
+#LiveGuildFightingBody .gbg-orange:before {
 	background-image: url(../../x_img/gbg-orange.png);
 }
 
-#LiveGildFightingBody .gbg-blue:before {
+#LiveGuildFightingBody .gbg-blue:before {
 	background-image: url(../../x_img/gbg-blue.png);
 }
 
-#LiveGildFightingBody .gbg-purple:before {
+#LiveGuildFightingBody .gbg-purple:before {
 	background-image: url(../../x_img/gbg-purple.png);
 }
 
-#LiveGildFightingBody .gbg-pink:before {
+#LiveGuildFightingBody .gbg-pink:before {
 	background-image: url(../../x_img/gbg-pink.png);
 }
 
-#LiveGildFightingBody .gbg-own_guild_colour:before {
+#LiveGuildFightingBody .gbg-own_guild_colour:before {
 	background-image: url(../../x_img/gbg-gray.png);
 }
 
-#LiveGildFightingBody tr .btn.discord {
+#LiveGuildFightingBody tr .btn.discord {
 	visibility: hidden;
 }
 
-#LiveGildFightingBody tr:hover .btn.discord {
+#LiveGuildFightingBody tr:hover .btn.discord {
 	visibility: visible;
 }
 
@@ -343,6 +351,8 @@
 	background-image: url(../../../../images/menu/alerts.png), var(--btn-bg-red);
 	width: 26px;
 }
+
+
 
 /*************************************************************************************************************/
 
@@ -409,5 +419,31 @@
 }
 
 #StatsGBGBody {
+	width: 1050px;
+	height: 547px;
+}
+
+#StatsGBGBody {
 	background-color: var(--bg-chart);
+}
+
+#GBGStatsDiffs {
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	border-top: 1px solid var(--border-table-bottom);
+}
+
+#GBGStatsDiffs b {
+	padding: 1px 3px;
+	border-radius: 2px;
+	color: var(--black);
+	text-shadow: none;
+}
+
+#GBGPlayersLegend {
+	height: 48px;
+	overflow: auto;
 }

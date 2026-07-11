@@ -4,7 +4,7 @@
  */
 
 // AutoHide feature: Battle
-FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
     const requestMethod = data.requestMethod;
     const d = data.responseData;
@@ -34,13 +34,13 @@ FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 });
 
 /**
- * @type {{ShowAllBoxes: CloseBox.ShowAllBoxes, CloseAllBoxes: CloseBox.CloseAllBoxes, SaveSettings: CloseBox.SaveSettings, InitSettings: CloseBox.InitSettings, HideAllBoxes: CloseBox.HideAllBoxes, Show: CloseBox.Show, Excludes: {BackgroundInfo: {inj: string, name: *}, LiveGildFighting: {inj: string, name: *}}, Settings: {ButtonSize: number, AutoHideOnBattle: boolean, Excludes: *[], BoxAlignment: number, HideAllButton: boolean, CloseAllButton: boolean}, BuildBox: CloseBox.BuildBox, CloseBoxSettings: CloseBox.CloseBoxSettings}}
+ * @type {{ShowAllBoxes: CloseBox.ShowAllBoxes, CloseAllBoxes: CloseBox.CloseAllBoxes, SaveSettings: CloseBox.SaveSettings, InitSettings: CloseBox.InitSettings, HideAllBoxes: CloseBox.HideAllBoxes, Show: CloseBox.Show, Excludes: {BackgroundInfo: {inj: string, name: *}, LiveGuildFighting: {inj: string, name: *}}, Settings: {ButtonSize: number, AutoHideOnBattle: boolean, Excludes: *[], BoxAlignment: number, HideAllButton: boolean, CloseAllButton: boolean}, BuildBox: CloseBox.BuildBox, CloseBoxSettings: CloseBox.CloseBoxSettings}}
  */
 let CloseBox = {
 
     Excludes: {
-        BackgroundInfo: { name: i18n('Boxes.Infobox.Title'), inj: 'infobox' },
-        LiveGildFighting: { name: i18n('Menu.Gildfight.Title'), inj: 'guildfights' }
+        BackgroundInfo: { name: FH.t('Boxes.Infobox.Title'), inj: 'infobox' },
+        LiveGuildFighting: { name: FH.t('Menu.Gildfight.Title'), inj: 'guildfights' }
     },
 
     Settings: {
@@ -55,7 +55,7 @@ let CloseBox = {
 
     InitSettings: () => {
 
-        let Settings = JSON.parse(localStorage.getItem('CloseBoxSettings'));
+        let Settings = JSON.parse(FH.Storage.getItem('CloseBoxSettings'));
 
         if (!Settings)
         {
@@ -75,17 +75,17 @@ let CloseBox = {
     BuildBox: () => {
         if ($('#CloseBox').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'CloseBox',
-                title: i18n('Boxes.CloseBox.Title'),
+                title: FH.t('Boxes.CloseBox.Title'),
                 auto_close: false,
                 dragdrop: true,
                 resize: false,
                 minimize: false,
-                settings: 'CloseBox.CloseBoxSettings()'
+                settings: CloseBox.CloseBoxSettings
             });
 
-            HTML.AddCssFile('closebox');
+            FH.HTML.AddCssFile('closebox');
         }
 
         CloseBox.Show();
@@ -181,10 +181,10 @@ let CloseBox = {
         const Settings = CloseBox.Settings;
         const Excludes = CloseBox.Excludes;
 
-        c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.CloseBox.View')}</span>`);
-        c.push(`<input id="cb_close_all_button" name="closeallbutton" value="1" type="checkbox" ${(Settings.CloseAllButton) ? ' checked="checked"' : ''} /> <label for="cb_close_all_button"><i>${i18n('Boxes.CloseBox.CloseAllButton')}</i></label></p>`);
-        c.push(`<input id="cb_hide_all_button" name="hideallbutton" value="1" type="checkbox" ${(Settings.HideAllButton) ? ' checked="checked"' : ''} /> <label for="cb_hide_all_button"><i>${i18n('Boxes.CloseBox.HideAllButton')}</i></label></p>`);
-        c.push(`<p>${i18n('Boxes.CloseBox.ButtonSize')} <select id="cb_buttonsize" name="buttonsize">`);
+        c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.CloseBox.View')}</span>`);
+        c.push(`<input id="cb_close_all_button" name="closeallbutton" value="1" type="checkbox" ${(Settings.CloseAllButton) ? ' checked="checked"' : ''} /> <label for="cb_close_all_button"><i>${FH.t('Boxes.CloseBox.CloseAllButton')}</i></label></p>`);
+        c.push(`<input id="cb_hide_all_button" name="hideallbutton" value="1" type="checkbox" ${(Settings.HideAllButton) ? ' checked="checked"' : ''} /> <label for="cb_hide_all_button"><i>${FH.t('Boxes.CloseBox.HideAllButton')}</i></label></p>`);
+        c.push(`<p>${FH.t('Boxes.CloseBox.ButtonSize')} <select id="cb_buttonsize" name="buttonsize">`);
 
         for (let k in ButtonSizes)
         {
@@ -192,12 +192,12 @@ let CloseBox = {
         }
 
         c.push(`</select></p>`);
-        c.push(`<p>${i18n('Boxes.CloseBox.BoxAlignment')} <select id="cb_boxalignment" name="boxalignment">`);
-        c.push(`<option value="0" ${Settings.BoxAlignment === 0 ? ' selected="selected"' : ''}>${i18n('Boxes.CloseBox.Horizontal')}</option>`);
-        c.push(`<option value="1" ${Settings.BoxAlignment === 1 ? ' selected="selected"' : ''}>${i18n('Boxes.CloseBox.Vertical')}</option>`);
+        c.push(`<p>${FH.t('Boxes.CloseBox.BoxAlignment')} <select id="cb_boxalignment" name="boxalignment">`);
+        c.push(`<option value="0" ${Settings.BoxAlignment === 0 ? ' selected="selected"' : ''}>${FH.t('Boxes.CloseBox.Horizontal')}</option>`);
+        c.push(`<option value="1" ${Settings.BoxAlignment === 1 ? ' selected="selected"' : ''}>${FH.t('Boxes.CloseBox.Vertical')}</option>`);
 
         c.push(`</select></p>`);
-        c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.CloseBox.ExcludeFromClosing')}</span>`);
+        c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.CloseBox.ExcludeFromClosing')}</span>`);
 
         for (let k in Excludes)
         {
@@ -206,9 +206,9 @@ let CloseBox = {
             c.push(`<input id="cb_exc_${k}" class="cb_exludes" name="excludes[]" value="${k}" type="checkbox" ${(Settings.Excludes.includes(k)) ? ' checked="checked"' : ''} /> <label for="cb_exc_${k}"><i>${Excludes[k].name}</i></label><br />`);
 
         }
-        c.push(`<p class="text-left"><span class="settingtitle">${i18n('Boxes.CloseBox.Automation')}</span>`);
-        c.push(`<input id="cb_auto_hide_on_battle" name="autohideonbattle" value="1" type="checkbox" ${(Settings.AutoHideOnBattle) ? ' checked="checked"' : ''} /> <label for="cb_auto_hide_on_battle"><i>${i18n('Boxes.CloseBox.AutoHideOnBattle')}</i></label></p>`);
-        c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="CloseBox.SaveSettings()">${i18n('Boxes.General.Save')}</button>`);
+        c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.CloseBox.Automation')}</span>`);
+        c.push(`<input id="cb_auto_hide_on_battle" name="autohideonbattle" value="1" type="checkbox" ${(Settings.AutoHideOnBattle) ? ' checked="checked"' : ''} /> <label for="cb_auto_hide_on_battle"><i>${FH.t('Boxes.CloseBox.AutoHideOnBattle')}</i></label></p>`);
+        c.push(`<hr><button id="save-GexStat-settings" class="btn saveSettings" onclick="CloseBox.SaveSettings()">${FH.t('Boxes.General.Save')}</button>`);
 
         $('#CloseBoxSettingsBox').html(c.join(''));
 
@@ -233,7 +233,7 @@ let CloseBox = {
             CloseBox.Settings.Excludes.push($(this).val());
         });
 
-        localStorage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
+        FH.Storage.setItem('CloseBoxSettings', JSON.stringify(CloseBox.Settings));
 
         $(`#CloseBoxSettingsBox`).fadeToggle('fast', function () {
             $(this).remove();

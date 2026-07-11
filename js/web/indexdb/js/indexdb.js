@@ -66,7 +66,7 @@ let IndexDB = {
 
     /**
      * Resolve db when ready for using.
-     * SHOULD be always used in FoEproxy.addHandler.
+     * SHOULD be always used in FH.proxy.addHandler.
      * In Boxes you can use IndexDB.db
      * @returns {Promise<void>}
      */
@@ -279,14 +279,14 @@ let IndexDB = {
         }
 
         function clearLog() {
-            localStorage.setItem('FH_IndexDBLastMigraion', '');
+            FH.Storage.setItem('FH_IndexDBLastMigraion', '');
         }
 
         function log(text) {
             //console.log('mergeDatabases: ' + text);
-            let logTxt = localStorage.getItem('FH_IndexDBLastMigraion') || '';
+            let logTxt = FH.Storage.getItem('FH_IndexDBLastMigraion') || '';
             logTxt += text + '\n';
-            localStorage.setItem('FH_IndexDBLastMigraion', logTxt);
+            FH.Storage.setItem('FH_IndexDBLastMigraion', logTxt);
         }
     },
 
@@ -379,7 +379,7 @@ let IndexDB = {
 
     rewardDBCleanup: async () => {
         //reward type for shard, Ad chests and shards was changed around april 11 and code was amended for that on May 19 - this will switch all old entries for incidents to the new type
-        if (!localStorage.getItem("HiddenRewardOverwrite")) {
+        if (!FH.Storage.getItem("HiddenRewardOverwrite")) {
             let x = await IndexDB.db.statsRewards.toArray();
             let y= [];
             x.forEach(a=>{
@@ -393,7 +393,7 @@ let IndexDB = {
                 }
                 });
             IndexDB.db.statsRewards.bulkPut(y);
-            localStorage.setItem("HiddenRewardOverwrite","done");
+            FH.Storage.setItem("HiddenRewardOverwrite","done");
         }
     },
 
@@ -416,7 +416,7 @@ let IndexDB = {
 
 
     /**
-     * Add user from PlayerDict if not added, without era information
+     * Add user from FH.Players.Dict if not added, without era information
      *
      * @param playerId
      * @param updateDate
@@ -425,7 +425,7 @@ let IndexDB = {
     addUserFromPlayerDictIfNotExists: async(playerId, updateDate) => {
         const playerFromDB = await IndexDB.db.players.get(playerId);
         if (!playerFromDB) {
-            let player = PlayerDict[playerId];
+            let player = FH.Players.Dict[playerId];
             if (player) {
                 await IndexDB.db.players.add({
                     id: playerId,
@@ -434,13 +434,13 @@ let IndexDB = {
                     clanName: player.ClanName,
                     avatar: player.Avatar,
                     era: 'unknown', // Era can be discovered when user is visited, not now
-                    date: MainParser.getCurrentDate(),
+                    date: FH.Main.getCurrentDate(),
                 });
             }
         }
         else if (updateDate) {
             IndexDB.db.players.update(playerId, {
-                date: MainParser.getCurrentDate()
+                date: FH.Main.getCurrentDate()
             });
         }
     }

@@ -4,11 +4,11 @@
  */
 
 // Army types
-FoEproxy.addMetaHandler('unit_types', (xhr, postData) => {
+FH.proxy.addMetaHandler('unit_types', (xhr, postData) => {
 	Unit.Types = JSON.parse(xhr.responseText);
 });
 
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData) => {
 	Unit.RefreshAlca();
 
 	Unit.Cache = data.responseData;
@@ -23,7 +23,7 @@ FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', (data, postData)
 	}
 });
 
-FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
+FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData) => {
 	Unit.RefreshAlca(data['responseData']);
 
 	if (Unit.alca && postData && postData[0] && postData[0]['requestData'] && postData[0]['requestData'][0] && postData[0]['requestData'][0][0] === Unit.alca.id) {
@@ -37,7 +37,7 @@ FoEproxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
 		}
 
 		if (data.responseData.militaryProducts.length > 0) {
-			localStorage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
+			FH.Storage.setItem('LastAlcatrazUnits', JSON.stringify(data.responseData.militaryProducts));
 		}
 	}
 });
@@ -66,7 +66,7 @@ let Unit = {
 	},
 
 	/**
-	 * Creates an HTML box for the DOM
+	 * Creates an FH.HTML.box for the DOM
 	 *
 	 */
 	Show: ()=> {
@@ -74,23 +74,23 @@ let Unit = {
 		Unit.PrepareCoords();
 
 		if ($('#UnitOverview').length === 0) {
-			HTML.AddCssFile('unit');
+			FH.HTML.AddCssFile('unit');
 
 			let args = {
 				id: 'UnitOverview',
-				title: i18n('Boxes.Units.Title'),
+				title: FH.t('Boxes.Units.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'Unit.ShowSettings()'
+				settings: Unit.ShowSettings
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 			//moment.locale(18n('Local'));
 
 		} else {
-			HTML.CloseOpenBox('UnitOverview');
+			FH.HTML.CloseOpenBox('UnitOverview');
 		}
 
 		Unit.BuildBox();
@@ -161,10 +161,10 @@ let Unit = {
 		attack.push('<thead class="head-sticky">');
 			attack.push('<tr>');
 				attack.push('<th></th>');
-				attack.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				attack.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				attack.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				attack.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			attack.push('</tr>');
 		attack.push('</thead>');
 
@@ -209,8 +209,8 @@ let Unit = {
 			let AttackBoost = Boosts['AttackAttackBoost'],
 				DefenseBoost = Boosts['AttackDefenseBoost']
 			
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			attack.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			attack.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -221,7 +221,7 @@ let Unit = {
 
     	for(let i = Unit.Attack.length; i < 8; i++) {
 		    attack.push('<tr>');
-			attack.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			attack.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			attack.push('</tr>');
 		}
 
@@ -241,10 +241,10 @@ let Unit = {
 		defense.push('<thead class="head-sticky">');
 			defense.push('<tr>');
 				defense.push('<th></th>');
-				defense.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				defense.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				defense.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				defense.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			defense.push('</tr>');
 		defense.push('</thead>');
 		defense.push('<tbody>');
@@ -277,8 +277,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			defense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			defense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -288,7 +288,7 @@ let Unit = {
 
 		for(let i = Unit.Defense.length; i < 8; i++){
 			defense.push('<tr>');
-			defense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			defense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			defense.push('</tr>');
 		}
 
@@ -308,10 +308,10 @@ let Unit = {
 		arenaDefense.push('<thead class="head-sticky">');
 			arenaDefense.push('<tr>');
 				arenaDefense.push('<th></th>');
-				arenaDefense.push('<th class="text-center" style="width:29%">' + i18n('Boxes.Units.Unit') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Status') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Attack') + '</th>');
-				arenaDefense.push('<th class="text-center">' + i18n('Boxes.Units.Defend') + '</th>');
+				arenaDefense.push('<th class="text-center" style="width:29%">' + FH.t('Boxes.Units.Unit') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Status') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Attack') + '</th>');
+				arenaDefense.push('<th class="text-center">' + FH.t('Boxes.Units.Defend') + '</th>');
 			arenaDefense.push('</tr>');
 		arenaDefense.push('</thead>');
 		arenaDefense.push('<tbody>');
@@ -344,8 +344,8 @@ let Unit = {
 			let AttackBoost = Boosts['DefenseAttackBoost'],
 				DefenseBoost = Boosts['DefenseDefenseBoost']
 
-			let Attack = MainParser.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
-				Defense = MainParser.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
+			let Attack = FH.Main.round(type['baseDamage'] * (AttackBoost / 100)) + type['baseDamage'],
+				Defense = FH.Main.round(type['baseArmor'] * (DefenseBoost / 100)) + type['baseArmor'];
 
 			arenaDefense.push('<td class="text-center"><em><small>+' + AttackBoost + '%</small></em> <strong class="text-success">= ' + Attack + '</strong></td>');
 			arenaDefense.push('<td class="text-center"><em><small>+' + DefenseBoost + '%</small></em> <strong class="text-success">= ' + Defense + '</strong></td>');
@@ -355,7 +355,7 @@ let Unit = {
 
 		for(let i = Unit.ArenaDefense.length; i < 8; i++){
 			arenaDefense.push('<tr>');
-			arenaDefense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + i18n('Boxes.Units.NotFilled') + '</em></strong></td>');
+			arenaDefense.push('<td colspan="5" class="text-center"><strong class="text-danger"><em>' + FH.t('Boxes.Units.NotFilled') + '</em></strong></td>');
 			arenaDefense.push('</tr>');
 		}
 
@@ -401,9 +401,9 @@ let Unit = {
 		pool.push('<thead class="head-sticky">');
 			pool.push('<tr>');
 				pool.push('<th></th>');
-				pool.push('<th>' + i18n('Boxes.Units.Unit') + '</th>');
-				pool.push('<th class="text-center">' + i18n('Boxes.Units.Bind') + '</th>');
-				pool.push('<th class="text-center">' + i18n('Boxes.Units.Unbind') + '</th>');
+				pool.push('<th>' + FH.t('Boxes.Units.Unit') + '</th>');
+				pool.push('<th class="text-center">' + FH.t('Boxes.Units.Bind') + '</th>');
+				pool.push('<th class="text-center">' + FH.t('Boxes.Units.Unbind') + '</th>');
 			pool.push('</tr>');
 		pool.push('</thead>');
 
@@ -417,7 +417,7 @@ let Unit = {
 			}
 
 			pool.push('<tr>');
-			pool.push('<th colspan="4">' + i18n('Eras.' + era) + '</th>');
+			pool.push('<th colspan="4">' + FH.t('Eras.' + era) + '</th>');
 			pool.push('</tr>');
 
 			for(let i in eras[era])
@@ -484,7 +484,7 @@ let Unit = {
 		}
 
 		if(Unit.alca['state']['next_state_transition_at'] === undefined) {
-			text = `<strong class="text-warning">${i18n('Boxes.Units.AlcaHarvest')}</strong>`;
+			text = `<strong class="text-warning">${FH.t('Boxes.Units.AlcaHarvest')}</strong>`;
 
 		}
 		// there was a harvest...
@@ -498,8 +498,8 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
-				i18n('Boxes.Units.NextUnitsIn'),
+			text = FH.helper.str.Replacer(
+				FH.t('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.NextAmount,
 					harvest: moment.unix(Unit.alca['state']['next_state_transition_at']).format('HH:mm:ss')
@@ -515,8 +515,8 @@ let Unit = {
 
 			Unit.UpdateAlcaLable(countDownDate, x);
 
-			text = HTML.i18nReplacer(
-				i18n('Boxes.Units.NextUnitsIn'),
+			text = FH.helper.str.Replacer(
+				FH.t('Boxes.Units.NextUnitsIn'),
 				{
 					count: Unit.alca.state.current_product.amount,
 					harvest: moment.unix(Unit.alca['state']['next_state_transition_at']).format('HH:mm:ss')
@@ -535,7 +535,7 @@ let Unit = {
 	 */
 	RefreshAlca: (data) => {
 		if (!Unit.alca) {
-			Unit.alca = Object.values(MainParser.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
+			Unit.alca = Object.values(FH.Main.CityMapData).find(obj => (obj['cityentity_id'] === 'X_ProgressiveEra_Landmark1'))
 		}
 
 		// update next harvest time if pickup
@@ -553,7 +553,7 @@ let Unit = {
 	 * @param id
 	 */
 	SetTabs: (id)=>{
-		Unit.Tabs.push('<li class="' + id + ' game-cursor"><a href="#' + id + '" class="game-cursor" title="' + i18n('Boxes.Units.' + id + '') + '" ><span>&nbsp;</span></a></li>');
+		Unit.Tabs.push('<li class="' + id + ' game-cursor"><a href="#' + id + '" class="game-cursor" title="' + FH.t('Boxes.Units.' + id + '') + '" ><span>&nbsp;</span></a></li>');
 	},
 
 
@@ -600,14 +600,14 @@ let Unit = {
 			if (diff <= 0)
 			{
 				clearInterval(intervalID);
-				$('.alca-info').html('<span class="text-danger"><strong>'+i18n('Boxes.Units.ReadyToLoot')+'</strong></span>');
+				$('.alca-info').html('<span class="text-danger"><strong>'+FH.t('Boxes.Units.ReadyToLoot')+'</strong></span>');
 			}
 			else
 				$('.alca-countdown').text(moment.utc(diff).format("HH:mm:ss"));
 		}
 		else{
 			clearInterval(intervalID);
-			$('.alca-info').html('<span class="text-danger"><strong>'+i18n('Boxes.Units.ReadyToLoot')+'</strong></span>');
+			$('.alca-info').html('<span class="text-danger"><strong>'+FH.t('Boxes.Units.ReadyToLoot')+'</strong></span>');
 		}
 	},
 
@@ -715,7 +715,7 @@ let Unit = {
 	GetLastAlcaUnits: ()=> {
 
 		let last = [],
-			au = localStorage.getItem('LastAlcatrazUnits'),
+			au = FH.Storage.getItem('LastAlcatrazUnits'),
 			AlcaUnits = null;
 
 		// nix drin
@@ -765,9 +765,9 @@ let Unit = {
 		last.push('<thead class="head-sticky">');
 			last.push('<tr>');
 				last.push('<th class="text-warning">' + LastTotal + 'x</th>');
-				last.push('<th>' + i18n('Boxes.Units.Unit') + '</th>');
-				last.push('<th class="text-center">' + i18n('Boxes.Units.Quantity') + '</th>');
-				last.push('<th class="text-center">' + i18n('Boxes.Units.Proportionally') + '</th>');
+				last.push('<th>' + FH.t('Boxes.Units.Unit') + '</th>');
+				last.push('<th class="text-center">' + FH.t('Boxes.Units.Quantity') + '</th>');
+				last.push('<th class="text-center">' + FH.t('Boxes.Units.Proportionally') + '</th>');
 			last.push('</tr>');
 		last.push('</thead>');
 
@@ -788,7 +788,7 @@ let Unit = {
 				last.push('<td>' + LastAlca[i]['name'] + '</td>');
 
 				last.push('<td class="text-center">' + LastAlca[i]['count'] + 'x</td>');
-				last.push('<td class="text-center">' + MainParser.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
+				last.push('<td class="text-center">' + FH.Main.round((LastAlca[i]['count'] * 100 ) / LastTotal) + '%</td>');
 
 			last.push('</tr>');
 
@@ -806,7 +806,7 @@ let Unit = {
 	*
 	*/
 	LoadSettings: () => {
-		cachedSettings = JSON.parse(localStorage.getItem('UnitOverviewSettings')) || Unit.Settings;
+		cachedSettings = JSON.parse(FH.Storage.getItem('UnitOverviewSettings')) || Unit.Settings;
 		Unit.Settings.pictogramScaling = (cachedSettings && cachedSettings.pictogramScaling !== undefined) ? cachedSettings.pictogramScaling : Unit.Settings.pictogramScaling;
 	},
 
@@ -816,13 +816,13 @@ let Unit = {
 	ShowSettings: () => {
 		let h = [];
 
-		h.push(`<p>${i18n('Boxes.Units.PictogramScalingTitle')}
+		h.push(`<p>${FH.t('Boxes.Units.PictogramScalingTitle')}
 					<button class="btn btn-slim btn-set-value" data-value="-1">&lt;</button>
-					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${HTML.i18nTooltip(i18n('Boxes.Units.PictogramScalingDesc'))}">
+					<input type="number" id="pictogramScaling" step="1" min="1" max="4" placeholder="1-4" required value="${Unit.Settings.pictogramScaling}" title="${FH.HTML.Tooltip(FH.t('Boxes.Units.PictogramScalingDesc'))}">
 					<button class="btn btn-slim btn-set-value" data-value="1">&gt;</button>
 					<span class="validity"></span>
 				</p>`);
-		h.push(`<p><button onclick="Unit.SaveSettings()" id="unit-save-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><button onclick="Unit.SaveSettings()" id="unit-save-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#UnitOverviewSettingsBox').html(h.join(''));
 		
@@ -840,7 +840,7 @@ let Unit = {
 	*/
 	SaveSettings: () => {
 		Unit.Settings.pictogramScaling = 1 <= $('#pictogramScaling').val() && $('#pictogramScaling').val() <= 4 ? $('#pictogramScaling').val() : Unit.Settings.pictogramScaling;
-		localStorage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
+		FH.Storage.setItem('UnitOverviewSettings', JSON.stringify(Unit.Settings));
 
 		$('#UnitOverviewSettingsBox').remove();
 		Unit.BuildBox();

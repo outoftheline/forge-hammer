@@ -4,7 +4,7 @@
  */
 
 
-FoEproxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
+FH.proxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
 	if (data['responseData']['0']['context'] !== 'forgePoints') {
 		return;
 	}
@@ -13,7 +13,7 @@ FoEproxy.addHandler('ResourceShopService', 'getContexts', (data)=> {
 	StrategyPoints.RefreshBuyableForgePoints(offer.formula);
 });
 
-FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
+FH.proxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
 	if (data['responseData']['gains'] === undefined || data['responseData']['gains']['resources'] === undefined || data['responseData']['gains']['resources']['strategy_points'] === undefined) {
 		return;
 	}
@@ -22,15 +22,15 @@ FoEproxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
 
 
 // GEX started
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FoEproxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	//Fp packages often trigger more than one Inventory Update - only update the bar once
 	if (StrategyPoints.delay) clearTimeout(StrategyPoints.delay);
 	StrategyPoints.delay = setTimeout(()=>{
@@ -92,7 +92,7 @@ let StrategyPoints = {
 		let width = window.innerWidth,
 			elem = $('#fp-bar').children().length;
 
-		switch (ActiveMap){
+		switch (FH.ActiveMap){
 			case 'gex':
 				if((elem === 3 && width <= 1313) || (elem === 2 && width <= 1170) || elem === 1 && width < 970)
 				{
@@ -121,17 +121,17 @@ let StrategyPoints = {
 
 	ShowFPBar: ()=>{
 
-		$('#fp-bar').removeClass(possibleMaps).addClass(ActiveMap);
+		$('#fp-bar').removeClass(FH.possibleMaps).addClass(FH.ActiveMap);
 		if( $('.fp-bar-main').length === 0){
 			$('#fp-bar').addClass(`game-cursor`).append(`<div class="fp-bar-main"><div class="number"></div><div class="bars"></div></div>`);
 		}
 		// necessary to wait for gift in gg + diplomatic gift
 		setTimeout(()=>{
-			const availableFPs = (ResourceStock['strategy_points'] !== undefined ? ResourceStock['strategy_points'] : 0);
+			const availableFPs = (FH.RessourceStock['strategy_points'] !== undefined ? FH.RessourceStock['strategy_points'] : 0);
 			const $main = $('.fp-bar-main')
 			$main.find('.number').text(availableFPs);
 			$main.removeClass('full');
-			$main.attr('title',HTML.i18nTooltip(i18n('StrategyPoints.FPInBar')));
+			$main.attr('title',FH.HTML.Tooltip(FH.t('StrategyPoints.FPInBar')));
 
 			const $bar = $main.find('.bars');
 
@@ -165,17 +165,17 @@ let StrategyPoints = {
 			currentlyCosts += factor;
 		}
 
-		for(let money = ResourceStock.money; money >= currentlyCosts; money--) {
+		for(let money = FH.RessourceStock.money; money >= currentlyCosts; money--) {
 			currentlyCosts += factor;
 			money -= currentlyCosts;
 			amount++;
 		}
 
 		if($('div.buyable-fp').length === 0) {
-			$('#fp-bar').append(`<div class="buyable-fp" title="${HTML.i18nTooltip(i18n('StrategyPoints.BuyableFP'))}">${ HTML.Format(amount)}</div>`);
+			$('#fp-bar').append(`<div class="buyable-fp" title="${FH.HTML.Tooltip(FH.t('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
 
 		} else {
-			$('div.buyable-fp').text(HTML.Format(amount));
+			$('div.buyable-fp').text(FH.HTML.Format(amount));
 		}
 	},
 
@@ -191,14 +191,14 @@ let StrategyPoints = {
 		if( $('#fp-bar').length < 1 ){
 			let div = $('<div />').attr({
 				id: 'fp-bar',
-				class: `game-cursor ${ActiveMap}`
+				class: `game-cursor ${FH.ActiveMap}`
 			}).append( `<div class="fp-storage">0</div>` );
 
 			$('body').append(div);
 			StrategyPoints.HandleWindowResize();
 		}
 		let old = StrategyPoints.InventoryFP;
-		StrategyPoints.InventoryFP = Object.values(MainParser.Inventory).filter(x=>x.item.__class__ == "ForgePointPackagePayload").reduce((total,x) => total + (x.inStock || 0) * (x.item?.resource_package?.gain || 0),0)
+		StrategyPoints.InventoryFP = Object.values(FH.Main.Inventory).filter(x=>x.item.__class__ == "ForgePointPackagePayload").reduce((total,x) => total + (x.inStock || 0) * (x.item?.resource_package?.gain || 0),0)
 
 		let delimiter = Number(1000).toLocaleString().substring(1,2);
 
@@ -212,7 +212,7 @@ let StrategyPoints = {
 				// this seems to be necessary due to a bug with the easy_number_animate
 				// jQuery plugin = if many animations run in a quick succession the order
 				// in which they finish is not guaranteed!
-				el.text( HTML.Format( StrategyPoints.InventoryFP ) );
+				el.text( FH.HTML.Format( StrategyPoints.InventoryFP ) );
 			}
 		});
 
@@ -227,7 +227,7 @@ let StrategyPoints = {
 	 * @constructor
 	 */
 	get AvailableFP() {
-		let Ret = (ResourceStock['strategy_points'] !== undefined ? ResourceStock['strategy_points'] : 0);
+		let Ret = (FH.RessourceStock['strategy_points'] !== undefined ? FH.RessourceStock['strategy_points'] : 0);
 		Ret += StrategyPoints.InventoryFP;
 		return Ret;
 	},

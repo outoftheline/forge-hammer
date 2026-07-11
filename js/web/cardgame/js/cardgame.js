@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('CardGameService', 'all', (data, postData) => {
+FH.proxy.addHandler('CardGameService', 'all', (data, postData) => {
 	
 	if(!Settings.GetSetting('ShowEventChest')){
 		return;
@@ -147,11 +147,11 @@ FoEproxy.addHandler('CardGameService', 'all', (data, postData) => {
 });
 
 
-FoEproxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
+FH.proxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
 	if (["history_event"].includes(data.responseData.context)) cardGame.context = data.responseData.context;
 });
 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 	if(data.responseData.context != cardGame.context) return;
 	for (let r of data.responseData.reward.rewards) {
 		if (Object.keys(cardGame.rewardcount).includes(r.iconAssetName)) cardGame.rewardcount[r.iconAssetName] += r.amount;
@@ -252,7 +252,7 @@ let cardGame = {
 			minHealth += cardGame.enemy.card.abilities[0].minValue;
 		}
 
-		let warning = maxHealth <= 0 ? i18n("Boxes.cardGame.WarningCertainDeath"): minHealth <= 0 ? i18n("Boxes.cardGame.WarningPossibleDeath"):undefined;
+		let warning = maxHealth <= 0 ? FH.t("Boxes.cardGame.WarningCertainDeath"): minHealth <= 0 ? FH.t("Boxes.cardGame.WarningPossibleDeath"):undefined;
 		/*
 		if (cardGame.isLastLevel && warning) {
 			let enemyHealth;
@@ -277,7 +277,7 @@ let cardGame = {
         
 		// Don't create a new box while another one is still open
 		if ($('#cardGameDialog').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'cardGameDialog',
 				title: 'Card Game',
 				auto_close: true,
@@ -345,7 +345,7 @@ let cardGame = {
 		h +=`<td style="text-align:right"><img style="height:40px" src=${srcLinks.get(imgs.spentHealth,true)}></td><td style="text-align:left">${cardGame.currencySpent.heal+currency}</td>`;
 		h +=`<td style="text-align:right"><img style="height:30px" src="${srcLinks.get(imgs.spentRedraw,true)}"><img style="margin-left: -20px;height: 19px;margin-top: 10px;" src="${srcLinks.get("/shared/gui/pvp_arena/hud/pvp_arena_icon_refresh.png",true)}"></td><td style="text-align:left">${cardGame.currencySpent.redraw+currency}</td>`;
 		h +=`</tr></table><table class="foe-table">`;
-		h +=`<tr><th></th><th class="attack">${i18n('Boxes.cardGame.Attack')}</th><th class="bonus">${i18n('Boxes.cardGame.Bonus')}</th></tr>`;
+		h +=`<tr><th></th><th class="attack">${FH.t('Boxes.cardGame.Attack')}</th><th class="bonus">${FH.t('Boxes.cardGame.Bonus')}</th></tr>`;
 		for (let c of cards) {
 			h+=`<tr ${(cardGame.cardOptions.includes(c) && cardGame.cardOptions.length > 1) ? 'class="highlightOptions"': (cardGame.cardOptions.includes(c) && cardGame.cardOptions.length == 1) ? 'class="highlight"':""}>`;
 			h+=`<td title="${cardGame.cards[c].description}">`;
@@ -376,4 +376,4 @@ let cardGame = {
 	},
 }
 cardGame.init();
-HTML.AddCssFile('cardgame');
+FH.HTML.AddCssFile('cardgame');

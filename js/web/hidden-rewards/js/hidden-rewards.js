@@ -3,34 +3,34 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('HiddenRewardService', 'getOverview', (data, postData) => {
     let fromHandler = true;
     HiddenRewards.Cache = HiddenRewards.prepareData(data.responseData.hiddenRewards);
 
-    HiddenRewards.GEprogress = JSON.parse(localStorage.getItem('HiddenRewards.GEprogress')||'0');
+    HiddenRewards.GEprogress = JSON.parse(FH.Storage.getItem('HiddenRewards.GEprogress')||'0');
    
     HiddenRewards.RefreshGui(fromHandler);
     if (HiddenRewards.FirstCycle) { //Timer setzen 
         HiddenRewards.FirstCycle = false;
         data.responseData.hiddenRewards.forEach(x=>{
-            if (x.startTime && x.startTime>GameTime.get()) 
-                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-GameTime.get())*1000)
+            if (x.startTime && x.startTime>FH.GameTime.get()) 
+                setTimeout(HiddenRewards.RefreshGui, (x.startTime+5-FH.GameTime.get())*1000)
         })
     }
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
     HiddenRewards.GEprogress = data?.responseData?.progress?.currentEntityId || 0;
-    localStorage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
+    FH.Storage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
     HiddenRewards.RefreshGui();
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getState', (data, postData) => {
     for (let x in data.responseData) {
         if (!data.responseData.hasOwnProperty(x)) continue;
         if (!data.responseData[x].hasOwnProperty('currentEntityId')) continue;
         HiddenRewards.GEprogress = data.responseData[x].currentEntityId;
-        localStorage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
+        FH.Storage.setItem('HiddenRewards.GEprogress', JSON.stringify(HiddenRewards.GEprogress));
         HiddenRewards.RefreshGui();
     }
 });
@@ -54,11 +54,11 @@ let HiddenRewards = {
     init: () => {
         if ($('#HiddenRewardBox').length < 1) {
 
-            HTML.AddCssFile('hidden-rewards');
+            FH.HTML.AddCssFile('hidden-rewards');
 
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'HiddenRewardBox',
-                'title': i18n('Boxes.HiddenRewards.Title'),
+                'title': FH.t('Boxes.HiddenRewards.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -72,7 +72,7 @@ let HiddenRewards = {
             HiddenRewards.RefreshGui();
 
         } else {
-            HTML.CloseOpenBox('HiddenRewardBox');
+            FH.HTML.CloseOpenBox('HiddenRewardBox');
         }
     },
 
@@ -94,7 +94,7 @@ let HiddenRewards = {
 
             // prüfen ob der Spieler in seiner Stadt eine zweispurige Straße hat
             if (position === 'cityRoadBig') {
-                if (CurrentEraID >= Technologies.Eras.ProgressiveEra) SkipEvent = false
+                if (FH.CurrentEraID >= Technologies.Eras.ProgressiveEra) SkipEvent = false
                 twolane = true
             }
             else {
@@ -111,7 +111,7 @@ let HiddenRewards = {
             }
 
             const positionI18nLookupKey = 'HiddenRewards.Positions.' + position;
-            const positionI18nLookup = i18n('HiddenRewards.Positions.' + position);
+            const positionI18nLookup = FH.t('HiddenRewards.Positions.' + position);
 
             if (positionI18nLookupKey !== positionI18nLookup) {
                 position = positionI18nLookup;
@@ -147,7 +147,7 @@ let HiddenRewards = {
 	    let StartTime = moment.unix(HiddenRewards.Cache[i].starts|0),
 		EndTime = moment.unix(HiddenRewards.Cache[i].expires);
             HiddenRewards.Cache[i].isVis = true;
-            if (StartTime > MainParser.getCurrentDateTime() || EndTime < MainParser.getCurrentDateTime()) continue;
+            if (StartTime > FH.Main.getCurrentDateTime() || EndTime < FH.Main.getCurrentDateTime()) continue;
             if (HiddenRewards.Cache[i].isGE && !(HiddenRewards.GElookup[HiddenRewards.Cache[i].positionGE] <= Math.floor((HiddenRewards.GEprogress % 32)/8))) {
                 HiddenRewards.Cache[i].isVis = false;
             }
@@ -177,18 +177,18 @@ let HiddenRewards = {
     BuildBox: () => {
         let h = [];
 
-        let twolane = 0 < [...new Set(Object.values(MainParser.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>MainParser.CityEntities[x].requirements.street_connection_level == 2).length
+        let twolane = 0 < [...new Set(Object.values(FH.Main.CityMapData).filter(x=>x.type=="street").map(x=>x.cityentity_id))].filter(x=>FH.Main.CityEntities[x].requirements.street_connection_level == 2).length
         let warning = HiddenRewards.FilteredCache.filter(x=>x.twolane).length > 0 && !twolane
         if (warning) {
-            h.push(`<div class="dark-bg"><div class="warning">${i18n("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)
+            h.push(`<div class="dark-bg"><div class="warning">${FH.t("Boxes.HiddenRewards.twolaneWarning")}</div></div>`)
         }
         h.push('<table class="foe-table">');
 
         h.push('<thead>');
         h.push('<tr>');
-        h.push('<th>' + i18n('HiddenRewards.Table.type') + '</th>');
-        h.push('<th>' + i18n('HiddenRewards.Table.position') + '</th>');
-        h.push('<th>' + i18n('HiddenRewards.Table.expires') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.type') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.position') + '</th>');
+        h.push('<th>' + FH.t('HiddenRewards.Table.expires') + '</th>');
         h.push('</tr>');
         h.push('</thead>');
 
@@ -209,14 +209,14 @@ let HiddenRewards = {
                 if (hiddenReward.type.indexOf('outpost') > -1) {
                     img = 'Shard_' + hiddenReward.type.substr(hiddenReward.type.length-2, 2);
                 }
-                h.push('<td class="incident" title="' + HTML.i18nTooltip(hiddenReward.type) + '"><img src="' + extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
+                h.push('<td class="incident" title="' + FH.HTML.Tooltip(hiddenReward.type) + '"><img src="' + FH.extUrl + 'js/web/hidden-rewards/images/' + img + '.png" alt=""></td>');
                 h.push('<td>' + hiddenReward.position + '</td>');
-                h.push('<td class="">' + i18n('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
+                h.push('<td class="">' + FH.t('Boxes.HiddenRewards.Disappears') + ' ' + moment.unix(hiddenReward.expires).fromNow() + '</td>');
                 h.push('</tr>');
             }
         }
         else {
-            h.push('<td colspan="3">' + i18n('Boxes.HiddenRewards.NoEvents') + '</td>');
+            h.push('<td colspan="3">' + FH.t('Boxes.HiddenRewards.NoEvents') + '</td>');
         }
 
         h.push('</tbody>');
@@ -230,7 +230,7 @@ let HiddenRewards = {
 	SetCounter: ()=> {
         let list = HiddenRewards.FilteredCache || [];
         let count = list.length;
-        let CountRelics = JSON.parse(localStorage.getItem('CountRelics') || 0);
+        let CountRelics = JSON.parse(FH.Storage.getItem('CountRelics') || 0);
         if (CountRelics == 1) count = list.filter(x => x.isVis).length;
         if (CountRelics == 2) count = list.filter(x => !x.isGE).length;
         $('#hidden-reward-count').text(count).show();
@@ -238,10 +238,10 @@ let HiddenRewards = {
 	},
     
     ShowSettingsButton: () => {
-        let CountRelics = JSON.parse(localStorage.getItem('CountRelics') || 0);
+        let CountRelics = JSON.parse(FH.Storage.getItem('CountRelics') || 0);
         let h = [];
-        h.push(`<p class="text-center"><label for="countrelics">${i18n('Settings.CountRelics')}<label><br>`);
-        h.push(`<select oninput="HiddenRewards.SaveSettings(this.value)"/><option value="0" ${CountRelics == 0 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.CountAll')} </option><option value="1" ${CountRelics == 1 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.onlyVis')} </option><option value="2" ${CountRelics == 2 ? 'selected="selected"': ''}>${i18n('Boxes.HiddenRewards.none')} </option></p>`);
+        h.push(`<p class="text-center"><label for="countrelics">${FH.t('Settings.CountRelics')}<label><br>`);
+        h.push(`<select oninput="HiddenRewards.SaveSettings(this.value)"/><option value="0" ${CountRelics == 0 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.CountAll')} </option><option value="1" ${CountRelics == 1 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.onlyVis')} </option><option value="2" ${CountRelics == 2 ? 'selected="selected"': ''}>${FH.t('Boxes.HiddenRewards.none')} </option></p>`);
         $('#HiddenRewardBoxSettingsBox').html(h.join(''));
     },
 
@@ -249,7 +249,7 @@ let HiddenRewards = {
     *
     */
     SaveSettings: (value='0') => {
-        localStorage.setItem('CountRelics', value);
+        FH.Storage.setItem('CountRelics', value);
         HiddenRewards.SetCounter();
     },
 };

@@ -2,8 +2,9 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-HTML.AddCssFile('battle-assist');
-FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
+{
+FH.HTML.AddCssFile('battle-assist');
+FH.proxy.addHandler('BattlefieldService', 'all', (data, postData) => {
 
 	// if setting is true?
 	if(!Settings.GetSetting('ShowRougeUnitWarning')){
@@ -30,7 +31,7 @@ FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
             alive.push(unit.unitTypeId);
         } else {
             const unitEra = Unit.Types.find(e => e.unitTypeId === unit.unitTypeId)?.minEra;
-            if (CurrentEraID && Technologies.Eras[unitEra] > CurrentEraID)
+            if (FH.CurrentEraID && Technologies.Eras[unitEra] > FH.CurrentEraID)
             	nextEraUnitDead = true;
         }
     }
@@ -49,7 +50,7 @@ FoEproxy.addHandler('BattlefieldService', 'all', (data, postData) => {
     	return BattleAssist.ShowRogueDialog();
 });
 
-FoEproxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (data.responseData?.__class__=="Error") return;
@@ -68,7 +69,7 @@ FoEproxy.addHandler('BattlefieldService', 'getArmyPreview', (data, postData) => 
     BattleAssist.processArmies(wave1,wave2,bonus,fightType);
 });
 
-FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     let bt=data.responseData?.battleType?.type;
@@ -77,7 +78,7 @@ FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) 
     if (bt=="pvp_arena") {
         opponent = BattleAssist.ArenaOpponents[data.responseData?.battleType?.difficulty]
         if (!opponent) return;
-        let wave1 = data.responseData.state.unitsOrder.filter(x=>x.ownerId!=ExtPlayerID).map(x=>x.unitTypeId)
+        let wave1 = data.responseData.state.unitsOrder.filter(x=>x.ownerId!=FH.Player.ID).map(x=>x.unitTypeId)
         BattleAssist.processArmies(wave1,null,opponent.bonus,bt);
         opId = "pvp_arena%"+opponent.id;
     }
@@ -108,52 +109,52 @@ FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) 
     
 });
 
-FoEproxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'surrender', (data, postData) => {
     if (!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (!BattleAssist.AASettings.battleSurrendered) return
     if (BattleAssist.armyRecent[0] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id].bonus < BattleAssist.armyRecent[0]?.bonus) return
     BattleAssist.ShowAddAdvice();
 });
-FoEproxy.addHandler('BattlefieldService', 'surrenderWave', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'surrenderWave', (data, postData) => {
     if (!Settings.GetSetting('ShowArmyAdvice'))	return;
     if (!BattleAssist.AASettings.battleSurrendered) return
     if (BattleAssist.armyRecent[0] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id] && BattleAssist.armyAdvice[BattleAssist.armyRecent[0]?.id].bonus < BattleAssist.armyRecent[0]?.bonus) return
     BattleAssist.ShowAddAdvice();
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'getSection', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getSection', (data, postData) => {
     for (e of data.responseData?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'selectTrial', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'selectTrial', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
-FoEproxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'changeDifficulty', (data, postData) => {
     for (e of data.responseData?.section?.encounters||[]) {
         BattleAssist.GEArmies[e.id||0] = e;
     }
 });
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
    BattleAssist.ArenaOpponents = Object.assign({},...data.responseData?.opponents.map(x=>({[x.difficulty]:{id:x?.opposingPlayer?.player?.name+"#"+x?.opposingPlayer?.player?.player_id,bonus:x.defenseArmyBoosts?.defenseBoost||0}})))
    BattleAssist.SelectedOpponent = null;
 });
-FoEproxy.addHandler('PVPArenaService', 'updateOpponents', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'updateOpponents', (data, postData) => {
    setTimeout(()=>{
         BattleAssist.ArenaOpponents = Object.assign({},...data.responseData?.map(x=>({[x.difficulty]:{id:x?.opposingPlayer?.player?.name+"#"+x?.opposingPlayer?.player?.player_id,bonus:x.defenseArmyBoosts?.defenseBoost||0}})))
         BattleAssist.SelectedOpponent = null;
     },100);
 });
 
-FoEproxy.addRequestHandler('ArmyUnitManagementService', 'getArmyInfo', (postData) => {
+FH.proxy.addRequestHandler('ArmyUnitManagementService', 'getArmyInfo', (postData) => {
     
     if(!Settings.GetSetting('ShowArmyAdvice'))	return;
     
@@ -196,10 +197,10 @@ mouseActions.addAction([[97, 219, 'Center'],[152, 266, 'Center']],()=>{
  */
 let BattleAssist = {
 
-    armyAdvice: JSON.parse(localStorage.getItem("BattleAssistArmyAdvice") || "{}"),
+    armyAdvice: JSON.parse(FH.Storage.getItem("BattleAssistArmyAdvice") || "{}"),
     armyRecent:[],
     UnitOrder:null,
-    AASettings: JSON.parse(localStorage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
+    AASettings: JSON.parse(FH.Storage.getItem("BattleAssistAASettings") || '{"lostUnits":2,"lostHP":40,"battleLost":true,"battleSurrendered":true}'),
     GEArmies:{},
     ArenaOpponents:{},
     SelectedOpponent: null,
@@ -210,14 +211,14 @@ let BattleAssist = {
 	 *
     ShowNextEraDialog: (nT=false) => {
         
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistNextEraDialog',
-            'title': i18n('Boxes.BattleAssist.Title'),
+            'title': FH.t('Boxes.BattleAssist.Title'),
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        $('#battleAssistNextEraDialogBody').html(`${i18n('Boxes.BattleAssist.Text.NextEra')}`);
+        $('#battleAssistNextEraDialogBody').html(`${FH.t('Boxes.BattleAssist.Text.NextEra')}`);
         if (nT) $('#battleAssistNextEraDialog').addClass('BattleAssistNoTournamnt');
     },
 
@@ -227,16 +228,16 @@ let BattleAssist = {
 	 * @constructor
 	 */
     ShowRogueDialog: () => {
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistRogueDialog',
-            'title': i18n('Boxes.BattleAssist.Title'),
+            'title': FH.t('Boxes.BattleAssist.Title'),
             'class': 'window-warning',
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        //if (MainParser.ABTests["foe_abtest_army_ux"].group != "control_group") $('#battleAssistRogueDialog').addClass("ABnew")
-        $('#battleAssistRogueDialogBody').html(`${i18n('Boxes.BattleAssist.Text.Rogue')}`);
+        //if (FH.Main.ABTests["foe_abtest_army_ux"].group != "control_group") $('#battleAssistRogueDialog').addClass("ABnew")
+        $('#battleAssistRogueDialogBody').html(`${FH.t('Boxes.BattleAssist.Text.Rogue')}`);
     },
     
     /**
@@ -246,9 +247,9 @@ let BattleAssist = {
 	 */
     ShowArmyAdvice: (advice) => {
         if ($('#battleAssistArmyAdvice').length == 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'battleAssistArmyAdvice',
-                'title': i18n('Boxes.BattleAssistArmyAdvice.Title'),
+                'title': FH.t('Boxes.BattleAssistArmyAdvice.Title'),
                 'auto_close': true,
                 'dragdrop': false,
                 'minimize': false,
@@ -266,14 +267,14 @@ let BattleAssist = {
     ShowAddAdvice: () => {
         if ($('#battleAssistAAConfig').length !== 0) return;
         if ($('#battleAssistAddAdvice').length !== 0) return;
-        HTML.Box({
+        FH.HTML.Box({
             'id': 'battleAssistAddAdvice',
-            'title': i18n('Boxes.BattleAssistAddAdvice.Title'),
+            'title': FH.t('Boxes.BattleAssistAddAdvice.Title'),
             'auto_close': true,
             'dragdrop': false,
             'minimize': false
         });
-        $('#battleAssistAddAdviceBody').html(`<div onclick="BattleAssist.ShowArmyAdviceConfig()">${i18n('Boxes.BattleAssistAddAdvice')}</div>`);
+        $('#battleAssistAddAdviceBody').html(`<div onclick="BattleAssist.ShowArmyAdviceConfig()">${FH.t('Boxes.BattleAssistAddAdvice')}</div>`);
     },
 
 
@@ -288,7 +289,7 @@ let BattleAssist = {
             if (/^GE5/.test(key)) {
                 BattleAssist.armyAdvice[key.replace(/^GE5/,"defense%")]=structuredClone(value);
                 delete BattleAssist.armyAdvice[key];
-                localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+                FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
             }
         }
 
@@ -299,20 +300,20 @@ let BattleAssist = {
         
         // Don't create a new box while another one is still open
         if ($('#battleAssistAAConfig').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'battleAssistAAConfig',
-                title: i18n('Boxes.BattleAssistAAConfig.Title'),
+                title: FH.t('Boxes.BattleAssistAAConfig.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize : true,
-                settings: 'BattleAssist.ShowAASettingsButton()'
+                settings: BattleAssist.ShowAASettingsButton
             });
         }
-        let html=`<div class="explanation closed" onclick="BattleAssist.AAExp()">${i18n('Boxes.BattleAssistAAConfig.Exp')}</div>`;
-        html += `<h1>${i18n('Boxes.BattleAssistAAConfig.RecentOpponents')}</h1>`;
+        let html=`<div class="explanation closed" onclick="BattleAssist.AAExp()">${FH.t('Boxes.BattleAssistAAConfig.Exp')}</div>`;
+        html += `<h1>${FH.t('Boxes.BattleAssistAAConfig.RecentOpponents')}</h1>`;
         if (BattleAssist.armyRecent.length>0) {
-            html += `<table class="foe-table"><tr><th>${i18n('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Bonus')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
+            html += `<table class="foe-table"><tr><th>${FH.t('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Bonus')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
             for (let recent of BattleAssist.armyRecent) {
                 html += `<tr><td><div class="BattleWave">`
                 for (let unit of recent.wave1) {
@@ -344,10 +345,10 @@ let BattleAssist = {
             }
             html += `</table>`
         }
-        html += `<h1>${i18n('Boxes.BattleAssistAAConfig.AllConfigs')}</h1>`;
+        html += `<h1>${FH.t('Boxes.BattleAssistAAConfig.AllConfigs')}</h1>`;
         
         if (Object.keys(BattleAssist.armyAdvice).length>0) {
-            html += `<table class="foe-table"><tr><th>${i18n('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${i18n('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
+            html += `<table class="foe-table"><tr><th>${FH.t('Boxes.BattleAssistAAConfig.Wave1')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Wave2')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Threshold')}</th><th>${FH.t('Boxes.BattleAssistAAConfig.Advice')}</th></tr>`;
             for (let [id,advice] of Object.entries(BattleAssist.armyAdvice)) {
                 if (!advice) break;
                 html += `<tr><td><div class="BattleWave">`
@@ -408,7 +409,7 @@ let BattleAssist = {
             BattleAssist.armyAdvice[overrideId]=oldAdvice;
             tr.find(`.AASetAdvice[data-id="${id}"]`).attr("data-id",overrideId);
             tr.find(`.AASetBonus[data-id="${id}"]`).attr("data-id",overrideId);
-            localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+            FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         })
         
     },
@@ -428,7 +429,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,bonus,"");
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     SetAdvice: (e) => {
@@ -447,7 +448,7 @@ let BattleAssist = {
         } else {
             BattleAssist.AddAdvice(td.dataset.id,null,advice);
         }
-        localStorage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
+        FH.Storage.setItem("BattleAssistArmyAdvice",JSON.stringify(BattleAssist.armyAdvice));
         BattleAssist.ShowArmyAdviceConfig();
     },
     AddAdvice: (id, bonus, advice) => {
@@ -459,24 +460,24 @@ let BattleAssist = {
         let elem = $('#battleAssistAAConfig .explanation')[0];
         elem.classList.toggle("closed");
         if (elem.classList.contains("closed")) {
-            elem.innerHTML = i18n('Boxes.BattleAssistAAConfig.Exp');
+            elem.innerHTML = FH.t('Boxes.BattleAssistAAConfig.Exp');
         } else {
-            elem.innerHTML = i18n('Boxes.BattleAssistAAConfig.Explanation');
+            elem.innerHTML = FH.t('Boxes.BattleAssistAAConfig.Explanation');
         }
         
     },
     ShowAASettingsButton: () => {
 
         let h = [];
-		h.push(`<p>${i18n('Boxes.BattleAssistAAConfig.when')}<p>`)
+		h.push(`<p>${FH.t('Boxes.BattleAssistAAConfig.when')}<p>`)
         h.push(`<table class="foe-table"><tr><td>`)
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.lostUnits')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.lostUnits')}</td><td>`);
         h.push(`<input type="Number" id="AAlostUnits" oninput="BattleAssist.SaveAASettings()" value="${BattleAssist.AASettings.lostUnits}"></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.lostHP')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.lostHP')}</td><td>`);
         h.push(`<input type="Number" id="AAlostHP" oninput="BattleAssist.SaveAASettings()" value="${BattleAssist.AASettings.lostHP}"></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.battleLost')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.battleLost')}</td><td>`);
         h.push(`<input type="checkbox" id="AAbattleLost" oninput="BattleAssist.SaveAASettings()"${BattleAssist.AASettings.battleLost ? ' checked' : ''}></td></tr><tr><td>`);
-        h.push(`${i18n('Boxes.BattleAssistAAConfig.battleSurrendered')}</td><td>`);
+        h.push(`${FH.t('Boxes.BattleAssistAAConfig.battleSurrendered')}</td><td>`);
         h.push(`<input type="checkbox" id="AAbattleSurrendered" oninput="BattleAssist.SaveAASettings()"${BattleAssist.AASettings.battleSurrendered ? ' checked' : ''}></td></tr></table>`);
          
 		$('#battleAssistAAConfigSettingsBox').html(h.join(''));
@@ -492,7 +493,7 @@ let BattleAssist = {
 		BattleAssist.AASettings.lostHP = Number($('#AAlostHP').val()) || 40;
         BattleAssist.AASettings.battleLost = $('#AAbattleLost')[0].checked;
 		BattleAssist.AASettings.battleSurrendered = $('#AAbattleSurrendered')[0].checked;
-		localStorage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
+		FH.Storage.setItem('BattleAssistAASettings', JSON.stringify(BattleAssist.AASettings));
     },
     processArmies: (wave1, wave2, bonus, type) => {
         let id= type+"%";
@@ -543,4 +544,5 @@ let BattleAssist = {
         if ($('#battleAssistAAConfig').length > 0) BattleAssist.ShowArmyAdviceConfig();
     }
 };
-
+FH.BattleAssist = {ShowArmyAdviceConfig: BattleAssist.ShowArmyAdviceConfig};
+}

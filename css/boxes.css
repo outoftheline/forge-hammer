@@ -796,6 +796,10 @@ p { margin: 0 0 10px 0; }
 	background-image: url('../images/menu/discord.png');
 }
 
+[id$=gbgActionLog-Btn] span {
+	background-image: url('../images/menu/gbg_action_log.png');
+}
+
 /***********************************************************************************/
 
 /* ---------------------------------------------------------------------------------------------------------------------
@@ -831,7 +835,7 @@ Tabs */
 	box-shadow: var(--tabs-bg-shadow-active);
 }
 
-.window-body .tabs ul.horizontal li a {
+.window-body .tabs ul.horizontal li a, .window-body .tabs ul.horizontal li > span {
 	text-decoration: none;
 	display: block;
 	position: relative;
@@ -840,7 +844,8 @@ Tabs */
 }
 
 .window-body .tabs ul.horizontal li:hover a,
-.window-body .tabs ul.horizontal li.active a {
+.window-body .tabs ul.horizontal li.active a,
+.window-body .tabs ul.horizontal li.active > span {
 	color: var(--text-tab-active);
 }
 
@@ -1145,10 +1150,7 @@ FP-Bar */
 #fp-bar.guild_raids {
 	left: 461px;
 }
-#fp-bar.gg {
-	left: 324px;
-}
-#fp-bar.gg .fp-bar-main, #fp-bar.gg .buyable-fp, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
+#fp-bar.gg, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
 	display: none;
 }
 #fp-bar.gex {
@@ -1450,13 +1452,17 @@ a:hover, input[type="radio"], .clickable {
 	z-index: 150;
 }
 
-.icon-close {
+.icon-close, .icon-move {
     background-image: url('../images/hud/box-sprite.png'), none;
     background-position: -2px -2px, 0 0;
     box-shadow: none;
 	width: 22px;
 	height: 22px;
 	display: inline-block;
+}
+
+.icon-move {
+    background-position: -315px -2px, 0 0;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------ */
@@ -1850,7 +1856,7 @@ SettingsBox */
 	box-shadow: 0 0 4px 4px var(--black-50);
 	min-width: 120px;
 	max-width: 280px;
-	z-index: 1000;
+	z-index: 5006;
 	font-size: 90%;
 }
 
@@ -2059,26 +2065,36 @@ input[type="range"]::-webkit-slider-thumb {
 	margin-top: 10%;
 }
 
-.hud-btn span.hud-counter {
+.hud-btn span.hud-counter, .hammer-counter {
 	width: 15px;
 	height: 15px;
-	position: absolute;
 	padding: 1px;
-	bottom: 4px;
-	top: unset;
-	left: 4px;
-	background-image: none;
-	background-color: var(--hud-counter-color);
 	border-radius: 50%;
 	line-height: 13px;
 	text-align: center;
-    box-shadow: var(--hud-counter-bg);
 	pointer-events: none;
 	font-weight: bold;
 	font-size: 0.8rem;
+	display: block;
+	background-image: none;
+	background-color: var(--hud-counter-color);
+    box-shadow: var(--hud-counter-bg);
+}
+
+.hud-btn span.hud-counter {
+	position: absolute;
+	bottom: 4px;
+	top: unset;
+	left: 4px;
 }
 
 .hud-btn #gex-attempt-count[data-number^="8"] {
+	background-color: var(--red);
+    box-shadow: 0 0 1px 1px var(--danger-red);
+}
+
+/* Red state for JS-toggled HUD counters (e.g. GBG Action Log collection age) */
+.hud-btn span.hud-counter.hud-counter-red {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
@@ -2544,48 +2560,130 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 
 
+#GBGActionLogCount {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	z-index: 100;
+	pointer-events: none;
+	margin-top: -110px;
+}
+
 #GBGTargets {
 	position: absolute;
-    bottom: 6px;
-    left: 240px;
+	box-sizing: border-box;
     z-index: 2000;
-	width: 160px;
 	color: #fffc;
 	text-shadow: 0 1px 1px var(--black);
 	display: flex;
-	flex-direction: column-reverse;
 	z-index: 200;
 	text-align: left;
 	gap: 12px;
-	padding: 6px;
+	padding: 12px;
 	pointer-events: none;
 }
 
-#GBGTargets div {
-	width: inherit;
+#GBGTargets.pos-bottom {
+    bottom: 0;
+    left: 223px;
+	align-items: end;
+	overflow: hidden;
+	flex-wrap: nowrap;
 }
 
-#GBGTargets small {
-	text-transform: uppercase;
-    font-weight: bold;
-    font-size: 9px;
-    letter-spacing: 1px;
+#GBGTargets.pos-left {
+    bottom: 149px;
+    left: 9px;
+	width: 144px;
+	align-items: end;
+	flex-direction: column;
 }
 
-#GBGTargets span {
-	    background-color: var(--black-50);
+#GBGTargets .gbgTarget {
+	width: 120px;
+}
+
+#GBGTargets .gbgTarget.open .signal-countdown {
+	display: none;
+}
+
+#GBGTargets .progress > div {
+	height: 4px;
+	margin-bottom: 2px;
+	box-shadow: 0 0 1px 1px #0005;
+	border-radius: 1px;
+}
+
+#GBGTargets .title, #GBGTargets .signal-countdown {
+	background-color: var(--black-65);
+	backdrop-filter: blur(2px);
     padding: 0 4px;
-    display: inline-block;
     border-radius: 4px;
 }
 
-#GBGTargets b {
+#GBGTargets .title {
+    display: flex;
+	align-items: center;
+}
+
+#GBGTargets .title b {
 	font-size: 250%;
 }
 
 #GBGTargets img {
 	height: 30px;
     vertical-align: text-bottom;
+}
+
+#GBGTargets.pos-top {
+    top: 3px;
+    left: 324px;
+	gap: 2px;
+	padding: 0;
+	max-width: calc(50% - 363px);
+    overflow-x: hidden;
+	height: 66px;
+	color: var(--beige);
+}
+
+#GBGTargets.pos-top .gbgTarget {
+	width: 71px;
+	position: relative;
+}
+#GBGTargets.pos-top .gbgTarget b {
+	font-weight: normal;
+}
+#GBGTargets.pos-top .signal-countdown, #GBGTargets.pos-top .title {
+	border: 1px solid #664421;
+	border-radius: 4px 4px 0 0;
+}
+
+#GBGTargets.pos-top img {
+	height: 23px;
+	padding: 1px 1px 1px 0;
+}
+
+#GBGTargets.pos-top .title b {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#GBGTargets.pos-top .signal-countdown {
+	font-size: 85%;
+	display: block;
+	margin-top: -1px;
+	border-radius: 0 0 4px 4px;
+}
+
+#GBGTargets.pos-top .progress {
+	position: absolute;
+	top: 28px;
+	left: 0;
+	width: 70px;
+}
+
+#GBGTargets.pos-top #target-overflow {
+	display: none;
 }
 
 .unit_skill.rogue::before {background-position: calc(-144px*var(--unit_scale)) calc(-48px*var(--unit_scale))}

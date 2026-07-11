@@ -309,6 +309,10 @@ code {
 	background-image: url('../images/menu/discord.png');
 }
 
+[id$=gbgActionLog-Btn] span {
+	background-image: url('../images/menu/gbg_action_log.png');
+}
+
 .setting {
 	display: flex;
 	flex-wrap: wrap;

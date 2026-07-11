@@ -311,3 +311,25 @@
 #PowerLevelingBox #PowerLevelingBoxBody .success {
 	color: var(--success);
 }
+
+
+#calcReminder {
+	top: 20px;
+}
+
+#calcReminder b {
+	color: var(--text-highlight);
+}
+
+#calcReminder .content {
+    border-top: 1px solid var(--table-bg-hover);
+	padding: 2px;
+}
+
+#calcReminder .gbEntry {
+    white-space: nowrap;
+}
+
+#calcReminder .gbEntry:hover {
+    text-decoration: line-through;
+}

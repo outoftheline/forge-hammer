@@ -12,19 +12,19 @@ let DBExport = {
     BuildBox: (event) => {
         if ($('#DBExport').length === 0)
         {
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'DBExport',
-                title: i18n('Boxes.DBExport.Title'),
+                title: FH.t('Boxes.DBExport.Title'),
                 auto_close: true,
                 dragdrop: true,
                 resize: true,
                 minimize: true
             });
 
-            HTML.AddCssFile('dbexport');
+            FH.HTML.AddCssFile('dbexport');
         } else if (!event)
         {
-            HTML.CloseOpenBox('DBExport');
+            FH.HTML.CloseOpenBox('DBExport');
             return;
         }
 
@@ -48,8 +48,8 @@ let DBExport = {
         let h = [];
 
         h.push('<div class="tabs dark-bg"><ul id="dbexTabs" class="horizontal">');
-        h.push(`<li${DBExport.CurrentTab === 'Export' ? ' class="active"' : ''}><a class="toggle-group" data-value="Export"><span>${i18n('Boxes.DBExport.Export')}</span></a></li>`);
-        h.push(`<li${DBExport.CurrentTab === 'Import' ? ' class="active"' : ''}><a class="toggle-group" data-value="Import"><span>${i18n('Boxes.DBExport.Import')}</span></a></li>`);
+        h.push(`<li${DBExport.CurrentTab === 'Export' ? ' class="active"' : ''}><a class="toggle-group" data-value="Export"><span>${FH.t('Boxes.DBExport.Export')}</span></a></li>`);
+        h.push(`<li${DBExport.CurrentTab === 'Import' ? ' class="active"' : ''}><a class="toggle-group" data-value="Import"><span>${FH.t('Boxes.DBExport.Import')}</span></a></li>`);
         h.push(`</ul></div>`);
 
         h.push('<div id="dbexport_wrapper">');
@@ -74,10 +74,10 @@ let DBExport = {
 
         let h = [];
         let DBInfo = await DBExport.GetDBInfo();
-        h.push(`<table id="dbex_ExportTable" class="foe-table"><thead><th><input id="dbex_toggleCheckbox" type="checkbox" value="1" checked="checked" /></th><th>${i18n('Boxes.DBExport.Description')}</th><th>${i18n('Boxes.DBExport.Type')}</th><th>${i18n('Boxes.DBExport.Tables')}</th><th>${i18n('Boxes.DBExport.Records')}</th></thead><tbody>`);
+        h.push(`<table id="dbex_ExportTable" class="foe-table"><thead><th><input id="dbex_toggleCheckbox" type="checkbox" value="1" checked="checked" /></th><th>${FH.t('Boxes.DBExport.Description')}</th><th>${FH.t('Boxes.DBExport.Type')}</th><th>${FH.t('Boxes.DBExport.Tables')}</th><th>${FH.t('Boxes.DBExport.Records')}</th></thead><tbody>`);
 
         // Local Storage
-        h.push(`<tr><td><input class="inpExport" type="checkbox" value="1"  data-type="localsettings" data-value="localsettings" checked="checked" /></td><td>${i18n('Boxes.DBExport.LocalSettings')}</td><td>local storage</td><td>0</td><td>${localStorage.length}</td></tr>`);
+        h.push(`<tr><td><input class="inpExport" type="checkbox" value="1"  data-type="localsettings" data-value="localsettings" checked="checked" /></td><td>${FH.t('Boxes.DBExport.LocalSettings')}</td><td>local storage</td><td>0</td><td>${localStorage.length}</td></tr>`);
 
         // IndexDBs
         const databases = DBInfo;
@@ -93,7 +93,7 @@ let DBExport = {
 
         h.push(`</tbody></table>`);
 
-        h.push(`<button class="btn" id="dbex_ExportSelection" href="#">${i18n('Boxes.DBExport.ExportData')}</button>`);
+        h.push(`<button class="btn" id="dbex_ExportSelection" href="#">${FH.t('Boxes.DBExport.ExportData')}</button>`);
 
         $('#dbexport_wrapper').html(h.join('')).promise().done(function () {
 
@@ -153,7 +153,7 @@ let DBExport = {
     ShowImportGroup: async () => {
         let h = [];
 
-        h.push(`<label for="dbex_fileupload" tabindex="1" role="button"><div id="dbex_dropzone">${i18n('Boxes.DBExport.ImportDescription')}</div></label>`);
+        h.push(`<label for="dbex_fileupload" tabindex="1" role="button"><div id="dbex_dropzone">${FH.t('Boxes.DBExport.ImportDescription')}</div></label>`);
         h.push(`<input type="file" name="file" id="dbex_fileupload"></input>`);
 
         h.push(`<div id="debex_import_wrapper"></div>`);
@@ -203,7 +203,7 @@ let DBExport = {
             let SuccessState = 1;
             if (!file || !file.name || !file.type || (file.type !== 'application/json' && file.type !== 'application/zip' && file.type !== 'application/x-zip-compressed'))
             {
-                $("#debex_import_wrapper").html(`<p class="error">${i18n('Boxes.DBExport.ImportFileError')}</p>`);
+                $("#debex_import_wrapper").html(`<p class="error">${FH.t('Boxes.DBExport.ImportFileError')}</p>`);
                 DBExport.hidePreloader();
                 return;
             }
@@ -220,7 +220,7 @@ let DBExport = {
                     if (file.name.search('localStorage') == 4 || file.name.search('localStorage') == 5)
                     {
                         await DBExport.ImportLocalStorage(file, file.name);
-                        $("#debex_import_wrapper").append(`<p class="success">${i18n('Boxes.DBExport.ImportSuccessful')}</p>`);
+                        $("#debex_import_wrapper").append(`<p class="success">${FH.t('Boxes.DBExport.ImportSuccessful')}</p>`);
                         DBExport.hidePreloader();
                         break;
                     }
@@ -230,9 +230,9 @@ let DBExport = {
 
                     if (response < SuccessState) { SuccessState = response; }
 
-                    let SuccessMessage = SuccessState === 1 ? i18n('Boxes.DBExport.ImportSuccessful') : (SuccessState === 0 ? i18n('Boxes.DBExport.ImportPartlySuccessful') : i18n('Boxes.DBExport.ImportFileError'));
+                    let SuccessMessage = SuccessState === 1 ? FH.t('Boxes.DBExport.ImportSuccessful') : (SuccessState === 0 ? FH.t('Boxes.DBExport.ImportPartlySuccessful') : FH.t('Boxes.DBExport.ImportFileError'));
                     $("#debex_import_wrapper").append(`<p class="success">${SuccessMessage}</p>` +
-                        `<p><button onclick="location.reload();" class="btn">${i18n('Boxes.DBExport.ReloadPage')}</button></p>`);
+                        `<p><button onclick="location.reload();" class="btn">${FH.t('Boxes.DBExport.ReloadPage')}</button></p>`);
 
                     DBExport.hidePreloader();
                     break;
@@ -281,9 +281,9 @@ let DBExport = {
                         });
 
                     Promise.all(promises).then(function () {
-                        let SuccessMessage = SuccessState === 1 ? i18n('Boxes.DBExport.ImportSuccessful') : (SuccessState === 0 ? i18n('Boxes.DBExport.ImportPartlySuccessful') : i18n('Boxes.DBExport.ImportFileError'));
+                        let SuccessMessage = SuccessState === 1 ? FH.t('Boxes.DBExport.ImportSuccessful') : (SuccessState === 0 ? FH.t('Boxes.DBExport.ImportPartlySuccessful') : FH.t('Boxes.DBExport.ImportFileError'));
                         $("#debex_import_wrapper").append(`<p class="success">${SuccessMessage}</p>` +
-                            `<p><button onclick="location.reload();" class="btn">${i18n('Boxes.DBExport.ReloadPage')}</button></p>`);
+                            `<p><button onclick="location.reload();" class="btn">${FH.t('Boxes.DBExport.ReloadPage')}</button></p>`);
                         DBExport.hidePreloader();
                     });
                     break;
@@ -305,7 +305,7 @@ let DBExport = {
         Object.keys(json).forEach(function (k) {
             if (!excludeKeys.includes(k) && k.indexOf("forgeofempires.com") === -1)
             {
-                localStorage.setItem(k, json[k]);
+                FH.Storage.setItem(k, json[k]);
             }
         });
         $("#debex_import_wrapper").append(`<p class="success">${filename} <span class="icon success"></span></p>`);
@@ -319,7 +319,7 @@ let DBExport = {
 
         if (!importMeta || !importMeta.data)
         {
-            $("#debex_import_wrapper").append(`<p class="error"><span class="icon error">X</span><span class="errmsg">${i18n('Boxes.DBExport.ImportFileError')}</span></p>`);
+            $("#debex_import_wrapper").append(`<p class="error"><span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.ImportFileError')}</span></p>`);
             return 0;
         }
 
@@ -331,15 +331,15 @@ let DBExport = {
             let Filename = dbName.split(/_/);
             let ImportPlayerID = Array.isArray(Filename) ? parseInt(Filename.pop()) : undefined;
 
-            if (ExtPlayerID !== ImportPlayerID)
+            if (FH.Player.ID !== ImportPlayerID)
             {
-                $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${i18n('Boxes.DBExport.WrongDBPlayerID')}</span></p>`);
+                $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.WrongDBPlayerID')}</span></p>`);
                 return 0;
             }
 
-            if (ExtWorld !== World)
+            if (FH.World !== World)
             {
-                $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${i18n('Boxes.DBExport.WrongDBWorld')}</span></p>`);
+                $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.WrongDBWorld')}</span></p>`);
                 return 0;
             }
 
@@ -357,7 +357,7 @@ let DBExport = {
         }
         catch (error)
         {
-            $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${i18n('Boxes.DBExport.ImportFileError')}</span></p>`);
+            $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.ImportFileError')}</span></p>`);
             console.error('' + error);
             return 0;
         }
@@ -423,10 +423,10 @@ let DBExport = {
             let localStorageBlob = new Blob([localStorageJSON], { type: "application/json" });
             $("#dbex-loading-data .message span.progress").html((++exportState) + ' / ' + exportCounter);
             if (exportCounter > 1) {
-                zip.file(ExtWorld + '_localStorage_' + moment().format("YYYYMMDD-HHmmss") + ".json", localStorageBlob);
+                zip.file(FH.World + '_localStorage_' + moment().format("YYYYMMDD-HHmmss") + ".json", localStorageBlob);
             }
             else {
-                download(localStorageBlob, ExtWorld + '_localStorage_' + moment().format("YYMMDD-HHmm") + "_" + ExtPlayerID + ".json", "application/json");
+                download(localStorageBlob, FH.World + '_localStorage_' + moment().format("YYMMDD-HHmm") + "_" + FH.Player.ID + ".json", "application/json");
             }
 
         }
@@ -442,10 +442,10 @@ let DBExport = {
                 try {
                     const blob = await DexieDB.export({ prettyJson: true, filter: (table, value, key) => table !== 'buildingMeta',progressCallback });
                     if (exportCounter > 1) {
-                        zip.file(ExtWorld + '_' + DexieDB.name + ".json", blob);
+                        zip.file(FH.World + '_' + DexieDB.name + ".json", blob);
                     }
                     else {
-                        download(blob, ExtWorld + '_' + DexieDB.name + ".json", "application/json")
+                        download(blob, FH.World + '_' + DexieDB.name + ".json", "application/json")
                     }
                     $("#dbex-loading-data .message span.progress").html((++exportState) + ' / ' + exportCounter);
                     await DexieDB.close();
@@ -455,12 +455,12 @@ let DBExport = {
                 }
             }
         }
-        $("#dbex-loading-data .message .progressbar").html(i18n('Boxes.DBExport.Compression'));
+        $("#dbex-loading-data .message .progressbar").html(FH.t('Boxes.DBExport.Compression'));
         if (exportCounter > 1)
         {
             zip.generateAsync({ type: "blob", compression: "DEFLATE" })
                 .then(function (blob) {
-                    download(blob, ExtWorld + "_foe_helper_export_" + moment().format("YYMMDD-HHmm") + "_" + ExtPlayerID + ".zip", "application/zip");
+                    download(blob, FH.World + "_foe_helper_export_" + moment().format("YYMMDD-HHmm") + "_" + FH.Player.ID + ".zip", "application/zip");
                     DBExport.hidePreloader();
                 });
         }

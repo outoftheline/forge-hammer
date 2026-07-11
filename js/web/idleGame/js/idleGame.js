@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('IdleGameService', 'getState', (data, postData) => {
+FH.proxy.addHandler('IdleGameService', 'getState', (data, postData) => {
 	//Do not show window if deactivated in settings
 	if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperIdle') === undefined ? true : Settings.GetSetting('EventHelperIdle'))) {
 		return;
@@ -82,7 +82,7 @@ FoEproxy.addHandler('IdleGameService', 'getState', (data, postData) => {
 	idleGame.idleGameUpdateDialog();
 });
 
-FoEproxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
+FH.proxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
 	
     if(postData['requestClass'] !== 'IdleGameService')
     	return;
@@ -120,7 +120,7 @@ FoEproxy.addRequestHandler('IdleGameService', 'performActions', (postData) => {
     }
 });
 
-FoEproxy.addMetaHandler('idle_game', (data, postData) => {
+FH.proxy.addMetaHandler('idle_game', (data, postData) => {
     idleGame.meta= JSON.parse(data['response']);
 });
 
@@ -164,10 +164,10 @@ let idleGame = {
 	},
 	texts:{
 		st_patricks_event: {
-			Production: i18n('Boxes.idleGame.Production.StPat')
+			Production: FH.t('Boxes.idleGame.Production.StPat')
 		},
 		fellowship_event: {
-			Production: i18n('Boxes.idleGame.Production.StPat')
+			Production: FH.t('Boxes.idleGame.Production.StPat')
 		}
 	},
 	
@@ -177,7 +177,7 @@ let idleGame = {
 	Tasklist: [],
 	Taskprogress:[],
 
-	settings: JSON.parse(localStorage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
+	settings: JSON.parse(FH.Storage.getItem('idleGameSettings') || '{"hiddenTables":[],"minimized":false,"Strategy":{},"targets":{"workshop_1": 0, "workshop_2": 0, "workshop_3": 0, "workshop_4": 0, "workshop_5": 0, "transport_1": 0, "market_1": 0}}'),
 
 	Progress: 0,
 	ProgressDegree: 0,
@@ -194,12 +194,12 @@ let idleGame = {
 	},
 	iGNumTitles: {
 		0 : "",
-		1 : i18n('Boxes.idleGame.K'),
-		2 : i18n('Boxes.idleGame.M'),
-		3 : i18n('Boxes.idleGame.B'),
-		4 : i18n('Boxes.idleGame.T'),
-		5 : i18n('Boxes.idleGame.Q'),
-		6 : i18n('Boxes.idleGame.QT')
+		1 : FH.t('Boxes.idleGame.K'),
+		2 : FH.t('Boxes.idleGame.M'),
+		3 : FH.t('Boxes.idleGame.B'),
+		4 : FH.t('Boxes.idleGame.T'),
+		5 : FH.t('Boxes.idleGame.Q'),
+		6 : FH.t('Boxes.idleGame.QT')
 	},
 
 	selectEventData: ()=>{
@@ -241,11 +241,11 @@ let idleGame = {
      * @constructor
      */
     ShowDialog: () => {
-        HTML.AddCssFile('idleGame');
+        FH.HTML.AddCssFile('idleGame');
         
-        HTML.Box({
+        FH.HTML.Box({
             id: 'idleGameDialog',
-            title: i18n('Boxes.idleGame.Title'),
+            title: FH.t('Boxes.idleGame.Title'),
             auto_close: true,
             dragdrop: true,
             minimize: true,
@@ -255,14 +255,14 @@ let idleGame = {
 
         let htmltext = `<table id="idleGame_Table" style="width:100%"><thead><tr><th colspan="2">`;
         htmltext += `<img src="${srcLinks.get(idleGame.images[idleGame.event].idleCurrency, true)}" alt="" > `;
-        htmltext += `${i18n('Boxes.idleGame.Hourly')}</th></tr></thead><tr>`;
+        htmltext += `${FH.t('Boxes.idleGame.Hourly')}</th></tr></thead><tr>`;
         htmltext += `<td colspan="2"><div class="flex"><div><p>${idleGame.data.market_1.baseData.name}<br><span id="idleGame_Fest"></span></p>`;
         htmltext += `${idleGame.data.transport_1.baseData.name}<br><span id="idleGame_Ship"></span></div>`;
         htmltext += `<div>${idleGame.texts[idleGame.event].Production}<br><span id="idleGame_Work"></span></div></div></td>`;
         htmltext += `</tr><tr class="town_info"><td><div class="idleGame_Town"></div></td>`
-		htmltext += `<td data-original-title="${i18n('Boxes.idleGame.Warning')}">${i18n('General.Disclaimer')}</td></tr></table>`;
+		htmltext += `<td data-original-title="${FH.t('Boxes.idleGame.Warning')}">${FH.t('General.Disclaimer')}</td></tr></table>`;
         
-		htmltext += `<table id="idleGame_Next" class="foe-table" style="width:100%"><tr><th colspan="4" onclick="idleGame.hide('#idleGame_Next')">${i18n('Boxes.idleGame.BuildingUpgrades')}<i></i></tr>`;
+		htmltext += `<table id="idleGame_Next" class="foe-table" style="width:100%"><tr><th colspan="4" onclick="idleGame.hide('#idleGame_Next')">${FH.t('Boxes.idleGame.BuildingUpgrades')}<i></i></tr>`;
 		htmltext += `<tr>`;
         htmltext += `<td><img data-original-title="${idleGame.data.workshop_1.baseData.name}" src="${srcLinks.get(idleGame.images[idleGame.event].workshop_1, true)}" alt="" ></td>`;
         htmltext += `<td><span id="idleGame_workshop_1Level" class="levelSelect" data-station="workshop_1"></span></td>`;
@@ -299,12 +299,12 @@ let idleGame = {
 		htmltext += `<td><span id="idleGame_market_1"></span></td>`;
 		htmltext += `<td class="align-right"><span id="idleGame_market_1Time"></span></td></tr>`;
         htmltext += `</table>`;
-        htmltext += `<table id="idleGame_TasksActive" class="foe-table" style="width:100%"><tr><th colspan="2" onclick="idleGame.hide('#idleGame_TasksActive')">${i18n('Boxes.idleGame.ActiveTasks')}<i></i></th></tr>`;
+        htmltext += `<table id="idleGame_TasksActive" class="foe-table" style="width:100%"><tr><th colspan="2" onclick="idleGame.hide('#idleGame_TasksActive')">${FH.t('Boxes.idleGame.ActiveTasks')}<i></i></th></tr>`;
 		htmltext += `<tr><td class="align-left" id="idleGame_Task0"></td><td id="time0"></td></tr>`;
         htmltext += `<tr><td class="align-left" id="idleGame_Task1"></td><td id="time1"></td></tr>`;
         htmltext += `<tr><td class="align-left" id="idleGame_Task2"></td><td id="time2"></td></tr>`;
         htmltext += `</table>`;
-		htmltext += `<table id="idleGame_Tasks" class="foe-table" style="width:100%"><tr><th onclick="idleGame.hide('#idleGame_Tasks')">${i18n('Boxes.idleGame.UpcomingTasks')}<i></i></th></tr>`;
+		htmltext += `<table id="idleGame_Tasks" class="foe-table" style="width:100%"><tr><th onclick="idleGame.hide('#idleGame_Tasks')">${FH.t('Boxes.idleGame.UpcomingTasks')}<i></i></th></tr>`;
 		htmltext += `<tr><td id="idleGame_Task3"></td></tr>`;
         htmltext += `<tr><td id="idleGame_Task4"></td></tr>`;
         htmltext += `<tr><td id="idleGame_Task5"></td></tr>`;
@@ -314,7 +314,7 @@ let idleGame = {
         htmltext += `</table>`;
 		htmltext += `<table id="idleGame_Strategy" class="foe-table" style="width:100%"><tr>`;
 		htmltext += `<th class="clickable" style="width:25px" onclick="idleGame.modifyStrategy()">✏️</th>`;
-		htmltext += `<th colspan="2" onclick="idleGame.hide('#idleGame_Strategy')"><span style="margin-right:25px">${i18n('Boxes.idleGame.Strategy')}</span><i></i></th></tr>`;
+		htmltext += `<th colspan="2" onclick="idleGame.hide('#idleGame_Strategy')"><span style="margin-right:25px">${FH.t('Boxes.idleGame.Strategy')}</span><i></i></th></tr>`;
 		htmltext += `<tr><td colspan="2" id="idleGame_StratPrev"></td><td style="width:25px" id="idleGame_StratUndo" onclick="idleGame.StratUndo()"></td></tr>`;
         htmltext += `<tr><td colspan="2" id="idleGame_Strat"></td><td id="idleGame_StratCheck" onclick="idleGame.StratCheck()"></td></tr>`;
         htmltext += `<tr><td colspan="2" id="idleGame_StratNext"></td><td></td></tr>`;
@@ -518,7 +518,7 @@ let idleGame = {
 		
 		idleGame.DisplayStrat(idleGame.checkStrat());
 		
-		const text_currentrun = `${i18n('Boxes.idleGame.CurrentRun')}: ${idleGame.Stage} / ${i18n('Boxes.idleGame.Variant')}: ${idleGame.Variant}`;
+		const text_currentrun = `${FH.t('Boxes.idleGame.CurrentRun')}: ${idleGame.Stage} / ${FH.t('Boxes.idleGame.Variant')}: ${idleGame.Variant}`;
 		let text_currentrun_short = `${idleGame.Stage}/${idleGame.Variant}`;
 		let Tt = idleGame.finishTown
 		let Td = idleGame.finishTownDegree
@@ -528,7 +528,7 @@ let idleGame = {
 			Td = 2
 		}
 
-		let text_nexttown = `${i18n('Boxes.idleGame.NextTown')} ${Tt} ${idleGame.iGNums[Td]}: `
+		let text_nexttown = `${FH.t('Boxes.idleGame.NextTown')} ${Tt} ${idleGame.iGNums[Td]}: `
 		text_nexttown += `${idleGame.time(Tt,Td,sum,degree,idleGame.Progress,idleGame.ProgressDegree,fest,festd)}<br/>`
 		let discounted = Math.round(idleGame.finishTownDiscount * Tt * 100) / 100
 		text_nexttown += `${discounted} ${idleGame.iGNums[Td]}: `
@@ -686,8 +686,8 @@ let idleGame = {
 		let t0 = t(amount, da, hourly, dh, stock, ds)
 		let tNB = t(amount, da, fest, df, stock, ds)
 		
-		let time = `<span ${(t0.t > tNB.t) ? 'data-original-title="' + tf(tNB)+'<br>' + i18n("Boxes.idleGame.noBottleneck")+'"':''}>${tf(t0)}</span>`		
-		time += (t0.h < 24) ? ` <img class="clickable" data-original-title="${i18n("Boxes.idleGame.SetTimer")}" src="${srcLinks.get("/shared/gui/plus_offer/plus_offer_time.png", true)}" alt="" onclick="idleGame.addAlert(${t0.h},${t0.m})">` : ``
+		let time = `<span ${(t0.t > tNB.t) ? 'data-original-title="' + tf(tNB)+'<br>' + FH.t("Boxes.idleGame.noBottleneck")+'"':''}>${tf(t0)}</span>`		
+		time += (t0.h < 24) ? ` <img class="clickable" data-original-title="${FH.t("Boxes.idleGame.SetTimer")}" src="${srcLinks.get("/shared/gui/plus_offer/plus_offer_time.png", true)}" alt="" onclick="idleGame.addAlert(${t0.h},${t0.m})">` : ``
 		return time;
 	},
 
@@ -708,7 +708,7 @@ let idleGame = {
 	},
 
 	saveSettings:() => {
-		localStorage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
+		FH.Storage.setItem('idleGameSettings', JSON.stringify(idleGame.settings));
 	},
 
 	StratUndo:() =>{
@@ -814,16 +814,16 @@ let idleGame = {
 	modifyStrategy:()=>{
 		let list = idleGame.settings.Strategy[idleGame.event][idleGame.Variant].map(x => x.text + (x.conditions.length > 0 ? "#":"") + x.conditions.join('#')).join('\n');
 		if ($('#idleGameStrategyDialog').length == 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'idleGameStrategyDialog',
-				title: i18n('Boxes.idleGame.Strategy.Title'),
+				title: FH.t('Boxes.idleGame.Strategy.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: false,
 				resize : true
 			});
 		}
-		let h = `<textarea id="idleGameStratText">${list}</textarea><button id="idleGameStratSave" class="btn" onclick="idleGame.saveStrategy()">${i18n('General.Save')}</button>`;
+		let h = `<textarea id="idleGameStratText">${list}</textarea><button id="idleGameStratSave" class="btn" onclick="idleGame.saveStrategy()">${FH.t('General.Save')}</button>`;
 		$('#idleGameStrategyDialogBody').html(h)
 	},
 
@@ -835,7 +835,7 @@ let idleGame = {
 			return {"text": conditions[0],"check": false,"conditions":conditions.slice(1)}});
 		idleGame.saveSettings();
 		idleGame.DisplayStrat(0);
-		HTML.CloseOpenBox('idleGameStrategyDialog')
+		FH.HTML.CloseOpenBox('idleGameStrategyDialog')
 	},
 
 	test:()=>{
@@ -848,7 +848,7 @@ let idleGame = {
 	addAlert:(hours,minutes)=>{
 		const data = {
 			title: "Idle Game",
-			body: i18n("Boxes.idleGame.AlertText"),
+			body: FH.t("Boxes.idleGame.AlertText"),
 			expires: moment().add(hours,"hours").add(minutes,"minutes").valueOf(),
 			repeat: -1,
 			persistent: true,
@@ -858,15 +858,15 @@ let idleGame = {
 			actions: [{title:"OK"}]
 		};
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'create',
 			data: data,
 		}).then((aId) => {
-			HTML.ShowToastMsg({
+			FH.HTML.ShowToastMsg({
 				head: "Idle Game",
-				text: HTML.i18nReplacer(i18n('Boxes.idleGame.AlertSetText'), { minutes: minutes,hours: hours }),
+				text: FH.helper.str.Replacer(FH.t('Boxes.idleGame.AlertSetText'), { minutes: minutes,hours: hours }),
 				type: 'success',
 				hideAfter: 5000
 			});

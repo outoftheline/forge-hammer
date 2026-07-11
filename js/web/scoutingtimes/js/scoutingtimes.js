@@ -4,12 +4,12 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     // Closes the box when the player navigates back to the city
-    HTML.CloseOpenBox('mapScoutingTimesDialog');
+    FH.HTML.CloseOpenBox('mapScoutingTimesDialog');
 });
 
-FoEproxy.addMetaHandler('castle_system_levels', (data, postData) => {
+FH.proxy.addMetaHandler('castle_system_levels', (data, postData) => {
 
     let resp = JSON.parse(data['response']);
     let castlebonus = 1;
@@ -29,7 +29,7 @@ FoEproxy.addMetaHandler('castle_system_levels', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -48,16 +48,16 @@ FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
     return scoutingTimes.ShowDialog();
 });
 
-FoEproxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'getProvinceData', (data, postData) => {
        
     return scoutingTimes.CheckSectors(data);
 });
-FoEproxy.addHandler('CampaignService', 'buySector', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'buySector', (data, postData) => {
        
     return scoutingTimes.CheckSectors(data);
 });
 
-FoEproxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -69,7 +69,7 @@ FoEproxy.addHandler('CampaignService', 'buyInstantScout', (data, postData) => {
     return scoutingTimes.ShowDialog();
 });
 
-FoEproxy.addHandler('CampaignService', 'moveScoutToProvince', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'moveScoutToProvince', (data, postData) => {
        
     // Is the box enabled in the settings?
     if (!Settings.GetSetting('ShowScoutingTimes')) {
@@ -158,18 +158,18 @@ let scoutingTimes = {
         }
 
         let i = 0;
-        let htmltext = `<table class="foe-table"><tr><th>${i18n('Boxes.scoutingTimes.ProvinceName')}</th><th>${i18n('Boxes.scoutingTimes.ScoutingCost')}</th><th>${i18n('Boxes.scoutingTimes.ScoutingTime')}</th></tr>`;
+        let htmltext = `<table class="foe-table"><tr><th>${FH.t('Boxes.scoutingTimes.ProvinceName')}</th><th>${FH.t('Boxes.scoutingTimes.ScoutingCost')}</th><th>${FH.t('Boxes.scoutingTimes.ScoutingTime')}</th></tr>`;
         
         while (toscout.length > 0) {
             let p = toscout.pop();
             let province = scoutingTimes.Provinces[p];
             if (province.isScouted) {
-                htmltext += `<tr class="scouted" title="${i18n('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td><td></td><td></td></tr>`;
+                htmltext += `<tr class="scouted" title="${FH.t('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td><td></td><td></td></tr>`;
                 i += 1;
             }
             if ((province.travelTime|0)>0) {
                 i += 1;
-                htmltext += `<tr title="${i18n('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td>`;
+                htmltext += `<tr title="${FH.t('Eras.'+Technologies.Eras[province.era])}"><td>${province.name}</td>`;
                 htmltext += (p === scoutingTimes.target) ? `<td class="scouting">...<img  src="${srcLinks.get("/city/gui/citymap_icons/tavern_shop_boost_scout_small_icon.png", true)}" alt="">...` : `<td><img  src="${srcLinks.get("/shared/icons/money.png", true)}" alt=""> ${province.travelTime > 1 ? scoutingTimes.numberWithCommas(province.scoutingCost) : 0}</td>`;
                 htmltext += `<td><img  src="${srcLinks.get("/shared/icons/icon_time.png", true)}" alt="">`;
                 htmltext += ` ${scoutingTimes.format(province.travelTime)}`;
@@ -178,19 +178,19 @@ let scoutingTimes = {
         }
        
         htmltext += `</table>`;
-        //htmltext += `<div style="color:var(--text-bright); text-align:center;">${i18n('Boxes.scoutingTimes.Warning')}</div>`
+        //htmltext += `<div style="color:var(--text-bright); text-align:center;">${FH.t('Boxes.scoutingTimes.Warning')}</div>`
         
         if (i > 0) {
             if ($('#mapScoutingTimesDialog').length === 0) {
-                HTML.AddCssFile('scoutingtimes');
+                FH.HTML.AddCssFile('scoutingtimes');
         
-                HTML.Box({
+                FH.HTML.Box({
                     id: 'mapScoutingTimesDialog',
-                    title: i18n('Boxes.scoutingTimes.Title'),
+                    title: FH.t('Boxes.scoutingTimes.Title'),
                     auto_close: true,
                     dragdrop: true,
                     minimize: true,
-                    settings: 'scoutingTimes.ShowSettings()',
+                    settings: scoutingTimes.ShowSettings,
                 });
             }
         
@@ -287,8 +287,8 @@ let scoutingTimes = {
 		let autoOpen = Settings.GetSetting('ShowScoutingTimes');
 
         let h = [];
-        h.push(`<p><label><input id="autoStartScout" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${i18n('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><button onclick="scoutingTimes.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><label><input id="autoStartScout" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+        h.push(`<p><button onclick="scoutingTimes.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#mapScoutingTimesDialogSettingsBox').html(h.join(''));
     },
@@ -297,7 +297,7 @@ let scoutingTimes = {
         let value = false;
 		if ($("#autoStartScout").is(':checked'))
 			value = true;
-		localStorage.setItem('ShowScoutingTimes', value);
+		FH.Storage.setItem('ShowScoutingTimes', value);
 		$(`#mapScoutingTimesDialogSettingsBox`).remove();
     },
 

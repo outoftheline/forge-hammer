@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
     //on startUp
     let first = false;
     if ($('#betterMusic1').length === 0) {
@@ -13,140 +13,140 @@ FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, post
         newSound.id = "betterMusic1";
         newSound.volume = 0;
         newSound.loop = true;
-        newSound.onloadedmetadata = function () {betterMusic.setEvent(id="betterMusic1")}
+        newSound.onloadedmetadata = function () {FH.betterMusic.setEvent(id="betterMusic1")}
         $('#game_body').append(newSound);
-        betterMusic.Ids.push(newSound.id);
+        FH.betterMusic.Ids.push(newSound.id);
         
         let newSound2 = document.createElement("audio");
         newSound2.id = "betterMusic2";
         newSound2.volume = 0;
         newSound2.loop = true;
-        newSound2.onloadedmetadata = function () {betterMusic.setEvent(id="betterMusic2")}
+        newSound2.onloadedmetadata = function () {FH.betterMusic.setEvent(id="betterMusic2")}
         $('#game_body').append(newSound2);
-        betterMusic.Ids.push(newSound2.id);
+        FH.betterMusic.Ids.push(newSound2.id);
         
         let newSound3 = document.createElement("audio");
         newSound3.id = "betterMusic3";
         newSound3.volume = 0;
         newSound3.loop = true;
-        newSound3.onloadedmetadata = function () {betterMusic.setEvent(id="betterMusic3")}
+        newSound3.onloadedmetadata = function () {FH.betterMusic.setEvent(id="betterMusic3")}
         $('#game_body').append(newSound3);
-        betterMusic.Ids.push(newSound3.id);
+        FH.betterMusic.Ids.push(newSound3.id);
         
-        betterMusic.loadSettings();
+        FH.betterMusic.loadSettings();
         
-        betterMusic.playStatus = betterMusic.Settings.PlayOnStart;
-        if (!betterMusic.playStatus) betterMusic.pause();
+        FH.betterMusic.playStatus = FH.betterMusic.Settings.PlayOnStart;
+        if (!FH.betterMusic.playStatus) FH.betterMusic.pause();
         
-        betterMusic.buildlists();
+        FH.betterMusic.buildlists();
         first = true;
 
         
     }
     
-    if (!first) betterMusic.setScene("main");
+    if (!first) FH.betterMusic.setScene("main");
 
 });
 
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
        
-    betterMusic.setScene("map");
+    FH.betterMusic.setScene("map");
     
 });
 
-FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
     
     if (!data.responseData?.gridId) return;
     
     switch (data.responseData.gridId) {
         case "cultural_outpost":
-            betterMusic.setScene("settlement");
+            FH.betterMusic.setScene("settlement");
             break;
         case "era_outpost":
-            betterMusic.setScene("colony");
+            FH.betterMusic.setScene("colony");
             break;
     }
    
 });
 
-FoEproxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getEntities', (data, postData) => {
 
-    betterMusic.setScene("main");   
+    FH.betterMusic.setScene("main");   
 
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
        
-    betterMusic.setScene("gbg");
+    FH.betterMusic.setScene("gbg");
     
 });
 
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
        
-    betterMusic.setScene("ge");
+    FH.betterMusic.setScene("ge");
     
 });
-FoEproxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
+FH.proxy.addHandler('BattlefieldService', 'startByBattleType', (data, postData) => {
     if (!data.responseData.map) return;
-    betterMusic.setScene("battle");
+    FH.betterMusic.setScene("battle");
     
 });
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', (data, postData) => {
        
-    if (betterMusic.Settings.Pvp) betterMusic.setScene("foe_music_pvp_arena");
+    if (FH.betterMusic.Settings.Pvp) FH.betterMusic.setScene("foe_music_pvp_arena");
     
 });
 
-FoEproxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
+FH.proxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
 
     Eventname = data.responseData[0].context;
     
-    if (!betterMusic.Settings.Events) return;
+    if (!FH.betterMusic.Settings.Events) return;
     
-    for (t in betterMusic.PossibleTracks) {
-        if (betterMusic.PossibleTracks[t].Event != Eventname) continue;
-        return betterMusic.setScene(t);
+    for (t in FH.betterMusic.PossibleTracks) {
+        if (FH.betterMusic.PossibleTracks[t].Event != Eventname) continue;
+        return FH.betterMusic.setScene(t);
     };
     
 });
-FoEproxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
+FH.proxy.addHandler('EventPassService', 'getPreview', (data, postData) => {
 
     Eventname = data.responseData?.teaserPrizes?.context;
     
-    if (!betterMusic.Settings.Events) return;
+    if (!FH.betterMusic.Settings.Events) return;
     
-    for (t in betterMusic.PossibleTracks) {
-        if (betterMusic.PossibleTracks[t].Event != Eventname) continue;
-        return betterMusic.setScene(t);
+    for (t in FH.betterMusic.PossibleTracks) {
+        if (FH.betterMusic.PossibleTracks[t].Event != Eventname) continue;
+        return FH.betterMusic.setScene(t);
     };
     
 });
 
-FoEproxy.addHandler('FriendsTavernService', 'getConfig', (data, postData) => {
+FH.proxy.addHandler('FriendsTavernService', 'getConfig', (data, postData) => {
        
-    if (betterMusic.Settings.Tavern) betterMusic.setScene("foe_music_tavern");
+    if (FH.betterMusic.Settings.Tavern) FH.betterMusic.setScene("foe_music_tavern");
     
 });
 
 $('#game_body').click(function () {
-    if (!betterMusic.first || $('#betterMusic1').length === 0) return;
-    betterMusic.first = false;
-    betterMusic.TrackSelector();
+    if (!FH.betterMusic.first || $('#betterMusic1').length === 0) return;
+    FH.betterMusic.first = false;
+    FH.betterMusic.TrackSelector();
 })
 $('#game_body').contextmenu(function () {
-    if (!betterMusic.first || $('#betterMusic1').length === 0) return;
-    betterMusic.first = false;
-    betterMusic.TrackSelector();
+    if (!FH.betterMusic.first || $('#betterMusic1').length === 0) return;
+    FH.betterMusic.first = false;
+    FH.betterMusic.TrackSelector();
 })
 $('#game_body').keydown(function () {
-    if (!betterMusic.first || $('#betterMusic1').length === 0) return;
-    betterMusic.first = false;
-    betterMusic.TrackSelector();
+    if (!FH.betterMusic.first || $('#betterMusic1').length === 0) return;
+    FH.betterMusic.first = false;
+    FH.betterMusic.TrackSelector();
 })
 
 
-let betterMusic = {
+FH.betterMusic = {
 
     first: true,
     NextEvent: null,
@@ -236,13 +236,13 @@ let betterMusic = {
     },
     playStatus: false,
     Scenes: {
-        "main": {Name: i18n('Boxes.BetterMusic.Main'), TitleList: []},
-        "settlement":{Name: i18n('Boxes.BetterMusic.Settlement'), TitleList: []},
-        "colony":{Name: i18n('Boxes.BetterMusic.Colony'), TitleList: []},
-        "ge":{Name: i18n('Boxes.BetterMusic.GE'), TitleList: []},
-        "gbg":{Name: i18n('Boxes.BetterMusic.GBG'), TitleList: []},
-        "battle":{Name: i18n('Boxes.BetterMusic.Battle'), TitleList: []},
-        "map":{Name: i18n('Boxes.BetterMusic.Map'), TitleList: []},
+        "main": {Name: FH.t('Boxes.BetterMusic.Main'), TitleList: []},
+        "settlement":{Name: FH.t('Boxes.BetterMusic.Settlement'), TitleList: []},
+        "colony":{Name: FH.t('Boxes.BetterMusic.Colony'), TitleList: []},
+        "ge":{Name: FH.t('Boxes.BetterMusic.GE'), TitleList: []},
+        "gbg":{Name: FH.t('Boxes.BetterMusic.GBG'), TitleList: []},
+        "battle":{Name: FH.t('Boxes.BetterMusic.Battle'), TitleList: []},
+        "map":{Name: FH.t('Boxes.BetterMusic.Map'), TitleList: []},
     },
     PossibleTracks: {
         "FoE_CityTrack_Vs2": {Volume:1, Name:"Stone Age - Early Middle Ages", Age:1, Agelimit: 4},
@@ -283,6 +283,7 @@ let betterMusic = {
         "foe_music_aztecs": {Volume:1, Name:"Aztec Settlement", Settlement:"aztecs"},
         "foe_music_mughals": {Volume:1, Name:"Mughal Settlement", Settlement:"mughals"},
         "foe_music_polynesia": {Volume:1, Name:"Polynesia Settlement", Settlement:"polynesia"},
+        "foe_music_pirates": {Volume:1, Name:"Pirates Settlement", Settlement:"pirates"},
     },
 
     
@@ -295,41 +296,41 @@ let betterMusic = {
 
                 
         let htmltext = `<div class="flex">`;
-        htmltext += `<div id="musicSettingsGeneral" class="musicSettings"><h1>${i18n('Boxes.BetterMusic.GeneralSettings')}</h1>`;
-        htmltext += `<label for="musicSettingsVolume">${i18n('Boxes.BetterMusic.Volume')} <input id="musicSettingsVolume" type="range" min="0" max="1" step ="0.05" value="${betterMusic.Settings.Volume}" oninput="betterMusic.newVolume(Number(this.value))"></label> <br>`;
-        htmltext += `<input id="musicSettingsPlayOnClose" type="checkbox" ${betterMusic.Settings.PlayOnStart ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.PlayOnStart = this.checked"><label for="musicSettingsPlayOnClose">${i18n('Boxes.BetterMusic.Auto')}</label></div>`;
+        htmltext += `<div id="musicSettingsGeneral" class="musicSettings"><h1>${FH.t('Boxes.BetterMusic.GeneralSettings')}</h1>`;
+        htmltext += `<label for="musicSettingsVolume">${FH.t('Boxes.BetterMusic.Volume')} <input id="musicSettingsVolume" type="range" min="0" max="1" step ="0.05" value="${FH.betterMusic.Settings.Volume}" oninput="FH.betterMusic.newVolume(Number(this.value))"></label> <br>`;
+        htmltext += `<input id="musicSettingsPlayOnClose" type="checkbox" ${FH.betterMusic.Settings.PlayOnStart ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.PlayOnStart = this.checked"><label for="musicSettingsPlayOnClose">${FH.t('Boxes.BetterMusic.Auto')}</label></div>`;
         
-        htmltext += `<div id="musicSettingsTitle" class="musicSettings"><h1>${i18n('Boxes.BetterMusic.TitleSettings')}</h1>`;
-        htmltext += `<label for="musicSettingsTransitionTime">${i18n('Boxes.BetterMusic.Transition')} <input id="musicSettingsTransitionTime" type="range" min="0" max="5000" step ="500" value="${betterMusic.Settings.TransitionTime}" oninput="betterMusic.Settings.TransitionTime = Number(this.value)"></label><br>`;
-        htmltext += `<input id="musicSettingsFinish" type="checkbox" ${betterMusic.Settings.Finish ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Finish = this.checked"><label for="musicSettingsFinish">${i18n('Boxes.BetterMusic.Finish')}</label></div>`;
+        htmltext += `<div id="musicSettingsTitle" class="musicSettings"><h1>${FH.t('Boxes.BetterMusic.TitleSettings')}</h1>`;
+        htmltext += `<label for="musicSettingsTransitionTime">${FH.t('Boxes.BetterMusic.Transition')} <input id="musicSettingsTransitionTime" type="range" min="0" max="5000" step ="500" value="${FH.betterMusic.Settings.TransitionTime}" oninput="FH.betterMusic.Settings.TransitionTime = Number(this.value)"></label><br>`;
+        htmltext += `<input id="musicSettingsFinish" type="checkbox" ${FH.betterMusic.Settings.Finish ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.Finish = this.checked"><label for="musicSettingsFinish">${FH.t('Boxes.BetterMusic.Finish')}</label></div>`;
         htmltext += `</div>`;
 
-        htmltext += `<div id="musicSettingsScenes" class="musicSettings"><h1 class="text-center">${i18n('Boxes.BetterMusic.SceneSettings')}</h1>`
+        htmltext += `<div id="musicSettingsScenes" class="musicSettings"><h1 class="text-center">${FH.t('Boxes.BetterMusic.SceneSettings')}</h1>`
         htmltext += `<div class="flex">`;
         htmltext += `<div class="text-right">`;
-        htmltext += `<label for="musicSettingsMainCity">${i18n('Boxes.BetterMusic.InCity')} </label><select id="musicSettingsMainCity" type="select" oninput="betterMusic.Settings.MainCity = this.selectedIndex"><option value="0" ${betterMusic.Settings.MainCity === 0 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.IgnoreEra')} </option><option value="1" ${betterMusic.Settings.MainCity === 1 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.ToEra')} </option><option value="2" ${betterMusic.Settings.MainCity === 2 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.CurrentEra')} </option></select><br>`;
-        htmltext += `<label for="musicSettingsColony">${i18n('Boxes.BetterMusic.InColony')} </label>`;
-        htmltext += `<select id="musicSettingsColony" type="select" oninput="betterMusic.Settings.Colony = this.selectedIndex"><option value="0" ${betterMusic.Settings.Colony === 0 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.IgnoreEra')}</option><option value="1" ${betterMusic.Settings.Colony === 1 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.ToEra')}</option><option value="2" ${betterMusic.Settings.Colony === 2 ? 'selected="selected"': ''}>${i18n('Boxes.BetterMusic.CurrentEra')}</option></select>`;
+        htmltext += `<label for="musicSettingsMainCity">${FH.t('Boxes.BetterMusic.InCity')} </label><select id="musicSettingsMainCity" type="select" oninput="FH.betterMusic.Settings.MainCity = this.selectedIndex"><option value="0" ${FH.betterMusic.Settings.MainCity === 0 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.IgnoreEra')} </option><option value="1" ${FH.betterMusic.Settings.MainCity === 1 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.ToEra')} </option><option value="2" ${FH.betterMusic.Settings.MainCity === 2 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.CurrentEra')} </option></select><br>`;
+        htmltext += `<label for="musicSettingsColony">${FH.t('Boxes.BetterMusic.InColony')} </label>`;
+        htmltext += `<select id="musicSettingsColony" type="select" oninput="FH.betterMusic.Settings.Colony = this.selectedIndex"><option value="0" ${FH.betterMusic.Settings.Colony === 0 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.IgnoreEra')}</option><option value="1" ${FH.betterMusic.Settings.Colony === 1 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.ToEra')}</option><option value="2" ${FH.betterMusic.Settings.Colony === 2 ? 'selected="selected"': ''}>${FH.t('Boxes.BetterMusic.CurrentEra')}</option></select>`;
         htmltext += `</div>`;
         htmltext += `<div>`;
-        htmltext += `<input id="musicSettingsTavern" type="checkbox" ${betterMusic.Settings.Tavern ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Tavern = this.checked"><label for="musicSettingsTavern">${i18n('Boxes.BetterMusic.TavernT')}</label>`;
-        htmltext += `<input id="musicSettingsPvp" type="checkbox" ${betterMusic.Settings.Pvp ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Pvp = this.checked"><label for="musicSettingsPvp">${i18n('Boxes.BetterMusic.PvPT')}</label>`;
-        htmltext += `<input id="musicSettingsIgnoreSettlement" type="checkbox" ${betterMusic.Settings.IgnoreSettlement ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.IgnoreSettlement = this.checked"><label for="musicSettingsIgnoreSettlement">${i18n('Boxes.BetterMusic.IgnoreSettlement')}</label>`;
-        htmltext += `<input id="musicSettingsEvents" type="checkbox" ${betterMusic.Settings.Events ? 'checked="checked"' : ''}" oninput="betterMusic.Settings.Events = this.checked"><label for="musicSettingsEvents">${i18n('Boxes.BetterMusic.EventT')}</label>`;
+        htmltext += `<input id="musicSettingsTavern" type="checkbox" ${FH.betterMusic.Settings.Tavern ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.Tavern = this.checked"><label for="musicSettingsTavern">${FH.t('Boxes.BetterMusic.TavernT')}</label>`;
+        htmltext += `<input id="musicSettingsPvp" type="checkbox" ${FH.betterMusic.Settings.Pvp ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.Pvp = this.checked"><label for="musicSettingsPvp">${FH.t('Boxes.BetterMusic.PvPT')}</label>`;
+        htmltext += `<input id="musicSettingsIgnoreSettlement" type="checkbox" ${FH.betterMusic.Settings.IgnoreSettlement ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.IgnoreSettlement = this.checked"><label for="musicSettingsIgnoreSettlement">${FH.t('Boxes.BetterMusic.IgnoreSettlement')}</label>`;
+        htmltext += `<input id="musicSettingsEvents" type="checkbox" ${FH.betterMusic.Settings.Events ? 'checked="checked"' : ''}" oninput="FH.betterMusic.Settings.Events = this.checked"><label for="musicSettingsEvents">${FH.t('Boxes.BetterMusic.EventT')}</label>`;
         htmltext += `</div>`;
         htmltext += `</div>`;
 
-        htmltext += `<table id="musicSettingsScenesX" class="foe-table"><caption style="font-weight: bold; font-size: initial; padding-top: 10px;">${i18n('Boxes.BetterMusic.Scenes')}</caption><thead class="sticky">><tr><th>${i18n('Boxes.BetterMusic.TitleName')}</th>`;
+        htmltext += `<table id="musicSettingsScenesX" class="foe-table"><caption style="font-weight: bold; font-size: initial; padding-top: 10px;">${FH.t('Boxes.BetterMusic.Scenes')}</caption><thead class="sticky">><tr><th>${FH.t('Boxes.BetterMusic.TitleName')}</th>`;
         
-        for (let scene in betterMusic.Scenes) {
-            htmltext += `<th><span>${betterMusic.Scenes[scene].Name}</span></th>`;
+        for (let scene in FH.betterMusic.Scenes) {
+            htmltext += `<th><span>${FH.betterMusic.Scenes[scene].Name}</span></th>`;
         }
         htmltext += `</tr></thead>`;
         
-        for (let title in betterMusic.PossibleTracks) {
-            htmltext += `<tr><td class="betterMusicTitle" onclick="betterMusic.switchTrack('${title}', 0)" onmouseout="betterMusic.pause(event)">${betterMusic.PossibleTracks[title].Name}</td>`;
-            for (let scene in betterMusic.Scenes) {
-                htmltext += `<td class="betterMusicEntry ${betterMusic.testSettings(scene, title) ? 'betterMusicSelected' :'betterMusicNotSelected'}" data-scene="${scene}" data-title="${title}" onclick="betterMusic.setSceneTitle(event)"></td>`;
+        for (let title in FH.betterMusic.PossibleTracks) {
+            htmltext += `<tr><td class="betterMusicTitle" onclick="FH.betterMusic.switchTrack('${title}', 0)" onmouseout="FH.betterMusic.pause(event)">${FH.betterMusic.PossibleTracks[title].Name}</td>`;
+            for (let scene in FH.betterMusic.Scenes) {
+                htmltext += `<td class="betterMusicEntry ${FH.betterMusic.testSettings(scene, title) ? 'betterMusicSelected' :'betterMusicNotSelected'}" data-scene="${scene}" data-title="${title}" onclick="FH.betterMusic.setSceneTitle(event)"></td>`;
             }
             htmltext += `</tr>`;
                 
@@ -338,11 +339,11 @@ let betterMusic = {
         htmltext += `</table>`;
         
         if ($('#betterMusicDialog').length === 0) {
-            HTML.AddCssFile('bettermusic');
+            FH.HTML.AddCssFile('bettermusic');
     
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'betterMusicDialog',
-                title: i18n('Boxes.BetterMusic.Title'),
+                title: FH.t('Boxes.BetterMusic.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -350,66 +351,66 @@ let betterMusic = {
             });
 
             $('#betterMusicDialogclose').on('click', function() {
-                betterMusic.close();
+                FH.betterMusic.close();
                 });
 
-            betterMusic.pause();
+            FH.betterMusic.pause();
         }
     
         $('#betterMusicDialogBody').html(htmltext);
     },
 
     
-    playRandom: (titles = Object.keys(betterMusic.PossibleTracks)) => {
+    playRandom: (titles = Object.keys(FH.betterMusic.PossibleTracks)) => {
         
         if ((titles?.length|0) == 0 ) return;
         
         let title = titles[Math.floor(titles.length * Math.random())];
         
-        betterMusic.switchTrack(title);
+        FH.betterMusic.switchTrack(title);
         
         
     },
 
 
-    switchTrack: (newTrack, transition = betterMusic.Settings.TransitionTime) => {
-        let $SoundC = $(`#${betterMusic.Ids.shift()}`);
-        let $SoundN = $(`#${betterMusic.Ids[0]}`);
-        let path = srcLinks.get(betterMusic.PossibleTracks[newTrack].Path || '/sounds/shared/theme/'+ newTrack +'.ogg', true)
+    switchTrack: (newTrack, transition = FH.betterMusic.Settings.TransitionTime) => {
+        let $SoundC = $(`#${FH.betterMusic.Ids.shift()}`);
+        let $SoundN = $(`#${FH.betterMusic.Ids[0]}`);
+        let path = srcLinks.get(FH.betterMusic.PossibleTracks[newTrack].Path || '/sounds/shared/theme/'+ newTrack +'.ogg', true)
         if ($SoundC[0].src == path) {
         
-            betterMusic.Ids.unshift($SoundC[0].id);
-            betterMusic.setEvent($SoundC[0].id, 0);
+            FH.betterMusic.Ids.unshift($SoundC[0].id);
+            FH.betterMusic.setEvent($SoundC[0].id, 0);
         
         } else {
             
-            let elem = $(`#${betterMusic.Ids[1]}`)[0];
+            let elem = $(`#${FH.betterMusic.Ids[1]}`)[0];
             if (!(!elem)) elem.pause();
             
-            betterMusic.Ids.push($SoundC[0].id);
+            FH.betterMusic.Ids.push($SoundC[0].id);
             $SoundC.animate({volume: 0}, transition);
             
             $SoundN[0].volume = 0;
             $SoundN[0].src = path;
             
-            clearTimeout(betterMusic.nextEvent);
+            clearTimeout(FH.betterMusic.nextEvent);
             var playPromise = $SoundN[0].play();
 
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
-                    betterMusic.playStatus = true;
-                    betterMusic.currentTitle = newTrack;
-                    $SoundN.animate({volume: 1*betterMusic.PossibleTracks[newTrack].Volume*betterMusic.Settings.Volume}, transition);
+                    FH.betterMusic.playStatus = true;
+                    FH.betterMusic.currentTitle = newTrack;
+                    $SoundN.animate({volume: 1*FH.betterMusic.PossibleTracks[newTrack].Volume*FH.betterMusic.Settings.Volume}, transition);
                 })
                 .catch(error => {
                     if (error.toString() == "NotSupportedError: Failed to load because no supported source was found.") {
                         console.log(`↑ ↑ ↑ ↑ ${newTrack} banned from playlist ↑ ↑ ↑ ↑ ↑`);
-                        if (betterMusic.PossibleTracks[newTrack]) {
-                            betterMusic.PossibleTracks[newTrack].banned = true;
-                            betterMusic.buildlist(betterMusic.currentScene);
+                        if (FH.betterMusic.PossibleTracks[newTrack]) {
+                            FH.betterMusic.PossibleTracks[newTrack].banned = true;
+                            FH.betterMusic.buildlist(FH.betterMusic.currentScene);
                         }
                     }
-                    betterMusic.TrackSelector();
+                    FH.betterMusic.TrackSelector();
                 });
             }
 
@@ -418,12 +419,12 @@ let betterMusic = {
     },
 
     pause: (e) => {
-        clearTimeout(betterMusic.nextEvent);
-        betterMusic.playStatus = false;
+        clearTimeout(FH.betterMusic.nextEvent);
+        FH.betterMusic.playStatus = false;
         $('#musicControl-Btn').addClass('musicmuted');
         
         if (!(e?.relatedTarget?.classList.contains('betterMusicTitle'))) {
-            let elem= $(`#${betterMusic.Ids[0]}`)[0];
+            let elem= $(`#${FH.betterMusic.Ids[0]}`)[0];
             if (!elem) return;
             elem.pause();
             elem.src = "";
@@ -431,74 +432,74 @@ let betterMusic = {
     },
 
     TrackSelector: () => {
-        if (!betterMusic.playStatus) return;
+        if (!FH.betterMusic.playStatus) return;
         $('#musicControl-Btn').removeClass('musicmuted');
         
-        betterMusic.playRandom(betterMusic.Scenes[betterMusic.currentScene].TitleList);    
+        FH.betterMusic.playRandom(FH.betterMusic.Scenes[FH.betterMusic.currentScene].TitleList);    
     },
 
-    setEvent: (id, transition = betterMusic.Settings.TransitionTime) => {
-        if (!betterMusic.playStatus) return;
+    setEvent: (id, transition = FH.betterMusic.Settings.TransitionTime) => {
+        if (!FH.betterMusic.playStatus) return;
         let $SoundC = $(`#${id}`);
         let timeout = Math.floor($SoundC[0].duration * 1000 - transition);
         if (timeout != 'NaN') {
-            clearTimeout(betterMusic.nextEvent);
-            betterMusic.nextEvent = setTimeout(function() {betterMusic.TrackSelector()}, timeout);
+            clearTimeout(FH.betterMusic.nextEvent);
+            FH.betterMusic.nextEvent = setTimeout(function() {FH.betterMusic.TrackSelector()}, timeout);
         }
     },
 
     setScene: (scene) => {
         
-        if (betterMusic.currentTitle == scene) return
+        if (FH.betterMusic.currentTitle == scene) return
         
-        if (!betterMusic.Scenes[scene]) {
-            if (betterMusic.Settings.Finish) return;
-            if (!betterMusic.playStatus) return;
-            betterMusic.switchTrack(scene);
+        if (!FH.betterMusic.Scenes[scene]) {
+            if (FH.betterMusic.Settings.Finish) return;
+            if (!FH.betterMusic.playStatus) return;
+            FH.betterMusic.switchTrack(scene);
             return
         }
 
-        betterMusic.buildlist(scene);
-        if (betterMusic.currentScene === scene) return;
+        FH.betterMusic.buildlist(scene);
+        if (FH.betterMusic.currentScene === scene) return;
 
-        betterMusic.currentScene = scene;
-        if (betterMusic.Scenes[scene].TitleList.includes(betterMusic.currentTitle)) return;
+        FH.betterMusic.currentScene = scene;
+        if (FH.betterMusic.Scenes[scene].TitleList.includes(FH.betterMusic.currentTitle)) return;
         
-        if (betterMusic.Settings.Finish) return;
-        betterMusic.TrackSelector();
+        if (FH.betterMusic.Settings.Finish) return;
+        FH.betterMusic.TrackSelector();
     },
 
     close: () => {
-        betterMusic.saveSettings();
-        betterMusic.playStatus = betterMusic.Settings.PlayOnStart;
-        betterMusic.TrackSelector()
+        FH.betterMusic.saveSettings();
+        FH.betterMusic.playStatus = FH.betterMusic.Settings.PlayOnStart;
+        FH.betterMusic.TrackSelector()
     },
 
     CloseBox: () => {
-        HTML.CloseOpenBox('betterMusicDialog');
-        betterMusic.close();
+        FH.HTML.CloseOpenBox('betterMusicDialog');
+        FH.betterMusic.close();
     },
 
     newVolume: (value) => {
-        betterMusic.Settings.Volume = value;
-        $(`#${betterMusic.Ids[0]}`)[0].volume = value;
+        FH.betterMusic.Settings.Volume = value;
+        $(`#${FH.betterMusic.Ids[0]}`)[0].volume = value;
         
     },
     
     loadSettings: ()=> {
 
-		tempSettings = JSON.parse(localStorage.getItem('betterMusicSettings') || '{}');
+		tempSettings = JSON.parse(FH.Storage.getItem('betterMusicSettings') || '{}');
         if (tempSettings.Scenes) {
             for (let i of Object.keys(tempSettings.Scenes)) {
-                if (!betterMusic.Settings.Scenes[i]) delete tempSettings.Scenes[i];
+                if (!FH.betterMusic.Settings.Scenes[i]) delete tempSettings.Scenes[i];
             }
         }
-        betterMusic.Settings = betterMusic.update(betterMusic.Settings,tempSettings);
+        FH.betterMusic.Settings = FH.betterMusic.update(FH.betterMusic.Settings,tempSettings);
     },
     
     saveSettings: ()=> {
-        localStorage.setItem('betterMusicSettings', JSON.stringify(betterMusic.Settings));
-        betterMusic.buildlists();
+        FH.Storage.setItem('betterMusicSettings', JSON.stringify(FH.betterMusic.Settings));
+        FH.betterMusic.buildlists();
     },
     
     update (obj/*, …*/) {
@@ -506,7 +507,7 @@ let betterMusic = {
             for (var prop in arguments[i]) {
                 var val = arguments[i][prop];
                 if (typeof val == "object") // this also applies to arrays or null!
-                    betterMusic.update(obj[prop], val);
+                    FH.betterMusic.update(obj[prop], val);
                 else
                     obj[prop] = val;
             }
@@ -517,39 +518,37 @@ let betterMusic = {
     setSceneTitle: (e) => {
         e.target.classList.toggle('betterMusicSelected');
         e.target.classList.toggle('betterMusicNotSelected');
-        betterMusic.Settings.Scenes[e.target.dataset.scene][e.target.dataset.title] = e.target.classList.contains('betterMusicSelected');
+        FH.betterMusic.Settings.Scenes[e.target.dataset.scene][e.target.dataset.title] = e.target.classList.contains('betterMusicSelected');
     },
 
     testSettings: (scene, title) => {
-        if (!betterMusic.Settings.Scenes) return false;
-        if (!betterMusic.Settings.Scenes[scene]) return false;
-        return betterMusic.Settings.Scenes[scene][title] | false;
+        if (!FH.betterMusic.Settings.Scenes) return false;
+        if (!FH.betterMusic.Settings.Scenes[scene]) return false;
+        return FH.betterMusic.Settings.Scenes[scene][title] | false;
     },
 
     buildlists: () => {
-        for (scene in betterMusic.Scenes) {
-            betterMusic.buildlist(scene);
+        for (scene in FH.betterMusic.Scenes) {
+            FH.betterMusic.buildlist(scene);
         }
     },
 
     buildlist: (scene) => {
-        if (!betterMusic.Scenes[scene]) return;
-        betterMusic.Scenes[scene].TitleList = [];
-        for (title in betterMusic.Settings.Scenes[scene]) {
-            if (betterMusic.PossibleTracks[title]?.banned) continue;
-            if (scene==="settlement" && (betterMusic.PossibleTracks[title].Settlement != Outposts?.OutpostData?.content) && (betterMusic.PossibleTracks[title].Settlement != undefined) && (!betterMusic.IgnoreSettlement)) continue;
+        if (!FH.betterMusic.Scenes[scene]) return;
+        FH.betterMusic.Scenes[scene].TitleList = [];
+        for (title in FH.betterMusic.Settings.Scenes[scene]) {
+            if (FH.betterMusic.PossibleTracks[title]?.banned) continue;
+            if (scene==="settlement" && (FH.betterMusic.PossibleTracks[title].Settlement != Outposts?.OutpostData?.content) && (FH.betterMusic.PossibleTracks[title].Settlement != undefined) && (!FH.betterMusic.IgnoreSettlement)) continue;
             if (scene==="colony" && (
-                ((betterMusic.PossibleTracks[title].Agelimit < CurrentEraID || betterMusic.PossibleTracks[title].Age > CurrentEraID ) && betterMusic.Settings.Colony == 2) ||
-                (betterMusic.PossibleTracks[title].Age > CurrentEraID && betterMusic.Settings.Colony == 1)
+                ((FH.betterMusic.PossibleTracks[title].Agelimit < FH.CurrentEraID || FH.betterMusic.PossibleTracks[title].Age > FH.CurrentEraID ) && FH.betterMusic.Settings.Colony == 2) ||
+                (FH.betterMusic.PossibleTracks[title].Age > FH.CurrentEraID && FH.betterMusic.Settings.Colony == 1)
                 )) continue;
             if (scene==="main" && (
-                (betterMusic.Settings.MainCity == 2 && (betterMusic.PossibleTracks[title].Agelimit < CurrentEraID || betterMusic.PossibleTracks[title].Age > CurrentEraID )) ||
-                (betterMusic.Settings.MainCity == 1 && betterMusic.PossibleTracks[title].Age > CurrentEraID)
+                (FH.betterMusic.Settings.MainCity == 2 && (FH.betterMusic.PossibleTracks[title].Agelimit < FH.CurrentEraID || FH.betterMusic.PossibleTracks[title].Age > FH.CurrentEraID )) ||
+                (FH.betterMusic.Settings.MainCity == 1 && FH.betterMusic.PossibleTracks[title].Age > FH.CurrentEraID)
                 )) continue;
-            if (betterMusic.Settings.Scenes[scene][title]) betterMusic.Scenes[scene].TitleList.push(title);
+            if (FH.betterMusic.Settings.Scenes[scene][title]) FH.betterMusic.Scenes[scene].TitleList.push(title);
         }
     }
 
 };
-
-

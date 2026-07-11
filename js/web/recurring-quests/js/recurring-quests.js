@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
+FH.proxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
     
     if (!data.responseData) return;
     for (let q in data.responseData) {
@@ -17,7 +17,7 @@ FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
                 if (quest.genericRewards[0].subType == "medals" || quest.genericRewards[0].subType == "premium") {
                     Recurring.data.Questlist[quest.id].diamonds = true;
                 }
-                if (!Recurring.data.Questlist[quest.id].era) Recurring.data.Questlist[quest.id].era = CurrentEraID;
+                if (!Recurring.data.Questlist[quest.id].era) Recurring.data.Questlist[quest.id].era = FH.CurrentEraID;
                 if (!Recurring.data.Questlist[quest.id].conditions) {
                     Recurring.data.Questlist[quest.id].conditions = quest.successConditions;
                     Recurring.data.Questlist[quest.id].groups = quest.successConditionGroups;
@@ -32,7 +32,7 @@ FoEproxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
 });
 
 let Recurring = {
-    data: JSON.parse(localStorage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
+    data: JSON.parse(FH.Storage.getItem('Recurring')) || {"Questlist": {}, "count":0, "showCounter": false,"hideTasks":true},
     
 	/**
 	 * Box in den DOM
@@ -40,11 +40,11 @@ let Recurring = {
     init: () => {
         if ($('#RecurringQuestsBox').length < 1) {
 
-            HTML.AddCssFile('recurring-quests');
+            FH.HTML.AddCssFile('recurring-quests');
 
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'RecurringQuestsBox',
-                'title': i18n('Boxes.RecurringQuests.Title'),
+                'title': FH.t('Boxes.RecurringQuests.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -55,7 +55,7 @@ let Recurring = {
             Recurring.RefreshGui();
 
         } else {
-            HTML.CloseOpenBox('RecurringQuestsBox');
+            FH.HTML.CloseOpenBox('RecurringQuestsBox');
         }
     },
 
@@ -78,14 +78,14 @@ let Recurring = {
         Recurring.data.count = 0;
         for (let q in Recurring.data.Questlist) {
             if (!Recurring.data.Questlist[q]) continue;
-            if (Recurring.data.Questlist[q].era == CurrentEraID) {
+            if (Recurring.data.Questlist[q].era == FH.CurrentEraID) {
                 if (!Recurring.data.Questlist[q].diamonds){
                     Recurring.data.filter.push(q);
                     Recurring.data.count++;
                 } else {
                     Recurring.data.filter2.push(q);
                 }
-            } else if (CurrentEraID - Recurring.data.Questlist[q].era > 1) {
+            } else if (FH.CurrentEraID - Recurring.data.Questlist[q].era > 1) {
                 delete Recurring.data.Questlist[q];
             }
         }
@@ -96,14 +96,14 @@ let Recurring = {
 	 */
     BuildBox: () => {
         let h = [];
-        h.push(`<div>${i18n('Boxes.RecurringQuests.Warning')}</div>`);
+        h.push(`<div>${FH.t('Boxes.RecurringQuests.Warning')}</div>`);
 
         h.push(`<table id="recurringTable" class="foe-table${!!Recurring.data.hideTasks?' hideTasks':''}">`);
 
         h.push('<thead class="sticky">');
         h.push('<tr>');
-        h.push(`<th onclick="Recurring.hideTasks()">${i18n('Boxes.RecurringQuests.Table.Quest')} ⇋</th>`);
-        h.push(`<th onclick="Recurring.hideTasks()">${i18n('Boxes.RecurringQuests.Table.Tasks')} ⇋</th>`);
+        h.push(`<th onclick="Recurring.hideTasks()">${FH.t('Boxes.RecurringQuests.Table.Quest')} ⇋</th>`);
+        h.push(`<th onclick="Recurring.hideTasks()">${FH.t('Boxes.RecurringQuests.Table.Tasks')} ⇋</th>`);
         h.push('<th><img src="' + srcLinks.get("/shared/icons/premium.png", true) + '" alt="" width="20px" height="20px">?</th>');
         h.push('</tr>');
         h.push('</thead>');
@@ -163,14 +163,14 @@ let Recurring = {
 
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<label><input type="checkbox" oninput="Recurring.SaveSettings(this.checked)" ${Recurring.data.showCounter?'checked':''}/>${i18n('Boxes.RecurringQuests.showCounter')}<label>`);
+        h.push(`<label><input type="checkbox" oninput="Recurring.SaveSettings(this.checked)" ${Recurring.data.showCounter?'checked':''}/>${FH.t('Boxes.RecurringQuests.showCounter')}<label>`);
         $('#RecurringQuestsBoxSettingsBox').html(h.join(''));
     },
 
     SaveSettings: (show=Recurring.data.showCounter) => {
         Recurring.filter()
         Recurring.data.showCounter = show;
-        localStorage.setItem('Recurring', JSON.stringify(Recurring.data));
+        FH.Storage.setItem('Recurring', JSON.stringify(Recurring.data));
         Recurring.SetCounter();
     },
     getTasks: (groups,conditions) =>{
@@ -182,9 +182,9 @@ let Recurring = {
                 let d= conditions.find(item => item.id==c).description;
                 let img= srcLinks.getQuest(conditions.find(item => item.id==c).iconType);
                 t += `<span>${tAdd} <img src="${img}"> ${d}</span>`;
-                tAdd = `<pre style="display:inline">&emsp;&emsp;</pre>${i18n('Boxes.RecurringQuests.OR')} `;
+                tAdd = `<pre style="display:inline">&emsp;&emsp;</pre>${FH.t('Boxes.RecurringQuests.OR')} `;
             }
-            tAdd = `${i18n('Boxes.RecurringQuests.AND')}`;
+            tAdd = `${FH.t('Boxes.RecurringQuests.AND')}`;
         }
         return t;
     },
@@ -195,9 +195,9 @@ let Recurring = {
             if (!groups[x]) continue;
             for (let c of groups[x].conditionIds) {
                 t += tAdd + conditions.find(item => item.id==c).description;
-                tAdd = `\n${i18n('Boxes.RecurringQuests.OR')} `;
+                tAdd = `\n${FH.t('Boxes.RecurringQuests.OR')} `;
             }
-            tAdd = `\n-------\n${i18n('Boxes.RecurringQuests.AND')} `;
+            tAdd = `\n-------\n${FH.t('Boxes.RecurringQuests.AND')} `;
         }
         return t;
     },

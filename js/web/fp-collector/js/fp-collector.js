@@ -3,18 +3,18 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
+FH.proxy.addHandler('GrandPrizeService', 'getGrandPrizes', (data, postData) => {
 	FPCollector.currentEvent = data.responseData[0]['context'].replace(/_tournament/g,'');
 });
 
-FoEproxy.addHandler('TimedSpecialRewardService', 'getTimedSpecial', (data, postData) => {
+FH.proxy.addHandler('TimedSpecialRewardService', 'getTimedSpecial', (data, postData) => {
 	if (!FPCollector.currentEvent) {
 		FPCollector.currentEvent = data.responseData['context'].replace(/_tournament/g,'');
 	}
 });
 
 // - QI 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 	const d = data.responseData;
 	let event = null, 
 		notes = null;
@@ -30,12 +30,12 @@ FoEproxy.addHandler('RewardService', 'collectRewardSet', (data, postData) => {
 			event: event,
 			notes: notes ? notes : '',
 			amount: reward.amount,
-			date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+			date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 		});
 	}
 });
 
-FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 	const d = data.responseData[0][0];
 	let eventCheck = data.responseData[1],
 		event = data.responseData[1],
@@ -48,27 +48,27 @@ FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		}
 		if (eventCheck.includes("AutoCollect")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.auto_collect');
+			notes = FH.t('Boxes.FPCollector.auto_collect');
 		}
 		if (eventCheck.includes("task_reward")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.task_reward');
+			notes = FH.t('Boxes.FPCollector.task_reward');
 		}
 		if (eventCheck.includes("card_duel")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.card_duel');
+			notes = FH.t('Boxes.FPCollector.card_duel');
 		}
 		if (eventCheck.includes("reward_calendar")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.reward_calendar');
+			notes = FH.t('Boxes.FPCollector.reward_calendar');
 		}
 		if (eventCheck.toLowerCase().includes("collectRewardSet")) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.grand_prize');
+			notes = FH.t('Boxes.FPCollector.grand_prize');
 		}
 		if (eventCheck.toLowerCase().includes("grandprize") || eventCheck.includes("grand_prize") || d['type'].includes("grand_prize") || eventCheck.includes("event_pass") ) {
 			event = FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.grand_prize');
+			notes = FH.t('Boxes.FPCollector.grand_prize');
 		}
 	}
 
@@ -98,7 +98,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		/*else if (data.responseData[0][2] && data.responseData[0][2]['subType'] === 'strategy_points') { // Event-Überraschungskiste
 			console.log('✔️Event-Überraschungskiste', data, postData);
 			event = 'event';
-			notes = i18n('Boxes.FPCollector.event_mystery_item');
+			notes = FH.t('Boxes.FPCollector.event_mystery_item');
 			amount = data.responseData[0][2]['amount'];
 		}*/
 		else {
@@ -108,12 +108,12 @@ FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 	else if (event === 'default') {	// default is hiddenreward or leaguereward or flying island incidents
 		event = 'hiddenReward';
 
-		if (ActiveMap == 'cultural_outpost') {
+		if (FH.ActiveMap == 'cultural_outpost') {
 			event = 'shards';
 		}
 		if (postData[0].requestMethod === 'useItem') {
 			event = !FPCollector.currentEvent ? 'event' : FPCollector.currentEvent;
-			notes = i18n('Boxes.FPCollector.league_reward');
+			notes = FH.t('Boxes.FPCollector.league_reward');
 		}
 		if (postData[0].requestMethod === 'advanceQuest') {
 			return;
@@ -124,17 +124,17 @@ FoEproxy.addHandler('RewardService', 'collectReward', (data, postData) => {
 		event: event,
 		notes: notes ? notes : '',
 		amount: amount,
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
 // - reward calendar completion
-FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
+FH.proxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 	let eventCheck = data.responseData.itemAssetName;
 
 	if (eventCheck.includes("calendar_completion")) {
 		let event = !FPCollector.currentEvent ? 'event' : FPCollector.currentEvent,
-			notes = i18n('Boxes.FPCollector.reward_calendar_completion'),
+			notes = FH.t('Boxes.FPCollector.reward_calendar_completion'),
 			amount = 0,
 			rewards = data.responseData.item.reward['rewards'];
 		if (!Array.isArray(rewards)) {
@@ -157,12 +157,12 @@ FoEproxy.addHandler('InventoryService', 'getItem', (data, postData) => {
 		event: event,
 		notes: notes,
 		amount: amount,
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
 // GEX FP from chest
-FoEproxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
 	const d = data['responseData'];
 
 	if (d['subType'] !== 'strategy_points') {
@@ -172,56 +172,56 @@ FoEproxy.addHandler('GuildExpeditionService', 'openChest', (data, postData) => {
 	StrategyPoints.insertIntoDB({
 		event: 'chest',
 		amount: d['amount'],
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
 
 // Visit taverns (satDown)
-FoEproxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) => {
+FH.proxy.addHandler('FriendsTavernService', 'getOtherTavern', (data, postData) => {
 	const d = data['responseData'];
 
 	if (!d['rewardResources'] || !d['rewardResources']['resources'] || !d['rewardResources']['resources']['strategy_points'] || !postData[0] || !postData[0]['requestData'] || !postData[0]['requestData'][0]) {
 		return;
 	}
 
-	const player = PlayerDict[postData[0]['requestData'][0]];
+	const player = FH.Players.Dict[postData[0]['requestData'][0]];
 
 	StrategyPoints.insertIntoDB({
 		event: 'satDown',
-		notes: player ? `<img alt="${player['PlayerName']}" src="${srcLinks.GetPortrait(player['Avatar'])}"><span>${MainParser.GetPlayerLink(player['PlayerID'], player['PlayerName'])}</span>` : '',
+		notes: player ? `<img alt="${player['PlayerName']}" src="${srcLinks.GetPortrait(player['Avatar'])}"><span>${FH.Main.GetPlayerLink(player['PlayerID'], player['PlayerName'])}</span>` : '',
 		amount: d['rewardResources']['resources']['strategy_points'],
-		date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+		date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 	});
 });
 
 
 // Plunder reward
-FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 	FPCollector.lastVisitedPlayer = data.responseData.other_player.player_id;
 });
 
-FoEproxy.addHandler('CityMapService', 'reset', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'reset', (data, postData) => {
 	for (let i = 0; i < data.responseData.length; i++) {
 		FPCollector.lastPlunderedEntity = data.responseData[i].cityentity_id;
 	}
 });
 
-FoEproxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 	setTimeout(function() {
 		for (let i = 0; i < data.responseData.length; i++) {
 			let PlunderReward = data.responseData[i];
 
 			if (PlunderReward['product'] && PlunderReward['product']['resources'] && PlunderReward['product']['resources']['strategy_points']) {
 				let PlunderedFP = PlunderReward['product']['resources']['strategy_points'];
-				const player = PlayerDict[FPCollector.lastVisitedPlayer];
-				const entity = MainParser.CityEntities[FPCollector.lastPlunderedEntity];
+				const player = FH.Players.Dict[FPCollector.lastVisitedPlayer];
+				const entity = FH.Main.CityEntities[FPCollector.lastPlunderedEntity];
 
 				StrategyPoints.insertIntoDB({
 					event: 'plunderReward',
-					notes: player ? `<img src="${srcLinks.GetPortrait(MainParser.PlayerPortraits[player['Avatar']])}"><span>${MainParser.GetPlayerLink(player['PlayerID'], player['PlayerName'])}${entity ? ' - ' + entity['name'] : ''}</span>` : '',
+					notes: player ? `<img src="${srcLinks.GetPortrait(FH.Main.PlayerPortraits[player['Avatar']])}"><span>${FH.Main.GetPlayerLink(player['PlayerID'], player['PlayerName'])}${entity ? ' - ' + entity['name'] : ''}</span>` : '',
 					amount: PlunderedFP,
-					date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+					date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 				});
 			}
 		}
@@ -230,7 +230,7 @@ FoEproxy.addHandler('OtherPlayerService', 'rewardPlunder', (data, postData) => {
 
 
 // double Collection by Blue Galaxy contains [id, type] -  old, should not get triggered anymore
-FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 	for (let i in data['responseData']) {
 		if (!data['responseData'].hasOwnProperty(i)) continue;
 
@@ -238,8 +238,8 @@ FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 
 		if (data['responseData']['bonus'][0] === BonusId) {
 			let CityMapID = data['responseData']['entityId'],
-				Building = MainParser.CityMapData[CityMapID],
-				CityEntity = MainParser.CityEntities[Building['cityentity_id']],
+				Building = FH.Main.CityMapData[CityMapID],
+				CityEntity = FH.Main.CityEntities[Building['cityentity_id']],
 				Production = Productions.readType(Building);
 
 			if (Production['products']) {
@@ -250,7 +250,7 @@ FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 						event: 'double_collection',
 						notes: CityEntity['name'],
 						amount: FP,
-						date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+						date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 					});
 				}
 			}
@@ -259,16 +259,16 @@ FoEproxy.addHandler('CityMapService', 'showEntityIcons', (data, postData) => {
 });
 
 // double Collection by Blue Galaxy contains [id, type]  - NEW Version
-FoEproxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
-	let BonusId = BonusService.Bonuses.find(object => object.type === 'double_collection')?.id;
+FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
+	let BonusId = FH.BonusService.getBonuses().find(object => object.type === 'double_collection')?.id;
 	if (!BonusId) return;
   	for (let j in data['responseData']['bonus']) {
 		if (!data['responseData']['bonus'].hasOwnProperty(j)) continue;
 		if (BonusId !== data['responseData']['bonus'][j]) continue;
 
 		let CityMapID = data['responseData']['entityId'],
-		buildingData = MainParser.CityMapData[CityMapID],
-		metaData = MainParser.CityEntities[buildingData.cityentity_id],
+		buildingData = FH.Main.CityMapData[CityMapID],
+		metaData = FH.Main.CityEntities[buildingData.cityentity_id],
 		era = Technologies.getEraName(buildingData.cityentity_id, buildingData.level)
 
 		let building = CityBuildings.createBuilding(metaData, era, buildingData)
@@ -281,7 +281,7 @@ FoEproxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
 			event: 'double_collection',
 			notes: building.name,
 			amount: FP,
-			date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+			date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 		});
 	}
 });
@@ -297,9 +297,9 @@ let FPCollector = {
 	lastPlunderedEntity: null,
 
 	minDateFilter: null,
-	maxDateFilter: moment(MainParser.getCurrentDate()).toDate(),
-	currentDateFilter: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD'),
-	currentDateEndFilter: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD'),
+	maxDateFilter: moment(FH.Main.getCurrentDate()).toDate(),
+	currentDateFilter: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD'),
+	currentDateEndFilter: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD'),
 
 	CityMapDataNew: null,
 
@@ -323,11 +323,11 @@ let FPCollector = {
 			FPCollector.DatePicker = null;
 
 			// CSS into the DOM
-			HTML.AddCssFile('fp-collector');
+			FH.HTML.AddCssFile('fp-collector');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'fp-collector',
-				title: i18n('Menu.fpCollector.Title'),
+				title: FH.t('Menu.fpCollector.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
@@ -343,7 +343,7 @@ let FPCollector = {
 				FPCollector.minDateFilter = moment(resp.date).subtract(1, 'minute').toDate();
 
 			}).catch(() => {
-				FPCollector.minDateFilter = moment(MainParser.getCurrentDate()).toDate();
+				FPCollector.minDateFilter = moment(FH.Main.getCurrentDate()).toDate();
 			});
 
 			// set the last known date
@@ -379,7 +379,7 @@ let FPCollector = {
 
 			$('#fp-collectorBody').append(
 				`<div class="dark-bg head sticky">
-					<div class="text-warning"><strong>${i18n('Boxes.FPCollector.Total')} <span id="fp-collector-total-fp"></span>${i18n('Boxes.FPCollector.FP')}</strong></div>
+					<div class="text-warning"><strong>${FH.t('Boxes.FPCollector.Total')} <span id="fp-collector-total-fp"></span>${FH.t('Boxes.FPCollector.FP')}</strong></div>
 					<div class="text-right"><button class="btn btn-slim" id="FPCollectorPicker">${FPCollector.formatRange()}</button></div>
 				</div>`,
 				`<div id="fp-collectorBodyInner"></div>`
@@ -388,7 +388,7 @@ let FPCollector = {
 			if (hidePicker) $('#FPCollectorPicker').hide();
 		}
 		else {
-			HTML.CloseOpenBox('fp-collector');
+			FH.HTML.CloseOpenBox('fp-collector');
 			return;
 		}
 
@@ -410,7 +410,7 @@ let FPCollector = {
 
 		if (FPCollector.TodayEntries.length === 0)
 		{
-			tr.push(`<div class="text-center" style="padding:15px"><em>${i18n('Boxes.FPCollector.NoEntriesFound')}</em></div>`);
+			tr.push(`<div class="text-center" style="padding:15px"><em>${FH.t('Boxes.FPCollector.NoEntriesFound')}</em></div>`);
 		}
 		else {
 
@@ -425,16 +425,16 @@ let FPCollector = {
 
 				tr.push(	`<div class="fham-accordion-head game-cursor ${event}-head" onclick="FPCollector.ToggleHeader('${event}')">
 								<span class="image"></span>
-								<strong class="text-warning">${sumTotal} ${i18n('Boxes.FPCollector.FP')}</strong>
-								<span>${i18n('Boxes.FPCollector.' + event)}</span>
+								<strong class="text-warning">${sumTotal} ${FH.t('Boxes.FPCollector.FP')}</strong>
+								<span>${FH.t('Boxes.FPCollector.' + event)}</span>
 							</div>`);
 
 				tr.push(	`<div class="fham-accordion-body ${event}-body">`);
 
 				 entriesEvent.forEach(e => {
 					 tr.push(`<div>
-								<span class="fps">${e.amount.toLocaleString(i18n('Local'))} ${i18n('Boxes.FPCollector.FP')}</span>
-								<span class="desc">${i18n('Boxes.FPCollector.' + e.event)}</span>
+								<span class="fps">${e.amount.toLocaleString(FH.t('Local'))} ${FH.t('Boxes.FPCollector.FP')}</span>
+								<span class="desc">${FH.t('Boxes.FPCollector.' + e.event)}</span>
 								<span class="building">${e.notes ? e.notes : ''}</span>
 						</div>`);
 				 });
@@ -459,7 +459,7 @@ let FPCollector = {
 		if (PostData['requestData'] && PostData['requestData'][0]) {
 			let QuestID = PostData['requestData'][0];
 
-			for (let Quest of MainParser.Quests) {
+			for (let Quest of FH.Main.Quests) {
 				if (Quest['id'] !== QuestID || Quest['state'] !== 'collectReward') continue;
 
 				if (Quest['genericRewards']) {
@@ -475,7 +475,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: amount,
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 						else if (Reward['type'] === 'forgepoint_package') { // Belohnung einer Schleifenquest
@@ -483,7 +483,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: Number(Reward['subType']),
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 						else if (Reward['subType'] === 'strategy_points') { // normale Quest-Belohnung
@@ -491,7 +491,7 @@ let FPCollector = {
 								event: 'collectReward',
 								notes: Quest.questGiver['name'] + ' - ' + Quest['windowTitle'],
 								amount: Reward['amount'],
-								date: moment(MainParser.getCurrentDate()).format('YYYY-MM-DD')
+								date: moment(FH.Main.getCurrentDate()).format('YYYY-MM-DD')
 							});
 						}
 					}
@@ -513,7 +513,7 @@ let FPCollector = {
 			totalFP += e.amount
 		});
 
-		return totalFP.toLocaleString(i18n('Local'));
+		return totalFP.toLocaleString(FH.t('Local'));
 	},
 
 
@@ -527,7 +527,7 @@ let FPCollector = {
 			}
 		});
 
-		return totalFPByType.toLocaleString(i18n('Local'));
+		return totalFPByType.toLocaleString(FH.t('Local'));
 	},
 
 
@@ -544,8 +544,8 @@ let FPCollector = {
 
 		FPCollector.DatePicker = new Litepicker({
 			element: document.getElementById('FPCollectorPicker'),
-			format: i18n('Date'),
-			lang: MainParser.Language,
+			format: FH.t('Date'),
+			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
 			numberOfMonths: 1,
@@ -574,13 +574,13 @@ let FPCollector = {
 		let dateEnd = moment(FPCollector.currentDateEndFilter);
 
 		if (dateStart.isSame(dateEnd)){
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())){
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		return text;

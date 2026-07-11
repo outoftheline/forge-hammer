@@ -1,4 +1,4 @@
-FoEproxy.addHandler('AchievementsService','getOverview', (data, postData) => {
+FH.proxy.addHandler('AchievementsService','getOverview', (data, postData) => {
     Profile.init(data.responseData);
     
     if ($('#playerProfile-Btn').hasClass('hud-btn-red')) {
@@ -6,22 +6,22 @@ FoEproxy.addHandler('AchievementsService','getOverview', (data, postData) => {
         $('#playerProfile-Btn-closed').remove();
     }
 });
-FoEproxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
     Profile.otherPlayer = data.responseData;
     Profile.showButton();
 });
 
-FoEproxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
 	if ($('#PlayerProfileButton').length !== 0) {
-        $('#PlayerProfileButton span').attr('class',ActiveMap);
+        $('#PlayerProfileButton span').attr('class',FH.ActiveMap);
 
-        if (ActiveMap === "OtherPlayer")
+        if (FH.ActiveMap === "OtherPlayer")
             $('#PlayerProfileButton').attr('onclick','Profile.showOtherPlayer()');
         else
             $('#PlayerProfileButton').attr('onclick','Profile.show()');
     }
 });
-FoEproxy.addFoeHelperHandler('BoostsUpdated', () => {
+FH.proxy.addFoeHelperHandler('BoostsUpdated', () => {
     Profile.update()
 });
 
@@ -50,7 +50,7 @@ const Profile = {
 
 	showButton: () => {
 		if ($('#PlayerProfileButton').length === 0) {
-			HTML.AddCssFile('profile');
+			FH.HTML.AddCssFile('profile');
 			let div = $('<div />');
 
 			div.attr({
@@ -59,12 +59,12 @@ const Profile = {
 			});
 
 			$('body').append(div).promise().done(function() {
-                let showProfile = ActiveMap === 'OtherPlayer' ? 'Profile.showOtherPlayer()' : 'Profile.show()';
-				div.append('<span class="'+ActiveMap+'" data-original-title="'+i18n('Boxes.PlayerProfile.Tooltip')+'"><img class="clickable" src="'+srcLinks.GetPortrait(ExtPlayerAvatar)+'" /></span>')
+                let showProfile = FH.ActiveMap === 'OtherPlayer' ? 'Profile.showOtherPlayer()' : 'Profile.show()';
+				div.append('<span class="'+FH.ActiveMap+'" data-original-title="'+FH.t('Boxes.PlayerProfile.Tooltip')+'"><img class="clickable" src="'+srcLinks.GetPortrait(FH.Player.Avatar)+'" /></span>')
 					.attr('onclick', showProfile);
                 $('#PlayerProfileButton [data-original-title]').tooltip({
                         useFoEHelperSkin: true,
-                        headLine: i18n('Global.BoxTitle'),
+                        headLine: FH.t('Global.BoxTitle'),
                         placement: 'bottom',
                         html: true
                 });
@@ -74,13 +74,13 @@ const Profile = {
 
 	show: () => {
 		if ($('#PlayerProfile').length > 0) {
-			HTML.CloseOpenBox('PlayerProfile');
+			FH.HTML.CloseOpenBox('PlayerProfile');
 			return;
 		}
 
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'PlayerProfile',
-			title: ExtPlayerName,
+			title: FH.Player.Name,
 			auto_close: true,
 			dragdrop: true,
             class: 'playerprofile'
@@ -95,7 +95,7 @@ const Profile = {
         let content = [];
 
         if (Profile.achievements === null)
-            content.push('<div style="display:inline-flex;width:100%;height:200px;align-items:center;justify-content:center;font-size:120%;text-align:center;">'+i18n('Menu.PlayerProfile.Warning')+'</div>');
+            content.push('<div style="display:inline-flex;width:100%;height:200px;align-items:center;justify-content:center;font-size:120%;text-align:center;">'+FH.t('Menu.PlayerProfile.Warning')+'</div>');
 
         // left content, city
         if (Profile.achievements !== null) content.push(Profile.buildCityContent(isRebuilt));
@@ -111,7 +111,7 @@ const Profile = {
 
         // actions
         $('#PlayerProfileBody').html(content.join('')).promise().done(function() {
-            let theme = localStorage.getItem("PlayerProfileTheme") || "default";
+            let theme = FH.Storage.getItem("PlayerProfileTheme") || "default";
             $('#PlayerProfile').addClass(theme);
             $('#PlayerProfileBody [data-original-title]').tooltip();
             if (isRebuilt) {
@@ -129,7 +129,7 @@ const Profile = {
                 $(this).attr('data-original-title', text);
             });
             $('#PlayerProfileBody').on('click', '.colorToggle',function () {
-                Profile.currentThemeNr = Profile.themes.indexOf(localStorage.getItem("PlayerProfileTheme")) || 0;
+                Profile.currentThemeNr = Profile.themes.indexOf(FH.Storage.getItem("PlayerProfileTheme")) || 0;
                 $('#PlayerProfile').removeClass(Profile.themes[Profile.currentThemeNr]);
                 if (Profile.themes[Profile.currentThemeNr+1] !== undefined)
                     Profile.currentThemeNr++;
@@ -137,7 +137,7 @@ const Profile = {
                     Profile.currentThemeNr = 0;
 
                 $('#PlayerProfile').addClass(Profile.themes[Profile.currentThemeNr]);
-				localStorage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
+				FH.Storage.setItem("PlayerProfileTheme", Profile.themes[Profile.currentThemeNr]);
             });
             $('#PlayerProfile').on('click', '.toggleMore', function () {
                 $(this).toggleClass('active');
@@ -160,7 +160,7 @@ const Profile = {
                     $('.battleBoosts h2',this).text()+'\n'+
                     $('.battleBoosts tr',this).text()+'\n';
 
-                    helper.str.copyToClipboardLegacy(copyText);
+                    FH.helper.str.copyToClipboardLegacy(copyText);
             });*/
         });
     },
@@ -171,32 +171,32 @@ const Profile = {
         cl.push('<div class="leftInfo showMore">');
         cl.push('<img class="decoration" src="'+srcLinks.get(`/shared/gui/window/window_decoration_side.png`,true)+'" />');
         cl.push('<div class="header flex">');
-        cl.push('<img src="'+srcLinks.get(`/city/buildings/H_SS_${CurrentEra}_Townhall.png`,true)+'" />');
+        cl.push('<img src="'+srcLinks.get(`/city/buildings/H_SS_${FH.CurrentEra}_Townhall.png`,true)+'" />');
         cl.push('</div>');
         
         cl.push('<div class="expansions secondary">');
         cl.push('<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_street.png`,true)+'" />');
         let roadAmount = 0;
-        for (let building of Object.values(MainParser.CityMapData)) { 
+        for (let building of Object.values(FH.Main.CityMapData)) { 
             if (building.type !== "street") continue; 
             roadAmount++;
         }
-        cl.push(HTML.Format(roadAmount)+'</span>');
+        cl.push(FH.HTML.Format(roadAmount)+'</span>');
 
         cl.push('<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />');
-        cl.push(HTML.Format(CityMap.Main.unlockedAreas.length*16+256-16)+'</span>'); // unlocked areas + start area (- 16 somehow?)
+        cl.push(FH.HTML.Format(CityMap.Main.unlockedAreas.length*16+256-16)+'</span>'); // unlocked areas + start area (- 16 somehow?)
         cl.push('</div>');
 
         cl.push('<div class="greatbuildings pad text-center">')
         // selected GBs
         for (let gb of Profile.gbList) {
-            let gbLevel = Object.values(MainParser.CityMapData).find(x => x.cityentity_id == gb)?.level;
+            let gbLevel = Object.values(FH.Main.CityMapData).find(x => x.cityentity_id == gb)?.level;
             if (gbLevel)
                 cl.push('<span class="removable"><img src="'+srcLinks.get(`/city/buildings/${gb.replace('X_','X_SS_')}.png`,true)+'" />' + gbLevel +'</span>');
         }
 
         let allGBs = [];
-        for (let building of Object.values(MainParser.CityMapData)) { // get all GBs
+        for (let building of Object.values(FH.Main.CityMapData)) { // get all GBs
             if (building.type !== "greatbuilding") continue; 
             allGBs.push(building);
         }
@@ -212,22 +212,22 @@ const Profile = {
                 cl.push('<span class="removable"><img src="'+srcLinks.get(`/city/buildings/${gb.cityentity_id.replace('X_','X_SS_')}.png`,true)+'" />' + gb.level +'</span>');
         }
         if (allGBs.length > 6)
-            cl.push('<span class="total" data-original-title="'+i18n('Boxes.GuildFights.Total')+': '+allGBs.length+'"><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" />' + allGBs.length +'</span>');
+            cl.push('<span class="total" data-original-title="'+FH.t('Boxes.GuildFights.Total')+': '+allGBs.length+'"><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" />' + allGBs.length +'</span>');
 
         cl.push('</div>');
 
         // daily production
         cl.push('<div class="dailyProd pad">');
-        cl.push('<h2 class="border"><span>'+i18n('Boxes.PlayerProfile.DailyProduction')+'</span></h2>');
+        cl.push('<h2 class="border"><span>'+FH.t('Boxes.PlayerProfile.DailyProduction')+'</span></h2>');
         // no data
         if (Profile.fpProduction === 0 || Profile.guildGoods === 0) {
-            cl.push('<p class="important" onclick="Productions.init();">'+i18n('Boxes.PlayerProfile.OpenProduction')+'</p>');
+            cl.push('<p class="important" onclick="Productions.init();">'+FH.t('Boxes.PlayerProfile.OpenProduction')+'</p>');
         }
 
         if (Profile.fpProduction > 0) {
             cl.push('<span class="removable">' +
                 '<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />' + 
-                HTML.Format(parseInt(Profile.fpProduction)));
+                FH.HTML.Format(parseInt(Profile.fpProduction)));
                 if (Boosts.Sums.forge_points_production > 0)
                     cl.push('<span class="boost"> '+Boosts.Sums.forge_points_production + '% </span>');
             cl.push('</span>');
@@ -235,25 +235,25 @@ const Profile = {
         if (Profile.guildGoods) {
             cl.push('<span class="removable">'+
                 '<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_guild_goods.png`,true)+'" />' + 
-                HTML.Format(parseInt(parseInt(Profile.guildGoods)) || 0));
+                FH.HTML.Format(parseInt(parseInt(Profile.guildGoods)) || 0));
                 if (Boosts.Sums.guild_goods_production > 0)
                     cl.push('<span class="boost"> '+ Boosts.Sums.guild_goods_production + '% </span>');
             cl.push('</span>');
         }
         // goods
-        if (Profile.goods[CurrentEraID-2] || Profile.goods[CurrentEraID-1] || Profile.goods[CurrentEraID]) {
+        if (Profile.goods[FH.CurrentEraID-2] || Profile.goods[FH.CurrentEraID-1] || Profile.goods[FH.CurrentEraID]) {
             cl.push('<span class="removable">');
-                if (Profile.goods[CurrentEraID-2]) {
+                if (Profile.goods[FH.CurrentEraID-2]) {
                     cl.push(' <img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + 
-                    HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-2])) || 0));
+                    FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-2])) || 0));
                 }
-                if (Profile.goods[CurrentEraID-1]) {
+                if (Profile.goods[FH.CurrentEraID-1]) {
                     cl.push('<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />');
-                    cl.push(HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-1])) || 0));
+                    cl.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-1])) || 0));
                 }
-                if (Profile.goods[CurrentEraID]) {
+                if (Profile.goods[FH.CurrentEraID]) {
                     cl.push(' <img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + 
-                    HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID])) || 0));
+                    FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID])) || 0));
                 }
                 if (Boosts.Sums.goods_production > 0)
                     cl.push('<span class="boost"> '+Boosts.Sums.goods_production + '% </span>');
@@ -261,7 +261,7 @@ const Profile = {
         }
 
         if (Profile.units > 0) {
-			cl.push('<span class="removable"><img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+HTML.Format(parseInt(Profile.units))+'</span>');
+			cl.push('<span class="removable"><img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+FH.HTML.Format(parseInt(Profile.units))+'</span>');
         }
         cl.push('</div>');
         
@@ -269,31 +269,31 @@ const Profile = {
         let hasQIBoosts = (Boosts.noSettlement.guild_raids_action_points_collection+Boosts.Sums.guild_raids_coins_production+Boosts.Sums.guild_raids_coins_start+Boosts.Sums.guild_raids_supplies_production+Boosts.Sums.guild_raids_supplies_start+Boosts.Sums.guild_raids_goods_start+Boosts.Sums.guild_raids_units_start !== 0)
         if (hasQIBoosts) {
             cl.push('<div class="qiBoosts pad text-center">');
-            cl.push('<h2>'+i18n('Boxes.PlayerProfile.QIBoosts')+'</h2>');
+            cl.push('<h2>'+FH.t('Boxes.PlayerProfile.QIBoosts')+'</h2>');
             if (Boosts.noSettlement.guild_raids_coins_production + Boosts.Sums.guild_raids_coins_start !== 0) {
                 cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_coins_start.png`,true) + '" />');
                 if (Boosts.noSettlement.guild_raids_coins_production !== 0)
-                    cl.push(HTML.Format(parseInt(Boosts.noSettlement.guild_raids_coins_production)) + '% ');
+                    cl.push(FH.HTML.Format(parseInt(Boosts.noSettlement.guild_raids_coins_production)) + '% ');
                 if (Boosts.Sums.guild_raids_coins_start !== 0)
-                    cl.push('+' + HTML.FormatNumberShort(parseInt(Boosts.Sums.guild_raids_coins_start),true,'en-EN'));
+                    cl.push('+' + FH.HTML.FormatNumberShort(parseInt(Boosts.Sums.guild_raids_coins_start),true,'en-EN'));
                 cl.push('</span> ');
             }
             if (Boosts.noSettlement.guild_raids_supplies_production + Boosts.Sums.guild_raids_supplies_start !== 0) {
                 cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_supplies_start.png`,true) + '" />');
                 if (Boosts.noSettlement.guild_raids_supplies_production !== 0)
-                    cl.push(HTML.Format(parseInt(Boosts.noSettlement.guild_raids_supplies_production)) + '% ');
+                    cl.push(FH.HTML.Format(parseInt(Boosts.noSettlement.guild_raids_supplies_production)) + '% ');
                 if (Boosts.Sums.guild_raids_supplies_start !== 0)
-                    cl.push('+' + HTML.FormatNumberShort(parseInt(Boosts.Sums.guild_raids_supplies_start),true,'en-EN'));
+                    cl.push('+' + FH.HTML.FormatNumberShort(parseInt(Boosts.Sums.guild_raids_supplies_start),true,'en-EN'));
                 cl.push('</span> ');
             }
             if (Boosts.noSettlement.guild_raids_action_points_collection !== 0)
-                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_action_points_collection.png`,true) + '" />' + HTML.Format(parseInt(Boosts.noSettlement.guild_raids_action_points_collection)) + '</span> ');
+                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_action_points_collection.png`,true) + '" />' + FH.HTML.Format(parseInt(Boosts.noSettlement.guild_raids_action_points_collection)) + '</span> ');
             if (Boosts.Sums.guild_raids_goods_start !== 0)
-                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_goods_start.png`,true) + '" />' + HTML.Format(parseInt(Boosts.Sums.guild_raids_goods_start)) + '</span> ');
+                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_goods_start.png`,true) + '" />' + FH.HTML.Format(parseInt(Boosts.Sums.guild_raids_goods_start)) + '</span> ');
             if (Boosts.Sums.guild_raids_units_start !== 0)
-                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_units_start.png`,true) + '" />' + HTML.Format(parseInt(Boosts.Sums.guild_raids_units_start)) + '</span> ');
+                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_units_start.png`,true) + '" />' + FH.HTML.Format(parseInt(Boosts.Sums.guild_raids_units_start)) + '</span> ');
             if (Boosts.noSettlement.guild_raids_action_points_capacity !== 0)
-                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_action_points_capacity.png`,true)+'" />' + HTML.Format(parseInt(Boosts.noSettlement.guild_raids_action_points_capacity)) + '</span> ');
+                cl.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_townhall_guild_raids_action_points_capacity.png`,true)+'" />' + FH.HTML.Format(parseInt(Boosts.noSettlement.guild_raids_action_points_capacity)) + '</span> ');
             cl.push('</div>');
         }
         cl.push('</div>');
@@ -303,7 +303,7 @@ const Profile = {
 
 
     buildMainContent(isRebuilt) {
-        let player = PlayerDict[ExtPlayerID];
+        let player = FH.Players.Dict[FH.Player.ID];
         let cc = [];
             cc.push('<div class="centerInfo">');
             cc.push('<img class="decoration" src="'+srcLinks.get(`/shared/gui/teaser/ui/teaser_decoration_bottom.png`,true)+'" />');
@@ -315,9 +315,9 @@ const Profile = {
             cc.push('</div>');
                 cc.push('<div>');
                 cc.push('<h1>'+player.PlayerName+'</h1>');
-                cc.push('<span>'+i18n('Eras.'+CurrentEraID)+'</span><br>');
-                cc.push('<span class="ranking">'+HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
-                cc.push('<span>⚔'+HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
+                cc.push('<span>'+FH.t('Eras.'+FH.CurrentEraID)+'</span><br>');
+                cc.push('<span class="ranking">'+FH.HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
+                cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
                 cc.push('</div>');
             cc.push('</div>');
 
@@ -325,60 +325,60 @@ const Profile = {
 			    let d = new Date();
 			    d.setDate(d.getDate() - Math.abs(n));
 
-			    return moment(d).format(i18n('Date'));
+			    return moment(d).format(FH.t('Date'));
 			};
 
-            let daysPlayed = HTML.i18nReplacer(i18n('Boxes.PlayerProfile.DaysPlayed'), {number: HTML.Format(parseInt(Profile.daysPlayed || 0))});
+            let daysPlayed = FH.helper.str.Replacer(FH.t('Boxes.PlayerProfile.DaysPlayed'), {number: FH.HTML.Format(parseInt(Profile.daysPlayed || 0))});
 
 	        cc.push('<div class="daysPlayed clickable" data-original-title="'+daysPlayed+'">');
-	            cc.push('<span>' + HTML.i18nReplacer(i18n('Boxes.PlayerProfile.DateStarted'), { date: daysFromToday(Profile.daysPlayed) }) + '</span>');
+	            cc.push('<span>' + FH.helper.str.Replacer(FH.t('Boxes.PlayerProfile.DateStarted'), { date: daysFromToday(Profile.daysPlayed) }) + '</span>');
             cc.push('</div>');
             cc.push('<img class="decorationBanner" src="'+srcLinks.get(`/shared/gui/reward_notification/reward_notification_banner.png`,true)+'" />');
 
             cc.push('<div class="copyContent">');
             cc.push('<div class="dailyProd hideOnMore pad">');
-            cc.push('<h2 class="text-center">'+i18n('Boxes.PlayerProfile.DailyProduction')+'</h2> ');
+            cc.push('<h2 class="text-center">'+FH.t('Boxes.PlayerProfile.DailyProduction')+'</h2> ');
             if (Profile.fpProduction === 0 || Profile.guildGoods === 0)
-                cc.push('<span class="important clickable" onclick="Productions.init();">'+i18n('Boxes.PlayerProfile.OpenProduction')+'</span><br>');
+                cc.push('<span class="important clickable" onclick="Productions.init();">'+FH.t('Boxes.PlayerProfile.OpenProduction')+'</span><br>');
 
             if (Profile.fpProduction > 0) {
                 cc.push('<span class="removable">' +
-                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+i18n('Boxes.BlueGalaxy.FP')+':&nbsp;</span>'+
-                    '<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />' +  HTML.Format(parseInt(Profile.fpProduction)));
+                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+FH.t('Boxes.BlueGalaxy.FP')+':&nbsp;</span>'+
+                    '<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />' +  FH.HTML.Format(parseInt(Profile.fpProduction)));
                     if (Boosts.Sums.forge_points_production > 0)
                         cc.push(' <span class="boost"><span class="hidden-text">&nbsp;</span>'+Boosts.Sums.forge_points_production + '% </span>');
                 cc.push('</span><span class="hidden-text">&numsp;</span>');
             }
             if (Profile.units > 0) {
                 cc.push('<span class="removable">'+
-                    '<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+i18n('Boxes.Productions.Units')+':&nbsp;</span>'+
-                    '<img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+HTML.Format(parseInt(Profile.units))+'</span>');
+                    '<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+FH.t('Boxes.Productions.Units')+':&nbsp;</span>'+
+                    '<img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+FH.HTML.Format(parseInt(Profile.units))+'</span>');
                 cc.push('<br>');
             }
             if (Profile.guildGoods) {
                 cc.push('<span class="removable">'+
-                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+i18n('Boxes.GuildMemberStat.GuildGoods')+':&nbsp;</span>'+
+                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+FH.t('Boxes.GuildMemberStat.GuildGoods')+':&nbsp;</span>'+
                     '<img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_guild_goods.png`,true)+'" />' + 
-                    HTML.Format(parseInt(parseInt(Profile.guildGoods)) || 0));
+                    FH.HTML.Format(parseInt(parseInt(Profile.guildGoods)) || 0));
                     if (Boosts.Sums.guild_goods_production > 0)
                         cc.push('<span class="hidden-text">&nbsp;</span><span class="boost"> '+ Boosts.Sums.guild_goods_production + '% </span>');
                 cc.push('</span><span class="hidden-text">&numsp;</span>');
             }
             // goods
-            if (Profile.goods[CurrentEraID-2] || Profile.goods[CurrentEraID-1] || Profile.goods[CurrentEraID]) {
+            if (Profile.goods[FH.CurrentEraID-2] || Profile.goods[FH.CurrentEraID-1] || Profile.goods[FH.CurrentEraID]) {
                 cc.push('<span class="removable">');
-                    cc.push('<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+i18n('Boxes.BlueGalaxy.Goods')+':</span>');
-                    if (Profile.goods[CurrentEraID-2]) {
+                    cc.push('<span class="hidden-text"><br>&numsp;&middot;&nbsp;'+FH.t('Boxes.BlueGalaxy.Goods')+':</span>');
+                    if (Profile.goods[FH.CurrentEraID-2]) {
                         cc.push('<span class="hidden-text">⬅️</span> <img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + 
-                        HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-2])) || 0));
+                        FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-2])) || 0));
                     }
-                    if (Profile.goods[CurrentEraID-1]) {
+                    if (Profile.goods[FH.CurrentEraID-1]) {
                         cc.push('<span class="hidden-text">⬇️</span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />');
-                        cc.push(HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID-1])) || 0));
+                        cc.push(FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID-1])) || 0));
                     }
-                    if (Profile.goods[CurrentEraID]) {
+                    if (Profile.goods[FH.CurrentEraID]) {
                         cc.push('<span class="hidden-text">➡️</span> <img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + 
-                        HTML.Format(parseInt(parseInt(Profile.goods[CurrentEraID])) || 0));
+                        FH.HTML.Format(parseInt(parseInt(Profile.goods[FH.CurrentEraID])) || 0));
                     }
                     if (Boosts.Sums.goods_production > 0)
                         cc.push('<span class="hidden-text">&nbsp;</span><span class="boost"> '+Boosts.Sums.goods_production + '% </span>');
@@ -387,39 +387,39 @@ const Profile = {
 			cc.push('</div>');
 
             cc.push('<div class="battleBoosts pad text-center">');
-            cc.push('<h2>'+i18n('Boxes.PlayerProfile.BattleBoosts')+'</h2>');
+            cc.push('<h2>'+FH.t('Boxes.PlayerProfile.BattleBoosts')+'</h2>');
             cc.push('<table><tr class="general">'
                 +'<td>'+
-                    '<span class="hidden-text">&numsp;&middot;&nbsp;</span><span class="aAtt">'+HTML.Format(parseInt(Boosts.Sums["att_boost_attacker"]))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="aDef">'+HTML.Format(parseInt(Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'
+                    '<span class="hidden-text">&numsp;&middot;&nbsp;</span><span class="aAtt">'+FH.HTML.Format(parseInt(Boosts.Sums["att_boost_attacker"]))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="aDef">'+FH.HTML.Format(parseInt(Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'
                 +'</td><td></td><td>'+
-                    '<span class="dAtt"><span class="hidden-text">🔵</span>'+HTML.Format(parseInt(Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="dDef">'+HTML.Format(parseInt(Boosts.Sums.def_boost_defender))+'</span>'+
+                    '<span class="dAtt"><span class="hidden-text">🔵</span>'+FH.HTML.Format(parseInt(Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="dDef">'+FH.HTML.Format(parseInt(Boosts.Sums.def_boost_defender))+'</span>'+
                 '</td></tr>');
             cc.push('<tr>'
                 +'<td>'+
-                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+i18n('Boxes.General.Guild_Battlegrounds.short')+':&nbsp;</span>'+
-                    '<span class="aAtt">'+HTML.Format(parseInt(Boosts.Sums['battleground-att_boost_attacker']+Boosts.Sums.att_boost_attacker))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="aDef">'+HTML.Format(parseInt(Boosts.Sums['battleground-def_boost_attacker']+Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'+
+                    '<span class="hidden-text">&numsp;&middot;&nbsp;'+FH.t('Boxes.General.Guild_Battlegrounds.short')+':&nbsp;</span>'+
+                    '<span class="aAtt">'+FH.HTML.Format(parseInt(Boosts.Sums['battleground-att_boost_attacker']+Boosts.Sums.att_boost_attacker))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="aDef">'+FH.HTML.Format(parseInt(Boosts.Sums['battleground-def_boost_attacker']+Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'+
                 '</td><td class="gbg"></td><td>'
-                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+HTML.Format(parseInt(Boosts.Sums['battleground-att_boost_defender']+Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="dDef">'+HTML.Format(parseInt(Boosts.Sums['battleground-def_boost_defender']+Boosts.Sums.def_boost_defender))+'</span>'+
+                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+FH.HTML.Format(parseInt(Boosts.Sums['battleground-att_boost_defender']+Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="dDef">'+FH.HTML.Format(parseInt(Boosts.Sums['battleground-def_boost_defender']+Boosts.Sums.def_boost_defender))+'</span>'+
                 '</td></tr>');
             cc.push('<tr>'
                 +'<td>'
-                    +'<span class="hidden-text">&numsp;&middot;&nbsp;'+i18n('Boxes.General.Guild_Expedition.short')+':&nbsp;</span>'
-                    +'<span class="aAtt">'+HTML.Format(parseInt(Boosts.Sums['guild_expedition-att_boost_attacker']+Boosts.Sums.att_boost_attacker))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="aDef">'+HTML.Format(parseInt(Boosts.Sums['guild_expedition-def_boost_attacker']+Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'
+                    +'<span class="hidden-text">&numsp;&middot;&nbsp;'+FH.t('Boxes.General.Guild_Expedition.short')+':&nbsp;</span>'
+                    +'<span class="aAtt">'+FH.HTML.Format(parseInt(Boosts.Sums['guild_expedition-att_boost_attacker']+Boosts.Sums.att_boost_attacker))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="aDef">'+FH.HTML.Format(parseInt(Boosts.Sums['guild_expedition-def_boost_attacker']+Boosts.Sums.def_boost_attacker))+'</span><span class="hidden-text">🔴</span>'
                 +'</td><td class="ge"></td><td>'
-                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+HTML.Format(parseInt(Boosts.Sums['guild_expedition-att_boost_defender']+Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
-                    +'<span class="dDef">'+HTML.Format(parseInt(Boosts.Sums['guild_expedition-def_boost_defender']+Boosts.Sums.def_boost_defender))+'</span> </td></tr>');
+                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+FH.HTML.Format(parseInt(Boosts.Sums['guild_expedition-att_boost_defender']+Boosts.Sums.att_boost_defender))+'</span><span class="hidden-text">/</span>'
+                    +'<span class="dDef">'+FH.HTML.Format(parseInt(Boosts.Sums['guild_expedition-def_boost_defender']+Boosts.Sums.def_boost_defender))+'</span> </td></tr>');
 
             if (Boosts.noSettlement['guild_raids-att_boost_attacker'] > 0 || Boosts.noSettlement['guild_raids-def_boost_attacker'] > 0 || Boosts.noSettlement['guild_raids-att_boost_defender'] > 0 || Boosts.noSettlement['guild_raids-def_boost_defender'] > 0)
                 cc.push('<tr><td>'
-                    +'<span class="hidden-text">&numsp;&middot;&nbsp;'+i18n('Boxes.General.Quantum_Incursion.short')+':&nbsp;</span>'
-                    +'<span class="aAtt">'+HTML.Format(parseInt(Boosts.noSettlement['guild_raids-att_boost_attacker']))+'</span><span class="hidden-text">/</span><span class="aDef">'+HTML.Format(parseInt(Boosts.noSettlement['guild_raids-def_boost_attacker']))+'</span><span class="hidden-text">🔴</span>'
+                    +'<span class="hidden-text">&numsp;&middot;&nbsp;'+FH.t('Boxes.General.Quantum_Incursion.short')+':&nbsp;</span>'
+                    +'<span class="aAtt">'+FH.HTML.Format(parseInt(Boosts.noSettlement['guild_raids-att_boost_attacker']))+'</span><span class="hidden-text">/</span><span class="aDef">'+FH.HTML.Format(parseInt(Boosts.noSettlement['guild_raids-def_boost_attacker']))+'</span><span class="hidden-text">🔴</span>'
                 +'</td><td class="qi"></td><td>'
-                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+HTML.Format(parseInt(Boosts.noSettlement['guild_raids-att_boost_defender']))+'</span><span class="hidden-text">/</span><span class="dDef">'+HTML.Format(parseInt(Boosts.noSettlement['guild_raids-def_boost_defender']))+'</span> </td></tr>');
+                    +'<span class="dAtt"><span class="hidden-text">🔵</span>'+FH.HTML.Format(parseInt(Boosts.noSettlement['guild_raids-att_boost_defender']))+'</span><span class="hidden-text">/</span><span class="dDef">'+FH.HTML.Format(parseInt(Boosts.noSettlement['guild_raids-def_boost_defender']))+'</span> </td></tr>');
             cc.push('</tr></table>');
             
             if (Boosts.Sums.critical_hit_chance > 0)
@@ -429,29 +429,29 @@ const Profile = {
 
             // settlements
             cc.push('<div class="settlements pad showMore text-center">');
-            cc.push('<h2>'+i18n('Boxes.PlayerProfile.Settlements')+'</h2>');
+            cc.push('<h2>'+FH.t('Boxes.PlayerProfile.Settlements')+'</h2>');
             if (Profile.settlements.length > 0) {
                 for (let settlement of Profile.settlements) {
-                    cc.push('<span class="'+settlement.id+' removable" data-original-title="'+settlement.descriptionCityTooltip.replace('%s',HTML.Format(parseInt(settlement.currentLevel.progress)))+'">');
+                    cc.push('<span class="'+settlement.id+' removable" data-original-title="'+settlement.descriptionCityTooltip.replace('%s',FH.HTML.Format(parseInt(settlement.currentLevel.progress)))+'">');
                     cc.push('<img src="'+srcLinks.get(`/shared/icons/achievements/achievement_icons_${settlement.id}.png`,true)+'" />');
-                    cc.push(HTML.Format(parseInt(settlement.currentLevel.progress)) + '</span>');
+                    cc.push(FH.HTML.Format(parseInt(settlement.currentLevel.progress)) + '</span>');
                 }
             }
             else {
-                cc.push(i18n('Boxes.PlayerProfile.NoSettlementsFinished'));
+                cc.push(FH.t('Boxes.PlayerProfile.NoSettlementsFinished'));
             }
             cc.push('</div>');
 
             // achievements
             cc.push('<div class="achievements pad showMore text-center">');
-            cc.push('<h2>'+i18n('Boxes.PlayerProfile.GamePlay')+'</h2>');
+            cc.push('<h2>'+FH.t('Boxes.PlayerProfile.GamePlay')+'</h2>');
             for (let achievement of Profile.achievementList) {
                 let ach = achievement.split('#')
                 let achFromList = Profile.achievements.find(x => x.id === ach[0]).achievements.find(x => x.id === ach[1]);
                 if (isNaN(parseInt(achFromList?.currentLevel?.progress))) continue; 
 
-                cc.push('<span class="removable" data-original-title="'+achFromList.descriptionTemplate.replace('%s/%s',HTML.Format(parseInt(achFromList.currentLevel.progress))).replace('%s-/%s-',HTML.Format(parseInt(achFromList.currentLevel.progress)))+'"><img src="'+srcLinks.get(`/shared/icons/achievements/achievement_icons_${ach[1]}.png`,true)+'" />'+
-                HTML.FormatNumberShort(parseInt(achFromList.currentLevel.progress),true,'en-EN') + '</span>');
+                cc.push('<span class="removable" data-original-title="'+achFromList.descriptionTemplate.replace('%s/%s',FH.HTML.Format(parseInt(achFromList.currentLevel.progress))).replace('%s-/%s-',FH.HTML.Format(parseInt(achFromList.currentLevel.progress)))+'"><img src="'+srcLinks.get(`/shared/icons/achievements/achievement_icons_${ach[1]}.png`,true)+'" />'+
+                FH.HTML.FormatNumberShort(parseInt(achFromList.currentLevel.progress),true,'en-EN') + '</span>');
             }
             cc.push('</div>');
         cc.push('<img class="decoration" src="'+srcLinks.get(`/shared/gui/teaser/ui/teaser_decoration_bottom.png`,true)+'" />');
@@ -472,55 +472,55 @@ const Profile = {
         cr.push('<img class="goods" src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />');
         cr.push('</div>');
 		cr.push('<div class="stock pad text-center">');
-		cr.push('<span class="removable"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />'+HTML.Format(StrategyPoints.InventoryFP || 0)+'</span>');
-		cr.push('<span class="removable" data-original-title="'+HTML.Format(ResourceStock.medals)+'"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_medals.png`,true)+'" />'+HTML.FormatNumberShort(ResourceStock.medals || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="removable"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)+'" />'+FH.HTML.Format(StrategyPoints.InventoryFP || 0)+'</span>');
+		cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.medals)+'"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_medals.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.medals || 0,true,'en-EN')+'</span>');
 		
 		
 		let currentGoods = 0, previousGoods = 0, nextGoods = 0;
-		for (let good of Object.values(GoodsData)) {
-			if (good.era === CurrentEra)
-				currentGoods += (ResourceStock[good.id] || 0);
-			if (good.era === Technologies.EraNames[CurrentEraID-1])
-				previousGoods += (ResourceStock[good.id] || 0);
-			if (good.era === Technologies.EraNames[CurrentEraID+1])
-				nextGoods += (ResourceStock[good.id] || 0);
+		for (let good of Object.values(FH.Goods.Data)) {
+			if (good.era === FH.CurrentEra)
+				currentGoods += (FH.RessourceStock[good.id] || 0);
+			if (good.era === Technologies.EraNames[FH.CurrentEraID-1])
+				previousGoods += (FH.RessourceStock[good.id] || 0);
+			if (good.era === Technologies.EraNames[FH.CurrentEraID+1])
+				nextGoods += (FH.RessourceStock[good.id] || 0);
 		}
 		cr.push('<div class="goods">');
 		if (previousGoods > 0)
-			cr.push('<span class="removable" data-original-title="'+HTML.Format(previousGoods)+'"><img src="' + srcLinks.get(`/shared/icons/all_goods_of_previous_age.png`,true)+'" />' + HTML.FormatNumberShort(previousGoods,true,'en-EN') + '</span> ');
+			cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(previousGoods)+'"><img src="' + srcLinks.get(`/shared/icons/all_goods_of_previous_age.png`,true)+'" />' + FH.HTML.FormatNumberShort(previousGoods,true,'en-EN') + '</span> ');
 		if (currentGoods > 0)
-			cr.push('<span class="removable" data-original-title="'+HTML.Format(currentGoods)+'"><img src="' + srcLinks.get(`/shared/icons/all_goods_of_age.png`,true)+'" />' + HTML.FormatNumberShort(currentGoods,true,'en-EN') + '</span> ');
+			cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(currentGoods)+'"><img src="' + srcLinks.get(`/shared/icons/all_goods_of_age.png`,true)+'" />' + FH.HTML.FormatNumberShort(currentGoods,true,'en-EN') + '</span> ');
 		if (nextGoods > 0)
-			cr.push('<span class="removable" data-original-title="'+HTML.Format(nextGoods)+'"><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + HTML.FormatNumberShort(nextGoods,true,'en-EN') + '</span> ');
+			cr.push('<span class="removable" data-original-title="'+FH.HTML.Format(nextGoods)+'"><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + FH.HTML.FormatNumberShort(nextGoods,true,'en-EN') + '</span> ');
 		cr.push('</div>');
 
-		cr.push('<span class="secondary removable" data-original-title="'+HTML.Format(ResourceStock.tavern_silver)+'"><img src="'+srcLinks.get(`/shared/icons/eventwindow_tavern.png`,true)+'" />'+HTML.FormatNumberShort(ResourceStock.tavern_silver || 0,true,'en-EN')+'</span>');
-		cr.push('<span class="secondary removable" data-original-title="'+HTML.Format(ResourceStock.gemstones)+'"><img src="'+srcLinks.get(`/shared/icons/gemstones.png`,true)+'" />'+HTML.Format(ResourceStock.gemstones || 0)+'</span>');
-		cr.push('<span class="secondary removable" data-original-title="'+HTML.Format(ResourceStock.trade_coins)+'"><img src="'+srcLinks.get(`/shared/gui/antiquedealer/antiquedealer_currency_trade_coins.png`,true)+'" />'+HTML.FormatNumberShort(ResourceStock.trade_coins || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.tavern_silver)+'"><img src="'+srcLinks.get(`/shared/icons/eventwindow_tavern.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.tavern_silver || 0,true,'en-EN')+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.gemstones)+'"><img src="'+srcLinks.get(`/shared/icons/gemstones.png`,true)+'" />'+FH.HTML.Format(FH.RessourceStock.gemstones || 0)+'</span>');
+		cr.push('<span class="secondary removable" data-original-title="'+FH.HTML.Format(FH.RessourceStock.trade_coins)+'"><img src="'+srcLinks.get(`/shared/gui/antiquedealer/antiquedealer_currency_trade_coins.png`,true)+'" />'+FH.HTML.FormatNumberShort(FH.RessourceStock.trade_coins || 0,true,'en-EN')+'</span>');
 		
 		cr.push('</div>');
 
 		cr.push('<div class="inventory pad text-center">');
-		cr.push('<h2 class="border"><span>'+i18n('Boxes.MarketOffers.Inventory')+'</span></h2>');
+		cr.push('<h2 class="border"><span>'+FH.t('Boxes.MarketOffers.Inventory')+'</span></h2>');
 		for (let item of Profile.inventoryList) {
-			let itemInStock = Object.values(MainParser.Inventory).find(x => x.itemAssetName === item);
+			let itemInStock = Object.values(FH.Main.Inventory).find(x => x.itemAssetName === item);
 			if (item === 'rush_mass_supply_large') { // same asset as 6h rush, filter by speedup
-				itemInStock = Object.values(MainParser.Inventory).filter(x => x.itemAssetName === item).find(x => x.item.duration === 86400);
+				itemInStock = Object.values(FH.Main.Inventory).filter(x => x.itemAssetName === item).find(x => x.item.duration === 86400);
 			}
 			if (itemInStock)
-				cr.push('<span class="removable" data-original-title="'+itemInStock.name+'"><img src="'+srcLinks.get(`/shared/icons/reward_icons/reward_icon_${item}.png`,true)+'" />'+HTML.Format(itemInStock.inStock)+'</span>');
+				cr.push('<span class="removable" data-original-title="'+itemInStock.name+'"><img src="'+srcLinks.get(`/shared/icons/reward_icons/reward_icon_${item}.png`,true)+'" />'+FH.HTML.Format(itemInStock.inStock)+'</span>');
 		}
 
 		// get additional favorites
 		cr.push('<div class="favorites">');
 		let favCounter = 0;
-		for(let item of Object.values(MainParser.Inventory)) {
+		for(let item of Object.values(FH.Main.Inventory)) {
 			if (!item.favorite || Profile.inventoryList.find(x => x === item.itemAssetName)) continue;
 			if (favCounter > 6) continue;
 			if (item.itemAssetName !== "icon_fragment") { // do not include fragments
 				cr.push('<span class="removable" data-original-title="'+item.name+'">');
 				cr.push(srcLinks.icons(item.itemAssetName,true));
-				cr.push(HTML.Format(item.inStock)+'</span>');
+				cr.push(FH.HTML.Format(item.inStock)+'</span>');
 				favCounter++;
 			}
 		}
@@ -534,18 +534,18 @@ const Profile = {
 
     showOtherPlayer: () => {
 		if ($('#OtherPlayerProfile').length > 0) {
-			HTML.CloseOpenBox('OtherPlayerProfile');
+			FH.HTML.CloseOpenBox('OtherPlayerProfile');
 			return;
 		}
 
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'OtherPlayerProfile',
-			title: ExtPlayerName,
+			title: FH.Player.Name,
 			auto_close: true,
 			dragdrop: true,
             class: 'playerprofile other'
 		})
-        HTML.AddCssFile('profile');
+        FH.HTML.AddCssFile('profile');
 
         let content = [];
         let n = (Profile.otherPlayer.other_player.is_guild_member === undefined && Profile.otherPlayer.other_player.is_friend === undefined);
@@ -563,8 +563,8 @@ const Profile = {
         content.push('<img src="'+srcLinks.GetPortrait(Profile.otherPlayer.other_player.avatar)+'" />');
         content.push('<div>');
         content.push('<b>'+Profile.otherPlayer.other_player.name+'</b><br>');
-        content.push('<span>'+i18n('Eras.'+Technologies.Eras[CityMap.OtherPlayer.eraName])+'</span><br>');
-        content.push('<span class="ranking">'+HTML.Format(parseInt(Profile.otherPlayer.other_player.score))+'</span>');
+        content.push('<span>'+FH.t('Eras.'+Technologies.Eras[CityMap.OtherPlayer.eraName])+'</span><br>');
+        content.push('<span class="ranking">'+FH.HTML.Format(parseInt(Profile.otherPlayer.other_player.score))+'</span>');
         content.push('</div>');
         content.push('</div>');
 
@@ -605,10 +605,10 @@ const Profile = {
             fpBoost = '<span class="boost"> '+boosts.forge_points_production + '% </span>';
             fpSum += (boosts.forge_points_production*boosts.strategy_points/100);
         }
-        content.push('<span><img src="' + srcLinks.get(`/shared/icons/strategy_points.png`,true)+'" />' + HTML.Format(parseInt(fpSum)) + '</span> '+fpBoost);
+        content.push('<span><img src="' + srcLinks.get(`/shared/icons/strategy_points.png`,true)+'" />' + FH.HTML.Format(parseInt(fpSum)) + '</span> '+fpBoost);
         
         if (boosts.units > 0) {
-			content.push('<span><img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+HTML.Format(parseInt(boosts.units))+'</span><br>');
+			content.push('<span><img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+FH.HTML.Format(parseInt(boosts.units))+'</span><br>');
         }
 
         content.push('<div class="goods">');
@@ -623,11 +623,11 @@ const Profile = {
             nextGoodsSum += (boosts.goods_production*nextGoodsSum/100);
         }
         if (boosts['goods-previous'])
-            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + HTML.Format(parseInt(parseInt(prevGoodsSum)) || 0) + '</span> ');
+            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(prevGoodsSum)) || 0) + '</span> ');
         if (boosts['goods-current'])
-            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />' + HTML.Format(parseInt(parseInt(currentGoodsSum)) || 0) + '</span> ');
+            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(currentGoodsSum)) || 0) + '</span> ');
         if (boosts['goods-next'] !== 0)
-            content.push('<span><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + HTML.Format(parseInt(parseInt(nextGoodsSum)) || 0) + '</span> ');
+            content.push('<span><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(nextGoodsSum)) || 0) + '</span> ');
         content.push(goodsBoost);
 
         let guildGoodsSum = boosts.clan_goods;
@@ -637,60 +637,60 @@ const Profile = {
             guildGoodsSum += (guildGoodsSum*boosts.guild_goods_production/100);
         }
         if (guildGoodsSum)
-            content.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_great_building_bonus_guild_goods.png`,true)+'" />' + HTML.Format(parseInt(parseInt(guildGoodsSum)) || 0) + '</span> '+guildGoodsBoost);
+            content.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_great_building_bonus_guild_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(guildGoodsSum)) || 0) + '</span> '+guildGoodsBoost);
         content.push('</div>');
         content.push('</div>');
 
 
         content.push('<div class="battleBoosts pad text-center">');
         content.push('<table><tr class="general">'
-            +'<td><span class="aAtt">'+HTML.Format(parseInt(boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+HTML.Format(parseInt(boosts['def_boost_attacker-all']))+'</span> </td>'
-            +`<td></td><td><span class="dAtt ${n?'blur" data-original-title="'+i18n('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}">`+HTML.Format(parseInt(n?boosts['att_boost_defender']:boosts['att_boost_defender-all']))+'</span>'
-            +`<span class="dDef ${n?'blur" data-original-title="'+i18n('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}>`+HTML.Format(parseInt(n?boosts['def_boost_defender']:boosts['def_boost_defender-all']))+'</span> </td></tr>');
+            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-all']))+'</span>'
+            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-all']))+'</span> </td>'
+            +`<td></td><td><span class="dAtt ${n?'blur" data-original-title="'+FH.t('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}">`+FH.HTML.Format(parseInt(n?boosts['att_boost_defender']:boosts['att_boost_defender-all']))+'</span>'
+            +`<span class="dDef ${n?'blur" data-original-title="'+FH.t('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}>`+FH.HTML.Format(parseInt(n?boosts['def_boost_defender']:boosts['def_boost_defender-all']))+'</span> </td></tr>');
         content.push('<tr>'
-            +'<td><span class="aAtt">'+HTML.Format(parseInt(boosts['att_boost_attacker-battleground']+boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+HTML.Format(parseInt(boosts['def_boost_attacker-battleground']+boosts['def_boost_attacker-all']))+'</span> </td>'
-            +'<td><span class="gbg"></span></td><td><span class="dAtt">'+HTML.Format(parseInt(boosts['att_boost_defender-battleground']+boosts['att_boost_defender-all']))+'</span>'
-            +'<span class="dDef">'+HTML.Format(parseInt(boosts['def_boost_defender-battleground']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
+            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-battleground']+boosts['att_boost_attacker-all']))+'</span>'
+            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-battleground']+boosts['def_boost_attacker-all']))+'</span> </td>'
+            +'<td><span class="gbg"></span></td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-battleground']+boosts['att_boost_defender-all']))+'</span>'
+            +'<span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-battleground']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
         content.push('<tr>'
-            +'<td><span class="aAtt">'+HTML.Format(parseInt(boosts['att_boost_attacker-guild_expedition']+boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+HTML.Format(parseInt(boosts['def_boost_attacker-guild_expedition']+boosts['def_boost_attacker-all']))+'</span> </td>'
-            +'<td><span class="ge"></span> </td><td><span class="dAtt">'+HTML.Format(parseInt(boosts['att_boost_defender-guild_expedition']+boosts['att_boost_defender-all']))+'</span>'
-            +'<span class="dDef">'+HTML.Format(parseInt(boosts['def_boost_defender-guild_expedition']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
+            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-guild_expedition']+boosts['att_boost_attacker-all']))+'</span>'
+            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-guild_expedition']+boosts['def_boost_attacker-all']))+'</span> </td>'
+            +'<td><span class="ge"></span> </td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-guild_expedition']+boosts['att_boost_defender-all']))+'</span>'
+            +'<span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-guild_expedition']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
         if (boosts['att_boost_attacker-guild_raids'] > 0 || boosts['def_boost_attacker-guild_raids'] > 0 || boosts['att_boost_defender-guild_raids'] > 0 || boosts['def_boost_defender-guild_raids'] > 0)
-            content.push('<tr><td><span class="aAtt">'+HTML.Format(parseInt(boosts['att_boost_attacker-guild_raids']))+'</span><span class="aDef">'+HTML.Format(parseInt(boosts['def_boost_attacker-guild_raids']))+'</span> </td><td><span class="qi"></span></td><td><span class="dAtt">'+HTML.Format(parseInt(boosts['att_boost_defender-guild_raids']))+'</span><span class="dDef">'+HTML.Format(parseInt(boosts['def_boost_defender-guild_raids']))+'</span> </td></tr>');
+            content.push('<tr><td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-guild_raids']))+'</span><span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-guild_raids']))+'</span> </td><td><span class="qi"></span></td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-guild_raids']))+'</span><span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-guild_raids']))+'</span> </td></tr>');
         content.push('</tr></table>');
         
         if (boosts.critical_hit_chance > 0)
             content.push('<span class="crit"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_critical_hit_chance.png`,true)+'" /> '+Math.round(boosts.critical_hit_chance*100)/100+'%</span>');
         content.push('</div>');
 
-        content.push('<div class="disclaimer clickable removable pad text-center">'+i18n('Boxes.PlayerProfile.OtherPlayerDisclaimer')+'<br><b>'+i18n('Boxes.PlayerProfile.OtherPlayerTroubleshooting')+'</b></div>');
+        content.push('<div class="disclaimer clickable removable pad text-center">'+FH.t('Boxes.PlayerProfile.OtherPlayerDisclaimer')+'<br><b>'+FH.t('Boxes.PlayerProfile.OtherPlayerTroubleshooting')+'</b></div>');
 
         content.push('<div class="qiBoosts pad text-center">');
             if (boosts.guild_raids_coins_production + boosts.guild_raids_coins_start !== 0) {
                 content.push('<span class="qicoins">');
                 if (boosts.guild_raids_coins_production !== 0)
-                    content.push(HTML.Format(parseInt(boosts.guild_raids_coins_production)) + '% ');
+                    content.push(FH.HTML.Format(parseInt(boosts.guild_raids_coins_production)) + '% ');
                 if (boosts.guild_raids_coins_start !== 0)
-                    content.push('+' + HTML.FormatNumberShort(parseInt(boosts.guild_raids_coins_start),true,'en-EN'));
+                    content.push('+' + FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_coins_start),true,'en-EN'));
                 content.push('</span> ');
             }
             if (boosts.guild_raids_supplies_production + boosts.guild_raids_supplies_start !== 0) {
                 content.push('<span class="qisupplies">');
                 if (boosts.guild_raids_supplies_production !== 0)
-                    content.push(HTML.Format(parseInt(boosts.guild_raids_supplies_production)) + '% ');
+                    content.push(FH.HTML.Format(parseInt(boosts.guild_raids_supplies_production)) + '% ');
                 if (boosts.guild_raids_supplies_start !== 0)
-                    content.push('+' + HTML.FormatNumberShort(parseInt(boosts.guild_raids_supplies_start),true,'en-EN'));
+                    content.push('+' + FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_supplies_start),true,'en-EN'));
                 content.push('</span> ');
             }
             if (boosts.guild_raids_action_points_collection !== 0)
-                content.push('<span class="qiactions">' + HTML.Format(parseInt(boosts.guild_raids_action_points_collection)) + '</span> ');
+                content.push('<span class="qiactions">' + FH.HTML.Format(parseInt(boosts.guild_raids_action_points_collection)) + '</span> ');
             if (boosts.guild_raids_goods_start)
-                content.push('<span class="qigoods_start">+' + HTML.Format(parseInt(boosts.guild_raids_goods_start)) + '</span> ');
+                content.push('<span class="qigoods_start">+' + FH.HTML.Format(parseInt(boosts.guild_raids_goods_start)) + '</span> ');
             if (boosts.guild_raids_units_start)
-                content.push('<span class="qiunits_start">+' + HTML.Format(parseInt(boosts.guild_raids_units_start || 0)) + '</span> ');
+                content.push('<span class="qiunits_start">+' + FH.HTML.Format(parseInt(boosts.guild_raids_units_start || 0)) + '</span> ');
             content.push('</div>');
         content.push('</div>');
 

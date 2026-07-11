@@ -14,7 +14,7 @@
  */
 
 
-FoEproxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, postData) => {
 	GBGBuildings.storeBuildingCosts(data.responseData);
 	if (!Settings.GetSetting('ShowGBGBuildings')) return;
 
@@ -37,11 +37,11 @@ FoEproxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, p
 	}, 500);
 });
 
-FoEproxy.addMetaHandler('battleground_buildings',(data,postData) => {
+FH.proxy.addMetaHandler('battleground_buildings',(data,postData) => {
 	GBGBuildings.BuildingData = Object.assign({}, ...JSON.parse(data.responseText).map((x) => ({ [x.id]: x })));
 });
 
-FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 	if (data.responseData.resources) GBGBuildings.treasury = data.responseData.resources
 	if (GBGBuildings.Timeout.B) {
 		GBGBuildings.calc()
@@ -52,7 +52,7 @@ FoEproxy.addHandler('ClanService', 'getTreasury', (data, postData) => {
 		GBGBuildings.clearTO("T")
 	}, 350);
 });
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'ClanMain') return; // for now ignore all other source types
 	if (data.responseData.resources) GBGBuildings.treasury = data.responseData.resources.resources
 	if (GBGBuildings.Timeout.B) {
@@ -65,10 +65,10 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', (data, postData) => {
 	}, 350);
 });
 
-FoEproxy.addHandler("BattlefieldService","getArmyPreview",(data)=>{
+FH.proxy.addHandler("BattlefieldService","getArmyPreview",(data)=>{
 	$('#GBGBuildings').remove();
 })
-FoEproxy.addHandler("GuildBattlegroundService","startNegotiation",(data)=>{
+FH.proxy.addHandler("GuildBattlegroundService","startNegotiation",(data)=>{
 	$('#GBGBuildings').remove();
 })
 
@@ -189,7 +189,7 @@ let GBGBuildings = {
 			s["maxCosts"]=max;
 			s["avgCosts"]=avg;
 			s["absCosts"]=abs;
-			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>HTML.i18nReplacer(i18n('Boxes.GBGBuildings.relativeCosts'),{good:GoodsData[x.good].name,amount:(x.rel*100).toPrecision(2),era:i18n("Eras."+Technologies.Eras[GoodsData[x.good].era])})).join("\n");
+			s["title"] = title.sort((a,b)=>b.rel-a.rel).map(x=>FH.helper.str.Replacer(FH.t('Boxes.GBGBuildings.relativeCosts'),{good:FH.Goods.Data[x.good].name,amount:(x.rel*100).toPrecision(2),era:FH.t("Eras."+Technologies.Eras[FH.Goods.Data[x.good].era])})).join("\n");
 		}
 		let sortby = "maxCosts"
 		sets.sort((a,b)=> a.absCosts - b.absCosts);
@@ -227,20 +227,20 @@ let GBGBuildings = {
 
 		// Don't create a new box while another one is still open
 		if ($('#GBGBuildings').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GBGBuildings',
-				title: i18n('Boxes.GBGBuildings.title'),
+				title: FH.t('Boxes.GBGBuildings.title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize : true,
 			    active_maps:"gg",
 			});
-			HTML.AddCssFile('gbgbuildings');
+			FH.HTML.AddCssFile('gbgbuildings');
 		}
 
 		let h='<table class="foe-table">';
-		h += `<tr><th>${i18n('Boxes.GBGBuildings.toBuild')}</th><th>${i18n('Boxes.GBGBuildings.totalChance')}</th><th colspan="2">${i18n('Boxes.GBGBuildings.Costs')}</th></tr>`
+		h += `<tr><th>${FH.t('Boxes.GBGBuildings.toBuild')}</th><th>${FH.t('Boxes.GBGBuildings.totalChance')}</th><th colspan="2">${FH.t('Boxes.GBGBuildings.Costs')}</th></tr>`
 		let lastBlock = Infinity;
 		let lastCost = Infinity;
 		let lastMax = Infinity;
@@ -281,7 +281,7 @@ let GBGBuildings = {
 			}
 			h+=`</td><td ${highlight == "chance"? 'class="highlight"':''}>${s.block}%</td>
 				<td title="${s.title}" ${highlight == "max"? 'class="highlight"':''}>${(s[sortby]*100).toPrecision(2)}%</td>
-				<td title="${i18n('Boxes.GBGBuildings.absoluteCosts')}" ${highlight == "cost"? 'class="highlight"':''}>${s.absCosts}</td>
+				<td title="${FH.t('Boxes.GBGBuildings.absoluteCosts')}" ${highlight == "cost"? 'class="highlight"':''}>${s.absCosts}</td>
 				</tr>`;
 		}
 		h+='</table>';
@@ -330,7 +330,7 @@ let GBGBuildings = {
 		let provinceId = data.provinceId || 0;
 		if (data.availableBuildings.length === 0) return;
 
-		let stored = JSON.parse(localStorage.getItem("GBGBuildingCosts") || "{}");
+		let stored = JSON.parse(FH.Storage.getItem("GBGBuildingCosts") || "{}");
 		if (stored.GBGRound != GuildFights.CurrentGBGRound)
 			stored = {};
 
@@ -340,6 +340,6 @@ let GBGBuildings = {
 			stored[provinceId] = costsMap;
 		}
 
-		localStorage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
+		FH.Storage.setItem("GBGBuildingCosts", JSON.stringify(Object.assign(stored, {GBGRound: GuildFights.CurrentGBGRound})));
 	}
 }

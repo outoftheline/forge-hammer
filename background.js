@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -13,10 +14,23 @@ catch {
 
 // @ts-ignore
 let alertsDB = new Dexie("Alerts");
+let buildingMetaDB = new Dexie("FoEBuildingMeta");
+let plannerDB = new Dexie("HammerPlanner");
 
 // Define Database Schema
 alertsDB.version(1).stores({
 	alerts: "++id,[server+playerId],data.expires"
+});
+
+buildingMetaDB.version(1).stores({
+	buildingMeta: "[region+id],region,id,hash,json"
+});
+
+plannerDB.version(1).stores({
+	plans: "++id,world,planName,playerId,playerName,boostJSON,date",	
+	buildings: "[planId+buildingId],planId,buildingId,x,y,type,JSON"
+}).upgrade(tx => {
+	return tx.table('buildings').clear();
 });
 
 // separate code from global scope
@@ -354,7 +368,7 @@ alertsDB.version(1).stores({
 	browser.runtime.onInstalled.addListener(() => {
 		"use strict";
 		//const version = browser.runtime.getManifest().version;
-		let lng = browser.i18n.getUILanguage();
+		let lng = navigator.language.split("-")[0];
 
 		// Fallback to "en"
 		if(lng !== 'de' && lng !== 'en'){
@@ -395,6 +409,223 @@ alertsDB.version(1).stores({
 		return {ok: false, error: message};
 	}
 
+
+	/**
+	 * Fetch and cache building metadata per region in the background service worker.
+	 *
+	 * @param {string} region
+	 * @param {Record<string, {url:string, hash:string}>} buildingUrls
+	 * @returns {Promise<Record<string, any>>}
+	 */
+	async function getBuildingMetadata(region, buildingUrls) {
+		if (!buildingUrls || typeof buildingUrls !== 'object' || Array.isArray(buildingUrls)) {
+			return {};
+		}
+
+		await buildingMetaDB.open();
+		const table = buildingMetaDB.table('buildingMeta');
+		const existingEntries = await table.where('region').equals(region).toArray();
+		const buildingsOld = Object.assign({}, ...existingEntries.map(x => ({ [x.id]: x })));
+		const metadata = {};
+		const updated = [];
+		const ids = Object.keys(buildingUrls);
+		const maxConcurrent = 10;
+		let active = 0;
+		let index = 0;
+
+		function fetchMeta(id, meta, retries = 3) {
+			return new Promise(resolve => {
+				const controller = new AbortController();
+				const timeout = setTimeout(() => controller.abort(), 10000);
+
+				fetch(meta.url, { signal: controller.signal })
+					.then(async response => {
+						clearTimeout(timeout);
+						if (!response.ok) throw new Error(`HTTP ${response.status}`);
+						const text = await response.text();
+						metadata[id] = JSON.parse(text);
+						updated.push({ region, id, hash: meta.hash, json: text });
+						resolve();
+					})
+					.catch(async error => {
+						clearTimeout(timeout);
+						if (retries > 0) {
+							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
+						} else {
+							console.warn('Failed to load', meta.url, error);
+							resolve();
+						}
+					});
+			});
+		}
+
+		async function runNext() {
+			while (active < maxConcurrent && index < ids.length) {
+				const id = ids[index++];
+				const meta = buildingUrls[id];
+				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
+					active++;
+					fetchMeta(id, meta).then(() => {
+						active--;
+						runNext();
+					});
+				} else {
+					try {
+						metadata[id] = JSON.parse(buildingsOld[id].json);
+					} catch (e) {
+						metadata[id] = null;
+					}
+				}
+			}
+		}
+
+		await new Promise(resolve => {
+			function checkDone() {
+				if (index >= ids.length && active === 0) resolve();
+				else setTimeout(checkDone, 100);
+			}
+			runNext();
+			checkDone();
+		});
+
+		if (updated.length > 0) {
+			await table.bulkPut(updated);
+		}
+
+		return metadata;
+	}
+
+	const Planner = {
+		getPlan: async (id)=>{
+			try {
+				await plannerDB.open();
+				const plan = await plannerDB.plans.get(id);
+				await plannerDB.close();
+				return plan;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.getPlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		getPlanList: async ()=>{
+			try {
+				await plannerDB.open();
+				const list = await plannerDB.plans.toArray();
+				await plannerDB.close();
+				return list.map(x=>({id:x.id,name:x.planName,world:x.world,playerName:x.playerName,date:x.date}));
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.getPlanList failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		removePlan: async (id)=>{
+			try {
+				await plannerDB.open();
+				await plannerDB.plans.delete(id);
+				await plannerDB.buildings.where('planId').equals(id).delete();
+				await plannerDB.close();
+				return;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.removePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		newPlan: async (world,planName,playerId,playerName,boostData,mapData,originalData) => {
+			try {
+				const plan = {
+					world: world,
+					planName: planName,
+					playerId: playerId,
+					playerName: playerName,
+					boostJSON: JSON.stringify(boostData),
+					originalJSON: JSON.stringify(originalData || null), // used to revert everything
+					date: Math.floor(Date.now() / 1000)
+				};
+				await plannerDB.open();
+				const planId = await plannerDB.plans.add(plan);
+
+				const buildings = (mapData || []).map( (building) => {
+					const buildingId = building.id;
+					const x = building.x;
+					const y = building.y;
+					const type = building.type;
+					const clone = Object.assign({}, building);
+					delete clone.id; delete clone.x; delete clone.y; delete clone.type;
+					delete clone.bonuses; delete clone.connected; delete clone.state; delete clone.player_id; delete clone.max_level;
+					return {
+						planId: planId,
+						buildingId: buildingId,
+						x: x,
+						y: y,
+						type: type,
+						JSON: JSON.stringify(clone),
+					};
+				});
+
+				if (buildings.length > 0) await plannerDB.buildings.bulkPut(buildings);
+				await plannerDB.close();
+				return planId;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.newPlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		updatePlan: async (planId,world,planName,playerId,playerName,boostData,mapData) => {
+			try {
+				await plannerDB.open();
+				const existing = await plannerDB.plans.get(planId);
+				if (!existing) throw new Error('plan not found');
+
+				const updatedPlan = {
+					...existing, // keep the originalJSON in there
+					world: world || existing.world,
+					planName: planName || existing.planName,
+					playerId: playerId || existing.playerId,
+					playerName: playerName || existing.playerName,
+					boostJSON: boostData ? JSON.stringify(boostData) : existing.boostJSON,
+					date: Math.floor(Date.now() / 1000)
+				};
+				await plannerDB.plans.put(updatedPlan,planId);
+				await plannerDB.buildings.where('planId').equals(planId).delete();
+
+				const buildings = (mapData || []).map((building) => {
+					const buildingId = building.id;
+					const x = building.x;
+					const y = building.y;
+					const type = building.type;
+					const clone = Object.assign({}, building);
+					delete clone.id; delete clone.x; delete clone.y; delete clone.type;
+					delete clone.bonuses; delete clone.connected; delete clone.state; delete clone.player_id; delete clone.max_level;
+					return {
+						planId: planId,
+						buildingId: buildingId,
+						x: x,
+						y: y,
+						type: type,
+						JSON: JSON.stringify(clone),
+					};
+				});
+
+				if (buildings.length > 0) await plannerDB.buildings.bulkPut(buildings);
+				await plannerDB.close();
+				return;    
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.updatePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		getBuildingList: async (planId) => {
+			try {
+				await plannerDB.open();
+				const list = await plannerDB.buildings.where('planId').equals(planId).toArray();
+				await plannerDB.close();
+				return list;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.getBuildingList failed: '+(e && e.message ? e.message : e));
+			}
+		}
+	}
 
 	/**
 	 * handles internal and external extension communication
@@ -577,6 +808,77 @@ alertsDB.version(1).stores({
 				} // end of limited alerts-API
 
 			} // end of alerts-API
+
+			case 'buildingMeta': { // type
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				const buildingUrls = request.buildingUrls;
+				const metadata = await getBuildingMetadata(region, buildingUrls);
+				return APIsuccess(metadata);
+			}
+
+			case 'buildingMetaPreCheck': { // type
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				await buildingMetaDB.open();
+				const count = await buildingMetaDB.table('buildingMeta').where('region').equals(region).count();
+				return APIsuccess({ existingCount: count });
+			}
+
+			case 'Planner.getPlan':{
+				if (!request.planId) return APIerror('Planner.getPlan: Parameter {planId} expected!');
+				try {
+					const plan = await Planner.getPlan(request.planId);
+					return APIsuccess(plan);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				} 
+			}
+			case 'Planner.getPlanList': {
+				const plans = await Planner.getPlanList();
+				return APIsuccess(plans);
+			}
+			case 'Planner.removePlan': {
+				if (!request.planId) return APIerror('Planner.removePlan: Parameter {planId} expected!');
+				try {
+					await Planner.removePlan(request.planId);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
+			case 'Planner.newPlan': {
+				if (!request.world || !request.planName || !request.playerId || !request.playerName || !request.boostData || !request.mapData) {
+					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
+				}
+				try {
+					const planId = await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData,request.originalData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess({ planId, plans });
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
+			case 'Planner.updatePlan': {
+				if (!request.planId || (request.world === undefined && request.planName === undefined && request.playerId === undefined && request.playerName === undefined && request.boostData === undefined && request.mapData === undefined)) {
+					return APIerror('Planner.updatePlan: Parameters {planId} and at least one of {world}, {planName}, {playerId}, {playerName}, {boostData} or {mapData} expected!');
+				}
+				try {
+					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
+			case 'Planner.getBuildingList': {
+				if (!request.planId) return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
+				try {
+					const buildings = await Planner.getBuildingList(request.planId);
+					return APIsuccess(buildings);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
 
 			case 'message': { // type
 				let t = request.time;

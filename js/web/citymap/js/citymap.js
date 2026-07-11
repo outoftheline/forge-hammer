@@ -69,10 +69,10 @@ let CityMap = {
 	 */
 	AscendingBuildings: new Promise((resolve) => {
 		let timer = () => {
-			if (!MainParser.BuildingUpgrades) {
+			if (!FH.Main.BuildingUpgrades) {
 				setTimeout(timer,500)
 			} else {
-				resolve (Object.assign({},...Object.values(MainParser.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
+				resolve (Object.assign({},...Object.values(FH.Main.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
 			}
 		}
 
@@ -88,12 +88,12 @@ let CityMap = {
 	 * @param {Object} event - An optional event object passed when triggered. If not provided, it toggles the visibility of the map UI.
 	 */
 	init: (event)=> {
-		let Title = i18n('Boxes.CityMap.YourCity');
+		let Title = FH.t('Boxes.CityMap.YourCity');
 
 		// grid sizing and view
-		let scale = localStorage.getItem('CityMapScale'),
-			outpostScale = localStorage.getItem('OutpostMapScale'),
-			view = localStorage.getItem('CityMapView');
+		let scale = FH.Storage.getItem('CityMapScale'),
+			outpostScale = FH.Storage.getItem('OutpostMapScale'),
+			view = FH.Storage.getItem('CityMapView');
 		if(null !== scale)
 			CityMap.map.scale = parseInt(scale);
 		if(null !== view)
@@ -101,24 +101,24 @@ let CityMap = {
 		if(null !== outpostScale)
 			CityMap.map.outpostScale = parseInt(outpostScale);
 
-		let Data = MainParser.CityMapData;
-		if (ActiveMap === "cultural_outpost") 
+		let Data = FH.Main.CityMapData;
+		if (FH.ActiveMap === "cultural_outpost") 
 			Data = CityMap.CulturalOutpost.data;
-		else if (ActiveMap === "era_outpost") 
+		else if (FH.ActiveMap === "era_outpost") 
 			Data = CityMap.EraOutpost.data;
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			Data = CityMap.QI.data;
-			Title = i18n('Boxes.General.Quantum_Incursion.short')+' '+i18n('Boxes.General.Level')+' '+CityMap.QI.level;
+			Title = FH.t('Boxes.General.Quantum_Incursion.short')+' '+FH.t('Boxes.General.Level')+' '+CityMap.QI.level;
 		}
-		else if (ActiveMap === "OtherPlayer") {
+		else if (FH.ActiveMap === "OtherPlayer") {
 			Data = CityMap.OtherPlayer.mapData;
 			Title = CityMap.OtherPlayer.name;
 		}
 
 		if( $('#citymap-main').length < 1 ) {
-			HTML.AddCssFile('citymap');
+			FH.HTML.AddCssFile('citymap');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'citymap-main',
 				title: Title,
 				auto_close: true,
@@ -132,7 +132,7 @@ let CityMap = {
 			}, 100);
 		}
 		else if (!event) {
-			HTML.CloseOpenBox('citymap-main');
+			FH.HTML.CloseOpenBox('citymap-main');
 			return;
 		}
 
@@ -146,7 +146,7 @@ let CityMap = {
 	 * Prepares and initializes the main UI box and sidebar for the City Map.
 	 *
 	 * This function:
-	 * - Sets up the HTML structure for the map container and sidebar.
+	 * - Sets up the FH.HTML.structure for the map container and sidebar.
 	 * - Initializes map scale and perspective (view) settings from local storage.
 	 * - Adds event listeners for view changes and scale adjustments.
 	 * - Configures filters and action buttons (e.g., meta info copy, submit box).
@@ -159,11 +159,12 @@ let CityMap = {
 	PrepareBox: (Title,elemId="citymap-main")=> {	
 		let oB = $('#'+elemId+'Body'),
 			wrapper = $('<div id="citymap-wrapper" />'),
-			menu = $('<div id="city-map-menu" />');
+			menu = $('<div id="city-map-menu" />'),
+			menuBottom = $('<div id="city-map-menu-bottom" />');
 
 		/* scale */
 		let scaleUnit = CityMap.map.scale;
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") 
 			scaleUnit = CityMap.map.outpostScale;
 
 		wrapper
@@ -176,20 +177,20 @@ let CityMap = {
 
 		$('#'+elemId+'Header > .title').attr('id', 'map' + CityMap.hashCode(Title));
 
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
-			oB.addClass('outpost').addClass(ActiveMap)
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+			oB.addClass('outpost').addClass(FH.ActiveMap)
 		}
 
 		/* change view */
 		let dropView = $('<select id="menu-view" class="game-cursor" />')
-			.append($('<option class="game-cursor" data-view="normal" />').prop('selected', CityMap.map.view === 'normal').text(i18n('Boxes.CityMap.NormalPerspecitve')) )
-			.append($('<option class="game-cursor" data-view="turned" />').prop('selected', CityMap.map.view === 'turned').text(i18n('Boxes.CityMap.TurnedPerspecitve')) )
-			.append($('<option class="game-cursor" data-view="skew" />').prop('selected', CityMap.map.view === 'skew').text(i18n('Boxes.CityMap.CavalierPerspecitve')) );
+			.append($('<option class="game-cursor" data-view="normal" />').prop('selected', CityMap.map.view === 'normal').text(FH.t('Boxes.CityMap.NormalPerspecitve')) )
+			.append($('<option class="game-cursor" data-view="turned" />').prop('selected', CityMap.map.view === 'turned').text(FH.t('Boxes.CityMap.TurnedPerspecitve')) )
+			.append($('<option class="game-cursor" data-view="skew" />').prop('selected', CityMap.map.view === 'skew').text(FH.t('Boxes.CityMap.CavalierPerspecitve')) );
 
 		$('#'+elemId).on('change', '#menu-view', function(){
 			let view = $('#menu-view option:selected').data('view');
 			$('#grid-outer').attr('data-view', view);
-			localStorage.setItem('CityMapView', view);
+			FH.Storage.setItem('CityMapView', view);
 		});
 		
 		let scaleView = $('<select id="scale-view" class="game-cursor" />')
@@ -208,12 +209,12 @@ let CityMap = {
 			let unit = parseInt($('#scale-view option:selected').data('scale'));
 			$('#grid-outer').attr('data-unit', unit);
 
-			if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
-				localStorage.setItem('OutpostMapScale', unit);
+			if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
+				FH.Storage.setItem('OutpostMapScale', unit);
 				CityMap.map.outpostScale = unit;
 			}
 			else {
-				localStorage.setItem('CityMapScale', unit);
+				FH.Storage.setItem('CityMapScale', unit);
 				CityMap.map.scale = unit;	
 			}
 
@@ -221,53 +222,54 @@ let CityMap = {
 		});
 
 		// Button for submit Box
-		if (ActiveMap === 'main') {
-			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ i18n('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
-			menu.append(
+		if (FH.ActiveMap === 'main') {
+			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
+			menuBottom.append(
 				$('<div class="btn-group" />')
-					.append($('<button class="btn ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(i18n('Boxes.CityMap.CopyMetaInfos')))
+					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(FH.t('Boxes.CityMap.CopyMetaInfos')))
+					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(FH.t('Boxes.CityMap.SendToPlanner')))
 			);
 		}
 		oB.append(wrapper);
 
-		if (ActiveMap === "guild_raids")
+		if (FH.ActiveMap === "guild_raids")
 			if (CityMap.QI.data) {
-				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(i18n('Boxes.CityMap.CopyMetaInfos')));
+				menu.append($(`<button class="btn ml-auto" id="copy-meta-infos" onclick="CityMap.copyMetaInfos()" style="margin-left:auto" />`).text(FH.t('Boxes.CityMap.CopyMetaInfos')));
 				$("#sidebar").append(CityMap.showQIBuildingList());
 			}
 
-		wrapper.append(menu);
+		wrapper.append(menu).append(menuBottom);
 
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost") 
 			$("#sidebar").append(CityMap.showOutpostBuildings());
 		
-		if (ActiveMap === "cultural_outpost")
-			$('#citymap-wrapper').append('<span class="btn btn-mid openOverview" onClick="Outposts.BuildInfoBox()">'+i18n('Menu.OutP.Title')+'</span>');
+		if (FH.ActiveMap === "cultural_outpost")
+			$('#citymap-wrapper').append('<span class="btn btn-mid openOverview" onClick="Outposts.BuildInfoBox()">'+FH.t('Menu.OutP.Title')+'</span>');
 
-		if (ActiveMap === 'OtherPlayer') {
+		if (FH.ActiveMap === 'OtherPlayer') {
 			let townhall = (Object.values(CityMap.OtherPlayer.mapData).find(x => x.type === 'main_building'));
 			CityMap.OtherPlayer.eraName = townhall.cityentity_id?.split('_')[1] || townhall.entityId?.split('_')[1];
 
-			$("#sidebar").append($('<a id="openEfficiencyRating" class="btn" onclick="Productions.ShowRating(true,\''+CityMap.OtherPlayer.eraName+'\')">'+ i18n('Menu.ProductionsRating.Title') +'</a>'));
+			$("#sidebar").append($('<a id="openEfficiencyRating" class="btn" onclick="Productions.ShowRating(true,\''+CityMap.OtherPlayer.eraName+'\')">'+ FH.t('Menu.ProductionsRating.Title') +'</a>'));
 		}
 	},
 
 
 	BuildGrid: () => {	
 		let ua = CityMap.Main.unlockedAreas;
-		if (ActiveMap === "OtherPlayer")
+		if (FH.ActiveMap === "OtherPlayer")
 			ua = CityMap.OtherPlayer.unlockedAreas;
 		let xOffset = 0;
 		let yOffset = 0;
-		if (ActiveMap === "cultural_outpost") {
+		if (FH.ActiveMap === "cultural_outpost") {
 			ua = CityMap.CulturalOutpost.areas;
 			xOffset = 500;
 		}
-		else if (ActiveMap === "era_outpost") {
+		else if (FH.ActiveMap === "era_outpost") {
 			ua = CityMap.EraOutpost.areas;
 			yOffset = 500;
 		}
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			ua = CityMap.QI.areas;
 			yOffset = 500;
 			xOffset = 500;
@@ -301,9 +303,9 @@ let CityMap = {
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
 
-		let cssPosition = JSON.parse(localStorage.getItem('CityMapViewOffset'))||null;
+		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
-			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			let key = Object.keys(cssPosition).find(x => x == [FH.ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
 				$('#grid-outer').css({
 					'top': cssPosition[key].top+'px',
@@ -316,14 +318,14 @@ let CityMap = {
 
 		let buildings = CityMap.CulturalOutpost.data;
 		let xOffset = 0, yOffset = 0;
-		if (ActiveMap === "era_outpost") {
+		if (FH.ActiveMap === "era_outpost") {
 			buildings = CityMap.EraOutpost.data;
 			yOffset = 500;
 		}
-		else if (ActiveMap === "cultural_outpost") {
+		else if (FH.ActiveMap === "cultural_outpost") {
 			xOffset = 500;
 		}
-		else if (ActiveMap === "guild_raids") {
+		else if (FH.ActiveMap === "guild_raids") {
 			buildings = CityMap.QI.data;
 			xOffset = 500;
 			yOffset = 500;
@@ -333,7 +335,7 @@ let CityMap = {
 			let x = (buildings[b]['x'] || 0) - xOffset;
 			let y = (buildings[b]['y'] || 0) - yOffset;
 			let CityMapEntity = buildings[b],
-				d = MainParser.CityEntities[CityMapEntity['cityentity_id']],
+				d = FH.Main.CityEntities[CityMapEntity['cityentity_id']],
 				BuildingSize = CityMap.GetBuildingSize(CityMapEntity),
 
 				xx = (parseInt(x) * CityMap.map.gridSize),
@@ -344,10 +346,10 @@ let CityMap = {
 				let collectSoon = "";
 				let thresholdTime = 10800;
 				let hours = CityMapEntity.state?.next_state_transition_in ? Math.round(CityMapEntity.state.next_state_transition_in/60/60*100) : 0;
-				if (ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
+				if (FH.ActiveMap === "guild_raids" && CityMapEntity.state?.__class__ === "ProducingState" && CityMapEntity.state.next_state_transition_in < thresholdTime) {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
-				let collectionString = HTML.i18nReplacer(i18n('Boxes.CityMap.CollectSoon'), {hours: hours/100})
+				let collectionString = FH.helper.str.Replacer(FH.t('Boxes.CityMap.CollectSoon'), {hours: hours/100})
 				let f = $('<span />').addClass('entity ' + d['type'] + collectSoon).css({
 					width: xsize + 'em',
 					height: ysize + 'em',
@@ -369,11 +371,11 @@ let CityMap = {
 		$('#grid-outer').draggable({
 			stop: function( event, ui ) {
 				let mapOffsets = {
-					[ActiveMap+'_'+CityMap.map.view]: ui.position
+					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
-				let view = JSON.parse(localStorage.getItem('CityMapViewOffset'))||{};
+				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
-				localStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
 			}
 		});
 	},
@@ -383,7 +385,7 @@ let CityMap = {
 		if (!CityMap.QI.data) return;
 
 		let out = '<div class="metaSums">';
-		out += '<p class="text-center"><i>'+i18n('Boxes.CityMap.QIHint')+'</i></p>';
+		out += '<p class="text-center"><i>'+FH.t('Boxes.CityMap.QIHint')+'</i></p>';
 		out += '<div class="flex between" style="margin-bottom: 10px;">';
         out += '<span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' +  CityMap.QI.areas.length + '</span>';
 		out += '<div class="popStats"><span class="prod population">'+CityMap.QI.stats.availablePopulation+'/'+CityMap.QI.stats.totalPopulation+'</span> ';
@@ -394,7 +396,7 @@ let CityMap = {
 		out += '<div class="productions">';
 		for (let [prod, value] of Object.entries(CityMap.QI.stats.resources)) {
 			out += '<span class="'+prod+'">'+srcLinks.icons(prod);
-				out += HTML.Format(value);
+				out += FH.HTML.Format(value);
 			out += "</span> ";
 		}
 		out += '</div><div class="boosts">';
@@ -429,7 +431,7 @@ let CityMap = {
 		};
 
 		let out = '<table class="foe-table allBuildings">'
-		out += '<thead><tr><th colspan="2">'+i18n('Boxes.CityMap.Building')+'</th><th class="population textright"></th><th class="happiness textright"></th><th>'+i18n('Boxes.CityMap.Boosts')+'</th></tr></thead>'
+		out += '<thead><tr><th colspan="2">'+FH.t('Boxes.CityMap.Building')+'</th><th class="population textright"></th><th class="happiness textright"></th><th>'+FH.t('Boxes.CityMap.Boosts')+'</th></tr></thead>'
 		out += "<tbody>"
 
 		let uniques = {};
@@ -441,7 +443,7 @@ let CityMap = {
 		}
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)){
-			let building = CityMap.setQIBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setQIBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 			
@@ -478,8 +480,8 @@ let CityMap = {
 			if (building.production !== null) {
 				if (building.type === "goods" || building.type === "military") {
 					out += (building.type === "goods" ? "+20 = " : "+10 = ")
-					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
-					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
+					out += (building.production.guild_raids_supplies ? '<span class="prod guild_raids_supplies">'+FH.HTML.Format(building.production.guild_raids_supplies*-1.0)+'</span> ' : " ")
+					out += (building.production.guild_raids_money ? '<span class="prod guild_raids_money">'+FH.HTML.Format(building.production.guild_raids_money*-1.0)+'</span> ' : "")	
 				}
 				else {
 					let euphoriaBoost = CityMap.QI.stats.euphoriaBoost;
@@ -497,7 +499,7 @@ let CityMap = {
 							boost = 0;
 						}
 						let boostedValue = Math.round(value*(euphoriaBoost+(boost/100)))
-						out += srcLinks.icons(prod)+HTML.Format(boostedValue)+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(boostedValue)+" ";
 						CityMap.QI.stats.resources[prod] += boostedValue*building.count;
 					}
 				}
@@ -558,7 +560,7 @@ let CityMap = {
 		/// cultural settlements
 		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia
 		/// era settlements
-		if (ActiveMap === "era_outpost") populationName = "colonists";
+		if (FH.ActiveMap === "era_outpost") populationName = "colonists";
 
 		// for buildings adding pop
 		let population = Object.keys(data.staticResources?.resources).find(x => x.includes(populationName))
@@ -571,7 +573,7 @@ let CityMap = {
 		let diplomacy = data.staticResources?.resources?.diplomacy || 0;
 
 		let building = {};
-		if (ActiveMap === "cultural_outpost")
+		if (FH.ActiveMap === "cultural_outpost")
 			building = {
 				name: data.name,
 				population: population || 0,
@@ -580,7 +582,7 @@ let CityMap = {
 				type: data.type,
 				entityId: data.asset_id,
 			};
-		else if (ActiveMap === "era_outpost")
+		else if (FH.ActiveMap === "era_outpost")
 			building = {
 				name: data.name,
 				population: population || 0,
@@ -596,7 +598,7 @@ let CityMap = {
 
 	showOutpostBuildings: () => {
 		let buildings = Object.values(CityMap.CulturalOutpost.data);
-		if (ActiveMap === "era_outpost")
+		if (FH.ActiveMap === "era_outpost")
 			buildings = Object.values(CityMap.EraOutpost.data);
 
 		let uniques = {};
@@ -609,7 +611,7 @@ let CityMap = {
 
 		let uniqueBuildings = [];
 		for (let [id,count] of Object.entries(uniques)) {
-			let building = CityMap.setOutpostBuilding(MainParser.CityEntities[id]);
+			let building = CityMap.setOutpostBuilding(FH.Main.CityEntities[id]);
 			building.count = count;
 			uniqueBuildings.push(building);
 		}
@@ -622,10 +624,10 @@ let CityMap = {
 
 		let out = '<table class="foe-table allBuildings">'
 		out += `<thead><tr>
-			<th colspan="2">${i18n('Boxes.CityMap.Building')}</th>
+			<th colspan="2">${FH.t('Boxes.CityMap.Building')}</th>
 			<th class="population textright"></th>
-			<th><span class="goods-sprite ${(ActiveMap !== "era_outpost"?'diplomacy':'')}"></span></th>
-			<th>${i18n('Boxes.CityMap.Boosts')}</th></tr></thead>`
+			<th><span class="goods-sprite ${(FH.ActiveMap !== "era_outpost"?'diplomacy':'')}"></span></th>
+			<th>${FH.t('Boxes.CityMap.Boosts')}</th></tr></thead>`
 		out += "<tbody>"
 
 		let totals = {
@@ -644,7 +646,7 @@ let CityMap = {
 				out += "<td>";
 				if (building.production !== null) {
 					for (let [prod, value] of Object.entries(building.production)) {
-						out += srcLinks.icons(prod)+HTML.Format(Math.round(value))+" ";
+						out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+" ";
 					}
 				}
 				out += "</td></tr>";
@@ -659,7 +661,7 @@ let CityMap = {
 		let meta = "";
 		if (totals.diplomacy > 0) {
 			meta += `<div class="metaSums p5 text-center">
-						<i>${i18n('Boxes.CityMap.QIHint')}</i><br/> 
+						<i>${FH.t('Boxes.CityMap.QIHint')}</i><br/> 
 						<span class="population"></span>${totals.population}
 						<span class="goods-sprite diplomacy"></span>${totals.diplomacy}
 					</div>`;
@@ -671,14 +673,14 @@ let CityMap = {
 
 
 	SetMapBuildings: async (Data = null)=> {
-		if (ActiveMap === "cultural_outpost" || ActiveMap === "era_outpost" || ActiveMap === "guild_raids") {
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids") {
 			CityMap.SetOutpostBuildings();
 			return;
 		}
 
-		let cssPosition = JSON.parse(localStorage.getItem('CityMapViewOffset'))||null;
+		let cssPosition = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||null;
 		if (cssPosition) {
-			let key = Object.keys(cssPosition).find(x => x == [ActiveMap+'_'+CityMap.map.view]);
+			let key = Object.keys(cssPosition).find(x => x == [FH.ActiveMap+'_'+CityMap.map.view]);
 			if (key) {
 				$('#grid-outer').css({
 					'top': cssPosition[key].top+'px',
@@ -730,10 +732,10 @@ let CityMap = {
 			MaxY = 71;
 
 		let buildingData;
-		if (ActiveMap === 'OtherPlayer')
+		if (FH.ActiveMap === 'OtherPlayer')
 			buildingData = CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData))
 		else
-			buildingData = CityBuildings.createBuildings(Object.values(MainParser.CityMapData))
+			buildingData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 
 		// find highest rating in all buildings, do not include roads
 		let buildingsWithoutStreets = Object.values(buildingData).filter((x) => x.type !== "street");
@@ -747,7 +749,7 @@ let CityMap = {
 		let rating20 = buildingRatings[parseInt(buildingRatings.length/5)];
 		let rating30 = buildingRatings[parseInt(buildingRatings.length/3)];
 
-		let unlockedAreas = (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
+		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 
 		// create building elements
 		for (const building of Object.values(buildingData)) {
@@ -775,13 +777,13 @@ let CityMap = {
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
 						(building.rating?.totalScore*100 <= (rating30) ? ' rating30' : '')));
 			
-			let f = $('<span '+ MainParser.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
+			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
 				width: xsize + 'em',
 				height: ysize + 'em',
 				left: x + 'em',
 				top: y + 'em'
 			})
-				.attr('data-callback_tt','Tooltips.buildingTT')
+				.attr('data-callback_tt','building')
 				.attr('data-era', building.eraName)
 				.attr('data-size', building.size.length + 'x' + building.size.width)
 				.attr('data-id', building.id)
@@ -846,9 +848,9 @@ let CityMap = {
 			if (building.eraName) {
 				let era = Technologies.Eras[building.eraName]
 
-				if (era < CurrentEraID && building.type !== "greatbuilding" && era !== 0) {
+				if (era < FH.CurrentEraID && building.type !== "greatbuilding" && era !== 0) {
 					f.addClass('oldBuildings')
-					let eraDiff = CurrentEraID - era
+					let eraDiff = FH.CurrentEraID - era
 					
 					switch(eraDiff){
 						case 1:
@@ -884,11 +886,11 @@ let CityMap = {
 		$('#grid-outer').draggable({
 			stop: function( event, ui ) {
 				let mapOffsets = {
-					[ActiveMap+'_'+CityMap.map.view]: ui.position
+					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
 				}
-				let view = JSON.parse(localStorage.getItem('CityMapViewOffset'))||{};
+				let view = JSON.parse(FH.Storage.getItem('CityMapViewOffset'))||{};
 
-				localStorage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
+				FH.Storage.setItem('CityMapViewOffset',JSON.stringify(Object.assign(view,mapOffsets)));
 			}
 		});
 		CityMap.getAreas();
@@ -901,7 +903,7 @@ let CityMap = {
 
 
 	getAreas: ()=>{
-		let unlockedAreas = (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
+		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 		let total = (((unlockedAreas?.length || 1) -1) * 16) + 256, // x + (4*4) + 16*16
 			occupied = CityMap.metrics.areaOccupied,
 			txtFree = (total - occupied);
@@ -920,11 +922,11 @@ let CityMap = {
 		}
 
 
-		if (ActiveMap !== 'OtherPlayer') {
+		if (FH.ActiveMap !== 'OtherPlayer') {
 			$('.building-stats').html(
 				'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
-				'<span data-original-title="'+i18n('Boxes.CityMap.FreeArea')+'">' + txtFree + 
-				'</span> / <span data-original-title="'+i18n('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
+				'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
+				'</span> / <span data-original-title="'+FH.t('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
 		}
 
 		let sortedBldTypes = [];
@@ -933,52 +935,52 @@ let CityMap = {
 		sortedBldTypes.reverse();
 
 		let areaStats = [];
-		areaStats.push('<p class="text-center"><b>'+ CityMap.metrics.buildings +' '+ i18n('Boxes.CityMap.BuildingsAmount') + '</b></p>');
+		areaStats.push('<p class="text-center"><b>'+ CityMap.metrics.buildings +' '+ FH.t('Boxes.CityMap.BuildingsAmount') + '</b></p>');
 		areaStats.push('<ul>');
 		for(let x in sortedBldTypes) {
 			if(!sortedBldTypes.hasOwnProperty(x)) break;
 
 			let type = sortedBldTypes[x][0];
 
-			let TypeName = i18n('Boxes.CityMap.' + type)
+			let TypeName = FH.t('Boxes.CityMap.' + type)
 			const count = sortedBldTypes[x][1];
 			const pct = parseFloat(100*count/CityMap.metrics.buildings).toFixed(1);
 
 			let str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.buildingAreas[type]}</span>`;
 
 			if (type === 'street') {
-				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${i18n('Boxes.Citymap.Efficiency')}</small>`;
+				str = `<span data-original-title="${pct}%"><span class="square ${type}"></span>${count}x ${TypeName}</span> <small class="street-eff">${FH.HTML.Format(Math.round(CityMap.EfficiencyFactor * 10000) / 100)}% ${FH.t('Boxes.Citymap.Efficiency')}</small>`;
 			}
 			str = `<li>${str}</li>`;
 			areaStats.push(str);
 		}
 		areaStats.push('</ul>');
 
-		areaStats.push(`<b>${i18n('Boxes.CityMap.Highlight')}</b>`)
+		areaStats.push(`<b>${FH.t('Boxes.CityMap.Highlight')}</b>`)
 		areaStats.push('<ul class="highlight-map">' +
-			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
-			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
-			'<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.limited')+', '+parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" />' + CityMap.metrics.limitedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.limitedBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.ShowAscendableBuildings')+', '+parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)+'" />' + CityMap.metrics.ascendableBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.ascendableBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+i18n('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
+			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
+			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
+			'<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.limited')+', '+parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" />' + CityMap.metrics.limitedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.limitedBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowAscendableBuildings')+', '+parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)+'" />' + CityMap.metrics.ascendableBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.ascendableBuildingsArea + '</span></li>' +
+			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
 
 		areaStats.push('<li class="ratings clickable">')
-			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${i18n('Boxes.CityMap.ShowWorstBuildings')}</label>`)
-			if (ActiveMap !== 'OtherPlayer') 
+			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${FH.t('Boxes.CityMap.ShowWorstBuildings')}</label>`)
+			if (FH.ActiveMap !== 'OtherPlayer') 
 				areaStats.push('<span onclick="Productions.ShowRating()" class="clickable"></span>')
 		areaStats.push('</li>')
 
-		if (ActiveMap !== 'OtherPlayer') {
-			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${i18n('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
-			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${i18n('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
+		if (FH.ActiveMap !== 'OtherPlayer') {
+			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
+			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${FH.t('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
 			if (CityMap.metrics.hasCollectableBuildings)
-				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${i18n('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
+				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${FH.t('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
 		}
 		areaStats.push('</ul>')
 
 		// let cityEfficiency = parseFloat(CityMap.metrics.connectedBuildingsArea / CityMap.metrics.roadsArea * 100).toFixed(0);
-		// areaStats.push('<p data-original-title="'+i18n('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+i18n('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
+		// areaStats.push('<p data-original-title="'+FH.t('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+FH.t('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
 
 		$('.building-count-area').html(areaStats.join('')).promise().done(function() {
 			$('.building-count-area ul.highlight-map li').click(function(){
@@ -988,10 +990,10 @@ let CityMap = {
 		
 		let legends = [];
 		
-		legends.push(`<span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${i18n('Boxes.CityMap.OlderThan1Era')}<br>`);
-		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${i18n('Boxes.CityMap.OlderThan2Era')}<br>`);
-		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${i18n('Boxes.CityMap.OlderThan3Era')}<br>`);
-		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${i18n('Boxes.CityMap.OlderThan4Era')}<br>`);
+		legends.push(`<span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>`);
+		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${FH.t('Boxes.CityMap.OlderThan2Era')}<br>`);
+		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${FH.t('Boxes.CityMap.OlderThan3Era')}<br>`);
+		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}<br>`);
 
 		$('.too-old-legends').html(legends.join(''));
 	},
@@ -1037,20 +1039,20 @@ let CityMap = {
 		$('#grid-outer').toggleClass('showLimited');
 
 		if ($('#citymapExtra').length !== 0) {
-			HTML.CloseOpenBox('citymapExtra');
+			FH.HTML.CloseOpenBox('citymapExtra');
 			return;
 		}
 		
-		HTML.Box({
+		FH.HTML.Box({
 			id: 'citymapExtra',
-			title: i18n('Boxes.CityMap.limited'),
+			title: FH.t('Boxes.CityMap.limited'),
 			dragdrop: true,
 			auto_close: true,
 			resize: true,
 		});
 		
 		let limitedBuildings = [];
-		for (let building of Object.values(MainParser.CityBuildingsData)) {
+		for (let building of Object.values(FH.Main.CityBuildingsData)) {
 			if (!building.isLimited) continue;
 			limitedBuildings.push(building);
 		}
@@ -1066,7 +1068,7 @@ let CityMap = {
 		for (let building of limitedBuildings) {
 			output.push(`<li class="flex between">
 				<span>
-					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${extUrl}images/hud/open-eye.png"></span> 
+					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${FH.extUrl}images/hud/open-eye.png"></span> 
 					${building.name}
 				</span> 
 				<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>
@@ -1096,25 +1098,25 @@ let CityMap = {
 
 	copyMetaInfos: () => {
         let data = {};
-        switch (ActiveMap) {
+        switch (FH.ActiveMap) {
             case 'guild_raids':
                 data.CityMapData = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
                 break;
             default:
-                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(MainParser.CityMapData);
+                data.CityMapData = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
                 data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
-				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+				data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
                 break;
         }
-        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(MainParser.CityEntities);
+        data.CityEntities = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityEntities);
 
-        helper.str.copyToClipboard(
+        FH.helper.str.copyToClipboard(
             JSON.stringify(data)
         ).then(() => {
-            HTML.ShowToastMsg({
-                head: i18n('Boxes.CityMap.ToastHeadCopyData'),
-                text: i18n('Boxes.CityMap.ToastBodyCopyData'),
+            FH.HTML.ShowToastMsg({
+                head: FH.t('Boxes.CityMap.ToastHeadCopyData'),
+                text: FH.t('Boxes.CityMap.ToastBodyCopyData'),
                 type: 'info',
                 hideAfter: 4000,
             })
@@ -1122,8 +1124,46 @@ let CityMap = {
 	},
 
 
+	openPlanner: () => {
+		let region = String(FH.World).replace(/\d+$/, '') || 'unknown';
+		let data = { region };
+
+		data.playerName = FH.Player.Name;
+		data.boostData  = null; // todo
+		data.currentEra = FH.CurrentEra;
+
+		switch (FH.ActiveMap) {
+			case 'guild_raids':
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+				break;
+			default:
+				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
+				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
+				break;
+		}
+
+		for (let id in data.CityMapData) {
+			if (!Object.prototype.hasOwnProperty.call(data.CityMapData, id)) continue;
+			let building = data.CityMapData[id];
+			try {
+				let eraId = CityMap.GetBuildingEra(building);
+				building.era = Technologies.EraNames[eraId] || data.currentEra || null;
+			} catch (e) {
+				building.era = data.currentEra || null;
+			}
+		}
+
+		FH.Main.sendExtMessage({
+			type: 'storeData',
+			key: 'foe_planner_pending',
+			data: data
+		}).catch(err => console.error('openPlanner: failed to hand off data', err));
+	},
+
+
 	GetBuildingSize: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		let Ret = {};
 
@@ -1178,15 +1218,15 @@ let CityMap = {
 	 * @returns {number|string} - The era id for the building
 	 */
 	GetBuildingEra: (CityMapEntity) => {
-		let CityEntity = MainParser.CityEntities[CityMapEntity['cityentity_id']];
+		let CityEntity = FH.Main.CityEntities[CityMapEntity['cityentity_id']];
 
 		// Great building
 		if (CityEntity['type'] === 'greatbuilding') {
-			return CurrentEraID;
+			return FH.CurrentEraID;
 		}
 		// AllAge
 		else if (CityMapEntity['cityentity_id'].indexOf("AllAge") > -1) {
-			return CurrentEraID;
+			return FH.CurrentEraID;
 		}
 		// Multi era
 		else if (CityMapEntity['level']) {
@@ -1206,12 +1246,12 @@ let CityMap = {
 
 				// AllAge => Current era
 				if (era === 0) {
-					era = CurrentEraID;
+					era = FH.CurrentEraID;
 				}
 				return era;
 			}
 			else {
-				return CurrentEraID;
+				return FH.CurrentEraID;
 			}
 		}
 	},
@@ -1254,7 +1294,7 @@ let CityMap = {
 
 
 // // // // // // // // // // // // //
-// Data for MainParser.CityBuildingsData
+// Data for FH.Main.CityBuildingsData
 // // // // // // // // // // // // //
 let CityBuildings = {
 	
@@ -1574,7 +1614,7 @@ let CityBuildings = {
 			}
 		}
 		if (withAlly) {
-			let allyStats = MainParser.Allies.getProd(data.id||0)
+			let allyStats = FH.Main.Allies.getProd(data.id||0)
 			if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
 				(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
 					let boost = {
@@ -1632,7 +1672,7 @@ let CityBuildings = {
 		
 		if (state === "producing") {
 			if (data.cityentity_id.includes("CastleSystem")) {
-				return { at: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt, in: MainParser.CastleSystemChest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
+				return { at: Castle.Chest.dailyRewardCollectionAvailableAt, in: Castle.Chest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
 			}
 			return { at: data?.state?.next_state_transition_at, in: data?.state?.next_state_transition_in }
 		}
@@ -1754,7 +1794,7 @@ let CityBuildings = {
 			h = building.size.length,
 			setName = building.setBuilding.name,
 			adjacents = new Set(),
-			allBuildings = Object.values(MainParser.CityBuildingsData);
+			allBuildings = Object.values(FH.Main.CityBuildingsData);
 
 		const getB = (tx, ty) => {
 			return allBuildings.find(b =>
@@ -1815,7 +1855,7 @@ let CityBuildings = {
 				}
 			}
 			if (metaData.type === "main_building") { // add emissary production to town hall
-				MainParser.EmissaryService?.forEach(emissary => {
+				FH.Main.EmissaryService?.forEach(emissary => {
 					let resource = {
 						type: (emissary.bonus.type !== "unit" ? "resources" : emissary.bonus.type),
 						needsMotivation: false,
@@ -1823,7 +1863,7 @@ let CityBuildings = {
 					}
 					productions.push(resource)
 				})
-				MainParser.BonusService?.forEach(bonus => { // guild FP
+				FH.Main.BonusService?.forEach(bonus => { // guild FP
 					if (bonus.type === "daily_strategypoint") {
 						let resource = {
 							type: "resources",
@@ -1836,13 +1876,13 @@ let CityBuildings = {
 			}
 			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
 				let currentLevel = Castle.curLevel
-				era = CurrentEra 
-				if (MainParser.CastleSystemLevels[(currentLevel-1)] !== undefined)
-					MainParser.CastleSystemLevels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
+				era = FH.CurrentEra 
+				if (Castle.Levels[(currentLevel-1)] !== undefined)
+					Castle.Levels[(currentLevel-1)].dailyReward[era].rewards.forEach(reward => {
 						let resources = {[reward.subType]: reward.amount} 
 						if (reward.id.search("#") !== -1) { // "goods#random#CurrentEra#30" "goods#random#PreviousEra#15"
 							let amount = reward.id.match(/\d+$/)[0]
-							if (reward.id.search("goods") !== -1 && reward.id.search("CurrentEra") !== -1)
+							if (reward.id.search("goods") !== -1 && reward.id.search("FH.CurrentEra") !== -1)
 								resources = { 'random_good_of_age': amount }
 							else if (reward.id.search("goods") !== -1 && reward.id.search("PreviousEra") !== -1)
 								resources = { 'random_good_of_previous_age': amount }
@@ -2018,7 +2058,7 @@ let CityBuildings = {
 										let newReward = {
 											id: null,
 											type: "resources",
-											name: i18n('Boxes.OwnpartCalculator.OptionsFP'), // ugly
+											name: FH.t('Boxes.OwnpartCalculator.OptionsFP'), // ugly
 											subType: Object.keys(reward.product.playerResources.resources)[0],
 											amount: reward.product.playerResources.resources.strategy_points,
 											dropChance: reward.dropChance,
@@ -2031,7 +2071,7 @@ let CityBuildings = {
 										let newReward = {
 											id: Object.keys(reward.product.playerResources.resources)[0],
 											type: type,
-											name: i18n('Boxes.BlueGalaxy.Goods'),
+											name: FH.t('Boxes.BlueGalaxy.Goods'),
 											subType: Object.keys(reward.product.playerResources.resources)[0],
 											amount: Object.values(reward.product.playerResources.resources)[0],
 											dropChance: reward.dropChance,
@@ -2146,10 +2186,9 @@ let CityBuildings = {
 						if (production.type === "resources") {
 							resource.resources = production.playerResources.resources;
 							
-							// check if first resource is a special good and change the type accordingly
-							let specialGood = FHResourcesList.find(x => x.id === Object.keys(production.playerResources?.resources)[0] && x.abilities.specialResource?.type === "specialResource")
-							if (specialGood)
+							if (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource") {
 								resource.type = "special_goods";
+							}
 						}
 						else if (production.type === "guildResources")
 							resource.resources = production.guildResources.resources
@@ -2205,14 +2244,14 @@ let CityBuildings = {
 		if (metaData.components[era]) {
 			let lookupRewards = structuredClone(metaData.components[era].lookup?.rewards||{})
 			if (metaData.components?.AllAge?.chain) {
-				MainParser.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
+				FH.Main.BuildingChains[metaData.components.AllAge.chain.chainId]?.cityEntityIds.forEach(chainBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[chainBuilding]?.components?.[era]?.lookup?.rewards||{})
 				})
 			}
 			let setId = this.setSetBuilding(metaData)?.name;
-			if (setId && MainParser.BuildingSets[setId]) {
-				MainParser.BuildingSets[setId].buildings.forEach(setBuilding => {
-					Object.assign(lookupRewards, MainParser.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || MainParser.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
+			if (setId && FH.Main.BuildingSets[setId]) {
+				FH.Main.BuildingSets[setId].buildings.forEach(setBuilding => {
+					Object.assign(lookupRewards, FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.[era]?.lookup?.rewards || FH.Main.CityEntities[setBuilding.cityEntityId]?.components?.AllAge?.lookup?.rewards || {})
 				})
 			}
 
@@ -2488,12 +2527,12 @@ let CityBuildings = {
 
 
 	getBuildingById(id) {
-		return Object.values(MainParser.CityBuildingsData).find(x => x.id === id)
+		return Object.values(FH.Main.CityBuildingsData).find(x => x.id === id)
 	},
 
 	
 	getBuildingByCoords(x,y) {	
-		return Object.values(MainParser.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
+		return Object.values(FH.Main.CityBuildingsData).find(b => b.coords.x === x && b.coords.y === y)
 	},
 
 
@@ -2520,8 +2559,8 @@ let CityBuildings = {
 
 				if (production.type === 'resources' || production.type === 'special_goods') {
 					Object.keys(production.resources).forEach(resourceName => {
-						let good = GoodsList.find(x => x.id === resourceName)
-						let specialGood = FHResourcesList.find(x => x.id === resourceName && x.abilities.specialResource?.type === "specialResource")
+						let good = FH.Goods.List.find(x => x.id === resourceName)
+						let specialGood = (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource")
 						let goodEra = Technologies.InnoEras[building.eraName]
 						let isGood = false
 
@@ -2611,7 +2650,7 @@ let CityBuildings = {
 				if (production.type !== 'guildResources' || production.resources === undefined) continue;
 
 				for (let resourceName of Object.keys(production?.resources)) {
-					let good = GoodsList.find(x => x.id === resourceName);
+					let good = FH.Goods.List.find(x => x.id === resourceName);
 					let goodEra = Technologies.InnoEras[building.eraName];
 					let isGood = false;
 
@@ -2661,30 +2700,30 @@ let CityBuildings = {
 	},
 
 
-	createBuildings(data=Object.values(MainParser.CityMapData),withAllies=true) {	
-		if (ActiveMap === 'OtherPlayer') {
+	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=true) {	
+		if (FH.ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
 
 		for (let building of data) {
-			if (ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
-			let metaData = Object.values(MainParser.CityEntities).find(x => x.id === building.cityentity_id)
+			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
+			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
-			if (ActiveMap === 'OtherPlayer') 
+			if (FH.ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
 			else
-				MainParser.CityBuildingsData[building.id] = newCityEntity
+				FH.Main.CityBuildingsData[building.id] = newCityEntity
 		}
 
-		return (ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : MainParser.CityBuildingsData) 
+		return (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
 	},
 
 
-	createBuilding(metaData, era=CurrentEra, data={}, withAlly=true) {	
+	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=true) {	
 		if (typeof(metaData)=="string") {
-			metaData=MainParser.CityEntities[metaData];
+			metaData=FH.Main.CityEntities[metaData];
 		}
 		let entity = {
 			player_id: data.player_id||0,
@@ -2694,7 +2733,7 @@ let CityBuildings = {
 			allyRoom: metaData.components?.AllAge?.ally?.rooms[0]?.allyType || null,
 			name: metaData.name,
 			type: this.setType(metaData),
-			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? CurrentEra : era),
+			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? FH.CurrentEra : era),
 			isSpecial: this.isSpecialBuilding(metaData),
 			isLimited: this.isLimitedBuilding(metaData),
 			isInInventory: false,

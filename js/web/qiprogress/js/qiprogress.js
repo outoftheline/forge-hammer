@@ -14,11 +14,11 @@
  */
 
 
-FoEproxy.addHandler('GuildRaidsService', 'getMemberActivityOverview', (data, postData) => {
+FH.proxy.addHandler('GuildRaidsService', 'getMemberActivityOverview', (data, postData) => {
     QiProgress.HandleQiProgress(data.responseData.rows);
 });
 
-FoEproxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildRaidsService', 'getState', (data, postData) => {
 	QiProgress.GlobalRankingTimeout = setTimeout(()=>{
 		if (data.responseData.__class__ == 'GuildRaidsRunningState') {
 			QiProgress.CurrentQISeason = data.responseData.endsAt
@@ -53,8 +53,6 @@ let QiProgress = {
     NewActionTimestamp: null,
 	HistoryView: false,
 	ProgressSettings: {
-		showRoundSelector: 1,
-		showProgressFilter: 1,
 		showOnlyActivePlayers: 0,
 	},
 	QiMap: {},
@@ -82,17 +80,17 @@ let QiProgress = {
 	ShowProgressList: () => {
 		if ($('#QiProgressList').length === 0) {
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'QiProgressList',
-				title: i18n('Boxes.QiProgress.Title'),
+				title: FH.t('Boxes.QiProgress.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'QiProgress.ShowSettings()',
+				settings: QiProgress.ShowSettings,
 			    active_maps:"guild_raids"
 			});
-			HTML.AddCssFile('qiprogress');
+			FH.HTML.AddCssFile('qiprogress');
 		}
 			
 		if (Settings.GetSetting('ShowQIPlayerInfo') == false) {
@@ -172,7 +170,7 @@ let QiProgress = {
 				if (playerOld !== undefined) {
 					if (playerOld.actions < playerNew.actions) {
 						diffActions = playerNew.actions - playerOld.actions
-						newActions = ' <small class="text-success">&#8593; ' + HTML.Format(diffActions) + '</small>';
+						newActions = ' <small class="text-success">&#8593; ' + FH.HTML.Format(diffActions) + '</small>';
 						change = true;
 					}
 					if (playerOld.progress < playerNew.progress) {
@@ -202,13 +200,13 @@ let QiProgress = {
 			tA += playerNew.actions;
 			tP += playerNew.progress;
 
-			b.push('<tr data-player="' + playerNew['player_id'] + '" data-qiround="' + qiRound + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === ExtPlayerID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
+			b.push('<tr data-player="' + playerNew['player_id'] + '" data-qiround="' + qiRound + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
 			b.push('<td style="display:none">' + playerNew.player_id + '</td>');
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
 			b.push('<td class="tdmin"><img src="' + srcLinks.GetPortrait(playerNew.avatar) + '"></td>');
 			b.push('<td>' + playerNew.name + '</td>');
-			b.push('<td class="text-center" data-number="' + playerNew.actions + '">' + HTML.Format(playerNew.actions) + newActions + '</td>');
-			b.push('<td class="text-center" data-number="' + playerNew.progress + '">' + HTML.Format(playerNew.progress) + newProgress + '</td>');
+			b.push('<td class="text-center" data-number="' + playerNew.actions + '">' + FH.HTML.Format(playerNew.actions) + newActions + '</td>');
+			b.push('<td class="text-center" data-number="' + playerNew.progress + '">' + FH.HTML.Format(playerNew.progress) + newProgress + '</td>');
 			b.push('</tr>');
 
 			QiProgress.ProgressContent.push({
@@ -223,9 +221,9 @@ let QiProgress = {
 		t.push('<thead class="sticky">');
 		t.push('<tr>');
 		t.push('<th style="display:none" data-export="Player_ID"></th>');
-		t.push('<th colspan="3" data-export3="Player">' + i18n('General.Player') + '</th>');
-		t.push('<th class="text-center" data-export="Actions">' + i18n('Boxes.QiProgress.Actions') + '<br> <strong class="text-warning">(' + HTML.Format(tA) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Progress">' + i18n('Boxes.QiProgress.Progress') + '<br> <strong class="text-warning">(' + HTML.Format(tP) + ')</strong></th>');
+		t.push('<th colspan="3" data-export3="Player">' + FH.t('General.Player') + '</th>');
+		t.push('<th class="text-center" data-export="Actions">' + FH.t('Boxes.QiProgress.Actions') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Progress">' + FH.t('Boxes.QiProgress.Progress') + '<br> <strong class="text-warning">(' + FH.HTML.Format(tP) + ')</strong></th>');
 		t.push('</tr>');
 		t.push('</thead>');
 
@@ -260,9 +258,7 @@ let QiProgress = {
 				$('button#qi_filterProgressList').html('&#8593; ' + newPlayerProgress);
 				$('button#qi_filterProgressList').attr("disabled", false);
 
-				if (QiProgress.ProgressSettings.showOnlyActivePlayers === 1) {
-					QiProgress.ToggleProgressList('qi_filterProgressList');
-				}
+				QiProgress.ToggleProgressList('qi_filterProgressList');
 			}
 		});
 
@@ -279,22 +275,9 @@ let QiProgress = {
 			let time = duration.humanize();
 
 			$('.time-diff').text(
-				HTML.i18nReplacer(i18n('Boxes.QiProgress.LastSnapshot'), { time: time })
+				FH.helper.str.Replacer(FH.t('Boxes.QiProgress.LastSnapshot'), { time: time })
 			);
 		}
-	},
-
-    
-	ProgressListSettingsSaveValues: () => {
-		QiProgress.ProgressSettings.showRoundSelector = $("#gf_showRoundSelector").is(':checked') ? 1 : 0;
-		QiProgress.ProgressSettings.showProgressFilter = $("#gf_showProgressFilter").is(':checked') ? 1 : 0;
-
-		localStorage.setItem('QiProgressProgressSettings', JSON.stringify(QiProgress.ProgressSettings));
-
-		$(`#QiProgressListSettingsBox`).fadeToggle('fast', function () {
-			$(this).remove();
-			QiProgress.BuildProgressList(QiProgress.CurrentQISeason);
-		});
 	},
 
 
@@ -310,7 +293,6 @@ let QiProgress = {
 			if (nelem.length !== 0) {
 				let oelem = elem.find('tr:not(.new)');
 				QiProgress.ProgressSettings.showOnlyActivePlayers = 1;
-				localStorage.setItem('QiProgressProgressSettings', JSON.stringify(QiProgress.ProgressSettings));
 				$('#QiProgressTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
@@ -319,7 +301,6 @@ let QiProgress = {
 		else if (act === 'show') {
 			elem.find('tr').show();
 			QiProgress.ProgressSettings.showOnlyActivePlayers = 0;
-			localStorage.setItem('QiProgressProgressSettings', JSON.stringify(QiProgress.ProgressSettings));
 			$('#QiProgressTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}
@@ -330,9 +311,9 @@ let QiProgress = {
 			let ptop = null,
 				pright = null;
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'QiProgressPlayerDetails',
-				title: i18n('Boxes.QiProgress.SnapshotLog'),
+				title: FH.t('Boxes.QiProgress.SnapshotLog'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -340,7 +321,7 @@ let QiProgress = {
 			    active_maps:"guild_raids"
 			});
 
-			if (localStorage.getItem('QiProgressPlayerDetailsCords') === null) {
+			if (FH.Storage.getItem('QiProgressPlayerDetailsCords') === null) {
 				ptop = $('#QiProgress').length !== 0 ? $('#QiProgress').position().top : 0;
 				pright = $('#QiProgress').length !== 0 ? ($('#QiProgress').position().left + $('#QiProgress').width() + 10) : 0;
 				$('#QiProgressPlayerDetails').css('top', ptop + 'px').css('left', (pright * 1) + 'px');
@@ -380,22 +361,22 @@ let QiProgress = {
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
 
 
-			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(qiround).subtract(11, 'd').format(i18n('DateShort')) + ` - ` + moment.unix(qiround).format(i18n('Date')) + '</div>');
-			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + i18n('Boxes.QiProgress.SnapShotLogDisclaimer') + '</p>')
+			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(qiround).subtract(11, 'd').format(FH.t('DateShort')) + ` - ` + moment.unix(qiround).format(FH.t('Date')) + '</div>');
+			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + FH.t('Boxes.QiProgress.SnapShotLogDisclaimer') + '</p>')
 			h.push('<table id="qiPlayerLogTable" class="foe-table qilog"><thead>');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="qi-playerlog-group">' + i18n('General.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + HTML.i18nTooltip(i18n('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + HTML.i18nTooltip(i18n('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number" data-type="qi-playerlog-group">' + FH.t('General.Date') + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-playerlog-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-playerlog-group">');
 
 			dailyProgress.forEach(day => {
-				let id = moment.unix(day.time).format(i18n('DateTime'));
+				let id = moment.unix(day.time).format(FH.t('DateTime'));
 				h.push('<tr id="qidetail_' + id + '" data-qiround="' + qiround + '" data-player="' + player_id + '" data-id="' + id + '">');
-				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(i18n('Date'))}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.actions}">${HTML.Format(day.actions)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.progress}">${HTML.Format(day.progress)}</td>`);
+				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(FH.t('Date'))}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.actions}">${FH.HTML.Format(day.actions)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.progress}">${FH.HTML.Format(day.progress)}</td>`);
 				h.push('</tr>');
 
 			});
@@ -412,19 +393,19 @@ let QiProgress = {
 			h.push('<div class="datetimepicker"><button id="qiLogDatepicker" class="btn">' + QiProgress.formatRange() + '</button></div>');
 			h.push('<table id="QiProgressLogTable" class="foe-table qilog"><thead>');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="qi-log-group">' + i18n('Boxes.QiProgress.Date') + '</th>');
-			h.push('<th class="case-sensitive" data-type="qi-log-group">' + i18n('Boxes.QiProgress.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + HTML.i18nTooltip(i18n('Boxes.QiProgress.Actions')) + '</th>');
-			h.push('<th class="is-number text-center" data-type="qi-log-group">' + HTML.i18nTooltip(i18n('Boxes.QiProgress.Progress')) + '</th>');
+			h.push('<th class="is-number" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Date') + '</th>');
+			h.push('<th class="case-sensitive" data-type="qi-log-group">' + FH.t('Boxes.QiProgress.Player') + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Actions')) + '</th>');
+			h.push('<th class="is-number text-center" data-type="qi-log-group">' + FH.HTML.Tooltip(FH.t('Boxes.QiProgress.Progress')) + '</th>');
 			h.push('</tr>');
 			h.push('</thead><tbody class="qi-log-group">');
 
 			detaildata.forEach(e => {
 				h.push('<tr data-id="' + e.time + '" id="qitime_' + e.time + '">');
-				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
-				h.push(`<td class="case-sensitive" data-text="${helper.str.cleanup(e.name)}">${e.name}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.actions}">${HTML.Format(e.actions)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.progress}">${HTML.Format(e.progress)}</td>`);
+				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(FH.t('DateTime'))}</td>`);
+				h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(e.name)}">${e.name}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.actions}">${FH.HTML.Format(e.actions)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.progress}">${FH.HTML.Format(e.progress)}</td>`);
 				h.push('</tr>');
 			});
 
@@ -476,13 +457,13 @@ let QiProgress = {
 		let dateEnd = moment(QiProgress.curDateEndFilter);
 
 		if (dateStart.isSame(dateEnd)) {
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())) {
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		return text;
@@ -496,11 +477,8 @@ let QiProgress = {
 	SetBoxNavigation: async (qiRound) => {
 		let h = [];
 		let i = 0;
-		let storageSettings = localStorage.getItem('QiProgressProgressSettings')
-		let ProgressSettings = (storageSettings != null && storageSettings != 'undefined') ? JSON.parse(localStorage.getItem('QiProgressProgressSettings')) : '{}';
-
-		QiProgress.ProgressSettings.showRoundSelector = (ProgressSettings.showRoundSelector !== null) ? ProgressSettings.showRoundSelector : QiProgress.ProgressSettings.showRoundSelector;
-		QiProgress.ProgressSettings.showProgressFilter = (ProgressSettings.showProgressFilter !== null) ? ProgressSettings.showProgressFilter : QiProgress.ProgressSettings.showProgressFilter;
+		let storageSettings = FH.Storage.getItem('QiProgressProgressSettings')
+		let ProgressSettings = (storageSettings != null && storageSettings != 'undefined') ? JSON.parse(FH.Storage.getItem('QiProgressProgressSettings')) : '{}';
 
 		if (QiProgress.AllRounds === undefined || QiProgress.AllRounds === null) {
 			// get all available entires
@@ -520,26 +498,21 @@ let QiProgress = {
 			let previousweek = QiProgress.AllRounds[index + 1] || null;
 			let nextweek = QiProgress.AllRounds[index - 1] || null;
 
-			h.push(`<div id="qi_roundswitch" class="roundswitch dark-bg">`);
-
-			if (QiProgress.ProgressSettings.showRoundSelector) {
-				h.push(`${i18n('Boxes.QiProgress.QiRound')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> `);
-				h.push(`<select id="qi-select-qiRound">`);
+			h.push(`<div id="qi_roundswitch" class="roundswitch dark-bg">
+				${FH.t('Boxes.QiProgress.QiRound')} <button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> 
+				<select id="qi-select-qiRound">`);
 
 				QiProgress.AllRounds.forEach(week => {
-					h.push(`<option value="${week}"${qiRound === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
+					h.push(`<option value="${week}"${qiRound === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(FH.t('Date')) + ` - ` + moment.unix(week).format(FH.t('Date')) + `</option>`);
 				});
 
-				h.push(`</select> `);
-				h.push(`<button class="btn btn-mid btn-set-week last" data-week="${nextweek}"${nextweek === null ? ' disabled' : ''}>&gt;</button>`);
-			}
+				h.push(`</select> 
+					<button class="btn btn-mid btn-set-week last" data-week="${nextweek}"${nextweek === null ? ' disabled' : ''}>&gt;</button>`);
 
 			if (qiRound === QiProgress.CurrentQISeason) {
-				h.push(`<div id="qiLogFilter" style="float:right">`);
-				if (QiProgress.ProgressSettings.showProgressFilter === 1) {
-					h.push(`<button id="qi_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn" disabled>&#8593;</button>`);
-				}
-				h.push(`</div>`);
+				h.push(`<div id="qiLogFilter" style="float:right">
+					<button id="qi_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.QiProgress.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+					</div>`);
 			}
 			h.push(`</div>`);
 		}
@@ -580,12 +553,8 @@ let QiProgress = {
 
 	ShowSettings: () => {
 		let c = [];
-		let Settings = QiProgress.ProgressSettings;
-		c.push(`<input id="gf_showRoundSelector" name="showroundswitcher" value="1" type="checkbox" ${(Settings.showRoundSelector === 1) ? ' checked="checked"' : ''} /> <label for="gf_showRoundSelector">${i18n('Boxes.QiProgress.ShowRoundSelector')}</label></p>`);
-		c.push(`<p class="text-left"><input id="gf_showProgressFilter" name="showprogressfilter" value="1" type="checkbox" ${(Settings.showProgressFilter === 1) ? ' checked="checked"' : ''} /> <label for="gf_showProgressFilter">${i18n('Boxes.QiProgress.ShowProgressFilter')}</label></p>`);
-		c.push(`<p><button id="save-QiProgressPlayerBox-settings" class="btn saveSettings" onclick="QiProgress.ProgressListSettingsSaveValues()">${i18n('Boxes.General.Save')}</button></p>`);
-		c.push(`<hr><p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'csv','QI')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#QiProgressTable'),'json','QI')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#QiProgressListSettingsBox').html(c.join(''));
 	},
@@ -596,9 +565,9 @@ let QiProgress = {
 	 */
 	HandleQiProgress: async (d) => {
 		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
-		if (localStorage.getItem('QiProgress.NewAction') !== null) {
-			QiProgress.PrevAction = JSON.parse(localStorage.getItem('QiProgress.NewAction'));
-			QiProgress.PrevActionTimestamp = parseInt(localStorage.getItem('QiProgress.NewActionTimestamp'));
+		if (FH.Storage.getItem('QiProgress.NewAction') !== null) {
+			QiProgress.PrevAction = JSON.parse(FH.Storage.getItem('QiProgress.NewAction'));
+			QiProgress.PrevActionTimestamp = parseInt(FH.Storage.getItem('QiProgress.NewActionTimestamp'));
 		}
 		else if (QiProgress.NewAction !== null) {
 			QiProgress.PrevAction = QiProgress.NewAction;
@@ -629,10 +598,10 @@ let QiProgress = {
 
 		QiProgress.HistoryView = false;
 		QiProgress.NewAction = players;
-		localStorage.setItem('QiProgress.NewAction', JSON.stringify(QiProgress.NewAction));
+		FH.Storage.setItem('QiProgress.NewAction', JSON.stringify(QiProgress.NewAction));
 
 		QiProgress.NewActionTimestamp = moment().unix();
-		localStorage.setItem('QiProgress.NewActionTimestamp', QiProgress.NewActionTimestamp);
+		FH.Storage.setItem('QiProgress.NewActionTimestamp', QiProgress.NewActionTimestamp);
 
 		if ($('#QiProgress').length > 0) {
 			QiProgress.BuildProgressList(QiProgress.CurrentQISeason);
@@ -703,7 +672,6 @@ let QiProgress = {
 			if (nelem.length !== 0) {
 				let oelem = elem.find('tr:not(.new)');
 				QiProgress.ProgressSettings.showOnlyActivePlayers = 1;
-				localStorage.setItem('QiProgressProgressSettings', JSON.stringify(QiProgress.PlayerBoxSettings));
 				$('#QiProgressTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
@@ -713,7 +681,6 @@ let QiProgress = {
 		else if (act === 'show') {
 			elem.find('tr').show();
 			QiProgress.ProgressSettings.showOnlyActivePlayers = 0;
-			localStorage.setItem('QiProgressProgressSettings', JSON.stringify(QiProgress.PlayerBoxSettings));
 			$('#QiProgressTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}

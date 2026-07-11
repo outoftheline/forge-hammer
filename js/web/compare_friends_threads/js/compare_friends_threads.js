@@ -16,7 +16,7 @@
 /**
  * Get threads from ConversationService
  */
-FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getOverviewForCategory', (data, postData) => {
 	if (data['responseData']['category']['type'] === 'social')
 	{
 		CompareFriendsThreads.ParseThreads(data['responseData']['category']['teasers']);
@@ -24,7 +24,7 @@ FoEproxy.addHandler('ConversationService', 'getOverviewForCategory', (data, post
 });
 
 
-FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
+FH.proxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
 	if (data['responseData']['type'] === 'social')
 	{
 		CompareFriendsThreads.ParseThreads(data['responseData']['teasers']);
@@ -34,7 +34,7 @@ FoEproxy.addHandler('ConversationService', 'getCategory', (data, postData) => {
 /**
  * Thread is opened
  */
-FoEproxy.addHandler('ConversationSettingsService', 'getSettings', (data, postData) => {
+FH.proxy.addHandler('ConversationSettingsService', 'getSettings', (data, postData) => {
 	if(postData[0]['requestClass'] === 'ConversationSettingsService' && postData[0]['requestMethod'] === 'getSettings')
 	{
 		if (data['responseData']['participants']) {
@@ -54,7 +54,7 @@ FoEproxy.addHandler('ConversationSettingsService', 'getSettings', (data, postDat
 /**
  * Friend is deleted
  */
-FoEproxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
+FH.proxy.addHandler('FriendService', 'deleteFriend', (data, postData) => {
 	if ($('#friendsCompareBox').length > 0) {
 		setTimeout(()=>{
 			CompareFriendsThreads.BuildBody(true);
@@ -137,24 +137,24 @@ let CompareFriendsThreads = {
 		*/
 
 		if ($('#friendsCompareBox').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'friendsCompareBox',
-				title: i18n('Boxes.CompareFriendsThreads.Title'),
+				title: FH.t('Boxes.CompareFriendsThreads.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
 			});
 
-			HTML.AddCssFile('compare_friends_threads');
+			FH.HTML.AddCssFile('compare_friends_threads');
 
 		} else if(!rebuild) {
-			HTML.CloseOpenBox('friendsCompareBox');
+			FH.HTML.CloseOpenBox('friendsCompareBox');
 		}
 
 		// no threads visited
 		if(CompareFriendsThreads.Threads[0]?.participants.length === undefined){
-			let info = `<div class="text-center text-warning" style="margin-top:2em">${i18n('Boxes.CompareFriendsThreads.Information')}</div>`;
+			let info = `<div class="text-center text-warning" style="margin-top:2em">${FH.t('Boxes.CompareFriendsThreads.Information')}</div>`;
 
 			$('#friendsCompareBoxBody').html(info);
 
@@ -184,7 +184,7 @@ let CompareFriendsThreads = {
 		t.push('</thead>');
 		t.push('<tbody>');
 
-		let PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsFriend'] === true));
+		let PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsFriend'] === true));
 
 		PlayerList = PlayerList.sort(function (a, b) {
 			return b['Score'] - a['Score'];
@@ -197,7 +197,7 @@ let CompareFriendsThreads = {
 
 			t.push(`<td>#${(parseInt(p) + 1)} <img style="max-width: 22px" src="${srcLinks.GetPortrait(Player['Avatar'])}" alt="${Player['PlayerName']}"> ` 
 				+ `${`<span class="activity activity_${Player['Activity']}"></span> ` 
-				+ MainParser.GetPlayerLink(Player['PlayerID'], Player['PlayerName'])}</td>`);
+				+ FH.Main.GetPlayerLink(Player['PlayerID'], Player['PlayerName'])}</td>`);
 
 			for(let x in CompareFriendsThreads.Threads)
 			{

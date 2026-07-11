@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addMetaHandler('research', (xhr, postData) => {
+FH.proxy.addMetaHandler('research', (xhr, postData) => {
 	Technologies.AllTechnologies = JSON.parse(xhr.responseText);
 	//$('#technologies-Btn').removeClass('hud-btn-red');
 	//$('#technologies-Btn-closed').remove();
@@ -13,19 +13,19 @@ FoEproxy.addMetaHandler('research', (xhr, postData) => {
     //}
 });
 
-FoEproxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
 	Technologies.UnlockedTechnologies = data.responseData;
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
 	let era = data.responseData.technology.era;
-    if (Technologies.Eras[era] > CurrentEraID) {
-        CurrentEraID = Technologies.EraNames[era];
-        CurrentEra = era;
+    if (Technologies.Eras[era] > FH.CurrentEraID) {
+        FH.CurrentEraID = Technologies.EraNames[era];
+        FH.CurrentEra = era;
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -54,7 +54,7 @@ FoEproxy.addHandler('ResearchService', 'spendForgePoints', (data, postData) => {
     }
 });
 
-FoEproxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
+FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
     let CurrentTech = data.responseData['technology'];
     if (CurrentTech === undefined) return;
 
@@ -190,7 +190,7 @@ let Technologies = {
     },
     maxEra:null,
     getMaxEra:()=>{ // 1 more than "InnoEra"
-        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(MainParser.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
+        if (!Technologies.maxEra) Technologies.maxEra = Math.max(...Object.values(FH.Main.CityEntities).filter(x=>x.type=="greatbuilding").map(x=>Technologies.Eras[x.requirements.min_era]));
         return Technologies.maxEra;
     },
 
@@ -216,29 +216,27 @@ let Technologies = {
     },
 
 
-	/**
-	 * Zeigt
-	 */
+
     Show: ()=> {
 		if ($('#technologies').length === 0) {
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'technologies',
-				title: i18n('Boxes.Technologies.Title'),
+				title: FH.t('Boxes.Technologies.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
                 resize: true,
-                settings: 'Technologies.ShowSettingsButton()'
+                settings: Technologies.ShowSettingsButton
 			});
 
 			// CSS in den DOM prügeln
-			HTML.AddCssFile('technologies');
+			FH.HTML.AddCssFile('technologies');
 
-			Technologies.SelectedEraID = CurrentEraID;
+			Technologies.SelectedEraID = FH.CurrentEraID;
 
 		} else {
-			HTML.CloseOpenBox('technologies');
+			FH.HTML.CloseOpenBox('technologies');
         }
 
         $('#technologies').on('click', '.ignoreprevera', function () {
@@ -247,7 +245,7 @@ let Technologies = {
 
             Technologies.IgnorePrevEra = v;
 
-            localStorage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
+            FH.Storage.setItem('TechnologiesIgnorePrevEra', Technologies.IgnorePrevEra);
 
             Technologies.CalcBody();
         });
@@ -258,7 +256,7 @@ let Technologies = {
 
             Technologies.IgnoreCurrentEraOptional = v;
 
-            localStorage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
+            FH.Storage.setItem('TechnologiesIgnoreCurrentEraOptional', Technologies.IgnoreCurrentEraOptional);
 
             Technologies.CalcBody();
         });
@@ -278,20 +276,14 @@ let Technologies = {
     },
 
 
-	/**
-	 *
-	 */
     BuildBox: () => {
-        Technologies.IgnorePrevEra = (localStorage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
-        Technologies.IgnoreCurrentEraOptional = (localStorage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
+        Technologies.IgnorePrevEra = (FH.Storage.getItem('TechnologiesIgnorePrevEra') !== 'false' ? 'true' : 'false')
+        Technologies.IgnoreCurrentEraOptional = (FH.Storage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
 
         Technologies.CalcBody();
     },
 
 
-	/**
-	 *
-	 */
     CalcBody: ()=> {
         let h = [],
             TechDict = [];
@@ -302,11 +294,10 @@ let Technologies = {
         }
 
         // Look up researched tech
-        for (let i = 0; i < Technologies.UnlockedTechnologies['unlockedTechnologies'].length; i++) {
-            let TechName = Technologies.UnlockedTechnologies['unlockedTechnologies'][i];
-            let Index = TechDict[TechName];
-            Technologies.AllTechnologies[Index]['isResearched'] = true;
-            Technologies.AllTechnologies[Index]['currentSP'] = Technologies.AllTechnologies[Index]['maxSP'];
+        for (let node of Technologies.UnlockedTechnologies.unlockedNodes) {
+            if (!TechDict[node]) continue;
+            Technologies.AllTechnologies[TechDict[node]].isResearched = true;
+            Technologies.AllTechnologies[TechDict[node]]['currentSP'] = Technologies.AllTechnologies[TechDict[node]]['maxSP'];
         }
 
         // Teilweise erforscht
@@ -324,13 +315,15 @@ let Technologies = {
             if (Tech['currentSP'] === undefined)
             	Tech['currentSP'] = 0;
 
+            //console.log(Tech.isResearched, Tech.id)
+
             if (!Tech['isResearched'] && !Tech['isTeaser']) {
                 let EraID = Technologies.Eras[Tech['era']];
 
-                if (EraID < CurrentEraID && Technologies.IgnorePrevEra) continue; // Vorherige ZA ausblenden
-                if (EraID >= CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) continue; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
+                if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) continue; // Vorherige ZA ausblenden
+                if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) continue; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
 
-                if (EraID >= CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
+                if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
 
                     if (RequiredResources.strategy_points === undefined)
                     	RequiredResources.strategy_points = 0;
@@ -350,29 +343,36 @@ let Technologies = {
             }
         }
 
-        let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, CurrentEraID),
+        let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, FH.CurrentEraID),
             NextEraID = Math.min(Technologies.SelectedEraID + 1, Technologies.getMaxEra());
 
-        h.push('<div class="dark-bg" style="margin-bottom: 3px">');
-	        h.push('<div class="techno-head">');
-				h.push('<button class="btn btn-switchage" data-value="' + PreviousEraID + '">' + i18n('Eras.'+PreviousEraID) + '</button>');
-				h.push('<div class="text-center"><strong>' + i18n('Eras.'+Technologies.SelectedEraID) + '</strong></div>');
-				h.push('<button class="btn btn-switchage" data-value="' + NextEraID + '">' + i18n('Eras.'+NextEraID) + '</button>');
-	        h.push('</div>');
-	        h.push('<div class="text-small">');
-            h.push('<input id="IgnorePrevEra" class="ignoreprevera game-cursor" ' + (Technologies.IgnorePrevEra ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnorePrevEra') + '<br>');
-            h.push('<input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ' + (Technologies.IgnoreCurrentEraOptional ? 'checked' : '') + ' type="checkbox">' + i18n('Boxes.Technologies.IgnoreCurrentEraOptional') + '<br>');
-        	h.push('</div>');
-        h.push('</div>');
+        h.push(`<div class="dark-bg p5" style="margin-bottom: 3px">
+                    <div class="text-center"><strong>${FH.t('Eras.'+Technologies.SelectedEraID)}</strong></div>
+                    <div class="flex between">
+                        <div>`);
+                        if (PreviousEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${PreviousEraID}">${FH.t('Eras.'+PreviousEraID)}</button>`);
 
-        h.push('<table class="foe-table exportable">');
+                        h.push(`</div><div>`);
+
+                        if (NextEraID !== Technologies.SelectedEraID)
+                            h.push(`<button class="btn btn-mid btn-switchage" data-value="${NextEraID}">${FH.t('Eras.'+NextEraID)}</button>`);
+                        h.push(`</div>
+                    </div>
+                    <div class="text-small">
+                        <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnorePrevEra')}</label><br/>
+                        <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                    </div>
+                </div>
+            
+            <table class="foe-table exportable">`);
 
         h.push('<thead class="sticky">' +
             '<tr>' +
-            '<th colspan="2" data-export2="resource">' + i18n('Boxes.Technologies.Resource') + '</th>' +
-            '<th data-export="required">' + i18n('Boxes.Technologies.DescRequired') + '</th>' +
-            '<th data-export="instock">' + i18n('Boxes.Technologies.DescInStock') + '</th>' +
-            '<th data-export="remaining" class="text-right">' + i18n('Boxes.Technologies.DescStillMissing') + '</th>' +
+            '<th colspan="2" data-export2="resource">' + FH.t('Boxes.Technologies.Resource') + '</th>' +
+            '<th data-export="required">' + FH.t('Boxes.Technologies.DescRequired') + '</th>' +
+            '<th data-export="instock">' + FH.t('Boxes.Technologies.DescInStock') + '</th>' +
+            '<th data-export="remaining" class="text-right">' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
             '</tr>' +
             '</thead>');
 
@@ -380,62 +380,62 @@ let Technologies = {
             // Reihenfolge der Ausgabe generieren
             let OutputList = ['strategy_points', 'money', 'supplies'];
             for (let i = 0; i < 70; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'promethium';
             for (let i = 70; i < 75; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'orichalcum';
             for (let i = 75; i < 80; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'mars_ore';
             for (let i = 80; i < 85; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'asteroid_ice';
             for (let i = 85; i < 90; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'venus_carbon';
             for (let i = 90; i < 95; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'unknown_dna';
             for (let i = 95; i < 100; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'crystallized_hydrocarbons';
             for (let i = 100; i < 105; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
             OutputList[OutputList.length] = 'dark_matter';
-            for (let i = 105; i < GoodsList.length; i++) {
-                OutputList[OutputList.length] = GoodsList[i]['id'];
+            for (let i = 105; i < FH.Goods.List.length; i++) {
+                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
             }
 
             for (let i = 0; i < OutputList.length; i++) {
                 let ResourceName = OutputList[i];
                 if (RequiredResources[ResourceName] !== undefined) {
                     let Required = RequiredResources[ResourceName];
-                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : ResourceStock[ResourceName]);
+                    let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : FH.RessourceStock[ResourceName]);
                     if (Stock === undefined) Stock = 0;
                     let Diff = Stock - Required;
 
                     h.push('<tr>');
-                    h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ GoodsData[ResourceName]['id'] +'"></span></td>');
-                    h.push('<td>' + GoodsData[ResourceName]['name'] + '</td>');
-                    h.push('<td>' + HTML.Format(Required) + '</td>');
-                    h.push('<td>' + HTML.Format(Stock) + '</td>');
-                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + HTML.Format(Diff) + '</td>');
+                    h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ FH.Goods.Data[ResourceName]['id'] +'"></span></td>');
+                    h.push('<td>' + FH.Goods.Data[ResourceName]['name'] + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Required) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
+                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');
                     h.push('</tr>');
                 }
             }
         }
         else {
             h.push('<tr>');
-            	h.push('<td colspan="5" class="text-center">' + i18n('Boxes.Technologies.NoTechs') + '</td>');
+            	h.push('<td colspan="5" class="text-center" style="font-size:110%;height:200px;">' + FH.t('Boxes.Technologies.NoTechs') + '</td>');
             h.push('</tr>');
         }
         h.push('</table');
@@ -443,13 +443,15 @@ let Technologies = {
         $('#technologiesBody').html(h.join(''));
     },
 
-    /**
-    *
-    */
+
     ShowSettingsButton: () => {
         let h = [];
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-        h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+        h.push(`<p class="text-left">${FH.t('Boxes.General.Export')}: 
+        <span class="btn-group">
+        <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'csv', 'technologies')">CSV</button>
+        <button class="btn" onclick="FH.HTML.ExportTable($('#technologiesBody').find('.foe-table.exportable'), 'json', 'technologies')">JSON</button>
+        </span>
+        </p>`);
 
         $('#technologiesSettingsBox').html(h.join(''));
     },

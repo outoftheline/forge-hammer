@@ -1,0 +1,576 @@
+@import url('../css/variables.css');
+
+body {
+    scrollbar-color: #47677d #0e171d;
+    font-family: sans-serif;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #0e171d;
+    color: #eee;
+    overflow-x: hidden;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0; 
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(2px);
+    z-index: 3333;
+    box-sizing: border-box;
+}
+
+.overlay .inner {
+    position: fixed;
+    width: 500px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -290px;
+    box-sizing: border-box;
+    padding: 10px 1em;
+    border-radius: 10px;
+    background-color: var(--black-65);
+    z-index: 1500;
+}
+
+.overlay button {
+    zoom: 150%;
+}
+
+.error {
+    color: var(--danger-red)
+}
+
+h1 {
+    display: flex;
+    margin: 0.5rem 0;
+    align-items: center;
+    gap: 5px;
+    padding: 0 5px;
+    font-size: 22px;
+}
+
+textarea, button, input, .btn, select {
+    background-color: inherit;
+    color: inherit;
+    border: 1px solid #eee9;
+    border-radius: 5px;
+}
+
+select {
+    padding: 4px 0;
+}
+
+select option {
+    padding: 4px 0;
+    color: #000;
+}
+
+.btn {
+    padding: 3px 6px;
+}
+
+.btn.btn-mid {
+    padding: 6px;
+    margin: 2px 0;
+}
+
+.btn:hover {
+    background-color: #383028;
+}
+
+.btn:disabled {
+    opacity: 0.3;
+}
+
+.wrapper {
+    display: flex;
+}
+
+.sidebar {
+    font-size: small;
+    user-select: none;
+    width: 290px;
+    max-height: 100vh;
+    border-right: 1px dotted #47677d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.sidebar h1 img {
+    height: 30px;
+}
+
+.sidebar .filter, .sidebar .save {
+    padding: 3px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.sidebar .filter input, .modal input {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 4px 6px;
+    margin-bottom: 2px;
+}
+
+.sidebar.drop-target {
+    box-shadow: 0 0 30px #66c440;
+    border-right: 1px solid #65e035;
+    background-color: #53b82c21;
+    transition: background-color 0.1s, border-color 0.1s;
+}
+
+#storedBuildingsList {
+    box-sizing: border-box;
+    overflow: auto;
+    scrollbar-width: thin;
+    flex-grow: 2;
+    width: 100%;
+}
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+}
+
+.sidebar li {
+    margin: 0; 
+    padding: 3px 0;
+    font-size: 90%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.sidebar li.active {
+    background-color: #fff2;
+}
+
+.sidebar li.section-header {
+    justify-content: flex-start;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px dotted #47677d;
+    font-size: 80%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    cursor: default;
+}
+
+.sidebar li.deleted {
+    opacity: 0.5;
+    text-decoration: line-through;
+    cursor: pointer;
+}
+
+.sidebar li.deleted:hover {
+    opacity: 0.85;
+}
+
+.sidebar li.deleted .restore-icon {
+    flex-shrink: 0;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.sidebar li .name::before {
+    content: '';
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+    border-radius: 10px;
+    background-color: #eee;
+    margin-right: 5px;
+}
+
+.sidebar .name {
+    flex-grow: 3;
+}
+
+.sidebar .residential .name::before { background-color: #7abaff;}
+.sidebar .greatbuilding .name::before { background-color: #e6542f;}
+.sidebar .production .name::before { background-color: #416dff;}
+.sidebar .nostreet .name::before { background-color: #793bc9;}
+.sidebar .main_building .name::before { background-color: #ffb300;}
+
+.amount {
+    width: 25px;
+    box-sizing: border-box;
+    text-align: right;
+    border-radius: 2px;
+    padding: 1px 3px;
+    margin-right: 4px;
+}
+.amount:not(:empty) {
+    background-color: #333;
+}
+
+.amount:not(:empty)::after {
+    content: 'x';
+}
+
+.content {
+    height: 100vh;
+    position: relative;
+}
+
+.content header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    padding: 0 1rem;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+.content header h1 {
+    font-size: medium;
+    background-color: #0006;
+}
+
+.content header h1, .content header .stats {
+    padding: 0.5em;
+}
+
+#map {
+    position: relative;
+    background-color: #0003;
+    user-select: none;
+}
+
+#map .buttons {
+    z-index: 1200;
+    position: absolute;
+    top: 5px;
+    display: flex;
+    gap: 3px;
+}
+
+#map .buttons.left {
+    left: 0.5em;
+}
+
+#map .buttons.right {
+    right: 0.5em;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.group {
+    display: inline-flex;
+}
+
+.group .btn {
+    border-radius: 0;
+    border-left: none;
+}
+
+.group .btn:first-child {
+    border-left: 1px solid #eeea;
+    border-radius: 5px 0 0 5px;
+}
+
+.group .btn:last-child {
+    border-radius: 0 5px 5px 0;
+}
+
+.group.column {
+    flex-direction: column;
+}
+
+.group.column .btn {
+    border: 1px solid #eeea;
+    border-radius: 0;
+    border-top: none;
+}
+
+.group.column .btn:first-child {
+    border-top: 1px solid #eeea;
+    border-radius: 5px 5px 0 0;
+}
+
+.group.column .btn:last-child {
+    border-radius: 0 0 5px 5px;
+}
+
+#map .info {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 1200;
+    padding: 5px;
+    text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
+    background-color: #0003;
+    backdrop-filter: blur(2px);
+    border-radius: 5px 0 0 0;
+    pointer-events: none;
+}
+
+#map .info b {
+    pointer-events: all;
+    cursor: pointer;
+}
+
+button, .btn {
+    backdrop-filter: blur(5px) brightness(0.5) contrast(1.2);
+    text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
+    border-radius: 3px;
+}
+
+#storeSelection { display: none; }
+#storeSelection.show { display: inline-block; }
+
+#storeSelection span:not(:empty)::before { content: '(' }
+#storeSelection span:not(:empty)::after { content: ')' }
+
+#canvasWrapper {
+    overflow: hidden;
+	position: relative;
+	height: 100vh;
+	width: calc(100vw - 290px);
+}
+#canvasWrapper .shadow {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px #0b1217, inset 0 0 5px #0b1217 !important;
+}
+
+#canvasWrapper canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hidden, #streetSizeGroup { display: none; }
+
+.sideview { transform: rotate(33deg) skew(-30deg,-5deg) }
+
+#placeStreet.active {
+    background-color: #1d6b2a;
+    border-color: #66c440;
+    color: #fff;
+    box-shadow: 0 0 6px #66c44088;
+}
+
+#streetSizeGroup.active {
+    display: flex;
+}
+
+.street-size-btn.active {
+    background-color: #1d6b2a;
+    border-color: #66c440;
+    color: #fff;
+}
+
+/* --- Meta building search --- */
+#metaSearch {
+    position: relative;
+}
+
+#metaSearchResults {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: #1a2a35;
+    border: 1px solid #47677d;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    max-height: 260px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#metaSearchResults.open {
+    display: block;
+}
+
+#metaSearchResults li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 4px 6px;
+    cursor: pointer;
+    font-size: 85%;
+    gap: 4px;
+}
+
+#metaSearchResults li:hover {
+    background: #2a3f50;
+}
+
+#metaSearchResults li::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: #888;
+}
+
+#metaSearchResults li.residential::before   { background-color: #7abaff; }
+#metaSearchResults li.greatbuilding::before { background-color: #e6542f; }
+#metaSearchResults li.production::before    { background-color: #416dff; }
+#metaSearchResults li.main_building::before { background-color: #ffb300; }
+#metaSearchResults li.military::before      { background-color: #fff; }
+
+#metaSearchResults .name {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#metaSearchResults .dims {
+    flex-shrink: 0;
+    opacity: 0.6;
+    font-size: 80%;
+}
+
+#populationStat {
+    padding: 0 5px;
+}
+
+.pop-stat.negative {
+    color: var(--danger-red, #ff4d4d);
+    font-weight: bold;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4000;
+    background-color: #000a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal .btn {
+    border: none;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-inner {
+    width: 480px;
+    max-height: 70vh;
+    font-size: 14px;
+    line-height: 18px;
+    display: flex;
+    flex-direction: column;
+    background-color: #0e171d;
+    border: 1px solid #47677d;
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: medium;
+}
+
+.modal li {
+    margin: 2px 0;
+}
+
+#planListItems {
+    list-style: none;
+    margin: 5px 0 0;
+    padding: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#planListItems li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 4px;
+    border-bottom: 1px dotted #47677d;
+    cursor: pointer;
+}
+
+#planListItems li:hover {
+    background-color: #2a3f50;
+}
+
+#planListItems .plan-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#planListItems .plan-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#planListItems .plan-meta {
+    font-size: 80%;
+    opacity: 0.7;
+}
+
+#planListItems .plan-delete {
+    flex-shrink: 0;
+}
+
+#planListItems .empty {
+    opacity: 0.6;
+    padding: 6px 4px;
+    cursor: default;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.stretch {
+    justify-content: stretch;
+    gap: 2px;
+}
+
+.flex.stretch select {
+    width: stretch;
+}

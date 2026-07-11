@@ -3,44 +3,44 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('BoostService', 'getAllBoosts', (data, postData) => {
+FH.proxy.addHandler('BoostService', 'getAllBoosts', (data, postData) => {
     Boosts.Add(data.responseData);
     if (Boosts.first) {
         Boosts.first = false;
         Boosts.InitQIAP();
     } 
 });
-FoEproxy.addHandler('BoostService', 'addBoost', (data,postData)=> {
+FH.proxy.addHandler('BoostService', 'addBoost', (data,postData)=> {
     if (postData[0].requestClass == "CityMapService") return;
     if (postData[0].requestData[0]?.additionalPayload?.cityMapEntity) return;
     if (postData[0].requestData[0]?.additionalPayload?.mapEntityId) return;
 	Boosts.Add([data.responseData]);
 });
-FoEproxy.addHandler('BoostService', 'removeBoost', (data)=> {
+FH.proxy.addHandler('BoostService', 'removeBoost', (data)=> {
 	Boosts.Remove([{boostId:data.responseData}]);
 });
-FoEproxy.addHandler('StartupService', 'getData', (data, postData) => {
+FH.proxy.addHandler('StartupService', 'getData', (data, postData) => {
     Boosts.InitLB(data.responseData.city_map.entities.filter(x=>x.type=="greatbuilding"));
     Boosts.TimeIn.add(data.responseData.city_map.entities.filter(x=>x.state.decaysAt || x.state.__class__=="ConstructionState"));
 }),
-FoEproxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
     Boosts.TimeIn.add(data.responseData);
 });
-FoEproxy.addHandler('CityMapService', 'moveEntities', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'moveEntities', (data, postData) => {
     Boosts.TimeIn.add(data.responseData);
 });
-FoEproxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
     let buildings=data.responseData.filter(x=>x.type!="greatbuilding")
     Boosts.TimeIn.add(buildings);
 });
-FoEproxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
     Boosts.Remove(postData[0].requestData.map(b=>({entityId:b})));
 });
-FoEproxy.addHandler('CityMapService', 'reset', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'reset', (data, postData) => {
     Boosts.InitLB(data.responseData.filter(x=>x.type=="greatbuilding"));
     Boosts.TimeIn.add(data.responseData.filter(x=>x.type!="greatbuilding"));
 });
-FoEproxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
+FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData) => {
     if (data.responseData.gridId!=="guild_raids") return
     Boosts.TimeIn.add(data.responseData.entities);
 });
@@ -125,7 +125,7 @@ let Boosts = {
 
     InitLB: async (LBs) => {
         
-        let boosts=LBs.filter(x=>x.bonus?.type && x.player_id == ExtPlayerID).map(x=>
+        let boosts=LBs.filter(x=>x.bonus?.type && x.player_id == FH.Player.ID).map(x=>
             ({
                 entityId: x.entityId||x.id,
                 origin: "greatBuilding",
@@ -137,8 +137,8 @@ let Boosts = {
         Boosts.Add(boosts)
     },
     InitQIAP: async () => {
-        await ExistenceConfirmed('GoodsData.guild_raids_action_points');
-        QIActions.capacity  = (GoodsData.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity'];
+        await FH.ExistenceConfirmed('FH.Goods.Data.guild_raids_action_points');
+        FH.QIActions.setCapacity((FH.Goods.Data.guild_raids_action_points?.abilities?.autoRefill?.maxAmount || 200000) - Boosts.Sums['guild_raids_action_points_capacity']);
 
     },
     getFeatureType: (bonus) => {
@@ -166,9 +166,9 @@ let Boosts = {
             }
             
             if (b.origin === "inventory_item") {
-                BoostPotions.activate(b.type,{expire:b.expireTime,target:b.targetedFeature||"all",value:b.value})    
+                FH.BoostPotions.activate(b.type,{expire:b.expireTime,target:b.targetedFeature||"all",value:b.value})    
                 if (b.expireTime) {
-                    BoostPotions.TimeOut?.add(b)
+                    FH.BoostPotions.TimeOut?.add(b)
                 }
             }
 
@@ -190,19 +190,19 @@ let Boosts = {
             Boosts.noSettlement[boost] = 0;
             for (let b of Boosts.ListByType[boost]) {
                 Boosts.Sums[boost] += b.value;
-                if ((!b.entityId || MainParser.CityMapData[b.entityId])) {
+                if ((!b.entityId || FH.Main.CityMapData[b.entityId])) {
                     Boosts.noSettlement[boost] += b.value;
                 }
             }
         }
-        FoEproxy.triggerFoeHelperHandler("BoostsUpdated");
+        FH.proxy.triggerFoeHelperHandler("BoostsUpdated");
     },
     TimeIn: {
         list:[],
         next:null,
         id:null,
         add: async (buildings)=>{
-            await StartUpDone
+            await FH.StartUpDone
             let addToList = (boost)=>{
                 if (!Array.isArray(boost.type)) boost.type=[boost.type]
                 for (type of boost.type||[boost.type]) {
@@ -212,16 +212,16 @@ let Boosts = {
                 }
                 if (!Boosts.Timer.id || !Boosts.Timer.next || boost.startTime < Boosts.Timer.next) {
                     clearTimeout(Boosts.Timer.id)
-                    Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - GameTime.get() + 2)*1000)
+                    Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.startTime - FH.GameTime.get() + 2)*1000)
                     Boosts.Timer.next = boost.startTime
                 }
-                //localStorage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!MainParser.CityMapData[x.entityId])))
+                //FH.Storage.setItem("Boosts.TimeIn.list", JSON.stringify(Boosts.TimeIn.list.filter(x=>!FH.Main.CityMapData[x.entityId])))
             }
             let boostsToAddDirectly=[]
             for (let building of buildings||[]) {
                 if (!building.id) continue
                 Boosts.Remove([{entityId:building.id}])
-                let metaData = structuredClone(MainParser.CityEntities[building.cityentity_id])
+                let metaData = structuredClone(FH.Main.CityEntities[building.cityentity_id])
                 let era = Technologies.getEraName(building.cityentity_id, building.level)
                 let NCE=CityBuildings.createBuilding(metaData, era, building)
                 if (!NCE.boosts||NCE.boosts.length==0) continue
@@ -247,7 +247,7 @@ let Boosts = {
                  
                 if (metaData?.components?.AllAge?.limited) {
                     let target = metaData.components.AllAge.limited.config.targetCityEntityId
-                    let metaTarget = structuredClone(MainParser.CityEntities[target])
+                    let metaTarget = structuredClone(FH.Main.CityEntities[target])
                     let era = Technologies.getEraName(building.cityentity_id, building.level)
                     let NCE=CityBuildings.createBuilding(metaTarget, era)
                     for (let boost of NCE.boosts||[]) {
@@ -266,7 +266,7 @@ let Boosts = {
         add:(boost)=>{
             if (!Boosts.TimeOut.id || !Boosts.Timer.next || boost.expireTime < Boosts.TimeOut.next) {
                 clearTimeout(Boosts.Timer.id)
-                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.expireTime - GameTime.get() + 2)*1000)
+                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.expireTime - FH.GameTime.get() + 2)*1000)
                 Boosts.Timer.next = boost.expireTime
             }
             Boosts.TimeOut.list.push(boost)
@@ -277,7 +277,7 @@ let Boosts = {
         id:null,
         execute:()=>{
 
-            let refTime=GameTime.get()
+            let refTime=FH.GameTime.get()
             let toRemove = Boosts.TimeOut.list.filter(x=>x.expireTime<=refTime)
             Boosts.TimeOut.list = Boosts.TimeOut.list.filter(x=>x.expireTime>refTime)
             Boosts.Remove(toRemove)
@@ -289,7 +289,7 @@ let Boosts = {
             let next=Math.min(...list)
             clearTimeout(Boosts.Timer.id)
             Boosts.Timer.id=null
-            if (list.length>0) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (next - GameTime.get() + 2)*1000)
+            if (list.length>0) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (next - FH.GameTime.get() + 2)*1000)
         },
     },
     Remove: (boosts) => {

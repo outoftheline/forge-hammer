@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
 
 	// is activated?
 	if(!Settings.GetSetting('ShowEventChest')){
@@ -53,7 +53,7 @@ FoEproxy.addHandler('ChestEventService', 'getOverview', (data, postData) => {
     EventChests.Show();
 });
 
-FoEproxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest') || !(Settings.GetSetting('EventHelperPresent') === undefined ? true : Settings.GetSetting('EventHelperPresent'))) return;
     let presents = data.responseData.presentList
@@ -69,7 +69,7 @@ FoEproxy.addHandler('PresentGameService', 'getOverview', (data, postData) => {
     EventPresents.Show()
 });
 
-FoEproxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest')) return
     let presents = data.responseData.updatedPresentList
@@ -81,7 +81,7 @@ FoEproxy.addHandler('PresentGameService', 'openPresent', (data, postData) => {
     EventPresents.Show()
 });
 
-FoEproxy.addHandler('PresentGameService', 'useBooster', (data, postData) => {
+FH.proxy.addHandler('PresentGameService', 'useBooster', (data, postData) => {
 
 	if(!Settings.GetSetting('ShowEventChest')) return
     let presents = data.responseData.updatedPresentList
@@ -98,9 +98,9 @@ let EventPresents = {
 
     Show: () => {
         if ($('#eventpresents').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'eventpresents',
-                'title': i18n('Boxes.EventPresents.Title'),
+                'title': FH.t('Boxes.EventPresents.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
@@ -108,7 +108,7 @@ let EventPresents = {
 			    active_maps:"main"
             });
 
-            HTML.AddCssFile('eventchests');
+            FH.HTML.AddCssFile('eventchests');
 
             Unit.PrepareCoords();
         }
@@ -134,13 +134,13 @@ let EventPresents = {
                 if(present.reward.type === "unit") {
                     asset = present.reward.subType
                 } else if (present.reward.type=="building") {
-                    asset =  MainParser.CityEntities[present.reward.subType].asset_id
+                    asset =  FH.Main.CityEntities[present.reward.subType].asset_id
                 } else {
                     asset =  present.reward.iconAssetName
                 }
                 if (asset == "icon_fragment") {
                     if (present.reward.assembledReward.type=="building") 
-                        asset = MainParser.CityEntities[present.reward.assembledReward.subType].asset_id
+                        asset = FH.Main.CityEntities[present.reward.assembledReward.subType].asset_id
                     else 
                         asset = present.reward.assembledReward.iconAssetName
                     frag = '<span class="fragment">'+srcLinks.icons("icon_tooltip_fragment")+'</span>';
@@ -156,15 +156,15 @@ let EventPresents = {
                     // warning for currency overflow
                     if (present.reward.subType === (currencyName1) || present.reward.subType === (currencyName2)) {
                         let currency = present.reward.subType;
-                        let currencyInfo = FHResourcesList.find(x => x.id == currency);
+                        let currencyInfo = FH.Goods.Data[currency];
                         let currencyCapAmount = currencyInfo?.abilities?.resourceCap?.amount || null;
                         if (currencyCapAmount) {
-                            if (ResourceStock[currency] === (currencyCapAmount-1))
+                            if (FH.RessourceStock[currency] === (currencyCapAmount-1))
                                 warning = true;
                         }
-                        h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${ResourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
+                        h.push(`${(currencyCapAmount ? `&middot; <i ${warning ? ' class="danger"' : ''}>${FH.RessourceStock[currency]}/${currencyCapAmount}</i>` : '')}`);
                     }
-                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + extUrl + 'images/hud/open-eye.png" alt="">' : '')}
+                    h.push(`${(present.status.value === "visible" ? '<img class="visible" src="' + FH.extUrl + 'images/hud/open-eye.png" alt="">' : '')}
                     </td>`);
                 h.push('</tr>');
             }
@@ -183,16 +183,16 @@ let EventChests = {
     Show: () => {
         return;
         if ($('#eventchests').length === 0) {
-            HTML.Box({
+            FH.HTML.Box({
                 'id': 'eventchests',
-                'title': i18n('Boxes.EventChests.Title'),
+                'title': FH.t('Boxes.EventChests.Title'),
                 'auto_close': true,
                 'dragdrop': true,
                 'minimize': true,
 			    active_maps:"main"
             });
 
-            HTML.AddCssFile('eventchests');
+            FH.HTML.AddCssFile('eventchests');
         }
 
         EventChests.BuildBox();
@@ -208,17 +208,17 @@ let EventChests = {
         h.push('<table class="foe-table">');
         h.push('<thead>' +
             '<tr>' +
-            '<th colspan="3" class="text-center">' + i18n('Boxes.EventChests.MainPrize') + '</th>' +
-            '<th colspan="3" class="text-center">' + i18n('Boxes.EventChests.MainPrizeTitle') + '</th>' +
+            '<th colspan="3" class="text-center">' + FH.t('Boxes.EventChests.MainPrize') + '</th>' +
+            '<th colspan="3" class="text-center">' + FH.t('Boxes.EventChests.MainPrizeTitle') + '</th>' +
             '</tr>' +
 
             '<tr>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Cost') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Steps') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.CostPerStep') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Chance') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.CostPerPrize') + '</th>' +
-            '<th class="text-center">' + i18n('Boxes.EventChests.Cost') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Cost') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Steps') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.CostPerStep') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Chance') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.CostPerPrize') + '</th>' +
+            '<th class="text-center">' + FH.t('Boxes.EventChests.Cost') + '</th>' +
             '</tr>' +
 
             '</thead>');
@@ -241,10 +241,10 @@ let EventChests = {
             h.push('<td class="text-center text-bold ' + ( isBestMain ? ' text-success' : 'text-warning') + '">' + EventChests.Chests[i]['cost'] + '</td>');
 
             h.push('<td class="text-center">' + EventChests.Chests[i]['grandPrizeContribution'] + '</td>');
-            h.push('<td class="text-center border-right' + (isBestMain ? ' text-success text-bold' : '') + '">' + MainParser.round(EventChests.Chests[i]['costpermainprizestep'] * 10) / 10 + '</td>');
+            h.push('<td class="text-center border-right' + (isBestMain ? ' text-success text-bold' : '') + '">' + FH.Main.round(EventChests.Chests[i]['costpermainprizestep'] * 10) / 10 + '</td>');
 
             h.push('<td class="text-center border-left">' + EventChests.Chests[i]['drop_chance'] + '%</td>');
-            h.push('<td class="text-center' + ( isBestDaily? ' text-success text-bold' : '') + '">' + MainParser.round(EventChests.Chests[i]['costperdailyprize']) + '</td>');
+            h.push('<td class="text-center' + ( isBestDaily? ' text-success text-bold' : '') + '">' + FH.Main.round(EventChests.Chests[i]['costperdailyprize']) + '</td>');
             h.push('<td class="text-center text-bold ' + (isBestDaily ? ' text-success' : 'text-warning') + '">' + EventChests.Chests[i]['cost'] + '</td>');
             h.push('</tr>');
         }

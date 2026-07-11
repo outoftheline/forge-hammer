@@ -5,13 +5,13 @@
 
 // Motivate/Polish Helper
 
-FoEproxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'getEventsPaginated', (data, postData) => {
     if (data.responseData['events'] && Settings.GetSetting('ShowPlayersMotivation')) {
         EventHandler.HandleEvents(data.responseData['events']);
     }
 });
 
-FoEproxy.addHandler('OtherPlayerService', 'getCityProtections', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'getCityProtections', (data, postData) => {
 	if (!Array.isArray(data.responseData)) return;
 	for (x of data.responseData) {
 		EventHandler.isProtected[x.playerId] = x.expireTime;
@@ -53,7 +53,7 @@ let EventHandler = {
 	 */
 	Init: () => {
 		// Keys not saved in the local storage are added from the attribute
-		let vShowHideColumns = JSON.parse(localStorage.getItem('MoppelHelper.Settings.ShowHideColumns')) || {};
+		let vShowHideColumns = JSON.parse(FH.Storage.getItem('MoppelHelper.Settings.ShowHideColumns')) || {};
 
 		for(let iColKey in EventHandler.ShowHideColumns) {
 			if (!vShowHideColumns.hasOwnProperty(iColKey)) {
@@ -69,7 +69,7 @@ let EventHandler = {
 	 * Save settings to LocalStorage
 	 */
 	SaveSettings:() => {
-		localStorage.setItem('MoppelHelper.Settings.ShowHideColumns', JSON.stringify(EventHandler.ShowHideColumns));
+		FH.Storage.setItem('MoppelHelper.Settings.ShowHideColumns', JSON.stringify(EventHandler.ShowHideColumns));
 	},
 
 
@@ -172,28 +172,28 @@ let EventHandler = {
 			if (InvalidDates.length > 0)
 			{
 
-				HTML.ShowToastMsg({
+				FH.HTML.ShowToastMsg({
 					show: 'force',
-					head: i18n('Boxes.Investment.DateParseError'),
-					text: HTML.i18nReplacer(i18n('Boxes.Investment.DateParseErrorDesc'), { InvalidDate: InvalidDates[0]}),
+					head: FH.t('Boxes.Investment.DateParseError'),
+					text: FH.helper.str.Replacer(FH.t('Boxes.Investment.DateParseErrorDesc'), { InvalidDate: InvalidDates[0]}),
 					type: 'error',
 					hideAfter: 6000,
 				});
             }
 			else if (count === 0) {
 
-				HTML.ShowToastMsg({
-					head: i18n('Boxes.Investment.AllUpToDate'),
-					text: i18n('Boxes.Investment.AllUpToDateDesc'),
+				FH.HTML.ShowToastMsg({
+					head: FH.t('Boxes.Investment.AllUpToDate'),
+					text: FH.t('Boxes.Investment.AllUpToDateDesc'),
 					type: 'info',
 					hideAfter: 6000,
 				});
 			}
 			else {
-				HTML.ShowToastMsg({
-					head: i18n('Boxes.Investment.PlayerFound'),
-					text: HTML.i18nReplacer(
-						count === 1 ? i18n('Boxes.Investment.PlayerFoundCount') : i18n('Boxes.Investment.PlayerFoundCounter'),
+				FH.HTML.ShowToastMsg({
+					head: FH.t('Boxes.Investment.PlayerFound'),
+					text: FH.helper.str.Replacer(
+						count === 1 ? FH.t('Boxes.Investment.PlayerFoundCount') : FH.t('Boxes.Investment.PlayerFoundCounter'),
 						{count: count}
 					),
 					type: 'success',
@@ -216,7 +216,7 @@ let EventHandler = {
 		let OldLocale = moment.locale();
 		moment.locale('en-US');
 
-		const lang = ExtWorld.substr(0, 2);
+		const lang = FH.World.substr(0, 2);
 		const matcher = EventHandler.DateShapes(lang);
 
 		const capitalize = (s) => {
@@ -274,7 +274,7 @@ let EventHandler = {
 						break;
 					default:
 						refDate = moment().day(capitalize(day));
-						if (refDate.isAfter(MainParser.getCurrentDate())) refDate = refDate.subtract(7 * 86400000); //Date is in the future => subtract 1 week
+						if (refDate.isAfter(FH.Main.getCurrentDate())) refDate = refDate.subtract(7 * 86400000); //Date is in the future => subtract 1 week
 				}
 
 				refDate.set({
@@ -297,17 +297,17 @@ let EventHandler = {
 		//moment.locale(18n('Local'));
 
 		if ($('#moppelhelper').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'moppelhelper',
-				title: i18n('Boxes.MoppelHelper.Title'),
+				title: FH.t('Boxes.MoppelHelper.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'EventHandler.ShowMoppelHelperSettingsButton()'
+				settings: EventHandler.ShowMoppelHelperSettingsButton
 			});
 
-			HTML.AddCssFile('eventhandler');
+			FH.HTML.AddCssFile('eventhandler');
 
 			$('#moppelhelper').on('click', '.filtermoppelevents', function () {
 				EventHandler.FilterMoppelEvents = !EventHandler.FilterMoppelEvents;
@@ -375,7 +375,7 @@ let EventHandler = {
 			EventHandler.CalcMoppelHelperBody();
 
 		} else {
-			HTML.CloseOpenBox('moppelhelper');
+			FH.HTML.CloseOpenBox('moppelhelper');
 			EventHandler.CurrentPlayerGroup = null;
 		}
 	},
@@ -386,13 +386,13 @@ let EventHandler = {
 
 		/* Calculation */
 		if (!EventHandler.CurrentPlayerGroup) {
-			if (PlayerDictFriendsUpdated) {
+			if (FH.Players.FriendsUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Friends';
 			}
-			else if (PlayerDictGuildUpdated) {
+			else if (FH.Players.GuildUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Guild';
 			}
-			else if (PlayerDictNeighborsUpdated) {
+			else if (FH.Players.NeighborsUpdated) {
 				EventHandler.CurrentPlayerGroup = 'Neighbors';
 			}
 			else {
@@ -401,41 +401,41 @@ let EventHandler = {
 		}
 
 		/* Filters */
-		h.push('<div class="text-center dark-bg header"><strong class="title">' + i18n('Boxes.MoppelHelper.HeaderWarning') + '</strong></div>');
+		h.push('<div class="text-center dark-bg header"><strong class="title">' + FH.t('Boxes.MoppelHelper.HeaderWarning') + '</strong></div>');
 		h.push('<div class="dark-bg">');
 
 		// Event filter dropdown
 		h.push('<div class="dropdown" style="float:right">');
-		h.push('<input type="checkbox" class="dropdown-checkbox" id="event-checkbox-toggle"><label class="dropdown-label game-cursor" for="event-checkbox-toggle">' + i18n('Boxes.Infobox.Filter') + '</label><span class="arrow"></span>');
+		h.push('<input type="checkbox" class="dropdown-checkbox" id="event-checkbox-toggle"><label class="dropdown-label game-cursor" for="event-checkbox-toggle">' + FH.t('Boxes.Infobox.Filter') + '</label><span class="arrow"></span>');
         h.push('<ul>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="auction" class="filtermoppelevents game-cursor" ' 
-			+ (EventHandler.FilterMoppelEvents ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.MoppelEvents') + '</label></li>');
+			+ (EventHandler.FilterMoppelEvents ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.MoppelEvents') + '</label></li>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="gex" class="filtertavernvisits game-cursor" ' 
-			+ (EventHandler.FilterTavernVisits ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.TavernVisits') + '</label></li>');
+			+ (EventHandler.FilterTavernVisits ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.TavernVisits') + '</label></li>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="gbg" class="filterattacks game-cursor" ' 
-			+ (EventHandler.FilterAttacks ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.Attacks') + '</label></li>');
+			+ (EventHandler.FilterAttacks ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.Attacks') + '</label></li>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="trade" class="filterplunders game-cursor" ' 
-			+ (EventHandler.FilterPlunders ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.Plunders') + '</label></li>');
+			+ (EventHandler.FilterPlunders ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.Plunders') + '</label></li>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="level" class="filtertrades game-cursor" ' 
-			+ (EventHandler.FilterTrades ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.Trades') + '</label></li>');
+			+ (EventHandler.FilterTrades ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.Trades') + '</label></li>');
         h.push('<li><label class="game-cursor"><input type="checkbox" data-type="msg" class="filtergbs game-cursor" ' 
-			+ (EventHandler.FilterGBs ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.GBs') + '</label></li>');
+			+ (EventHandler.FilterGBs ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.GBs') + '</label></li>');
         /*h.push('<li><label class="game-cursor"><input type="checkbox" data-type="msg" class="filterothers game-cursor" ' 
-			+ (EventHandler.FilterOthers ? 'checked' : '') + '> ' + i18n('Boxes.MoppelHelper.Others') + '</label></li>');*/
+			+ (EventHandler.FilterOthers ? 'checked' : '') + '> ' + FH.t('Boxes.MoppelHelper.Others') + '</label></li>');*/
         h.push('</ul>');
 		h.push('</div>');
 
 		// Column selector dropdown
 		h.push('<div class="dropdown" style="float:right">');
-		h.push('<input type="checkbox" class="dropdown-checkbox" id="event-checkbox-col-sel"><label class="dropdown-label game-cursor" for="event-checkbox-col-sel">' + i18n('Boxes.MoppelHelper.Columns') + '</label><span class="arrow"></span>');
+		h.push('<input type="checkbox" class="dropdown-checkbox" id="event-checkbox-col-sel"><label class="dropdown-label game-cursor" for="event-checkbox-col-sel">' + FH.t('Boxes.MoppelHelper.Columns') + '</label><span class="arrow"></span>');
         h.push('<ul>');
 		for (var iColumn in EventHandler.ShowHideColumns) {
 			var DropdownItemLabel = "N/A";
 			var DropdownItemClass = "col-visibility-na"
 			switch(iColumn) {
-				case "GuildName": DropdownItemLabel = i18n("General.Guild"); DropdownItemClass = "col-visibility-guildname"; break;
-				case "Era": DropdownItemLabel = i18n("Boxes.MoppelHelper.Era"); DropdownItemClass = "col-visibility-era"; break;
-				case "Points": DropdownItemLabel = i18n("Boxes.MoppelHelper.Points"); DropdownItemClass = "col-visibility-points"; break;
+				case "GuildName": DropdownItemLabel = FH.t("General.Guild"); DropdownItemClass = "col-visibility-guildname"; break;
+				case "Era": DropdownItemLabel = FH.t("Boxes.MoppelHelper.Era"); DropdownItemClass = "col-visibility-era"; break;
+				case "Points": DropdownItemLabel = FH.t("Boxes.MoppelHelper.Points"); DropdownItemClass = "col-visibility-points"; break;
 			}
 			h.push('<li><label class="game-cursor"><input type="checkbox" class="' + DropdownItemClass + ' game-cursor" ' 
 				+ (EventHandler.ShowHideColumns[iColumn] ? 'checked' : '') + '> ' + DropdownItemLabel + '</label></li>'
@@ -446,9 +446,9 @@ let EventHandler = {
 		
 		h.push('<div class="tabs"><ul class="horizontal">');
 
-		h.push('<li class="' + (!PlayerDictNeighborsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Neighbors' ? 'active' : '') + '"><a class="toggle-players" data-value="Neighbors"><span>' + i18n('Boxes.MoppelHelper.Neighbors') + '</span></a></li>');
-		h.push('<li class="' + (!PlayerDictGuildUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Guild' ? 'active' : '') + '"><a class="toggle-players" data-value="Guild"><span>' + i18n('Boxes.MoppelHelper.GuildMembers') + '</span></a></li>');
-		h.push('<li class="' + (!PlayerDictFriendsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Friends' ? 'active' : '') + '"><a class="toggle-players" data-value="Friends"><span>' + i18n('Boxes.MoppelHelper.Friends') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.NeighborsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Neighbors' ? 'active' : '') + '"><a class="toggle-players" data-value="Neighbors"><span>' + FH.t('Boxes.MoppelHelper.Neighbors') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.GuildUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Guild' ? 'active' : '') + '"><a class="toggle-players" data-value="Guild"><span>' + FH.t('Boxes.MoppelHelper.GuildMembers') + '</span></a></li>');
+		h.push('<li class="' + (!FH.Players.FriendsUpdated ? 'disabled' : '') + ' ' + (EventHandler.CurrentPlayerGroup === 'Friends' ? 'active' : '') + '"><a class="toggle-players" data-value="Friends"><span>' + FH.t('Boxes.MoppelHelper.Friends') + '</span></a></li>');
 
 		h.push('</ul></div></div>');
 
@@ -484,28 +484,28 @@ let EventHandler = {
 		let PlayerList = [];
 
 		if (EventHandler.CurrentPlayerGroup === 'Friends') {
-			if (!PlayerDictFriendsUpdated) {
-				h.push('<div class="text-center"><strong class="bigerror">' + i18n('Boxes.MoppelHelper.FriendsSocialTabTT') + '</strong></div>');
+			if (!FH.Players.FriendsUpdated) {
+				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.FriendsSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
             }
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsFriend'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsFriend'] === true));
 		}
 		else if (EventHandler.CurrentPlayerGroup === 'Guild') {
-			if (!PlayerDictGuildUpdated) {
-				h.push('<div class="text-center"><strong class="bigerror">' + i18n('Boxes.MoppelHelper.GuildSocialTabTT') + '</strong></div>');
+			if (!FH.Players.GuildUpdated) {
+				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.GuildSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
 			}
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsGuildMember'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsGuildMember'] === true));
 		}
 		else if (EventHandler.CurrentPlayerGroup === 'Neighbors') {
-			if (!PlayerDictNeighborsUpdated) {
-				h.push('<div class="text-center"><strong class="bigerror">' + i18n('Boxes.MoppelHelper.NeighborsSocialTabTT') + '</strong></div>');
+			if (!FH.Players.NeighborsUpdated) {
+				h.push('<div class="text-center"><strong class="bigerror">' + FH.t('Boxes.MoppelHelper.NeighborsSocialTabTT') + '</strong></div>');
 				await $('#moppelhelperTable').html(h.join(''))
 				return;
 			}
-			PlayerList = Object.values(PlayerDict).filter(obj => (obj['IsNeighbor'] === true));
+			PlayerList = Object.values(FH.Players.Dict).filter(obj => (obj['IsNeighbor'] === true));
 		}
 
 		PlayerList = PlayerList.sort(function (a, b) {
@@ -514,29 +514,29 @@ let EventHandler = {
 
 		h.push('<thead>');
 		h.push('<tr class="sorter-header">');
-		h.push('<th data-export="Rank" class="is-number ascending" data-type="moppelhelper">' + i18n('Boxes.MoppelHelper.Rank') + '</th>');
+		h.push('<th data-export="Rank" class="is-number ascending" data-type="moppelhelper">' + FH.t('Boxes.MoppelHelper.Rank') + '</th>');
 		h.push('<th></th>');
-		h.push('<th data-export="Name" data-type="moppelhelper" class="name-col">' + i18n('Boxes.MoppelHelper.Name') + '</th>');
+		h.push('<th data-export="Name" data-type="moppelhelper" class="name-col">' + FH.t('Boxes.MoppelHelper.Name') + '</th>');
         h.push('<th style="display:none" data-export="Player_ID"></th>');
 		if (EventHandler.CurrentPlayerGroup !== 'Guild' && EventHandler.ShowHideColumns.GuildName) {
-			h.push('<th data-export="GuildName" data-type="moppelhelper" class="name-col">' + i18n('General.Guild') + '</th>');
+			h.push('<th data-export="GuildName" data-type="moppelhelper" class="name-col">' + FH.t('General.Guild') + '</th>');
 		}
 		if (EventHandler.ShowHideColumns.Era) {
-			h.push('<th class="is-number" data-export="Era" data-type="moppelhelper">' + i18n('Boxes.MoppelHelper.Era') + '</th>');
+			h.push('<th class="is-number" data-export="Era" data-type="moppelhelper">' + FH.t('Boxes.MoppelHelper.Era') + '</th>');
 		}
 		if (EventHandler.ShowHideColumns.Points) {
-			h.push('<th data-export="Points" class="is-number" data-type="moppelhelper">' + i18n('Boxes.MoppelHelper.Points') + '</th>');
+			h.push('<th data-export="Points" class="is-number" data-type="moppelhelper">' + FH.t('Boxes.MoppelHelper.Points') + '</th>');
 		}
 
 		for (let i = 0; i < EventHandler.MaxVisitCount; i++)
 		{
-			h.push('<th data-export="Event'+ (i+1) +'" class="is-number" data-type="moppelhelper">' + i18n('Boxes.MoppelHelper.Event') + (i + 1) + '</th>');
+			h.push('<th data-export="Event'+ (i+1) +'" class="is-number" data-type="moppelhelper">' + FH.t('Boxes.MoppelHelper.Event') + (i + 1) + '</th>');
 		}
 
 		h.push('</tr></thead>');
 
 		h.push('<tbody class="moppelhelper">');
-		let pImage = `<img style="max-width: 22px" src="${srcLinks.get('/shared/gui/tavern/shop/tavern_shop_boost_shield1_icon.png', true)}" title="${i18n('Boxes.MoppelHelper.CityProtected')}" alt="${i18n('Boxes.MoppelHelper.CityProtected')}"></img>`
+		let pImage = `<img style="max-width: 22px" src="${srcLinks.get('/shared/gui/tavern/shop/tavern_shop_boost_shield1_icon.png', true)}" title="${FH.t('Boxes.MoppelHelper.CityProtected')}" alt="${FH.t('Boxes.MoppelHelper.CityProtected')}"></img>`
 		for (let i = 0; i < PlayerList.length; i++)
 		{
 			let Player = PlayerList[i];
@@ -584,45 +584,45 @@ let EventHandler = {
 			h.push(`<td><img style="max-width: 22px" src="${srcLinks.GetPortrait(Player['Avatar'])}" alt="${Player['PlayerName']}"></td>`);
 			
 			// Player Name column
-			h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + helper.str.cleanup(Player['PlayerName']) + '">');
+			h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + FH.helper.str.cleanup(Player['PlayerName']) + '">');
 
 			h.push(`<span class="activity activity_${Player['Activity']}"></span> `);
-			h.push(MainParser.GetPlayerLink(Player['PlayerID'], Player['PlayerName']));
+			h.push(FH.Main.GetPlayerLink(Player['PlayerID'], Player['PlayerName']));
 
             // Player ID
             h.push('<td style="display:none" data-text="' + Player['PlayerID'] + '">' + Player['PlayerID'] + '</td>');
 
 			// Guild name column
 			if (EventHandler.CurrentPlayerGroup != 'Guild' && EventHandler.ShowHideColumns.GuildName) {
-				h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + (helper.str.cleanup(Player['ClanName'] || "")) + '">');
-				h.push(Player['ClanName'] ? MainParser.GetGuildLink(Player['ClanId'], Player['ClanName']) : "");
+				h.push('<td style="white-space:nowrap;text-align:left;" data-text="' + (FH.helper.str.cleanup(Player['ClanName'] || "")) + '">');
+				h.push(Player['ClanName'] ? FH.Main.GetGuildLink(Player['ClanId'], Player['ClanName']) : "");
 			}
 
 			// Player Age column (with shield icons if protected)
 			if (EventHandler.ShowHideColumns.Era) {
 				let pTime = EventHandler.isProtected[Player['PlayerID']] | 0;
-				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > MainParser.getCurrentDateTime())) ? pImage : '';
-				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${i18n('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + i18n('Eras.' + Technologies.Eras[Player['Era']]+'.short') + pImg}</td>`);
+				let pImg = (EventHandler.CurrentPlayerGroup === 'Neighbors' && (pTime == -1 || pTime * 1000 > FH.Main.getCurrentDateTime())) ? pImage : '';
+				h.push(`<td data-number="${Technologies.Eras[Player['Era']]}" exportvalue="${FH.t('Eras.' + Technologies.Eras[Player['Era']])}">${pImg + FH.t('Eras.' + Technologies.Eras[Player['Era']]+'.short')}</td>`);
 			}
 
 			// Player points column
 			if (EventHandler.ShowHideColumns.Points) {
-				h.push('<td class="is-number" data-number="' + Player['Score'] + '">' + HTML.Format(Player['Score']) + '</td>');
+				h.push('<td class="is-number" data-number="' + Player['Score'] + '">' + FH.HTML.Format(Player['Score']) + '</td>');
 			}
 
 			// Event columns
 			for (let j = 0; j < EventHandler.MaxVisitCount; j++) {
 				if (j < Visits.length) {
-					let Seconds = (MainParser.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
+					let Seconds = (FH.Main.getCurrentDateTime() - Visits[j]['date'].getTime()) / 1000;
 					let Days = Seconds / 86400; //24*3600
-					let StrongColor = (Days < 3 * (j + 1) ? HTML.GetColorGradient(Days, 0, 3 * (j + 1), '00ff00', 'ffff00') : HTML.GetColorGradient(Days, 3 * (j + 1), 7 * (j + 1), 'ffff00', 'ff0000'));
-					let FormatedDays = HTML.i18nReplacer(i18n('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });
+					let bgColor = (Days < 2 * (j + 1) ? 'bg-green' : (Days < 5 * (j + 1) ? 'bg-yellow' : 'bg-red'));
+					let FormatedDays = FH.helper.str.Replacer(FH.t('Boxes.MoppelHelper.Days'), { 'days': Math.round(Days) });
 					let EventType = EventHandler.GetEventType(Visits[j]);
 
-					h.push('<td style="white-space:nowrap" class="events-image" data-number="' + Days + '"><span class="events-sprite-35 ' + EventType + '"></span><strong style="color:#' + StrongColor + '">' + FormatedDays + '</strong></td>');
+					h.push('<td style="white-space:nowrap" class="events-image '+bgColor+'" data-number="' + Days + '"><span class="events-sprite-35 ' + EventType + '"></span><strong>' + FormatedDays + '</strong></td>');
 				}
 				else {
-					h.push('<td class="is-date" data-number="999999999"><strong style="color:#ff0000">' + i18n('Boxes.MoppelHelper.Never') + '</strong></td>');
+					h.push('<td class="is-date bg-red" data-number="999999999"><strong>' + FH.t('Boxes.MoppelHelper.Never') + '</strong></td>');
 				}
 			}
 			h.push('</tr>');
@@ -657,8 +657,8 @@ let EventHandler = {
 	*/
 	ShowMoppelHelperSettingsButton: () => {
 		let h = [];
-		h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'csv', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportCSV')}</button></p>`);
-		h.push(`<p class="text-center"><button class="btn" onclick="HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'json', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${i18n('Boxes.General.ExportJSON')}</button></p>`);
+		h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'csv', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${FH.t('Boxes.General.ExportCSV')}</button></p>`);
+		h.push(`<p class="text-center"><button class="btn" onclick="FH.HTML.ExportTable($('#moppelhelperBody').find('.foe-table.exportable'), 'json', 'MoppelHelper${EventHandler.CurrentPlayerGroup}')">${FH.t('Boxes.General.ExportJSON')}</button></p>`);
 
 		$('#moppelhelperSettingsBox').html(h.join(''));
 	},

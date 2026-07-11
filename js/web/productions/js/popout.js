@@ -1,5 +1,5 @@
 function initPopout() {
-    let era = CurrentEra;
+    let era = FH.CurrentEra;
 
     // manually set up tooltip container
     let container = document.createElement("div");
@@ -13,7 +13,8 @@ function initPopout() {
     $('body').on("pointerenter", ".helperTT", async (e) => {
         if (e.currentTarget.dataset.callback_tt) {
             Tooltips.activate();
-            let f = eval(e.currentTarget.dataset.callback_tt);
+            let f = e.currentTarget.dataset.callback_tt;
+            if (Tooltips.callbacks && Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
             if (typeof f === "function") {
                 let content = await f(e);
                 if (content) Tooltips.set(content);
@@ -76,7 +77,7 @@ function initPopout() {
         Productions.efficiencySettings[x] = $('#'+x).is(':checked')
         if (x === "inventorybuildingscore")
             Productions.efficiencySettings[x] = parseFloat($('#'+x).val())/100
-        localStorage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
+        FH.Storage.setItem("Productions.efficiencySettings",JSON.stringify(Productions.efficiencySettings))
         if (x === "inventorybuildingscore") return;
 
         if ($('#'+x).is(':checked')) {
@@ -108,7 +109,7 @@ function initPopout() {
     $('.ratingPresetDelete').on('click', () => {
         const preset = Productions.Rating.getActivePreset();
         if (!preset) return;
-        if (!window.confirm(i18n('Boxes.ProductionsRating.PresetConfirmDelete'))) return;
+        if (!window.confirm(FH.t('Boxes.ProductionsRating.PresetConfirmDelete'))) return;
         const activeId = Productions.Rating.Presets?.activePresetId;
         Productions.Rating.deletePreset(activeId);
         Productions.Rating.savePresets();
@@ -116,7 +117,7 @@ function initPopout() {
         Productions.CalcRatingBody();
     });
     $('#ratingPresetReset').on('click', () => {
-        if (!window.confirm(i18n('Boxes.ProductionsRating.PresetConfirmReset'))) return;
+        if (!window.confirm(FH.t('Boxes.ProductionsRating.PresetConfirmReset'))) return;
         Productions.Rating.resetActivePreset();
         Productions.Rating.save();
         Productions.CalcRatingBody();
@@ -206,8 +207,8 @@ function initPopout() {
 
         let foundBuildings = Object.values(Productions.AdditionalSpecialBuildings).filter(x => regEx.test(x.filter)).sort((a, b) => (((a.selected !== b.selected) ? (a.selected ? -2 : 2) : 0) + (a.name > b.name ? 1 : -1)))
 
-        for (building of foundBuildings) {
-            $('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era === "AllAge" ? "" : era)}" data-callback_tt="Tooltips.buildingTT" class="helperTT${building.selected ? " selected" : ""}">${building.name}</li>`)
+        for (let building of foundBuildings) {
+            $('#ProductionsRatingBody .overlay .results').append(`<li data-meta_id="${building.id}" data-era="${(era === "AllAge" ? "" : era)}" data-callback_tt="building" class="helperTT${building.selected ? " selected" : ""}">${building.name}</li>`)
         }
     }
     filterMeta(/./)
@@ -275,7 +276,7 @@ function initPopout() {
             $("#FSPCalculator").remove()
             return
         }
-        h = `<div id="FSPCalculator" class="dark-bg p5"><h2>${i18n("Boxes.ProductionsRating.TitleFSPCalculator")}</h2><div class="cats flex-between my-5 p5">`
+        h = `<div id="FSPCalculator" class="dark-bg p5"><h2>${FH.t("Boxes.ProductionsRating.TitleFSPCalculator")}</h2><div class="cats flex-between my-5 p5">`
         for (let x of Productions.FSPqualifiedResources) {
             h += `<div><span class="resicon ${x}"></span> <input type="number" step="1" min="0" max="1000000" class="${x} no-grow" value="${Productions.Rating.Data.fsp[x] || ""}"></div>`
         }
@@ -337,13 +338,13 @@ function initPopout() {
     $('.sortable-table').tableSorter();
 
     $('.reset-button').on('click', function () {
-        if (window.confirm(i18n('Boxes.ProductionsRating.ConfirmReset'))) {
+        if (window.confirm(FH.t('Boxes.ProductionsRating.ConfirmReset'))) {
             Productions.Rating.resetActivePreset();
             Productions.Rating.save();
         }
     });
 
-    helper.preloader.hide('#ProductionsRating');
+    FH.helper.preloader.hide('#ProductionsRating');
     //$('#ProductionsRatingBody').fadeIn(501);
 
     if (Productions.RatingSearchTerm !== "") {

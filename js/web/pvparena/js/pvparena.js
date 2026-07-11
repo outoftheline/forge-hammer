@@ -14,21 +14,21 @@ const PvPArena = {
     Show: () => {
         if ($('#PvPArena').length === 0) {
             // Box in den DOM
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'PvPArena',
-                title: i18n('Boxes.PvPArena.Title'),
+                title: FH.t('Boxes.PvPArena.Title'),
                 auto_close: true,
                 minimize: true,
                 dragdrop: true,
                 resize: true,
-                settings: 'PvPArena.ShowSettings()',
+                settings: PvPArena.ShowSettings,
 			    active_maps:"main"
             });
 
             // CSS in den DOM
-            HTML.AddCssFile('pvparena');
+            FH.HTML.AddCssFile('pvparena');
         } else {
-            HTML.CloseOpenBox('PvPArena');
+            FH.HTML.CloseOpenBox('PvPArena');
         }
 
         PvPArena.BuildBox();
@@ -57,10 +57,10 @@ const PvPArena = {
         let h = [];
         h.push('<div class="tabs">');
         h.push('<ul class="horizontal">');
-        h.push(`<li class="${PvPArena.activeTable === "Fights" ? "active" : ""}"><a class="toggle-fights" data-value="Fights">${i18n('Boxes.PvPArena.Tabs.AllFights')}</a></li>`);
-        h.push(`<li class="${PvPArena.activeTable === "AttackFights" ? "active" : ""}"><a class="toggle-fights" data-value="AttackFights">${i18n('Boxes.PvPArena.Tabs.AttackFights')}</a></li>`);
-        h.push(`<li class="${PvPArena.activeTable === "DefenseFights" ? "active" : ""}"><a class="toggle-fights" data-value="DefenseFights">${i18n('Boxes.PvPArena.Tabs.DefenseFights')}</a></li>`);
-        h.push(`<li class="${PvPArena.activeTable === "LostAttackFights" ? "active" : ""}"><a class="toggle-fights" data-value="LostAttackFights">${i18n('Boxes.PvPArena.Tabs.LostAttackFights')}</a></li>`);
+        h.push(`<li class="${PvPArena.activeTable === "Fights" ? "active" : ""}"><a class="toggle-fights" data-value="Fights">${FH.t('Boxes.PvPArena.Tabs.AllFights')}</a></li>`);
+        h.push(`<li class="${PvPArena.activeTable === "AttackFights" ? "active" : ""}"><a class="toggle-fights" data-value="AttackFights">${FH.t('Boxes.PvPArena.Tabs.AttackFights')}</a></li>`);
+        h.push(`<li class="${PvPArena.activeTable === "DefenseFights" ? "active" : ""}"><a class="toggle-fights" data-value="DefenseFights">${FH.t('Boxes.PvPArena.Tabs.DefenseFights')}</a></li>`);
+        h.push(`<li class="${PvPArena.activeTable === "LostAttackFights" ? "active" : ""}"><a class="toggle-fights" data-value="LostAttackFights">${FH.t('Boxes.PvPArena.Tabs.LostAttackFights')}</a></li>`);
         h.push('</ul>');
         h.push('</div>');
         h.push('<div id="PvPArenaTable">');
@@ -83,9 +83,9 @@ const PvPArena = {
         h.push('<table class="foe-table sortable-table">');
         h.push('<thead>');
         h.push('<tr class="sorter-header">');
-        h.push(`<th class="game-cursor no-sort" data-type="fights">${i18n('Boxes.PvPArena.Type')}</th>`);
-        h.push(`<th class="game-cursor ascending" data-type="fights">${i18n('Boxes.PvPArena.PlayerName')}</th>`);
-        h.push(`<th class="is-number game-cursor text-right" data-type="fights">${i18n('Boxes.PvPArena.Points')}</th>`);
+        h.push(`<th class="game-cursor no-sort" data-type="fights">${FH.t('Boxes.PvPArena.Type')}</th>`);
+        h.push(`<th class="game-cursor ascending" data-type="fights">${FH.t('Boxes.PvPArena.PlayerName')}</th>`);
+        h.push(`<th class="is-number game-cursor text-right" data-type="fights">${FH.t('Boxes.PvPArena.Points')}</th>`);
         h.push('</tr>');
         h.push('</thead>');
 
@@ -94,7 +94,7 @@ const PvPArena = {
         for (let i = 0; i < PvPArena[PvPArena.activeTable].length; i++) {
             h.push(`<tr>`);
             h.push(`<td><div class="${PvPArena[PvPArena.activeTable][i].type}"></div></td>`);
-            h.push(`<td class="" data-text="${helper.str.cleanup(PvPArena[PvPArena.activeTable][i].playerName)}">${PvPArena[PvPArena.activeTable][i].playerName}</td>`);
+            h.push(`<td class="" data-text="${FH.helper.str.cleanup(PvPArena[PvPArena.activeTable][i].playerName)}">${PvPArena[PvPArena.activeTable][i].playerName}</td>`);
             h.push(`<td class="is-number text-right text-${PvPArena[PvPArena.activeTable][i].rankingPointsChange < 0 ? 'danger' : 'success'}" data-number="${PvPArena[PvPArena.activeTable][i].rankingPointsChange}">${PvPArena[PvPArena.activeTable][i].rankingPointsChange}</td>`);
             h.push(`</tr>`)
         }
@@ -138,8 +138,8 @@ const PvPArena = {
 
         let h = [];
         h.push(`<p><input id="autoStartPvPArena" name="autoStartPvPArena" value="1" type="checkbox" ${autoOpen === true ? ' checked="checked"' : ''} />`
-            + ` <label for="autoStartPvPArena">${i18n('Boxes.Settings.Autostart')}</label>`);
-        h.push(`<p><button onclick="PvPArena.SaveSettings()" id="savePvPArenaSettings" class="btn saveSettings">${i18n('Boxes.Settings.Save')}</button></p>`);
+            + ` <label for="autoStartPvPArena">${FH.t('Boxes.Settings.Autostart')}</label>`);
+        h.push(`<p><button onclick="PvPArena.SaveSettings()" id="savePvPArenaSettings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#PvPArenaSettingsBox').html(h.join(''));
     },
@@ -148,12 +148,12 @@ const PvPArena = {
     *
     */
     SaveSettings: () => {
-        localStorage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
+        FH.Storage.setItem('ShowPvPArena', $("#autoStartPvPArena").is(':checked'));
         $(`#PvPArenaSettingsBox`).remove();
     },
 }
 
-FoEproxy.addHandler('PVPArenaService', 'getOverview', ({ responseData }) => {
+FH.proxy.addHandler('PVPArenaService', 'getOverview', ({ responseData }) => {
     if (Settings.GetSetting('ShowPvPArena') || $('#PvPArena').length > 0) {
         PvPArena.StartPvPArena((responseData));
     }

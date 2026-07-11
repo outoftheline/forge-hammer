@@ -1,12 +1,10 @@
 [
 	"srcLinks",
+	"customTooltip",
 	"mouseActions",
 	"_languages",
 	"_helper",
 	"_menu",
-	"_menu_bottom",
-	"_menu_right",
-	"_menu_box",
 	"indexdb",
 	"kits",
 	"outposts",
@@ -61,10 +59,10 @@
 	"pvparena",
 	"worldchallenge",
 	"boost-potions",
-	"customTooltip",
 	"reconstruction",
 	"boosts",
 	"shopAssist",
 	"cablocker",
-	"notes"
+	"notes",
+	"gbg-actionlog"
 ]

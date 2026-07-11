@@ -3,7 +3,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('WorldChallengeService', 'all', (data, postData) => {
+FH.proxy.addHandler('WorldChallengeService', 'all', (data, postData) => {
 	if (data.requestMethod=='getOverview') {
 		worldChallenge.currentPoints = data.responseData?.taskProgressPoints || 0;
 	}
@@ -14,7 +14,7 @@ FoEproxy.addHandler('WorldChallengeService', 'all', (data, postData) => {
 	mergerGame.checkTaskProgress(false);
 });
 
-FoEproxy.addHandler('LeagueService', 'getRank', (data, postData) => {
+FH.proxy.addHandler('LeagueService', 'getRank', (data, postData) => {
 	return;
 	//deactivated as an ingame popup was implemented
 	if (worldChallenge.leaguepoints == data.responseData.points) return;
@@ -22,7 +22,7 @@ FoEproxy.addHandler('LeagueService', 'getRank', (data, postData) => {
 	if (["buyChest"].includes(postData[0].requestMethod)) return;
 	if (worldChallenge.count === undefined) return;
 	worldChallenge.count++;
-	if (worldChallenge.count >=20) helper.sounds.play("message");
+	if (worldChallenge.count >=20) FH.helper.sounds.play("message");
 
 });
 

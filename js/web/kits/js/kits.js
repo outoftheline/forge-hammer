@@ -4,11 +4,11 @@
  */
 
 /**
- * A {@link HTML.Box box} for listing owned (in inventory) and missing buildings, and according kits and assets.
+ * A {@link FH.HTML.Box box} for listing owned (in inventory) and missing buildings, and according kits and assets.
  * @namespace
  */
 
-FoEproxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
 	Kits.UpdateBoxIfVisible();
 });
 
@@ -29,7 +29,7 @@ let Kits = {
 	ShowMissing: 0,
 	Fragments:{},
 	fragmentURL:null,
-	favourites:JSON.parse(localStorage.getItem("Kits.favourites")||"[]"),
+	favourites:JSON.parse(FH.Storage.getItem("Kits.favourites")||"[]"),
 	specialCases:{
 		"selection_kit_watchtower_1_gbg" : "selection_kit_watchtower1_gbg",
 		"selection_kit_ind_palace_set" :"selection_kit_indian_palace",
@@ -48,10 +48,10 @@ let Kits = {
 	upgradeKits:null,
 
 	/**
-	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link HTML.Box DOM box}.
+	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link FH.HTML.Box DOM box}.
 	 */
 	init: ()=> {
-		MainParser.loadJSON(extUrl + 'js/web/kits/data/sets.json', (data)=> {
+		FH.Main.loadJSON(FH.extUrl + 'js/web/kits/data/sets.json', (data)=> {
 			Kits.KitsjSON = JSON.parse(data);
 			Kits.BuildBox();
 		});
@@ -59,16 +59,16 @@ let Kits = {
 
 
 	/**
-	 * Creates the {@link HTML.Box box} with displayed sets.
+	 * Creates the {@link FH.HTML.Box box} with displayed sets.
 	 */
 	BuildBox: ()=> {
 		if ( $('#kits').length === 0 ) {
 
-			HTML.AddCssFile('kits');
+			FH.HTML.AddCssFile('kits');
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'kits',
-				title: i18n('Menu.Kits.Title'),
+				title: FH.t('Menu.Kits.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -84,7 +84,7 @@ let Kits = {
 			$('#kitsBodyTopbar').append(
 				$('<label />').attr({
 					class: 'game-cursor'
-				}).text(i18n('Boxes.Kits.FilterSets') + ':\xA0').append(
+				}).text(FH.t('Boxes.Kits.FilterSets') + ':\xA0').append(
 					$('<input />').attr({
 						class: 'game-cursor',
 						type: 'text',
@@ -93,7 +93,7 @@ let Kits = {
 					}).on('change', Kits._filter)
 				)
 			).append(
-				$('<label />').attr({class: 'game-cursor'}).text(i18n('Boxes.General.FilterItems') + ':\xA0').append(
+				$('<label />').attr({class: 'game-cursor'}).text(FH.t('Boxes.General.FilterItems') + ':\xA0').append(
 					$('<input />').attr({
 						class: 'game-cursor',
 						type: 'text',
@@ -108,18 +108,18 @@ let Kits = {
 					id: 'kits-triplestate-button',
 					class: 'btn btn-slim',
 					onclick: 'Kits.ToggleView()'
-				}).text(i18n('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
+				}).text(FH.t('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
 			);
 			$('#kitsBodyBottombar').append(
 				$('<span />').attr({
 					id: 'kits-showFavourites',
 					class: 'btn btn-slim',
 					onclick: 'Kits.ToggleFavouritesBtn()'
-				}).text(i18n('Boxes.Kits.ShowFavourites'))
+				}).text(FH.t('Boxes.Kits.ShowFavourites'))
 			);
 		}
 		else {
-			HTML.CloseOpenBox('kits');
+			FH.HTML.CloseOpenBox('kits');
 		}
 
 		Kits.ReadSets();
@@ -142,7 +142,7 @@ let Kits = {
 	 */
 	ReadSets: ()=> {
 		let inv = Kits.GetInventoryArray(),
-			entities = MainParser.CityEntities,
+			entities = FH.Main.CityEntities,
 			kits = Kits.KitsjSON;
 
 		let t = '<div class="foe-table">';
@@ -150,9 +150,9 @@ let Kits = {
 
 		let selectionKits = {};
 
-		for (let k in MainParser.SelectionKits) {
-			if (!MainParser.SelectionKits.hasOwnProperty(k)) continue;
-			const options = MainParser.SelectionKits[k].options || MainParser.SelectionKits[k].eraOptions.BronzeAge.options;
+		for (let k in FH.Main.SelectionKits) {
+			if (!FH.Main.SelectionKits.hasOwnProperty(k)) continue;
+			const options = FH.Main.SelectionKits[k].options || FH.Main.SelectionKits[k].eraOptions.BronzeAge.options;
 			for (let o of options) {
 				if (!["BuildingItemPayload", "UpgradeKitPayload"].includes(o.item.__class__)) continue;
 				let id = o.item.upgradeItemId || o.item.selectionKitId || o.item.cityEntityId;
@@ -166,7 +166,7 @@ let Kits = {
 				if (r.type === "set") {
 					addItems(r.rewards, idx);
 				} else if (r.subType === "selection_kit") {
-					const options = MainParser.SelectionKits[r.id].options || MainParser.SelectionKits[r.id].eraOptions.BronzeAge.options;
+					const options = FH.Main.SelectionKits[r.id].options || FH.Main.SelectionKits[r.id].eraOptions.BronzeAge.options;
 					for (let o of options) {
 						if (!["BuildingItemPayload", "UpgradeKitPayload"].includes(o.item.__class__)) continue;
 						let id = o.item.upgradeItemId || o.item.selectionKitId || o.item.cityEntityId;
@@ -183,17 +183,17 @@ let Kits = {
 				}
 			}
 		}
-		for (let k in MainParser.Inventory) {
-			if (! MainParser.Inventory.hasOwnProperty(k)) continue
-			if (MainParser.Inventory[k]?.item?.reward?.type==="set") {
-				addItems(MainParser.Inventory[k].item.reward.rewards,MainParser.Inventory[k].item.reward.id)
+		for (let k in FH.Main.Inventory) {
+			if (! FH.Main.Inventory.hasOwnProperty(k)) continue
+			if (FH.Main.Inventory[k]?.item?.reward?.type==="set") {
+				addItems(FH.Main.Inventory[k].item.reward.rewards,FH.Main.Inventory[k].item.reward.id)
 			}
 
 		}
 
 		Kits.upgradeKits = {}
 
-		for (let u of Object.values(MainParser.BuildingUpgrades)) {
+		for (let u of Object.values(FH.Main.BuildingUpgrades)) {
 			let upgradeList = [u.upgradeItem.id];
 			let buildingList=[];
 			let sK=[]
@@ -362,24 +362,24 @@ let Kits = {
 
 				
 				if (Name === 'Kits') {
-					KitText = i18n('Boxes.Kits.Kits');
+					KitText = FH.t('Boxes.Kits.Kits');
 				}
 				else if (Name === 'Guard_Post') {
-					KitText = MainParser.SelectionKits.selection_kit_guard_post.name;
+					KitText = FH.Main.SelectionKits.selection_kit_guard_post.name;
 				}
 				else if (Name === 'Winterdeco_Set') {
-					KitText = MainParser.SelectionKits.selection_kit_winter_deco.name;
+					KitText = FH.Main.SelectionKits.selection_kit_winter_deco.name;
 				}
-				else if (MainParser.BuildingChains[sName]) {
-					KitText = MainParser.BuildingChains[sName].name;
+				else if (FH.Main.BuildingChains[sName]) {
+					KitText = FH.Main.BuildingChains[sName].name;
 					ChainSetIco = '<img src="' + srcLinks.get('/shared/icons/' + sName + '.png', true) + '" class="chain-set-ico">';
 				}
-				else if (MainParser.BuildingSets[sName]) {
-					KitText = MainParser.BuildingSets[sName].name;
+				else if (FH.Main.BuildingSets[sName]) {
+					KitText = FH.Main.BuildingSets[sName].name;
 					ChainSetIco = '<img src="' + srcLinks.get('/shared/icons/' + sName + '.png', true) + '" class="chain-set-ico">';
 				}
-				else if (MainParser.CityEntities[kits[set].buildings[0].first]) {
-					let itemName = MainParser.CityEntities[kits[set].buildings[0].first].name;
+				else if (FH.Main.CityEntities[kits[set].buildings[0].first]) {
+					let itemName = FH.Main.CityEntities[kits[set].buildings[0].first].name;
 					let idx = itemName.indexOf(' - ', 0);
 
 					if (idx === -1) {
@@ -398,37 +398,37 @@ let Kits = {
 				}
 
 				let Link = kits[set].link ? kits[set].link : Name;
-				KitText = MainParser.GetBuildingLink(Link, KitText);
+				KitText = FH.Main.GetBuildingLink(Link, KitText);
 			}
 			else if (GroupName) { // Group is set
-				let i18nKey = 'Boxes.Kits.' + GroupName,
-					i18nTranslation = i18n(i18nKey);
+				let Key = 'Boxes.Kits.' + GroupName,
+					Translation = FH.t(Key);
 
-				if (i18nKey === i18nTranslation) i18nTranslation = GroupName.replace(/_/g, ' '); //No translation => Fallback to GroupName
+				if (Key === Translation) Translation = GroupName.replace(/_/g, ' '); //No translation => Fallback to GroupName
 
-				KitText = i18nTranslation;
+				KitText = Translation;
 				show = true;
 				if (GroupName !== 'Events')
 					t += '</div>'
 				t += `<div class="group"><h1 class="grouphead" onclick="Kits.toggleGroup(event)">` + KitText + '</h1>'
 			}
 			else { // No name and group set => Show udate
-				KitText = i18n('Boxes.Kits.Udate') + kits[set].udate;
+				KitText = FH.t('Boxes.Kits.Udate') + kits[set].udate;
 				show = true;
 			}
 			//let upgradeOrder=["upgrade","silver","golden","platinum","ascended"];
 			let upgrades = "";
 			let eff=""
-			if (kits[set].buildings?.[0]?.first && MainParser.CityEntities[kits[set].buildings[0].first]) {
+			if (kits[set].buildings?.[0]?.first && FH.Main.CityEntities[kits[set].buildings[0].first]) {
 				let f=Kits.upgradeKits?.[kits[set].buildings[0].first]
 				let upgradeCount = f?.upgradeCount;
 				if (upgradeCount) {
-					upgrades = '<span class="upgrades" data-original-title="'+i18n('Boxes.Kits.Upgrades')+'" data-toggle="tooltip">'
+					upgrades = '<span class="upgrades" data-original-title="'+FH.t('Boxes.Kits.Upgrades')+'" data-toggle="tooltip">'
 					let first = true
 					//for (let i of upgradeOrder) {
 					for (let i in upgradeCount) {
 						if (!upgradeCount[i]) continue
-						upgrades += (first ? '<span class="base">1</span>' : "") + `<span class="${i}">${upgradeCount[i]}</span>` //title="'+i18n('Boxes.Kits.Base')+'"
+						upgrades += (first ? '<span class="base">1</span>' : "") + `<span class="${i}">${upgradeCount[i]}</span>` //title="'+FH.t('Boxes.Kits.Base')+'"
 						first = false;
 					}
 					upgrades+= '</span>'
@@ -445,7 +445,7 @@ let Kits = {
 						}
 					}
 					let top=rating.pop()
-					eff = `<span class="kitsEff" data-original-title="${title}">${i18n('Boxes.Kits.Efficiency')}: `
+					eff = `<span class="kitsEff" data-original-title="${title}">${FH.t('Boxes.Kits.Efficiency')}: `
 					eff += Math.round(100 * top?.rating.totalScore||0);
 					eff+= '</span>'
 				}
@@ -478,7 +478,7 @@ let Kits = {
 
 			// Asset listing
 			if (assetRow.length) {
-				t += `<h3 class="assets-header ${!show ? "all-missing" : (!showA ? "row-missing" : "")}">${i18n('Boxes.Kits.Extensions')}</h3>`;
+				t += `<h3 class="assets-header ${!show ? "all-missing" : (!showA ? "row-missing" : "")}">${FH.t('Boxes.Kits.Extensions')}</h3>`;
 				let rowTd = ''
 				assetRow.forEach((e)=> {
 					rowTd += Kits.ItemDiv(e);
@@ -504,14 +504,14 @@ let Kits = {
 	/**
 	 * Creates a `div` for any item.
 	 * @param {SetItem} el
-	 * @returns {string} HTML string of the `div` element.
+	 * @returns {string} FH.HTML.string of the `div` element.
 	 */
 	ItemDiv: (el)=> {
 
 		if (!el?.item) return '';
 		if (el.missing && !el.showMissing) return '';
 		let item = el.item,
-			aName = item.itemAssetName || item.asset_id || MainParser.BuildingUpgrades[item]?.upgradeItem?.iconAssetName || Kits.specialCases[item] || item,
+			aName = item.itemAssetName || item.asset_id || FH.Main.BuildingUpgrades[item]?.upgradeItem?.iconAssetName || Kits.specialCases[item] || item,
 			url = '/shared/icons/reward_icons/reward_icon_' + aName + '.png',
 			title = '';
 
@@ -530,16 +530,16 @@ let Kits = {
 
 		if (!title ) {
 			if (el.type === 'update') {
-				title = MainParser.BuildingUpgrades[item] ? MainParser.BuildingUpgrades[item].upgradeItem.name : i18n('Boxes.Kits.UpgradeKit');
+				title = FH.Main.BuildingUpgrades[item] ? FH.Main.BuildingUpgrades[item].upgradeItem.name : FH.t('Boxes.Kits.UpgradeKit');
 			}
 			else if (el.type === 'kit') {
-				title = MainParser.SelectionKits[item] ? MainParser.SelectionKits[item].name : i18n('Boxes.Kits.SelectionKit');
+				title = FH.Main.SelectionKits[item] ? FH.Main.SelectionKits[item].name : FH.t('Boxes.Kits.SelectionKit');
 			}
 		}
 
 		return 	`<div class="item${((el.missing) ? ' is-missing' : '')}">
 					<div class="image"><img loading="lazy" src="${url}" alt="${title}" /></div>
-					<strong class="in-stock" data-original-title="${i18n('Boxes.Kits.InStock')}">${(item.inStock ? item.inStock : '-')}</strong>
+					<strong class="in-stock" data-original-title="${FH.t('Boxes.Kits.InStock')}">${(item.inStock ? item.inStock : '-')}</strong>
 					<span>${title}</span>
 					<span class="fragments">${(el.fragments ? `<img class="ItemFragment" src="${Kits.fragmentURL}"> ` + el.fragments + '/' + el.reqFragments : '')}</span>
 				</div>`;
@@ -547,21 +547,21 @@ let Kits = {
 
 
 	/**
-	 * Returns {@link MainParser.Inventory} as array.
+	 * Returns {@link FH.Main.Inventory} as array.
 	 * @returns {any[]}
 	 */
 	GetInventoryArray: ()=> {
 		let Ret = {}
-		for (let i in MainParser.Inventory) {
-			if (!MainParser.Inventory.hasOwnProperty(i)) continue;
-			let x = MainParser.Inventory[i]
+		for (let i in FH.Main.Inventory) {
+			if (!FH.Main.Inventory.hasOwnProperty(i)) continue;
+			let x = FH.Main.Inventory[i]
 			let amount = x.inStock;
 			let required = null;
 			let id = x.item.upgradeItemId||x.item.selectionKitId||x.item.cityEntityId||x.itemAssetName;
 			let asset= x.itemAssetName;
 			let name = x.name;
 			if (x.item.__class__ === "BuildingItemPayload") {
-				asset=MainParser.CityEntities[id].asset_id;
+				asset=FH.Main.CityEntities[id].asset_id;
 			}
 			if (x.item.__class__ === "FragmentItemPayload") {
 				id =  "fragment#"+ ((x.item.reward.assembledReward.type === "building") ? 
@@ -596,7 +596,7 @@ let Kits = {
 			Kits.favourites.splice(index, 1);
 		}
 		e.target.style = `background-image:url('${Kits.favourites.includes(name)? srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_fill.png",true) : srcLinks.get("/shared/gui/guild_meta_layer/guild_meta_layer_recommend_star_empty.png",true)}')`
-		localStorage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
+		FH.Storage.setItem("Kits.favourites",JSON.stringify(Kits.favourites));
 		e.target.parentElement.parentElement.classList.toggle("notFavourite");
 	},
 
@@ -608,7 +608,7 @@ let Kits = {
 
 		Kits._filter()
 
-		$('#kits-triplestate-button').text(i18n('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
+		$('#kits-triplestate-button').text(FH.t('Boxes.Kits.TripleStateButton'+Kits.ShowMissing))
 	},
 
 	ToggleFavouritesBtn:() => {
@@ -702,9 +702,9 @@ let Kits = {
 
 	CreateUpgradeSchemes: ()=> {
 		let sO = {}
-		for (let s of Object.values(MainParser.SelectionKits)) {
+		for (let s of Object.values(FH.Main.SelectionKits)) {
 			Kits.Names[s.selectionKitId] = s.name
-			for (let c of s.options || s.eraOptions[CurrentEra].options) {
+			for (let c of s.options || s.eraOptions[FH.CurrentEra].options) {
 				id = (c.item.cityEntityId||c.item.upgradeItemId)
 				if (!id)
 					continue
@@ -719,7 +719,7 @@ let Kits = {
 		let endBuildings = {}
 		let startBuildings = {}
 
-		for (let upgrade of Object.values(MainParser.BuildingUpgrades)) {
+		for (let upgrade of Object.values(FH.Main.BuildingUpgrades)) {
 			if (["silver_upgrade_kit_BOWL22A"].includes(upgrade.upgradeItem.id)) continue; // faulty game data
 			Kits.Names[upgrade.upgradeItem.id] = upgrade.upgradeItem.name;
 			let upgradeId= upgrade.upgradeItem.id;
@@ -811,7 +811,7 @@ let Kits = {
 				}
 			}
 		}
-		for (let i of Object.values(MainParser.Inventory)) {
+		for (let i of Object.values(FH.Main.Inventory)) {
 			if (i.itemAssetName === "icon_fragment") {
 				if (i.item.reward.assembledReward.subType==="selection_kit") {
 					InventoryAdd(i.item.reward.assembledReward.id, Math.floor(i.inStock/i.item.reward.requiredAmount))
@@ -842,7 +842,7 @@ let Kits = {
 		}
 		//flatten CityBuildings
 		cityBuildings = {}
-		Object.values(MainParser.CityMapData).forEach(x=>cityBuildings[x.cityentity_id]=(cityBuildings[x.cityentity_id] || 0)+1);
+		Object.values(FH.Main.CityMapData).forEach(x=>cityBuildings[x.cityentity_id]=(cityBuildings[x.cityentity_id] || 0)+1);
 		//check non-upgrade scheme selection kit items
 		for (let [id,kits] of Object.entries(Kits.selectionOptions)) {
 			if (id.substring(1,2)=="_" && !upgradeBuildings.includes(id)) {
@@ -882,7 +882,7 @@ let Kits = {
 				let sKvalues = Object.assign({},...SKs.map(x=>({[x]:0})));
 				let upgradesIndexed = Object.keys(upgrades)
 				for (let sk of SKs) {
-					for (let o of MainParser.SelectionKits[sk].options) {
+					for (let o of FH.Main.SelectionKits[sk].options) {
 						let i = upgradesIndexed.indexOf(o.item.cityEntityId||o.item.upgradeItemId||"test")
 						if (i > -1)
 							sKvalues[sk] += Math.pow(2,i)
@@ -1071,7 +1071,7 @@ let Kits = {
 
 	InventoryTooltip: (e) => {
         const id = e?.currentTarget?.dataset?.id || e?.currentTarget?.parentElement?.dataset?.id;
-		let lng = ExtWorld.substring(0, 2);
+		let lng = FH.World.substring(0, 2);
 		const mapper = {
 			'us': 'en',
 			'xs': 'en',
@@ -1105,8 +1105,8 @@ let Kits = {
 		upgradesMax += '</span>';
 
 		let tooltip = `<div class="inventoryTooltip" lang="${lng}">`;
-        tooltip += `<h2>${inventoryBuilding.amount}x ${MainParser.CityEntities[id]?.name}${upgrades}</h2>`;
-		tooltip += `<span style="padding:3px 8px;">${i18n("Boxes.Tooltip.Efficiency.description")}:</span>`;
+        tooltip += `<h2>${inventoryBuilding.amount}x ${FH.Main.CityEntities[id]?.name}${upgrades}</h2>`;
+		tooltip += `<span style="padding:3px 8px;">${FH.t("Boxes.Tooltip.Efficiency.description")}:</span>`;
 
 		if (inventoryBuilding.includesAscended) {
 			tooltip += `<span class="inventoryChainAscendedStock">${inventoryBuilding.ascendedStock}x</span>`;
@@ -1126,7 +1126,7 @@ let Kits = {
 					tooltip += `<span class="inventoryChainItemCount">${c.count}x</span>`;
 				}
 
-				tooltip += `<span>${Kits.Names[c.id] || MainParser.CityEntities[c.id]?.name}</span>`;
+				tooltip += `<span>${Kits.Names[c.id] || FH.Main.CityEntities[c.id]?.name}</span>`;
 				tooltip += `</div></div>`;
 			}
 			tooltip += `</div>`;
@@ -1135,8 +1135,8 @@ let Kits = {
 
 		if (upgradesMax !== '<span class="upgrades"></span>') {
 			tooltip += `<div class="maxBuilding">`;
-			tooltip += `<h2>${i18n("Boxes.Kits.maxBuilding")}:</h2>`;
-			tooltip += `<span class="maxBuildingDetails">${MainParser.CityEntities[inventoryBuilding.maxBuilding]?.name}${upgradesMax}</span>`;
+			tooltip += `<h2>${FH.t("Boxes.Kits.maxBuilding")}:</h2>`;
+			tooltip += `<span class="maxBuildingDetails">${FH.Main.CityEntities[inventoryBuilding.maxBuilding]?.name}${upgradesMax}</span>`;
 			tooltip += `</div>`;
 		}
 
@@ -1151,3 +1151,4 @@ let Kits = {
  * @property {string|object} item
  * @property {boolean} missing
  */
+FH.Tooltips.addCallback('InventoryKits', Kits.InventoryTooltip);

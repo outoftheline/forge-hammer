@@ -2,19 +2,19 @@
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
  * Licensed under AGPL - see LICENSE.md for details.
  */
-
+{
 // GEX started
-FoEproxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
+FH.proxy.addHandler('GuildExpeditionService', 'getOverview', (data, postData) => {
 	BonusService.InitBonus(true);
 });
 
 // World map
-FoEproxy.addHandler('CampaignService', 'start', (data, postData) => {
+FH.proxy.addHandler('CampaignService', 'start', (data, postData) => {
 	BonusService.InitBonus();
 });
 
 // neihbor is visit
-FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
+FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 	let OtherPlayer = data.responseData.other_player;
 	let IsPlunderable = (OtherPlayer.is_neighbor && !OtherPlayer.is_friend && !OtherPlayer.is_guild_member);
 
@@ -24,28 +24,28 @@ FoEproxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 });
 
 // Bonus get updated
-FoEproxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
+FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
 	BonusService.Bonuses = data['responseData'];
 
-	FoEproxy.triggerFoeHelperHandler('BonusUpdated');
+	FH.proxy.triggerFoeHelperHandler('BonusUpdated');
 
 	if ($('#bonus-hud').length > 0) {
 		BonusService.CalcBonusData();
 	}
 });
 
-FoEproxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length == 0) return;
 		BonusService.CalcBonusData();
 });
 
 // Guildfights enter
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	BonusService.InitBonus();
 });
 
 // main is entered
-FoEproxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
+FH.proxy.addHandler('AnnouncementsService', 'fetchAllAnnouncements', (data, postData) => {
 	BonusService.HideBonusSidebar();
 });
 
@@ -75,7 +75,7 @@ let BonusService = {
 	 */
 	InitBonus: (isGex = false)=> {
 		if($('#bonus-hud').length === 0){
-			HTML.AddCssFile('bonus-service');
+			FH.HTML.AddCssFile('bonus-service');
 
 			// wait 2s
 			BonusService.timeout = setTimeout(()=>{
@@ -170,7 +170,7 @@ let BonusService = {
 
 				sp.attr({
 					class: `hud-btn`,
-					title: 'Forge Hammer: '+i18n('Boxes.BonusService.'+bt[i]),
+					title: 'Forge Hammer: '+FH.t('Boxes.BonusService.'+bt[i]),
 				}).tooltip({
 					placement: 'left'
 				});
@@ -246,7 +246,7 @@ let BonusService = {
 					si.addClass('bonus-blink');
 
 					if (bt[i] === 'donequests') {
-						helper.sounds.play("message");
+						FH.helper.sounds.play("message");
 					}
 
 					setTimeout(()=>{
@@ -261,15 +261,20 @@ let BonusService = {
 	 * Überprüft, ob ein Quest erledigt ist
 	 */
 	GetDoneQuestsCount: () => {
-		if (!MainParser.Quests) return 0;
+		if (!FH.Main.Quests) return 0;
 
 		let Ret = 0;
-		for (let i = 0; i < MainParser.Quests.length; i++) {
-			let Quest = MainParser.Quests[i];
+		for (let i = 0; i < FH.Main.Quests.length; i++) {
+			let Quest = FH.Main.Quests[i];
 			if (Quest['category'] === 'outpost') continue;
 			if (Quest['type'] === 'ReplayableSeason_Allies_Milestone') continue;
 			if (Quest['state'] === 'collectReward') Ret += 1;
 		}
 		return Ret;
-    }
+    },
+	getBonuses: () => {
+		return BonusService.Bonuses;
+	}
+}
+FH.BonusService = {getBonuses: BonusService.getBonuses};
 }

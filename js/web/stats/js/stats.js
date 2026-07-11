@@ -1,22 +1,23 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
 // GBG leader board log
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', async (data, postData) => {
 	Stats.HandlePlayerLeaderboard(data.responseData);
 });
 
 // Gildengefechte
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', async (data, postData) => {
 	if (data.responseData['stateId'] !== 'participating') {
 		Stats.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
 	}
 });
 
 // Reward log
-FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => {
 	const r = data.responseData;
 	if (!Array.isArray(r)) {
 		return;
@@ -31,7 +32,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 
 		if (rewardIncidentSource === 'hidden_reward') {
 			//split flying island incidents from Ad-chests
-			if (ActiveMap == 'cultural_outpost'){
+			if (FH.ActiveMap == 'cultural_outpost'){
 				rewardIncidentSource = 'shards';
 			}
 		}
@@ -64,7 +65,7 @@ FoEproxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 	}
 });
 
-FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
+FH.proxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
 	let rewardIncidentSource = data.responseData.context;
 	if (rewardIncidentSource!='guild_raids' && rewardIncidentSource.indexOf('guild_raids')>=0) rewardIncidentSource='guild_raidsP'; //QI-Pass detection
 	if (rewardIncidentSource.indexOf('event')<0 && !["guild_raids","guild_raidsP"].includes(rewardIncidentSource)) return; //exclude Main city collection "collect all", "aid_all"
@@ -107,7 +108,7 @@ FoEproxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) 
 });
 
 //reward split for QI
-FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, postData) => {
 	let rewards = data.responseData?.reward?.reward?.possible_rewards
 	let nodeId = postData?.[0]?.requestData?.[0];
 	
@@ -130,16 +131,16 @@ FoEproxy.addHandler('GuildRaidsMapService', 'getNodeExtendedInfo', async (data, 
 	}
 }),
 
-FoEproxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'getOverview', async (data, postData) => {
 	Stats.QI.currentNode = data.responseData.currentNode;
 }),
-FoEproxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
+FH.proxy.addHandler('GuildRaidsMapService', 'move', async (data, postData) => {
 	Stats.QI.currentNode = postData[0].requestData[0].pop();
 }),
 
 
 // Player treasure log
-FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResources', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -159,7 +160,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResources', async (data, postDa
 
 	StockAlarm.checkResources();
 });
-FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
+FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -180,7 +181,7 @@ FoEproxy.addHandler('ResourceService', 'getPlayerResourceBag', async (data, post
 });
 
 // Clan Treasure log
-FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 	const r = data.responseData;
 	if (!r.resources) {
 		return;
@@ -190,20 +191,20 @@ FoEproxy.addHandler('ClanService', 'getTreasury', async (data, postData) => {
 
 	await IndexDB.db.statsTreasureClanD.put({
 		date: moment().startOf('day').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r.resources
 	});
 
 	await IndexDB.db.statsTreasureClanH.put({
 		date: moment().startOf('hour').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r.resources
 	});
 	
 	StockAlarm.checkTreasury();
 });
 
-FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
+FH.proxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 	if (data.responseData?.type?.value && data.responseData?.type?.value != 'ClanMain') return; // for now ignore all other source types
 	const r = data.responseData?.resources?.resources || data.responseData?.resources;
 	if (!r) return;
@@ -212,13 +213,13 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 
 	await IndexDB.db.statsTreasureClanD.put({
 		date: moment().startOf('day').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r
 	});
 
 	await IndexDB.db.statsTreasureClanH.put({
 		date: moment().startOf('hour').toDate(),
-		clanId: ExtGuildID,
+		clanId: FH.Guild.ID,
 		resources: r
 	});
 	
@@ -226,8 +227,8 @@ FoEproxy.addHandler('ClanService', 'getTreasuryBag', async (data, postData) => {
 });
 
 // Player Army log
-FoEproxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
-	if (ActiveMap !== 'main') {
+FH.proxy.addHandler('ArmyUnitManagementService', 'getArmyInfo', async (data, postData) => {
+	if (FH.ActiveMap !== 'main') {
 		return;
 	}
 
@@ -292,14 +293,14 @@ let Stats = {
 			let EraName = Technologies.EraNames[Era];
 			if (!EraName) continue;
 
-			if (GoodsList.length < 5 * (Era - 1)) break; // Era does not exist yet
+			if (FH.Goods.List.length < 5 * (Era - 1)) break; // Era does not exist yet
 
 			Stats.PlayableEras.push(EraName);
 			Stats.ResMap[EraName] = [];
 
 			for (let i = 0; i < 5; i++) {
-				if (GoodsList[(Era - 2) * 5 + i]) {
-					let g = GoodsList[(Era - 2) * 5 + i].id
+				if (FH.Goods.List[(Era - 2) * 5 + i]) {
+					let g = FH.Goods.List[(Era - 2) * 5 + i].id
 					Stats.ResMap[EraName].push(g);
 					Stats.goodsSubTypes.push(g);
 				}
@@ -308,13 +309,13 @@ let Stats = {
     },
 
 	DatePickerObj: null,
-	DatePickerStart: moment(MainParser.getCurrentDate()).subtract(6, 'days'),
-	DatePickerEnd: moment(MainParser.getCurrentDateTime()),//.toDate(),
+	DatePickerStart: moment(FH.Main.getCurrentDate()).subtract(6, 'days'),
+	DatePickerEnd: moment(FH.Main.getCurrentDateTime()),//.toDate(),
 
 	minDateFilter: null,
-	maxDateFilter: moment(MainParser.getCurrentDate()).toDate(),
-	DatePickerFrom: null, //moment(MainParser.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
-	DatePickerTo: null, //moment(MainParser.getCurrentDateTime()),//.format('YYYY-MM-DD'),
+	maxDateFilter: moment(FH.Main.getCurrentDate()).toDate(),
+	DatePickerFrom: null, //moment(FH.Main.getCurrentDate()).subtract(6, 'days'),//.format('YYYY-MM-DD'),
+	DatePickerTo: null, //moment(FH.Main.getCurrentDateTime()),//.format('YYYY-MM-DD'),
 
 	lockDates: [],
 	TodayEntries: null,
@@ -323,7 +324,7 @@ let Stats = {
 	treasureSources: ['statsTreasureClanH', 'statsTreasureClanD'],
 	unitSources: ['statsUnitsH', 'statsUnitsD'],
 	rewardSources: ['statsRewards'],
-	gbgSources: ['statsGBGPlayers'],
+	gbgSources: [],
 	isSelectedPlayerSources: () => Stats.playerSources.includes(Stats.state.source),
 	isSelectedTreasureSources: () => Stats.treasureSources.includes(Stats.state.source),
 	isSelectedUnitSources: () => Stats.unitSources.includes(Stats.state.source),
@@ -338,30 +339,30 @@ let Stats = {
 		if ($('#stats').length === 0) {
 			let args = {
 				'id': 'stats',
-				'title': i18n('Boxes.Stats.Title'),
+				'title': FH.t('Boxes.Stats.Title'),
 				'auto_close': true,
 				'dragdrop': true,
 				'minimize': true
 			};
 
-			HTML.Box(args);
+			FH.HTML.Box(args);
 			//moment.locale(18n('Local'));
-			HTML.AddCssFile('stats');
-			HTML.AddCssFile('unit');
+			FH.HTML.AddCssFile('stats');
+			FH.HTML.AddCssFile('unit');
 		}
 		else if (!event)
 		{
-			HTML.CloseOpenBox('stats');
+			FH.HTML.CloseOpenBox('stats');
 			return;
 		}
 
 		// If not selected any era, preselect 2 last eras of user
 		if (!Object.keys(Stats.state.eras).length) {
 			Stats.state.eras = {
-				[Technologies.EraNames[CurrentEraID]]: true,
+				[Technologies.EraNames[FH.CurrentEraID]]: true,
 			};
-			if (CurrentEraID > 2) {
-				Stats.state.eras[Technologies.EraNames[CurrentEraID - 1]] = true;
+			if (FH.CurrentEraID > 2) {
+				Stats.state.eras[Technologies.EraNames[FH.CurrentEraID - 1]] = true;
 			}
 		}
 
@@ -404,7 +405,6 @@ let Stats = {
 					const isChangedToPlayerSource = ['statsTreasurePlayerH', 'statsTreasurePlayerD'].includes(value) && !Stats.isSelectedPlayerSources();
 					const isChangedToClanTreasure = ['statsTreasureClanH', 'statsTreasureClanD'].includes(value) && !Stats.isSelectedTreasureSources();
 					const isChangedToReward = Stats.rewardSources.includes(value) && !Stats.isSelectedRewardSources();
-					const isChangedToGBG = Stats.gbgSources.includes(value) && !Stats.isSelectedGBGSources();
 
 					if (isChangedToUnit) {
 						// if Changed to units than select all eras by default
@@ -415,20 +415,16 @@ let Stats = {
 						// If changed to player's treasure select 2 last eras
 						Stats.state.eras = {};
 						Stats.state.eras = {
-							[Technologies.EraNames[CurrentEraID]]: true,
+							[Technologies.EraNames[FH.CurrentEraID]]: true,
 						};
-						if (CurrentEraID > 2) {
-							Stats.state.eras[Technologies.EraNames[CurrentEraID - 1]] = true;
+						if (FH.CurrentEraID > 2) {
+							Stats.state.eras[Technologies.EraNames[FH.CurrentEraID - 1]] = true;
 						}
 
 					} else if (isChangedToClanTreasure) {
 						// If changed to treasure select all playable eras
 						Stats.state.eras = {};
 						Stats.PlayableEras.forEach(era => Stats.state.eras[era] = true);
-
-					} else if (isChangedToGBG) {
-						Stats.state.chartType = 'line';
-						Stats.isGG = true;
 
 					} else if (isChangedToReward) {
 						Stats.state.rewardSource = 'battlegrounds_conquest';
@@ -473,17 +469,20 @@ let Stats = {
 	Render: async () => {
 		$('#statsBody').html(`<div class="options">${Stats.RenderOptions()}</div>
 							<div class="options-2"></div>
-							<div id="statsWrapper"><div id="statsTitle"></div><canvas id="statsChart"></canvas>
+							<div id="statsWrapper">
+							<div id="statsTitle"></div>
+							<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastSeries, 'stats-${moment().format('YYYY-MM-DD')}.csv')" title="CSV">CSV</button><canvas id="statsChart"></canvas>
 							<div id="statsLegendWrapper">
 								<div class="StatsRewardFilter">
-									<input type="text" id="StatsRewardFilter" placeholder="${i18n("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
+									<input type="text" id="StatsRewardFilter" placeholder="${FH.t("Boxes.Stats.FilterRewards")}" value="${Stats.state.filter}" oninput="Stats.state.filter=this.value;Stats.updateCharts();">
 								</div>
-								<div id="statsLegend"></div>
+								<div id="statsLegend" class="chartLegend"></div>
 							</div>
-							<div id="statsTooltip" style="display:none;"></div></div>`);
+							<div id="statsTooltip" class="chartTooltip" style="display:none;"></div>
+							</div>`);
 
 		Stats.updateOptions();
-		await helper.loadChartJS();
+		await FH.helper.loadChartJS();
 		await Stats.updateCharts(Stats.DatePickerStart, Stats.DatePickerEnd);
 	},
 
@@ -506,18 +505,18 @@ let Stats = {
 
 				Stats.DatePickerObj = new Litepicker({
 					element: document.getElementById('StatsDatePicker'),
-					format: i18n('Date'),
-					lang: MainParser.Language,
+					format: FH.t('Date'),
+					lang: FH.Main.Language,
 					singleMode: false,
-					maxDate: MainParser.getCurrentDateTime(),
+					maxDate: FH.Main.getCurrentDateTime(),
 					showWeekNumbers: true,
 					endDate: Stats.DatePickerTo,
 					startDate: Stats.DatePickerFrom,
 					resetButton: true,
 					onSelect: async function (start, end) {
 						// get now if day is today
-						if (end.getDate() === MainParser.getCurrentDate().getDate() && end.getMonth() === MainParser.getCurrentDate().getMonth() && end.getYear() === MainParser.getCurrentDate().getYear()) 
-							end = MainParser.getCurrentDate();
+						if (end.getDate() === FH.Main.getCurrentDate().getDate() && end.getMonth() === FH.Main.getCurrentDate().getMonth() && end.getYear() === FH.Main.getCurrentDate().getYear()) 
+							end = FH.Main.getCurrentDate();
 						else
 							// otherwise, take end of day for end date
 							end.setHours(23);
@@ -558,7 +557,7 @@ let Stats = {
 		const selectedEras = Stats.getSelectedEras().sort();
 
 		const btnSelectNoEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnNoEra'),
+			name: FH.t('Boxes.Stats.BtnNoEra'),
 			isActive: selectedEras.length === 1 && selectedEras[0] === 'NoAge',
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -566,24 +565,24 @@ let Stats = {
 		});
 
 		const btnSelectMyEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnMyEra'),
-			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID],
+			name: FH.t('Boxes.Stats.BtnMyEra'),
+			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[FH.CurrentEraID],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
-			value: Technologies.EraNames[CurrentEraID]
+			value: Technologies.EraNames[FH.CurrentEraID]
 		});
 
 		const btnSelectNextEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnNextEra'),
-			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[CurrentEraID + 1],
+			name: FH.t('Boxes.Stats.BtnNextEra'),
+			isActive: selectedEras.length === 1 && selectedEras[0] === Technologies.EraNames[FH.CurrentEraID + 1],
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
-			value: Technologies.EraNames[CurrentEraID + 1]
+			value: Technologies.EraNames[FH.CurrentEraID + 1]
 		});
 
 		const btnSelectAll = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnAll'),
-			title: i18n('Boxes.Stats.BtnAllTittle'),
+			name: FH.t('Boxes.Stats.BtnAll'),
+			title: FH.t('Boxes.Stats.BtnAllTittle'),
 			isActive: Object.keys(Stats.ResMap).length == selectedEras.length,
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -591,19 +590,19 @@ let Stats = {
 		});
 
 		const btnSelectTwoLastEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnLastEras'),
-			title: i18n('Boxes.Stats.BtnLastErasTitle'),
+			name: FH.t('Boxes.Stats.BtnLastEras'),
+			title: FH.t('Boxes.Stats.BtnLastErasTitle'),
 			isActive: (selectedEras.length === 2 &&
-				selectedEras.includes(Technologies.EraNames[CurrentEraID]) &&
-				selectedEras.includes(Technologies.EraNames[CurrentEraID - 1])),
+				selectedEras.includes(Technologies.EraNames[FH.CurrentEraID]) &&
+				selectedEras.includes(Technologies.EraNames[FH.CurrentEraID - 1])),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
 			dataType: 'selectEras',
-			value: Technologies.EraNames[CurrentEraID] + ',' + Technologies.EraNames[CurrentEraID - 1]
+			value: Technologies.EraNames[FH.CurrentEraID] + ',' + Technologies.EraNames[FH.CurrentEraID - 1]
 		});
 
 		const btnSelectAllEra = Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnAllPlayableEras'),
-			title: i18n('Boxes.Stats.BtnAllPlayableErasTitle'),
+			name: FH.t('Boxes.Stats.BtnAllPlayableEras'),
+			title: FH.t('Boxes.Stats.BtnAllPlayableErasTitle'),
 			isActive: Stats.equals(selectedEras, Stats.PlayableEras.slice().sort()),
 			dataType: 'selectEras',
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
@@ -611,16 +610,16 @@ let Stats = {
 		});
 
 		const btnGroupByEra = Stats.RenderBox({
-			name: i18n('Boxes.Stats.BtnToggleGroupBy'),
-			title: i18n('Boxes.Stats.BtnToggleGroupByTitle'),
+			name: FH.t('Boxes.Stats.BtnToggleGroupBy'),
+			title: FH.t('Boxes.Stats.BtnToggleGroupByTitle'),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources(),
 			isActive: Stats.state.isGroupByEra,
 			dataType: 'groupByToggle',
 		});
 
 		const btnGroupRenormalize = Stats.RenderBox({
-			name: i18n('Boxes.Stats.BtnToggleRenormalize'),
-			title: i18n('Boxes.Stats.BtnToggleRenormalizeTitle'),
+			name: FH.t('Boxes.Stats.BtnToggleRenormalize'),
+			title: FH.t('Boxes.Stats.BtnToggleRenormalizeTitle'),
 			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources(),
 			isActive: Stats.state.isRenormalize,
 			dataType: 'renormalizeToggle',
@@ -630,22 +629,21 @@ let Stats = {
 			'statsTreasurePlayerD',
 			'statsTreasureClanD',
 			'statsUnitsD',
-			'statsGBGPlayers',
 			'statsRewards'
 		].map(source => Stats.RenderTab({
-			name: i18n('Boxes.Stats.BtnSource.' + source),
-			title: i18n('Boxes.Stats.SourceTitle.' + source),
+			name: FH.t('Boxes.Stats.BtnSource.' + source),
+			title: FH.t('Boxes.Stats.SourceTitle.' + source),
 			isActive: Stats.state.source === source,
 			dataType: 'selectSource',
 			value: source
 		}));
 
 		const chartTypes = ['line', 'delta'].map(it => Stats.RenderButton({
-			name: i18n('Boxes.Stats.BtnChartType.' + it),
-			title: i18n('Boxes.Stats.BtnChartTypeTitle.' + it),
+			name: FH.t('Boxes.Stats.BtnChartType.' + it),
+			title: FH.t('Boxes.Stats.BtnChartTypeTitle.' + it),
 			isActive: Stats.state.chartType === it,
 			dataType: 'setChartType',
-			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources() && !Stats.isSelectedGBGSources(),
+			disabled: !Stats.isSelectedPlayerSources() && !Stats.isSelectedTreasureSources() && !Stats.isSelectedUnitSources(),
 			value: it
 		}));
 
@@ -662,8 +660,8 @@ let Stats = {
 				'diplomaticGifts', //Space Carrier
 				'shards', //Flying Island
 			].map(it => Stats.RenderTab({
-				name: i18n('Boxes.Stats.Rewards.Source.' + it),
-				title: i18n('Boxes.Stats.Rewards.SourceTitle.' + it),
+				name: FH.t('Boxes.Stats.Rewards.Source.' + it),
+				title: FH.t('Boxes.Stats.Rewards.SourceTitle.' + it),
 				isActive: Stats.state.rewardSource === it,
 				dataType: 'setRewardSource',
 				value: it,
@@ -681,12 +679,12 @@ let Stats = {
 					${Stats.RenderEraSwitchers()}
 				</div>
 				<div class="option-era-wrap text-center">
-					<strong>${i18n('Boxes.Stats.Era')}:</strong> ${btnGroupByEra}<br>
+					<strong>${FH.t('Boxes.Stats.Era')}:</strong> ${btnGroupByEra}<br>
 					<span class="btn-group">
 					${btnSelectAllEra}
 					${btnSelectMyEra}
-					${Technologies.EraNames[CurrentEraID + 1] ? btnSelectNextEra : ''}
-					${CurrentEraID > 2 ? btnSelectTwoLastEra : ''}
+					${Technologies.EraNames[FH.CurrentEraID + 1] ? btnSelectNextEra : ''}
+					${FH.CurrentEraID > 2 ? btnSelectTwoLastEra : ''}
 					${btnSelectAll}
 					${btnSelectNoEra}
 					</span>
@@ -710,8 +708,8 @@ let Stats = {
 
 	formatRange: ()=> {
 		let text = undefined;
-		let dateStart = moment(MainParser.getCurrentDateTime()).subtract(10, 'days');
-		let dateEnd = moment(MainParser.getCurrentDateTime());
+		let dateStart = moment(FH.Main.getCurrentDateTime()).subtract(10, 'days');
+		let dateEnd = moment(FH.Main.getCurrentDateTime());
 
 		if (Stats.DatePickerFrom !== null && Stats.DatePickerTo !== null) {
 			dateStart = moment(Stats.DatePickerFrom);
@@ -719,17 +717,17 @@ let Stats = {
 		}
 
 		if (dateStart.isSame(dateEnd)){
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())){
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		if (Stats.DatePickerFrom == null && Stats.DatePickerTo == null) {
-			text = i18n('Boxes.Stats.DatePicker');
+			text = FH.t('Boxes.Stats.DatePicker');
 		}
 
 		//console.log(dateStart,dateEnd);
@@ -747,7 +745,7 @@ let Stats = {
 		const ages = [
 			'NoAge',
 		].concat(Stats.PlayableEras);
-		const selectedErasI18n = Stats.getSelectedEras().map(era => Technologies.Eras.hasOwnProperty(era) ? i18n('Eras.' + Technologies.Eras[era]) : era).join(',');
+		const selectedErasI18n = Stats.getSelectedEras().map(era => Technologies.Eras.hasOwnProperty(era) ? FH.t('Eras.' + Technologies.Eras[era]) : era).join(',');
 
 		return `<div class="dropdown">
 					<input type="checkbox" class="dropdown-checkbox" id="toggle-era-dropdown" data-type="eraSelectOpen" data-value="${Stats.state.eraSelectOpen ? 0 : 1}" ${Stats.state.eraSelectOpen ? ' checked' : ''}>
@@ -763,7 +761,7 @@ let Stats = {
 							isActive: !!Stats.state.eras.special
 						})}
 						${ages.map(it => Stats.RenderCheckbox({
-							name: i18n('Eras.' + Technologies.Eras[it]),
+							name: FH.t('Eras.' + Technologies.Eras[it]),
 							dataType: 'toggleEra',
 							value: it,
 							isActive: !!Stats.state.eras[it]
@@ -835,10 +833,6 @@ let Stats = {
 	 */
 	updateCharts: async (dates = null) => {
 		dates = {s: Stats.DatePickerFrom, e: Stats.DatePickerTo};
-		if (Stats.isSelectedGBGSources()) {
-			return await Stats.updateCommonChart(Stats.applyDeltaToSeriesIfNeed(await Stats.createGBGSeries()));
-		}
-
 		if (Stats.isSelectedUnitSources()) {
 			return await Stats.updateCommonChart(Stats.applyDeltaToSeriesIfNeed(await Stats.createUnitsSeries()));
 		}
@@ -862,53 +856,6 @@ let Stats = {
 		if (Stats.isSelectedRewardSources) {
 			return Stats.updateRewardCharts(await Stats.createRewardSeries());
 		}
-	},
-
-
-	/**
-	 * Battlegrounds series
-	 *
-	 * @param dates		Date obj with {start, end}
-	 * @returns {Promise<{series: {data, avatarUrl: (string|string), name: string}[]}>}
-	 */
-	createGBGSeries: async () => {
-		let data;
-
-		if(Stats.DatePickerFrom !== null && Stats.DatePickerTo !== null){
-			data = await IndexDB.db.statsGBGPlayers.where('date').between(Stats.DatePickerFrom, Stats.DatePickerTo).sortBy('date');
-		} else {
-			data = await IndexDB.db.statsGBGPlayers.orderBy('date').toArray();
-		}
-
-		const playerCache = await IndexDB.db.statsGBGPlayerCache.toArray();
-
-		const playerKV = playerCache.reduce((acc, it) => {
-			acc[it.id] = it;
-			return acc;
-		}, {});
-
-		const knownIds = Object.keys(data.reduce((acc, row) => {
-			Object.keys(row.players).forEach(it => acc[it] = true);
-			return acc;
-		}, {}));
-
-		const series = knownIds.map(playerId => {
-			const playerInfo = playerKV[playerId] || {name: '' + playerId};
-			const avatarUrl = srcLinks.GetPortrait(playerInfo.avatar);
-			return {
-				name: playerInfo.name,
-				avatarUrl,
-				data: data.map(({date, players}) => {
-					const player = players[playerId];
-					const score = player && (2 * (player.n || 0) + (player.b || 0))
-					return [+date, score];
-				})
-			}
-		});
-
-		return {
-			series,
-		};
 	},
 
 
@@ -951,7 +898,7 @@ let Stats = {
 			const era = unitInfo.minEra;
 			return {
 				name: unitInfo.name,
-				era: era ? i18n('Eras.' + Technologies.Eras[era] + '.short') : '',
+				era: era ? FH.t('Eras.' + Technologies.Eras[era] + '.short') : '',
 				unitId,
 				unitUrl:srcLinks.get("/shared/unit_portraits/armyuniticons_50x50/armyuniticons_50x50_"+unitId+".jpg", true),
 				data: data.map(({date, army}) => [
@@ -988,7 +935,7 @@ let Stats = {
 
 		const series = Stats.getSelectedEras().map(era => {
 			return {
-				name: i18n('Eras.' + Technologies.Eras[era] + '.short'),
+				name: FH.t('Eras.' + Technologies.Eras[era] + '.short'),
 				// Group by era's resources
 				data: data.map(({date, resources}) => [
 					+date,
@@ -1041,9 +988,9 @@ let Stats = {
 			.reduce((acc, it) => acc.concat(it), []);
 
 		const series = selectedResources.map(it => {
-			const goodsData = (GoodsData[it] || {name: it})
+			const goodsData = (FH.Goods.Data[it] || {name: it})
 			return {
-				era: goodsData.era ? i18n('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
+				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
 				name: goodsData.name,
 				data: data.map(({date, resources}) => {
@@ -1080,7 +1027,7 @@ let Stats = {
 
 		const series = Stats.getSelectedEras().map(era => {
 			return {
-				name: i18n('Eras.' + Technologies.Eras[era] + '.short'),
+				name: FH.t('Eras.' + Technologies.Eras[era] + '.short'),
 				// Group by era's resources
 				data: data.map(({date, resources}) => [
 					+date,
@@ -1133,9 +1080,9 @@ let Stats = {
 			.reduce((acc, it) => acc.concat(it), []);
 
 		const series = selectedResources.map(it => {
-			const goodsData = (GoodsData[it] || {name: it})
+			const goodsData = (FH.Goods.Data[it] || {name: it})
 			return {
-				era: goodsData.era ? i18n('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
+				era: goodsData.era ? FH.t('Eras.' + Technologies.Eras[goodsData.era] + '.short') : '',
 				goodsId: it,
 				name: goodsData.name,
 				data: data.map(({date, resources}) => {
@@ -1241,7 +1188,7 @@ let Stats = {
 	 * @returns {Promise<void>}
 	 */
 	updateCommonChart: async ({series, colors, chartType}) => {
-		const title = i18n('Boxes.Stats.SourceTitle.' + Stats.state.source);
+		const title = FH.t('Boxes.Stats.SourceTitle.' + Stats.state.source);
 		const isColumn = chartType === 'column';
 
 		const defaultColors = [
@@ -1301,7 +1248,7 @@ let Stats = {
 						: meta.avatarUrl
 							? `<img src="${meta.avatarUrl}" class="stats-legend-img">`
 							: '';
-					return `<div class="stats-legend-item ${hidden}" data-index="${item.datasetIndex}">
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
 						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
 						${img}
 						<span class="stats-legend-label">${item.text}</span>
@@ -1319,6 +1266,8 @@ let Stats = {
 				});
 			}
 		};
+
+		Stats._lastSeries = series;
 
 		Stats._chartInstance = new Chart(ctx, {
 			type: isColumn ? 'bar' : 'line',
@@ -1351,7 +1300,7 @@ let Stats = {
 							}
 
 							const dateTitle = tooltip.dataPoints?.length
-								? moment(tooltip.dataPoints[0].parsed.x).format(i18n('Date'))
+								? moment(tooltip.dataPoints[0].parsed.x).format(FH.t('Date'))
 								: '';
 
 							const rows = (tooltip.dataPoints || []).map(item => {
@@ -1369,7 +1318,7 @@ let Stats = {
 											: '';
 								return `<li class="flex between">
 									<span class="legend">${img} <span class="stats-tooltip-swatch" style="background:${color};"></span> ${era} ${ds.label}:</span>
-									<b>${HTML.Format(val)}</b>
+									<b>${FH.HTML.Format(val)}</b>
 								</li>`;
 							});
 
@@ -1412,7 +1361,7 @@ let Stats = {
 					x: {
 						type: 'time',
 						time: {
-							tooltipFormat: i18n('Date'),
+							tooltipFormat: FH.t('Date'),
 						},
 					},
 					y: {
@@ -1477,7 +1426,7 @@ let Stats = {
 						text = rewardInfo.name;
 					} else {
 						url = srcLinks.get("/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png",true);
-						text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? i18n("General.Units"):i18n("General.Unit"));
+						text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? FH.t("General.Units"):FH.t("General.Unit"));
 					}
 					pointImage = `<img src="${url}" />`
 					//console.log(rewardInfo)
@@ -1489,7 +1438,7 @@ let Stats = {
 					};
 				case 'good':
 					url = srcLinks.get("/shared/icons/goods/goods.png",true);
-					text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? i18n("General.Goods"):i18n("General.Good"));
+					text = rewardInfo.amount + " " + (rewardInfo.amount > 1 ? FH.t("General.Goods"):FH.t("General.Good"));
 
 					pointImage = `<img src="${url}" />`
 					return {
@@ -1546,7 +1495,7 @@ let Stats = {
 
 
 		return {
-			title: i18n('Boxes.Stats.Rewards.SourceTitle.' + rewardSource),
+			title: FH.t('Boxes.Stats.Rewards.SourceTitle.' + rewardSource),
 			series: [{
 				name: rewardSource,
 				data: serieData
@@ -1600,10 +1549,10 @@ let Stats = {
 					const hidden = meta.data[i]?.hidden ? 'stats-legend-hidden' : '';
 					const pointImage = dataset._pointImages?.[i] || '';
 					const pct = total > 0 ? ((serieData[i].y / total) * 100).toFixed(1) : 0;
-					return `<span class="stats-legend-item ${hidden}" data-index="${i}">
+					return `<span class="stats-legend-item ${hidden} clickable" data-index="${i}">
 						<span class="stats-legend-swatch" style="background:${color};"></span>
 						${pointImage ? `<span class="stats-legend-img">${pointImage}</span>` : ''}
-						<span class="stats-legend-label">${label}: ${HTML.Format(serieData[i].y)} (${pct}%)</span>
+						<span class="stats-legend-label">${label}: ${FH.HTML.Format(serieData[i].y)} (${pct}%)</span>
 					</span>`;
 				}).join('');
 
@@ -1709,6 +1658,40 @@ let Stats = {
 	},
 
 
+	/**
+	 * @param {Array} series - { name, data }
+	 * @param {string} filename
+	 */
+	exportCSV: (series, filename) => {
+		if (!series || !series.length) return;
+		let normalise = (points) => Array.isArray(points) ? { x: points[0], y: points[1] } : points;
+
+		let allTimestamps = [...new Set(series.flatMap(s => s.data.map(points => normalise(points).x)))];
+		allTimestamps.sort((a, b) => a - b);
+
+		let headers = ['Date', ...series.map(s => `"${s.name || s.label || ''}"`)];
+
+		// 1 row per timestamp
+		let rows = allTimestamps.map(timestamp => {
+			let date = moment(timestamp).format('YYYY-MM-DD HH:mm');
+			let values = series.map(s => {
+				let points = s.data.find(p => normalise(p).x === timestamp);
+				return points !== undefined ? normalise(points).y : '';
+			});
+			return [date, ...values].join(';');
+		});
+
+		let csv = [headers.join(';'), ...rows].join('\n');
+		let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		let url = URL.createObjectURL(blob);
+		let a = document.createElement('a');
+		a.href = url;
+		a.download = filename || 'export.csv';
+		a.click();
+		URL.revokeObjectURL(url);
+	},
+
+
 
 
 	/* Handlers */
@@ -1725,7 +1708,7 @@ let Stats = {
 			};
 			return acc;
 		}, {});
-		const timeNow = MainParser.getCurrentDate();
+		const timeNow = FH.Main.getCurrentDate();
 
 		await IndexDB.getDB();
 
@@ -1746,7 +1729,7 @@ let Stats = {
 	addReward: async (type,amount,reward) => {
 		//console.log(`add ${type} -  ${reward}: ${amount}`);
 		IndexDB.db.statsRewards.add({
-			date: MainParser.getCurrentDate(),
+			date: FH.Main.getCurrentDate(),
 			type: type,
 			amount: amount,
 			reward: reward
@@ -1757,10 +1740,394 @@ let Stats = {
 				console.log(error)
 			}
 		});
-	}
+	},
+
+
+
+	// opened from the guildfights leaderboard 
+	ShowGBGCharts: async () => {
+		if (!GuildFights.CurrentGBGRound) return;
+
+		if ($('#StatsGBG').length === 0) {
+			FH.HTML.Box({
+				id: 'StatsGBG',
+				title: FH.t('Boxes.GuildFights.Stats.Title'),
+				auto_close: true,
+				dragdrop: true,
+				minimize: true,
+			});
+
+			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
+				if (GuildFights.Chart) {
+					GuildFights.Chart.destroy();
+					GuildFights.Chart = null;
+				}
+				if (Stats.gbgPlayersChart) {
+					Stats.gbgPlayersChart.destroy();
+					Stats.gbgPlayersChart = null;
+				}
+			});
+		}
+		else {
+			FH.HTML.CloseOpenBox('StatsGBG');
+			return;
+		}
+
+		FH.HTML.AddCssFile('stats');
+		await FH.helper.loadChartJS();
+
+		$('#StatsGBGBody').html(`
+			<div class="tabs">
+				<ul class="horizontal dark-bg">
+					<li class="gbg-tab-guilds active" data-gbgtab="guilds"><span>${FH.t('Boxes.GuildFights.Stats.TabGuilds')}</span></li>
+					<li class="gbg-tab-players" data-gbgtab="players"><span>${FH.t('Boxes.GuildFights.Stats.TabPlayers')}</span></li>
+				</ul>
+			</div>
+			<div id="StatsGBGTabGuilds"></div>
+			<div id="StatsGBGTabPlayers" style="display:none;"></div>
+		`);
+
+		$('#StatsGBGBody').on('click', '[data-gbgtab]', function () {
+			$('#StatsGBGBody li').removeClass('active');
+			$('#StatsGBGTabGuilds, #StatsGBGTabPlayers').hide();
+
+			let tab = $(this).data('gbgtab');
+			$(this).addClass('active');
+
+			if (tab === 'guilds') {
+				$('#StatsGBGTabGuilds').show();
+			} else {
+				$('#StatsGBGTabPlayers').show();
+				if (!Stats.gbgPlayersChart)
+					Stats.buildGBGPlayersChart();
+			}
+		});
+
+		Stats.buildGBGGuildsChart();
+	},
+
+
+	/**
+	 * Render the guild progression chart into #StatsGBGTabGuilds
+	 */
+	buildGBGGuildsChart: async () => {
+		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
+		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
+
+		let guildColors = {};
+		if (GuildFights.SortedColors && GuildFights.MapData?.battlegroundParticipants) {
+			for (let participant of GuildFights.MapData.battlegroundParticipants) {
+				let color = GuildFights.SortedColors.find(x => x.id === participant.participantId);
+				if (color) {
+					guildColors[participant.clan.id] = color.main;
+				}
+			}
+		}
+
+		let datasets = guildNames.map(name => {
+			let guildId = entries.flatMap(e => e.guilds).find(x => x.name === name)?.id;
+			let color = guildColors[guildId] ?? null;
+
+			return {
+				label: FH.HTML.escapeHtml(name),
+				borderColor: color,
+				backgroundColor: color,
+				borderWidth: 1.5,
+				spanGaps: true,
+				data: entries.map(snapshot => {
+					let guild = snapshot.guilds.find(x => x.name === name);
+					if (!guild) return null;
+					return {
+						x: snapshot.time * 1000,
+						y: guild?.points ?? null,
+					};
+				}),
+			};
+		});
+
+		let canvas = document.createElement('canvas');
+		canvas.width = 1050;
+		canvas.height = 450;
+		$('#StatsGBGTabGuilds').empty().append(canvas)
+			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
+			.append($('<div id="GBGStatsDiffs" class="dark-bg" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGGuildsSeries, &apos;gbg-guilds-${moment().format('YYYY-MM-DD')}.csv&apos;)">CSV</button>`));
+
+		if (GuildFights.Chart) GuildFights.Chart.destroy();
+		Stats._lastGBGGuildsSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
+
+		let guildsHtmlLegendPlugin = {
+			id: 'htmlLegend',
+			afterUpdate(chart) {
+				let container = document.getElementById('GBGGuildsLegend');
+				if (!container) return;
+
+				let items = chart.options.plugins.legend.labels.generateLabels(chart);
+				container.innerHTML = items.map(item => {
+					let hidden = item.hidden ? 'stats-legend-hidden' : '';
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
+						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
+						<span class="stats-legend-label">${item.text}</span>
+					</div>`;
+				}).join('');
+
+				container.querySelectorAll('.stats-legend-item').forEach(el => {
+					el.addEventListener('click', () => {
+						let index = Number(el.dataset.index);
+						let meta = chart.getDatasetMeta(index);
+						meta.hidden = !meta.hidden;
+						el.classList.toggle('stats-legend-hidden');
+						chart.update();
+					});
+				});
+			}
+		};
+
+		GuildFights.Chart = new Chart(canvas, {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				animation: false,
+				color: '#ccc',
+				interaction: {
+					mode: 'index',
+					intersect: false,
+				},
+				pointRadius: 0.5,
+				pointHitRadius: 5,
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'hour',
+							displayFormats: { hour: 'dd, HH:mm' }
+						},
+						ticks: { maxRotation: 45 }
+					},
+					y: { beginAtZero: false }
+				},
+				plugins: {
+					legend: {
+						display: false,
+						labels: { }
+					},
+					zoom: {
+						pan: { enabled: true, mode: 'x' },
+						zoom: {
+							wheel: { enabled: true },
+							pinch: { enabled: true },
+							mode: 'x',
+						},
+					},
+				},
+			},
+			plugins: [guildsHtmlLegendPlugin, {
+				id: 'guildDiffDisplay',
+				afterTooltipDraw(chart) {
+					let tooltip = chart.tooltip;
+					if (!tooltip || tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
+						$('#GBGStatsDiffs').empty();
+						return;
+					}
+
+					let rankedGuilds = [...tooltip.dataPoints].filter(p => p.parsed.y !== null);
+					rankedGuilds.sort((a,b)=>{
+						if (a.parsed.y > b.parsed.y) return -1;
+						if (a.parsed.y < b.parsed.y) return 1;
+						return 0;
+					});
+
+					let h = [];
+					for (let i = 0; i < rankedGuilds.length; i++) {
+						let point = rankedGuilds[i];
+						let color = point.dataset.borderColor ?? '#ccc';
+						h.push(`<b style="background:${color}">${point.dataset.label.substring(0,5)}</b>`);
+
+						if (i < rankedGuilds.length - 1) {
+							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
+							h.push(`<span class="text-smaller">${FH.HTML.Format(diff)}</span>`);
+						}
+					}
+
+					$('#GBGStatsDiffs').html(h.join(' '));
+				}
+			}]
+		});
+	},
+
+
+	/**
+	 * Render the player score chart for the current GBG round into #StatsGBGTabPlayers
+	 */
+	buildGBGPlayersChart: async () => {
+		let defaultColors = ['#62a2df','#434357','#8ecf70','#db9255','#7478c7','#d35572','#d4c33e','#2b908f','#d15959','#7acfc8'];
+		let roundStart = moment(GuildFights.CurrentGBGRound * 1000).subtract(11, 'days').toDate();
+		// only display data from the current gbg season
+		let data = await IndexDB.db.statsGBGPlayers.where('date').aboveOrEqual(roundStart).sortBy('date');
+
+		let playerDB = await IndexDB.db.statsGBGPlayerCache.toArray();
+		let players = playerDB.reduce((acc, p) => { acc[p.id] = p; return acc; }, {});
+
+		// collect all player ids
+		let playerIds = Object.keys(data.reduce((acc, row) => {
+			Object.keys(row.players).forEach(p => acc[p] = true);
+			return acc;
+		}, {}));
+
+
+		let datasets = playerIds.map((playerId, i) => {
+			let playerInfo = players[playerId] || { name: '' + playerId };
+			let color = defaultColors[i % defaultColors.length];
+			return {
+				label: playerInfo.name,
+				borderColor: color,
+				borderWidth: 1.5,
+				backgroundColor: color,
+				pointRadius: 0,
+				spanGaps: true,
+				data: data.map(({ date, players }) => {
+					let player = players[playerId];
+					let score = player ? (2 * (player.n || 0) + (player.b || 0)) : null;
+					return { x: +date, y: score };
+				}),
+			};
+		});
+
+		let canvas = document.createElement('canvas');
+		canvas.width = 1050;
+		canvas.height = 450;
+		$('#StatsGBGTabPlayers').empty().append(canvas)
+			.append($('<div id="GBGPlayersLegend" class="chartLegend dark-bg p5" />'))
+			.append($('<div id="GBGPlayersTooltip" class="chartTooltip" style="display:none;" />'))
+			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGPlayersSeries, &apos;gbg-players-${moment().format('YYYY-MM-DD')}.csv&apos;)" title="CSV">CSV</button>`));
+
+		if (Stats.gbgPlayersChart) {
+			Stats.gbgPlayersChart.destroy();
+			Stats.gbgPlayersChart = null;
+		}
+		Stats._lastGBGPlayersSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
+
+		let legendPlugin = {
+			id: 'htmlLegend',
+			afterUpdate(chart) {
+				let container = document.getElementById('GBGPlayersLegend');
+				if (!container) return;
+
+				let items = chart.options.plugins.legend.labels.generateLabels(chart);
+				// sort latest player data by most points
+				items.sort((a, b) => {
+					let lastY = (item) => {
+						let data = chart.data.datasets[item.datasetIndex]?.data;
+						if (!data) return -Infinity;
+						for (let i = data.length - 1; i >= 0; i--) {
+							if (data[i]?.y != null) return data[i].y;
+						}
+						return -Infinity;
+					};
+					return lastY(b) - lastY(a);
+				});
+				container.innerHTML = items.map(item => {
+					let hidden = item.hidden ? 'stats-legend-hidden' : '';
+					let playerInfo = players[playerIds[item.datasetIndex]] || {};
+					let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
+					let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-legend-img">` : '';
+					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
+						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
+						${img}
+						<span class="stats-legend-label">${item.text}</span>
+					</div>`;
+				}).join('');
+
+				container.querySelectorAll('.stats-legend-item').forEach(el => {
+					el.addEventListener('click', () => {
+						let index = Number(el.dataset.index);
+						let meta = chart.getDatasetMeta(index);
+						meta.hidden = !meta.hidden;
+						el.classList.toggle('stats-legend-hidden');
+						chart.update();
+					});
+				});
+			}
+		};
+
+		Stats.gbgPlayersChart = new Chart(canvas, {
+			type: 'line',
+			data: { datasets },
+			options: {
+				animation: false,
+				color: '#ccc',
+				scales: {
+					x: {
+						type: 'time',
+						time: {
+							unit: 'hour',
+							displayFormats: { hour: 'dd, HH:mm' }
+						},
+						ticks: { maxRotation: 45 }
+					},
+					y: { beginAtZero: true }
+				},
+				plugins: {
+					legend: {
+						display: false,
+					},
+					tooltip: {
+						enabled: false,
+						mode: 'nearest',
+						intersect: false,
+						external: ({ chart, tooltip }) => {
+							let el = document.getElementById('GBGPlayersTooltip');
+							if (!el) return;
+
+							if (tooltip.opacity === 0) {
+								el.style.display = 'none';
+								return;
+							}
+
+							let item = tooltip.dataPoints?.[0];
+							if (!item) return;
+
+							let dataSet = item.dataset;
+							let playerInfo = players[playerIds[item.datasetIndex]] || {};
+							let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
+							let img = avatarUrl ? `<img src="${avatarUrl}" class="stats-tooltip-img">` : '';
+							let date = moment(item.parsed.x).format(FH.t('DateTime'));
+
+							el.innerHTML = `<div class="stats-tooltip-title">
+									<span class="stats-tooltip-swatch" style="background:${dataSet.borderColor};"></span>
+									${img} <span>${dataSet.label}:</span>
+								</div>
+								<div class="stats-tooltip-value">${date}: <b>${FH.HTML.Format(item.parsed.y)}</b></div>`;
+
+							let canvasRect = chart.canvas.getBoundingClientRect();
+							let tabRect = document.getElementById('StatsGBGTabPlayers').getBoundingClientRect();
+							let left = canvasRect.left - tabRect.left + tooltip.caretX + 12;
+							let top  = canvasRect.top  - tabRect.top  + tooltip.caretY;
+							el.style.display = 'block';
+							if (left + el.offsetWidth > tabRect.width)
+								left = canvasRect.left - tabRect.left + tooltip.caretX - el.offsetWidth - 12;
+							el.style.left = left + 'px';
+							el.style.top  = top  + 'px';
+						},
+					},
+					zoom: {
+						pan: { enabled: true, mode: 'x' },
+						zoom: {
+							wheel: { enabled: true },
+							pinch: { enabled: true },
+							mode: 'x',
+						},
+					},
+				},
+			},
+			plugins: [legendPlugin]
+		});
+	},
 };
+
+
 let StockAlarm = {
-	Alarms: JSON.parse(localStorage.getItem('StockAlarms') || '[]'),
+	Alarms: JSON.parse(FH.Storage.getItem('StockAlarms') || '[]'),
 	triggered: [],
 	OptionsR: "",
 	OptionsT: "",
@@ -1827,9 +2194,9 @@ let StockAlarm = {
 
 	trigger: (alm) => {
 		StockAlarm.triggered.push({type:alm.type,id:alm.id})
-		HTML.ShowToastMsg({
-			head: i18n('Boxes.LowStock.LowStockHeader'),
-			text: replace(replace(i18n('Boxes.LowStock.LowStockMessage'),'%name%',alm.name),'%amount%',alm.value),
+		FH.HTML.ShowToastMsg({
+			head: FH.t('Boxes.LowStock.LowStockHeader'),
+			text: replace(replace(FH.t('Boxes.LowStock.LowStockMessage'),'%name%',alm.name),'%amount%',alm.value),
 			type: 'warning',
 			hideAfter: 20000,
 		});
@@ -1854,7 +2221,7 @@ let StockAlarm = {
 		let OA = [];
 		era="";
 		setClass = true;
-		for (x of GoodsList) {
+		for (x of FH.Goods.List) {
 			if (era != x.era) {
 				setClass = !setClass;
 				era = x.era;
@@ -1875,11 +2242,11 @@ let StockAlarm = {
 		StockAlarm.OptionsA=OA.join();
 		StockAlarm.OptionsT=OT.join();
 		
-		HTML.AddCssFile('stats');
+		FH.HTML.AddCssFile('stats');
         
-        HTML.Box({
+        FH.HTML.Box({
             id: 'LowStock',
-            title: i18n('Boxes.LowStock.Title'),
+            title: FH.t('Boxes.LowStock.Title'),
             auto_close: true,
             dragdrop: true,
             minimize: true,
@@ -1891,14 +2258,14 @@ let StockAlarm = {
 		htmltext += `<img class="options" data-type="T" src="${srcLinks.get("/shared/icons/reward_icons/reward_icon_treasury_goods.png",true)}">`;
 		htmltext += `<img class="options" data-type="A" src="${srcLinks.get("/shared/icons/reward_icons/reward_icon_all_units.png",true)}"></span>`;
 		htmltext += `<select id="LowStockID">${StockAlarm.OptionsR}</select>`;
-		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add i18n!!
+		htmltext += `<input id="LowStockValue" "type="Number" placeholder="alert threshold">`; //Add Translation!!
 		htmltext += `<span id="LowStockRepeat">`;
-		htmltext += `<img class="options" data-repeat="2" src="${extUrl}js/web/stats/images/once.png">`;
-		htmltext += `<img class="options  selected" data-repeat="1" src="${extUrl}js/web/stats/images/once_per_session.png">`;
-		htmltext += `<img class="options" data-repeat="0" src="${extUrl}js/web/stats/images/always.png"></span>`
+		htmltext += `<img class="options" data-repeat="2" src="${FH.extUrl}js/web/stats/images/once.png">`;
+		htmltext += `<img class="options  selected" data-repeat="1" src="${FH.extUrl}js/web/stats/images/once_per_session.png">`;
+		htmltext += `<img class="options" data-repeat="0" src="${FH.extUrl}js/web/stats/images/always.png"></span>`
 		htmltext += `<span id="LowStockAddBtn" class="btn btn-green" onclick="StockAlarm.addbtn">+</span>`;
 		htmltext += `<table class="foe-table" id="LowStockAlarmsList">`;
-		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add i18n!!
+		htmltext += `<tr><th>type</th><th>name</th><th>threshold</th><th>repeat</th><th></th></tr>` //Add Translation!!
 		htmltext += `</table>`;
 		
 		
@@ -1948,7 +2315,7 @@ let StockAlarm = {
 			value: value,
 			repeat: repeat
 		})
-		localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+		FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 	},
 
 	addline: (type, id, name, value, repeat)=>{
@@ -1969,13 +2336,13 @@ let StockAlarm = {
 		let repeatImg = '';
 		switch (repeat) {
 			case 0: 
-				repeatImg = extUrl + "js/web/stats/images/always.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/always.png";
 				break;
 			case 1:
-				repeatImg = extUrl + "js/web/stats/images/once_per_session.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once_per_session.png";
 				break;
 			case 2:
-				repeatImg = extUrl + "js/web/stats/images/once.png";
+				repeatImg = FH.extUrl + "js/web/stats/images/once.png";
 				break;
 		}
 		html = `<td><img src="${typeImg}"></td>`;
@@ -1992,7 +2359,7 @@ let StockAlarm = {
 		let i = StockAlarm.Alarms.findIndex( x => x.type==type && x.id==id && x.name == name && x.repeat == repeat && x.value == value);
 		if (i>-1) {
 			StockAlarm.Alarms.splice(i,1);
-			localStorage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
+			FH.Storage.setItem("StockAlarms",JSON.stringify(StockAlarm.Alarms));
 			$(`#LowStockType [data-type="${type}"]`).trigger("click");
 			$(`#LowStockRepeat [data-repeat="${repeat}"]`).trigger("click");
 			$(`#LowStockValue`).val(value);

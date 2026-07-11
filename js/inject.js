@@ -16,21 +16,21 @@ function scriptLoaded (src, base) {
 	scripts[base].splice(scripts[base].indexOf(src),1);
 	if (scripts.internal.length == 1) {
 		scripts.internal.splice(scripts.internal.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('foe-helper#loaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#loaded'));
 	}
 	if (scripts.main.length == 1) {
 		scripts.main.splice(scripts.main.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('foe-helper#mainloaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#mainloaded'));
 	}
 	if (scripts.vendor.length == 1) {
 		scripts.vendor.splice(scripts.vendor.indexOf("once"),1);
-		window.dispatchEvent(new CustomEvent('foe-helper#vendors-loaded'));
+		window.dispatchEvent(new CustomEvent('forgehammer#vendors-loaded'));
 	}
 };
 
 inject();
 
-function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate='') {
+function inject (extUrl = chrome.runtime.getURL('')) {
 	/**
 	 * Loads a JavaScript in the website. The returned promise will be resolved once the code has been loaded.
 	 * @param {string} src the URL to load
@@ -69,28 +69,23 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	// check whether jQuery has been loaded in the DOM
 	// => Catch jQuery Loaded event
 	const jQueryLoading = new Promise(resolve => {
-		window.addEventListener('foe-helper#jQuery-loaded', evt => {
+		window.addEventListener('forgehammer#jQuery-loaded', evt => {
 			resolve();
 		}, {capture: false, once: true, passive: true});
 	});
 	const mainLoaded = new Promise(resolve => {
-		window.addEventListener('foe-helper#mainloaded', evt => {
+		window.addEventListener('forgehammer#mainloaded', evt => {
 			resolve();
 		}, {capture: false, once: true, passive: true});
 	});
 	
-	const v = chrome.runtime.getManifest().version + (loadBeta ? '-beta-'+ betaDate:'');
+	const v = chrome.runtime.getManifest().version;
 
-	let   lng = chrome.i18n.getUILanguage();
-	const uLng = localStorage.getItem('user-language');
+	let   lng = navigator.language.split("-")[0];
+	const uLng = localStorage.getItem('Hammer.user-language');
 	
-	// we only need the first part
-	if (lng.indexOf('-') > 0) {
-		lng = lng.split('-')[0];
-	}
-
 	// is there a translation?
-	if (Languages.PossibleLanguages[lng] === undefined) {
+	if (FH.Languages.PossibleLanguages[lng] === undefined) {
 		lng = 'en';
 	}
 
@@ -98,10 +93,10 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		lng = uLng;
 	} else {
 		// so that the language can be read out without having to change it once via the settings
-		localStorage.setItem('user-language', lng);
+		localStorage.setItem('Hammer.user-language', lng);
 	}
 
-	InjectCode(loadBeta, extUrl);
+	InjectCode(extUrl);
 
 
 	let tid = setInterval(InjectCSS, 0);
@@ -109,11 +104,11 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 	function InjectCSS() {
 		// Document loaded
 		if(document.head !== null){
-			let MenuSetting = localStorage.getItem('SelectedMenu');
+			let MenuSetting = localStorage.getItem('Hammer.SelectedMenu');
 			MenuSetting = MenuSetting ? MenuSetting : 'RightBar';
 			let menuCss = "_menu_" + MenuSetting.toLowerCase().replace("bar","");
 
-			let skinCss = localStorage.getItem('HammerSkin')||'themes/hammer';
+			let skinCss = localStorage.getItem('Hammer.HammerSkin')||'themes/hammer';
 
 			let cssFiles = [
 				'boxes',
@@ -137,17 +132,15 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 		}
 	}
 
-	async function InjectCode(loadBeta, extUrl) {
+	async function InjectCode(extUrl) {
 	 	try {
 			// set some global variables
-			localStorage.setItem("HelperBaseData", JSON.stringify({
+			localStorage.setItem("Hammer.ExtBaseData", JSON.stringify({
 				extID: chrome.runtime.id,
 				extUrl: extUrl,
 				GuiLng: lng,
 				extVersion: v,
-				isRelease: true,
-				devMode: `${!('update_url' in chrome.runtime.getManifest())}`,
-				loadBeta: loadBeta
+				devMode: `${!('update_url' in chrome.runtime.getManifest())}`
 			}));
 			
 			// Firefox does not support direct communication with background.js but API injections
@@ -177,7 +170,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 						)
 					);
 				}
-				exportFunction(callBgApi, window, {defineAs: 'foeHelperBgApiHandler'});
+				exportFunction(callBgApi, window, {defineAs: 'FHBgApiHandler'});
 			}
 			// start loading both script-lists
 			const vendorListPromise = loadJsonResource(`${extUrl}js/vendor.json`);
@@ -187,7 +180,7 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 			scriptLoaded("primed", "main");
 			await mainLoaded;
 			
-			// wait for ant and i18n to be loaded
+			// wait jquery to be loaded
 			await jQueryLoading;
 
 			// load all vendor scripts first (unknown order)
@@ -209,8 +202,8 @@ function inject (loadBeta = false, extUrl = chrome.runtime.getURL(''), betaDate=
 			scriptLoaded("primed", "internal");
 
 		} catch (err) {
-			// make sure that the packet buffer in the FoEproxy does not fill up in the event of an incomplete loading.
-			window.dispatchEvent(new CustomEvent('foe-helper#error-loading'));
+			// make sure that the packet buffer in the FH.proxy does not fill up in the event of an incomplete loading.
+			window.dispatchEvent(new CustomEvent('forgehammer#error-loading'));
 		}
 	}
 

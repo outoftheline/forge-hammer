@@ -4,42 +4,40 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
-FoEproxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
+FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+	if (FH.ActiveMap !== 'gg') {
+		$('#GBGActionLogCount').remove();
+		$('#GBGTargets').remove();
+	}
+});
+
+FH.proxy.addMetaHandler('guild_battleground_maps', (xhr, postData) => {
 	GuildFights.ProvinceNames = JSON.parse(xhr.responseText);
 });
 
-FoEproxy.addMetaHandler('battleground_colour', (xhr, postData) => {
+FH.proxy.addMetaHandler('battleground_colour', (xhr, postData) => {
 	GuildFights.Colors = JSON.parse(xhr.responseText);
 	GuildFights.PrepareColors();
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getPlayerLeaderboard', (data, postData) => {
 	GuildFights.HandlePlayerLeaderboard(data.responseData);
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getLeaderboard', (data, postData) => {
 	GuildFights.HandleGuildLeaderboard(data.responseData);
 });
 
-/*FoEproxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
+FH.proxy.addWsHandler('GuildBattlegroundService', 'getAction', (data, postData) => {
 	if (data.responseData.action === "province_conquered")
-		console.log(data.responseData.provinceId);
+		GuildFights.HandleSignals(data.responseData);
 });
 
-FoEproxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
-	return;
-	if ($('#GBGTargets').length === 0) {
-		$('body').append('<div id="GBGTargets"></div>');
-	}
-	if (data.responseData.signal === "focus") {
-		let provinceId = data.responseData.provinceId||0;
-		let provinceName = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
-		$(`<div><small>Next Target</small><span><img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/> <b>${provinceName?.title}</b></span></div>`)
-			.appendTo("#GBGTargets").fadeOut(12000, function(){ $(this).remove();})
-	}
-});*/
+FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data => {
+	GuildFights.HandleSignals(data.responseData);
+});
 
-FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
 	if (data.responseData.stateId === 'unsubscribed') return;
 	GuildFights.GlobalRankingTimeout = setTimeout(()=>{
 		if (data.responseData['stateId'] !== 'participating')	{
@@ -49,23 +47,23 @@ FoEproxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData
 				GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
 				GuildFights.curDateEndFilter = moment.unix(GuildFights.CurrentGBGRound).format('YYYYMMDD');
 			}
-
-			GuildFights.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
+			if (data.responseData['stateId'] !== 'trialSelection')
+				GuildFights.HandlePlayerLeaderboard(data.responseData['playerLeaderboardEntries']);
 		}
 	},500)
 });
 
-FoEproxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
+FH.proxy.addHandler('RankingService', 'searchRanking', (data, postData) => {
 	clearTimeout(GuildFights.GlobalRankingTimeout);
 });
 
-FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
+FH.proxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postData) => {
 	GuildFights.init();
 	GuildFights.CurrentGBGRound = data.responseData.endsAt;
 
 	if (GuildFights.curDateFilter === null || GuildFights.curDateEndFilter === null) {
 		GuildFights.curDateFilter = moment.unix(GuildFights.CurrentGBGRound).subtract(11, 'd').format('YYYYMMDD');
-		GuildFights.curDateEndFilter = MainParser.getCurrentDateTime();
+		GuildFights.curDateEndFilter = FH.Main.getCurrentDateTime();
 	}
 
 	GuildFights.MapData = data.responseData;
@@ -73,16 +71,26 @@ FoEproxy.addHandler('GuildBattlegroundService', 'getBattleground', (data, postDa
 	$('#gildFight-Btn').removeClass('hud-btn-red');
 	$('#selectorCalc-Btn-closed').remove();
 
-	if ($('#ProvinceMap').length > 0) {
+	if ($('#ProvinceMap').length > 0) 
 		ProvinceMap.RefreshSector();
-	}
 
-	// update box when open
-	if ($('#LiveGildFighting').length > 0) {
+	if ($('#LiveGuildFighting').length > 0) 
 		GuildFights.BuildFightContent();
-	}
+
+	setTimeout(function () {
+		if (GuildFights.autoOpen && $('#LiveGuildFighting').length === 0) {
+			GuildFights.ShowGuildBox();
+		}
+	}, 800);
+
+	GuildFights.HandleSignals();
+
+	let container = $('#GBGActionLogCount');
+	if (container.length === 0)
+		container = $('<div id="GBGActionLogCount"></div>').appendTo('body');
+	container.html(GBGActionLog.refreshMenuBadge());
 });
-FoEproxy.addHandler('TimerService', 'getTimers', (data, postData) => {
+FH.proxy.addHandler('TimerService', 'getTimers', (data, postData) => {
 	if (GuildFights.serverOffset !== null) return;
 	data.responseData.filter(t=>t.type=="battlegroundsAttrition").forEach(t=>{
 		if (!t.time) return;
@@ -114,21 +122,25 @@ let GuildFights = {
 	GBGHistoryView: false,
 	GBGRoundGuilds: null,
 	LogDatePicker: null,
+	Signals: null,
 	curDateFilter: null,
 	curDateEndFilter: null,
 	curDetailViewFilter: null,
 	PlayerBoxSettings: {
 		showOnlyActivePlayers: 0,
 	},
+	autoOpen: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.autoOpen || 0,
 	showGuildColumn: 0,
 	showAdjacentSectors: 0,
 	showOwnSectors: 0,
-	showTileColors: JSON.parse(localStorage.getItem("LiveFightSettings"))?.showTileColors || 1,
-	serverOffset: JSON.parse(localStorage.getItem("GuildFights.serverOffset")||"null"),
+	showTileColors: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.showTileColors || 1,
+	showGbgTargets: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.showGbgTargets ?? 1,
+	gbgTargetsPosition: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.gbgTargetsPosition || "bottom",
+	serverOffset: JSON.parse(FH.Storage.getItem("GuildFights.serverOffset")||"null"),
 	discordWebhook: { 
-		url: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhook || "",
-		template: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
-		bulkTemplate: JSON.parse(localStorage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
+		url: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhook || "",
+		template: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
+		bulkTemplate: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
 	},
 	discordCache: null,
 
@@ -138,31 +150,103 @@ let GuildFights = {
 	TabsContent: [],
 
 	/**
-	 *
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let hammerDBName = `ForgeHammer_GBG_${playerID}`;
+		let helperDBName = `FoeHelperDB_GuildFights_${playerID}`;
+		let migrationKey = `ForgeHammer_GBG_Migrated_${playerID}`;
 
-		GuildFights.db = new Dexie(DBName);
+		GuildFights.db = new Dexie(hammerDBName);
 
 		GuildFights.db.version(1).stores({
 			snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
-			history: '&gbground'
-		});
-
-		GuildFights.db.version(21).stores({
+			history: '&gbground',
 			guildHistory: '[gbground+time], gbground'
 		});
 
-		GuildFights.db.open();
+		await GuildFights.db.open();
+
+		// One-time migration from FoeHelperDB_GuildFights_${playerID}
+		if (!FH.Storage.getItem(migrationKey)) {
+			try {
+				// Detect version of the old DB 
+				let oldDBVersion = await new Promise((resolve) => {
+					let request = indexedDB.open(helperDBName);
+					request.onsuccess = (e) => {
+						let version = e.target.result.version;
+						e.target.result.close();
+						resolve(version);
+					};
+					request.onerror = () => resolve(0);
+				});
+
+				// there was no DB - indexedDB.open() created a DB
+				if (oldDBVersion === 0) {
+					indexedDB.deleteDatabase(helperDBName);
+					FH.Storage.setItem(migrationKey, '1');
+					return;
+				}
+
+				let hasGuildHistory = oldDBVersion >= 21;
+				let oldDB = new Dexie(helperDBName);
+
+				oldDB.version(1).stores({
+					snapshots: '&[player_id+gbground+time],[gbground+player_id], [date+player_id], gbground',
+					history: '&gbground'
+				});
+
+				if (hasGuildHistory) {
+					oldDB.version(21).stores({
+						guildHistory: '[gbground+time], gbground'
+					});
+				}
+
+				if (oldDBVersion === 21) {
+					await oldDB.open();
+					const exportBlob = await oldDB.export({ prettyJson: true });
+					const exportJson = JSON.parse(await exportBlob.text());
+					if (exportJson?.data?.databaseVersion === 21) {
+						exportJson.data.databaseVersion = 1;
+						const fixedBlob = new Blob([JSON.stringify(exportJson, null, 2)], { type: 'application/json' });
+						await oldDB.close();
+						await oldDB.delete();
+						oldDB = await Dexie.import(fixedBlob);
+					}
+				} else {
+					await oldDB.open();
+				}
+
+				let [snapshots, history] = await Promise.all([
+					oldDB.snapshots.toArray(),
+					oldDB.history.toArray()
+				]);
+
+				let guildHistory = hasGuildHistory ? await oldDB.guildHistory.toArray() : [];
+
+				await Promise.all([
+					GuildFights.db.snapshots.bulkPut(snapshots),
+					GuildFights.db.history.bulkPut(history),
+					GuildFights.db.guildHistory.bulkPut(guildHistory)
+				]);
+				
+
+
+
+				oldDB.close();
+
+				FH.Storage.setItem(migrationKey, '1');
+			} catch (e) {
+				console.warn('Forge Hammer GBG database migration failed:', e);
+			}
+		}
 	},
 
 	init: () => {
 		GuildFights.GetAlerts();
 
 		if (GuildFights.InjectionLoaded === false) {
-			FoEproxy.addWsHandler('GuildBattlegroundService', 'all', data => {
+			FH.proxy.addWsHandler('GuildBattlegroundService', 'all', data => {
 				if (!data['responseData']?.[0]) return
 				let Pid = data.responseData[0].id || 0;
 				for (let x in data.responseData[0]) {
@@ -170,12 +254,10 @@ let GuildFights = {
 					GuildFights.MapData.map.provinces[Pid][x] = data.responseData[0][x];
 				}
 
-				// Update Tables
-				if ($('#LiveGildFighting').length > 0) {
+				if ($('#LiveGuildFighting').length > 0) {
 					GuildFights.RefreshTable(data['responseData'][0]);
 				}
 
-				// Update Minimap
 				if($('#ProvinceMap').length > 0) {
 					ProvinceMap.RefreshSector(data['responseData'][0]);
 				}
@@ -185,11 +267,164 @@ let GuildFights = {
 	},
 
 
+
+	HandleSignals: (data = null) => {
+		if (!GuildFights.showGbgTargets) return;
+
+		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		
+		if (GuildFights.Signals?.length > 0) {
+			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
+				let province = GuildFights.MapData.map.provinces.find(x => x.id === (GuildFights.Signals[i].provinceId || 0));
+				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
+					GuildFights.Signals.splice(i, 1);
+				}
+				if (GuildFights.Signals[i]?.signal === 'ignore') {
+					GuildFights.Signals.splice(i, 1);
+				}
+			}
+		}
+		
+		if (data) {
+			let provinceId = data.provinceId||0;
+			if (data.signal === "focus") {
+				let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
+				if (province?.ownerId === GuildFights.MapData.currentParticipantId) return;
+
+				GuildFights.Signals.push({provinceId: provinceId, signal: "focus"});
+			}
+			else if (data.signal === undefined || data.signal === "ignore") {
+				let signal = GuildFights.Signals.findIndex(prov => prov.provinceId === provinceId);
+            	if (signal !== -1) GuildFights.Signals.splice(signal, 1);
+			}
+		}
+
+		GuildFights.ShowSignals();
+
+		if (GuildFights.Signals?.length > 0) {
+			if (!GuildFights.SignalsIntervalID)
+				GuildFights.SignalsIntervalID = setInterval(GuildFights.ShowSignals, 1000);
+		}
+		else if (GuildFights.SignalsIntervalID) {
+			clearInterval(GuildFights.SignalsIntervalID);
+			GuildFights.SignalsIntervalID = null;
+		}
+	},
+
+
+	ShowSignals: () => {
+		let signals = GuildFights.Signals || [];
+
+		if (!signals.length || !GuildFights.showGbgTargets || FH.ActiveMap !== 'gg') {
+			$('#GBGTargets').remove();
+			return;
+		}
+
+		let container = $('#GBGTargets');
+		if (container.length === 0)
+			container = $('<div id="GBGTargets"></div>').appendTo('body');
+
+		container.attr('class', `pos-${GuildFights.gbgTargetsPosition}`);
+
+		let activeSignals = new Set();
+
+		let sortedSignals = [...signals].sort((a, b) => {
+			let lockedA = GuildFights.MapData.map.provinces.find(x => x.id === (a.provinceId||0))?.lockedUntil,
+				lockedB = GuildFights.MapData.map.provinces.find(x => x.id === (b.provinceId||0))?.lockedUntil;
+
+			if (lockedA === undefined && lockedB === undefined) return 0;
+			if (lockedA === undefined) return -1;
+			if (lockedB === undefined) return 1;
+
+			return lockedA - lockedB;
+		});
+
+		const maxSignals = 5;
+		let visibleSignals = sortedSignals.slice(0, maxSignals);
+
+		for (let signal of visibleSignals) {
+			let provinceId = signal.provinceId||0;
+			activeSignals.add(`target-${provinceId}`);
+
+			let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
+			let countDownDate = province.lockedUntil ? moment.unix(province.lockedUntil - 2) : null;
+			let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
+			let unlocked = remaining === null || remaining <= 0;
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
+
+			let title = "!!!";
+			
+			if (remaining > 1800 * 1000) {
+				title = FH.t('Boxes.GuildFights.Time') +" "+ countDownDate.add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds").format('HH:mm');
+			}
+			else if (!unlocked) {
+				title = FH.t('Boxes.GuildFights.Count') +" "+ moment.utc(remaining).format('mm:ss');
+			}
+
+			let entry = container.find(`#target-${provinceId}`);
+
+			if (entry.length === 0) {
+				entry = $(`<div id="target-${provinceId}" class="gbgTarget${unlocked ? ' open':''}">
+					<div class="progress"></div>
+					<span class="title">
+					<img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/> 
+					<b>${province.title}</b>
+					</span>
+					<b class="signal-countdown">${title}</b>
+				</div>`);
+			}
+			else {
+				if (unlocked)
+					entry.addClass('open');
+				entry.find('.signal-countdown').text(title);
+			}
+
+			entry.appendTo(container);
+
+			if (unlocked)
+				GuildFights.UpdateSignalProgress(entry.find('.progress'), province.conquestProgress || []);
+		}
+
+		container.children().each(function () {
+			if (!activeSignals.has($(this).attr('id'))) $(this).remove();
+		});
+	},
+
+
+	UpdateSignalProgress: (progressEl, conquestProgress) => {
+		let activeAttackers = new Set();
+
+		for (let p of conquestProgress) {
+			activeAttackers.add(p.participantId);
+
+			let span = progressEl.find(`.attacker-${p.participantId}`);
+			let length = p.progress/p.maxProgress*100;
+
+			let color = GuildFights.SortedColors?.find(e => e.id === p.participantId);
+			if (!color) continue;
+
+			if (span.length > 0) {
+				span.attr("style",`background-color:${color.main};width:${length}%;`);
+				continue;
+			}
+
+			progressEl.append(`<div class="attacker-${p.participantId}" style="background-color:${color.main};width:${length}%;"></div>`);
+		}
+
+		progressEl.find('.attack').each(function () {
+			let match = $(this).attr('class').match(/attacker-(\d+)/),
+				participantId = match ? parseInt(match[1], 10) : null;
+
+			if (participantId === null || !activeAttackers.has(participantId)) $(this).remove();
+		});
+	},
+
+
 	HandlePlayerLeaderboard: async (d) => {
-		// immer zwei vorhalten, für Referenz Daten (LiveUpdate)
-		if (localStorage.getItem('GuildFights.NewAction') !== null) {
-			GuildFights.PrevAction = JSON.parse(localStorage.getItem('GuildFights.NewAction'));
-			GuildFights.PrevActionTimestamp = parseInt(localStorage.getItem('GuildFights.NewActionTimestamp'));
+		// always have two for reference
+		if (FH.Storage.getItem('GuildFights.NewAction') !== null) {
+			GuildFights.PrevAction = JSON.parse(FH.Storage.getItem('GuildFights.NewAction'));
+			GuildFights.PrevActionTimestamp = parseInt(FH.Storage.getItem('GuildFights.NewActionTimestamp'));
 		}
 		else if (GuildFights.NewAction !== null) {
 			GuildFights.PrevAction = GuildFights.NewAction;
@@ -233,10 +468,10 @@ let GuildFights = {
 
 		GuildFights.GBGHistoryView = false;
 		GuildFights.NewAction = players;
-		localStorage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
+		FH.Storage.setItem('GuildFights.NewAction', JSON.stringify(GuildFights.NewAction));
 
 		GuildFights.NewActionTimestamp = moment().unix();
-		localStorage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
+		FH.Storage.setItem('GuildFights.NewActionTimestamp', GuildFights.NewActionTimestamp);
 
 		if ($('#GuildPlayers').length > 0) {
 			GuildFights.BuildPlayerContent(GuildFights.CurrentGBGRound);
@@ -277,110 +512,6 @@ let GuildFights = {
 			);
 			GuildFights.GBGRoundGuilds = null;
 		}
-	},
-
-
-	ShowGBGCharts: async () => {
-		if (!GuildFights.CurrentGBGRound) return;
-
-		if ($('#StatsGBG').length === 0) {
-			HTML.Box({
-				id: 'StatsGBG',
-				title: i18n('Boxes.GuildFights.Stats.Title'),
-				auto_close: true,
-				dragdrop: true,
-				minimize: true,
-			});
-
-			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
-				if (GuildFights.Chart) {
-					GuildFights.Chart.destroy();
-					GuildFights.Chart = null;
-				}
-			});
-		}
-		else {
-			HTML.CloseOpenBox('StatsGBG');
-			return;
-		}
-
-		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
-		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
-
-		let guildColors = {};
-		if (GuildFights.SortedColors && GuildFights.MapData?.battlegroundParticipants) {
-			for (let participant of GuildFights.MapData.battlegroundParticipants) {
-				let color = GuildFights.SortedColors.find(x => x.id === participant.participantId);
-				if (color) {
-					guildColors[participant.clan.id] = color.main;
-				}
-			}
-		}
-
-		// prepare data for chart
-		let datasets = guildNames.map(name => {
-			let guildId = entries.flatMap(e => e.guilds).find(x => x.name === name)?.id;
-			let color = guildColors[guildId] ?? null;
-
-			return {
-				label: name,
-				borderColor: color,
-				backgroundColor: color,
-				spanGaps: true,
-				data: entries.map(snapshot => {
-					let guild = snapshot.guilds.find(x => x.name === name);
-					if (!guild) return null;
-					return {
-						x: snapshot.time * 1000,
-						y: guild?.points ?? null,
-					};
-				}),
-			};
-		});
-
-		await helper.loadChartJS();
-
-		if (GuildFights.Chart) GuildFights.Chart.destroy();
-
-		let canvas = document.createElement('canvas');
-		canvas.width = 600;
-		canvas.height = 400;
-		$('#StatsGBGBody').empty().append(canvas);
-
-		GuildFights.Chart = new Chart(canvas, {
-			type: 'line',
-			data: { datasets: datasets },
-			options: {
-				animation: false,
-				color: '#ccc',
-				interaction: {
-					mode: 'index',
-					intersect: false,
-				},
-				pointRadius: 2,
-				pointHitRadius: 5,
-				scales: {
-					x: {
-						type: 'time',
-						time: {
-							unit: 'hour',
-							displayFormats: { hour: 'dd, HH:mm' }
-						},
-						ticks: { maxRotation: 45 }
-					},
-					y: { beginAtZero: false }
-				},
-				plugins: {
-					legend: { 
-						position: 'bottom', 
-						labels: {
-							boxWidth: 15,
-							pointStyle: 'circle'
-						} 
-					},
-				},
-			}
-		});
 	},
 
 
@@ -452,16 +583,16 @@ let GuildFights = {
 	SetBoxNavigation: async (gbground) => {
 		let h = [];
 		let i = 0;
-		let PlayerBoxSettings = JSON.parse(localStorage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
+		let PlayerBoxSettings = JSON.parse(FH.Storage.getItem('GuildFightsPlayerBoxSettings')) || '{}';
 
 		if (GuildFights.GBGAllRounds === undefined || GuildFights.GBGAllRounds === null) {
-			// get all available GBG entires
-			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).keys();
+			// get all GBG entires, skip those without participation data
+			const gbgRounds = await GuildFights.db.history.where('gbground').above(0).filter(entry => entry.participation && entry.participation.length > 0).primaryKeys();
 			gbgRounds.sort(function (a, b) { return b - a });
 			GuildFights.GBGAllRounds = gbgRounds;
 		}
 
-		//set latest GBG round to show if available and no specific GBG round is set
+		// set latest GBG round to show if available and no specific GBG round is set
 		if (!gbground && GuildFights.GBGAllRounds && GuildFights.GBGAllRounds.length) {
 			gbground = GuildFights.GBGAllRounds[i];
 		}
@@ -477,7 +608,7 @@ let GuildFights = {
 					<select id="gbg-select-gbground">`);
 
 					GuildFights.GBGAllRounds.forEach(week => {
-						h.push(`<option value="${week}"${gbground === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(i18n('Date')) + ` - ` + moment.unix(week).format(i18n('Date')) + `</option>`);
+						h.push(`<option value="${week}"${gbground === week ? ' selected="selected"' : ''}>` + moment.unix(week).subtract(11, 'd').format(FH.t('Date')) + ` - ` + moment.unix(week).format(FH.t('Date')) + `</option>`);
 					});
 
 				h.push(`</select>
@@ -486,9 +617,12 @@ let GuildFights = {
 
 			if (gbground === GuildFights.CurrentGBGRound) {
 				h.push(`<div id="gbgLogFilter">
-							<button class="btn btn-mid" onclick="GuildFights.ShowGBGCharts()">${i18n('Boxes.GuildFights.Stats.Open')}</button>
-							<button id="gbg_filterProgressList" title="${HTML.i18nTooltip(i18n('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
-							<button id="gbg_showLog" class="btn btn-mid">${i18n('Boxes.GuildFights.SnapshotLog')}</button>
+							<button class="btn btn-mid" onclick="Stats.ShowGBGCharts()">${FH.t('Boxes.GuildFights.Stats.Open')}</button>
+							<button id="gbg_filterProgressList" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildFights.ProgressFilterDesc'))}" class="btn btn-mid" disabled>&#8593;</button>
+							<div class="btn-group">
+							<button id="gbg_showLog" class="btn btn-mid">${FH.t('Boxes.GuildFights.SnapshotLog')}</button>
+							<button class="btn btn-mid" onclick="GBGActionLog.toggleWindow()">${FH.t('Boxes.GBGActionLog.Button')}</button>
+							</div>
 						</div>`);
 			}
 			h.push(`</div>`);
@@ -530,11 +664,7 @@ let GuildFights = {
 	},
 
 
-	/**
-	 * Filters the list for players with new progress
-	 */
 	ToggleProgressList: (id) => {
-
 		let elem = $('#GuildPlayersTable > tbody');
 		let nelem = elem.find('tr.new');
 		let act = $('#' + id).hasClass('filtered') ? 'show' : 'hide';
@@ -543,7 +673,7 @@ let GuildFights = {
 			if (nelem.length !== 0) {
 				let oelem = elem.find('tr:not(.new)');
 				GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 1;
-				localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+				FH.Storage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 				$('#GuildPlayersTable > thead .text-warning').hide();
 				oelem.hide();
 				$('#' + id).addClass('filtered btn-green');
@@ -553,7 +683,7 @@ let GuildFights = {
 		else if (act === 'show') {
 			elem.find('tr').show();
 			GuildFights.PlayerBoxSettings.showOnlyActivePlayers = 0;
-			localStorage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
+			FH.Storage.setItem('GuildFightsPlayerBoxSettings', JSON.stringify(GuildFights.PlayerBoxSettings));
 			$('#GuildPlayersTable > thead .text-warning').show();
 			$('#' + id).removeClass('filtered btn-green');
 		}
@@ -584,10 +714,10 @@ let GuildFights = {
 	GetAlertButton: (provId) => {
 		let btn;
 		if (GuildFights.Alerts.find((a) => a.provId == provId) !== undefined) {
-			btn = `<button class="btn btn-slim btn-delete deletealertbutton" data-id="${provId}" data-original-title="${i18n('Boxes.GuildFights.DeleteAlert')}"></button>`;
+			btn = `<button class="btn btn-slim btn-delete deletealertbutton" data-id="${provId}" data-original-title="${FH.t('Boxes.GuildFights.DeleteAlert')}"></button>`;
 		}
 		else {
-			btn = `<button class="btn btn-slim setalertbutton" data-id="${provId}" data-original-title="${i18n('Boxes.GuildFights.SetAlert')}"></button>`;
+			btn = `<button class="btn btn-slim setalertbutton" data-id="${provId}" data-original-title="${FH.t('Boxes.GuildFights.SetAlert')}"></button>`;
 		}
 		return btn;
 	},
@@ -597,23 +727,22 @@ let GuildFights = {
 	 * Creates the box with the data
 	 */
 	ShowGuildBox: (reload) => {
-		if ($('#LiveGildFighting').length === 0) {
-			HTML.Box({
-				id: 'LiveGildFighting',
-				title: i18n('Menu.Gildfight.Title'),
+		if ($('#LiveGuildFighting').length === 0) {
+			FH.HTML.Box({
+				id: 'LiveGuildFighting',
+				title: FH.t('Menu.Gildfight.Title'),
 				auto_close: true,
 				dragdrop: true,
 				resize: true,
 				minimize: true,
-				settings: 'GuildFights.ShowLiveFightSettings()',
+				settings: GuildFights.ShowLiveFightSettings,
 			    //active_maps:"gg"
 			});
 
-			// add css to the dom
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		}
 		else if (!reload) {
-			HTML.CloseOpenBox('LiveGildFighting');
+			FH.HTML.CloseOpenBox('LiveGuildFighting');
 			return;
 		}
 
@@ -625,19 +754,18 @@ let GuildFights = {
 	 * Shows the player overview
 	 */
 	ShowPlayerBox: () => {
-		// Wenn die Box noch nicht da ist, neu erzeugen und in den DOM packen
 		if ($('#GuildPlayers').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GuildPlayers',
-				title: i18n('Boxes.GuildFights.Title'),
+				title: FH.t('Boxes.GuildFights.Title'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-				settings: 'GuildFights.ShowPlayerBoxSettings()',
+				settings: GuildFights.ShowPlayerBoxSettings,
 			    active_maps:"gg",
 			});
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		}
 			
 		if (Settings.GetSetting('ShowGBGPlayerInfo') == false) {
@@ -656,9 +784,9 @@ let GuildFights = {
 			let ptop = null,
 				pright = null;
 
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'GuildPlayersDetailView',
-				title: i18n('Boxes.GuildFights.SnapshotLog'),
+				title: FH.t('Boxes.GuildFights.SnapshotLog'),
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
@@ -676,7 +804,6 @@ let GuildFights = {
 	 * @returns {Promise<void>}
 	 */
 	BuildPlayerContent: async (gbground) => {
-
 		let newRound = false;
 		let updateDetailView = false;
 
@@ -713,13 +840,11 @@ let GuildFights = {
 		});
 
 		if (gbground && gbground !== null && gbground !== GuildFights.CurrentGBGRound) {
-
 			let d = await GuildFights.db.history.where({ gbground: gbground }).toArray();
 			GuildFights.GBGRound = d[0].participation.sort(function (a, b) {
 				return a.rank - b.rank;
 			});
 			histView = true;
-
 		}
 		else {
 			GuildFights.GBGRound = GuildFights.NewAction;
@@ -789,7 +914,7 @@ let GuildFights = {
 			tF += playerNew['battlesWon'];
 			tA += playerNew['attrition']
 
-			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === ExtPlayerID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
+			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
 			b.push('<td style="display:none;">' + playerNew.player_id + '.</td>');
 
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
@@ -838,11 +963,11 @@ let GuildFights = {
 		t.push('<tr>');
 
 		t.push('<th style="display:none;" data-export="Player_ID"></th>');
-		t.push('<th colspan="3" data-export3="Player">' + i18n('Boxes.GuildFights.Player') + '</th>');
-		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + HTML.Format(tN) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + HTML.Format(tF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Total">' + i18n('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + HTML.Format(tNF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Attrition">' + i18n('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + HTML.Format(tA) + ')</strong></th>');
+		t.push('<th colspan="3" data-export3="Player">' + FH.t('Boxes.GuildFights.Player') + '</th>');
+		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Total">' + FH.t('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Attrition">' + FH.t('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
 
 		t.push('<th></th>');
 		t.push('</tr>');
@@ -905,7 +1030,7 @@ let GuildFights = {
 			let time = duration.humanize();
 
 			$('.time-diff').text(
-				HTML.i18nReplacer(i18n('Boxes.GuildFights.LastSnapshot'), { time: time })
+				FH.helper.str.Replacer(FH.t('Boxes.GuildFights.LastSnapshot'), { time: time })
 			);
 		}
 	},
@@ -946,25 +1071,25 @@ let GuildFights = {
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
 
 
-			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(gbground).subtract(11, 'd').format(i18n('DateShort')) + ` - ` + moment.unix(gbground).format(i18n('Date')) + '</div>');
-			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + i18n('Boxes.GuildFights.SnapShotLogDisclaimer') + '</p>')
+			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(gbground).subtract(11, 'd').format(FH.t('DateShort')) + ` - ` + moment.unix(gbground).format(FH.t('Date')) + '</div>');
+			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + FH.t('Boxes.GuildFights.SnapShotLogDisclaimer') + '</p>')
 			h.push('<table id="gbgPlayerLogTable" class="foe-table gbglog"><thead class="sticky">');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + i18n('Boxes.GuildFights.Date') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
-			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${i18n('Boxes.GuildFights.Total')}</th>`);
+			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-playerlog-group">');
 
 			dailyFights.forEach(day => {
-				let id = moment.unix(day.time).format(i18n('DateTime'));
+				let id = moment.unix(day.time).format(FH.t('DateTime'));
 				let sum = (day.battles + day.negotiations * 2);
 				h.push(`<tr id="gbgdetail_${id}" data-gbground="${gbground}" data-player="${player_id}" data-id="${id}">`);
-				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(i18n('Date'))}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${HTML.Format(day.negotiations)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.battles}">${HTML.Format(day.battles)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
+				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(FH.t('Date'))}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
 				h.push('</tr>');
 			});
 
@@ -980,11 +1105,11 @@ let GuildFights = {
 			h.push('<div class="datetimepicker sticky"><button id="gbgLogDatepicker" class="btn">' + GuildFights.formatRange() + '</button></div>');
 			h.push('<table id="GuildFightsLogTable" class="foe-table gbglog"><thead>');
 			h.push('<tr class="sorter-header">');
-			h.push('<th class="is-number" data-type="gbg-log-group">' + i18n('Boxes.GuildFights.Date') + '</th>');
-			h.push('<th class="case-sensitive" data-type="gbg-log-group">' + i18n('Boxes.GuildFights.Player') + '</th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Negotiations')) + '"></span></th>');
-			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + HTML.i18nTooltip(i18n('Boxes.GuildFights.Fights')) + '"></span></th>');
-			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${i18n('Boxes.GuildFights.Total')}</th>`);
+			h.push('<th class="is-number" data-type="gbg-log-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
+			h.push('<th class="case-sensitive" data-type="gbg-log-group">' + FH.t('Boxes.GuildFights.Player') + '</th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
+			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
 
@@ -994,11 +1119,11 @@ let GuildFights = {
 				sumF += e.battles;
 				let sum = (e.battles + e.negotiations * 2);
 				h.push(`<tr  ${e.time === lastDataId ? '' : 'class="spacer"'} data-id="${e.time}" id="gbgtime_${e.time}">`);
-				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
-				h.push(`<td class="case-sensitive" data-text="${helper.str.cleanup(e.name)}">${e.name}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${HTML.Format(e.negotiations)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${e.battles}">${HTML.Format(e.battles)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${sum}">${HTML.Format(sum)}</td>`);
+				h.push(`<td class="is-number" data-number="${e.time}">${moment.unix(e.time).format(FH.t('DateTime'))}</td>`);
+				h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(e.name)}">${e.name}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${FH.HTML.Format(e.negotiations)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.battles}">${FH.HTML.Format(e.battles)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
 				h.push('</tr>');
 				lastDataId = e.time;
 			});
@@ -1072,7 +1197,7 @@ let GuildFights = {
 
 		d.forEach(e => {
 			h.push(`<tr>`);
-			h.push(`<td style="width: ${data.width.a}px">${moment.unix(e.time).format(i18n('DateTime'))}</td>`);
+			h.push(`<td style="width: ${data.width.a}px">${moment.unix(e.time).format(FH.t('DateTime'))}</td>`);
 			h.push(`<td style="width: ${data.width.b}px" class="text-center">${e.negotiations}</td>`);
 			h.push(`<td style="width: ${data.width.c}px" class="text-center">${e.battles}</td>`);
 			h.push(`<td style="width: ${data.width.d}px" class="text-center">${(e.battles + e.negotiations * 2)}</td>`);
@@ -1098,7 +1223,7 @@ let GuildFights = {
 		GuildFights.SetTabs('gbgowned');
 
 		let progress = [], nextup = [],
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		GuildFights.showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 
@@ -1134,10 +1259,10 @@ let GuildFights = {
 		let h = [];
 
 		h.push(`<div class="btn-group">
-			<button class="btn btn-slim copybutton all" onclick="GuildFights.CopyToClipBoard(event)">${i18n('Boxes.GuildFights.SelectAll')}</button>
-			<button class="btn btn-slim dcbutton discord custom" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${i18n('Boxes.GuildFights.DiscordSendSelectionCustom')}" style="display:none;"></button>
-			<button class="btn btn-slim dcbutton discord" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${i18n('Boxes.GuildFights.DiscordSendSelection')}" style="display:none;"></button>
-			<button class="btn btn-slim mapbutton" onclick="ProvinceMap.build()">${i18n('Boxes.GuildFights.OpenMap')}</button>
+			<button class="btn btn-slim copybutton all" onclick="GuildFights.CopyToClipBoard(event)">${FH.t('Boxes.GuildFights.SelectAll')}</button>
+			<button class="btn btn-slim dcbutton discord custom" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendSelectionCustom')}" style="display:none;"></button>
+			<button class="btn btn-slim dcbutton discord" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendSelection')}" style="display:none;"></button>
+			<button class="btn btn-slim mapbutton" onclick="ProvinceMap.build()">${FH.t('Boxes.GuildFights.OpenMap')}</button>
 			</div>
 		</div>`);
 		h.push('<div class="gbg-tabs tabs">');
@@ -1147,7 +1272,7 @@ let GuildFights = {
 		let activeTab = 1;
 		if ($('.gbgprogress.active').length > 0) activeTab = 2;
 
-		$('#LiveGildFighting').find('#LiveGildFightingBody').html(h.join('')).promise().done(function () {
+		$('#LiveGuildFighting').find('#LiveGuildFightingBody').html(h.join('')).promise().done(function () {
 			$('.gbg-tabs').tabslet({ active: activeTab });
 
 			$('.gbg-tabs').on('_after', (e) => {
@@ -1166,7 +1291,7 @@ let GuildFights = {
 				GuildFights.ToggleCopyButton();
 			});
 			// in BuildFightContent(), inside .promise().done(), alongside the existing delegated listeners:
-			$('#LiveGildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
+			$('#LiveGuildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
 				if (ProvinceMap.selectedProvince?.owner) {
 					ProvinceMap.selectedProvince.isSelected = false;
 					ProvinceMap.selectedProvince.updateMapSector();
@@ -1197,14 +1322,14 @@ let GuildFights = {
 
 		progress.push('<div id="progress"><table class="foe-table">');
 		progress.push('<thead><tr>');
-		progress.push('<th class="prov-name" style="user-select:text">' + i18n('Boxes.GuildFights.Province') + '</th>');
+		progress.push('<th class="prov-name" style="user-select:text">' + FH.t('Boxes.GuildFights.Province') + '</th>');
 
 		if (GuildFights.showGuildColumn) {
-			progress.push('<th>' + i18n('Boxes.GuildFights.Owner') + '</th>');
+			progress.push('<th>' + FH.t('Boxes.GuildFights.Owner') + '</th>');
 		}
 
-		progress.push('<th>' + i18n('Boxes.GuildFights.Progress') + '</th>');
-		progress.push('<th>' + i18n('Boxes.GuildFights.RequiredProgress') + '</th>');
+		progress.push('<th>' + FH.t('Boxes.GuildFights.Progress') + '</th>');
+		progress.push('<th>' + FH.t('Boxes.GuildFights.RequiredProgress') + '</th>');
 		progress.push('</tr></thead><tbody>');
 
 		for (let i in mapdata) {
@@ -1220,7 +1345,7 @@ let GuildFights = {
 						let provinceProgress = mapdata[i]['conquestProgress'];
 
 						progress.push(`<tr id="province-${id}" data-id="${id}" data-tab="progress">`);
-						progress.push(`<td title="${i18n('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['main']}"></span> ${mapdata[i]['title']}</b></td>`);
+						progress.push(`<td title="${FH.t('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['main']}"></span> ${mapdata[i]['title']}</b></td>`);
 
 						if (GuildFights.showGuildColumn) 
 							progress.push(`<td>${gbgGuilds[x]['clan']['name']}</td>`);
@@ -1245,7 +1370,7 @@ let GuildFights = {
 				progress.push(`<td><b><span class="province-color" style="background-color:#555"></span> ${mapdata[i]['title']}</b></td>`);
 
 				if (GuildFights.showGuildColumn)
-					progress.push(`<td><em>${i18n('Boxes.GuildFights.NoOwner')}</em></td>`);
+					progress.push(`<td><em>${FH.t('Boxes.GuildFights.NoOwner')}</em></td>`);
 
 				progress.push('<td data-field="' + id + '" class="guild-progress">');
 
@@ -1273,21 +1398,21 @@ let GuildFights = {
 		let nextup = [],
 			mapdata = GuildFights.MapData.map.provinces,
 			gbgGuilds = GuildFights.MapData['battlegroundParticipants'],
-			own = gbgGuilds.find(e => e.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			own = gbgGuilds.find(e => e.clan.id === FH.Guild.ID),
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		GuildFights.showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		GuildFights.showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
 
 		nextup.push(`<div id="nextup"><table class="foe-table">
 			<thead><tr>
-			<th class="prov-name">${i18n('Boxes.GuildFights.Province')}</th>`);
+			<th class="prov-name">${FH.t('Boxes.GuildFights.Province')}</th>`);
 
 		if (GuildFights.showGuildColumn) 
-			nextup.push('<th>' + i18n('Boxes.GuildFights.Owner') + '</th>');
+			nextup.push('<th>' + FH.t('Boxes.GuildFights.Owner') + '</th>');
 		
-		nextup.push(`<th class="time-static w-small">${i18n('Boxes.GuildFights.Time')}</th>
-				<th class="time-dynamic w-small">${i18n('Boxes.GuildFights.Count')}</th>
+		nextup.push(`<th class="time-static w-small">${FH.t('Boxes.GuildFights.Time')}</th>
+				<th class="time-dynamic w-small">${FH.t('Boxes.GuildFights.Count')}</th>
 				<th></th>
 				<th></th>
 			</tr></thead>`);
@@ -1348,7 +1473,7 @@ let GuildFights = {
 				}
 				
 				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''}" data-tab="nextup" data-id=${prov[x].id}>
-					<td class="prov-name" data-original-title="${i18n('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
+					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
 					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span>
 					<span class="battletype ${battleType}"></span>
 					<b>${prov[x].title}</b> 
@@ -1368,9 +1493,9 @@ let GuildFights = {
 					if (GuildFights.discordWebhook.template != '') {
 						let tpl = Discord.WebHooks.find(x => x.name == GuildFights.discordWebhook.template);
 						if (tpl)
-							discordButtons += `<button class="btn btn-slim discord custom" data-original-title="${i18n('Boxes.GuildFights.DiscordSendCustom')}" onclick="Discord.sendGBGSectorCustom(${prov[x]['id']});"></button>`;
+							discordButtons += `<button class="btn btn-slim discord custom" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendCustom')}" onclick="Discord.sendGBGSectorCustom(${prov[x]['id']});"></button>`;
 					}
-					discordButtons += `<button class="btn btn-slim discord" data-original-title="${i18n('Boxes.GuildFights.DiscordSend')}" onclick="Discord.sendGBGSector(${prov[x]['id']});"></button>`;
+					discordButtons += `<button class="btn btn-slim discord" data-original-title="${FH.t('Boxes.GuildFights.DiscordSend')}" onclick="Discord.sendGBGSector(${prov[x]['id']});"></button>`;
 				}
 
 				nextup.push(`<td class="text-right">`);
@@ -1395,13 +1520,13 @@ let GuildFights = {
 		let content = [],
 			provinces = GuildFights.MapData.map.provinces,
 			guilds = GuildFights.MapData.battlegroundParticipants,
-			own = guilds.find(x => x.clan.id === ExtGuildID),
-			LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			own = guilds.find(x => x.clan.id === FH.Guild.ID),
+			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		content.push('<div id="gbgowned"><table class="foe-table">');
 		content.push('<thead><tr>');
-		content.push('<th class="prov-name" style="user-select:text">' + i18n('Boxes.GuildFights.Province') + '</th>');
-		content.push('<th class="time-dynamic">' + i18n('Boxes.GuildFights.Count') + '</th>');
+		content.push('<th class="prov-name" style="user-select:text">' + FH.t('Boxes.GuildFights.Province') + '</th>');
+		content.push('<th class="time-dynamic">' + FH.t('Boxes.GuildFights.Count') + '</th>');
 		content.push('<th>Slots</th>');
 		content.push('<th>VP</th>');
 		content.push('</tr></thead><tbody>');
@@ -1419,16 +1544,12 @@ let GuildFights = {
 			let slotWarning = (province.usedBuildingSlots||0) < province.totalBuildingSlots && province.totalBuildingSlots === 2 ? 'bg-red': ((province.usedBuildingSlots||0) < province.totalBuildingSlots ? 'bg-yellow' : '')
 
 			content.push(`<tr id="time-${province.id}" class="time ${slotWarning}" data-tab="gbgowned" data-id=${province.id}>
-				<td class="prov-name" title="${i18n('Boxes.GuildFights.Owner')}: ${province.owner}">
+				<td class="prov-name" title="${FH.t('Boxes.GuildFights.Owner')}: ${province.owner}">
 					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span> 
 					<b>${province.title}</b> 
 				</td>`);
 
 			GuildFights.UpdateCounter(countDownDate, intervalID, province.id);
-
-			if (GuildFights.showGuildColumn) {
-				content.push(`<td>${province.owner}</td>`);
-			}
 
 			let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
 			content.push(`<td class="time-dynamic"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}">${countDownDate.format('HH:mm:ss')}</span></span></td>`);
@@ -1456,7 +1577,7 @@ let GuildFights = {
 		GuildFights.LogDatePicker = new Litepicker({
 			element: document.getElementById('gbgLogDatepicker'),
 			format: 'YYYYMMDD',
-			lang: MainParser.Language,
+			lang: FH.Main.Language,
 			singleMode: false,
 			splitView: false,
 			numberOfMonths: 1,
@@ -1465,7 +1586,7 @@ let GuildFights = {
 			minDate: moment.unix(GuildFights.CurrentGBGRound).subtract(12, "d").toDate(),
 			maxDate: moment.unix(GuildFights.CurrentGBGRound).toDate(),
 			startDate: moment.unix(GuildFights.CurrentGBGRound).subtract(11, "d").toDate(),
-			endDate: MainParser.getCurrentDateTime(),
+			endDate: FH.Main.getCurrentDateTime(),
 			showWeekNumbers: false,
 			onSelect: async (dateStart, dateEnd) => {
 				GuildFights.curDateFilter = moment(dateStart).format('YYYYMMDD');
@@ -1486,13 +1607,13 @@ let GuildFights = {
 		let dateEnd = moment(GuildFights.curDateEndFilter);
 
 		if (dateStart.isSame(dateEnd)) {
-			text = `${dateStart.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}`;
 		}
 		else if (dateStart.year() !== (dateEnd.year())) {
-			text = `${dateStart.format(i18n('Date'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('Date'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 		else {
-			text = `${dateStart.format(i18n('DateShort'))}` + ' - ' + `${dateEnd.format(i18n('Date'))}`;
+			text = `${dateStart.format(FH.t('DateShort'))}` + ' - ' + `${dateEnd.format(FH.t('Date'))}`;
 		}
 
 		return text;
@@ -1509,13 +1630,13 @@ let GuildFights = {
 		}
 
 		if ($('.timer.highlight-row').length > 0) {
-			$('.copybutton').html(i18n('Boxes.GuildFights.Copy'));
+			$('.copybutton').html(FH.t('Boxes.GuildFights.Copy'));
 			$('.copybutton').removeClass('all');
 			$('.dcbutton').show();
 			if (GuildFights.discordWebhook.bulkTemplate == "")
 				$('.dcbutton.custom').hide();
 		} else {
-			$('.copybutton').html(i18n('Boxes.GuildFights.SelectAll'));
+			$('.copybutton').html(FH.t('Boxes.GuildFights.SelectAll'));
 			$('.copybutton').addClass('all');
 		}
 	},
@@ -1536,25 +1657,25 @@ let GuildFights = {
 		let copy = '';
 		copycache.forEach((mapElem) => {
 			let battleType = mapElem.isAttackBattleType ? '🔴' : '🔵';
-			let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+			let LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 			let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
 			copy += `${moment.unix(mapElem.lockedUntil - 2 - 60 * (GuildFights.serverOffset || 0)).format('HH:mm')} ${showTileColors === 1 ? battleType : ''} ${mapElem.title} \n`;
 		});
 
 		if (copy !== '') {
-			if (GuildFights.serverOffset && localStorage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
-				HTML.ShowToastMsg({
-					head: i18n('Boxes.GuildFights.TimeZoneWarning.Title'),
-					text: i18n('Boxes.GuildFights.TimeZoneWarning.Desc'),		
+			if (GuildFights.serverOffset && FH.Storage.getItem('Guildfights.TimeZoneWarningShown') === null) { // show warning only once
+				FH.HTML.ShowToastMsg({
+					head: FH.t('Boxes.GuildFights.TimeZoneWarning.Title'),
+					text: FH.t('Boxes.GuildFights.TimeZoneWarning.Desc'),		
 					type: 'error',
 					hideAfter: 60000
 				});
-				localStorage.setItem('Guildfights.TimeZoneWarningShown', 'true');
+				FH.Storage.setItem('Guildfights.TimeZoneWarningShown', 'true');
 			}
-			helper.str.copyToClipboard(copy).then(() => {
-				HTML.ShowToastMsg({
-					head: i18n('Boxes.GuildFights.CopyToClipBoard.Title'),
-					text: i18n('Boxes.GuildFights.CopyToClipBoard.Desc'),
+			FH.helper.str.copyToClipboard(copy).then(() => {
+				FH.HTML.ShowToastMsg({
+					head: FH.t('Boxes.GuildFights.CopyToClipBoard.Title'),
+					text: FH.t('Boxes.GuildFights.CopyToClipBoard.Desc'),
 					type: 'success',
 					hideAfter: 5000
 				});
@@ -1637,7 +1758,7 @@ let GuildFights = {
 
 			let c = null;
 
-			if (gbgGuilds[i]['clan']['id'] === ExtGuildID) {
+			if (gbgGuilds[i]['clan']['id'] === FH.Guild.ID) {
 				c = GuildFights.Colors.find(o => (o['id'] === 'own_guild_colour'));
 			} else {
 				c = GuildFights.Colors.find(o => (o['id'] === gbgGuilds[i]['colour']));
@@ -1763,8 +1884,8 @@ let GuildFights = {
 	ShowPlayerBoxSettings: () => {
 		let c = [];
 		let Settings = GuildFights.PlayerBoxSettings;
-		c.push(`<p>${i18n('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportCSV'))}">CSV</button>`);
-		c.push(`<button class="btn" onclick="HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${HTML.i18nTooltip(i18n('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
+		c.push(`<p>${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'csv','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportCSV'))}">CSV</button>`);
+		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('#GuildPlayersTable'),'json','GBG-PlayerList')" title="${FH.HTML.Tooltip(FH.t('Boxes.General.ExportJSON'))}">JSON</button></span></p>`);
 
 		$('#GuildPlayersSettingsBox').html(c.join(''));
 	},
@@ -1773,17 +1894,17 @@ let GuildFights = {
 	GetAlerts: async () => {
 		return new Promise(async (resolve, reject) => {
 			// is alert.js included?
-			if (!Alerts) {
+			if (!FH.Alerts) {
 				resolve();
 			}
 
 			// fetch all alerts and search the id
-			return Alerts.getAll().then((resp) => {
+			return FH.Alerts.getAll().then((resp) => {
 				if (resp.length === 0) {
 					resolve();
 				}
 
-				let currentTime = MainParser.getCurrentDateTime();
+				let currentTime = FH.Main.getCurrentDateTime();
 
 				GuildFights.Alerts = [];
 
@@ -1808,11 +1929,11 @@ let GuildFights = {
 
 	SetAlert: (id) => {
 		let prov = GuildFights.MapData.map.provinces.find(e => e.id === id);
-		let alertOffset = parseInt( JSON.parse(localStorage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
+		let alertOffset = parseInt( JSON.parse(FH.Storage.getItem('LiveFightSettings') )?.gbgAlertOffset || 30);
 
 		const data = {
 			title: prov.title,
-        	body: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
+        	body: FH.helper.str.Replacer(FH.t('Boxes.GuildFights.SaveAlert'), { provinceName: prov.title }),
 			expires: (prov.lockedUntil - alertOffset) * 1000, // -30s * Microtime
 			repeat: -1,
 			persistent: true,
@@ -1822,18 +1943,18 @@ let GuildFights = {
 			actions: null
 		};
 
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'create',
 			data: data,
 		}).then((aId) => {
 			GuildFights.Alerts.push({ provId: id, alertId: aId });
 			$(`#alert-${id}`).html(GuildFights.GetAlertButton(id));
 			$('.tooltip').remove();
-			HTML.ShowToastMsg({
-				head: i18n('Boxes.GuildFights.SaveMessage.Title'),
-				text: HTML.i18nReplacer(i18n('Boxes.GuildFights.SaveMessage.Desc'), { provinceName: prov.title }),
+			FH.HTML.ShowToastMsg({
+				head: FH.t('Boxes.GuildFights.SaveMessage.Title'),
+				text: FH.helper.str.Replacer(FH.t('Boxes.GuildFights.SaveMessage.Desc'), { provinceName: prov.title }),
 				type: 'success',
 				hideAfter: 5000
 			});
@@ -1844,17 +1965,17 @@ let GuildFights = {
 	DeleteAlert: (provId) => {
 		let prov = GuildFights.MapData['map']['provinces'].find(e => e.id === provId);
 		let alert = GuildFights.Alerts.find((a) => a.provId == provId);
-		MainParser.sendExtMessage({
+		FH.Main.sendExtMessage({
 			type: 'alerts',
-			playerId: ExtPlayerID,
+			playerId: FH.Player.ID,
 			action: 'delete',
 			id: alert.alertId,
 		}).then(() => {
 			GuildFights.Alerts = GuildFights.Alerts.filter((a) => a.provId != provId);
 			$('.tooltip').remove();
-			HTML.ShowToastMsg({
-				head: i18n('Boxes.GuildFights.DeleteMessage.Title'),
-				text: HTML.i18nReplacer(i18n('Boxes.GuildFights.DeleteMessage.Desc'), { provinceName: prov.title }),
+			FH.HTML.ShowToastMsg({
+				head: FH.t('Boxes.GuildFights.DeleteMessage.Title'),
+				text: FH.helper.str.Replacer(FH.t('Boxes.GuildFights.DeleteMessage.Desc'), { provinceName: prov.title }),
 				type: 'success',
 				hideAfter: 5000
 			});
@@ -1865,46 +1986,62 @@ let GuildFights = {
 
 	ShowLiveFightSettings: () => {
 		let c = [];
-		let LiveFightSettings = JSON.parse(localStorage.getItem('LiveFightSettings'));
+		let LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 		let showGuildColumn = (LiveFightSettings && LiveFightSettings.showGuildColumn !== undefined) ? LiveFightSettings.showGuildColumn : 0;
 		let showAdjacentSectors = (LiveFightSettings && LiveFightSettings.showAdjacentSectors !== undefined) ? LiveFightSettings.showAdjacentSectors : 1;
 		let showOwnSectors = (LiveFightSettings && LiveFightSettings.showOwnSectors !== undefined) ? LiveFightSettings.showOwnSectors : 0;
 		let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
+		let showGbgTargets = LiveFightSettings?.showGbgTargets ?? 1;
+		let gbgTargetsPosition = LiveFightSettings?.gbgTargetsPosition || 'top';
 		let showServerTime = LiveFightSettings?.showServerTime ?? 0;
 		let gbgAlertOffset = LiveFightSettings?.gbgAlertOffset ?? 30;
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';
 		let discordWebhookTemplate = LiveFightSettings?.discordWebhookTemplate ?? '';
 		let discordWebhookTemplateBulk = LiveFightSettings?.discordWebhookTemplateBulk ?? '';
+		let autoOpen = LiveFightSettings?.autoOpen ?? 0;
 
-		c.push(`<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
-			<label for="showguildcolumn">${i18n('Boxes.GuildFights.ShowOwner')}</label></p>
+		c.push(`<p><input id="gbgautopen" name="gbgautopen" value="1" type="checkbox" ${(autoOpen === 1) ? ' checked="checked"' : ''} /> 
+			<label for="gbgautopen">${FH.t('Boxes.General.AutoOpen')}</label></p>
+			<p><input id="showguildcolumn" name="showguildcolumn" value="1" type="checkbox" ${(showGuildColumn === 1) ? ' checked="checked"' : ''} /> 
+			<label for="showguildcolumn">${FH.t('Boxes.GuildFights.ShowOwner')}</label></p>
 			<p><input id="showAdjacentSectors" name="showAdjacentSectors" value="0" type="checkbox" ${(showAdjacentSectors === 1) ? ' checked="checked"' : ''} /> 
-			<label for="showAdjacentSectors">${i18n('Boxes.GuildFights.ShowAdjacentSectors')}</label></p>
+			<label for="showAdjacentSectors">${FH.t('Boxes.GuildFights.ShowAdjacentSectors')}</label></p>
 			<p><input id="showownsectors" name="showownsectors" value="0" type="checkbox" ${(showOwnSectors === 1) ? ' checked="checked"' : ''} /> 
-			<label for="showownsectors">${i18n('Boxes.GuildFights.ShowOwnSectors')}</label></p>
+			<label for="showownsectors">${FH.t('Boxes.GuildFights.ShowOwnSectors')}</label></p>
 			<p><input id="showtilecolors" name="showtilecolors" value="0" type="checkbox" ${(showTileColors === 1) ? ' checked="checked"' : ''} /> 
-			<label for="showtilecolors">${i18n('Boxes.GuildFights.ShowTileColors')}</label></p>
+			<label for="showtilecolors">${FH.t('Boxes.GuildFights.ShowTileColors')}</label></p>
+
+		<hr>
+
+		<p><input id="showGbgTargets" name="showGbgTargets" value="1" type="checkbox" ${(showGbgTargets === 1) ? ' checked="checked"' : ''} /> 
+		<label for="showGbgTargets">${FH.t('Boxes.GuildFights.GBGTargetsShow')}</label></p>
+		<p><label for="gbgTargetsPosition">${FH.t('Boxes.GuildFights.GBGTargetsPosition')}</label> 
+		<select id="gbgTargetsPosition" name="gbgTargetsPosition">
+			<option value="bottom" ${gbgTargetsPosition === 'bottom' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionBottom')}</option>
+			<option value="top" ${gbgTargetsPosition === 'top' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionTop')}</option>
+			<option value="left" ${gbgTargetsPosition === 'left' ? ' selected="selected"' : ''}>${FH.t('Boxes.GuildFights.GBGTargetsPositionLeft')}</option>
+		</select></p>
 
 		<hr>
 
 		<p><input id="showservertime" name="showservertime" value="0" type="checkbox" ${(showServerTime === 1) ? ' checked="checked"' : ''} /> 
-		<label for="showservertime">${i18n('Boxes.GuildFights.ShowServerTime')}</label></p>
-		<p><label for="serverOffset">${i18n('Boxes.GuildFights.serverOffset')}</label> 
+		<label for="showservertime">${FH.t('Boxes.GuildFights.ShowServerTime')}</label></p>
+		<p><label for="serverOffset">${FH.t('Boxes.GuildFights.serverOffset')}</label> 
 		<input id="serverOffset" name="serverOffset" value="${GuildFights.serverOffset??""}" type="text" maxlength="5" size="5"/></p>
 
 		<hr>
 
-		<p><label for="gbgalertoffset">${i18n('Boxes.GuildFights.AlertOffset')}</label> 
+		<p><label for="gbgalertoffset">${FH.t('Boxes.GuildFights.AlertOffset')}</label> 
 		<input id="gbgalertoffset" name="gbgalertoffset" value="${gbgAlertOffset}" maxlength="3" size="3" type="text" /> </p>
 		
 		<hr>
 
-		<p><label for="gbgWebhook"><b>${i18n('Menu.Discord.Title')}</b></label><br />`);
+		<p><label for="gbgWebhook"><b>${FH.t('Menu.Discord.Title')}</b></label><br />`);
 			if (Discord.WebHooksUrls.length === 0)
-				c.push(`${i18n('Boxes.GuildFights.DiscordSetup')}: <span class="btn btn-slim" onclick="Discord.BuildBox()">${i18n('General.Open')}</span>`);
+				c.push(`${FH.t('Boxes.GuildFights.DiscordSetup')}: <span class="btn btn-slim" onclick="Discord.BuildBox()">${FH.t('General.Open')}</span>`);
 			else {
 				c.push(`<select id="gbgWebhook" name="gbgWebhook">`);
-				c.push(`<option value="">${i18n('General.Choose')}</option>`);
+				c.push(`<option value="">${FH.t('General.Choose')}</option>`);
 				for(let url of Discord.WebHooksUrls) {
 					c.push(`<option value="${url.url}" ${discordWebhook === url.url ? ' selected="selected"' : ''}>${url.name}</option>`);
 				}
@@ -1913,38 +2050,44 @@ let GuildFights = {
 			let templates = Discord.WebHooks.filter(x => x.type == "template");
 			if (Discord.WebHooksUrls.length !== 0 && templates.length != 0) {
 				c.push(`<select id="gbgWebhookTemplate" name="gbgWebhookTemplate">`);
-				c.push(`<option value="">${i18n('Boxes.Discord.TitleNewTemplate')}</option>`);
+				c.push(`<option value="">${FH.t('Boxes.Discord.TitleNewTemplate')}</option>`);
 				for(let tpl of templates) {
 					c.push(`<option value="${tpl.name}" ${discordWebhookTemplate === tpl.name ? ' selected="selected"' : ''}>${tpl.name}</option>`);
 				}
 			c.push(`</select>`);}
 			if (Discord.WebHooksUrls.length !== 0 && templates.length != 0) {
 				c.push(`<select id="gbgWebhookTemplateBulk" name="gbgWebhookTemplateBulk">`);
-				c.push(`<option value="">${i18n('Boxes.GuildFights.DiscordTemplateBulk')}</option>`);
+				c.push(`<option value="">${FH.t('Boxes.GuildFights.DiscordTemplateBulk')}</option>`);
 				for(let tpl of templates) {
 					c.push(`<option value="${tpl.name}" ${discordWebhookTemplateBulk === tpl.name ? ' selected="selected"' : ''}>${tpl.name}</option>`);
 				}
 			c.push(`</select>`);}
 			c.push(`</p>`);
-		c.push(`<p><button onclick="GuildFights.SaveLiveFightSettings()" id="save-livefight-settings" class="btn saveSettings">${i18n('Boxes.GuildFights.SaveSettings')}</button></p>`);
+		c.push(`<p><button onclick="GuildFights.SaveLiveFightSettings()" id="save-livefight-settings" class="btn saveSettings">${FH.t('Boxes.GuildFights.SaveSettings')}</button></p>`);
 
 		
-		$('#LiveGildFightingSettingsBox').html(c.join(''));
+		$('#LiveGuildFightingSettingsBox').html(c.join(''));
 	},
 
 
 	SaveLiveFightSettings: () => {
 		let value = {};
 
+		value.autoOpen = 0;
 		value.showGuildColumn = 0;
 		value.showAdjacentSectors = 0;
 		value.showOwnSectors = 0;
 		value.showTileColors = 0;
+		value.showGbgTargets = 0;
+		value.gbgTargetsPosition = 'bottom';
 		value.showServerTime = 0;
 		value.gbgAlertOffset = 30;
 		value.discordWebhook = '';
 		value.discordWebhookTemplate = '';
 		value.discordWebhookTemplateBulk = '';
+
+		if ($("#gbgautopen").is(':checked')) 
+			value.autoOpen = 1;
 
 		if ($("#showguildcolumn").is(':checked')) 
 			value.showGuildColumn = 1;
@@ -1958,6 +2101,11 @@ let GuildFights = {
 		if ($("#showtilecolors").is(':checked')) 
 			value.showTileColors = 1;
 
+		if ($("#showGbgTargets").is(':checked')) 
+			value.showGbgTargets = 1;
+
+		value.gbgTargetsPosition = $("#gbgTargetsPosition").val();
+
 		if ($("#showservertime").is(':checked')) 
 			value.showServerTime = 1;
 
@@ -1966,10 +2114,13 @@ let GuildFights = {
 		value.discordWebhookTemplate = $("#gbgWebhookTemplate").val();
 		value.discordWebhookTemplateBulk = $("#gbgWebhookTemplateBulk").val();
 				
+		GuildFights.autoOpen = value.autoOpen;
 		GuildFights.showGuildColumn = value.showGuildColumn;
 		GuildFights.showAdjacentSectors = value.showAdjacentSectors;
 		GuildFights.showOwnSectors = value.showOwnSectors;
 		GuildFights.showTileColors = value.showTileColors;
+		GuildFights.showGbgTargets = value.showGbgTargets;
+		GuildFights.gbgTargetsPosition = value.gbgTargetsPosition;
 		GuildFights.showServerTime = value.showServerTime;
 		GuildFights.gbgAlertOffset = value.gbgAlertOffset;
 		GuildFights.discordWebhook.url = value.discordWebhook;
@@ -1978,13 +2129,15 @@ let GuildFights = {
 		GuildFights.serverOffset = parseInt($("#serverOffset").val()) ?? null;
 
 		if (GuildFights.serverOffset != null)
-			localStorage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
+			FH.Storage.setItem('GuildFights.serverOffset', JSON.stringify(GuildFights.serverOffset)) 
 		else
-			localStorage.removeItem('GuildFights.serverOffset');
-		localStorage.setItem('LiveFightSettings', JSON.stringify(value));
+			FH.Storage.removeItem('GuildFights.serverOffset');
+		FH.Storage.setItem('LiveFightSettings', JSON.stringify(value));
 
-		$(`#LiveGildFightingSettingsBox`).fadeToggle('fast', function () {
-			$.when($(`#LiveGildFightingSettingsBox`).remove()).then(
+		GuildFights.ShowSignals();
+
+		$(`#LiveGuildFightingSettingsBox`).fadeToggle('fast', function () {
+			$.when($(`#LiveGuildFightingSettingsBox`).remove()).then(
 				GuildFights.ShowGuildBox(true)
 			);
 		});
@@ -2056,7 +2209,7 @@ let ProvinceMap = {
 
 	build: () => {
 		if ($('#ProvinceMap').length === 0) {
-			HTML.Box({
+			FH.HTML.Box({
 				id: 'ProvinceMap',
 				title: 'ProvinceMap',
 				auto_close: true,
@@ -2067,9 +2220,9 @@ let ProvinceMap = {
 			});
 
 			// add css to the dom
-			HTML.AddCssFile('guildfights');
+			FH.HTML.AddCssFile('guildfights');
 		} else {
-			HTML.CloseOpenBox('ProvinceMap')
+			FH.HTML.CloseOpenBox('ProvinceMap')
 		}
 
 		ProvinceMap.prepare();
@@ -2093,7 +2246,7 @@ let ProvinceMap = {
 			id: 'province-map-wrap',
 		});
 		$(wrapper).html(ProvinceMap.Map);
-		$('#ProvinceMapBody').html(wrapper).append('<span id="zoomGBGMap" class="btn">'+i18n('Boxes.General.Zoom')+'</span><div id="provDetails"></div>');
+		$('#ProvinceMapBody').html(wrapper).append('<span id="zoomGBGMap" class="btn">'+FH.t('Boxes.General.Zoom')+'</span><div id="provDetails"></div>');
 		
 		ProvinceMap.mapDrag();
 
@@ -2458,8 +2611,8 @@ let ProvinceMap = {
 		let elem = document.querySelector("#provDetails");
 		elem.style.borderColor = ProvinceMap.selectedProvince.owner.colors.base;
 		elem.innerHTML = `<h2>${ProvinceMap.selectedProvince.short}</h2>`;
-		elem.innerHTML += `<p>${ProvinceMap.selectedProvince.owner.name}</p>`;
-		elem.innerHTML += `<p>${additionalData.victoryPoints}</p>`;
+		elem.innerHTML+= `<p>${ProvinceMap.selectedProvince.owner.name}</p>`;
+		elem.innerHTML+= `<p>${additionalData.victoryPoints}</p>`;
 	},
 
 	/**
@@ -2527,1101 +2680,137 @@ let ProvinceMap = {
 
 
 	ProvinceData: () => {
-		if (GuildFights.MapData.map['id'] === "volcano_archipelago") {
-			return [{
-				id: 0,
-				name: "A1: Mati Tudokk",
-				connections: [1, 3, 4, 5],
-				short: 'A1M',
-				flag: {
-					x: 1249,
-					y: 816
-				}
-			}, {
-				id: 1,
-				name: "B1: Ofrus Remyr",
-				connections: [0, 2, 6, 7],
-				short: 'B1O',
-				flag: {
-					x: 1327,
-					y: 996
-				}
-			}, {
-				id: 2,
-				name: "C1: Niali Diath",
-				connections: [1, 3, 8, 9],
-				short: 'C1N',
-				flag: {
-					x: 1064,
-					y: 1011
-				}
-			}, {
-				id: 3,
-				name: "D1: Brurat Andgiry",
-				connections: [0, 2, 10, 11],
-				short: 'D1B',
-				flag: {
-					x: 1064,
-					y: 838
-				}
-			}, {
-				id: 4,
-				name: "A2: Sladisk Icro",
-				connections: [0, 5, 11, 12, 13],
-				short: 'A2S',
-				flag: {
-					x: 1269,
-					y: 629
-				}
-			}, {
-				id: 5,
-				name: "A2: Tevomospa",
-				connections: [0, 4, 6, 14, 15],
-				short: 'A2T',
-				flag: {
-					x: 1482,
-					y: 752
-				}
-			}, {
-				id: 6,
-				name: "B2: Subeblic",
-				connections: [1, 5, 7, 16, 17],
-				short: 'B2S',
-				flag: {
-					x: 1541,
-					y: 984
-				}
-			}, {
-				id: 7,
-				name: "B2: Taspac",
-				connections: [1, 6, 8, 18, 19],
-				short: 'B2T',
-				flag: {
-					x: 1375,
-					y: 1197
-				}
-			}, {
-				id: 8,
-				name: "C2: Shadsterning",
-				connections: [2, 7, 9, 20, 21],
-				short: 'C2S',
-				flag: {
-					x: 1052,
-					y: 1217
-				}
-			}, {
-				id: 9,
-				name: "C2: Tayencoria",
-				connections: [2, 8, 10, 22, 23],
-				short: 'C2T',
-				flag: {
-					x: 878,
-					y: 1063
-				}
-			}, {
-				id: 10,
-				name: "D2: Slandmonii",
-				connections: [3, 9, 11, 24, 25],
-				short: 'D2S',
-				flag: {
-					x: 791,
-					y: 794
-				}
-			}, {
-				id: 11,
-				name: "D2: Tachmazer",
-				connections: [3, 4, 10, 26, 27],
-				short: 'D2T',
-				flag: {
-					x: 974,
-					y: 658
-				}
-			}, {
-				id: 12,
-				name: "A3: Vobolize",
-				connections: [4, 13, 27, 28, 29],
-				short: 'A3V',
-				flag: {
-					x: 1218,
-					y: 479
-				}
-			}, {
-				id: 13,
-				name: "A3: Xemga",
-				connections: [4, 12, 14, 30, 31],
-				short: 'A3X',
-				flag: {
-					x: 1407,
-					y: 523
-				}
-			}, {
-				id: 14,
-				name: "A3: Yelili",
-				connections: [5, 13, 15, 32, 33],
-				short: 'A3Y',
-				flag: {
-					x: 1592,
-					y: 574
-				}
-			}, {
-				id: 15,
-				name: "A3: Zamva",
-				connections: [5, 14, 16, 34, 35],
-				short: 'A3Z',
-				flag: {
-					x: 1693,
-					y: 710
-				}
-			}, {
-				id: 16,
-				name: "B3: Vishrain",
-				connections: [6, 15, 17, 36, 37],
-				short: 'B3V',
-				flag: {
-					x: 1721,
-					y: 889
-				}
-			}, {
-				id: 17,
-				name: "B3: Xidorpupo",
-				connections: [6, 16, 18, 38, 39],
-				short: 'B3X',
-				flag: {
-					x: 1800,
-					y: 1241
-				}
-			}, {
-				id: 18,
-				name: "B3: Yepadlic",
-				connections: [7, 17, 19, 40, 41],
-				short: 'B3Y',
-				flag: {
-					x: 1710,
-					y: 1364
-				}
-			}, {
-				id: 19,
-				name: "B3: Zilsier",
-				connections: [7, 18, 20, 42, 43],
-				short: 'B3Z',
-				flag: {
-					x: 1528,
-					y: 1401
-				}
-			}, {
-				id: 20,
-				name: "C3: Vilipne",
-				connections: [8, 19, 21, 44, 45],
-				short: 'C3V',
-				flag: {
-					x: 1132,
-					y: 1382
-				}
-			}, {
-				id: 21,
-				name: "C3: Xistan",
-				connections: [8, 20, 22, 46, 47],
-				short: 'C3X',
-				flag: {
-					x: 851,
-					y: 1343
-				}
-			}, {
-				id: 22,
-				name: "C3: Yeraim",
-				connections: [9, 21, 23, 48, 49],
-				short: 'C3Y',
-				flag: {
-					x: 656,
-					y: 1220
-				}
-			}, {
-				id: 23,
-				name: "C3: Zeaslo",
-				connections: [9, 22, 24, 50, 51],
-				short: 'C3Z',
-				flag: {
-					x: 569,
-					y: 1050
-				}
-			}, {
-				id: 24,
-				name: "D3: Verdebu",
-				connections: [10, 23, 25, 52, 53],
-				short: 'D3V',
-				flag: {
-					x: 592,
-					y: 824
-				}
-			}, {
-				id: 25,
-				name: "D3: Xiwait",
-				connections: [10, 24, 26, 54, 55],
-				short: 'D3X',
-				flag: {
-					x: 628,
-					y: 636
-				}
-			}, {
-				id: 26,
-				name: "D3: Yerat",
-				connections: [11, 25, 27, 56, 57],
-				short: 'D3Y',
-				flag: {
-					x: 788,
-					y: 520
-				}
-			}, {
-				id: 27,
-				name: "D3: Zilgypt",
-				connections: [11, 12, 26, 58, 59],
-				short: 'D3Z',
-				flag: {
-					x: 1025,
-					y: 484
-				}
-			}, {
-				id: 28,
-				name: "A4: Aithmirash",
-				connections: [12, 29, 59],
-				short: 'A4A',
-				flag: {
-					x: 1176,
-					y: 310
-				}
-			}, {
-				id: 29,
-				name: "A4: Bangma Mynia",
-				connections: [12, 28, 30],
-				short: 'A4B',
-				flag: {
-					x: 1337,
-					y: 316
-				}
-			}, {
-				id: 30,
-				name: "A4: Cuatishca",
-				connections: [13, 29, 31],
-				short: 'A4C',
-				flag: {
-					x: 1473,
-					y: 354
-				}
-			}, {
-				id: 31,
-				name: "A4: Dilandmoor",
-				connections: [13, 30, 32],
-				short: 'A4D',
-				flag: {
-					x: 1591,
-					y: 391
-				}
-			}, {
-				id: 32,
-				name: "A4: Eda Monwe",
-				connections: [14, 31, 33],
-				short: 'A4E',
-				flag: {
-					x: 1723,
-					y: 398
-				}
-			}, {
-				id: 33,
-				name: "A4: Frimoandbada",
-				connections: [14, 32, 34],
-				short: 'A4F',
-				flag: {
-					x: 1839,
-					y: 477
-				}
-			}, {
-				id: 34,
-				name: "A4: Gosolastan",
-				connections: [15, 33, 35],
-				short: 'A4G',
-				flag: {
-					x: 1962,
-					y: 590
-				}
-			}, {
-				id: 35,
-				name: "A4: Hasaint",
-				connections: [15, 34, 36],
-				short: 'A4H',
-				flag: {
-					x: 2047,
-					y: 688
-				}
-			}, {
-				id: 36,
-				name: "B4: Aguime",
-				connections: [16, 35, 37],
-				short: 'B4A',
-				flag: {
-					x: 1970,
-					y: 842
-				}
-			}, {
-				id: 37,
-				name: "B4: Bliclatan",
-				connections: [16, 36, 38],
-				short: 'B4B',
-				flag: {
-					x: 1900,
-					y: 1000
-				}
-			}, {
-				id: 38,
-				name: "B4: Capepesk",
-				connections: [17, 37, 39],
-				short: 'B4C',
-				flag: {
-					x: 2088,
-					y: 1176
-				}
-			}, {
-				id: 39,
-				name: "B4: Dalomstates",
-				connections: [17, 38, 40],
-				short: 'B4D',
-				flag: {
-					x: 2138,
-					y: 1361
-				}
-			}, {
-				id: 40,
-				name: "B4: Engthio",
-				connections: [18, 39, 41],
-				short: 'B4E',
-				flag: {
-					x: 2113,
-					y: 1504
-				}
-			}, {
-				id: 41,
-				name: "B4: Fradistaro",
-				connections: [18, 40, 42],
-				short: 'B4F',
-				flag: {
-					x: 1951,
-					y: 1590
-				}
-			}, {
-				id: 42,
-				name: "B4: Goima",
-				connections: [19, 41, 43],
-				short: 'B4G',
-				flag: {
-					x: 1735,
-					y: 1605
-				}
-			}, {
-				id: 43,
-				name: "B4: Hranreka",
-				connections: [19, 42, 44],
-				short: 'B4H',
-				flag: {
-					x: 1416,
-					y: 1454
-				}
-			}, {
-				id: 44,
-				name: "C4: Andgalbou",
-				connections: [20, 43, 45],
-				short: 'C4A',
-				flag: {
-					x: 1240,
-					y: 1521
-				}
-			}, {
-				id: 45,
-				name: "C4: Bangne Casau",
-				connections: [20, 44, 46],
-				short: 'C4B',
-				flag: {
-					x: 1015,
-					y: 1601
-				}
-			}, {
-				id: 46,
-				name: "C4: Cagalpo",
-				connections: [21, 45, 47],
-				short: 'C4C',
-				flag: {
-					x: 808,
-					y: 1586
-				}
-			}, {
-				id: 47,
-				name: "C4: Denwana",
-				connections: [21, 46, 48],
-				short: 'C4D',
-				flag: {
-					x: 686,
-					y: 1532
-				}
-			}, {
-				id: 48,
-				name: "C4: Eastkiabumi",
-				connections: [22, 47, 49],
-				short: 'C4E',
-				flag: {
-					x: 455,
-					y: 1410
-				}
-			}, {
-				id: 49,
-				name: "C4: Francedian",
-				connections: [22, 48, 50],
-				short: 'C4F',
-				flag: {
-					x: 304,
-					y: 1318
-				}
-			}, {
-				id: 50,
-				name: "C4: Guayla",
-				connections: [23, 49, 51],
-				short: 'C4G',
-				flag: {
-					x: 257,
-					y: 1182
-				}
-			}, {
-				id: 51,
-				name: "C4: Hoguay",
-				connections: [23, 50, 52],
-				short: 'C4H',
-				flag: {
-					x: 267,
-					y: 1011
-				}
-			}, {
-				id: 52,
-				name: "D4: Arasruhana",
-				connections: [24, 51, 53],
-				short: 'D4A',
-				flag: {
-					x: 429,
-					y: 851
-				}
-			}, {
-				id: 53,
-				name: "D4: Basainti",
-				connections: [24, 52, 54],
-				short: 'D4B',
-				flag: {
-					x: 300,
-					y: 718
-				}
-			}, {
-				id: 54,
-				name: "D4: Camehermenle",
-				connections: [25, 53, 55],
-				short: 'D4C',
-				flag: {
-					x: 415,
-					y: 600
-				}
-			}, {
-				id: 55,
-				name: "D4: Dabiala",
-				connections: [25, 54, 56],
-				short: 'D4D',
-				flag: {
-					x: 398,
-					y: 465
-				}
-			}, {
-				id: 56,
-				name: "D4: Enggreboka",
-				connections: [26, 55, 57],
-				short: 'D4E',
-				flag: {
-					x: 507,
-					y: 361
-				}
-			}, {
-				id: 57,
-				name: "D4: Finnited",
-				connections: [26, 56, 58],
-				short: 'D4F',
-				flag: {
-					x: 723,
-					y: 311
-				}
-			}, {
-				id: 58,
-				name: "D4: Guayre Bhugera",
-				connections: [27, 57, 59],
-				short: 'D4G',
-				flag: {
-					x: 878,
-					y: 252
-				}
-			}, {
-				id: 59,
-				name: "D4: Honbo",
-				connections: [27, 28, 58],
-				short: 'D4H',
-				flag: {
-					x: 1042,
-					y: 302
-				}
-			}];
-		}
-		else if (GuildFights.MapData.map['id'] === "waterfall_archipelago") {
-			return [{
-				id : 0,
-				name : "X1X: Elleorus",
-				connections : [ 1, 2, 3, 4, 5, 6],
-				short : "X1X",
-				flag : {
-					x : 9,
-					y : 9
-				}
-			}, {
-				id : 1,
-				name : "A2A: Flunnipia",
-				connections : [ 0, 2, 6, 7, 8, 18],
-				short : "A2A",
-				flag : {
-					x : 9,
-					y : 7
-				}
-			}, {
-				id : 2,
-				name : "B2A: Achinata",
-				connections : [ 0, 1, 3, 8, 9, 10],
-				short : "B2A",
-				flag : {
-					x : 11,
-					y : 8
-				}
-			}, {
-				id : 3,
-				name : "C2A: Enudran",
-				connections : [ 0, 2, 4, 10, 11, 12],
-				short : "C2A",
-				flag : {
-					x : 11,
-					y : 10
-				}
-			}, {
-				id : 4,
-				name : "D2A: Zebbeasos",
-				connections : [ 0, 3, 5, 12, 13, 14],
-				short : "D2A",
-				flag : {
-					x : 9,
-					y : 11
-				}
-			}, {
-				id : 5,
-				name : "E2A: Appatinaka",
-				connections : [ 0, 4, 6, 14, 15, 16],
-				short : "E2A",
-				flag : {
-					x : 7,
-					y : 10
-				}
-			}, {
-				id : 6,
-				name : "F2A: Kracciarhia",
-				connections : [ 0, 1, 5, 16, 17, 18],
-				short : "F2A",
-				flag : {
-					x : 7,
-					y : 8
-				}
-			}, {
-				id : 7,
-				name : "A3A: Micianary",
-				connections : [ 1, 8, 18, 19, 20, 36],
-				short : "A3A",
-				flag : {
-					x : 9,
-					y : 5
-				}
-			}, {
-				id : 8,
-				name : "A3B: Sheaggasia",
-				connections : [ 1, 2, 7, 9, 20, 21],
-				short : "A3B",
-				flag : {
-					x : 11,
-					y : 6
-				}
-			}, {
-				id : 9,
-				name : "B3A: Birrathan",
-				connections : [ 2, 8, 10, 21, 22, 23],
-				short : "B3A",
-				flag : {
-					x : 13,
-					y : 7
-				}
-			}, {
-				id : 10,
-				name : "B3B: Phiodeanet",
-				connections : [ 2, 3, 9, 11, 23, 24],
-				short : "B3B",
-				flag : {
-					x : 13,
-					y : 9
-				}
-			}, {
-				id : 11,
-				name : "C3A: Ioppiorion",
-				connections : [ 3, 10, 12, 24, 25, 26],
-				short : "C3A",
-				flag : {
-					x : 13,
-					y : 11
-				}
-			}, {
-				id : 12,
-				name : "C3B: Acyalyn",
-				connections : [ 3, 4, 11, 13, 26, 27],
-				short : "C3B",
-				flag : {
-					x : 11,
-					y : 12
-				}
-			}, {
-				id : 13,
-				name : "D3A: Giobbolas",
-				connections : [ 4, 12, 14, 27, 28, 29],
-				short : "D3A",
-				flag : {
-					x : 9,
-					y : 13
-				}
-			}, {
-				id : 14,
-				name : "D3B: Briocealyn",
-				connections : [ 4, 5, 13, 15, 29, 30],
-				short : "D3B",
-				flag : {
-					x : 7,
-					y : 12
-				}
-			}, {
-				id : 15,
-				name : "E3A: Joviolmond",
-				connections : [ 5, 14, 16, 30, 31, 32],
-				short : "E3A",
-				flag : {
-					x : 5,
-					y : 11
-				}
-			}, {
-				id : 16,
-				name : "E3B: Ciobiathis",
-				connections : [ 5, 6, 15, 17, 32, 33],
-				short : "E3B",
-				flag : {
-					x : 5,
-					y : 9
-				}
-			}, {
-				id : 17,
-				name : "F3A: Preammirune",
-				connections : [ 6, 16, 18, 33, 34, 35],
-				short : "F3A",
-				flag : {
-					x : 5,
-					y : 7
-				}
-			}, {
-				id : 18,
-				name : "F3B: Exoryme",
-				connections : [ 1, 6, 7, 17, 35, 36],
-				short : "F3B",
-				flag : {
-					x : 7,
-					y : 6
-				}
-			}, {
-				id : 19,
-				name : "A4A: Phiossiania",
-				connections : [ 7, 20, 36, 37, 38, 60],
-				short : "A4A",
-				flag : {
-					x : 9,
-					y : 3
-				}
-			}, {
-				id : 20,
-				name : "A4B: Klitimelan",
-				connections : [ 7, 8, 19, 21, 38, 39],
-				short : "A4B",
-				flag : {
-					x : 11,
-					y : 4
-				}
-			}, {
-				id : 21,
-				name : "A4C: Ioclequey",
-				connections : [ 8, 9, 20, 22, 39, 40],
-				short : "A4C",
-				flag : {
-					x : 13,
-					y : 5
-				}
-			}, {
-				id : 22,
-				name : "B4A: Lastaruz",
-				connections : [ 9, 21, 23, 40, 41, 42],
-				short : "B4A",
-				flag : {
-					x : 15,
-					y : 6
-				}
-			}, {
-				id : 23,
-				name : "B4B: Ecceacyre",
-				connections : [ 9, 10, 22, 24, 42, 43],
-				short : "B4B",
-				flag : {
-					x : 15,
-					y : 8
-				}
-			}, {
-				id : 24,
-				name : "B4C: Yastalyn",
-				connections : [ 10, 11, 23, 25, 43, 44],
-				short : "B4C",
-				flag : {
-					x : 15,
-					y : 10
-				}
-			}, {
-				id : 25,
-				name : "C4A: Chobbiabis",
-				connections : [ 11, 24, 26, 44, 45, 46],
-				short : "C4A",
-				flag : {
-					x : 15,
-					y : 12
-				}
-			}, {
-				id : 26,
-				name : "C4B: Mioccijan",
-				connections : [ 11, 12, 25, 27, 46, 47],
-				short : "C4B",
-				flag : {
-					x : 13,
-					y : 13
-				}
-			}, {
-				id : 27,
-				name : "C4C: Cheabenium",
-				connections : [ 12, 13, 26, 28, 47, 48],
-				short : "C4C",
-				flag : {
-					x : 11,
-					y : 14
-				}
-			}, {
-				id : 28,
-				name : "D4A: Diodiriel",
-				connections : [ 13, 27, 29, 48, 49, 50],
-				short : "D4A",
-				flag : {
-					x : 9,
-					y : 15
-				}
-			}, {
-				id : 29,
-				name : "D4B: Driqela",
-				connections : [ 13, 14, 28, 30, 50, 51],
-				short : "D4B",
-				flag : {
-					x : 7,
-					y : 14
-				}
-			}, {
-				id : 30,
-				name : "D4C: Gakiaran",
-				connections : [ 14, 15, 29, 31, 51, 52],
-				short : "D4C",
-				flag : {
-					x : 5,
-					y : 13
-				}
-			}, {
-				id : 31,
-				name : "E4A: Phulotora",
-				connections : [ 15, 30, 32, 52, 53, 54],
-				short : "E4A",
-				flag : {
-					x : 3,
-					y : 12
-				}
-			}, {
-				id : 32,
-				name : "E4B: Iccothaer",
-				connections : [ 15, 16, 31, 33, 54, 55],
-				short : "E4B",
-				flag : {
-					x : 3,
-					y : 10
-				}
-			}, {
-				id : 33,
-				name : "E4C: Ohephere",
-				connections : [ 16, 17, 32, 34, 55, 56],
-				short : "E4C",
-				flag : {
-					x : 3,
-					y : 8
-				}
-			}, {
-				id : 34,
-				name : "F4A: Xioceomos",
-				connections : [ 17, 33, 35, 56, 57, 58],
-				short : "F4A",
-				flag : {
-					x : 3,
-					y : 6
-				}
-			}, {
-				id : 35,
-				name : "F4B: Oglilyn",
-				connections : [ 17, 18, 34, 36, 58, 59],
-				short : "F4B",
-				flag : {
-					x : 5,
-					y : 5
-				}
-			}, {
-				id : 36,
-				name : "F4C: Omialanto",
-				connections : [ 7, 18, 19, 35, 59, 60],
-				short : "F4C",
-				flag : {
-					x : 7,
-					y : 4
-				}
-			}, {
-				id : 37,
-				name : "A5A: Appiatoph",
-				connections : [ 19, 38, 60],
-				short : "A5A",
-				flag : {
-					x : 9,
-					y : 1
-				}
-			}, {
-				id : 38,
-				name : "A5B: Cuchrarahe",
-				connections : [ 19, 20, 37, 39],
-				short : "A5B",
-				flag : {
-					x : 11,
-					y : 2
-				}
-			}, {
-				id : 39,
-				name : "A5C: Eokkirune",
-				connections : [ 20, 21, 38, 40],
-				short : "A5C",
-				flag : {
-					x : 13,
-					y : 3
-				}
-			}, {
-				id : 40,
-				name : "A5D: Iyoriyaz",
-				connections : [ 21, 22, 39, 41],
-				short : "A5D",
-				flag : {
-					x : 15,
-					y : 4
-				}
-			}, {
-				id : 41,
-				name : "B5A: Strennearial",
-				connections : [ 22, 40, 42],
-				short : "B5A",
-				flag : {
-					x : 17,
-					y : 5
-				}
-			}, {
-				id : 42,
-				name : "B5B: Atherathios",
-				connections : [ 22, 23, 41, 43],
-				short : "B5B",
-				flag : {
-					x : 17,
-					y : 7
-				}
-			}, {
-				id : 43,
-				name : "B5C: Xeaxudin",
-				connections : [ 23, 24, 42, 44],
-				short : "B5C",
-				flag : {
-					x : 17,
-					y : 9
-				}
-			}, {
-				id : 44,
-				name : "B5D: Stronolyn",
-				connections : [ 24, 25, 43, 45],
-				short : "B5D",
-				flag : {
-					x : 17,
-					y : 11
-				}
-			}, {
-				id : 45,
-				name : "C5A: Stuckodod",
-				connections : [ 25, 44, 46],
-				short : "C5A",
-				flag : {
-					x : 17,
-					y : 13
-				}
-			}, {
-				id : 46,
-				name : "C5B: Kazazriel",
-				connections : [ 25, 26, 45, 47],
-				short : "C5B",
-				flag : {
-					x : 15,
-					y : 14
-				}
-			}, {
-				id : 47,
-				name : "C5C: Pilitallios",
-				connections : [ 26, 27, 46, 48],
-				short : "C5C",
-				flag : {
-					x : 13,
-					y : 15
-				}
-			}, {
-				id : 48,
-				name : "C5D: Xishotish",
-				connections : [ 27, 28, 47, 49],
-				short : "C5D",
-				flag : {
-					x : 11,
-					y : 16
-				}
-			}, {
-				id : 49,
-				name : "D5A: Gegleadore",
-				connections : [ 28, 48, 50],
-				short : "D5A",
-				flag : {
-					x : 9,
-					y : 17
-				}
-			}, {
-				id : 50,
-				name : "D5B: Wrorrulan",
-				connections : [ 28, 29, 49, 51],
-				short : "D5B",
-				flag : {
-					x : 7,
-					y : 16
-				}
-			}, {
-				id : 51,
-				name : "D5C: Cleoseotophy",
-				connections : [ 29, 30, 50, 52],
-				short : "D5C",
-				flag : {
-					x : 5,
-					y : 15
-				}
-			}, {
-				id : 52,
-				name : "D5D: Equioque",
-				connections : [ 30, 31, 51, 53],
-				short : "D5D",
-				flag : {
-					x : 3,
-					y : 14
-				}
-			}, {
-				id : 53,
-				name : "E5A: Eatutiar",
-				connections : [ 31, 52, 54],
-				short : "E5A",
-				flag : {
-					x : 1,
-					y : 13
-				}
-			}, {
-				id : 54,
-				name : "E5B: Kaweariael",
-				connections : [ 31, 32, 53, 55],
-				short : "E5B",
-				flag : {
-					x : 1,
-					y : 11
-				}
-			}, {
-				id : 55,
-				name : "E5C: Yossiryon",
-				connections : [ 32, 33, 54, 56],
-				short : "E5C",
-				flag : {
-					x : 1,
-					y : 9
-				}
-			},
-				{
-				id : 56,
-				name : "E5D: Ecladorth",
-				connections : [ 33, 34, 55, 57],
-				short : "E5D",
-				flag : {
-					x : 1,
-					y : 7
-				}
-			}, {
-				id : 57,
-				name : "F5A: Udriomond",
-				connections : [ 34, 56, 58],
-				short : "F5A",
-				flag : {
-					x : 1,
-					y : 5
-				}
-			}, {
-				id : 58,
-				name : "F5B: Kreamenon",
-				connections : [ 34, 35, 57, 59],
-				short : "F5B",
-				flag : {
-					x : 3,
-					y : 4
-				}
-			}, {
-				id : 59,
-				name : "F5C: Jokuthriaz",
-				connections : [ 35, 36, 58, 60],
-				short : "F5C",
-				flag : {
-					x : 5,
-					y : 3
-				}
-			}, {
-				id : 60,
-				name : "F5D: Gleoleaterra",
-				connections : [ 19, 36, 37, 59],
-				short : "F5D",
-				flag : {
-					x : 7,
-					y : 2
-				}
-			}];
-		}
+		return ProvinceMap.SectorMapping[GuildFights.MapData.map['id']];
+	},
+
+	SectorMapping : 
+	{
+		"volcano_archipelago":
+		[
+			{"id":0 , "name":"A1: Mati Tudokk"   , "connections":[1,3,4,5]       , "short":"A1M", "flag": {"x":1249, "y": 816} },
+			{"id":1 , "name":"B1: Ofrus Remyr"   , "connections":[0,2,6,7]       , "short":"B1O", "flag": {"x":1327, "y": 996} },
+			{"id":2 , "name":"C1: Niali Diath"   , "connections":[1,3,8,9]       , "short":"C1N", "flag": {"x":1064, "y":1011} },
+			{"id":3 , "name":"D1: Brurat Andgiry", "connections":[0,2,10,11]     , "short":"D1B", "flag": {"x":1064, "y": 838} },
+			{"id":4 , "name":"A2: Sladisk Icro"  , "connections":[0,5,11,12,13]  , "short":"A2S", "flag": {"x":1269, "y": 629} },
+			{"id":5 , "name":"A2: Tevomospa"     , "connections":[0,4,6,14,15]   , "short":"A2T", "flag": {"x":1482, "y": 752} },
+			{"id":6 , "name":"B2: Subeblic"      , "connections":[1,5,7,16,17]   , "short":"B2S", "flag": {"x":1541, "y": 984} },
+			{"id":7 , "name":"B2: Taspac"        , "connections":[1,6,8,18,19]   , "short":"B2T", "flag": {"x":1375, "y":1197} },
+			{"id":8 , "name":"C2: Shadsterning"  , "connections":[2,7,9,20,21]   , "short":"C2S", "flag": {"x":1052, "y":1217} },
+			{"id":9 , "name":"C2: Tayencoria"    , "connections":[2,8,10,22,23]  , "short":"C2T", "flag": {"x": 878, "y":1063} },
+			{"id":10, "name":"D2: Slandmonii"    , "connections":[3,9,11,24,25]  , "short":"D2S", "flag": {"x": 791, "y": 794} },
+			{"id":11, "name":"D2: Tachmazer"     , "connections":[3,4,10,26,27]  , "short":"D2T", "flag": {"x": 974, "y": 658} },
+			{"id":12, "name":"A3: Vobolize"      , "connections":[4,13,27,28,29] , "short":"A3V", "flag": {"x":1218, "y": 479} },
+			{"id":13, "name":"A3: Xemga"         , "connections":[4,12,14,30,31] , "short":"A3X", "flag": {"x":1407, "y": 523} },
+			{"id":14, "name":"A3: Yelili"        , "connections":[5,13,15,32,33] , "short":"A3Y", "flag": {"x":1592, "y": 574} },
+			{"id":15, "name":"A3: Zamva"         , "connections":[5,14,16,34,35] , "short":"A3Z", "flag": {"x":1693, "y": 710} },
+			{"id":16, "name":"B3: Vishrain"      , "connections":[6,15,17,36,37] , "short":"B3V", "flag": {"x":1721, "y": 889} },
+			{"id":17, "name":"B3: Xidorpupo"     , "connections":[6,16,18,38,39] , "short":"B3X", "flag": {"x":1800, "y":1241} },
+			{"id":18, "name":"B3: Yepadlic"      , "connections":[7,17,19,40,41] , "short":"B3Y", "flag": {"x":1710, "y":1364} },
+			{"id":19, "name":"B3: Zilsier"       , "connections":[7,18,20,42,43] , "short":"B3Z", "flag": {"x":1528, "y":1401} },
+			{"id":20, "name":"C3: Vilipne"       , "connections":[8,19,21,44,45] , "short":"C3V", "flag": {"x":1132, "y":1382} },
+			{"id":21, "name":"C3: Xistan"        , "connections":[8,20,22,46,47] , "short":"C3X", "flag": {"x": 851, "y":1343} },
+			{"id":22, "name":"C3: Yeraim"        , "connections":[9,21,23,48,49] , "short":"C3Y", "flag": {"x": 656, "y":1220} },
+			{"id":23, "name":"C3: Zeaslo"        , "connections":[9,22,24,50,51] , "short":"C3Z", "flag": {"x": 569, "y":1050} },
+			{"id":24, "name":"D3: Verdebu"       , "connections":[10,23,25,52,53], "short":"D3V", "flag": {"x": 592, "y": 824} },
+			{"id":25, "name":"D3: Xiwait"        , "connections":[10,24,26,54,55], "short":"D3X", "flag": {"x": 628, "y": 636} },
+			{"id":26, "name":"D3: Yerat"         , "connections":[11,25,27,56,57], "short":"D3Y", "flag": {"x": 788, "y": 520} },
+			{"id":27, "name":"D3: Zilgypt"       , "connections":[11,12,26,58,59], "short":"D3Z", "flag": {"x":1025, "y": 484} },
+			{"id":28, "name":"A4: Aithmirash"    , "connections":[12,29,59]      , "short":"A4A", "flag": {"x":1176, "y": 310} },
+			{"id":29, "name":"A4: Bangma Mynia"  , "connections":[12,28,30]      , "short":"A4B", "flag": {"x":1337, "y": 316} },
+			{"id":30, "name":"A4: Cuatishca"     , "connections":[13,29,31]      , "short":"A4C", "flag": {"x":1473, "y": 354} },
+			{"id":31, "name":"A4: Dilandmoor"    , "connections":[13,30,32]      , "short":"A4D", "flag": {"x":1591, "y": 391} },
+			{"id":32, "name":"A4: Eda Monwe"     , "connections":[14,31,33]      , "short":"A4E", "flag": {"x":1723, "y": 398} },
+			{"id":33, "name":"A4: Frimoandbada"  , "connections":[14,32,34]      , "short":"A4F", "flag": {"x":1839, "y": 477} },
+			{"id":34, "name":"A4: Gosolastan"    , "connections":[15,33,35]      , "short":"A4G", "flag": {"x":1962, "y": 590} },
+			{"id":35, "name":"A4: Hasaint"       , "connections":[15,34,36]      , "short":"A4H", "flag": {"x":2047, "y": 688} },
+			{"id":36, "name":"B4: Aguime"        , "connections":[16,35,37]      , "short":"B4A", "flag": {"x":1970, "y": 842} },
+			{"id":37, "name":"B4: Bliclatan"     , "connections":[16,36,38]      , "short":"B4B", "flag": {"x":1900, "y":1000} },
+			{"id":38, "name":"B4: Capepesk"      , "connections":[17,37,39]      , "short":"B4C", "flag": {"x":2088, "y":1176} },
+			{"id":39, "name":"B4: Dalomstates"   , "connections":[17,38,40]      , "short":"B4D", "flag": {"x":2138, "y":1361} },
+			{"id":40, "name":"B4: Engthio"       , "connections":[18,39,41]      , "short":"B4E", "flag": {"x":2113, "y":1504} },
+			{"id":41, "name":"B4: Fradistaro"    , "connections":[18,40,42]      , "short":"B4F", "flag": {"x":1951, "y":1590} },
+			{"id":42, "name":"B4: Goima"         , "connections":[19,41,43]      , "short":"B4G", "flag": {"x":1735, "y":1605} },
+			{"id":43, "name":"B4: Hranreka"      , "connections":[19,42,44]      , "short":"B4H", "flag": {"x":1416, "y":1454} },
+			{"id":44, "name":"C4: Andgalbou"     , "connections":[20,43,45]      , "short":"C4A", "flag": {"x":1240, "y":1521} },
+			{"id":45, "name":"C4: Bangne Casau"  , "connections":[20,44,46]      , "short":"C4B", "flag": {"x":1015, "y":1601} },
+			{"id":46, "name":"C4: Cagalpo"       , "connections":[21,45,47]      , "short":"C4C", "flag": {"x": 808, "y":1586} },
+			{"id":47, "name":"C4: Denwana"       , "connections":[21,46,48]      , "short":"C4D", "flag": {"x": 686, "y":1532} },
+			{"id":48, "name":"C4: Eastkiabumi"   , "connections":[22,47,49]      , "short":"C4E", "flag": {"x": 455, "y":1410} },
+			{"id":49, "name":"C4: Francedian"    , "connections":[22,48,50]      , "short":"C4F", "flag": {"x": 304, "y":1318} },
+			{"id":50, "name":"C4: Guayla"        , "connections":[23,49,51]      , "short":"C4G", "flag": {"x": 257, "y":1182} },
+			{"id":51, "name":"C4: Hoguay"        , "connections":[23,50,52]      , "short":"C4H", "flag": {"x": 267, "y":1011} },
+			{"id":52, "name":"D4: Arasruhana"    , "connections":[24,51,53]      , "short":"D4A", "flag": {"x": 429, "y": 851} },
+			{"id":53, "name":"D4: Basainti"      , "connections":[24,52,54]      , "short":"D4B", "flag": {"x": 300, "y": 718} },
+			{"id":54, "name":"D4: Camehermenle"  , "connections":[25,53,55]      , "short":"D4C", "flag": {"x": 415, "y": 600} },
+			{"id":55, "name":"D4: Dabiala"       , "connections":[25,54,56]      , "short":"D4D", "flag": {"x": 398, "y": 465} },
+			{"id":56, "name":"D4: Enggreboka"    , "connections":[26,55,57]      , "short":"D4E", "flag": {"x": 507, "y": 361} },
+			{"id":57, "name":"D4: Finnited"      , "connections":[26,56,58]      , "short":"D4F", "flag": {"x": 723, "y": 311} },
+			{"id":58, "name":"D4: Guayre Bhugera", "connections":[27,57,59]      , "short":"D4G", "flag": {"x": 878, "y": 252} },
+			{"id":59, "name":"D4: Honbo"         , "connections":[27,28,58]      , "short":"D4H", "flag": {"x":1042, "y": 302} }
+		],
+		"waterfall_archipelago":
+		[
+			{"id":0 , "name":"X1X: Elleorus"    , "connections":[1,2,3,4,5,6]      , "short":"X1X", "flag": {"x": 9, "y": 9} },
+			{"id":1 , "name":"A2A: Flunnipia"   , "connections":[0,2,6,7,8,18]     , "short":"A2A", "flag": {"x": 9, "y": 7} },
+			{"id":2 , "name":"B2A: Achinata"    , "connections":[0,1,3,8,9,10]     , "short":"B2A", "flag": {"x":11, "y": 8} },
+			{"id":3 , "name":"C2A: Enudran"     , "connections":[0,2,4,10,11,12]   , "short":"C2A", "flag": {"x":11, "y":10} },
+			{"id":4 , "name":"D2A: Zebbeasos"   , "connections":[0,3,5,12,13,14]   , "short":"D2A", "flag": {"x": 9, "y":11} },
+			{"id":5 , "name":"E2A: Appatinaka"  , "connections":[0,4,6,14,15,16]   , "short":"E2A", "flag": {"x": 7, "y":10} },
+			{"id":6 , "name":"F2A: Kracciarhia" , "connections":[0,1,5,16,17,18]   , "short":"F2A", "flag": {"x": 7, "y": 8} },
+			{"id":7 , "name":"A3A: Micianary"   , "connections":[1,8,18,19,20,36]  , "short":"A3A", "flag": {"x": 9, "y": 5} },
+			{"id":8 , "name":"A3B: Sheaggasia"  , "connections":[1,2,7,9,20,21]    , "short":"A3B", "flag": {"x":11, "y": 6} },
+			{"id":9 , "name":"B3A: Birrathan"   , "connections":[2,8,10,21,22,23]  , "short":"B3A", "flag": {"x":13, "y": 7} },
+			{"id":10, "name":"B3B: Phiodeanet"  , "connections":[2,3,9,11,23,24]   , "short":"B3B", "flag": {"x":13, "y": 9} },
+			{"id":11, "name":"C3A: Ioppiorion"  , "connections":[3,10,12,24,25,26] , "short":"C3A", "flag": {"x":13, "y":11} },
+			{"id":12, "name":"C3B: Acyalyn"     , "connections":[3,4,11,13,26,27]  , "short":"C3B", "flag": {"x":11, "y":12} },
+			{"id":13, "name":"D3A: Giobbolas"   , "connections":[4,12,14,27,28,29] , "short":"D3A", "flag": {"x": 9, "y":13} },
+			{"id":14, "name":"D3B: Briocealyn"  , "connections":[4,5,13,15,29,30]  , "short":"D3B", "flag": {"x": 7, "y":12} },
+			{"id":15, "name":"E3A: Joviolmond"  , "connections":[5,14,16,30,31,32] , "short":"E3A", "flag": {"x": 5, "y":11} },
+			{"id":16, "name":"E3B: Ciobiathis"  , "connections":[5,6,15,17,32,33]  , "short":"E3B", "flag": {"x": 5, "y": 9} },
+			{"id":17, "name":"F3A: Preammirune" , "connections":[6,16,18,33,34,35] , "short":"F3A", "flag": {"x": 5, "y": 7} },
+			{"id":18, "name":"F3B: Exoryme"     , "connections":[1,6,7,17,35,36]   , "short":"F3B", "flag": {"x": 7, "y": 6} },
+			{"id":19, "name":"A4A: Phiossiania" , "connections":[7,20,36,37,38,60] , "short":"A4A", "flag": {"x": 9, "y": 3} },
+			{"id":20, "name":"A4B: Klitimelan"  , "connections":[7,8,19,21,38,39]  , "short":"A4B", "flag": {"x":11, "y": 4} },
+			{"id":21, "name":"A4C: Ioclequey"   , "connections":[8,9,20,22,39,40]  , "short":"A4C", "flag": {"x":13, "y": 5} },
+			{"id":22, "name":"B4A: Lastaruz"    , "connections":[9,21,23,40,41,42] , "short":"B4A", "flag": {"x":15, "y": 6} },
+			{"id":23, "name":"B4B: Ecceacyre"   , "connections":[9,10,22,24,42,43] , "short":"B4B", "flag": {"x":15, "y": 8} },
+			{"id":24, "name":"B4C: Yastalyn"    , "connections":[10,11,23,25,43,44], "short":"B4C", "flag": {"x":15, "y":10} },
+			{"id":25, "name":"C4A: Chobbiabis"  , "connections":[11,24,26,44,45,46], "short":"C4A", "flag": {"x":15, "y":12} },
+			{"id":26, "name":"C4B: Mioccijan"   , "connections":[11,12,25,27,46,47], "short":"C4B", "flag": {"x":13, "y":13} },
+			{"id":27, "name":"C4C: Cheabenium"  , "connections":[12,13,26,28,47,48], "short":"C4C", "flag": {"x":11, "y":14} },
+			{"id":28, "name":"D4A: Diodiriel"   , "connections":[13,27,29,48,49,50], "short":"D4A", "flag": {"x": 9, "y":15} },
+			{"id":29, "name":"D4B: Driqela"     , "connections":[13,14,28,30,50,51], "short":"D4B", "flag": {"x": 7, "y":14} },
+			{"id":30, "name":"D4C: Gakiaran"    , "connections":[14,15,29,31,51,52], "short":"D4C", "flag": {"x": 5, "y":13} },
+			{"id":31, "name":"E4A: Phulotora"   , "connections":[15,30,32,52,53,54], "short":"E4A", "flag": {"x": 3, "y":12} },
+			{"id":32, "name":"E4B: Iccothaer"   , "connections":[15,16,31,33,54,55], "short":"E4B", "flag": {"x": 3, "y":10} },
+			{"id":33, "name":"E4C: Ohephere"    , "connections":[16,17,32,34,55,56], "short":"E4C", "flag": {"x": 3, "y": 8} },
+			{"id":34, "name":"F4A: Xioceomos"   , "connections":[17,33,35,56,57,58], "short":"F4A", "flag": {"x": 3, "y": 6} },
+			{"id":35, "name":"F4B: Oglilyn"     , "connections":[17,18,34,36,58,59], "short":"F4B", "flag": {"x": 5, "y": 5} },
+			{"id":36, "name":"F4C: Omialanto"   , "connections":[7,18,19,35,59,60] , "short":"F4C", "flag": {"x": 7, "y": 4} },
+			{"id":37, "name":"A5A: Appiatoph"   , "connections":[19,38,60]         , "short":"A5A", "flag": {"x": 9, "y": 1} },
+			{"id":38, "name":"A5B: Cuchrarahe"  , "connections":[19,20,37,39]      , "short":"A5B", "flag": {"x":11, "y": 2} },
+			{"id":39, "name":"A5C: Eokkirune"   , "connections":[20,21,38,40]      , "short":"A5C", "flag": {"x":13, "y": 3} },
+			{"id":40, "name":"A5D: Iyoriyaz"    , "connections":[21,22,39,41]      , "short":"A5D", "flag": {"x":15, "y": 4} },
+			{"id":41, "name":"B5A: Strennearial", "connections":[22,40,42]         , "short":"B5A", "flag": {"x":17, "y": 5} },
+			{"id":42, "name":"B5B: Atherathios" , "connections":[22,23,41,43]      , "short":"B5B", "flag": {"x":17, "y": 7} },
+			{"id":43, "name":"B5C: Xeaxudin"    , "connections":[23,24,42,44]      , "short":"B5C", "flag": {"x":17, "y": 9} },
+			{"id":44, "name":"B5D: Stronolyn"   , "connections":[24,25,43,45]      , "short":"B5D", "flag": {"x":17, "y":11} },
+			{"id":45, "name":"C5A: Stuckodod"   , "connections":[25,44,46]         , "short":"C5A", "flag": {"x":17, "y":13} },
+			{"id":46, "name":"C5B: Kazazriel"   , "connections":[25,26,45,47]      , "short":"C5B", "flag": {"x":15, "y":14} },
+			{"id":47, "name":"C5C: Pilitallios" , "connections":[26,27,46,48]      , "short":"C5C", "flag": {"x":13, "y":15} },
+			{"id":48, "name":"C5D: Xishotish"   , "connections":[27,28,47,49]      , "short":"C5D", "flag": {"x":11, "y":16} },
+			{"id":49, "name":"D5A: Gegleadore"  , "connections":[28,48,50]         , "short":"D5A", "flag": {"x": 9, "y":17} },
+			{"id":50, "name":"D5B: Wrorrulan"   , "connections":[28,29,49,51]      , "short":"D5B", "flag": {"x": 7, "y":16} },
+			{"id":51, "name":"D5C: Cleoseotophy", "connections":[29,30,50,52]      , "short":"D5C", "flag": {"x": 5, "y":15} },
+			{"id":52, "name":"D5D: Equioque"    , "connections":[30,31,51,53]      , "short":"D5D", "flag": {"x": 3, "y":14} },
+			{"id":53, "name":"E5A: Eatutiar"    , "connections":[31,52,54]         , "short":"E5A", "flag": {"x": 1, "y":13} },
+			{"id":54, "name":"E5B: Kaweariael"  , "connections":[31,32,53,55]      , "short":"E5B", "flag": {"x": 1, "y":11} },
+			{"id":55, "name":"E5C: Yossiryon"   , "connections":[32,33,54,56]      , "short":"E5C", "flag": {"x": 1, "y": 9} },
+			{"id":56, "name":"E5D: Ecladorth"   , "connections":[33,34,55,57]      , "short":"E5D", "flag": {"x": 1, "y": 7} },
+			{"id":57, "name":"F5A: Udriomond"   , "connections":[34,56,58]         , "short":"F5A", "flag": {"x": 1, "y": 5} },
+			{"id":58, "name":"F5B: Kreamenon"   , "connections":[34,35,57,59]      , "short":"F5B", "flag": {"x": 3, "y": 4} },
+			{"id":59, "name":"F5C: Jokuthriaz"  , "connections":[35,36,58,60]      , "short":"F5C", "flag": {"x": 5, "y": 3} },
+			{"id":60, "name":"F5D: Gleoleaterra", "connections":[19,36,37,59]      , "short":"F5D", "flag": {"x": 7, "y": 2} }
+		]
 	}
 }

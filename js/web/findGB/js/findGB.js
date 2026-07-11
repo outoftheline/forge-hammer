@@ -4,11 +4,11 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-FoEproxy.addHandler('RankingService', 'getRanking', (data, postData) => {
+FH.proxy.addHandler('RankingService', 'getRanking', (data, postData) => {
     if (data.responseData.category.value != "great_building" || $('#findGBDialog').length === 0) return;
     findGB.check(data.responseData.rankings);
 });
-FoEproxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
+FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
     if ($('#findGBDialog').length === 0) return;
     findGB.check(data.responseData);
 });
@@ -18,8 +18,8 @@ let findGB = {
     found:[],
 
     init: async () => {
-        await ExistenceConfirmed("MainParser.CityEntities")
-        for (let building of Object.values(MainParser.CityEntities)) {
+        await FH.ExistenceConfirmed("FH.Main.CityEntities")
+        for (let building of Object.values(FH.Main.CityEntities)) {
             if(building.type != "greatbuilding") continue;
             findGB.list.push(building.name);
         }
@@ -29,17 +29,17 @@ let findGB = {
     ShowDialog: () => {
         
 		if ($('#findGBDialog').length > 0){
-			HTML.CloseOpenBox('findGBDialog');
+			FH.HTML.CloseOpenBox('findGBDialog');
 
 			return;
 		}
 
         if ($('#findGBDialog').length === 0) {
-            HTML.AddCssFile('findGB');
+            FH.HTML.AddCssFile('findGB');
 
-            HTML.Box({
+            FH.HTML.Box({
                 id: 'findGBDialog',
-                title: i18n('Boxes.findGB.Title'),
+                title: FH.t('Boxes.findGB.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
@@ -50,17 +50,17 @@ let findGB = {
         html = ``;
         html += `<table class="dark-bg w-full"><tr>`;
         html += `<td><select id="GBselect">`;
-        html += `<option value="" disabled selected>${i18n("Boxes.findGB.selectGB")}</option>`
+        html += `<option value="" disabled selected>${FH.t("Boxes.findGB.selectGB")}</option>`
         for (i of findGB.list) {
             html += `<option value="${i}">${i}</option>`
         }
         html += `</select></td>`;
-        html += `<td><input type="number" id="GBminLevel" min="0" max ="998" placeholder="${i18n("Boxes.findGB.minLvl")}"></td>`;
-        html += `<td><input type="number" id="GBmaxLevel" min="1" max ="999" placeholder="${i18n("Boxes.findGB.maxLvl")}"></td></tr><tr>`;
-        html += `<td><input type="checkbox" id="GBhasProgress"><label for="GBhasProress">${i18n("Boxes.findGB.hasProgress")}</label></td>`;
-        html += `<td colspan="2"><input type="button" id="findGBreset" class="btn" value="${i18n("General.Reset")}"></input></td>`;
+        html += `<td><input type="number" id="GBminLevel" min="0" max ="998" placeholder="${FH.t("Boxes.findGB.minLvl")}"></td>`;
+        html += `<td><input type="number" id="GBmaxLevel" min="1" max ="999" placeholder="${FH.t("Boxes.findGB.maxLvl")}"></td></tr><tr>`;
+        html += `<td><input type="checkbox" id="GBhasProgress"><label for="GBhasProress">${FH.t("Boxes.findGB.hasProgress")}</label></td>`;
+        html += `<td colspan="2"><input type="button" id="findGBreset" class="btn" value="${FH.t("General.Reset")}"></input></td>`;
         html += `</tr></table>`;
-        html += `<table id="foundGB" class="foe-table"><thead class="sticky"><tr><th>${i18n("General.Player")}</th><th>${i18n("General.GB")}</th><th>${i18n("General.Level")}</th></tr></thead>`
+        html += `<table id="foundGB" class="foe-table"><thead class="sticky"><tr><th>${FH.t("General.Player")}</th><th>${FH.t("General.GB")}</th><th>${FH.t("General.Level")}</th></tr></thead>`
         
         for (i of findGB.found) {
             html += findGB.row(i)
@@ -96,7 +96,7 @@ let findGB = {
     },
 
     row: (i) => {
-        return `<tr><td>${MainParser.GetPlayerLink(i.playerID,i.player)}</td><td>${i.GB}</td><td class="progress" style="--p:${i.progress}%">${i.level}</td></tr>`
+        return `<tr><td>${FH.Main.GetPlayerLink(i.playerID,i.player)}</td><td>${i.GB}</td><td class="progress" style="--p:${i.progress}%">${i.level}</td></tr>`
     }
 };
 

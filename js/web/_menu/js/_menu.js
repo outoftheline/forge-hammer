@@ -3,8 +3,8 @@
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
-let _menu = {
-
+{
+_menu = {
 	isBottom: false,
 	selectedMenu: 'RightBar',
 	MenuScrollTop: 0,
@@ -86,6 +86,10 @@ let _menu = {
 			Infoboard.Show();
 		}
 
+		if(Settings.GetSetting('AutoOpenNotes')){
+			Notes.Show();
+		}
+
 		if (Settings.GetSetting('AutoOpenCloseBox')) {
 			CloseBox.BuildBox();
 		}
@@ -94,10 +98,10 @@ let _menu = {
 	},
 
 	OverflowCheck: (selMenu='Box', flag) => {
-		if (window.innerHeight >= 600 && window.innerWidth >= 950 && (!flag && selMenu != MainParser.SelectedMenu)) {			
+		if (window.innerHeight >= 600 && window.innerWidth >= 950 && (!flag && selMenu != FH.Main.SelectedMenu)) {			
 			$('#menu_box').remove();
 			$('.tooltip').remove();
-			_menu.CallSelectedMenu(MainParser.SelectedMenu);
+			_menu.CallSelectedMenu(FH.Main.SelectedMenu);
 		}
 	},
 
@@ -146,12 +150,12 @@ let _menu = {
 	* Integrates all required buttons
 	*/
 	ListLinks: (InsertMenuFunction) => {
-		let StorgedItems = localStorage.getItem('MenuSort');
-		let HiddenItems = localStorage.getItem('MenuHiddenItems');
+		let StorgedItems = FH.Storage.getItem('MenuSort');
+		let HiddenItems = FH.Storage.getItem('MenuHiddenItems');
 
 		// Beta-Funktionen
-		if (HelperBeta.active) {
-			_menu.Items.unshift(...HelperBeta.menu);
+		if (FH.Beta.active) {
+			_menu.Items.unshift(...FH.Beta.menu);
 		}
 
 		if (StorgedItems !== null) {
@@ -188,8 +192,8 @@ let _menu = {
 
 		// Filter out beta functions
 		_menu.Items = _menu.Items.filter(e => {
-			if (HelperBeta.active) return true;
-			return !HelperBeta.menu.includes(e);
+			if (FH.Beta.active) return true;
+			return !FH.Beta.menu.includes(e);
 		});
 
 		// Filter out duplicates
@@ -248,12 +252,12 @@ let _menu = {
 			_menu.HiddenItems.push(name);
 		}
 		
-		localStorage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
+		FH.Storage.setItem('MenuHiddenItems', JSON.stringify(_menu.HiddenItems));
 
 		// refresh the Menü after setting-toggle
 		setTimeout(()=> {
 			$('#forgehammer-hud, #menu_box').remove();
-			_menu.CallSelectedMenu(MainParser.SelectedMenu);
+			_menu.CallSelectedMenu(FH.Main.SelectedMenu);
 		}, 100);
 
 	},
@@ -293,41 +297,41 @@ let _menu = {
 	/*----------------------------------------------------------------------------------------------------------------*/
 	
 	ItemsData: [
-		{ id: 'partCalc', title: i18n('Menu.OwnpartCalculator.Title'), description: i18n('Menu.OwnpartCalculator.Desc'), warning: '<em id="partCalc-Btn-closed" class="tooltip-error">' + i18n('Menu.OwnpartCalculator.Warning') + '<br></em>'},
-		{ id: 'unit', title: i18n('Menu.Unit.Title'), description: i18n('Menu.Unit.Desc'), warning: '<em id="unit-Btn-closed" class="tooltip-error">' + i18n('Menu.Unit.Warning') + '<br></em>'},
-		{ id: 'outpost', title: i18n('Menu.OutP.Title'), description: i18n('Menu.OutP.Desc'), warning: i18n('Menu.OutP.DescWarningOutpostData') },
-		{ id: 'shopAssist', title: i18n('Menu.ShopAssist.Title'), description: i18n('Menu.ShopAssist.Desc'), warning: '<i id="shopAssist-Btn-closed" class="tooltip-error">' + i18n('Menu.ShopAssist.DescWarning') + '</i>' },
-		{ id: 'productionsRating', title: i18n('Menu.ProductionsRating.Title'), description: i18n('Menu.ProductionsRating.Desc') },
-		{ id: 'negotiation', title: i18n('Menu.Negotiation.Title'), description: i18n('Menu.Negotiation.Desc'), warning: '<em id="negotiation-Btn-closed" class="tooltip-error">' + i18n('Menu.Negotiation.Warning') + '<br></em>' },
-		{ id: 'playerProfile', title: i18n('Menu.PlayerProfile.Title'), description: i18n('Menu.PlayerProfile.Desc'), warning: '<em id="PlayerProfile-Btn-closed" class="tooltip-error">' + i18n('Menu.PlayerProfile.Warning') + '<br></em>' },
-		{ id: 'guildMemberstat', title: i18n('Menu.GuildMemberStat.Title'), description: i18n('Menu.GuildMemberStat.Desc'), warning: '<em id="guildmemberstat-Btn-closed" class="tooltip-error">' + i18n('Menu.GuildMemberStat.Warning') + '<br></em>' },
-		{ id: 'gildFight', title: i18n('Menu.Gildfight.Title'), description: i18n('Menu.Gildfight.Desc'), warning: i18n('Menu.Gildfight.Warning') },
-		{ id: 'market', title: i18n('Menu.Market.Title'), description: i18n('Menu.Market.Desc'), warning: '<em id="market-Btn-closed" class="tooltip-error">' + i18n('Menu.Market.Warning') + '<br></em>' },
-		{ id: 'allies', title: i18n('Menu.Allies.Title'), description: i18n('Menu.Allies.Desc') },
-		{ id: 'productions', title: i18n('Menu.Productions.Title'), description: i18n('Menu.Productions.Desc') },
-		{ id: 'minigame_aztecs', title: i18n('Menu.AztecMiniGame.Title'), description: i18n('Menu.AztecMiniGame.Desc') },
-		{ id: 'infobox', title: i18n('Menu.Info.Title'), description: i18n('Menu.Info.Desc') },
-		{ id: 'findGB', title: i18n('Boxes.findGB.Title'), description: i18n('Menu.findGB.Desc') },
-		{ id: 'technologies', title: i18n('Menu.Technologies.Title'), description: i18n('Menu.Technologies.Desc') },
-		{ id: 'musicControl', title: i18n('Menu.MusicControl.Title'), description: i18n('Menu.MusicControl.Desc') },
-		{ id: 'music', title: i18n('Menu.Music.Title'), description: i18n('Menu.Music.Desc') },
-		{ id: 'discord', title: i18n('Menu.Discord.Title'), description: i18n('Menu.Discord.Desc') },
-		{ id: 'compare_friends_threads', title: i18n('Menu.CompareFriendsThreads.Title'), description: i18n('Menu.CompareFriendsThreads.Desc') },
-		{ id: 'castle', title: i18n('Menu.Castle.Title'), description: i18n('Menu.Castle.Desc') },
-		{ id: 'gexStat', title: i18n('Menu.GexStat.Title'), description: i18n('Menu.GexStat.Desc') },
-		{ id: 'investment', title: i18n('Menu.Investment.Title'), description: i18n('Menu.Investment.Desc') },
-		{ id: 'alerts', title: i18n('Menu.Alerts.Title'), description: i18n('Menu.Alerts.Desc') },
-		{ id: 'fpCollector', title: i18n('Menu.fpCollector.Title'), description: i18n('Menu.fpCollector.Desc') },
-		{ id: 'moppelHelper', title: i18n('Menu.Moppelhelper.Title'), description: i18n('Menu.Moppelhelper.Desc') },
-		{ id: 'blueGalaxy', title: i18n('Menu.Bluegalaxy.Title'), description: i18n('Menu.Bluegalaxy.Desc') },
-		{ id: 'greatBuildings', title: i18n('Menu.greatbuildings.Title'), description: i18n('Menu.greatbuildings.Desc') },
-		{ id: 'kits', title: i18n('Menu.Kits.Title'), description: i18n('Menu.Kits.Desc') },
-		{ id: 'stats', title: i18n('Menu.Stats.Title'), description: i18n('Menu.Stats.Desc') },
-		{ id: 'settings', title: i18n('Menu.Settings.Title'), description: i18n('Menu.Settings.Desc') },
-		{ id: 'notes', title: i18n('Menu.Notes.Title'), description: i18n('Menu.Notes.Desc') },
-		{ id: 'recurringQuests', title: i18n('Menu.recurringQuests.Title'), description: i18n('Menu.recurringQuests.Desc') },
-		{ id: 'hiddenRewards', title: i18n('Menu.HiddenRewards.Title'), description: i18n('Menu.HiddenRewards.Desc') },
-		{ id: 'cityMap', title: i18n('Menu.Citymap.Title'), description: i18n('Menu.Citymap.Desc') },
+		{ id: 'partCalc', title: FH.t('Menu.OwnpartCalculator.Title'), description: FH.t('Menu.OwnpartCalculator.Desc'), warning: '<em id="partCalc-Btn-closed" class="tooltip-error">' + FH.t('Menu.OwnpartCalculator.Warning') + '<br></em>'},
+		{ id: 'unit', title: FH.t('Menu.Unit.Title'), description: FH.t('Menu.Unit.Desc'), warning: '<em id="unit-Btn-closed" class="tooltip-error">' + FH.t('Menu.Unit.Warning') + '<br></em>'},
+		{ id: 'outpost', title: FH.t('Menu.OutP.Title'), description: FH.t('Menu.OutP.Desc'), warning: FH.t('Menu.OutP.DescWarningOutpostData') },
+		{ id: 'shopAssist', title: FH.t('Menu.ShopAssist.Title'), description: FH.t('Menu.ShopAssist.Desc'), warning: '<i id="shopAssist-Btn-closed" class="tooltip-error">' + FH.t('Menu.ShopAssist.DescWarning') + '</i>' },
+		{ id: 'productionsRating', title: FH.t('Menu.ProductionsRating.Title'), description: FH.t('Menu.ProductionsRating.Desc') },
+		{ id: 'negotiation', title: FH.t('Menu.Negotiation.Title'), description: FH.t('Menu.Negotiation.Desc'), warning: '<em id="negotiation-Btn-closed" class="tooltip-error">' + FH.t('Menu.Negotiation.Warning') + '<br></em>' },
+		{ id: 'playerProfile', title: FH.t('Menu.PlayerProfile.Title'), description: FH.t('Menu.PlayerProfile.Desc'), warning: '<em id="PlayerProfile-Btn-closed" class="tooltip-error">' + FH.t('Menu.PlayerProfile.Warning') + '<br></em>' },
+		{ id: 'guildMemberstat', title: FH.t('Menu.GuildMemberStat.Title'), description: FH.t('Menu.GuildMemberStat.Desc'), warning: '<em id="guildmemberstat-Btn-closed" class="tooltip-error">' + FH.t('Menu.GuildMemberStat.Warning') + '<br></em>' },
+		{ id: 'gildFight', title: FH.t('Menu.Gildfight.Title'), description: FH.t('Menu.Gildfight.Desc'), warning: FH.t('Menu.Gildfight.Warning') },
+		{ id: 'market', title: FH.t('Menu.Market.Title'), description: FH.t('Menu.Market.Desc'), warning: '<em id="market-Btn-closed" class="tooltip-error">' + FH.t('Menu.Market.Warning') + '<br></em>' },
+		{ id: 'allies', title: FH.t('Menu.Allies.Title'), description: FH.t('Menu.Allies.Desc') },
+		{ id: 'productions', title: FH.t('Menu.Productions.Title'), description: FH.t('Menu.Productions.Desc') },
+		{ id: 'minigame_aztecs', title: FH.t('Menu.AztecMiniGame.Title'), description: FH.t('Menu.AztecMiniGame.Desc') },
+		{ id: 'infobox', title: FH.t('Menu.Info.Title'), description: FH.t('Menu.Info.Desc') },
+		{ id: 'findGB', title: FH.t('Boxes.findGB.Title'), description: FH.t('Menu.findGB.Desc') },
+		{ id: 'technologies', title: FH.t('Menu.Technologies.Title'), description: FH.t('Menu.Technologies.Desc') },
+		{ id: 'musicControl', title: FH.t('Menu.MusicControl.Title'), description: FH.t('Menu.MusicControl.Desc') },
+		{ id: 'music', title: FH.t('Menu.Music.Title'), description: FH.t('Menu.Music.Desc') },
+		{ id: 'discord', title: FH.t('Menu.Discord.Title'), description: FH.t('Menu.Discord.Desc') },
+		{ id: 'compare_friends_threads', title: FH.t('Menu.CompareFriendsThreads.Title'), description: FH.t('Menu.CompareFriendsThreads.Desc') },
+		{ id: 'castle', title: FH.t('Menu.Castle.Title'), description: FH.t('Menu.Castle.Desc') },
+		{ id: 'gexStat', title: FH.t('Menu.GexStat.Title'), description: FH.t('Menu.GexStat.Desc') },
+		{ id: 'investment', title: FH.t('Menu.Investment.Title'), description: FH.t('Menu.Investment.Desc') },
+		{ id: 'alerts', title: FH.t('Menu.Alerts.Title'), description: FH.t('Menu.Alerts.Desc') },
+		{ id: 'fpCollector', title: FH.t('Menu.fpCollector.Title'), description: FH.t('Menu.fpCollector.Desc') },
+		{ id: 'moppelHelper', title: FH.t('Menu.Moppelhelper.Title'), description: FH.t('Menu.Moppelhelper.Desc') },
+		{ id: 'blueGalaxy', title: FH.t('Menu.Bluegalaxy.Title'), description: FH.t('Menu.Bluegalaxy.Desc') },
+		{ id: 'greatBuildings', title: FH.t('Menu.greatbuildings.Title'), description: FH.t('Menu.greatbuildings.Desc') },
+		{ id: 'kits', title: FH.t('Menu.Kits.Title'), description: FH.t('Menu.Kits.Desc') },
+		{ id: 'stats', title: FH.t('Menu.Stats.Title'), description: FH.t('Menu.Stats.Desc') },
+		{ id: 'settings', title: FH.t('Menu.Settings.Title'), description: FH.t('Menu.Settings.Desc') },
+		{ id: 'notes', title: FH.t('Menu.Notes.Title'), description: FH.t('Menu.Notes.Desc') },
+		{ id: 'recurringQuests', title: FH.t('Menu.recurringQuests.Title'), description: FH.t('Menu.recurringQuests.Desc') },
+		{ id: 'hiddenRewards', title: FH.t('Menu.HiddenRewards.Title'), description: FH.t('Menu.HiddenRewards.Desc') },
+		{ id: 'cityMap', title: FH.t('Menu.Citymap.Title'), description: FH.t('Menu.Citymap.Desc') },
 	],
 
 	/**
@@ -366,13 +370,13 @@ let _menu = {
 	 */
 	outpost_Btn: () => {
 		let red = false;
-		if (Outposts.OutpostData === null || localStorage.getItem('OutpostBuildings') === null) 
+		if (Outposts.OutpostData === null || FH.Storage.getItem('OutpostBuildings') === null) 
 			red = true;
 
 		let btn = _menu.MakeButton('outpost', red);
 
 		let btnEl = $('<span />').bind('click', function () {
-			let OutpostBuildings = localStorage.getItem('OutpostBuildings');
+			let OutpostBuildings = FH.Storage.getItem('OutpostBuildings');
 
 			if (OutpostBuildings !== null) {
 				Outposts.BuildInfoBox();
@@ -408,7 +412,7 @@ let _menu = {
 		let btn = _menu.MakeButton('allies');
 
 		let btnEl = $('<span />').bind('click', function () {
-			MainParser.Allies.showAllyList(true);
+			FH.Main.Allies.showAllyList(true);
 		});
 
 		return btn.append(btnEl);
@@ -482,7 +486,7 @@ let _menu = {
 			}
 		});
 
-		btn_playerProfile.append('<img src="'+srcLinks.GetPortrait(ExtPlayerAvatar)+'" />');
+		btn_playerProfile.append('<img src="'+srcLinks.GetPortrait(FH.Player.Avatar)+'" />');
 
 		return btn_playerProfileBG.append(btn_playerProfile);
 	},
@@ -650,7 +654,7 @@ let _menu = {
 	},
 
 	blueGalaxy_Btn: () => {
-		let OwnGalaxy = Object.values(MainParser.CityMapData).find(obj => (obj['cityentity_id'] === 'X_OceanicFuture_Landmark3'));;
+		let OwnGalaxy = Object.values(FH.Main.CityMapData).find(obj => (obj['cityentity_id'] === 'X_OceanicFuture_Landmark3'));;
 
 		// no BG => display none
 		if (!OwnGalaxy) {
@@ -662,7 +666,7 @@ let _menu = {
 		let btn = _menu.MakeButton('blueGalaxy');
 
 		let btn_sp = $('<span />').on('click', function () {
-			BlueGalaxy.Show();
+			FH.BlueGalaxy.Show();
 		});
 
 		return btn.append(btn_sp, $('<span id="hidden-blue-galaxy-count" class="hud-counter">0</span>'));
@@ -692,7 +696,7 @@ let _menu = {
 		let btn = _menu.MakeButton('alerts');
 
 		let btn_sp = $('<span />').on('click', function () {
-			Alerts.show();
+			FH.Alerts.show();
 		});
 
 		return btn.append(btn_sp);
@@ -783,9 +787,9 @@ let _menu = {
 
 		let btn_sp = $('<span />').bind('click', function () {
 			if ($('#betterMusicDialog').length > 0) {
-				betterMusic.CloseBox();
+				FH.betterMusic.CloseBox();
 			} else {
-				betterMusic.ShowDialog();
+				FH.betterMusic.ShowDialog();
 			}		
 
 		});
@@ -800,14 +804,725 @@ let _menu = {
 			if ($('#musicControl-Btn').hasClass('hud-btn-red') === false) {
 				$('#musicControl-Btn').toggleClass('musicmuted');
 				if ($('#musicControl-Btn').hasClass('musicmuted')) {
-					betterMusic.pause();
+					FH.betterMusic.pause();
 				} else {
-					betterMusic.playStatus = true;
-					betterMusic.TrackSelector();
+					FH.betterMusic.playStatus = true;
+					FH.betterMusic.TrackSelector();
 				}
 			}
 		});
 
 		return btn.append(btn_sp);
+	}
+}
+let _menu_bottom = {
+
+	btnSize: 42,
+
+	/**
+	 * Create the div holders and put them to the DOM
+	 *
+	 * @constructor
+	 */
+
+	BuildOverlayMenu: () => {
+
+		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-bottom'}).addClass('game-cursor'),
+			hudWrapper = $('<div />').attr('id', 'forgehammer-hud-wrapper'),
+			hudInner = $('<div />').attr('id', 'forgehammer-hud-slider');
+
+		hudWrapper.append(hudInner);
+
+		let btnUp = $('<span />').addClass('hud-btn-left'),
+			btnDown = $('<span />').addClass('hud-btn-right hud-btn-right-active');
+
+		hud.append(btnUp);
+		hud.append(hudWrapper)
+		hud.append(btnDown);
+		
+		// If the window size changes, recalculate
+		window.onresize = function(event) {
+			if (event.target == window) _menu_bottom.SetMenuWidth(true);
+		};
+		
+		$('body').append(hud).promise().done(async function(){
+
+			// Insert buttons
+			_menu.ListLinks(_menu_bottom.InsertMenuItem);
+			await _menu_bottom.CheckButtons();
+
+			// Determine the correct place for the menu
+			_menu_bottom.SetMenuWidth();
+
+			window.dispatchEvent(new CustomEvent('forgehammer#menu_loaded'));
+		});
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#forgehammer-hud-slider').append(MenuItem);
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#forgehammer-hud-slider').append(MenuItem);
+	},
+
+
+
+	/**
+	 * Sammelfunktion
+	 *
+	 * @param reset
+	 */
+	SetMenuWidth: (reset = true) => {
+		// Breite ermitteln und setzten
+		_menu_bottom.Prepare();
+
+		if (reset) {
+			// Slider nach links resetten
+			$('#forgehammer-hud-slider').css({ 
+				left: 0
+			});
+
+			_menu.MenuScrollLeft = 0;
+			_menu.ActiveSlide = 1;
+
+			$('.hud-btn-left').removeClass('hud-btn-left-active');
+
+			if (_menu.SlideParts > 1) {
+				$('.hud-btn-right').addClass('hud-btn-right-active');
+			}
+			else { //Gesamtes Menü passt auf 1 Seite => Kein Scrollbutton nach unten
+				$('.hud-btn-right').removeClass('hud-btn-right-active');
+			}
+		}
+	},
+
+
+	/**
+	 * Ermittelt die Fensterhöhe und ermittelt die passende Höhe
+	 *
+	 */
+	Prepare: () => {
+		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
+
+		_menu.HudCount = Math.floor((($(window).outerWidth() - 50) - $('#forgehammer-hud').offset().left) / _menu_bottom.btnSize);
+		_menu.HudCount = Math.min(_menu.HudCount, MenuItemCount);
+		if (_menu.HudCount <= 0) {
+			$('#forgehammer-hud').remove();
+			$('.tooltip').remove();
+			window.onresize = function(){};
+			_menu.CallSelectedMenu('Box');
+			return;
+		} 
+			
+		// hat der Spieler eine Länge vorgebeben?
+		let MenuLength = FH.Storage.getItem('MenuLength');
+
+		if (MenuLength !== null && MenuLength < _menu.HudCount)
+		{
+			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
+		}
+
+		_menu.HudWidth = (_menu.HudCount * _menu_bottom.btnSize);
+		_menu.SlideParts = Math.ceil(MenuItemCount / _menu.HudCount);
+
+		$('#forgehammer-hud').width(_menu.HudWidth);
+		$('#forgehammer-hud-wrapper').width(_menu.HudWidth);
+		$('#forgehammer-hud-slider').width( ($("#forgehammer-hud-slider").children().length * _menu_bottom.btnSize));
+	},
+	
+
+	/**
+	 * Panel scrollbar machen
+	 *
+	 */
+	CheckButtons: async () => {
+		let activeIdx = 0;
+		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
+		$('.hud-btn').click(function () {
+			activeIdx = $(this).index('.hud-btn');
+		});
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-right-active").length == 0) {
+			// Klick auf Pfeil nach rechts
+			$('body').on('click', '.hud-btn-right-active', function () {
+				_menu_bottom.ClickButtonRight();
+			});
+		};
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-left-active").length == 0) {
+			// Klick auf Pfeil nach links
+			$('body').on('click', '.hud-btn-left-active', function () {
+				_menu_bottom.ClickButtonLeft();
+			});
+		};
+
+
+		// Tooltipp top ermitteln und einblenden
+		$('.hud-btn').stop().hover(function(){
+			let $this = $(this),
+				id = $this.attr('id'),
+				x = ($this.offset().left + 30);
+
+			$('[data-btn="' + id + '"]').css({ left: x + 'px' }).show();
+
+		}, function(){
+			let id = $(this).attr('id');
+
+			$('[data-btn="' + id + '"]').hide();
+		});
+
+		// Sortierfunktion der Menü-items
+		$('#forgehammer-hud-slider').sortable({
+			placeholder: 'menu-placeholder',
+			axis: 'x',
+			distance: 22,
+			start: function () {
+				$('#forgehammer-hud').addClass('is--sorting');
+			},
+			sort: function () {
+
+				$('.is--sorting .hud-btn-left-active').mouseenter(function (e) {
+					$('.hud-btn-left-active').stop().addClass('hasFocus');
+
+					setTimeout(() => {
+						if ($('.is--sorting .hud-btn-left-active').hasClass('hasFocus')) {
+							_menu_bottom.ClickButtonLeft();
+						}
+					}, 1000);
+
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-left-active').removeClass('hasFocus');
+				});
+
+				$('.is--sorting .hud-btn-right-active').mouseenter(function (e) {
+					$('.is--sorting .hud-btn-right-active').stop().addClass('hasFocus');
+
+					setTimeout(() => {
+						if ($('.is--sorting .hud-btn-right-active').hasClass('hasFocus')) {
+							_menu_bottom.ClickButtonRight();
+						}
+					}, 1000);
+
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-right-active').removeClass('hasFocus');
+				});
+			},
+			stop: function () {
+				// Sortierung zwischenspeichern
+				let storedItems = _menu.Items;
+				_menu.Items = [];
+
+				$('.hud-btn').each(function () {
+					_menu.Items.push($(this).data('slug'));
+				});
+
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
+
+				$('#forgehammer-hud').removeClass('is--sorting');
+				if (_menu.equalTo(storedItems)) return;
+
+				FH.HTML.ShowToastMsg({
+					show: 'force',
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
+					type: 'success',
+					hideAfter: 5000
+				});
+			}
+		});
+
+		HiddenRewards.SetCounter();
+		FH.BlueGalaxy.SetCounter();
+	},
+
+	/**
+	 * Klick Funktion
+	 */
+	ClickButtonRight: () => {
+		$('.hud-btn-right').removeClass('hasFocus');
+
+		_menu.ActiveSlide++;
+
+		_menu.MenuScrollLeft -= _menu.HudWidth;
+		if (_menu.ActiveSlide * _menu.HudWidth > $('#forgehammer-hud-slider').width())
+			_menu.MenuScrollLeft = - (($('#forgehammer-hud-slider').width()/_menu.HudWidth) - 1) *_menu.HudWidth;
+
+
+		$('#forgehammer-hud-slider').css({
+			left: _menu.MenuScrollLeft + 'px'
+		});
+
+		if (_menu.ActiveSlide > 1) {
+			$('.hud-btn-left').addClass('hud-btn-left-active');
+		}
+
+		if (_menu.ActiveSlide === _menu.SlideParts) {
+			$('.hud-btn-right').removeClass('hud-btn-right-active');
+
+		} else if (_menu.ActiveSlide < _menu.SlideParts) {
+			$('.hud-btn-right').addClass('hud-btn-right-active');
+		}
+	},
+
+	/**
+	 * Klick Funktion
+	 */
+	ClickButtonLeft: () => {
+		$('.hud-btn-left').removeClass('hasFocus');
+
+		_menu.ActiveSlide--;
+		
+		if (_menu.ActiveSlide == 1) 
+			_menu.MenuScrollLeft = 0;
+		else
+			_menu.MenuScrollLeft += _menu.HudWidth;
+
+		$('#forgehammer-hud-slider').css({
+			left: _menu.MenuScrollLeft + 'px'
+		});
+
+		if (_menu.ActiveSlide === 1){
+			$('.hud-btn-left').removeClass('hud-btn-left-active');
+		}
+
+		if (_menu.ActiveSlide < _menu.SlideParts){
+			$('.hud-btn-right').addClass('hud-btn-right-active');
+
+		} else if (_menu.ActiveSlide === _menu.SlideParts){
+			$('.hud-btn-right').removeClass('hud-btn-right-active');
+		}
 	},
 };
+
+
+let _menu_box = {
+
+	/**
+	 * Create the div holders and put them to the DOM
+	 */
+	BuildBoxMenu: () => {
+		_menu_box.Show();
+	},
+
+
+	/**
+	 * Create a html box and put it into the DOM
+	 */
+	Show: () => {
+        //moment.locale(18n('Local'));
+
+		FH.HTML.Box({
+			id: 'menu_box',
+			title: FH.t('Global.BoxTitle'),
+			onlyTitle: true,
+			dragdrop: _menu_box.CheckButtons,
+			minimize: true,
+			resize: true,
+			auto_close: false
+		});
+		_menu_box.CalcBody();
+
+		window.dispatchEvent(new CustomEvent('forgehammer#menu_loaded'));
+	},
+
+
+	CalcBody: () => {
+		_menu.TopOffset = $('#menu_box').offset().top;
+		_menu.ListLinks(_menu_box.InsertMenuItem);
+		_menu_box.CheckButtons();
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#menu_boxBody').append(MenuItem);
+	},
+		
+
+	/**
+	 * Tooltips etc
+	 *
+	 */
+	CheckButtons: () => {
+
+		let activeIdx = 0,
+			top = $('#menu_box').offset().top < 90;
+
+		$('.hud-btn').click(function () {
+			activeIdx = $(this).index('.hud-btn');
+		});
+
+		$('.hud-btn').stop().hover(function(){
+			let $this = $(this),
+				id = $this.attr('id'),
+				y = ($this.offset().top - $('[data-btn="' + id + '"]').height()-30),
+				x = ($this.offset().left + 23);
+
+			$('[data-btn="' + id + '"]').removeClass('isOnTop');
+
+			// not enougth space to top viewport
+			if(top)
+			{
+				y = ($this.offset().top + 50);
+				$('[data-btn="' + id + '"]').addClass('isOnTop');
+			}
+
+			$('[data-btn="' + id + '"]').css({ left: x, top: y}).show();
+
+		}, function(){
+			let id = $(this).attr('id');
+
+			$('[data-btn="' + id + '"]').hide();
+		});
+
+		// Sorting function of the menu items
+		$('#menu_boxBody').sortable({
+			placeholder: 'menu-placeholder',
+			distance: 15,
+			start: function () {
+				$('#menu_box').addClass('is--sorting');
+			},
+			sort: function () {
+				$('.is--sorting .hud-btn-up-active').mouseenter(function (e) {
+					$('.hud-btn-up-active').stop().addClass('hasFocus');
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-up-active').removeClass('hasFocus');
+				});
+
+				$('.is--sorting .hud-btn-down-active').mouseenter(function (e) {
+					$('.is--sorting .hud-btn-down-active').stop().addClass('hasFocus');
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-down-active').removeClass('hasFocus');
+				});
+			},
+			stop: function () {
+				_menu.Items = [];
+				$('.hud-btn').each(function () {
+					_menu.Items.push($(this).data('slug'));
+				});
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
+
+				$('#menu_box').removeClass('is--sorting');
+
+				FH.HTML.ShowToastMsg({
+					show: 'force',
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
+					type: 'success',
+					hideAfter: 5000
+				});
+			}
+		});
+
+		HiddenRewards.SetCounter();
+		FH.BlueGalaxy.SetCounter();
+	},
+
+
+	/**
+	 * Hides a button. The HUD slider must already be filled for this.
+	 *
+	 * @param buttonId
+	 * @constructor
+	 */
+	HideButton: (buttonId) => {
+		if ($('#menu_boxBody').has(`div#${buttonId}`).length > 0)
+			$($('#menu_boxBody').children(`div#${buttonId}`)[0]).hide();
+
+	},
+
+
+	/**
+	 * Shows a hidden button again
+	 */
+	ShowButton: (buttonId) => {
+		if ($('#menu_boxBody').has(`div#${buttonId}`))
+			$($('#menu_boxBody').children(`div#${buttonId}`)[0]).show();
+	},
+};
+
+let _menu_right = {
+
+	/**
+	 *
+	 */
+	BuildOverlayMenu: () => {
+		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-right'}).addClass('game-cursor'),
+			hudWrapper = $('<div />').attr('id', 'forgehammer-hud-wrapper'),
+			hudInner = $('<div />').attr('id', 'forgehammer-hud-slider');
+
+		hudWrapper.append(hudInner);
+
+		let btnUp = $('<span />').addClass('hud-btn-up'),
+			btnDown = $('<span />').addClass('hud-btn-down hud-btn-down-active');
+
+		hud.append(btnUp);
+		hud.append(hudWrapper)
+		hud.append(btnDown);
+
+		window.onresize = function (event) {
+			if (event.target == window) _menu_right.SetMenuHeight(true);
+		};
+
+		$('body').append(hud).ready(async function () {
+
+			_menu.ListLinks(_menu_right.InsertMenuItem);
+			await _menu_right.CheckButtons();
+
+			_menu_right.SetMenuHeight();
+
+			window.dispatchEvent(new CustomEvent('forgehammer#menu_loaded'));
+		});
+
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#forgehammer-hud-slider').append(MenuItem);
+    },
+
+
+	/**
+	 * Collective function
+	 */
+	SetMenuHeight: (reset = true) => {
+		// calibrate height
+		_menu_right.Prepare();
+
+		if (reset) {
+			// Slider nach oben resetten
+			$('#forgehammer-hud-slider').css({
+				'top': '0'
+			});
+
+			_menu.MenuScrollTop = 0;
+			_menu.ActiveSlide = 1;
+
+			$('.hud-btn-up').removeClass('hud-btn-up-active');
+
+			if (_menu.SlideParts > 1) 
+				$('.hud-btn-down').addClass('hud-btn-down-active');
+			else // button not needed
+				$('.hud-btn-down').removeClass('hud-btn-down-active');	
+		}
+	},
+
+
+	/**
+	 * Determines the window height and determines the appropriate height
+	 *
+	 */
+	Prepare: () => {
+		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
+
+		_menu.HudCount = Math.floor((($(window).outerHeight() - 20) - $('#forgehammer-hud').offset().top) / 48);
+		_menu.HudCount = Math.min(_menu.HudCount, MenuItemCount);
+
+		if (_menu.HudCount <= 0) {
+			$('#forgehammer-hud').remove();
+			_menu.CallSelectedMenu('Box')
+		}
+			
+		// has a length been set manually?
+		let MenuLength = FH.Storage.getItem('MenuLength');
+
+		if (MenuLength !== null && MenuLength < _menu.HudCount) {
+			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
+		}
+
+		_menu.HudHeight = (_menu.HudCount * 47);
+		_menu.SlideParts = Math.ceil(MenuItemCount / _menu.HudCount);
+
+		$('#forgehammer-hud').height(_menu.HudHeight + 2);
+		$('#forgehammer-hud-wrapper').height(_menu.HudHeight);
+	},
+
+
+	/**
+	 * Make panel scrollable
+	 */
+	CheckButtons: async () => {
+		let activeIdx = 0;
+
+		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
+
+		$('.hud-btn').click(function () {
+			activeIdx = $(this).index('.hud-btn');
+		});
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-down-active").length == 0) {
+			// Klick auf Pfeil nach unten
+			$('body').on('click', '.hud-btn-down-active', function () {
+				_menu_right.ClickButtonDown();
+			});
+		};
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-up-active").length == 0) {
+			// Klick auf Pfeil nach oben
+			$('body').on('click', '.hud-btn-up-active', function () {
+				_menu_right.ClickButtonUp();
+			});
+		};
+
+		// Tooltipp top ermitteln und einblenden
+		$('.hud-btn').stop().hover(function () {
+			let $this = $(this),
+				id = $this.attr('id'),
+				y = ($this.offset().top + 30);
+
+			$('[data-btn="' + id + '"]').css({ 'top': y + 'px' }).show();
+
+		}, function () {
+			let id = $(this).attr('id');
+
+			$('[data-btn="' + id + '"]').hide();
+		});
+
+		// Sortierfunktion der Menü-items
+		$('#forgehammer-hud-slider').sortable({
+			placeholder: 'menu-placeholder',
+			axis: 'y',
+			distance: 22,
+			start: function () {
+				$('#forgehammer-hud').addClass('is--sorting');
+			},
+			sort: function () {
+
+				$('.is--sorting .hud-btn-up-active').mouseenter(function (e) {
+					$('.hud-btn-up-active').stop().addClass('hasFocus');
+
+					setTimeout(() => {
+						if ($('.is--sorting .hud-btn-up-active').hasClass('hasFocus')) {
+							_menu_right.ClickButtonUp();
+						}
+					}, 1000);
+
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-up-active').removeClass('hasFocus');
+				});
+
+				$('.is--sorting .hud-btn-down-active').mouseenter(function (e) {
+					$('.is--sorting .hud-btn-down-active').stop().addClass('hasFocus');
+
+					setTimeout(() => {
+						if ($('.is--sorting .hud-btn-down-active').hasClass('hasFocus')) {
+							_menu_right.ClickButtonDown();
+						}
+					}, 1000);
+
+				}).mouseleave(function () {
+					$('.is--sorting .hud-btn-down-active').removeClass('hasFocus');
+				});
+			},
+			stop: function () {
+				_menu.Items = [];
+
+				$('.hud-btn').each(function () {
+					_menu.Items.push($(this).data('slug'));
+				});
+
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
+
+				$('#forgehammer-hud').removeClass('is--sorting');
+
+				FH.HTML.ShowToastMsg({
+					show: 'force',
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
+					type: 'success',
+					hideAfter: 5000
+				});
+			}
+		});
+
+		HiddenRewards.SetCounter();
+		FH.BlueGalaxy.SetCounter();
+	},
+
+
+	/**
+	 * Click function
+	 */
+	ClickButtonDown: () => {
+		$('.hud-btn-down').removeClass('hasFocus');
+
+		_menu.ActiveSlide++;
+
+		_menu.MenuScrollTop -= _menu.HudHeight;
+		if (_menu.ActiveSlide * _menu.HudHeight > $('#forgehammer-hud-slider').height())
+			_menu.MenuScrollTop = - (($('#forgehammer-hud-slider').height()/_menu.HudHeight) - 1) *_menu.HudHeight;
+
+		$('#forgehammer-hud-slider').css({
+			'top': _menu.MenuScrollTop + 'px'
+		});
+
+		if (_menu.ActiveSlide > 1) {
+			$('.hud-btn-up').addClass('hud-btn-up-active');
+		}
+
+		if (_menu.ActiveSlide === _menu.SlideParts) {
+			$('.hud-btn-down').removeClass('hud-btn-down-active');
+
+		} else if (_menu.ActiveSlide < _menu.SlideParts) {
+			$('.hud-btn-down').addClass('hud-btn-down-active');
+		}
+	},
+
+
+	/**
+	 * Click function
+	 */
+	ClickButtonUp: () => {
+		$('.hud-btn-up').removeClass('hasFocus');
+
+		_menu.ActiveSlide--;
+		
+		if (_menu.ActiveSlide == 1) 
+			_menu.MenuScrollTop = 0;
+		else
+			_menu.MenuScrollTop += _menu.HudHeight;
+
+		$('#forgehammer-hud-slider').css({
+			'top': _menu.MenuScrollTop + 'px'
+		});
+
+		if (_menu.ActiveSlide === 1){
+			$('.hud-btn-up').removeClass('hud-btn-up-active');
+		}
+
+		if (_menu.ActiveSlide < _menu.SlideParts){
+			$('.hud-btn-down').addClass('hud-btn-down-active');
+
+		} else if (_menu.ActiveSlide === _menu.SlideParts){
+			$('.hud-btn-down').removeClass('hud-btn-down-active');
+		}
+	},
+};
+
+FH.menu = _menu;
+};
+
+
+
