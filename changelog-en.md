@@ -18,7 +18,6 @@
 ### Bug fixes
 - GBG Overview: Data without entries could be shown in the history
 - Translations: were not properly saved
-- Calculator: Was broken again on beta and quickly patched up
 
 ---
  

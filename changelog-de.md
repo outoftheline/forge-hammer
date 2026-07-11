@@ -18,7 +18,6 @@
 ### Bug Fixes
 - Gefechte: Es konnten leere Einträge in der Gefechtshistorie und manchmal leere Fenster angezeigt werden
 - Übersetzungen: Wurden unter anderem nicht korrekt gespeichert
-- LG Rechner: War auf Beta für eigene LG mal wieder kaputt
 
 ---
  
