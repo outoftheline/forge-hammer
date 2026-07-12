@@ -178,10 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 (function () {
-	let MainMenuLoaded = false,
-		LGCurrentLevelMedals = undefined,
-		IsLevelScroll = false;
-
+	let MainMenuLoaded = false;
 
 	// globale Handler
 	// die Gebäudenamen übernehmen
@@ -642,7 +639,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// gbUpdateData sammelt die informationen aus mehreren Handlern
 	let gbUpdateData = null;
-	let gbCityMapEntity = null;
 
 	FH.proxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
 		let getConstruction = data.requestMethod === 'getConstruction' ? data : null;
@@ -656,24 +652,24 @@ document.addEventListener("DOMContentLoaded", function () {
 			Bonus['production'] = getConstruction.responseData.next_production_bonus; // GB update to do
 			let EraName = getConstruction.responseData.ownerEra;
 			if (EraName) Era = Technologies.Eras[EraName];
-			IsLevelScroll = false;
 		}
 		else if (getConstructionRanking != null) {
 			Rankings = getConstructionRanking.responseData;
-			IsLevelScroll = true;
 		}
 		else if (contributeForgePoints != null) {
 			Rankings = contributeForgePoints.responseData;
-			IsLevelScroll = false;
 		}
 
 		if (Rankings) {
+			[entityId, playerId, level, contribution] = postData[0].requestData;
+			entity = FH.GBCalc.getGB(playerId, entityId);			
 			if (!gbUpdateData || !gbUpdateData.CityMapEntity) {
-				gbUpdateData = { Rankings: Rankings, CityMapEntity: gbCityMapEntity, Bonus: null };
+				gbUpdateData = { Rankings: Rankings, CityMapEntity: entity, Bonus: null, Level: (level + !! contribution) || entity.level + 1};
 			}
 			else {
 				gbUpdateData.Rankings = Rankings;
 				gbUpdateData.Bonus = Bonus;
+				gbUpdateData.Level = level;
 				gbUpdateData.Era = Era;
 			}
 		}
@@ -690,40 +686,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// can be removed after game update 1.332
 	FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
-		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: data };
-			// reset gbUpdateData sobald wie möglich (nachdem alle einzelnen Handler ausgeführt wurden)
-			Promise.resolve().then(() => gbUpdateData = null);
-		} else {
-			gbUpdateData.CityMapEntity = data;
-			lgUpdate();
-		}
-		
-		if (data.responseData[0]?.player_id === FH.Player.ID) {
-			
-			if ($('#OwnPartBox').length > 0) {
-				Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
-				Parts.CalcBody();
-			}
+		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
+		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
+		if (dataId == currentId && $('#OwnPartBox').length > 0) {
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Parts.CalcBody();
 		}
 	});
 
 	FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
-		let formattedData = { ...data, responseData: [data.responseData] };
-		gbCityMapEntity = formattedData;
-
-		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: formattedData };
-		} else {
-			gbUpdateData.CityMapEntity = formattedData;
-			lgUpdate();
-		}
-		
-		if (formattedData.responseData[0]?.player_id === FH.Player.ID) {
-			if ($('#OwnPartBox').length > 0) {
-				Main.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
-				Parts.CalcBody();
-			}
+		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
+		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
+		if (dataId == currentId && $('#OwnPartBox').length > 0) {
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Parts.CalcBody();
 		}
 	});
 
@@ -753,38 +729,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Update Funktion, die ausgeführt wird, sobald beide Informationen in gbUpdateData vorhanden sind.
 	function lgUpdate() {
-		const { CityMapEntity, Rankings, Bonus } = gbUpdateData;
+		const { CityMapEntity, Rankings, Bonus, Level } = gbUpdateData;
 		gbUpdateData = null;
-		Main.CurrentGB.isPreviousLevel = false;
+		Main.CurrentGB.isPreviousLevel = Level <= CityMapEntity.level;
 
 		if (!Rankings) return;
 
-		// LG Scrollaktion: Beim ersten mal Öffnen Medals von P1 notieren. Wenn gescrollt wird und P1 weniger Medals hat, dann vorheriges Level, sonst aktuelles Level
-		if (IsLevelScroll) {
-			let Medals = 0;
-			for (let i = 0; i < Rankings.length; i++) {
-				if (Rankings[i]['reward'] !== undefined) {
-					Medals = Rankings[i]['reward']['resources']['medals'];
-					break;
-				}
-			}
-
-			if (Medals !== LGCurrentLevelMedals) {
-				Main.CurrentGB.isPreviousLevel = true;
-			}
-		}
-		else {
-			let Medals = 0;
-			for (let i = 0; i < Rankings.length; i++) {
-				if (Rankings[i]['reward'] !== undefined) {
-					Medals = Rankings[i]['reward']['resources']['medals'];
-					break;
-				}
-			}
-			LGCurrentLevelMedals = Medals;
-		}
-
-		Main.CurrentGB.Entity = CityMapEntity.responseData[0];
+		Main.CurrentGB.Entity = CityMapEntity;
 		Main.CurrentGB.Rankings = Rankings;
 		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
 		if (!Main.CurrentGB.isPreviousLevel) 
