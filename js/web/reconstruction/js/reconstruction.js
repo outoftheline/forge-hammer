@@ -1,6 +1,6 @@
-
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -108,7 +108,10 @@ let reconstruction = {
     pages: null,
     rcIcons:null,
     roadIcons:null,
-    mapScale: 20,  
+    planBuildings:null,
+    selectedPlanId:null,
+    mapScale: 20,
+
     pageUpdate:(id)=>{
         let meta = FH.Main.CityEntities[id.split("#")[0]]
         if (["friends_tavern",
@@ -212,20 +215,26 @@ let reconstruction = {
         }
         let storedUnit = parseInt(FH.Storage.getItem('ReconstructionMapScale') || 80);
 
-        let c = `<div class="map-grid-wrapper" style="--scale:${storedUnit}">`;
-        c += `<div class="map-grid">`;
+        let c = `<div class="map-grid-wrapper" style="--scale:${storedUnit}">
+                <div class="map-grid">`;
 
         for(let area of CityMap.Main.unlockedAreas) {
             let startArea = area.width === 16 ? ' startarea' : '';
             c += `<span class="map-bg${startArea}" style="left:${area.x*reconstruction.mapScale||0}px;top:${area.y*reconstruction.mapScale||0}px;"></span>`
 		}
-        
+
+        if (reconstruction.planBuildings) {
+            for (let b of reconstruction.planBuildings) {
+                c += reconstruction.placePlanBuildingOnMap(b);
+            }
+        }
+
         for (let item of Object.values(reconstruction.draft)) {
             c += reconstruction.placeBuildingOnMap(item);
         }
 
-        c += `</div>`;
-        c += `</div>`;
+        c += `</div>
+        </div>`;
         $('#ReconstructionMapBody').html(c);
     },
     placeBuildingOnMap:(data)=>{
@@ -236,14 +245,62 @@ let reconstruction = {
         let height = meta.length||meta.components.AllAge.placement.size.y;
         let needsStreet = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0;
         let street = needsStreet === 0 ? ' roadless' : '';
+        let type = needsStreet === 0 ? 'roadless' : meta.type;
+        let matched = reconstruction.isPlanMatch(data.position?.x, data.position?.y, width, height, type) ? ' matched' : '';
         let c = '';
         if (data.position !== undefined) {
-            c += `<span data-id="${data.entityId}" class="map-building ${meta.type}${street}" 
+            c += `<span data-id="${data.entityId}" class="map-building ${meta.type}${street}${matched}" 
                     style="left:${data.position?.x*reconstruction.mapScale||0}px;top:${data.position?.y*reconstruction.mapScale||0}px;
                         width:${width*reconstruction.mapScale}px;height:${height*reconstruction.mapScale}px;">
                 </span>`;
         }
         return c;
+    },
+
+    placePlanBuildingOnMap:(b)=>{
+        return `<span class="map-building-ghost ${b.type}" 
+                style="left:${b.x*reconstruction.mapScale}px;top:${b.y*reconstruction.mapScale}px;
+                    width:${b.width*reconstruction.mapScale}px;height:${b.height*reconstruction.mapScale}px;">
+            </span>`;
+    },
+
+    isPlanMatch:(x,y,width,height,type)=>{
+        if (!reconstruction.planBuildings) return false;
+        return reconstruction.planBuildings.some(b => b.x === x && b.y === y && b.width === width && b.height === height && b.type === type);
+    },
+
+    loadPlanOverlay: async (planId) => {
+        if (!planId) {
+            reconstruction.planBuildings = null;
+            reconstruction.showMap();
+            return;
+        }
+        try {
+            let rows = await FH.Main.sendExtMessage({ type: 'Planner.getBuildingList', planId });
+            reconstruction.planBuildings = (rows||[])
+                .map(row => {
+                    let parsed = {};
+                    try { parsed = row.JSON ? JSON.parse(row.JSON) : {}; } 
+                    catch(e) { parsed = {}; }
+                    if (parsed.stored) return null;
+
+                    let meta = FH.Main.CityEntities[parsed.cityentity_id];
+                    if (!meta) return null;
+
+                    if (["friends_tavern","impediment","hub_part","off_grid","outpost_ship","hub_main"].includes(meta.type)) return null;
+
+                    let width = meta.width||meta.components.AllAge.placement.size.x;
+                    let height = meta.length||meta.components.AllAge.placement.size.y;
+                    let type = CityBuildings.needsStreet(meta) === 0 ? 'roadless' : meta.type;
+
+                    return { x: row.x, y: row.y, width, height, type };
+                })
+                .filter(Boolean);
+        } catch (e) {
+            console.error('Reconstruction: failed to load plan overlay', e);
+            reconstruction.planBuildings = null;
+        }
+        reconstruction.showMap();
     },
     mapSettings:()=>{
         let storedUnit = parseFloat(FH.Storage.getItem('ReconstructionMapScale') || 80);
@@ -252,8 +309,10 @@ let reconstruction = {
 			<option data-scale="80" ${storedUnit === 80 ? 'selected' : ''}>M</option>
 			<option data-scale="100" ${storedUnit === 110 ? 'selected' : ''}>L</option>
 			<option data-scale="156.1" ${storedUnit === 156.1 ? 'selected' : ''}>XL</option>
-            </select>`;
-            c += `<br><input type="range" class="opacity" name="opacity" min="0.01" max="1" step="0.01" value="0.9" />`
+            </select>
+            <br><input type="range" class="opacity" name="opacity" min="0.01" max="1" step="0.01" value="0.9" />
+            <br><select class="plan-overlay" name="planoverlay"><option value="">- ${FH.t('Boxes.ReconstructionMap.LoadPlan')} -</option></select>`;
+
 		$('#ReconstructionMapSettingsBox').html(c).promise().done(function() {
 
             $('#ReconstructionMapSettingsBox .scale-view').on('change', function(){
@@ -267,7 +326,20 @@ let reconstruction = {
                 $('#ReconstructionMapBody .map-grid-wrapper').css('opacity', val);
             });
 
+            FH.Main.sendExtMessage({ type: 'Planner.getPlanList' }).then(plans => {
+                let options = (plans||[]).map(p => `<option value="${p.id}">${FH.helper.str.cleanup(p.name)}</option>`).join('');
+                $('#ReconstructionMapSettingsBox .plan-overlay').append(options);
+                if (reconstruction.planBuildings && reconstruction.selectedPlanId) {
+                    $('#ReconstructionMapSettingsBox .plan-overlay').val(reconstruction.selectedPlanId);
+                }
+            }).catch(e => console.error('Reconstruction: failed to load plan list', e));
+
+            $('#ReconstructionMapSettingsBox .plan-overlay').on('change', function(){
+                let planId = $(this).val();
+                reconstruction.selectedPlanId = planId || null;
+                reconstruction.loadPlanOverlay(planId ? parseInt(planId) : null);
+            });
+
         });
     }
 }
-
