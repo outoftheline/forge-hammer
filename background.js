@@ -427,7 +427,6 @@ plannerDB.version(1).stores({
 		const existingEntries = await table.where('region').equals(region).toArray();
 		const buildingsOld = Object.assign({}, ...existingEntries.map(x => ({ [x.id]: x })));
 		const metadata = {};
-		const updated = [];
 		const ids = Object.keys(buildingUrls);
 		const maxConcurrent = 10;
 		let active = 0;
@@ -444,7 +443,7 @@ plannerDB.version(1).stores({
 						if (!response.ok) throw new Error(`HTTP ${response.status}`);
 						const text = await response.text();
 						metadata[id] = JSON.parse(text);
-						updated.push({ region, id, hash: meta.hash, json: text });
+						table.put({ region, id, hash: meta.hash, json: text });
 						resolve();
 					})
 					.catch(async error => {
@@ -487,11 +486,6 @@ plannerDB.version(1).stores({
 			runNext();
 			checkDone();
 		});
-
-		if (updated.length > 0) {
-			await table.bulkPut(updated);
-		}
-
 		return metadata;
 	}
 
