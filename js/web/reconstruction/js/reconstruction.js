@@ -207,7 +207,7 @@ let reconstruction = {
                 minimize: true,
                 resize: true,
                 active_maps:"main",
-                settings: 'reconstruction.mapSettings();'
+                settings: reconstruction.mapSettings
             });
         }
         let storedUnit = parseInt(FH.Storage.getItem('ReconstructionMapScale') || 80);
@@ -254,16 +254,19 @@ let reconstruction = {
 			<option data-scale="156.1" ${storedUnit === 156.1 ? 'selected' : ''}>XL</option>
             </select>`;
             c += `<br><input type="range" class="opacity" name="opacity" min="0.01" max="1" step="0.01" value="0.9" />`
-		$('#ReconstructionMapSettingsBox').html(c).promise().done(function(){
+		$('#ReconstructionMapSettingsBox').html(c).promise().done(function() {
+
             $('#ReconstructionMapSettingsBox .scale-view').on('change', function(){
                 let unit = parseFloat($('.scale-view option:selected').data('scale'));
                 FH.Storage.setItem('ReconstructionMapScale', unit);
                 $('#ReconstructionMapBody .map-grid-wrapper').css('--scale', unit);
             });
+
             $('#ReconstructionMapSettingsBox .opacity').on('change', function(){
                 let val = parseFloat($('#ReconstructionMapSettingsBox .opacity').val());
                 $('#ReconstructionMapBody .map-grid-wrapper').css('opacity', val);
             });
+
         });
     }
 }
