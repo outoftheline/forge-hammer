@@ -2043,11 +2043,11 @@ let Main = {
 	},
 
 
-	ResizeFunctions: () => {
-		// FP-Bar
+	/*ResizeFunctions: () => {
+		// hammerBar
 		if (document.getElementById('game_body'))
 			StrategyPoints.HandleWindowResize();
-	},
+	},*/
 
 
 	/**
