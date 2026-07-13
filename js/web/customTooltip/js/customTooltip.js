@@ -925,6 +925,7 @@ let QIActions = {
 //QI current Stock indicator upon collection
 let activeQIProductions = {};
 let currentQIUnits = {};
+let QIExpansionCosts = [];
 
 FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
     if (FH.ActiveMap !== "guild_raids") return;
@@ -940,8 +941,8 @@ FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
                     $('#QICollectionTooltip').remove();
                     $(`
                         <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
-                            ${FH.t("Boxes.Tooltip.CurrentStock")}: ${FH.RessourceStock[good]} 
-                            ${srcLinks.icons(good)}
+                            ${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${FH.RessourceStock[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}
+                            
                         </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
                 }, 100);
             } else if (product.type == "unit") { //units
@@ -950,8 +951,8 @@ FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
                 $('#QICollectionTooltip').remove();
                 $(`
                     <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
-                        ${FH.t("Boxes.Tooltip.CurrentStock")}: ${(currentQIUnits[product.unitTypeId]?.unattached || 0) + (currentQIUnits[product.unitTypeId]?.producedSince ||0)}${!currentQIUnits[product.unitTypeId]?.unattached ? "+?":""} 
-                        <img alt="" src=${srcLinks.getReward(product.unitTypeId.replace("guild_raids_",""))}>
+                        ${FH.t("Boxes.Tooltip.CurrentStock")}: <img alt="" src=${srcLinks.getReward(product.unitTypeId.replace("guild_raids_",""))}> ${(currentQIUnits[product.unitTypeId]?.unattached || 0) + (currentQIUnits[product.unitTypeId]?.producedSince ||0)}${!currentQIUnits[product.unitTypeId]?.unattached ? "+?":""} 
+                        
                     </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
             }
         } 
@@ -959,10 +960,33 @@ FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
     })
 })
 
+FH.proxy.addCustomHandler("test",()=>{
+    setTimeout(() => {
+        let good="guild_raids_rope"
+        $('#QICollectionTooltip').remove();
+        $(`
+            <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
+                ${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${FH.RessourceStock[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}
+                
+            </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
+    }, 1000);
+})
+
 
 FH.proxy.addHandler('ArmyUnitManagementService','getArmyInfo',(data, postData)=>{
     if (postData[0].requestData[0]?.battleType !== "guild_raids") return;
     currentQIUnits = Object.assign({},...data.responseData.counts.map(x=>({[x.unitTypeId]:x})))
+})
+
+FH.proxy.addHandler('CityMapService', 'getCityMap', (data, postData)=>{
+    if (data.responseData.gridId != "guild_raids") return
+    QIExpansionCosts = (data.responseData.tilesets || []).filter(x=>x.type=="selectablePrice").map(x=>Object.values(x?.requirements?.cost?.resources || {})[0])    
+})
+
+FH.proxy.addHandler('CityMapService', 'placeExpansion', (data, postData)=>{
+    if (FH.ActiveMap != "guild_raids") return;
+    if (postData?.[0]?.requestData?.[0]?.type != "selectablePrice") return; //premium expansions are not from interest
+    QIExpansionCosts.shift()
 })
 
 //GBG Rewards Stream
