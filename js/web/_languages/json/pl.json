@@ -1,4 +1,4 @@
-﻿{
+{
   "_Language": "Polski",
   "Boxes.Alerts.Form.Antiques.Auction": "Aukcja",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Czas pomiędzy aukcjami",
@@ -55,13 +55,22 @@
   "Boxes.Alerts.Time.10h": "10g",
   "Boxes.Alerts.Time.15m": "15m",
   "Boxes.Alerts.Time.1d": "1d",
-  "Boxes.Alerts.Time.1h": "1h",
+  "Boxes.Alerts.Time.1h": {
+    "s": "1g",
+    "r": "1h"
+  },
   "Boxes.Alerts.Time.1m": "1m",
-  "Boxes.Alerts.Time.4h": "4h",
+  "Boxes.Alerts.Time.4h": {
+    "s": "4g",
+    "r": "4h"
+  },
   "Boxes.Alerts.Time.5h": "5g",
   "Boxes.Alerts.Time.5m": "5m",
   "Boxes.Alerts.Time.7d": "7d",
-  "Boxes.Alerts.Time.8h": "8h",
+  "Boxes.Alerts.Time.8h": {
+    "s": "8g",
+    "r": "8h"
+  },
   "Boxes.AllyList.All": "Wszystkie rzadkości",
   "Boxes.AllyList.Ally": "Sojusznik",
   "Boxes.AllyList.Boosts": "Bonusy",
@@ -174,13 +183,24 @@
   "Boxes.Calculator.LGNotOpen": "Kolejny poziom tej PA jest aktualnie zablokowany.",
   "Boxes.Calculator.MaxLevel": "Odblokowany poziom",
   "Boxes.Calculator.Meds": "Medale",
+  "Boxes.Calculator.OwnPartClose": {
+    "s": "-",
+    "r": "-"
+  },
+  "Boxes.Calculator.PlayInfoSound": {
+    "s": "Odtwórz dźwięk gdy można bezpiecznie zająć miejsce",
+    "r": "Play sound when spots can be taken safely"
+  },
   "Boxes.Calculator.Profit": "Zysk",
   "Boxes.Calculator.Settings.newValue": "Nowa wartość",
   "Boxes.Calculator.Settings.Save": "Zapisz",
   "Boxes.Calculator.Step": "Poziom ",
   "Boxes.Calculator.Title": "Kalkulator budowy PA",
   "Boxes.Calculator.TTForderCosts": "Koszty = __nettoreward__<small>(Nagroda netto)</small> X __forderfactor__%<small>(Twoja inwestycja)</small> = __costs__",
-  "Boxes.Calculator.TTForderFPStockLow": "UWAGA: posiadasz za mało PR<br>masz __fpstock__ z __costs__ PR<br>za mało o__tooless__ PR",
+  "Boxes.Calculator.TTForderFPStockLow": {
+    "s": "UWAGA: posiadasz za mało PR!<br>masz __fpstock__ z __costs__ PR<br>To jest o __tooless__ PR za mało",
+    "r": "WARNING: Not enough FP in stock!<br>You only have __fpstock__ of __costs__FP<br>That is __tooless__FPs too few"
+  },
   "Boxes.Calculator.TTForderNegativeProfit": "Miejsce nie jest zabezpieczone. Należy wpłacić __fpcount__ dodatkowych PR w celu zabezpieczenia.<br>Całkowita wpłata: __totalfp__ PR",
   "Boxes.Calculator.TTLevelWarning": "Dodanie__fpcount__ PR nie mieści się!<br>Maksymalna możliwa wpłata: __totalfp__ PR",
   "Boxes.Calculator.TTLoss": "Nagroda = __nettoreward__ <small>(Nagroda netto)</small> X __arcfactor__% <small>(Bonus Arc)</small> = __bruttoreward__<br>Cost: __costs__ - Miejsce zablokowane: __safe__<br>Loss = __costs__ <small>(Koszt)</small> - __bruttoreward__ <small>(Nagroda)</small> = __loss__",
@@ -223,12 +243,31 @@
   "Boxes.Castle.VisitAntiqueDealerWarning": "Odwiedź handlarza antykami, aby zaktualizować dane.",
   "Boxes.Castle.VisitCastleWarning": "Otwórz przegląd zamku, aby zaktualizować dane.",
   "Boxes.Castle.VisitGexWarning": "Otwórz podsumowanie WG, aby zaktualizować dane.",
+  "Boxes.CityBuilder.Opacity": {
+    "s": "Krycie",
+    "r": "Opacity"
+  },
+  "Boxes.CityBuilder.Title": {
+    "s": "Budowanie miasta",
+    "r": "City Builder"
+  },
+  "Boxes.CityBuilder.Zoom": {
+    "s": "Powiększ",
+    "r": "Zoom"
+  },
   "Boxes.CityMap.Boosts": "Przyspieszenia &amp; Produkcje",
   "Boxes.CityMap.Building": "Budynek",
-  "Boxes.CityMap.buildingFromGBG": "Budynki z GPCH",
+  "Boxes.CityMap.buildingFromGBG": {
+    "s": "Budynki z GPCh",
+    "r": "Buildings from GBG"
+  },
   "Boxes.CityMap.buildingFromQI": "Budynki z NK",
   "Boxes.CityMap.BuildingsAmount": "Łącznie budynków:",
   "Boxes.CityMap.CavalierPerspecitve": "Izometryczny",
+  "Boxes.CityMap.ChainBuildings": {
+    "s": "Budynki łańcuchowe",
+    "r": "Chain buildings"
+  },
   "Boxes.CityMap.CityGridScore": "Wynik siatki miasta",
   "Boxes.CityMap.CityGridScoreText": "Powierzchnia wszystkich podłączonych budynków które wymagają dróg, podzielona przez powierzchnię wszystkich dróg pomnożoną przez 100",
   "Boxes.CityMap.clan_power_production": "Produkcja potencjału gildii",
@@ -243,6 +282,14 @@
   "Boxes.CityMap.goods": "Towarowe",
   "Boxes.CityMap.greatbuilding": "Perły",
   "Boxes.CityMap.Highlight": "Podświetl",
+  "Boxes.CityMap.HighlightCollectableBuildings": {
+    "s": "Budynki kolekcjonerskie",
+    "r": "Collectable buildings"
+  },
+  "Boxes.CityMap.HighlightNotPolivatedBuildings": {
+    "s": "Nie zmodernizowane budynki",
+    "r": "Not polivated buildings"
+  },
   "Boxes.CityMap.HighlightOldBuildings": "Budynki z poprzednich epok",
   "Boxes.CityMap.limited": "Wzniesione/limitowane budynki",
   "Boxes.CityMap.main_building": "Ratusz",
@@ -262,6 +309,14 @@
   "Boxes.CityMap.random_production": "Losowe",
   "Boxes.CityMap.residential": "Mieszkalne",
   "Boxes.CityMap.roadless": "Budynki bez dróg",
+  "Boxes.CityMap.SendToPlanner": {
+    "s": "Wyślij do plannera",
+    "r": "Send to planner"
+  },
+  "Boxes.CityMap.SetBuildings": {
+    "s": "Ustaw budynki",
+    "r": "Set buildings"
+  },
   "Boxes.CityMap.ShowAscendableBuildings": "Budynki do wzniesienia",
   "Boxes.CityMap.ShowDecayedBuildings": "Podupadłe budynki",
   "Boxes.CityMap.ShowNoStreetBuildings": "Budynki bez dróg",
@@ -278,6 +333,10 @@
   "Boxes.CityMap.ToastBodyCopyData": "Dane Twojego miasta zostały skopiowane do schowka",
   "Boxes.CityMap.ToastHeadCopyData": "Skopiowano!",
   "Boxes.CityMap.tower": "Wieże",
+  "Boxes.CityMap.TurnedPerspecitve": {
+    "s": "90° widok z góry",
+    "r": "90° Top View"
+  },
   "Boxes.CityMap.WholeArea": "Całkowita powierzchnia: ",
   "Boxes.CityMap.YourCity": "Twoje miasto",
   "Boxes.CloseBox.AutoHideOnBattle": "Automatycznie ukryj wszystko podczas walki",
@@ -322,14 +381,38 @@
   "Boxes.Discord.DeleteEntry": "Usuń",
   "Boxes.Discord.EditEntry": "Edytuj",
   "Boxes.Discord.Event": "Wydarzenie",
+  "Boxes.Discord.GBGVariables": {
+    "s": "Uwaga: Liczba punktów chwały, sąsiednie gildie oraz opór mogą ulec zmianie, zanim prowincja stanie się faktycznie dostępna. W swoim szablonie możesz użyć następujących symboli zastępczych dla prowincji GPCh:",
+    "r": "Attention: Victory points, neighboring guilds and attrition can change before the province is actually available. You can use these placeholders for GBG provinces in your template:"
+  },
+  "Boxes.Discord.MarkdownLinkText": {
+    "s": "Formatowanie tekstu w Discordzie",
+    "r": "Discord text formatting"
+  },
   "Boxes.Discord.Message": "Wiadomość",
   "Boxes.Discord.Name": "Nazwa",
   "Boxes.Discord.Save": "Zapisz",
   "Boxes.Discord.TestEntry": "Testowanie",
   "Boxes.Discord.Title": "Discord Webhooki",
+  "Boxes.Discord.TitleEntries": {
+    "s": "Wiadomości na Discord",
+    "r": "Discord Messages"
+  },
   "Boxes.Discord.TitleNewEntry": "Nowy wpis webhooka",
+  "Boxes.Discord.TitleNewTemplate": {
+    "s": "Szablon",
+    "r": "Template"
+  },
   "Boxes.Discord.VisitGGMapBefore": "Dla wydarzeń gildyjnych należy wcześniej odwiedzić mapę GPch",
   "Boxes.Discord.WebhookUrl": "URL Webhooka",
+  "Boxes.Discord.WebhookUrlManage": {
+    "s": "Zarządzaj adresami URL webhooków",
+    "r": "Manage Webhook URLs"
+  },
+  "Boxes.Discord.WebhookUrlNeeded": {
+    "s": "Najpierw dodaj adres URL webhooka!",
+    "r": "Add a webhook URL first!"
+  },
   "Boxes.doubleFPprevention.Text": "Zapobieganie",
   "Boxes.doubleFPprevention.Title": "Podwójny wkład",
   "Boxes.EventChests.Chance": "Szansa",
@@ -399,24 +482,311 @@
   "Boxes.FPCollector.Total": "Razem zebrano:",
   "Boxes.FPCollector.wildlife_event": "Event Wildlife",
   "Boxes.FPCollector.winter_event": "Event zimowy",
+  "Boxes.GBGActionLog.Action.attacked_ignored": {
+    "s": "Zignorowanie znaku Stop",
+    "r": "Stop sign ignored"
+  },
+  "Boxes.GBGActionLog.Action.building_destroyed": {
+    "s": "Zniszczony budynek",
+    "r": "Building destroyed"
+  },
+  "Boxes.GBGActionLog.Action.building_placed": {
+    "s": "Postawiony budynek",
+    "r": "Building placed"
+  },
+  "Boxes.GBGActionLog.Action.province_conquered": {
+    "s": "Przejęty sektor",
+    "r": "Sector taken"
+  },
+  "Boxes.GBGActionLog.Action.province_lost": {
+    "s": "Utracony sektor",
+    "r": "Sector lost"
+  },
+  "Boxes.GBGActionLog.ActionCode": {
+    "s": "Akcja",
+    "r": "Action"
+  },
+  "Boxes.GBGActionLog.ActionTime": {
+    "s": "Czas",
+    "r": "Time"
+  },
+  "Boxes.GBGActionLog.ActivityEmpty": {
+    "s": "Nie znaleziono żadnych działań graczy odpowiadających wybranym datom i czynnościom.",
+    "r": "No matching player activity for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.ActorName": {
+    "s": "Nazwa aktora",
+    "r": "Actor name"
+  },
+  "Boxes.GBGActionLog.ActorType": {
+    "s": "Typ aktora",
+    "r": "Actor type"
+  },
+  "Boxes.GBGActionLog.ActorType.guild": {
+    "s": "Gildia",
+    "r": "Guild"
+  },
+  "Boxes.GBGActionLog.ActorType.player": {
+    "s": "Gracz",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.BatchesEmpty": {
+    "s": "Nie zarejestrowano jeszcze żadnych zbiorów danych.",
+    "r": "No data collections logged yet."
+  },
+  "Boxes.GBGActionLog.Building": {
+    "s": "Budynek",
+    "r": "Building"
+  },
+  "Boxes.GBGActionLog.Button": {
+    "s": "Dziennik działań",
+    "r": "Action Log"
+  },
+  "Boxes.GBGActionLog.DateFormat": {
+    "s": "Format daty",
+    "r": "Date format"
+  },
+  "Boxes.GBGActionLog.DateTimeFormat": {
+    "s": "Format daty i godziny",
+    "r": "Date & time format"
+  },
+  "Boxes.GBGActionLog.Filter": {
+    "s": "Filtr",
+    "r": "Filter"
+  },
+  "Boxes.GBGActionLog.FilteredTimeRange": {
+    "s": "Zakres czasowy",
+    "r": "Time range"
+  },
+  "Boxes.GBGActionLog.FirstLogTime": {
+    "s": "Pierwszy wpis",
+    "r": "First entry"
+  },
+  "Boxes.GBGActionLog.FormatHint": {
+    "s": "Wyświetlanie daty (np. RRRR, MM, DD, GG, mm). Pozostaw puste, aby zachować ustawienie domyślne.",
+    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
+  },
+  "Boxes.GBGActionLog.From": {
+    "s": "Od",
+    "r": "From"
+  },
+  "Boxes.GBGActionLog.GroupIndex": {
+    "s": "Indeks grup",
+    "r": "Group Index"
+  },
+  "Boxes.GBGActionLog.LastLogTime": {
+    "s": "Ostatni wpis",
+    "r": "Last entry"
+  },
+  "Boxes.GBGActionLog.LogCount": {
+    "s": "Liczba nowych wpisów",
+    "r": "New entry count"
+  },
+  "Boxes.GBGActionLog.LogDate": {
+    "s": "Zebrane w",
+    "r": "Collected at"
+  },
+  "Boxes.GBGActionLog.Map": {
+    "s": "Mapa",
+    "r": "Map"
+  },
+  "Boxes.GBGActionLog.Map.volcano_archipelago": {
+    "s": "Archipelag Wulkanów",
+    "r": "Volcano Archipelago"
+  },
+  "Boxes.GBGActionLog.Map.waterfall_archipelago": {
+    "s": "Archipelag Wodospadów",
+    "r": "Waterfall Archipelago"
+  },
+  "Boxes.GBGActionLog.Metric": {
+    "s": "Pokaż",
+    "r": "Show"
+  },
+  "Boxes.GBGActionLog.MetricCount": {
+    "s": "Liczba akcji",
+    "r": "Action count"
+  },
+  "Boxes.GBGActionLog.MetricDays": {
+    "s": "Dni aktywności",
+    "r": "Active days"
+  },
+  "Boxes.GBGActionLog.Player": {
+    "s": "Gracz",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.RangeCapActivity": {
+    "s": "Zakładka Aktywność obejmuje okres maksymalnie jednego miesiąca. Skorygowano do:",
+    "r": "The Activity tab is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapBatches": {
+    "s": "Zakładka Partie obejmuje okres maksymalnie 2 tygodni. Skorygowano do:",
+    "r": "The Batches tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapDetails": {
+    "s": "Zakładka Szczegóły obejmuje tylko okres 2 tygodni. Skorygowano do:",
+    "r": "The Details tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapReport": {
+    "s": "Raport dzienny obejmuje okres maksymalnie jednego miesiąca. Skorygowano do:",
+    "r": "The Daily Report is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapTitle": {
+    "s": "Ograniczony zakres dat",
+    "r": "Date range limited"
+  },
+  "Boxes.GBGActionLog.RedAfterHours": {
+    "s": "Zmień kolor ikony menu na czerwony po (godzinach)",
+    "r": "Turn the menu badge red after (hours)"
+  },
+  "Boxes.GBGActionLog.RedAfterHoursHint": {
+    "s": "Ikona menu pokazuje liczbę godzin, które upłynęły od ostatniego zebrania danych; po upływie tej liczby godzin okrąg zmienia kolor na czerwony.",
+    "r": "The menu icon shows the hours since the last log collection; the circle turns red once this many hours pass."
+  },
+  "Boxes.GBGActionLog.ReportEmpty": {
+    "s": "Brak pasujących działań graczy dla wybranych dat i działań",
+    "r": "No matching player actions for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.Reset": {
+    "s": "Zresetuj filtry",
+    "r": "Reset filters"
+  },
+  "Boxes.GBGActionLog.RowCount": {
+    "s": "Wiersze",
+    "r": "Rows"
+  },
+  "Boxes.GBGActionLog.Sector": {
+    "s": "Sektor",
+    "r": "Sector"
+  },
+  "Boxes.GBGActionLog.TabActivity": {
+    "s": "Aktywność godzinowa",
+    "r": "Activity by Hour"
+  },
+  "Boxes.GBGActionLog.TabBatches": {
+    "s": "Partie",
+    "r": "Batches"
+  },
+  "Boxes.GBGActionLog.TabDetails": {
+    "s": "Szczegóły",
+    "r": "Details"
+  },
+  "Boxes.GBGActionLog.TabPlayerDailyReport": {
+    "s": "Codzienny raport gracza",
+    "r": "Player Daily Report"
+  },
+  "Boxes.GBGActionLog.title": {
+    "s": "Rejestr działań GPCh",
+    "r": "GBG Action Log"
+  },
+  "Boxes.GBGActionLog.To": {
+    "s": "Do",
+    "r": "To"
+  },
+  "Boxes.GBGActionLog.Toast.CurrLoadTime": {
+    "s": "Aktualny czas zakończenia ładowania",
+    "r": "Current load end time"
+  },
+  "Boxes.GBGActionLog.Toast.LogsLoaded": {
+    "s": "Liczba załadowanych wpisów",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.PrevLoadTime": {
+    "s": "Liczba załadowanych dzienników",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.Reopen": {
+    "s": "**Nie zapomnij ponownie otworzyć mapy GPCh, aby załadować nowe wpisy!**",
+    "r": "**Do not forget to reopen the GBG map to load new logs!**"
+  },
+  "Boxes.GBGActionLog.ToastDuration": {
+    "s": "Czas wyświetlania okienka z nowymi wpisami (w sekundach)",
+    "r": "New-entry popup duration (seconds)"
+  },
+  "Boxes.GBGActionLog.ToastDurationHint": {
+    "s": "Ustaw wartość 0, aby wyłączyć okienko.",
+    "r": "Set to 0 to disable the popup."
+  },
+  "Boxes.GBGActionLog.Total": {
+    "s": "Łącznie",
+    "r": "Total"
+  },
+  "Boxes.GBGActionLog.TotalReturned": {
+    "s": "Łączna liczba wpisów",
+    "r": "All entry count"
+  },
   "Boxes.GBGBuildings.absoluteCosts": "Całkowity koszt",
   "Boxes.GBGBuildings.Costs": "Koszty",
   "Boxes.GBGBuildings.relativeCosts": "__amount__% of __good__ stock (__era__)",
   "Boxes.GBGBuildings.title": "Rekomendowany budynek",
   "Boxes.GBGBuildings.toBuild": "Do budowy",
   "Boxes.GBGBuildings.totalChance": "Szansa",
+  "Boxes.General.AutoOpen": {
+    "s": "Otwórz automatycznie",
+    "r": "Open automatically"
+  },
+  "Boxes.General.Cancel": {
+    "s": "Anuluj",
+    "r": "Cancel"
+  },
+  "Boxes.General.ConfirmDelete": {
+    "s": "Potwierdź usunięcie:",
+    "r": "Confirm delete:"
+  },
+  "Boxes.General.Delete": {
+    "s": "Usuń",
+    "r": "Delete"
+  },
+  "Boxes.General.Edit": {
+    "s": "Edytuj",
+    "r": "Edit"
+  },
   "Boxes.General.Export": "Eksportuj",
   "Boxes.General.ExportCSV": "Eksportuj jako CSV",
   "Boxes.General.ExportJSON": "Eksportuj jako JSON",
+  "Boxes.General.Favorites": {
+    "s": "Ulubione",
+    "r": "Favorites"
+  },
+  "Boxes.General.FavoritesAdd": {
+    "s": "Dodaj do ulubionych",
+    "r": "Add to favorites"
+  },
+  "Boxes.General.FavoritesRemove": {
+    "s": "Usuń z ulubionych",
+    "r": "Remove from favorites"
+  },
   "Boxes.General.FilterItems": "Filtruj Elementy",
   "Boxes.General.Guild_Battlegrounds": "Pola Bitewne Gildii",
-  "Boxes.General.Guild_Battlegrounds.short": "GPCH",
+  "Boxes.General.Guild_Battlegrounds.short": {
+    "s": "GPCh",
+    "r": "GBG"
+  },
   "Boxes.General.Guild_Expedition": "Wyprawy Gildyjne",
   "Boxes.General.Guild_Expedition.short": "WG",
+  "Boxes.General.Level": {
+    "s": "Poziom",
+    "r": "Level"
+  },
   "Boxes.General.Quantum_Incursion": "Najazdy Kwantowe",
   "Boxes.General.Quantum_Incursion.short": "NK",
+  "Boxes.General.Reset": {
+    "s": "Reset",
+    "r": "Reset"
+  },
   "Boxes.General.Save": "Zapisz",
+  "Boxes.General.Season": {
+    "s": "Sezon",
+    "r": "Season"
+  },
   "Boxes.General.ShowOnMap": "Pokaż na mapie miasta",
+  "Boxes.General.Version": {
+    "s": "Wersja",
+    "r": "Version"
+  },
+  "Boxes.General.Zoom": {
+    "s": "Powiększ",
+    "r": "Zoom"
+  },
   "Boxes.GexStat.CompareLast": "Porównaj ostatnie",
   "Boxes.GexStat.Course": "Wykres",
   "Boxes.GexStat.DeleteDataOlderThan": "Usuń dane starsze niż",
@@ -477,6 +847,10 @@
   "Boxes.GreatBuildings.TTGoodCostsColumn": "Wyświetla koszt PR związany z zakupem potrzebnych towarów (dotyczy jedynie niewybudowanych pereł)",
   "Boxes.GreatBuildings.TTGoodsValue": "Ta wartość jest używana do oceniania budynków produkujących towary. Ile PR jest dla Ciebie wart jeden towar?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Opcjonalnie: ile nagród PR otrzymujesz dziennie? Informacje te są wykorzystywane do obliczania rentowności kolejnych poziomów Arki. Aby otrzymać sugestię, przejdź do Historii wydarzeń w Dzienniku wydarzeń i przewiń wszystkie strony",
+  "Boxes.GuildFights.AlertOffset": {
+    "s": "Pokaż powiadomienie na x sekund przed otwarciem prowincji",
+    "r": "Show notification x amount of seconds before the province opens"
+  },
   "Boxes.GuildFights.Attrition": "Opór",
   "Boxes.GuildFights.Copy": "Kopiuj",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "Skopiowano czasy ataków dla wybranej prowincji.",
@@ -486,7 +860,55 @@
   "Boxes.GuildFights.DeleteAlert": "Usuń powiadomienie",
   "Boxes.GuildFights.DeleteMessage.Desc": "Powiadomienie dla prowincji __provinceName__ zostało usunięte!",
   "Boxes.GuildFights.DeleteMessage.Title": "Usunięto!",
+  "Boxes.GuildFights.DiscordSend": {
+    "s": "Wyślij na Discord",
+    "r": "Send to Discord"
+  },
+  "Boxes.GuildFights.DiscordSendCustom": {
+    "s": "Wyślij na Discord z szablonem",
+    "r": "Send to Discord with template"
+  },
+  "Boxes.GuildFights.DiscordSendSelection": {
+    "s": "Wyślij wybrane prowincje na Discord",
+    "r": "Send selected provinces to Discord"
+  },
+  "Boxes.GuildFights.DiscordSendSelectionCustom": {
+    "s": "Wyślij wybrane prowincje na Discord z wybranym szablonem",
+    "r": "Send selected provinces to Discord with selected template"
+  },
+  "Boxes.GuildFights.DiscordSetup": {
+    "s": "Brak dostępnych webhooków. Najpierw utwórz jeden",
+    "r": "No Webhooks available. Create one first"
+  },
+  "Boxes.GuildFights.DiscordTemplateBulk": {
+    "s": "Szablon dla wielu prowincji",
+    "r": "Template for multiple provinces"
+  },
   "Boxes.GuildFights.Fights": "Walki",
+  "Boxes.GuildFights.GBGTargetsMore": {
+    "s": "więcej",
+    "r": "more"
+  },
+  "Boxes.GuildFights.GBGTargetsPosition": {
+    "s": "Pozycja celów",
+    "r": "Position for targets"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionBottom": {
+    "s": "dół",
+    "r": "bottom"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionLeft": {
+    "s": "lewo",
+    "r": "left"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionTop": {
+    "s": "góra",
+    "r": "top"
+  },
+  "Boxes.GuildFights.GBGTargetsShow": {
+    "s": "Pokaż cele",
+    "r": "Show targets"
+  },
   "Boxes.GuildFights.LastSnapshot": " - Ostatnia aktualizacja: __time__ temu",
   "Boxes.GuildFights.Negotiations": "Negocjacje",
   "Boxes.GuildFights.NoOwner": "Brak właściciela",
@@ -514,6 +936,22 @@
   "Boxes.GuildFights.ShowTileColors": "kopiuj kolory ataku",
   "Boxes.GuildFights.SnapshotLog": "Dziennik",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Zastrzeżenie: Dane te są oparte na zebranych przez użytkownika danych. Przedstawione tutaj liczby prawdopodobnie nie są w 100% dokładne. Musiał(a)byś otworzyć listę o północy, aby były poprawne.",
+  "Boxes.GuildFights.Stats.Open": {
+    "s": "Statystyki",
+    "r": "Stats"
+  },
+  "Boxes.GuildFights.Stats.TabGuilds": {
+    "s": "Punkty Chwały",
+    "r": "Victory Points"
+  },
+  "Boxes.GuildFights.Stats.TabPlayers": {
+    "s": "Postępy gracza",
+    "r": "Player progress"
+  },
+  "Boxes.GuildFights.Stats.Title": {
+    "s": "Statystyki GPCh",
+    "r": "GBG Stats"
+  },
   "Boxes.GuildFights.Switch": "Widok przełącznika",
   "Boxes.GuildFights.Time": "Godzina",
   "Boxes.GuildFights.TimeZoneWarning.Desc": "Od teraz czasy są kopiowane w czasie serwera. Jeśli chcesz zmienić wyświetlane czasy na czas serwera, sprawdź ustawienia.",
@@ -561,6 +999,14 @@
   "Boxes.GuildMemberStat.MaxLevel": "max. poziom",
   "Boxes.GuildMemberStat.Member": "Członek",
   "Boxes.GuildMemberStat.MemberActiviy": "Aktywność członka",
+  "Boxes.GuildMemberStat.MemberDetail.Average": {
+    "s": "Średnia z __seasons__ sezonów",
+    "r": "Average in __seasons__ seasons"
+  },
+  "Boxes.GuildMemberStat.MemberDetail.Info": {
+    "s": "Średni wkład i wyprodukowane towary gildii. Dane te są dokładne tylko wtedy, gdy za każdym razem po zakończeniu WG, NK i GPCh otwierasz listę wkładów członków i niedawno odwiedziłeś danego gracza",
+    "r": "Average contribution and produced guild goods. This data is only accurate if you open the member contribution list every time after GE, QI and GBG ended and vistited the player recently"
+  },
   "Boxes.GuildMemberStat.MemberLeavedGuild": "Gracz nie należy już do Twojej gildii.",
   "Boxes.GuildMemberStat.MemberWithoutGB": "Członkowie bez __greatbuilding__",
   "Boxes.GuildMemberStat.MinLevel": "min. poziom",
@@ -587,7 +1033,10 @@
   "Boxes.HiddenRewards.none": "żadne",
   "Boxes.HiddenRewards.onlyVis": "tylko nieodkryte",
   "Boxes.HiddenRewards.Title": "Zdarzenia losowe",
-  "Boxes.HiddenRewards.twolaneWarning": "Jeśli incydent jest wyświetlany na drodze dwupasmowej, taka droga musi zostać zbudowana, aby móc odebrać nagrodę!",
+  "Boxes.HiddenRewards.twolaneWarning": {
+    "s": "Jeśli zdarzenie losowe jest wyświetlane na drodze dwupasmowej, taka droga musi zostać zbudowana aby móc odebrać nagrodę!",
+    "r": "If an incident is displayed to be on a two-lane road, such a road must be built in order to be able to collect the reward!"
+  },
   "Boxes.idleGame.ActiveTasks": "Aktywne zadania zbioru",
   "Boxes.idleGame.AlertSetText": "Czasomierz ustawiony na __hours__ godzin i __minutes__ minut",
   "Boxes.idleGame.AlertText": "Czas się skończył",
@@ -626,6 +1075,14 @@
   "Boxes.Infobox.Messages.GildFightOccupied": "Sektor <span style=\"color:#ffb539\">__provinceName__</span> został przejęty przez <span style=\"color:__attackerColor__;text-shadow: 0 1px 1px __attackerShadow__\">__attackerName__</span> i jest chroniony do __untilOccupied__.",
   "Boxes.Infobox.Messages.LevelUp": "__player__ zamknął __level__ poziom perły __building__.<br>Zajmujesz <strong>__rank__.</strong> miejsce i otrzymujesz <strong>__fps__</strong> PR zwrotu.",
   "Boxes.Infobox.Messages.MsgBuilding": "__building__ - Poziom __level__",
+  "Boxes.Infobox.Messages.QINodeFinished": {
+    "s": "<strong>__id__</strong> zostało ukończone przez __player__.",
+    "r": "<strong>__id__</strong> was completed by __player__."
+  },
+  "Boxes.Infobox.Messages.QINodeProgress": {
+    "s": "<strong>__id__</strong> osiągnął __points__ postępu.",
+    "r": "<strong>__id__</strong> has reached __points__ progress."
+  },
   "Boxes.Infobox.Messages.Trade": "<strong>__player__</strong> zaakceptował Twoją ofertę, otrzymujesz __needValue__ __need__ za __offerValue__ __offer__.",
   "Boxes.Infobox.Messages.Welcome": "Witamy w <strong> Infoboxie</strong>! Podczas gdy to okno pozostanie otwarte, będzie się stopniowo wypełniać zdarzeniami zachodzącymi w tle (takimi jak wiadomości na czacie, ataki na polach bitew gildii i oferty aukcyjne)",
   "Boxes.Infobox.ResetBox": "Wyczyść",
@@ -742,9 +1199,17 @@
   "Boxes.MarketOffersEvents.DateNA": "N/D",
   "Boxes.MarketOffersEvents.Expired": "Wygasłe oferty",
   "Boxes.MarketOffersEvents.Title": "Oferty handlowe",
+  "Boxes.MergerGame.audibleTaskWarning": {
+    "s": "Odtwórz dźwięk po zakończeniu zadania",
+    "r": "Play sound when Task complete"
+  },
   "Boxes.MergerGame.availableCurrency.anniversary": "Dostępna energia",
   "Boxes.MergerGame.availableCurrency.care": "Dostępni pracownicy",
   "Boxes.MergerGame.availableCurrency.soccer": "Dostępne Piłki",
+  "Boxes.MergerGame.CurrencyOverflowWarning": {
+    "s": "Waluta sklepu przekroczy limit!",
+    "r": "Shop Currency will overflow!"
+  },
   "Boxes.MergerGame.Day": "Dzień ⇋",
   "Boxes.MergerGame.Day.Title": "Wartości dla bieżacego dnia",
   "Boxes.MergerGame.Efficiency.anniversary": "Wydajność (zawiera klucze)",
@@ -761,14 +1226,27 @@
   "Boxes.MergerGame.Keys.anniversary": "Sumarycznie klucze",
   "Boxes.MergerGame.Keys.care": "Klucze",
   "Boxes.MergerGame.Keys.soccer": "Odznaki",
-  "Boxes.MergerGame.KeysLeft.anniversary": "FoE-Helper: Na planszy pozostały klucze!",
-  "Boxes.MergerGame.KeysLeft.care": "FoE-Helper: Na polu pozostały klucze!",
-  "Boxes.MergerGame.KeysLeft.soccer": "FoE-Helper: Na boisku pozostały odznaki!",
+  "Boxes.MergerGame.KeysLeft.anniversary": {
+    "s": "Forge Hammer: Na planszy pozostały klucze!",
+    "r": "Forge Hammer: There are keys remaining on the board!"
+  },
+  "Boxes.MergerGame.KeysLeft.care": {
+    "s": "Forge Hammer: Na polu pozostały klucze!",
+    "r": "Forge Hammer: There are keys remaining on the field!"
+  },
+  "Boxes.MergerGame.KeysLeft.soccer": {
+    "s": "Forge Hammer: Na boisku pozostały odznaki!",
+    "r": "Forge Hammer: There are badges remaining on the field!"
+  },
   "Boxes.MergerGame.KeyValue.anniversary": "Postąp na klucz",
   "Boxes.MergerGame.KeyValue.care": "Postęp na klucz",
   "Boxes.MergerGame.KeyValue.soccer": "Postęp na odznakę",
   "Boxes.MergerGame.NextSpawn": "Następna część",
   "Boxes.MergerGame.NextSpawn.Title": "Podaje minimalny, maksymalny oraz średni postęp i wydajność dla następnej części",
+  "Boxes.MergerGame.opticalTaskWarning": {
+    "s": "Zablokuj planszę po zakończeniu zadania",
+    "r": "Block board when Task complete"
+  },
   "Boxes.MergerGame.ProgressCollected": "Zebrany postęp",
   "Boxes.MergerGame.Round": "Runda ⇋",
   "Boxes.MergerGame.Round.Title": "Wartości dla bieżącej rundy",
@@ -777,7 +1255,23 @@
   "Boxes.MergerGame.Status": "Status",
   "Boxes.MergerGame.Status.Title": "Bieżący status gry",
   "Boxes.MergerGame.targetProgress": "Postęp celu",
+  "Boxes.MergerGame.TaskReady": {
+    "s": "Odbierz zadanie!",
+    "r": "Collect Task!"
+  },
   "Boxes.MergerGame.useAverage": "Użyj tej wartości zamiast rzeczywistego kosztu resetowania (0 wyłącza)",
+  "Boxes.MergerGame.WorldChallengeOverflowWarning": {
+    "s": "Wyzwanie światowe przekroczy limit!",
+    "r": "Challenge will overflow!"
+  },
+  "Boxes.MoppelHelper.ActivateButton": {
+    "s": "Aktywuj tutaj",
+    "r": "Activate here"
+  },
+  "Boxes.MoppelHelper.ActivateDesc": {
+    "s": "Nieaktywne, najpierw włącz śledzenie! Następnie zamknij i ponownie otwórz to okno",
+    "r": "Inactive, please activate tracking first! Then close and open this window again"
+  },
   "Boxes.MoppelHelper.Attacks": "Ataki",
   "Boxes.MoppelHelper.CityProtected": "Miasto tego gracza nie może zostać zaatakowane",
   "Boxes.MoppelHelper.Columns": "Kolumny",
@@ -821,6 +1315,22 @@
   "Boxes.Negotiation.TryContinue": "Prosimy o kontynuowanie we własnym zakresie",
   "Boxes.Negotiation.TryEnd": "Brak kolejnych podejść",
   "Boxes.Negotiation.WrongGoods": "Wybrano niewłaściwe towary, proszę skończyć ręcznie",
+  "Boxes.Notes.Add": {
+    "s": "Dodaj notatkę",
+    "r": "Add note"
+  },
+  "Boxes.Notes.NewHeadline": {
+    "s": "Dodaj tytuł",
+    "r": "Add a title"
+  },
+  "Boxes.Notes.NewText": {
+    "s": "Wpisz tutaj swoją notatkę.\n\nAby utworzyć pole wyboru, zacznij wiersz od znaków [], a aby zaznaczyć pole, od znaków [*].",
+    "r": "Type your note here.&#10;&#10;Start a line with [] for a checkbox, [*] for a checked one."
+  },
+  "Boxes.Notes.Title": {
+    "s": "Notatki i rzeczy do zrobienia",
+    "r": "Notes and To Dos"
+  },
   "Boxes.OtherGuildActivity.Title": "Aktywni członkowie gildii",
   "Boxes.Outpost.DescInStock": "Aktualny stan magazynowy",
   "Boxes.Outpost.DescRequired": "Całkowity",
@@ -872,9 +1382,15 @@
   "Boxes.OwnpartCalculator.OwnPart": "Wpłata własna",
   "Boxes.OwnpartCalculator.OwnPartRemaining": "Zostało",
   "Boxes.OwnpartCalculator.OwnPartShort": "WW",
-  "Boxes.OwnpartCalculator.PatronPart": "Pomoc arek",
+  "Boxes.OwnpartCalculator.PatronPart": {
+    "s": "PR Innych",
+    "r": "Others FP"
+  },
   "Boxes.OwnpartCalculator.Place": "Miejsce",
-  "Boxes.OwnpartCalculator.Places": "Miejsce",
+  "Boxes.OwnpartCalculator.Places": {
+    "s": "Miejsca",
+    "r": "Places"
+  },
   "Boxes.OwnpartCalculator.PlayerName": "Gracz",
   "Boxes.OwnpartCalculator.PowerLeveling": "Kalkulator maratonów",
   "Boxes.OwnpartCalculator.Preview": "Przegląd",
@@ -889,6 +1405,10 @@
   "Boxes.PlayerProfile.NoSettlementsFinished": "Żadna Osada nie została jeszcze ukończona.",
   "Boxes.PlayerProfile.OpenProduction": "Aby zebrać te dane, otwórz zakładkę towarów i towarów gildii w przeglądzie produkcji.",
   "Boxes.PlayerProfile.OtherPlayerDisclaimer": "Uwaga: wzmocnione produkcje będą w rzeczywistości niższe, ponieważ nie dodajemy ich tutaj dla każdego budynku. Wzmocnienia bitewne będą prawdopodobnie wyższe niż wyświetlane, ponieważ nie możemy uzyskać informacji o sojusznikach.",
+  "Boxes.PlayerProfile.OtherPlayerNotAvailable": {
+    "s": "Nie masz dostępu do tej wartości, ponieważ ten gracz nie jest ani Twoim znajomym, ani członkiem Twojej gildii.",
+    "r": "This value is not accessible, because this player is neither a friend nor in your guild."
+  },
   "Boxes.PlayerProfile.OtherPlayerTroubleshooting": "Brakujące lub uszkodzone wartości? Proszę aktywować wszystkie potrzebne informacje w ocenie efektywności.",
   "Boxes.PlayerProfile.QIBoosts": "Wzmocnienia NK",
   "Boxes.PlayerProfile.Settlements": "Rozgrywki w osadach",
@@ -922,10 +1442,18 @@
   "Boxes.Productions.Done": "Do zebrania",
   "Boxes.Productions.EmptyList": "W tej kategorii nie ma żadnych budynków.",
   "Boxes.Productions.FilterTable": "Filtruj budynki",
+  "Boxes.Productions.fp_boost": {
+    "s": "Bonus PR",
+    "r": "FP boost"
+  },
   "Boxes.Productions.fragments": "Paprochy",
   "Boxes.Productions.FSP": "Fragment Zakończ produkcję specjalną",
   "Boxes.Productions.GoodEraTotal": "Całkowity",
   "Boxes.Productions.goods": "Towary",
+  "Boxes.Productions.goods_boost": {
+    "s": "Bonus towarów",
+    "r": "Goods boost"
+  },
   "Boxes.Productions.goods_current": "Towary z bieżącej epoki",
   "Boxes.Productions.goods_next": "Towary z kolejnej epoki",
   "Boxes.Productions.goods_previous": "Towary z poprzedniej epoki",
@@ -970,14 +1498,20 @@
   "Boxes.Productions.SizeTT": "Rozmiar z uwzględnieniem średniego zapotrzebowania na __streetnettosize__ kratek drogi",
   "Boxes.Productions.Time24": "24-godzinny zegar",
   "Boxes.Productions.Title": "Przegląd produkcji (dziennej)",
-  "Boxes.Productions.Total": "Total: ",
+  "Boxes.Productions.Total": {
+    "s": "Łącznie: ",
+    "r": "Total: "
+  },
   "Boxes.Productions.TTGoodsEra": "Ta kolumna pokazuje epokę budynku, a nie epokę produkowanych dóbr",
   "Boxes.Productions.Units": "Jednostki",
   "Boxes.ProductionsRating.AddBuilding": "Dodaj budynek",
   "Boxes.ProductionsRating.AddBuildings": "Dodaj wybrane budynki",
   "Boxes.ProductionsRating.Best": "Najlepszy",
   "Boxes.ProductionsRating.BuildingName": "Budynki",
-  "Boxes.ProductionsRating.ConfirmReset": "Potwierdzić zresetowanie?",
+  "Boxes.ProductionsRating.ConfirmReset": {
+    "s": "Potwierdzasz zresetowanie?",
+    "r": "Confirm Reset?"
+  },
   "Boxes.ProductionsRating.CountTooltip": "Aktualna ilość postawiona w twoim mieście. Uwaga: Nie wszystkie budynki mogą należeć do epoki, która jest wyświetlana obok nazwy. Sprawdź na mapie aby się upewnić!",
   "Boxes.ProductionsRating.Disclaimer": "W przypadku budynków łańcuchowych cały łańcuch jest traktowany jako jeden budynek. W przypadku zestawów zakładamy, że wszystkie części są w pełni połączone.",
   "Boxes.ProductionsRating.Enabled": "Włączone",
@@ -994,11 +1528,91 @@
   "Boxes.ProductionsRating.InventoryTooltip": "Ten budynek znajduje się w twoim inwentarzu",
   "Boxes.ProductionsRating.NoGBsExplanation": "Pokaż Perły Architektury",
   "Boxes.ProductionsRating.NoLimitedExplanation": "Pokaż wzniesione/ograniczone budynki",
+  "Boxes.ProductionsRating.PresetActive": {
+    "s": "Aktywne ustawienie",
+    "r": "Active preset"
+  },
+  "Boxes.ProductionsRating.PresetConfirmDelete": {
+    "s": "Usunąć te ustawienie?",
+    "r": "Delete this preset?"
+  },
+  "Boxes.ProductionsRating.PresetConfirmReset": {
+    "s": "Przywrócić domyślne wartości tego ustawienia?",
+    "r": "Reset this preset to default values?"
+  },
+  "Boxes.ProductionsRating.PresetCopySuffix": {
+    "s": "Kopiuj",
+    "r": "Copy"
+  },
+  "Boxes.ProductionsRating.PresetDefault": {
+    "s": "Domyślne",
+    "r": "Default"
+  },
+  "Boxes.ProductionsRating.PresetDelete": {
+    "s": "Usuń",
+    "r": "Delete"
+  },
+  "Boxes.ProductionsRating.PresetDuplicate": {
+    "s": "Duplikat",
+    "r": "Duplicate"
+  },
+  "Boxes.ProductionsRating.PresetExport": {
+    "s": "Eksportuj ustawienie",
+    "r": "Export presets"
+  },
+  "Boxes.ProductionsRating.PresetImport": {
+    "s": "Importuj ustawienie",
+    "r": "Import presets"
+  },
+  "Boxes.ProductionsRating.PresetImported": {
+    "s": "Zaimportowane",
+    "r": "Imported"
+  },
+  "Boxes.ProductionsRating.PresetImportError": {
+    "s": "Nie można zaimportować ustawień z tego pliku.",
+    "r": "Cannot import presets from this file."
+  },
+  "Boxes.ProductionsRating.PresetNameExists": {
+    "s": "Ustawienie o tej nazwie już istnieje.",
+    "r": "A preset with this name already exists."
+  },
+  "Boxes.ProductionsRating.PresetPromptDuplicate": {
+    "s": "Duplikuj ustawienie jako:",
+    "r": "Duplicate preset as:"
+  },
+  "Boxes.ProductionsRating.PresetPromptRename": {
+    "s": "Zmień nazwę ustawienia:",
+    "r": "Rename preset:"
+  },
+  "Boxes.ProductionsRating.PresetPromptSaveAs": {
+    "s": "Zapisz ustawienie jako:",
+    "r": "Save preset as:"
+  },
+  "Boxes.ProductionsRating.PresetRename": {
+    "s": "Zmiana nazw",
+    "r": "Rename"
+  },
+  "Boxes.ProductionsRating.PresetReset": {
+    "s": "Reset",
+    "r": "Reset"
+  },
+  "Boxes.ProductionsRating.PresetSave": {
+    "s": "Zapisz",
+    "r": "Save"
+  },
+  "Boxes.ProductionsRating.PresetSaveAs": {
+    "s": "Zapisz jako",
+    "r": "Save as"
+  },
   "Boxes.ProductionsRating.ProdPerTile": "Oczekiwana dzienna produkcja na kratkę",
   "Boxes.ProductionsRating.Reset": "Przywróć ustawienia domyślne",
   "Boxes.ProductionsRating.Results": "Wyniki",
   "Boxes.ProductionsRating.Score": "Wynik",
   "Boxes.ProductionsRating.Settings": "Ustawienia",
+  "Boxes.ProductionsRating.ShowAllies": {
+    "s": "Uwzględnij w ocenie bonusy od sojuszników",
+    "r": "Include Ally boosts in the rating"
+  },
   "Boxes.ProductionsRating.ShowFSPCalculator": "Wyświetl kalkulator ZPS",
   "Boxes.ProductionsRating.ShowHighlighted": "Tylko podświetlone",
   "Boxes.ProductionsRating.ShowHighlightedExplanation": "Wyświetla tylko budynki z wyników wyszukiwania, budynki które dodano ręcznie i budynki zaznaczone samodzielnie",
@@ -1008,6 +1622,10 @@
   "Boxes.ProductionsRating.ShowValuesPerTile": "Wartość/kratka",
   "Boxes.ProductionsRating.Title": "Ocena efektywności budynków",
   "Boxes.ProductionsRating.TitleFSPCalculator": "Ile oczekuje się za jeden zestaw ZPS?",
+  "Boxes.ProductionsRating.ToggleBuildingSelection": {
+    "s": "(Od)znacz obecnie widoczne budynki",
+    "r": "(De)select currently visible buildings"
+  },
   "Boxes.ProductionsRating.TooltipTitle": "Porównania z twojego miasta",
   "Boxes.ProductionsRating.top10percent": "Najlepsze 10%",
   "Boxes.PvPArena.PlayerName": "Gracz",
@@ -1046,6 +1664,22 @@
   "Boxes.Settings.Autostart": "Otwieraj okno automatycznie",
   "Boxes.Settings.DeletedBoxCoordsBody": "Wszystkie koordynaty okien zostały usunięte.",
   "Boxes.Settings.DeletedBoxCoordsHead": "Usunięto!",
+  "Boxes.Settings.GameFilters.Brightness": {
+    "s": "Jasność",
+    "r": "Brightness"
+  },
+  "Boxes.Settings.GameFilters.Contrast": {
+    "s": "Kontrast",
+    "r": "Contrast"
+  },
+  "Boxes.Settings.GameFilters.Hue": {
+    "s": "Barwa",
+    "r": "Hue"
+  },
+  "Boxes.Settings.GameFilters.Saturation": {
+    "s": "Nasycenie",
+    "r": "Saturation"
+  },
   "Boxes.Settings.Inactive": "Nieaktywne",
   "Boxes.Settings.Save": "Zapisz ustawienia",
   "Boxes.Settings.showBGFragments": "Pokaż fragmenty",
@@ -1077,6 +1711,10 @@
   "Boxes.Stats.BtnLastEras": "Ostatnie 2 epoki",
   "Boxes.Stats.BtnLastErasTitle": "Wybiera obecną i poprzednią epokę",
   "Boxes.Stats.BtnMyEra": "Moja epoka",
+  "Boxes.Stats.BtnNextEra": {
+    "s": "Następna Epoka",
+    "r": "Next Age"
+  },
   "Boxes.Stats.BtnNoEra": "Bez epoki",
   "Boxes.Stats.BtnSource.statsGBGPlayers": "Pola Chwały",
   "Boxes.Stats.BtnSource.statsRewards": "Nagrody",
@@ -1092,7 +1730,10 @@
   "Boxes.Stats.BtnToggleGroupByTitle": "Grupuj według nazwy",
   "Boxes.Stats.BtnToggleRenormalize": "Normalizuj wartości",
   "Boxes.Stats.DatePicker": "Wybierz zakres dat",
-  "Boxes.Stats.Era": "Era",
+  "Boxes.Stats.Era": {
+    "s": "Epoka",
+    "r": "Era"
+  },
   "Boxes.Stats.FilterRewards": "Filtruj Nagrody",
   "Boxes.Stats.Rewards.Source.__event": "Event",
   "Boxes.Stats.Rewards.Source.battlegrounds_conquest": "Pola Chwały",
@@ -1135,9 +1776,17 @@
   "Boxes.Tooltip.Building.canMotivate": "może być zmotywowany",
   "Boxes.Tooltip.Building.canPolish": "może być odrestaurowany",
   "Boxes.Tooltip.Building.costs": "Koszt",
+  "Boxes.Tooltip.Building.fspDisabled": {
+    "s": "Natychmiastowe zakończenie produkcji wyłączone",
+    "r": "Instant production finish disabled"
+  },
   "Boxes.Tooltip.Building.isUnique": "Unikalny budynek",
   "Boxes.Tooltip.Building.lifeSupport": "jest dotknięty przez podtrzymywanie życia",
   "Boxes.Tooltip.Building.noPlunder": "nie może zostać splądrowany",
+  "Boxes.Tooltip.Building.noroad": {
+    "s": "Droga niewymagana",
+    "r": "no road required"
+  },
   "Boxes.Tooltip.Building.perEra": "na erę",
   "Boxes.Tooltip.Building.produces": "Produkuje",
   "Boxes.Tooltip.Building.provides": "Zapewnia",
@@ -1145,8 +1794,88 @@
   "Boxes.Tooltip.Building.road2": "wymagana droga 2-pasmowa",
   "Boxes.Tooltip.Building.size+time": "Rozmiar i czas budowy",
   "Boxes.Tooltip.Building.traits": "Cechy",
+  "Boxes.Tooltip.Building.upgradesAutomatically": {
+    "s": "Automatycznie ulepsz do bieżącej epoki",
+    "r": "Upgrades automatically to current era"
+  },
   "Boxes.Tooltip.Building.when": "kiedy",
   "Boxes.Tooltip.Efficiency.description": "Możliwe są następujące kombinacje",
+  "Boxes.Translation.ClearStorage": {
+    "s": "Wyczyść przechowywane",
+    "r": "Clear Storage"
+  },
+  "Boxes.Translation.ComparisonLanguage": {
+    "s": "Język porównania (zobacz podpowiedź)",
+    "r": "Comparison Language (see tooltip)"
+  },
+  "Boxes.Translation.CopyJSON": {
+    "s": "Skopiuj JSON",
+    "r": "Copy JSON"
+  },
+  "Boxes.Translation.EditValuePrompt": {
+    "s": "Nowa wartość jest krótsza od oryginalnej – na pewno chcesz ją zapisać?",
+    "r": "New value is shorter than the original - sure, you want to save?"
+  },
+  "Boxes.Translation.Key": {
+    "s": "Klucz",
+    "r": "Key"
+  },
+  "Boxes.Translation.Reference": {
+    "s": "Odniesienie",
+    "r": "Reference"
+  },
+  "Boxes.Translation.Reference.Always": {
+    "s": "Zawsze skopiuj tekst odniesienia",
+    "r": "Always copy reference text"
+  },
+  "Boxes.Translation.Reference.Conditional": {
+    "s": "Warunkowo skopiuj tekst odniesienia",
+    "r": "Conditionally copy reference text"
+  },
+  "Boxes.Translation.Reference.No": {
+    "s": "Nigdy nie kopiuj tekstu odniesienia",
+    "r": "Never copy reference text"
+  },
+  "Boxes.Translation.Reference.Once": {
+    "s": "Skopiuj tekst odniesienia raz",
+    "r": "Copy reference text once"
+  },
+  "Boxes.Translation.ReferenceLanguage": {
+    "s": "Język odniesienia",
+    "r": "Reference Language"
+  },
+  "Boxes.Translation.SearchPlaceholder": {
+    "s": "Szukaj...",
+    "r": "Search..."
+  },
+  "Boxes.Translation.SelectLanguage": {
+    "s": "Wybierz Język",
+    "r": "Select Language"
+  },
+  "Boxes.Translation.ShowOnlyMissing": {
+    "s": "Pokaż tylko brakujące",
+    "r": "Show Only Missing"
+  },
+  "Boxes.Translation.ShowOnlyUpdated": {
+    "s": "Pokaż tylko zaktualizowane",
+    "r": "Show Only Updated"
+  },
+  "Boxes.Translation.Target": {
+    "s": "Tekst",
+    "r": "Text"
+  },
+  "Boxes.Translation.TargetLanguage": {
+    "s": "Język docelowy",
+    "r": "Target Language"
+  },
+  "Boxes.Translation.TempStorage": {
+    "s": "Przechowanie tymczasowe",
+    "r": "Temp Storage"
+  },
+  "Boxes.Translation.Title": {
+    "s": "Tłumaczenia",
+    "r": "Translations"
+  },
   "Boxes.Treasury.Action": "Wiadomość",
   "Boxes.Treasury.Amount": "Kwota",
   "Boxes.Treasury.DateTime": "Data/Godzina",
@@ -1190,9 +1919,31 @@
   "Boxes.UnitsGex.NoUnitsAvailable": "Brak danych o jednostkach wojskowych. Proszę nacisnąć klawisz \"U\", aby otworzyć okno zarządzania armii.",
   "Boxes.UnitsGex.Stage": "Poziom",
   "Boxes.UnitsGex.Won": "Wygrane",
-  "Date": "DD/MMM/YYYY",
+  "Date": {
+    "s": "DD/MMM/RRRR",
+    "r": "DD/MMM/YYYY"
+  },
   "DateShort": "DD/MMM",
-  "DateTime": "DD/MMM/YY @ HH:mm:ss a",
+  "DateTime": {
+    "s": "DD/MMM @ GG:mm:ss",
+    "r": "DD/MMM, hh:mm:ssa"
+  },
+  "DBCreationWarning.CloseOverlay": {
+    "s": "Zamknij",
+    "r": "Close"
+  },
+  "DBCreationWarning.ExplanationLine1": {
+    "s": "Baza danych została utworzona od nowa lub wiele budynków zostało zaktualizowanych. Rozszerzenie zostanie załadowane po zakończeniu tego procesu.",
+    "r": "The database is built anew or a lot of buildings received an update. The extension will load, when this process is finished."
+  },
+  "DBCreationWarning.ExplanationLine2": {
+    "s": "Możesz zamknąć to okienko samodzielnie lub zamknie się ono automatycznie po zakończeniu.",
+    "r": "This overlay may be closed by you or will close automatically, when finished."
+  },
+  "DBCreationWarning.Title": {
+    "s": "Tworzenie bazy danych zawierającej metadane dotyczące budynków",
+    "r": "Building the database for building metadata"
+  },
   "Eras.0": "Bez epoki",
   "Eras.0.short": "-",
   "Eras.1": "Epoka Kamienia",
@@ -1242,21 +1993,64 @@
   "Eras.9": "Epoka Postępowa",
   "Eras.9.short": "EPOS",
   "Eras.GvGAllAge": "Wszystkich grup wiekowych",
+  "Eras.undefined": {
+    "s": "Brak epoki",
+    "r": "No age"
+  },
+  "Eras.undefined.short": {
+    "s": "Brak epoki",
+    "r": "No age"
+  },
+  "General.Battle": {
+    "s": "Bitwa",
+    "r": "Battle"
+  },
   "General.Boost": "Bonus",
+  "General.Cancel": {
+    "s": "Anuluj",
+    "r": "Cancel"
+  },
+  "General.Choose": {
+    "s": "Proszę wybrać",
+    "r": "Please choose"
+  },
   "General.Date": "Data",
   "General.Disclaimer": "Zastrzeżenie",
+  "General.Error": {
+    "s": "Błąd",
+    "r": "Error"
+  },
   "General.GB": "Perła Architektury",
   "General.Good": "Towar",
   "General.Goods": "Towary",
   "General.Guild": "Gildia",
   "General.Items": "Przedmioty",
   "General.Level": "Poziom",
+  "General.Open": {
+    "s": "Otwórz",
+    "r": "Open"
+  },
   "General.Player": "Gracz",
   "General.Reset": "Zresetuj",
   "General.Save": "Zapisz",
+  "General.Search": {
+    "s": "Wyszukaj",
+    "r": "Search"
+  },
+  "General.Send": {
+    "s": "Wyślij",
+    "r": "Send"
+  },
+  "General.Success": {
+    "s": "Sukces",
+    "r": "Success"
+  },
   "General.Unit": "Jednostki",
   "General.Units": "Jednostki",
-  "Global.BoxTitle": "FoE Pomocnik",
+  "Global.BoxTitle": {
+    "s": "Forge Hammer",
+    "r": "Forge Hammer"
+  },
   "GvG.Independences.Tooltip": "Liczba niepodległości przyznanych od ostatniego obliczenia.",
   "GvG.Independences.Tooltip.Warning": "Może być niedokładny, jeśli grasz na wielu urządzeniach.",
   "HiddenRewards.Positions.cityRoadBig": "Droga 2-pasmowa",
@@ -1364,7 +2158,10 @@
   "Menu.RightBar": "Po prawej",
   "Menu.SaveMessage.Desc": "Nowa kolejność menu została zapisana",
   "Menu.SaveMessage.Title": "Zapisane!",
-  "Menu.Settings.Desc": "Kilka podstawowych ustawień",
+  "Menu.Settings.Desc": {
+    "s": "Skonfiguruj Forge Hammer",
+    "r": "Configure Forge Hammer"
+  },
   "Menu.Settings.Title": "Ustawienia",
   "Menu.ShopAssist.Desc": "Lista wszystkich przedmiotów w sklepie",
   "Menu.ShopAssist.DescWarning": "Proszę najpierw otworzyć sklep",
@@ -1382,7 +2179,10 @@
   "Settings.About.RatingDesc": "Jeśli podoba Ci się to, co widzisz, i co robimy, zostaw dobrą recenzję w Sklepie!",
   "Settings.About.RatingTitle": "Oceń rozszerzenie",
   "Settings.About.Title": "O Forge Hammer",
-  "Settings.About.TranslateDesc": "Pomóż w tłumaczeniu rozszerzenia, rejestrując się w naszym narzędziu do tłumaczenia: ",
+  "Settings.About.TranslateDesc": {
+    "s": "Pomóż w tłumaczeniu Forge Hammer poprzez rejestrację w naszym narzędziu do tłumaczenia: ",
+    "r": "Help translate Forge Hammer by registering on our translation tool: "
+  },
   "Settings.About.TranslateTitle": "Tłumaczenie",
   "Settings.Auctions.Button": "Ustawienia aukcji",
   "Settings.Auctions.Desc": "Ten moduł automatycznie obliczy ofertę aukcyjną i skopiuje ją do schowka.",
@@ -1394,9 +2194,20 @@
   "Settings.AutoOpenInfoBox.Desc": "Czy Infobox powinien otwierać się automatycznie po rozpoczęciu gry?",
   "Settings.AutoOpenInfoBox.Title": "Automatycznie otwórz Infobox",
   "Settings.BlockCollectAll.Desc": "Wyświetla okienko zakrywające przycisk „Zbierz wszystko”, gdy nie można zebrać PR lub nie wszystkie budynki są zmotywowane.",
-  "Settings.BlockCollectAll.Title": "Zbierz wszystkie blokery",
+  "Settings.BlockCollectAll.Title": {
+    "s": "Blokada zbioru wszystkiego",
+    "r": "Collect All Blocker"
+  },
   "Settings.ChangeLanguage.Desc": "Wybierz preferowany język z listy rozwijanej",
   "Settings.ChangeLanguage.Title": "Zmień język",
+  "Settings.ChangeLanguage.Translate": {
+    "s": "Przetłumacz",
+    "r": "Translate"
+  },
+  "Settings.ChangeLanguage.TranslateDescription": {
+    "s": "Sami możemy zapewnić tłumaczenia wyłącznie z języka Angielskiego i Niemieckiego. Jeśli chodzi o inne języki, możesz nam pomóc korzystając z modułu tłumaczeniowego:",
+    "r": "We can only provide translations for English and German ourselves. You can help with other languages by using the translation module:"
+  },
   "Settings.CountRelics": "Wyświetlaj liczbę reliktów obok ikony w menu",
   "Settings.doubleFPtimeout.Desc": "Pokazuje okienko, które tymczasowo zasłania pole wpisania PR w PA po wkładzie. Wartość oznacza czas, przez który okienko jest pokazane - kiedy jest równa 0, okienko się nie pokazuje",
   "Settings.doubleFPtimeout.Title": "Blokada podwójnego wkładu",
@@ -1407,14 +2218,24 @@
   "Settings.Entry.AutomaticNegotiation": "Asystent negocjacji",
   "Settings.Entry.AutoOpenCloseBox": "Zamknij wszystko",
   "Settings.Entry.AutoOpenInfoBox": "Info box",
-  "Settings.Entry.BlockCollectAll": "Zbierz wszystkie blokery",
+  "Settings.Entry.BlockCollectAll": {
+    "s": "Blokada zbioru wszystkiego",
+    "r": "Collect All Blocker"
+  },
   "Settings.Entry.ChangeLanguage": "Język",
   "Settings.Entry.doubleFPtimeout": "Blokada podwójnego wkładu",
   "Settings.Entry.EnableSound": "Dźwięk",
   "Settings.Entry.ExportSettings": "Import / Eksport",
+  "Settings.Entry.Filters": {
+    "s": "Kolory gry",
+    "r": "Game Colors"
+  },
   "Settings.Entry.GexStockWarning": "Wykorzystanie towarów WG",
   "Settings.Entry.Help": "Pomoc",
-  "Settings.Entry.HideHelperDuringBattle": "Widoczność helpera podczas walki",
+  "Settings.Entry.HideHelperDuringBattle": {
+    "s": "Widoczność Hammera podczas walki",
+    "r": "Battle visibility"
+  },
   "Settings.Entry.LoadBeta2": "Załaduj aktualną wersję Beta",
   "Settings.Entry.MenuContent": "Zawartość menu",
   "Settings.Entry.MenuLength": "Długość menu",
@@ -1432,7 +2253,10 @@
   "Settings.Entry.ShowBuildingsExpired": "Powiadomienie o wygasłych budynkach",
   "Settings.Entry.ShowEventChest": "Asystent eventowy",
   "Settings.Entry.ShowGBGBuildings": "GPC Rekomendowane budynki",
-  "Settings.Entry.ShowGBGPlayerInfo": "Lista graczy GPCH",
+  "Settings.Entry.ShowGBGPlayerInfo": {
+    "s": "Lista graczy GPCh",
+    "r": "GBG Player list"
+  },
   "Settings.Entry.ShowGBGRewards": "Informacje o pasku nagród",
   "Settings.Entry.ShowGuildTreasuryLogExport": "Eksport danych ze skarbca gildii",
   "Settings.Entry.ShowInvestments": "Inwestycje PR",
@@ -1449,6 +2273,10 @@
   "Settings.Entry.ShowRougeUnitWarning": "Ostrzeżenie o samych Łotrach",
   "Settings.Entry.ShowScoutingTimes": "Informacje o zwiadzie",
   "Settings.Entry.ShowShopAssist": "Asystent sklepu",
+  "Settings.Entry.Skins": {
+    "s": "Kolory",
+    "r": "Colors"
+  },
   "Settings.Entry.Version": "Wersja",
   "Settings.EventHelper.Advanced": "Ustawienia zaawansowane",
   "Settings.EventHelper.All": "Włącz pomocników wydarzeń",
@@ -1461,6 +2289,14 @@
   "Settings.ExportSettings.Desc": "Zapisywanie i przywracanie ustawień",
   "Settings.ExportSettings.OpenImportExportTool": "Otwórz narzędzie do importu/eksportu",
   "Settings.ExportSettings.Title": "Zapisywanie i przywracanie",
+  "Settings.Filters.Desc": {
+    "s": "Kilka mniej lub bardziej przydatnych i zabawnych zmian, które można wprowadzić w kolorystyce gry.",
+    "r": "Some more or less useful and playful changes you can apply to the game colors."
+  },
+  "Settings.Filters.Title": {
+    "s": "Zmień wygląd gry",
+    "r": "Change the Look of the Game"
+  },
   "Settings.GexStockWarning.Desc": "Jeśli po otwarciu okna dialogowego odblokowania etapu WG procentowe wykorzystanie towarów jest wyższe niż podany poniżej próg, generowane jest okno zawierające procentowe wykorzystanie towarów w stosunku do akcji własnych. Wartość '0' zawsze powoduje otwarcie okna, a wartość '100' nigdy.",
   "Settings.GexStockWarning.Title": "Wykorzystanie towarów WG",
   "Settings.Help.Desc": "Istnieje kilka sposobów uzyskania pomocy:",
@@ -1468,16 +2304,25 @@
   "Settings.Help.Documentation": "Wiki / Dokumentacja: Dokumentacja funkcji.",
   "Settings.Help.Forums": "Fora: przejdź tutaj, aby uzyskać pomoc i zgłaszać pomysły, a także raporty o błędach.",
   "Settings.Help.Github": "GitHub: więcej raportów technicznych o błędach, konkretne pomysły i pomoc w rozwoju.",
-  "Settings.Help.Title": "Pomoc i Społeczność",
+  "Settings.Help.Title": {
+    "s": "Pomoc",
+    "r": "Help"
+  },
   "Settings.Help.Website": "Witryna: informacje o rozszerzeniu i dokumentacja jego funkcji.",
   "Settings.HideHelperDuringBattle.Desc": "Jeśli helper przeszkadza Ci podczas walki ręcznej, ta opcja włączy ukrywanie okna na czas jej trwania. Działa tylko w trybie 'Pływające okno'",
   "Settings.HideHelperDuringBattle.Title": "Ukryj helpera podczas walki",
   "Settings.InfoboxEntryCount.Desc": "Ile elementów ma wyświetlać i zapisywać Infobox?<br>Pusty lub \"0\" oznacza nieskończoność.",
   "Settings.InfoboxEntryCount.Title": "Liczba wpisów w Infoboxie",
   "Settings.LoadBeta2.Button": "Pobierz rozszerzenie Beta",
-  "Settings.LoadBeta2.Desc": "Rozszerzenie Beta musi zostać zainstalowane i zaktualizowane ręcznie. Regularnie klikaj poniższy przycisk, aby pobrać aktualną wersję beta lub użyj Git-Managera<br><br>Rozpakuj pobrany plik zip i w ustawieniach rozszerzenia Chrome aktywuj tryb programisty, aby „załadować rozpakowane rozszerzenie”.<br><br>Tylko jedna wersja Helpera powinna być aktywna w danym momencie, aby zapobiec zakłóceniom!",
+  "Settings.LoadBeta2.Desc": {
+    "s": "Rozszerzenie Beta musi zostać zainstalowane i zaktualizowane ręcznie. Regularnie klikaj poniższy przycisk, aby pobrać aktualną wersję beta lub użyj Git-Managera<br><br>Rozpakuj pobrany plik zip i w ustawieniach rozszerzenia Chrome aktywuj tryb programisty, aby „załadować rozpakowane rozszerzenie”.<br><br>Tylko jedna wersja Forge Hammer powinna być aktywna w danym momencie, aby zapobiec zakłóceniom!",
+    "r": "The Beta-Extension musst be installed and updated manually. Either regularly click the button below to download the current beta or use a Git-Manager<br><br>Unpack the downloaded zip and activate developer mode in the Chrome extension settings to 'load unpacked extension'.<br><br>Only one Version of the Forge Hammer should be active at any time to prevent interference!"
+  },
   "Settings.LoadBeta2.Title": "Załaduj aktualną wersję Beta",
-  "Settings.MenuContent.Desc": "Które przyciski wyświetlać w menu?<br>Zielony: pokaż przycisk. Czerwony: nie pokazuj przycisku.",
+  "Settings.MenuContent.Desc": {
+    "s": "Które przyciski wyświetlać w menu?<br>Zielony: pokaż przycisk. Szary: nie pokazuj przycisku.",
+    "r": "Which buttons do you want in the menu?<br>Green: show button. Grey: don't show button."
+  },
   "Settings.MenuContent.Title": "Zawartość menu",
   "Settings.MenuLength.Desc": "Ile elementów powinno mieścić menu rozszerzenia?<br> Puste lub \"0\" oznacza automatyczną wysokość.",
   "Settings.MenuLength.Title": "Wysokość menu",
@@ -1514,9 +2359,18 @@
   "Settings.ShowEventChest.Title": "Pokaż asystenta eventowego",
   "Settings.ShowGBGBuildings.Desc": "Podczas otwierania menu budynków prowincji GPC wyświetlana jest tabela z możliwymi kombinacjami lepszymi nad aktualną, sortowane po wpływie na skarbiec Gildii.",
   "Settings.ShowGBGBuildings.Title": "Pokaż rekomendacje budynków GPC",
-  "Settings.ShowGBGPlayerInfo.Desc": "Czy chcesz, aby lista graczy GPCH otwierała się automatycznie po kliknięciu rankingu GPCH?",
-  "Settings.ShowGBGPlayerInfo.Title": "Wyskakujące okienko z listą graczy GPCH",
-  "Settings.ShowGBGRewards.Desc": "Czy chcesz, aby nagrody z GPCH i WG były wyświetlane w strumieniu nad paskiem nagród?",
+  "Settings.ShowGBGPlayerInfo.Desc": {
+    "s": "Czy chcesz, aby lista graczy GPCh otwierała się automatycznie po kliknięciu rankingu GPCh?",
+    "r": "Do you want the GBG Player list to automatically open when clicking on the GBG ranking?"
+  },
+  "Settings.ShowGBGPlayerInfo.Title": {
+    "s": "Wyskakujące okienko z listą graczy GPCh",
+    "r": "GBG Player Pop Up"
+  },
+  "Settings.ShowGBGRewards.Desc": {
+    "s": "Czy chcesz, aby nagrody z GPCh i WG były wyświetlane w strumieniu nad paskiem nagród?",
+    "r": "Do you want the rewards from GBG and GE to be displayed in a stream over the rewards bar?"
+  },
   "Settings.ShowGBGRewards.Title": "Informacje o pasku nagród",
   "Settings.ShowGuildTreasuryLogExport.Desc": "Wyświetla narzędzie eksportu dziennika po otwarciu okna dziennika skarbca gildii.",
   "Settings.ShowGuildTreasuryLogExport.Title": "Pokaż narzędzie do eksportu dziennika skarbca gildii",
@@ -1532,6 +2386,10 @@
   "Settings.ShowNotifications.Title": "Powiadomienia",
   "Settings.ShowOwnPartAutoOpen.Desc": "Otwórz automatycznie",
   "Settings.ShowOwnPartBP.Desc": "Pokaż plany",
+  "Settings.ShowOwnPartIncludeStart.Desc": {
+    "s": "Uwzględnij początkowe PR w sumie",
+    "r": "Include initial FP in sum"
+  },
   "Settings.ShowOwnPartMedals.Desc": "Pokaż medale",
   "Settings.ShowOwnPartMinView.Desc": "Ukryj większość szczegółów",
   "Settings.ShowOwnPartOnAllGBs.Desc": "Aktualizuje kalkulator PA także dla pereł architektury innych graczy.",
@@ -1552,17 +2410,41 @@
   "Settings.ShowScoutingTimes.Title": "Informacje o zwiadzie",
   "Settings.ShowShopAssist.Desc": "Otwarcie sklepu z przedmiotami spowoduje wyświetlenie przeglądu.",
   "Settings.ShowShopAssist.Title": "Asystent sklepu",
+  "Settings.Skins.Desc": {
+    "s": "Zmień kolory wszystkich okien na kolory z predefiniowanego motywu. W przyszłości dodane zostaną kolejne motywy.",
+    "r": "Change all window colors to a predefined theme. More themes will be added in the future."
+  },
+  "Settings.Skins.Title": {
+    "s": "Zmiana wyglądu rozszerzenia",
+    "r": "Change AddOn appearance"
+  },
   "Settings.Tab.About": "Informacje + strona internetowa",
   "Settings.Tab.Auto": "Wyskakujące okienka",
   "Settings.Tab.Boxes": "Inne",
   "Settings.Tab.Extension": "Pasek + Powiadomienia",
   "Settings.Tab.Sending": "Przesyłanie danych",
-  "Settings.Version.Desc": "Poniższe dane można zaznaczyć, aby je skopiować.",
+  "Settings.Version.Desc": {
+    "s": "Forge Hammer to stworzony przez graczy dodatek przeglądarkowy do gry Forge of Empires. Nie jest on powiązany z firmą InnoGames. Aby uzyskać więcej informacji, skorzystaj z poniższych linków.",
+    "r": "Forge Hammer is a player-made browser AddOn for Forge of Empires. It is not affiliated with InnoGames. Use the links below for further information."
+  },
+  "Settings.Version.Donate": {
+    "s": "Jeśli podoba Ci się to rozszerzenie i masz taką możliwość, możesz wesprzeć ten projekt niewielką darowizną. Dziękuję :)",
+    "r": "If you enjoy this extension and have the means, you can support this project with a small donation. Thank you :)"
+  },
   "Settings.Version.GuildId": "ID Gildii:",
-  "Settings.Version.Link": "<a target=\"_blank\" href=\"https://foe-helper.com/extension/update?v=__version__&amp;lang=pl\" class=\"game-cursor\">Ostatnia zmiana</a>",
+  "Settings.Version.Link": "<a target=\"_blank\" href=\"https://github.com/outoftheline/forge-hammer/blob/main/changelog-en.md\" class=\"game-cursor\">Zobacz najnowsze zmiany</a>",
   "Settings.Version.PlayerId": "ID Gracza:",
-  "Settings.Version.Title": "Wersja",
+  "Settings.Version.Title": {
+    "s": "Forge Hammer",
+    "r": "Forge Hammer"
+  },
   "Settings.Version.World": "Świat:",
-  "StrategyPoints.BuyableFP": "FoE-Helper: Liczba PR, które można kupić za monety.",
-  "StrategyPoints.FPInBar": "FoE-Helper: Ilość PR na pasku."
+  "StrategyPoints.BuyableFP": {
+    "s": "Forge Hammer: Liczba PR, które można kupić za monety.",
+    "r": "Forge Hammer: Number of FPs that can be bought with coins."
+  },
+  "StrategyPoints.FPInBar": {
+    "s": "Forge Hammer: Ilość PR na pasku.",
+    "r": "Forge Hammer: Number of FPs in your bar."
+  }
 }
