@@ -2558,30 +2558,31 @@ let CityBuildings = {
 				if (production === undefined) continue;
 
 				if (production.type === 'resources' || production.type === 'special_goods') {
-					Object.keys(production.resources).forEach(resourceName => {
-						let good = FH.Goods.List.find(x => x.id === resourceName)
-						let specialGood = (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource")
-						let goodEra = Technologies.InnoEras[building.eraName]
-						let isGood = false
+					for (let resourceName of Object.keys(production.resources)) {
+						if (resourceName === "money" || resourceName === "strategy_points" || resourceName === "supplies" || resourceName === "medals") continue;
+						let good = FH.Goods.List.find(x => x.id === resourceName);
+						let goodEra = Technologies.InnoEras[building.eraName];
+						let isGood = false;
 
 						if (good !== undefined) {
 							goodEra = Technologies.InnoEras[good.era]
-							resourceName = good.id
-							isGood = true
+							resourceName = good.id;
+							isGood = true;
 						}
-						else if (specialGood !== undefined) {
-							isGood = false
+						else if (resourceName.includes('_special')) {
+							isGood = false;
 						}
-						else if (resourceName.includes('previous_age')) {
+						else if (resourceName.includes('random_good_of_') || resourceName.includes('all_goods_of_')) {
+							isGood = true;
+						}
+
+						if (resourceName.includes('previous_age')) {
 							goodEra = Technologies.getPreviousEraIdByCurrentEraName(building.eraName)
-							isGood = true
+							isGood = true;
 						}
 						else if (resourceName.includes('next_age')) {
 							goodEra = Technologies.getNextEraIdByCurrentEraName(building.eraName)
-							isGood = true
-						}
-						else if (resourceName.includes('random_good_of_') || resourceName.includes('all_goods_of_')) {
-							isGood = true
+							isGood = true;
 						}
 
 						if (isGood) {
@@ -2594,7 +2595,7 @@ let CityBuildings = {
 							else
 								goods.eras[goodEra] += parseInt(production.resources[resourceName])+boostedExtra;
 						}
-					})
+					}
 				}
 				if (production.type === 'random') { // e.g. gentania windmill, eerie terror coaster
 					let goodEra = Technologies.InnoEras[building.eraName]

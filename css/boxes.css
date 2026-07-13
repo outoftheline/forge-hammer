@@ -1083,36 +1083,37 @@ Potions */
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-FP-Bar */
+hammerBar */
 
-#fp-bar {
+#hammerBar {
 	z-index: 100;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 	font-size: 0.8rem;
 	color: var(--beige);
 	position: fixed;
 	top: 2px;
-	left: calc(50vw  + 130px);
+	left: 0;
+	margin-left: 416px;
 	display: flex;
 	justify-content: flex-end;
 	user-select: none;
 }
 
-#fp-bar .fp-storage,
-#fp-bar .buyable-fp {
+#hammerBar .fp-storage,
+#hammerBar .buyable-fp {
 	margin: 1px 1px 0 0;
 	height: 26px;
 	line-height: 26px;
 	padding: 0 4px 0 26px;
 }
 
-#fp-bar .fp-storage, #fp-bar .buyable-fp {
+#hammerBar .fp-storage, #hammerBar .buyable-fp {
 	background: rgba(0, 0, 0, 0.50);
 	border: 1px solid rgba(113, 74, 35, 1);
 	border-radius: 4px;
 }
 
-#fp-bar .fp-storage::before, #fp-bar .buyable-fp::before {
+#hammerBar .fp-storage::before, #hammerBar .buyable-fp::before {
     content: " ";
     background: url('../../js/web/strategy-points/images/fp-bar-storage-bg.png') 0 0 no-repeat;
     width: 32px;
@@ -1123,44 +1124,35 @@ FP-Bar */
     background-size: 190%;
 }
 
-#fp-bar .buyable-fp {
+#hammerBar .buyable-fp {
 	background-image: url('../../js/web/strategy-points/images/fp-bar-buyable-bg.png');
 }
 
-#fp-bar .fp-storage div, 
-#fp-bar .buyable-fp div {
+#hammerBar .fp-storage div, 
+#hammerBar .buyable-fp div {
 	margin: 5px 0 0 30px;
 }
 
-#fp-bar .small-screen .fp-storage, 
-#fp-bar .small-screen .buyable-fp {
+#hammerBar .small-screen .fp-storage, 
+#hammerBar .small-screen .buyable-fp {
 	background-color: rgba(0, 0, 0, 0.75);
 	border: 1px solid rgba(243, 214, 160, 0.65);
 }
 
-#fp-bar .main .small-screen {
-	top: 50px;
-	left: calc(50vw - 46px);
+#hammerBar.guild_raids {
+	margin-left: 461px;
 }
-
-#fp-bar .gex .small-screen {
-	top: 80px;
-}
-
-#fp-bar.guild_raids {
-	left: 461px;
-}
-#fp-bar.gg, #fp-bar.guild_raids .buyable-fp, #fp-bar.gex .buyable-fp {
+#hammerBar.gg, #hammerBar.guild_raids .buyable-fp, #hammerBar.guild_raids .fp-storage, #hammerBar.guild_raids .fpbar, #hammerBar.gex .buyable-fp {
 	display: none;
 }
-#fp-bar.gex {
-	left: 354px;
+#hammerBar.gex {
+	margin-left: 354px;
 }
-#fp-bar.main .fp-bar-main{
+#hammerBar.main .fpbar{
 	display:none;
 }
 
-#fp-bar .fp-bar-main {
+#hammerBar .fpbar {
 	height: 16px;
 	background-image: linear-gradient(to left, #4b1b0b 25%, transparent 25%), linear-gradient(to top, #8d4e31 0%,#72381d 1%,#4f221d 99%,#8d533b 100%);
 	background-position: 0 0, 16px 0;
@@ -1174,11 +1166,11 @@ FP-Bar */
 	overflow: hidden;
 }
 
-#fp-bar .fp-bar-main.full {
+#hammerBar .fpbar.full {
 	filter: brightness(1.2);
 }
 
-#fp-bar .fp-bar-main .number {
+#hammerBar .fpbar .number {
 	text-align: center;
 	margin-top: -1px;
 	position: absolute;
@@ -1191,7 +1183,7 @@ FP-Bar */
 	color: var(--text-tab-active);
 }
 
-#fp-bar .fp-bar-main .bars span {
+#hammerBar .fpbar .bars span {
 	width: 3px;
 	height: 16px;
 	display: inline-block;
@@ -1201,7 +1193,7 @@ FP-Bar */
 	position: relative;
 }
 
-#fp-bar .fp-bar-main .bars span:first-child {
+#hammerBar .fpbar .bars span:first-child {
 	border-left-width: 0;
 }
 
@@ -2542,11 +2534,6 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 		overflow: hidden
 	}
 	
-}
-@media (max-width: 1420px) {
-	#fp-bar {
-		left: 416px;
-	}
 }
 
 #AllyListTable tr:last-child .all + .battleground::before, #AllyListTable tr:last-child .battleground + .guild_expedition::before {

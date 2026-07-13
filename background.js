@@ -608,6 +608,20 @@ plannerDB.version(1).stores({
 				throw new Error('Planner.updatePlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
+		renamePlan: async (id,planName) => {
+			try {
+				await plannerDB.open();
+				const existing = await plannerDB.plans.get(id);
+				if (!existing) throw new Error('plan not found');
+
+				await plannerDB.plans.update(id, { planName: planName });
+				await plannerDB.close();
+				return;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.renamePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
 		getBuildingList: async (planId) => {
 			try {
 				await plannerDB.open();
@@ -858,6 +872,16 @@ plannerDB.version(1).stores({
 				}
 				try {
 					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
+			case 'Planner.renamePlan': {
+				if (!request.planId || !request.planName) return APIerror('Planner.renamePlan: Parameters {planId} and {planName} expected!');
+				try {
+					await Planner.renamePlan(request.planId,request.planName);
 					const plans = await Planner.getPlanList();
 					return APIsuccess(plans);
 				} catch (e) {

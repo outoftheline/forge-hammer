@@ -3,9 +3,11 @@
 ## Version 1.3
 ### Updated
 - Translations: PL (Thanks to Kafo) updated
+- Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green
 
 ### Bug Fixes
 - GB Calculator: A change on Beta broke it for own GBs
+- Goods productions were calculated wrong
 - City Planner: Goods buildings had the wrong color
 
 ---
