@@ -961,7 +961,7 @@ FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
 
 
 FH.proxy.addHandler('ArmyUnitManagementService','getArmyInfo',(data, postData)=>{
-    if (postData[0].requestData[0].battleType !== "guild_raids") return;
+    if (postData[0].requestData[0]?.battleType !== "guild_raids") return;
     currentQIUnits = Object.assign({},...data.responseData.counts.map(x=>({[x.unitTypeId]:x})))
 })
 
