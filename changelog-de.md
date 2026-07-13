@@ -1,5 +1,15 @@
 # Changelog
  
+## Version 1.3
+### Update
+- Übersetzungen: PL (Danke an Kafo) aktualisiert
+
+### Bug Fixes
+- LG Rechner: Eine Änderung auf Beta hat den Rechner fpr eigene LG kaputt gemacht
+- Stadtplaner: Gütergebäude hatten die Farbe von Straßen
+
+---
+ 
 ## Version 1.2
 ### Neu
 - Gefechtslog: Der Gefechtslog wird nun ausgelesen und gespeichert, dank Arklur! Ihr findet den Button in der Gefechtsübersicht. Bitte beachtet, dass das Spiel nur die letzten 200 Einträge speichert und der Log deshalb nicht vollständig sein wird, wenn die Daten nicht regelmäßig abgerufen werden.
