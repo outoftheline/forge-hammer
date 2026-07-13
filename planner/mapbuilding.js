@@ -146,6 +146,7 @@ window.PlannerApp = window.PlannerApp || {};
             else if (this.meta.type === 'greatbuilding') color = '#e6542f';
             else if (this.meta.type === 'residential') color = '#7abaff';
             else if (this.meta.type === 'production') color = '#416dff';
+            else if (this.meta.type === 'goods') color = '#7d2a4d';
 
             if (this.streetReq === 0) color = '#793bc9';
             return color;
@@ -158,6 +159,7 @@ window.PlannerApp = window.PlannerApp || {};
             else if (this.meta.type === 'greatbuilding') color = '#af3d2b';
             else if (this.meta.type === 'residential') color = '#219eff';
             else if (this.meta.type === 'production') color = '#2732ff';
+            else if (this.meta.type === 'goods') color = '#6a2a3a';
 
             if (this.streetReq === 0) color = '#3d2783';
             return color;
