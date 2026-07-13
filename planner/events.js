@@ -690,6 +690,69 @@ window.PlannerApp = window.PlannerApp || {};
         updatePlacingBuildingPreview();
     }
 
+    function startPlanNameEdit(li, planId) {
+        if (!li || !planId) return;
+
+        const nameEl = li.querySelector('.plan-name');
+        if (!nameEl || li.querySelector('.plan-name-input')) return; // already editing
+
+        const currentName = nameEl.textContent;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentName;
+
+        nameEl.replaceWith(input);
+        input.focus();
+        input.select();
+
+        let settled = false;
+
+        const finish = () => {
+            if (input.isConnected) input.replaceWith(nameEl);
+        };
+
+        const commit = async () => {
+            if (settled) return;
+            settled = true;
+
+            const trimmed = input.value.trim();
+            finish();
+
+            if (!trimmed || trimmed === currentName) return;
+
+            nameEl.textContent = trimmed; // optimistic update
+
+            try {
+                const success = await app.renamePlanInDatabase(planId, trimmed);
+                if (!success) throw new Error('Plan rename failed');
+            } catch (err) {
+                console.error('Failed to rename plan:', err);
+                nameEl.textContent = currentName;
+                alert('Failed to rename plan.');
+            }
+        };
+
+        const cancel = () => {
+            if (settled) return;
+            settled = true;
+            finish();
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                input.blur(); // triggers commit via the blur handler below
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancel();
+            }
+        });
+
+        input.addEventListener('blur', commit);
+        input.addEventListener('mousedown', (e) => e.stopPropagation());
+    }
+
     async function refreshPlanListUi() {
         if (!dom.planListItems) return;
 
@@ -722,7 +785,11 @@ window.PlannerApp = window.PlannerApp || {};
                         '<span class="plan-name">' + name + '</span>' +
                         '<span class="plan-meta">' + meta + '</span>' +
                     '</span>' +
+                    '<div>' +
+                    '<button class="btn plan-load" title="Load plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>' +
+                    '<button class="btn plan-rename" title="Rename plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.986L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
                     '<button class="btn plan-delete" title="Delete plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+                    '</div>' +
                 '</li>'
             );
         });
@@ -915,6 +982,16 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (dom.planListItems) {
             dom.planListItems.addEventListener('click', async (e) => {
+                if (e.target.closest('.plan-name-input')) return;
+
+                const renameBtn = e.target.closest('.plan-rename');
+                if (renameBtn) {
+                    const li = renameBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    startPlanNameEdit(li, Number(li.dataset.planId));
+                    return;
+                }
+
                 const deleteBtn = e.target.closest('.plan-delete');
                 if (deleteBtn) {
                     const li = deleteBtn.closest('li[data-plan-id]');
@@ -931,17 +1008,20 @@ window.PlannerApp = window.PlannerApp || {};
                     return;
                 }
 
-                const li = e.target.closest('li[data-plan-id]');
-                if (!li) return;
-                const planId = Number(li.dataset.planId);
-
-                try {
-                    await app.loadPlanFromDatabase(planId);
-                    dom.planListModal.classList.add('hidden');
-                    dom.submitWindow.classList.add('hidden');
-                } catch (err) {
-                    console.error('Failed to load plan:', err);
-                    alert('Failed to load plan.');
+                const loadBtn = e.target.closest('.plan-load');
+                if (loadBtn) {
+                    const li = loadBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    const planId = Number(li.dataset.planId);
+                    try {
+                        await app.loadPlanFromDatabase(planId);
+                        dom.planListModal.classList.add('hidden');
+                        dom.submitWindow.classList.add('hidden');
+                    } catch (err) {
+                        console.error('Failed to load plan:', err);
+                        alert('Failed to load plan.');
+                    }
+                    return;
                 }
             });
         }

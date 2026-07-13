@@ -397,6 +397,19 @@ window.PlannerApp = window.PlannerApp || {};
         return callBackground({ type: 'Planner.removePlan', planId });
     }
 
+    async function renamePlanInDatabase(planId, planName) {
+        const name = (planName || '').trim();
+        if (!planId || !name) return false;
+
+        try {
+            await callBackground({ type: 'Planner.renamePlan', planId, planName: name });
+            if (state.planId === planId) state.planName = name;
+            return true;
+        } catch (e) {
+            console.error('Failed to rename plan:', e);
+            return false;
+        }
+    }
 
     // just position + metaId
     function serializeLayout() {
@@ -760,6 +773,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.loadLastSavedPlan = loadLastSavedPlan;
     app.getPlanList = getPlanList;
     app.removePlanFromDatabase = removePlanFromDatabase;
+    app.renamePlanInDatabase = renamePlanInDatabase;
     app.saveViewState = saveViewState;
     app.loadViewState = loadViewState;
     app.autoSave = autoSave;

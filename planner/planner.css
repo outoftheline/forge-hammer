@@ -527,11 +527,10 @@ button, .btn {
     gap: 8px;
     padding: 6px 4px;
     border-bottom: 1px dotted #47677d;
-    cursor: pointer;
 }
 
 #planListItems li:hover {
-    background-color: #2a3f50;
+    background-color: #2a3f50bd;
 }
 
 #planListItems .plan-info {
@@ -547,11 +546,24 @@ button, .btn {
     text-overflow: ellipsis;
 }
 
+#planListItems input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: bold;
+    border: none !important;
+    padding: 1px;
+    outline: none;
+    background-color: #2a3f50bd;
+    box-shadow: 0 0 1px 1px #fff2;
+}
+
 #planListItems .plan-meta {
     font-size: 80%;
     opacity: 0.7;
 }
 
+#planListItems .plan-rename,
 #planListItems .plan-delete {
     flex-shrink: 0;
 }
