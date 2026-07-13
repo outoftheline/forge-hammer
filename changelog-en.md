@@ -1,5 +1,15 @@
 # Changelog
  
+## Version 1.3
+### Updated
+- Translations: PL (Thanks to Kafo) updated
+
+### Bug Fixes
+- GB Calculator: A change on Beta broke it for own GBs
+- City Planner: Goods buildings had the wrong color
+
+---
+ 
 ## Version 1.2
 ### New
 - GBG Log: The action log will now be saved when you open it. Please be aware that the game only saves the last 200 entries, so you need to collect data regularly for it to be somewhat accurate. You can access it from the GBG Overview
