@@ -1884,7 +1884,7 @@ let Main = {
 	 * @param Buildings
 	 * */
 	UpdateCityMap: (Buildings) => {
-		for (let b in Buildings) {
+		for (let b of Buildings) {
 			if (b.player_id !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
 			if (FH.ActiveMap === "era_outpost") {
