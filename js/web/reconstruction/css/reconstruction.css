@@ -126,11 +126,6 @@
 .map-grid-wrapper .map-building-ghost.street {
 	background-color: #fff9;
 }
-.map-building.matched {
-	background-color: #3cc719d7 !important;
-	border-color: #032007 !important;
-	border-width: 2px;
-}
 .map-building.production {
 	background-color: var(--background-color-production);
 	border-color: var(--border-color-production);
@@ -143,6 +138,9 @@
 	background-color: var(--background-color-main_building);
 	border-color: var(--border-color-main_building);
 }
+.map-building.main_building.matched {
+	background-color: #97e968;
+}
 .map-building.roadless {
 	background-color: var(--background-color-noStreet);
 	border-color: var(--border-color-noStreet);
@@ -152,6 +150,11 @@
 	border-color: var(--border-color-street);
 }
 .map-building.street.matched {
-	border-color: #096941 !important;
-	background-color: #096941 !important;
+	border-color: #096941;
+	background-color: #096941;
+}
+.map-building.matched {
+	background-color: #3cc719d7;
+	border-color: #032007;
+	border-width: 2px;
 }
