@@ -136,7 +136,7 @@ let GameTime = {
 
 let TranslationData = null;
 let t = (key) => {
-	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key] || key;
+	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key]?.s || TranslationData[key] || key;
 }
 
 (async () => {
