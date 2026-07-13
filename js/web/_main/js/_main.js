@@ -646,8 +646,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (getConstruction != null) {
 			Rankings = getConstruction.responseData.rankings;
-			Bonus['passive'] = getConstruction.responseData.next_passive_bonus; // GB update to do
-			Bonus['production'] = getConstruction.responseData.next_production_bonus; // GB update to do
 			let EraName = getConstruction.responseData.ownerEra;
 			if (EraName) Era = Technologies.Eras[EraName];
 		}
@@ -658,24 +656,37 @@ document.addEventListener("DOMContentLoaded", function () {
 			Rankings = contributeForgePoints.responseData;
 		}
 
-		if (Rankings) {
-			[entityId, playerId, level, contribution] = postData[0].requestData;
-			entity = FH.GBCalc.getGB(playerId, entityId);			
-			if (!gbUpdateData || !gbUpdateData.CityMapEntity) {
-				gbUpdateData = { Rankings: Rankings, CityMapEntity: entity, Bonus: null, Level: (level + !! contribution) || entity.level + 1};
-			}
-			else {
-				gbUpdateData.Rankings = Rankings;
-				gbUpdateData.Bonus = Bonus;
-				gbUpdateData.Level = level;
-				gbUpdateData.Era = Era;
-			}
-		}
+		if (!Rankings) return 
 
-		if(gbUpdateData?.Rankings && gbUpdateData?.CityMapEntity){
-			lgUpdate();
-		}
+		Main.CurrentGB.Rankings = Rankings;
 
+		[entityId, playerId, level, contribution] = postData[0].requestData;
+		let delay = 0;
+		if (contribution && Rankings.map(x => (x.forge_points || 0)).reduce((a, b) => a + b, 0) == 0){
+			delay = 50;
+			level++;
+			//contribution = 0;
+		}
+		
+		setTimeout(()=>{
+			Main.CurrentGB.Entity = FH.GBCalc.getGB(playerId, entityId);
+	
+			let Level = (level + !! contribution) || Main.CurrentGB.Entity.level + 1
+
+			Main.CurrentGB.isPreviousLevel = Level <= Main.CurrentGB.Entity.level;
+			Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
+			
+			if (!Main.CurrentGB.isPreviousLevel) 
+				Parts.View = '';
+
+			// GB was loaded
+			$('#partCalc-Btn').removeClass('hud-btn-red');
+			$('#partCalc-Btn-closed').remove();
+
+			if ($('#OwnPartBox').length > 0) {
+				Parts.CalcBody();
+			}
+		},delay)
 	});
 
 	FH.proxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
@@ -724,30 +735,6 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		}
 	});
-
-	// Update Funktion, die ausgeführt wird, sobald beide Informationen in gbUpdateData vorhanden sind.
-	function lgUpdate() {
-		const { CityMapEntity, Rankings, Bonus, Level } = gbUpdateData;
-		gbUpdateData = null;
-		Main.CurrentGB.isPreviousLevel = Level <= CityMapEntity.level;
-
-		if (!Rankings) return;
-
-		Main.CurrentGB.Entity = CityMapEntity;
-		Main.CurrentGB.Rankings = Rankings;
-		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
-		if (!Main.CurrentGB.isPreviousLevel) 
-			Parts.View = '';
-
-		// GB was loaded
-		$('#partCalc-Btn').removeClass('hud-btn-red');
-		$('#partCalc-Btn-closed').remove();
-
-		if ($('#OwnPartBox').length > 0) {
-			Parts.CalcBody();
-		}
-	}
-
 
 	// player goods
 	FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
