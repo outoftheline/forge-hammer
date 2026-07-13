@@ -3,9 +3,11 @@
 ## Version 1.3
 ### Update
 - Übersetzungen: PL (Danke an Kafo) aktualisiert
+- Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
 
 ### Bug Fixes
-- LG Rechner: Eine Änderung auf Beta hat den Rechner fpr eigene LG kaputt gemacht
+- LG Rechner: Eine Änderung auf Beta hat den Rechner für eigene LG kaputt gemacht
+- Güterproduktionen wurden falsch berechnet
 - Stadtplaner: Gütergebäude hatten die Farbe von Straßen
 
 ---
