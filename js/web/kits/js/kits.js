@@ -8,7 +8,7 @@
  * @namespace
  */
 
-FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addCustomHandler('InventoryUpdated', () => {
 	Kits.UpdateBoxIfVisible();
 });
 

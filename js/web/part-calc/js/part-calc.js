@@ -63,7 +63,7 @@ FH.proxy.addHandler("all","all", (data,postData) => {
 	}
 });
 
-FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addCustomHandler('QuestsUpdated', data => {
 	if ($('#OwnPartBox').length > 0) {
 		Parts.CalcBody();
 	}

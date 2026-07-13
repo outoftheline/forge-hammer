@@ -851,7 +851,7 @@ let Tooltips = {
 
 //QI Actions
 
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	QIActions.count = FH.RessourceStock.guild_raids_action_points || 0
 });
 
@@ -859,7 +859,7 @@ FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) 
 	QIActions.setNext(data.responseData.resources.guild_raids_action_points)
 });
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
+FH.proxy.addCustomHandler('ActiveMapUpdated',()=>{
 	if (FH.ActiveMap==="guild_raids") {
 		$('#QIActions').show();
 	} else {

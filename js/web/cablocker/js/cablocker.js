@@ -1,7 +1,7 @@
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
     CABlocker.checkBuildings();
 });
-FH.proxy.addFoeHelperHandler('CityMapUpdated', () => {
+FH.proxy.addCustomHandler('CityMapUpdated', () => {
     CABlocker.checkBuildings();
 });
 

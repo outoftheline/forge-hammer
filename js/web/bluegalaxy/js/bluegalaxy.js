@@ -21,7 +21,7 @@ FH.proxy.addHandler('CityProductionService', 'pickupProduction', (data, postData
     }
 });
 
-FH.proxy.addFoeHelperHandler('BonusUpdated', data => {
+FH.proxy.addCustomHandler('BonusUpdated', data => {
     let b = FH.BonusService.getBonuses().find(x=>x.type==='double_collection')
     BlueGalaxy.DoubleCollections = b?.amount || 0;
     BlueGalaxy.GalaxyFactor = (b?.value || 0) / 100;

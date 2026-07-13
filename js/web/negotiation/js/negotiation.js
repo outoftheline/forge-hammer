@@ -1024,7 +1024,7 @@ FH.proxy.addHandler('all','all', (data, postData) => {
 		Negotiation.ExitNegotiation()
 	}
 });
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	if (Negotiation.timeout) {
 		clearTimeout(Negotiation.timeout);
 		Negotiation.timeout=null;

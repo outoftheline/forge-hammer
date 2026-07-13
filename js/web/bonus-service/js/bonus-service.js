@@ -27,14 +27,14 @@ FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
 FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
 	BonusService.Bonuses = data['responseData'];
 
-	FH.proxy.triggerFoeHelperHandler('BonusUpdated');
+	FH.proxy.triggerCustomHandler('BonusUpdated');
 
 	if ($('#bonus-hud').length > 0) {
 		BonusService.CalcBonusData();
 	}
 });
 
-FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addCustomHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length == 0) return;
 		BonusService.CalcBonusData();
 });

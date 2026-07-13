@@ -195,7 +195,7 @@ let Boosts = {
                 }
             }
         }
-        FH.proxy.triggerFoeHelperHandler("BoostsUpdated");
+        FH.proxy.triggerCustomHandler("BoostsUpdated");
     },
     TimeIn: {
         list:[],
