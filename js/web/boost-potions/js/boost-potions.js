@@ -5,12 +5,12 @@
 
 {
 // GEX started
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	BoostPotions.Show();
 	BoostPotions.updateList();
 });
 
-FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addCustomHandler('InventoryUpdated', () => {
 	BoostPotions.updateList();
 });
 

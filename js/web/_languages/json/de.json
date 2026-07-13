@@ -1298,6 +1298,7 @@
   "Boxes.Tooltip.Building.traits": "Merkmale",
   "Boxes.Tooltip.Building.upgradesAutomatically": "Automatisch im aktuellen Zeitalter",
   "Boxes.Tooltip.Building.when": "wenn",
+  "Boxes.Tooltip.CurrentStock":"Aktueller Bestand",
   "Boxes.Tooltip.Efficiency.description": "Folgende Kombinationen sind möglich",
   "Boxes.Translation.ClearStorage": "Zwischenspeicher leeren",
   "Boxes.Translation.ComparisonLanguage": "Vergleichssprache (siehe Tooltip)",

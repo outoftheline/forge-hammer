@@ -73,15 +73,15 @@ FH.proxy.addHandler("ItemStoreService","updateUnlockConditions", (data, postData
 	shopAssist.timeout = setTimeout(shopAssist.Show,100);
 });
 
-FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addCustomHandler('InventoryUpdated', () => {
 	shopAssist.updateDialog();
 });
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	$('#shopAssist').remove();
 });
 
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	shopAssist.checkAlerts();
 });
 

@@ -20,6 +20,7 @@ let Tooltips = {
     containerActive:false,
     targetElement:null,
     callbacks:{},
+    mousePosition:{},
     
     init: async () => {
         await FH.StartUpDone
@@ -99,6 +100,7 @@ let Tooltips = {
         Tooltips.Container.style.display = "none";
     },
     followMouse:(event)=>{
+        Tooltips.mousePosition={x:event.x,y:event.y};
         if (!Tooltips.containerActive) return;
         Tooltips.Container.style.left = (event.x+10) + "px";
         Tooltips.Container.style.top = (event.y+10) + "px";
@@ -851,7 +853,7 @@ let Tooltips = {
 
 //QI Actions
 
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	QIActions.count = FH.RessourceStock.guild_raids_action_points || 0
 });
 
@@ -859,7 +861,7 @@ FH.proxy.addHandler('ResourceService', 'getPlayerAutoRefills', (data, postData) 
 	QIActions.setNext(data.responseData.resources.guild_raids_action_points)
 });
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated',()=>{
+FH.proxy.addCustomHandler('ActiveMapUpdated',()=>{
 	if (FH.ActiveMap==="guild_raids") {
 		$('#QIActions').show();
 	} else {
@@ -919,6 +921,49 @@ let QIActions = {
         QIActions.capacity=cap;
     }
 }
+
+//QI current Stock indicator upon collection
+let activeQIProductions = {};
+let currentQIUnits = {};
+
+FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
+    if (FH.ActiveMap !== "guild_raids") return;
+    Object.values(CityMap.QI.data).forEach(b => {
+        if (!(FH.Main.CityEntities[b.cityentity_id]?.components?.AllAge?.production?.options?.length > 1)) return; //only military & goods
+
+        let product = activeQIProductions[b.id]?.state?.productionOption?.products?.[0]
+        let good = Object.keys(product?.playerResources?.resources || {})[0]
+
+        if (["ProductionFinishedState","ProducingState"].includes(activeQIProductions[b.id]?.state.__class__) && b.state?.__class__ == "IdleState") { //product was collected
+            if (good) {//goods
+                setTimeout(() => {
+                    $('#QICollectionTooltip').remove();
+                    $(`
+                        <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
+                            ${FH.t("Boxes.Tooltip.CurrentStock")}: ${FH.RessourceStock[good]} 
+                            ${srcLinks.icons(good)}
+                        </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
+                }, 100);
+            } else if (product.type == "unit") { //units
+                if (!currentQIUnits[product.unitTypeId]) currentQIUnits[product.unitTypeId] = {}
+                currentQIUnits[product.unitTypeId].producedSince = (currentQIUnits[product.unitTypeId].producedSince || 0) + product.amount;
+                $('#QICollectionTooltip').remove();
+                $(`
+                    <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
+                        ${FH.t("Boxes.Tooltip.CurrentStock")}: ${(currentQIUnits[product.unitTypeId]?.unattached || 0) + (currentQIUnits[product.unitTypeId]?.producedSince ||0)}${!currentQIUnits[product.unitTypeId]?.unattached ? "+?":""} 
+                        <img alt="" src=${srcLinks.getReward(product.unitTypeId.replace("guild_raids_",""))}>
+                    </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
+            }
+        } 
+        activeQIProductions[b.id] = b;
+    })
+})
+
+
+FH.proxy.addHandler('ArmyUnitManagementService','getArmyInfo',(data, postData)=>{
+    if (postData[0].requestData[0].battleType !== "guild_raids") return;
+    currentQIUnits = Object.assign({},...data.responseData.counts.map(x=>({[x.unitTypeId]:x})))
+})
 
 //GBG Rewards Stream
 FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => {

@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	if (FH.ActiveMap !== 'gg') {
 		$('#GBGActionLogCount').remove();
 		$('#GBGTargets').remove();

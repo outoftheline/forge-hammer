@@ -1299,6 +1299,7 @@
   "Boxes.Tooltip.Building.traits": "Traits",
   "Boxes.Tooltip.Building.upgradesAutomatically": "Upgrades automatically to current era",
   "Boxes.Tooltip.Building.when": "when",
+  "Boxes.Tooltip.CurrentStock":"Current Stock",
   "Boxes.Tooltip.Efficiency.description": "Following combinations are possible",
   "Boxes.Translation.ClearStorage": "Clear Storage",
   "Boxes.Translation.ComparisonLanguage": "Comparison Language (see tooltip)",

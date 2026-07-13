@@ -22,15 +22,15 @@ FH.proxy.addHandler('ResourceShopService', 'buyOffer', (data)=> {
 
 
 // GEX started
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	StrategyPoints.ShowFPBar();
 });
 
-FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+FH.proxy.addCustomHandler('InventoryUpdated', () => {
 	//Fp packages often trigger more than one Inventory Update - only update the bar once
 	if (StrategyPoints.delay) clearTimeout(StrategyPoints.delay);
 	StrategyPoints.delay = setTimeout(()=>{

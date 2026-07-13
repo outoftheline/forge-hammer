@@ -18,7 +18,7 @@ FH.proxy.addRequestHandler("ChallengeService", 'all', (postData) => {
 	Quests.DeactivateRival();
 });
 
-FH.proxy.addFoeHelperHandler('QuestsUpdated', data => {
+FH.proxy.addCustomHandler('QuestsUpdated', data => {
 	if ($('#bonus-hud').length > 0) return;
 	if (!Settings.GetSetting('RivalSound')) return;
 	if (Quests.RivalInActive) return;

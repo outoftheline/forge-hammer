@@ -954,7 +954,7 @@ let GexStat = {
 	},
 }
 
-FH.proxy.addFoeHelperHandler('ResourcesUpdated', () => {
+FH.proxy.addCustomHandler('ResourcesUpdated', () => {
 	GExAttempts.setCount(FH.RessourceStock.guild_expedition_attempt || 0)
 });
 

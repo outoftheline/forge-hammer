@@ -62,7 +62,7 @@ FH.proxy.addRequestHandler('CityReconstructionService', 'saveDraft', (data) => {
                 reconstruction.pageUpdate(id);
                 pagesUpdated=true;
             }
-            FH.proxy.triggerFoeHelperHandler('ReconstructionBuildingPlaced',{id:x.entityId,last:(reconstruction.count[id].stored==0)})
+            FH.proxy.triggerCustomHandler('ReconstructionBuildingPlaced',{id:x.entityId,last:(reconstruction.count[id].stored==0)})
 
             $('#ReconstructionMapBody .map-grid').append(reconstruction.placeBuildingOnMap(x));
         } else if (!x.position) {
