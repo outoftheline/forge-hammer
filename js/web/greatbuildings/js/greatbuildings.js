@@ -864,7 +864,7 @@ let GreatBuildings = {
             if (Event['type'] !== 'great_building_contribution') continue;
 
             if (!GreatBuildings.GreatBuildingEntityCache) {
-                GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
+                GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities)?.filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
             }
 
             let Entity = GreatBuildings.GreatBuildingEntityCache.find(obj => (obj['name'] === Event['great_building_name']))
