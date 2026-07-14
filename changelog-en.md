@@ -2,13 +2,18 @@
  
 ## Version 1.3
 ### Updated
-- Translations: PL (Thanks to Kafo) updated
 - Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green
+- City Overview: Send other players cities to the planner
+- City Planner: Move the map with WASD, move or delete multiple buildings at once, plans can now be renamed
+- Translations: PL (Thanks to Kafo) updated
 
 ### Bug Fixes
 - GB Calculator: A change on Beta broke it for own GBs
 - Goods productions were calculated wrong
 - City Planner: Goods buildings had the wrong color
+- Some windows settings were broken
+- Dropdowns in the Statistics and Infobox were adjusted so they better fit the window
+- Efficiency: Icons for buildings that can be ascended are back! No idea where they went
 
 ---
  
