@@ -109,9 +109,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.deletedBuildings = [];
         state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
-        state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.dragCopies = null;
         state.history = [];
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
@@ -600,11 +600,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.rotated = !state.rotated;
 
         // cancel any action
-        state.activeBuilding    = null;
-        state.placingBuilding   = null;
-        state.dragCopy          = null;
-        state.selectionRect     = null;
-        state.selectedBuildings = [];
+        app.clearSelection();
+        state.placingBuilding = null;
+        state.dragCopy        = null;
+        state.dragCopies      = null;
+        state.selectionRect   = null;
 
         state.camX = 0;
         state.camY = 0;
@@ -689,11 +689,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
         state.deletedBuildings = buildingsFromEntries(snapshot.deletedBuildings);
 
-        state.activeBuilding = null;
+        app.clearSelection();
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.dragCopies = null;
         state.selectionRect = null;
-        state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
 
         app.rebuildGridLayer();

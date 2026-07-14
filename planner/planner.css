@@ -484,7 +484,7 @@ button, .btn {
 
 .modal-inner {
     width: 480px;
-    max-height: 70vh;
+    max-height: 90vh;
     font-size: 14px;
     line-height: 18px;
     display: flex;
@@ -494,6 +494,7 @@ button, .btn {
     border-radius: 8px;
     box-sizing: border-box;
     padding: 10px;
+    overflow-y: auto;
 }
 
 .modal-header {
