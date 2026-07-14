@@ -411,44 +411,11 @@ window.PlannerApp = window.PlannerApp || {};
         }
     }
 
-    // just position + metaId
-    function serializeLayout() {
-        return {
-            version: 2,
-            mapBuildings: state.mapBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            storedBuildings: state.storedBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            deletedBuildings: (state.deletedBuildings || []).map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            camX: state.camX,
-            camY: state.camY,
-            zoomScale: state.zoomScale,
-            rotated: !!state.rotated,
-            mapData: state.mapData,
-            currentEra: state.currentEra
-        };
-    }
-
     // Full export
     function serializeState() {
         return {
             version: 3,
+            player: { id: state.playerId, name: state.playerName },
             region: state.region,
             cityData: state.cityData,
             mapData: state.mapData,
@@ -461,7 +428,12 @@ window.PlannerApp = window.PlannerApp || {};
         };
     }
 
+    // import
     async function deserializeState(saved) {
+        if (saved.player) {
+            state.playerId = saved.player.id;
+            state.playerName = saved.player.name;
+        }
         state.region = saved.region;
         state.cityData = sanitizeCityData(saved.cityData || {}).cityData;
         state.mapData = saved.mapData || [];
@@ -786,7 +758,6 @@ window.PlannerApp = window.PlannerApp || {};
     app.restoreCity = restoreCity;
     app.clearSavedLayout = clearSavedLayout;
     app.serializeState = serializeState;
-    app.serializeLayout = serializeLayout;
     app.deserializeState = deserializeState;
     app.exportSaveToFile = exportSaveToFile;
     app.importStateFromFile = importStateFromFile;
