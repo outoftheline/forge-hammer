@@ -453,6 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		CityMap.OtherPlayer.name = data.responseData.other_player.name;
 		CityMap.OtherPlayer.unlockedAreas = data.responseData.city_map.unlocked_areas;
 		CityMap.OtherPlayer.mapData = Object.assign({}, ...data.responseData.city_map.entities.map(x => ({ [x.id]: x })));
+		CityMap.OtherPlayer.mapDataRaw = Object.assign({}, ...data.responseData.city_map.entities.map(x => ({ [x.id]: x })));
 	});
 
 	// move buildings, use self aid kits
