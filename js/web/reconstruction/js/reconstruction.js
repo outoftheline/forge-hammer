@@ -246,7 +246,7 @@ let reconstruction = {
         let needsStreet = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0;
         let street = needsStreet === 0 ? ' roadless' : '';
         let type = needsStreet === 0 ? 'roadless' : meta.type;
-        let matched = reconstruction.isPlanMatch(data.position?.x, data.position?.y, width, height, type) ? ' matched' : '';
+        let matched = reconstruction.isPlanMatch(data.position?.x||0, data.position?.y||0, width, height, type) ? ' matched' : '';
         let c = '';
         if (data.position !== undefined) {
             c += `<span data-id="${data.entityId}" class="map-building ${meta.type}${street}${matched}" 
@@ -266,7 +266,7 @@ let reconstruction = {
 
     isPlanMatch:(x,y,width,height,type)=>{
         if (!reconstruction.planBuildings) return false;
-        return reconstruction.planBuildings.some(b => b.x === x && b.y === y && b.width === width && b.height === height && b.type === type);
+        return reconstruction.planBuildings.some(b => b.x === x||0 && b.y === y||0 && b.width === width && b.height === height && b.type === type);
     },
 
     loadPlanOverlay: async (planId) => {
