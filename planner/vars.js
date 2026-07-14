@@ -54,7 +54,6 @@ window.PlannerApp.dom = {
 };
 
 window.PlannerApp.state = {
-    metaData: {},
     cityData: {},
     mapData: {},
 

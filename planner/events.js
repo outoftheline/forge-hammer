@@ -99,6 +99,34 @@ window.PlannerApp = window.PlannerApp || {};
         app.autoSave();
     }
 
+    function deleteActiveMapBuilding() {
+        const building = state.activeBuilding;
+        if (!building) return;
+
+        app.pushSnapshot();
+
+        app.removeBuildingFromOccupiedTiles(building);
+
+        const idx = state.mapBuildings.indexOf(building);
+        if (idx !== -1) state.mapBuildings.splice(idx, 1);
+
+        state.selectedBuildings = state.selectedBuildings.filter(b => b !== building);
+        refreshSelectionUi();
+
+        building.isActive = false;
+        building.isSelected = false;
+        building.x = 0;
+        building.y = 0;
+
+        state.deletedBuildings = (state.deletedBuildings || []).concat(building);
+        state.activeBuilding = null;
+
+        app.showStoredBuildings();
+        app.redrawMap();
+        app.updateStats();
+        app.autoSave();
+    }
+
     function sortStoredBuildingsByAreaDesc() {
         state.storedBuildings.sort((a, b) => {
             const aSize = app.getMetaSize(a.meta);
@@ -347,7 +375,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function getStreetMetas() {
-        return Object.values(state.metaData).filter(x => x.type === 'street');
+        return Array.from(state.metaById.values()).filter(x => x.type === 'street');
     }
 
     function getStreetFootprintSizes() {
@@ -887,12 +915,16 @@ window.PlannerApp = window.PlannerApp || {};
                 app.redo();
             } else if (
                 (e.key === 'Backspace' || e.key === 'Delete') &&
-                state.selectedStoredMetaId &&
                 !isTypingTarget(e.target)
             ) {
-                e.preventDefault();
-                const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
-                deleteStoredBuildings(metaId, custom);
+                if (state.activeBuilding) {
+                    e.preventDefault();
+                    deleteActiveMapBuilding();
+                } else if (state.selectedStoredMetaId) {
+                    e.preventDefault();
+                    const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
+                    deleteStoredBuildings(metaId, custom);
+                }
             }
         });
 

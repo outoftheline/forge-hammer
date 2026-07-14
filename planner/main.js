@@ -10,34 +10,33 @@ window.PlannerApp = window.PlannerApp || {};
     const PLAN_ID_KEY = 'foe_planner_plan_id';
 
     // make sure types are the same as in the game map
-    function correctBuildingType(metaData) {
-        for (const id in metaData) {
-            if (!metaData.hasOwnProperty(id)) continue;
-            const entity = metaData[id];
+    function correctBuildingType(metaById) {
+        for (const entity of metaById.values()) {
             if (!entity.type) {
                 entity.type = entity?.components?.AllAge?.tags?.tags
                     ?.find(v => v.hasOwnProperty('buildingType'))?.buildingType;
             }
         }
-        return metaData;
+        return metaById;
     }
 
-    // grab metadata from the DB
+    // grab metadata from the DB, keyed by id (this is the single source of truth — see state.metaById)
     async function getCityEntityMetaData(region) {
         const buildingMetaDB = new Dexie("FoEBuildingMeta");
         await buildingMetaDB.open();
         const table = buildingMetaDB.table('buildingMeta');
         const entries = await table.where('region').equals(region).toArray();
 
-        const metaData = {};
+        const metaById = new Map();
         for (const entry of entries) {
             try {
-                metaData[entry.id] = JSON.parse(entry.json);
+                const parsed = JSON.parse(entry.json);
+                metaById.set(parsed.id ?? entry.id, parsed);
             } catch (e) {
                 console.warn('Could not parse meta for', entry.id, e);
             }
         }
-        return correctBuildingType(metaData);
+        return correctBuildingType(metaById);
     }
 
     // key used by CityMap.openPlanner() via background.js
@@ -101,8 +100,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.playerName = data.playerName || state.playerName || 'unknown';
         state.playerId = (playerId !== undefined) ? playerId : (state.playerId || 'unknown');
 
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
@@ -135,7 +133,7 @@ window.PlannerApp = window.PlannerApp || {};
         const existingPlanId = loadSavedPlanId();
 
         if (existingPlanId) {
-            const hasCurrentPlan = !!(state.metaData && Object.keys(state.metaData).length);
+            const hasCurrentPlan = !!(state.metaById && state.metaById.size);
             state.pendingIncomingData = data;
             if (app.showNewDataModal) app.showNewDataModal(hasCurrentPlan);
             return;
@@ -252,7 +250,7 @@ window.PlannerApp = window.PlannerApp || {};
 
     async function savePlanToDatabase() {
         // Nothing loaded yet — nothing to save
-        if (!state.metaData || !Object.keys(state.metaData).length) return false;
+        if (!state.metaById || !state.metaById.size) return false;
 
         const world = state.region || 'unknown';
         const planName = state.planName || 'Plan';
@@ -334,8 +332,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.currentEra = (originalData && originalData.currentEra) || null;
         state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
 
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         const entries = buildingRowsToEntries(rows);
@@ -446,8 +443,7 @@ window.PlannerApp = window.PlannerApp || {};
         };
 
         // check region
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         applyLayout(saved);
