@@ -13,7 +13,6 @@
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
 	--text-darker: #201a18;
-	--bg-darkest: #180d07;
 	--ash: #8a8a8a;
 	--light-blue: #d4aa72;
 
@@ -31,6 +30,7 @@
 	--bg-light: #F9EBC6;
 	--bg-medium: #b3a582;
 	--bg-dark: #281207;
+	--bg-darkest: #180d07;
 
 	--window-border: 2px solid transparent;
 	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;

@@ -365,21 +365,23 @@ td:nth-child(3) .HXBuilding .inhabitant {
 
 #QICollectionTooltip {
     white-space: nowrap;
-    font-size: 1.3em;
+    font-size: 1.2em;
     display: flex;
     align-items: center;
     border-radius: 10px;
-    padding: 2px;
+    padding: 2px 6px;
     margin-top: 2px;
-    color: var(--beige);
     --filled:0%;
-    border: 2px solid var(--text-dark);
     position:absolute;
     top: calc(var(--y) - 100px);
     left: var(--x);
     transform: translateX(-50%);
     z-index: 10000;
-    background: linear-gradient(90deg,#ab6d08 var(--filled), var(--text-darker) var(--filled));
+    border: 2px solid #a39280;
+    color: #ffe7ba;
+    background: linear-gradient(90deg,#71360b var(--filled), #180d07 var(--filled));
+    box-shadow: var(--window-shadow);
+    text-shadow: 0 1px 2px #000;
 }
 
 #QICollectionTooltip img {
