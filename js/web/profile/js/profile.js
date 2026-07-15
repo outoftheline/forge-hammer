@@ -569,6 +569,7 @@ const Profile = {
         content.push('</div>');
 
         for (let building of buildings) {
+            if (!building.hasOwnProperty('name')) continue;
             if (building.type === "street") continue;
             // gather boosts from efficiency ratings
             for (let [boost, value] of Object.entries(building.rating)) {
