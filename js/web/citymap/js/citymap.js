@@ -2713,20 +2713,15 @@ let CityBuildings = {
 		}
 
 		for (let building of data) {
-			if (!building.hasOwnProperty('name')) continue;
-			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue;
+			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
 			let metaData = Object.values(FH.Main.CityEntities).find(x => x.id === building.cityentity_id)
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
 			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
 
-			if (FH.ActiveMap === 'OtherPlayer') {
-				if (!newCityEntity.hasOwnProperty('name')) continue;
-				CityMap.OtherPlayer.mapData[building.id] = newCityEntity;
-			}
-			else {
-				if (!newCityEntity.hasOwnProperty('name')) continue;
+			if (FH.ActiveMap === 'OtherPlayer') 
+				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
+			else
 				FH.Main.CityBuildingsData[building.id] = newCityEntity
-			}
 		}
 
 		return (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.mapData : FH.Main.CityBuildingsData) 
@@ -2736,11 +2731,6 @@ let CityBuildings = {
 	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=true) {	
 		if (typeof(metaData)=="string") {
 			metaData=FH.Main.CityEntities[metaData];
-		}
-		
-		if (metaData === undefined || metaData === null) {
-			console.warn(data.cityentity_id +': createBuilding metaData could not be loaded');
-			return {};
 		}
 		let entity = {
 			player_id: data.player_id||0,
