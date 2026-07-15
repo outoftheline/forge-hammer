@@ -1995,7 +1995,7 @@ let CityBuildings = {
 						resources: {}
 					}
 					if (product.type === "resources") {
-						resource.resources = product.playerResources.resources;
+						resource.resources = structuredClone(product.playerResources.resources);
 						if (product.onlyWhenMotivated !== true)
 							resource.doubleWhenMotivated = true;
 						// make special goods their own type
