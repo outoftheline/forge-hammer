@@ -1188,7 +1188,7 @@
   "Boxes.scoutingTimes.ScoutingTime": "Scouting Time",
   "Boxes.scoutingTimes.Title": "Scouting Info",
   "Boxes.Settings.Active": "Active",
-  "Boxes.Settings.Autostart": "Open window automatically on game load",
+  "Boxes.Settings.Autostart": "Open window automatically",
   "Boxes.Settings.DeletedBoxCoordsBody": "All the coords from the boxes are deleted.",
   "Boxes.Settings.DeletedBoxCoordsHead": "Deleted!",
   "Boxes.Settings.GameFilters.Brightness": "Brightness",
