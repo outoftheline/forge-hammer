@@ -429,13 +429,24 @@ plannerDB.version(1).stores({
 		const metadata = {};
 		const ids = Object.keys(buildingUrls);
 		const maxConcurrent = 10;
+		const maxRetries = 1;
+		const heartbeatEvery = 10;
 		let active = 0;
 		let index = 0;
+		let processedItems = 0;
 
-		function fetchMeta(id, meta, retries = 3) {
+		async function touchHeartbeat() {
+			try {
+				await browser.storage.local.set({ buildingMetaHeartbeat: { region, timestamp: Date.now() } });
+			} catch (e) {
+				console.warn('Building meta heartbeat failed', e);
+			}
+		}
+
+		function fetchMeta(id, meta, retries = maxRetries) {
 			return new Promise(resolve => {
 				const controller = new AbortController();
-				const timeout = setTimeout(() => controller.abort(), 10000);
+				const timeout = setTimeout(() => controller.abort(), 3000);
 
 				fetch(meta.url, { signal: controller.signal })
 					.then(async response => {
@@ -443,7 +454,7 @@ plannerDB.version(1).stores({
 						if (!response.ok) throw new Error(`HTTP ${response.status}`);
 						const text = await response.text();
 						metadata[id] = JSON.parse(text);
-						table.put({ region, id, hash: meta.hash, json: text });
+						await table.put({ region, id, hash: meta.hash, json: text }).catch(e => console.log(e));
 						resolve();
 					})
 					.catch(async error => {
@@ -451,6 +462,7 @@ plannerDB.version(1).stores({
 						if (retries > 0) {
 							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
 						} else {
+							metadata[id]=null;
 							console.warn('Failed to load', meta.url, error);
 							resolve();
 						}
@@ -464,6 +476,10 @@ plannerDB.version(1).stores({
 				const meta = buildingUrls[id];
 				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
 					active++;
+					processedItems += 1;
+					if (processedItems % heartbeatEvery === 0) {
+						await touchHeartbeat();
+					}
 					fetchMeta(id, meta).then(() => {
 						active--;
 						runNext();
@@ -486,6 +502,7 @@ plannerDB.version(1).stores({
 			runNext();
 			checkDone();
 		});
+		await buildingMetaDB.close();
 		return metadata;
 	}
 
