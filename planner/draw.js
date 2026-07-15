@@ -218,6 +218,12 @@ window.PlannerApp = window.PlannerApp || {};
             drawBuildingCopy(ctx, state.dragCopy.building, state.dragCopy.x, state.dragCopy.y, state.dragCopy.valid);
         }
 
+        if (state.dragCopies) {
+            for (const copy of state.dragCopies) {
+                drawBuildingCopy(ctx, copy.building, copy.x, copy.y, copy.valid);
+            }
+        }
+
         drawSelectionRect(ctx);
         drawStreetPreview(ctx);
     }

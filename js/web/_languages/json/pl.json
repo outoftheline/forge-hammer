@@ -1920,7 +1920,7 @@
   "Boxes.UnitsGex.Stage": "Poziom",
   "Boxes.UnitsGex.Won": "Wygrane",
   "Date": {
-    "s": "DD/MMM/RRRR",
+    "s": "DD/MMM/YYYY",
     "r": "DD/MMM/YYYY"
   },
   "DateShort": "DD/MMM",

@@ -2080,7 +2080,11 @@ input[type="range"]::-webkit-slider-thumb {
 	left: 4px;
 }
 
-.hud-btn #gex-attempt-count[data-number^="8"] {
+.hud-btn #gex-attempt-count[data-number^="8"], 
+.hud-btn #gex-attempt-count[data-number^="9"], 
+.hud-btn #gex-attempt-count[data-number^="10"], 
+.hud-btn #gex-attempt-count[data-number^="11"], 
+.hud-btn #gex-attempt-count[data-number^="12"] {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }

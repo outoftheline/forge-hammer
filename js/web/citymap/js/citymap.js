@@ -20,6 +20,7 @@ let CityMap = {
 	},
 	OtherPlayer: {
 		mapData: {},
+		mapDataRaw: {},
 		unlockedAreas: null,
 		eraName: null,
 		name: ''
@@ -147,7 +148,6 @@ let CityMap = {
 	 *
 	 * This function:
 	 * - Sets up the FH.HTML.structure for the map container and sidebar.
-	 * - Initializes map scale and perspective (view) settings from local storage.
 	 * - Adds event listeners for view changes and scale adjustments.
 	 * - Configures filters and action buttons (e.g., meta info copy, submit box).
 	 * - Handles different map contexts: main city, cultural outposts, era outposts, guild raids, and other players.
@@ -222,7 +222,7 @@ let CityMap = {
 		});
 
 		// Button for submit Box
-		if (FH.ActiveMap === 'main') {
+		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'OtherPlayer') {
 			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
@@ -1136,6 +1136,12 @@ let CityMap = {
 			case 'guild_raids':
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
+				break;
+			case 'OtherPlayer':
+				data.playerName 	= CityMap.OtherPlayer.name;
+				data.currentEra		= CityMap.OtherPlayer.eraName;
+				data.CityMapData 	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.mapDataRaw);
+				data.UnlockedAreas	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.unlockedAreas);
 				break;
 			default:
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);

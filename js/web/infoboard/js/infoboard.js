@@ -101,15 +101,15 @@ let Infoboard = {
         h.push('<input type="checkbox" class="dropdown-checkbox" id="infobox-checkbox-toggle"><label class="dropdown-label" for="infobox-checkbox-toggle">' + FH.t('Boxes.Infobox.Filter') + '</label><span class="arrow"></span>');
 
         h.push('<ul>');
+        h.push('<li><label><input type="text" data-type="text" placeholder="1.9|A1: M" class="textfilter filter-msg" value=' + (Infoboard.SavedFilter.includes("text") ? Infoboard.SavedTextFilter : "") + '></label></li>');
         h.push('<li><label><input type="checkbox" data-type="favorites" class="filter-msg" ' + (Infoboard.SavedFilter.includes("favorites") ? "checked" : "") + '> ' + FH.t('Boxes.General.Favorites') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="auction" class="filter-msg" ' + (Infoboard.SavedFilter.includes("auction") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterAuction') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="msg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("msg") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterMessage') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="level" class="filter-msg" ' + (Infoboard.SavedFilter.includes("level") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterLevel') + '</label></li>');
         h.push('<li><label><input type="checkbox" data-type="ge" class="filter-msg" ' + (Infoboard.SavedFilter.includes("ge") ? "checked" : "") + '> ' + FH.t('Boxes.General.Guild_Expedition.short') + '</label></li>');
         h.push('<li><label><input type="checkbox" data-type="gbg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("gbg") ? "checked" : "") + '> ' + FH.t('Boxes.General.Guild_Battlegrounds.short') + '</label></li>');
         h.push('<li><label><input type="checkbox" data-type="qi" class="filter-msg" ' + (Infoboard.SavedFilter.includes("qi") ? "checked" : "") + '> ' + FH.t('Boxes.General.Quantum_Incursion.short') + '</label></li>');
+        h.push('<li><label><input type="checkbox" data-type="auction" class="filter-msg" ' + (Infoboard.SavedFilter.includes("auction") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterAuction') + '</label></li>');
         h.push('<li><label><input type="checkbox" data-type="trade" class="filter-msg" ' + (Infoboard.SavedFilter.includes("trade") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterTrade') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="level" class="filter-msg" ' + (Infoboard.SavedFilter.includes("level") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterLevel') + '</label></li>');
-        h.push('<li><label><input type="checkbox" data-type="msg" class="filter-msg" ' + (Infoboard.SavedFilter.includes("msg") ? "checked" : "") + '> ' + FH.t('Boxes.Infobox.FilterMessage') + '</label></li>');
-        h.push('<li><label><input type="text" data-type="text" placeholder="1.9|A1: M" class="textfilter filter-msg" value=' + (Infoboard.SavedFilter.includes("text") ? Infoboard.SavedTextFilter : "") + '></label></li>');
         h.push('</ul>');
         h.push('</div>');
 

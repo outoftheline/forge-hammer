@@ -2,13 +2,18 @@
  
 ## Version 1.3
 ### Update
-- Übersetzungen: PL (Danke an Kafo) aktualisiert
 - Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
+- Stadtübersicht: Schicke Städte anderer Spieler an den Stadtplaner
+- Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen. Man kann jetzt auch Pläne umbenennen 
+- Übersetzungen: PL (Danke an Kafo) aktualisiert
 
 ### Bug Fixes
 - LG Rechner: Eine Änderung auf Beta hat den Rechner für eigene LG kaputt gemacht
-- Güterproduktionen wurden falsch berechnet
 - Stadtplaner: Gütergebäude hatten die Farbe von Straßen
+- Güterproduktionen wurden falsch berechnet
+- Die Einstellungen an manchen Fenstern waren kaputt
+- Dropdowns wurde in der Infobox und den Statistiken ein wenig gekürzt, damit sie vollständig sichtbar bleiben
+- Effizienzrechner: Die Symbole für Gebäude, die man auf eine erhabene Version upgraden kann, sind wieder zurück
 
 ---
  
