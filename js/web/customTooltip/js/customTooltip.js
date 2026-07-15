@@ -928,11 +928,11 @@ let currentQIUnits = {};
 let QIExpansionCosts = [];
 let tempQIGoods = {};
 
-let showQIStock = (content, fadeOutTimer = 5000) =>{
+let showQIStock = (content, part) =>{
     $('#QICollectionTooltip').remove();
-    $(` <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;">
+    $(` <span id="QICollectionTooltip" style="--x:${Tooltips.mousePosition.x}px;--y:${Tooltips.mousePosition.y}px;${part ? "--filled:"+Math.floor(part * 100)+"%;":""}">
             ${content}
-        </span>`).appendTo("body").fadeOut(fadeOutTimer, function(){ $(this).remove();})
+        </span>`).appendTo("body").fadeOut(5000, function(){ $(this).remove();})
     return;
 }
 
@@ -947,7 +947,7 @@ FH.proxy.addCustomHandler('CityMapUpdated',(data, postData)=>{
 FH.proxy.addCustomHandler("test",()=>{
     setTimeout(() => {
         let good="guild_raids_rope"
-        showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${FH.RessourceStock[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`, 30000);
+        showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${FH.RessourceStock[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`,0.66);
     }, 1000);
 })
 
@@ -978,7 +978,8 @@ FH.proxy.addRequestHandler('CityProductionService', 'pickupProduction', (postDat
         if (["ProductionFinishedState","ProducingState"].includes(activeQIProductions[b.id]?.state.__class__)) { //product was collected
             if (good) {//goods
                 tempQIGoods[good] = (tempQIGoods[good] || 0) + product.playerResources.resources[good]
-                showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${(FH.RessourceStock[good] || 0) + tempQIGoods[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`)   
+                let part = (QIExpansionCosts[0] ? ((FH.RessourceStock[good] || 0) + tempQIGoods[good]) / QIExpansionCosts[0] : 0);
+                showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${(FH.RessourceStock[good] || 0) + tempQIGoods[good]}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`, part)   
             } else if (product.type === "unit") { //units
                 if (!currentQIUnits[product.unitTypeId]) currentQIUnits[product.unitTypeId] = {}
                 currentQIUnits[product.unitTypeId].producedSince = (currentQIUnits[product.unitTypeId].producedSince || 0) + product.amount;
@@ -1001,7 +1002,8 @@ FH.proxy.addRequestHandler('CityProductionService', 'startProduction', (postData
     let amount = product?.playerResources?.resources[good] || product.amount;
     
     if (good) {//goods
-        showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${(FH.RessourceStock[good] || 0) + amount}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`)   
+        let part = (QIExpansionCosts[0] ? ((FH.RessourceStock[good] || 0) + amount) / QIExpansionCosts[0] : 0);
+        showQIStock(`${FH.t("Boxes.Tooltip.CurrentStock")}:${srcLinks.icons(good)} ${(FH.RessourceStock[good] || 0) + amount}${QIExpansionCosts[0]? " / " + QIExpansionCosts[0]:""}`, part)   
     } else if (product.type === "unit") { //units
         showQIStock (`${FH.t("Boxes.Tooltip.CurrentStock")}: <img alt="" src="${srcLinks.getReward(product.unitTypeId.replace("guild_raids_",""))}"> ${(currentQIUnits[product.unitTypeId]?.unattached || 0) + (currentQIUnits[product.unitTypeId]?.producedSince ||0) + amount}${!currentQIUnits[product.unitTypeId]?.unattached ? "+?":""}`)
     }
