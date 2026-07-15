@@ -373,14 +373,13 @@ td:nth-child(3) .HXBuilding .inhabitant {
     margin-top: 2px;
     color: var(--beige);
     --filled:0%;
-    border: 2px solid var(--golden);
+    border: 2px solid var(--text-dark);
     position:absolute;
     top: calc(var(--y) - 100px);
     left: var(--x);
     transform: translateX(-50%);
     z-index: 10000;
-    background: linear-gradient(90deg,#1db51d var(--filled), var(--text-darker) var(--filled));
-    box-shadow: 0 0 8px var(--golden);
+    background: linear-gradient(90deg,#ab6d08 var(--filled), var(--text-darker) var(--filled));
 }
 
 #QICollectionTooltip img {
