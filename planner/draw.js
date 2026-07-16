@@ -346,7 +346,8 @@ window.PlannerApp = window.PlannerApp || {};
         context.save();
 
         for (const tile of streetState.previewTiles) {
-            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size);
+            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size) ||
+                app.isFootprintOccupiedByStreet(tile.x, tile.y, size);
             const px = tile.x * SIZE;
             const py = tile.y * SIZE;
 

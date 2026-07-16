@@ -127,6 +127,19 @@ window.PlannerApp = window.PlannerApp || {};
         return false;
     }
 
+    function getStreetsInFootprint(tx, ty, size = 1) {
+        const found = new Set();
+
+        for (let dy = 0; dy < size; dy++) {
+            for (let dx = 0; dx < size; dx++) {
+                const occupant = state.occupiedTiles.get(tileKey(tx + dx, ty + dy));
+                if (occupant && occupant.meta.type === 'street') found.add(occupant);
+            }
+        }
+
+        return Array.from(found);
+    }
+
     function getStraightLineTiles(startTile, endTile) {
         if (!startTile || !endTile) return [];
 
@@ -173,6 +186,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.isTileOccupiedByNonStreet = isTileOccupiedByNonStreet;
     app.isFootprintOccupiedByNonStreet = isFootprintOccupiedByNonStreet;
     app.isFootprintOccupiedByStreet = isFootprintOccupiedByStreet;
+    app.getStreetsInFootprint = getStreetsInFootprint;
     app.getStraightLineTiles = getStraightLineTiles;
     app.worldToTile = worldToTile;
 })(window.PlannerApp);
