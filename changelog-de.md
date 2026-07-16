@@ -6,6 +6,10 @@
 - Stadtübersicht: Schicke Städte anderer Spieler an den Stadtplaner
 - Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen. Man kann jetzt auch Pläne umbenennen 
 - Übersetzungen: PL (Danke an Kafo) aktualisiert
+- Tooltips: Wenn in den QI ein Güter- oder Militärgebäude geerntet, oder eine Produktion angestoßen wird, wird der aktuelle Vorrat für diese Produktion ausgegeben
+    - die Summe enthält die aktuell angestoßene Produktion
+    - wenn das Einheitenfenster noch nicht geöffnet wurde, steht ein +? hinter der Anzahl der Einheiten, um anzugeben, dass die Anzahl der Einheiten im Vorrat unbekannt ist
+    - wenn aktuell eine Erweiterung mit Gütern gekauft werden kann, werden die Kosten dafür im Tooltip angegeben und es wird ein Fortschrittsbalken angezeigt, der angibt, welcher Anteil von den Kosten bereits produziert wurde
 
 ### Bug Fixes
 - LG Rechner: Eine Änderung auf Beta hat den Rechner für eigene LG kaputt gemacht

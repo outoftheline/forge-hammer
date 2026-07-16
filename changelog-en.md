@@ -6,6 +6,10 @@
 - City Overview: Send other players cities to the planner
 - City Planner: Move the map with WASD, move or delete multiple buildings at once, plans can now be renamed
 - Translations: PL (Thanks to Kafo) updated
+- Tooltips: when a military or goods building is collected or a production is started, the current stock is given:
+    - includes the currently started production
+    - if the unit window was not opened yet, after the unit amount a +? indicates that the amount of units in stock is unknown
+    - if an expansion can be bought with goods, it's cost is indicated in the tooltip and a progress bar indicates the already produced amount of these costs
 
 ### Bug Fixes
 - GB Calculator: A change on Beta broke it for own GBs
