@@ -258,6 +258,7 @@ FH.betterMusic = {
         "foe_music_jupiter_moon": {Volume:1, Name:"Space Age Jupiter Moon (Colony)", Age:21, Agelimit: 22, Outpost: true},
         "foe_music_titan": {Volume:1, Name:"Space Age Titan", Age:22, Agelimit: 22},
         "foe_music_space_hub": {Volume:1, Name:"Space Age Space Hub", Age:23, Agelimit: 23},
+        "foe_music_discovery": {Volume:1, Name:"Stellar Age Discovery", Age:24, Agelimit: 30},
         "foe_music_tavern": {Volume:.7, Name:"Tavern"},
         "foe_music_expedition": {Volume:.7, Name:"Guild Expedition"},
         "foe_music_battlegrounds": {Volume:.7, Name:"Guild Battlegrounds"},
