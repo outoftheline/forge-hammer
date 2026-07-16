@@ -18,6 +18,9 @@
 - Some windows settings were broken
 - Dropdowns in the Statistics and Infobox were adjusted so they better fit the window
 - Efficiency: Icons for buildings that can be ascended are back! No idea where they went
+- improved building of the Building Meta Database
+- Tooltips: building tooltip was missing the special goods at times
+- Translations: translation data was partially not read correctly
 
 ---
  

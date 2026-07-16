@@ -18,6 +18,9 @@
 - Die Einstellungen an manchen Fenstern waren kaputt
 - Dropdowns wurde in der Infobox und den Statistiken ein wenig gekürzt, damit sie vollständig sichtbar bleiben
 - Effizienzrechner: Die Symbole für Gebäude, die man auf eine erhabene Version upgraden kann, sind wieder zurück
+- Aufbau der Gebäudedatenbank verbessert
+- Tooltips: im Gebäudetooltip konnten die Spezialgüter fehlen
+- Übersetzungen: die Übersetzungsdaten wurden teilweise nicht korrekt gelesen
 
 ---
  
