@@ -525,7 +525,16 @@ window.PlannerApp = window.PlannerApp || {};
 
         for (const tile of state.streetPlacement.previewTiles) {
             if (app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size)) continue;
-            if (app.isFootprintOccupiedByStreet(tile.x, tile.y, size)) continue;
+
+            const existingStreets = app.getStreetsInFootprint(tile.x, tile.y, size);
+            if (existingStreets.length) {
+                for (const existing of existingStreets) {
+                    app.removeBuildingFromOccupiedTiles(existing);
+                    const idx = state.mapBuildings.indexOf(existing);
+                    if (idx !== -1) state.mapBuildings.splice(idx, 1);
+                }
+                continue;
+            }
 
             const street = createStreetBuildingAtTile(tile.x, tile.y, streetMeta);
             state.mapBuildings.push(street);
@@ -991,7 +1000,7 @@ window.PlannerApp = window.PlannerApp || {};
                 e.preventDefault();
                 app.redo();
             } else if (
-                (e.key === 'Backspace' || e.key === 'Delete') &&
+                (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'r') &&
                 !isTypingTarget(e.target)
             ) {
                 if (state.selectedBuildings.length) {
@@ -1002,6 +1011,13 @@ window.PlannerApp = window.PlannerApp || {};
                     const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
                     deleteStoredBuildings(metaId, custom);
                 }
+            } else if (
+                e.key === ' ' &&
+                !isTypingTarget(e.target) &&
+                state.selectedBuildings.length
+            ) {
+                e.preventDefault();
+                storeSelectedBuildings();
             }
         });
 

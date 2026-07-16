@@ -4,12 +4,13 @@
 ### Update
 - Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
 - Stadtübersicht: Schicke Städte anderer Spieler an den Stadtplaner
-- Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen. Man kann jetzt auch Pläne umbenennen 
+- Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen, Straßen können durch überbauen mit der passenden Straße gelöscht werden. Man kann jetzt auch Pläne umbenennen
 - Übersetzungen: PL (Danke an Kafo) aktualisiert
-- Tooltips: Wenn in den QI ein Güter- oder Militärgebäude geerntet, oder eine Produktion angestoßen wird, wird der aktuelle Vorrat für diese Produktion ausgegeben
-    - die Summe enthält die aktuell angestoßene Produktion
-    - wenn das Einheitenfenster noch nicht geöffnet wurde, steht ein +? hinter der Anzahl der Einheiten, um anzugeben, dass die Anzahl der Einheiten im Vorrat unbekannt ist
-    - wenn aktuell eine Erweiterung mit Gütern gekauft werden kann, werden die Kosten dafür im Tooltip angegeben und es wird ein Fortschrittsbalken angezeigt, der angibt, welcher Anteil von den Kosten bereits produziert wurde
+- Tooltips: Wird in den QI ein Güter- oder Militärgebäude geerntet oder eine Produktion angestoßen, wird der Vorrat für diese Produktion angezeigt
+    - Die Summe enthält die aktuell angestoßene Produktion
+    - Wenn das Einheitenfenster noch nicht geöffnet wurde, steht ein +? hinter der Anzahl der Einheiten, um anzugeben, dass die Anzahl der Einheiten im Vorrat unbekannt ist
+    - Wenn eine Erweiterung mit Gütern gekauft werden kann, werden die Kosten dafür im Tooltip angegeben und es wird ein Fortschrittsbalken angezeigt, der angibt, welcher Anteil von den Kosten bereits produziert wurde
+- Die Standard-Position für GG Ziele ist nun oben
 
 ### Bug Fixes
 - LG Rechner: Eine Änderung auf Beta hat den Rechner für eigene LG kaputt gemacht
@@ -19,8 +20,9 @@
 - Dropdowns wurde in der Infobox und den Statistiken ein wenig gekürzt, damit sie vollständig sichtbar bleiben
 - Effizienzrechner: Die Symbole für Gebäude, die man auf eine erhabene Version upgraden kann, sind wieder zurück
 - Aufbau der Gebäudedatenbank verbessert
-- Tooltips: im Gebäudetooltip konnten die Spezialgüter fehlen
-- Übersetzungen: die Übersetzungsdaten wurden teilweise nicht korrekt gelesen
+- Tooltips: Im Gebäudetooltip konnten die Spezialgüter fehlen
+- Links: Gildenlinks waren kaputt
+- Übersetzungen: Die Übersetzungsdaten wurden teilweise nicht korrekt gelesen
 
 ---
  

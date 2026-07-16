@@ -4,12 +4,13 @@
 ### Updated
 - Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green
 - City Overview: Send other players cities to the planner
-- City Planner: Move the map with WASD, move or delete multiple buildings at once, plans can now be renamed
+- City Planner: Move the map with WASD, move or delete multiple buildings at once, remove streets by using the street placement over them, plans can now be renamed
 - Translations: PL (Thanks to Kafo) updated
-- Tooltips: when a military or goods building is collected or a production is started, the current stock is given:
-    - includes the currently started production
-    - if the unit window was not opened yet, after the unit amount a +? indicates that the amount of units in stock is unknown
-    - if an expansion can be bought with goods, it's cost is indicated in the tooltip and a progress bar indicates the already produced amount of these costs
+- Tooltips: When a military or goods building is collected or a production is started, the current stock is given:
+    - Includes the currently started production
+    - If the unit window was not opened yet, after the unit amount a +? indicates that the amount of units in stock is unknown
+    - If an expansion can be bought with goods, it's cost is indicated in the tooltip and a progress bar indicates the already produced amount of these costs
+- Changed the default position of the GBG targets to the top bar
 
 ### Bug Fixes
 - GB Calculator: A change on Beta broke it for own GBs
@@ -18,9 +19,9 @@
 - Some windows settings were broken
 - Dropdowns in the Statistics and Infobox were adjusted so they better fit the window
 - Efficiency: Icons for buildings that can be ascended are back! No idea where they went
-- improved building of the Building Meta Database
-- Tooltips: building tooltip was missing the special goods at times
-- Translations: translation data was partially not read correctly
+- Improved Building of the Building Meta Database
+- Tooltips: Building tooltip was missing the special goods at times
+- Translations: Translation data was partially not read correctly
 
 ---
  
