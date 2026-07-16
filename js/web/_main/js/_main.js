@@ -1182,9 +1182,9 @@ let Main = {
 	 */
 	GetGuildLink: (GuildID, GuildName, WorldId=FH.World) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			let GuildLink = FH.helper.str.Replacer(FH.Links.Guild.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
+				GuildLink = FH.helper.str.Replacer(FH.Links.Guild.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
 
 			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${FH.Links.Icon}</a>`;
 		}
