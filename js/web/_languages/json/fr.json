@@ -475,6 +475,10 @@
     "s": "Bâtiment",
     "r": "Building"
   },
+  "Boxes.GBGActionLog.Button": {
+    "s": "Log des actions",
+    "r": "Action Log"
+  },
   "Boxes.GBGActionLog.DateFormat": {
     "s": "Format de date",
     "r": "Date format"
@@ -1402,6 +1406,10 @@
   "Boxes.QiProgress.SnapShotLogDisclaimer": "Avis de non-responsabilité : ces données sont basées sur vos données collectées. Les chiffres présentés ici ne sont probablement pas exacts à 100 %. Il faudrait ouvrir la liste à minuit pour qu'ils soient corrects.",
   "Boxes.QiProgress.Title": "Aperçu IQ",
   "Boxes.ReconstructionList.Title": "Liste de tailles des objets en Reconstruction",
+  "Boxes.ReconstructionMap.LoadPlan": {
+    "s": "Charger depuis le planificateur de cité",
+    "r": "Load from City Planner"
+  },
   "Boxes.RecurringQuests.AND": "ET",
   "Boxes.RecurringQuests.OR": "OU",
   "Boxes.RecurringQuests.showCounter": "Afficher le compteur des quêtes ouvertes dans le menu",
@@ -1534,6 +1542,10 @@
     "r": "Upgrades automatically to current era"
   },
   "Boxes.Tooltip.Building.when": "Quand",
+  "Boxes.Tooltip.CurrentStock": {
+    "s": "Stock actuel",
+    "r": "Current Stock"
+  },
   "Boxes.Tooltip.Efficiency.description": "Les combinaisons suivantes sont possibles",
   "Boxes.Translation.ClearStorage": "Effacer le stockage",
   "Boxes.Translation.ComparisonLanguage": {
