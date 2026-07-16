@@ -136,7 +136,7 @@ let GameTime = {
 
 let TranslationData = null;
 let t = (key) => {
-	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key] || key;
+	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key]?.s || TranslationData[key] || key;
 }
 
 (async () => {
@@ -178,10 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 (function () {
-	let MainMenuLoaded = false,
-		LGCurrentLevelMedals = undefined,
-		IsLevelScroll = false;
-
+	let MainMenuLoaded = false;
 
 	// globale Handler
 	// die Gebäudenamen übernehmen
@@ -257,10 +254,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addHandler('AllyService', 'addAlly', (data, postData) => {
 		Main.Allies.addAlly(data.responseData);
 	});
-	FH.proxy.addFoeHelperHandler('InventoryUpdated', () => {
+	FH.proxy.addCustomHandler('InventoryUpdated', () => {
 		Main.Allies.updateAllyList();
 	});
-	FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+	FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 		$('.MapActivityCheck:not(.ActiveOn'+FH.ActiveMap+")").remove();
 		$('.MapActivityHide').hide();
 		$('.MapActivityHide.ActiveOn'+FH.ActiveMap).show();
@@ -414,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		FH.LastMapPlayerID = FH.Player.ID;
 
 		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
-		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerCustomHandler('CityMapUpdated');
 		Main.SetArkBonus2();
 
 		if (FH.ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
@@ -456,6 +453,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		CityMap.OtherPlayer.name = data.responseData.other_player.name;
 		CityMap.OtherPlayer.unlockedAreas = data.responseData.city_map.unlocked_areas;
 		CityMap.OtherPlayer.mapData = Object.assign({}, ...data.responseData.city_map.entities.map(x => ({ [x.id]: x })));
+		CityMap.OtherPlayer.mapDataRaw = Object.assign({}, ...data.responseData.city_map.entities.map(x => ({ [x.id]: x })));
 	});
 
 	// move buildings, use self aid kits
@@ -505,17 +503,15 @@ document.addEventListener("DOMContentLoaded", function () {
 					delete Main.CityBuildingsData[ID];
 			}
 		}
-		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerCustomHandler('CityMapUpdated');
 	});
 
 	// production is started, collected, aborted
 	FH.proxy.addHandler('CityProductionService', (data, postData) => {
-		if (data.requestMethod === 'pickupProduction' || data.requestMethod === 'pickupAll' || data.requestMethod === 'startProduction' || data.requestMethod === 'cancelProduction') {
-			let Buildings = data.responseData['updatedEntities'];
-			if (!Buildings) return
-			if (FH.ActiveMap != "main") return // do not add outpost buildings
-			Main.UpdateCityMap(Buildings)
-		}
+		if (!['pickupProduction','pickupAll','startProduction','cancelProduction'].includes(data.requestMethod)) return;
+		let Buildings = data.responseData['updatedEntities'];
+		if (!Buildings) return
+		Main.UpdateCityMap(Buildings)
 	});
 
 	// remove a friend
@@ -642,7 +638,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// gbUpdateData sammelt die informationen aus mehreren Handlern
 	let gbUpdateData = null;
-	let gbCityMapEntity = null;
 
 	FH.proxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
 		let getConstruction = data.requestMethod === 'getConstruction' ? data : null;
@@ -652,36 +647,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		if (getConstruction != null) {
 			Rankings = getConstruction.responseData.rankings;
-			Bonus['passive'] = getConstruction.responseData.next_passive_bonus; // GB update to do
-			Bonus['production'] = getConstruction.responseData.next_production_bonus; // GB update to do
 			let EraName = getConstruction.responseData.ownerEra;
 			if (EraName) Era = Technologies.Eras[EraName];
-			IsLevelScroll = false;
 		}
 		else if (getConstructionRanking != null) {
 			Rankings = getConstructionRanking.responseData;
-			IsLevelScroll = true;
 		}
 		else if (contributeForgePoints != null) {
 			Rankings = contributeForgePoints.responseData;
-			IsLevelScroll = false;
 		}
 
-		if (Rankings) {
-			if (!gbUpdateData || !gbUpdateData.CityMapEntity) {
-				gbUpdateData = { Rankings: Rankings, CityMapEntity: gbCityMapEntity, Bonus: null };
+		if (!Rankings) return 
+
+		Main.CurrentGB.Rankings = Rankings;
+
+		[entityId, playerId, level, contribution] = postData[0].requestData;
+		let delay = 0;
+		if (contribution && Rankings.map(x => (x.forge_points || 0)).reduce((a, b) => a + b, 0) == 0){
+			delay = 50;
+			level++;
+			//contribution = 0;
+		}
+		
+		setTimeout(()=>{
+			Main.CurrentGB.Entity = FH.GBCalc.getGB(playerId, entityId);
+	
+			let Level = (level + !! contribution) || Main.CurrentGB.Entity.level + 1
+
+			Main.CurrentGB.isPreviousLevel = Level <= Main.CurrentGB.Entity.level;
+			Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
+			
+			if (!Main.CurrentGB.isPreviousLevel) 
+				Parts.View = '';
+
+			// GB was loaded
+			$('#partCalc-Btn').removeClass('hud-btn-red');
+			$('#partCalc-Btn-closed').remove();
+
+			if ($('#OwnPartBox').length > 0) {
+				Parts.CalcBody();
 			}
-			else {
-				gbUpdateData.Rankings = Rankings;
-				gbUpdateData.Bonus = Bonus;
-				gbUpdateData.Era = Era;
-			}
-		}
-
-		if(gbUpdateData?.Rankings && gbUpdateData?.CityMapEntity){
-			lgUpdate();
-		}
-
+		},delay)
 	});
 
 	FH.proxy.addHandler('GreatBuildingsService', 'getContributions', (data, postData) => {
@@ -690,40 +696,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// can be removed after game update 1.332
 	FH.proxy.addHandler('CityMapService', 'updateEntity', (data, postData) => {
-		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: data };
-			// reset gbUpdateData sobald wie möglich (nachdem alle einzelnen Handler ausgeführt wurden)
-			Promise.resolve().then(() => gbUpdateData = null);
-		} else {
-			gbUpdateData.CityMapEntity = data;
-			lgUpdate();
-		}
-		
-		if (data.responseData[0]?.player_id === FH.Player.ID) {
-			
-			if ($('#OwnPartBox').length > 0) {
-				Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
-				Parts.CalcBody();
-			}
+		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
+		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
+		if (dataId == currentId && $('#OwnPartBox').length > 0) {
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Parts.CalcBody();
 		}
 	});
 
 	FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
-		let formattedData = { ...data, responseData: [data.responseData] };
-		gbCityMapEntity = formattedData;
-
-		if (!gbUpdateData || !gbUpdateData.Rankings) {
-			gbUpdateData = { Rankings: null, CityMapEntity: formattedData };
-		} else {
-			gbUpdateData.CityMapEntity = formattedData;
-			lgUpdate();
-		}
-		
-		if (formattedData.responseData[0]?.player_id === FH.Player.ID) {
-			if ($('#OwnPartBox').length > 0) {
-				Main.CurrentGB.Entity.max_level = formattedData.responseData[0]?.max_level;
-				Parts.CalcBody();
-			}
+		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
+		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
+		if (dataId == currentId && $('#OwnPartBox').length > 0) {
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Parts.CalcBody();
 		}
 	});
 
@@ -731,14 +717,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		for (let b of data.responseData) {
 			Main.CityMapData[b.id]=b;
 		}
-		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerCustomHandler('CityMapUpdated');
 	});
 
 	FH.proxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
 		for (let b of data.responseData.updatedEntities||[]) {
 			Main.CityMapData[b.id]=b;
 		}
-		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerCustomHandler('CityMapUpdated');
 	});
 
 	FH.proxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
@@ -751,67 +737,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	// Update Funktion, die ausgeführt wird, sobald beide Informationen in gbUpdateData vorhanden sind.
-	function lgUpdate() {
-		const { CityMapEntity, Rankings, Bonus } = gbUpdateData;
-		gbUpdateData = null;
-		Main.CurrentGB.isPreviousLevel = false;
-
-		if (!Rankings) return;
-
-		// LG Scrollaktion: Beim ersten mal Öffnen Medals von P1 notieren. Wenn gescrollt wird und P1 weniger Medals hat, dann vorheriges Level, sonst aktuelles Level
-		if (IsLevelScroll) {
-			let Medals = 0;
-			for (let i = 0; i < Rankings.length; i++) {
-				if (Rankings[i]['reward'] !== undefined) {
-					Medals = Rankings[i]['reward']['resources']['medals'];
-					break;
-				}
-			}
-
-			if (Medals !== LGCurrentLevelMedals) {
-				Main.CurrentGB.isPreviousLevel = true;
-			}
-		}
-		else {
-			let Medals = 0;
-			for (let i = 0; i < Rankings.length; i++) {
-				if (Rankings[i]['reward'] !== undefined) {
-					Medals = Rankings[i]['reward']['resources']['medals'];
-					break;
-				}
-			}
-			LGCurrentLevelMedals = Medals;
-		}
-
-		Main.CurrentGB.Entity = CityMapEntity.responseData[0];
-		Main.CurrentGB.Rankings = Rankings;
-		Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
-		if (!Main.CurrentGB.isPreviousLevel) 
-			Parts.View = '';
-
-		// GB was loaded
-		$('#partCalc-Btn').removeClass('hud-btn-red');
-		$('#partCalc-Btn-closed').remove();
-
-		if ($('#OwnPartBox').length > 0) {
-			Parts.CalcBody();
-		}
-	}
-
-
 	// player goods
 	FH.proxy.addHandler('ResourceService', 'getPlayerResources', (data, postData) => {
 		FH.RessourceStock = data.responseData.resources; // Keep this updated
 		Outposts.CollectResources();
-		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerCustomHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 	FH.proxy.addHandler('ResourceService', 'getPlayerResourceBag', (data, postData) => {
 		if (data.responseData?.type?.value && data.responseData?.type?.value != 'PlayerMain') return; // for now ignore all other source types
 		FH.RessourceStock = data.responseData.resources.resources;
 		Outposts.CollectResources();
-		FH.proxy.triggerFoeHelperHandler('ResourcesUpdated')
+		FH.proxy.triggerCustomHandler('ResourcesUpdated')
 		Castle.UpdateCastlePoints(data['requestId']);
 	});
 
@@ -857,7 +794,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		// Goods Update after accepted Trade
 		if (requestMethod === "newEvent" && responseData.type === "trade_accepted") {
 			FH.RessourceStock[responseData.need.good_id] += responseData.need.value;
-			FH.proxy.triggerFoeHelperHandler("ResourcesUpdated");
+			FH.proxy.triggerCustomHandler("ResourcesUpdated");
 		}
 		// Inventory Update, e.g. when receiving FP packages from GB leveling	
 		if (requestClass === 'InventoryService' && requestMethod === 'getItem') {
@@ -879,7 +816,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		Main.Quests = data.responseData;
 
-		FH.proxy.triggerFoeHelperHandler('QuestsUpdated');
+		FH.proxy.triggerCustomHandler('QuestsUpdated');
 	});
 
 	// Update unlocked features
@@ -1071,8 +1008,8 @@ let Main = {
 		if (typeof chrome !== 'undefined') {
 			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
 		}
-		else if (FH.bgApiHandler != null) {
-			_responsePromise = FH.bgApiHandler(data);
+		else if (FH.BgApiHandler != null) {
+			_responsePromise = FH.BgApiHandler(data);
 
 		}
 		else {
@@ -1245,9 +1182,9 @@ let Main = {
 	 */
 	GetGuildLink: (GuildID, GuildName, WorldId=FH.World) => {
 		if (Settings.GetSetting('ShowLinks')) {
-			let GuildLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
+			let GuildLink = FH.helper.str.Replacer(FH.Links.Guild.scoredb, { 'world': WorldId.toUpperCase(), 'guildid': GuildID });
 			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
-				GuildLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
+				GuildLink = FH.helper.str.Replacer(FH.Links.Guild.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'guildid': GuildID });
 
 			return `<a class="external-link game-cursor" href="${GuildLink}" target="_blank">${FH.HTML.escapeHtml(GuildName)} ${FH.Links.Icon}</a>`;
 		}
@@ -1717,7 +1654,7 @@ let Main = {
 
 			let h = [];
 			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
-			h.push(`<p><button onclick="Main.Allies.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+			h.push(`<p><button class="btn btn-green" onclick="FH.Main.Allies.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 			$('#AllyListSettingsBox').html(h.join(''));
 		},
@@ -1897,7 +1834,7 @@ let Main = {
 			let ID = Items[i]['id'];
 			Main.Inventory[ID] = Items[i];
 		}
-		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
+		FH.proxy.triggerCustomHandler('InventoryUpdated');
 	},
 
 
@@ -1909,7 +1846,7 @@ let Main = {
 	UpdateInventoryItem: (Item) => {
 		let ID = Item['id'];
 		Main.Inventory[ID] = Item;
-		FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
+		FH.proxy.triggerCustomHandler('InventoryUpdated');
 	},
 
 
@@ -1925,7 +1862,7 @@ let Main = {
 				Main.Inventory[ID].inStock = Amount;
 			} catch (e) {
 			}
-			FH.proxy.triggerFoeHelperHandler('InventoryUpdated');
+			FH.proxy.triggerCustomHandler('InventoryUpdated');
 	},
 
 
@@ -1935,32 +1872,27 @@ let Main = {
 	 * @param Buildings
 	 * */
 	UpdateCityMap: (Buildings) => {
-		for (let i in Buildings) {
-			if (!Buildings.hasOwnProperty(i)) continue;
-			if (Buildings[i]['player_id'] !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
+		for (let b of Buildings) {
+			if (b.player_id !== FH.Player.ID) continue; // Foreign building (z.B. visting neighbor and opening a GB)
 
-			let ID = Buildings[i]['id'];
-			if (Main.CityMapData[ID]) {
-				Main.CityMapData[ID] = Buildings[i];
-			} 
 			if (FH.ActiveMap === "era_outpost") {
-				CityMap.EraOutpost.data[ID] = Buildings[i];
+				CityMap.EraOutpost.data[b.id] = b;
 			}
 			else if (FH.ActiveMap === "cultural_outpost") {
-				CityMap.CulturalOutpost.data[ID] = Buildings[i];
+				CityMap.CulturalOutpost.data[b.id] = b;
 			}
 			else if (FH.ActiveMap === "guild_raids") {
-				CityMap.QI.data[ID] = Buildings[i];
+				CityMap.QI.data[b.id] = b;
+			} else {
+				Main.CityMapData[b.id] = b;
+				Main.SetArkBonus2();
+				if ($('#bluegalaxy').length > 0) {
+					FH.BlueGalaxy.CalcBody(Buildings);
+				}
 			}
-		}
-		Main.SetArkBonus2();
-
-		if ($('#bluegalaxy').length > 0) {
-			FH.BlueGalaxy.CalcBody(Buildings);
-		}
-
+		}		
 		FPCollector.CityMapDataNew = Buildings;
-		FH.proxy.triggerFoeHelperHandler('CityMapUpdated');
+		FH.proxy.triggerCustomHandler('CityMapUpdated');
 	},
 
 
@@ -2099,11 +2031,11 @@ let Main = {
 	},
 
 
-	ResizeFunctions: () => {
-		// FP-Bar
+	/*ResizeFunctions: () => {
+		// hammerBar
 		if (document.getElementById('game_body'))
 			StrategyPoints.HandleWindowResize();
-	},
+	},*/
 
 
 	/**
@@ -2265,7 +2197,7 @@ let Main = {
 
 	UpdateActiveMap: (map)=>{
 		FH.ActiveMap = map
-		FH.proxy.triggerFoeHelperHandler("ActiveMapUpdated");
+		FH.proxy.triggerCustomHandler("ActiveMapUpdated");
 	}
 };
 

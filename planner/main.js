@@ -10,34 +10,33 @@ window.PlannerApp = window.PlannerApp || {};
     const PLAN_ID_KEY = 'foe_planner_plan_id';
 
     // make sure types are the same as in the game map
-    function correctBuildingType(metaData) {
-        for (const id in metaData) {
-            if (!metaData.hasOwnProperty(id)) continue;
-            const entity = metaData[id];
+    function correctBuildingType(metaById) {
+        for (const entity of metaById.values()) {
             if (!entity.type) {
                 entity.type = entity?.components?.AllAge?.tags?.tags
                     ?.find(v => v.hasOwnProperty('buildingType'))?.buildingType;
             }
         }
-        return metaData;
+        return metaById;
     }
 
-    // grab metadata from the DB
+    // grab metadata from the DB, keyed by id (this is the single source of truth — see state.metaById)
     async function getCityEntityMetaData(region) {
         const buildingMetaDB = new Dexie("FoEBuildingMeta");
         await buildingMetaDB.open();
         const table = buildingMetaDB.table('buildingMeta');
         const entries = await table.where('region').equals(region).toArray();
 
-        const metaData = {};
+        const metaById = new Map();
         for (const entry of entries) {
             try {
-                metaData[entry.id] = JSON.parse(entry.json);
+                const parsed = JSON.parse(entry.json);
+                metaById.set(parsed.id ?? entry.id, parsed);
             } catch (e) {
                 console.warn('Could not parse meta for', entry.id, e);
             }
         }
-        return correctBuildingType(metaData);
+        return correctBuildingType(metaById);
     }
 
     // key used by CityMap.openPlanner() via background.js
@@ -101,8 +100,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.playerName = data.playerName || state.playerName || 'unknown';
         state.playerId = (playerId !== undefined) ? playerId : (state.playerId || 'unknown');
 
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
@@ -111,9 +109,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.deletedBuildings = [];
         state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
-        state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.dragCopies = null;
         state.history = [];
         state.future = [];
         localStorage.removeItem(HISTORY_KEY);
@@ -135,7 +133,7 @@ window.PlannerApp = window.PlannerApp || {};
         const existingPlanId = loadSavedPlanId();
 
         if (existingPlanId) {
-            const hasCurrentPlan = !!(state.metaData && Object.keys(state.metaData).length);
+            const hasCurrentPlan = !!(state.metaById && state.metaById.size);
             state.pendingIncomingData = data;
             if (app.showNewDataModal) app.showNewDataModal(hasCurrentPlan);
             return;
@@ -252,7 +250,7 @@ window.PlannerApp = window.PlannerApp || {};
 
     async function savePlanToDatabase() {
         // Nothing loaded yet — nothing to save
-        if (!state.metaData || !Object.keys(state.metaData).length) return false;
+        if (!state.metaById || !state.metaById.size) return false;
 
         const world = state.region || 'unknown';
         const planName = state.planName || 'Plan';
@@ -334,8 +332,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.currentEra = (originalData && originalData.currentEra) || null;
         state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
 
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         const entries = buildingRowsToEntries(rows);
@@ -397,45 +394,25 @@ window.PlannerApp = window.PlannerApp || {};
         return callBackground({ type: 'Planner.removePlan', planId });
     }
 
+    async function renamePlanInDatabase(planId, planName) {
+        const name = (planName || '').trim();
+        if (!planId || !name) return false;
 
-    // just position + metaId
-    function serializeLayout() {
-        return {
-            version: 2,
-            mapBuildings: state.mapBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            storedBuildings: state.storedBuildings.map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            deletedBuildings: (state.deletedBuildings || []).map(b => ({
-                metaId: b.meta.id,
-                x: b.data.x,
-                y: b.data.y,
-                era: b.data.era,
-                custom: !!b.custom
-            })),
-            camX: state.camX,
-            camY: state.camY,
-            zoomScale: state.zoomScale,
-            rotated: !!state.rotated,
-            mapData: state.mapData,
-            currentEra: state.currentEra
-        };
+        try {
+            await callBackground({ type: 'Planner.renamePlan', planId, planName: name });
+            if (state.planId === planId) state.planName = name;
+            return true;
+        } catch (e) {
+            console.error('Failed to rename plan:', e);
+            return false;
+        }
     }
 
     // Full export
     function serializeState() {
         return {
             version: 3,
+            player: { id: state.playerId, name: state.playerName },
             region: state.region,
             cityData: state.cityData,
             mapData: state.mapData,
@@ -448,7 +425,12 @@ window.PlannerApp = window.PlannerApp || {};
         };
     }
 
+    // import
     async function deserializeState(saved) {
+        if (saved.player) {
+            state.playerId = saved.player.id;
+            state.playerName = saved.player.name;
+        }
         state.region = saved.region;
         state.cityData = sanitizeCityData(saved.cityData || {}).cityData;
         state.mapData = saved.mapData || [];
@@ -461,8 +443,7 @@ window.PlannerApp = window.PlannerApp || {};
         };
 
         // check region
-        state.metaData = await getCityEntityMetaData(state.region);
-        state.metaById = new Map(Object.values(state.metaData).map(m => [m.id, m]));
+        state.metaById = await getCityEntityMetaData(state.region);
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         applyLayout(saved);
@@ -619,11 +600,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.rotated = !state.rotated;
 
         // cancel any action
-        state.activeBuilding    = null;
-        state.placingBuilding   = null;
-        state.dragCopy          = null;
-        state.selectionRect     = null;
-        state.selectedBuildings = [];
+        app.clearSelection();
+        state.placingBuilding = null;
+        state.dragCopy        = null;
+        state.dragCopies      = null;
+        state.selectionRect   = null;
 
         state.camX = 0;
         state.camY = 0;
@@ -708,11 +689,11 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);
         state.deletedBuildings = buildingsFromEntries(snapshot.deletedBuildings);
 
-        state.activeBuilding = null;
+        app.clearSelection();
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.dragCopies = null;
         state.selectionRect = null;
-        state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
 
         app.rebuildGridLayer();
@@ -760,6 +741,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.loadLastSavedPlan = loadLastSavedPlan;
     app.getPlanList = getPlanList;
     app.removePlanFromDatabase = removePlanFromDatabase;
+    app.renamePlanInDatabase = renamePlanInDatabase;
     app.saveViewState = saveViewState;
     app.loadViewState = loadViewState;
     app.autoSave = autoSave;
@@ -772,7 +754,6 @@ window.PlannerApp = window.PlannerApp || {};
     app.restoreCity = restoreCity;
     app.clearSavedLayout = clearSavedLayout;
     app.serializeState = serializeState;
-    app.serializeLayout = serializeLayout;
     app.deserializeState = deserializeState;
     app.exportSaveToFile = exportSaveToFile;
     app.importStateFromFile = importStateFromFile;

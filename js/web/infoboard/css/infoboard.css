@@ -260,3 +260,8 @@ input.textfilter{
     width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
     width: fill-available;
 }
+
+#BackgroundInfo .dropdown ul {
+	max-height: 130px;
+	overflow: auto;
+}

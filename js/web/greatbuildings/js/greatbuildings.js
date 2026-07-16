@@ -863,7 +863,7 @@ let GreatBuildings = {
 
             if (Event['type'] !== 'great_building_contribution') continue;
 
-            if (!GreatBuildings.GreatBuildingEntityCache) {
+            if (!GreatBuildings.GreatBuildingEntityCache && Object.values(FH.Main.CityEntities) !== undefined) {
                 GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
             }
 

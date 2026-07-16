@@ -4,7 +4,7 @@
  * Licensed under AGPL - see LICENSE.md for details.
 */
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	if (FH.ActiveMap !== 'gg') {
 		$('#GBGActionLogCount').remove();
 		$('#GBGTargets').remove();
@@ -2079,7 +2079,7 @@ let GuildFights = {
 		value.showOwnSectors = 0;
 		value.showTileColors = 0;
 		value.showGbgTargets = 0;
-		value.gbgTargetsPosition = 'bottom';
+		value.gbgTargetsPosition = 'top';
 		value.showServerTime = 0;
 		value.gbgAlertOffset = 30;
 		value.discordWebhook = '';

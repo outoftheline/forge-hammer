@@ -11,7 +11,7 @@ FH.proxy.addHandler('OtherPlayerService','visitPlayer', (data, postData) => {
     Profile.showButton();
 });
 
-FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
+FH.proxy.addCustomHandler('ActiveMapUpdated', () => {
 	if ($('#PlayerProfileButton').length !== 0) {
         $('#PlayerProfileButton span').attr('class',FH.ActiveMap);
 
@@ -21,7 +21,7 @@ FH.proxy.addFoeHelperHandler('ActiveMapUpdated', () => {
             $('#PlayerProfileButton').attr('onclick','Profile.show()');
     }
 });
-FH.proxy.addFoeHelperHandler('BoostsUpdated', () => {
+FH.proxy.addCustomHandler('BoostsUpdated', () => {
     Profile.update()
 });
 

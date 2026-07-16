@@ -468,11 +468,11 @@ if (typeof globalThis.FH == 'undefined') {
                 map[method] = list.filter(c => c !== callback);
             },
 
-            addFoeHelperHandler: function (method, callback) {
+            addCustomHandler: function (method, callback) {
                 this.addWsHandler('FoeHelperService', method, callback);
             },
 
-            removeFoeHelperHandler: function (method, callback) {
+            removeCustomHandler: function (method, callback) {
                 this.removeWsHandler('FoeHelperService', method, callback);
             },
 
@@ -487,7 +487,7 @@ if (typeof globalThis.FH == 'undefined') {
                 wsRawHandler = wsRawHandler.filter(c => c !== callback);
             },
 
-            triggerFoeHelperHandler: function (method, data = null) {
+            triggerCustomHandler: function (method, data = null) {
                 _proxyWsAction('FoeHelperService', method, data);
             },
 

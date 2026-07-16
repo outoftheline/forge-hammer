@@ -24,7 +24,7 @@
 
     <div class="wrapper">
         <section class="sidebar">
-            <h1><img src="../images/app48.png" /> City Planner v0.9</h1>
+            <h1><img src="../images/app48.png" /> City Planner v1.0</h1>
             <div id="populationStat">Population: <span class="pop-stat">0</span></div>
             <div class="filter">
                 <div id="metaSearch">
@@ -156,8 +156,7 @@
                     </div>
                     <a href="https://ko-fi.com/forgehammer" target="_blank" title="Support us on Ko-Fi"><img src="../images/kofi.png" width="35" /></a>
                 </div>
-                <div class="info"><span>Drag map by holding ALT key, (de)select buildings with CTRL key, cancel actions
-                        with right click</span> <b class="close">&gt;</b></div>
+                <div class="info"></div>
                 <div id="canvasWrapper">
                     <div class="shadow"></div><canvas id="planner" width="2500" height="2500"></canvas>
                 </div>
@@ -194,16 +193,20 @@
                 <h2>How to use this planner</h2>
                 <button class="btn modal-close">✕</button>
             </div>
-            <p>This is the very first version. Please report any issues you run into. We'll add more features in the future!</p>
+            <p>Please report any issues you run into. We'll add more features in the future!</p>
             <ul>
-                <li>Click on a building. When it is highlighted in green, you can drag it and move it to free space on the map or the sidebar to store it.</li>
-                <li>Drag the map by holding the ALT key and using your mouse</li>
-                <li>Select multiple buildings with the CTRL key and store them in the top right corner next to the <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg>
-                </li>
-                <li>Delete a building after storing it by using the backspace or DEL key</li>
                 <li>Cancel any action with <b>right click</b></li>
+                <li>Select one building by clicking it. Move it by dragging. Delete it with DEL, backspace or R. Store it with the space bar or by dragging it to the sidebar.</li>
+                <li>Select multiple buildings with the CTRL key. <br />
+                    You can deselect any building from your selection by holding the CTRL key and clicking it. 
+                    You can move all selected buildings at once to a free space by dragging. <br />
+                    Store selected buildings either by dragging them to the sidebar, clicking the space bar or clicking in the top right corner next to the <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg>
+                </li>
+                <li>Move the map by holding the ALT key and using your mouse or using the WASD keys!</li>
+                <li>Delete buildings from the sidebar or map by using the backspace, R or DEL key.</li>
+                <li>Delete street tiles by using the street placement over them.</li>
             </ul>
-            <p>Buildings added in the planner are marked with a *</p>
+            <p>Buildings added in the planner are marked with a *<br />Undo and redo actions are limited to the last 5 actions.</p>
         </div>
     </div>
 
@@ -216,10 +219,6 @@
     <script src="draw.js"></script>
     <script src="events.js"></script>
     <script src="main.js"></script>
-
-    <!-- TODO
-        - sharing
-    -->
 </body>
 
 </html>

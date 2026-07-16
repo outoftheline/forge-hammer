@@ -427,16 +427,26 @@ plannerDB.version(1).stores({
 		const existingEntries = await table.where('region').equals(region).toArray();
 		const buildingsOld = Object.assign({}, ...existingEntries.map(x => ({ [x.id]: x })));
 		const metadata = {};
-		const updated = [];
 		const ids = Object.keys(buildingUrls);
 		const maxConcurrent = 10;
+		const maxRetries = 1;
+		const heartbeatEvery = 10;
 		let active = 0;
 		let index = 0;
+		let processedItems = 0;
 
-		function fetchMeta(id, meta, retries = 3) {
+		async function touchHeartbeat() {
+			try {
+				await browser.storage.local.set({ buildingMetaHeartbeat: { region, timestamp: Date.now() } });
+			} catch (e) {
+				console.warn('Building meta heartbeat failed', e);
+			}
+		}
+
+		function fetchMeta(id, meta, retries = maxRetries) {
 			return new Promise(resolve => {
 				const controller = new AbortController();
-				const timeout = setTimeout(() => controller.abort(), 10000);
+				const timeout = setTimeout(() => controller.abort(), 3000);
 
 				fetch(meta.url, { signal: controller.signal })
 					.then(async response => {
@@ -444,7 +454,7 @@ plannerDB.version(1).stores({
 						if (!response.ok) throw new Error(`HTTP ${response.status}`);
 						const text = await response.text();
 						metadata[id] = JSON.parse(text);
-						updated.push({ region, id, hash: meta.hash, json: text });
+						await table.put({ region, id, hash: meta.hash, json: text }).catch(e => console.log(e));
 						resolve();
 					})
 					.catch(async error => {
@@ -452,6 +462,7 @@ plannerDB.version(1).stores({
 						if (retries > 0) {
 							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
 						} else {
+							metadata[id]=null;
 							console.warn('Failed to load', meta.url, error);
 							resolve();
 						}
@@ -465,6 +476,10 @@ plannerDB.version(1).stores({
 				const meta = buildingUrls[id];
 				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
 					active++;
+					processedItems += 1;
+					if (processedItems % heartbeatEvery === 0) {
+						await touchHeartbeat();
+					}
 					fetchMeta(id, meta).then(() => {
 						active--;
 						runNext();
@@ -487,11 +502,7 @@ plannerDB.version(1).stores({
 			runNext();
 			checkDone();
 		});
-
-		if (updated.length > 0) {
-			await table.bulkPut(updated);
-		}
-
+		await buildingMetaDB.close();
 		return metadata;
 	}
 
@@ -612,6 +623,20 @@ plannerDB.version(1).stores({
 			} catch (e) {
 				plannerDB.close();
 				throw new Error('Planner.updatePlan failed: '+(e && e.message ? e.message : e));
+			}
+		},
+		renamePlan: async (id,planName) => {
+			try {
+				await plannerDB.open();
+				const existing = await plannerDB.plans.get(id);
+				if (!existing) throw new Error('plan not found');
+
+				await plannerDB.plans.update(id, { planName: planName });
+				await plannerDB.close();
+				return;
+			} catch (e) {
+				plannerDB.close();
+				throw new Error('Planner.renamePlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
 		getBuildingList: async (planId) => {
@@ -864,6 +889,16 @@ plannerDB.version(1).stores({
 				}
 				try {
 					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					const plans = await Planner.getPlanList();
+					return APIsuccess(plans);
+				} catch (e) {
+					return APIerror(e && e.message ? e.message : e);
+				}
+			}
+			case 'Planner.renamePlan': {
+				if (!request.planId || !request.planName) return APIerror('Planner.renamePlan: Parameters {planId} and {planName} expected!');
+				try {
+					await Planner.renamePlan(request.planId,request.planName);
 					const plans = await Planner.getPlanList();
 					return APIsuccess(plans);
 				} catch (e) {

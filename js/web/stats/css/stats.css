@@ -41,6 +41,12 @@
 	padding: 0.1rem;
 }
 
+#stats .option-era-dropdown .dropdown ul {
+	max-height: 560px;
+	width: 200px;
+	overflow: auto;
+}
+
 #stats .tabs  {
 	align-self: flex-end;
 	padding: 0 5px;

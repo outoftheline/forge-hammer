@@ -1,8 +1,35 @@
 # Changelog
  
+## Version 1.3
+### Update
+- Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
+- Stadtübersicht: Schicke Städte anderer Spieler an den Stadtplaner
+- Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen, Straßen können durch überbauen mit der passenden Straße gelöscht werden. Man kann jetzt auch Pläne umbenennen
+- Übersetzungen: PL (Danke an Kafo) aktualisiert
+- Tooltips: Wird in den QI ein Güter- oder Militärgebäude geerntet oder eine Produktion angestoßen, wird der Vorrat für diese Produktion angezeigt
+    - Die Summe enthält die aktuell angestoßene Produktion
+    - Wenn das Einheitenfenster noch nicht geöffnet wurde, steht ein +? hinter der Anzahl der Einheiten, um anzugeben, dass die Anzahl der Einheiten im Vorrat unbekannt ist
+    - Wenn eine Erweiterung mit Gütern gekauft werden kann, werden die Kosten dafür im Tooltip angegeben und es wird ein Fortschrittsbalken angezeigt, der angibt, welcher Anteil von den Kosten bereits produziert wurde
+- Die Standard-Position für GG Ziele ist nun oben
+
+### Bug Fixes
+- LG Rechner: Eine Änderung auf Beta hat den Rechner für eigene LG kaputt gemacht
+- Stadtplaner: Gütergebäude hatten die Farbe von Straßen
+- Güterproduktionen wurden falsch berechnet
+- Die Einstellungen an manchen Fenstern waren kaputt
+- Dropdowns wurde in der Infobox und den Statistiken ein wenig gekürzt, damit sie vollständig sichtbar bleiben
+- Effizienzrechner: Die Symbole für Gebäude, die man auf eine erhabene Version upgraden kann, sind wieder zurück
+- Aufbau der Gebäudedatenbank verbessert
+- Tooltips: Im Gebäudetooltip konnten die Spezialgüter fehlen
+- Links: Gildenlinks waren kaputt
+- Übersetzungen: Die Übersetzungsdaten wurden teilweise nicht korrekt gelesen
+
+---
+ 
 ## Version 1.2
 ### Neu
 - Gefechtslog: Der Gefechtslog wird nun ausgelesen und gespeichert, dank Arklur! Ihr findet den Button in der Gefechtsübersicht. Bitte beachtet, dass das Spiel nur die letzten 200 Einträge speichert und der Log deshalb nicht vollständig sein wird, wenn die Daten nicht regelmäßig abgerufen werden.
+- GG Ziele: Die nächsten vier markierten Sektoren auf der Karte werden angezeigt. Deaktiviere sie oder ändere die Position in den Einstellungen am GG Fenster
 - Stadtplaner: Eine erste Version des Stadtplaners ist da! Schickt eure Daten in der Stadtübersicht an den Planer und fangt an zu bauen. Aktuell sind alle Beschreibungen noch auf Englisch.
 
 ### Update

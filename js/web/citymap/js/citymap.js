@@ -20,6 +20,7 @@ let CityMap = {
 	},
 	OtherPlayer: {
 		mapData: {},
+		mapDataRaw: {},
 		unlockedAreas: null,
 		eraName: null,
 		name: ''
@@ -147,7 +148,6 @@ let CityMap = {
 	 *
 	 * This function:
 	 * - Sets up the FH.HTML.structure for the map container and sidebar.
-	 * - Initializes map scale and perspective (view) settings from local storage.
 	 * - Adds event listeners for view changes and scale adjustments.
 	 * - Configures filters and action buttons (e.g., meta info copy, submit box).
 	 * - Handles different map contexts: main city, cultural outposts, era outposts, guild raids, and other players.
@@ -222,7 +222,7 @@ let CityMap = {
 		});
 
 		// Button for submit Box
-		if (FH.ActiveMap === 'main') {
+		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'OtherPlayer') {
 			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
@@ -1137,6 +1137,12 @@ let CityMap = {
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.data);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.QI.areas);
 				break;
+			case 'OtherPlayer':
+				data.playerName 	= CityMap.OtherPlayer.name;
+				data.currentEra		= CityMap.OtherPlayer.eraName;
+				data.CityMapData 	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.mapDataRaw);
+				data.UnlockedAreas	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.unlockedAreas);
+				break;
 			default:
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
@@ -1989,7 +1995,7 @@ let CityBuildings = {
 						resources: {}
 					}
 					if (product.type === "resources") {
-						resource.resources = product.playerResources.resources;
+						resource.resources = structuredClone(product.playerResources.resources);
 						if (product.onlyWhenMotivated !== true)
 							resource.doubleWhenMotivated = true;
 						// make special goods their own type
@@ -2558,30 +2564,31 @@ let CityBuildings = {
 				if (production === undefined) continue;
 
 				if (production.type === 'resources' || production.type === 'special_goods') {
-					Object.keys(production.resources).forEach(resourceName => {
-						let good = FH.Goods.List.find(x => x.id === resourceName)
-						let specialGood = (FH.Goods.Data[Object.keys(production.playerResources?.resources||{})[0]]?.abilities?.specialResource?.type === "specialResource")
-						let goodEra = Technologies.InnoEras[building.eraName]
-						let isGood = false
+					for (let resourceName of Object.keys(production.resources)) {
+						if (resourceName === "money" || resourceName === "strategy_points" || resourceName === "supplies" || resourceName === "medals") continue;
+						let good = FH.Goods.List.find(x => x.id === resourceName);
+						let goodEra = Technologies.InnoEras[building.eraName];
+						let isGood = false;
 
 						if (good !== undefined) {
 							goodEra = Technologies.InnoEras[good.era]
-							resourceName = good.id
-							isGood = true
+							resourceName = good.id;
+							isGood = true;
 						}
-						else if (specialGood !== undefined) {
-							isGood = false
+						else if (resourceName.includes('_special')) {
+							isGood = false;
 						}
-						else if (resourceName.includes('previous_age')) {
+						else if (resourceName.includes('random_good_of_') || resourceName.includes('all_goods_of_')) {
+							isGood = true;
+						}
+
+						if (resourceName.includes('previous_age')) {
 							goodEra = Technologies.getPreviousEraIdByCurrentEraName(building.eraName)
-							isGood = true
+							isGood = true;
 						}
 						else if (resourceName.includes('next_age')) {
 							goodEra = Technologies.getNextEraIdByCurrentEraName(building.eraName)
-							isGood = true
-						}
-						else if (resourceName.includes('random_good_of_') || resourceName.includes('all_goods_of_')) {
-							isGood = true
+							isGood = true;
 						}
 
 						if (isGood) {
@@ -2594,7 +2601,7 @@ let CityBuildings = {
 							else
 								goods.eras[goodEra] += parseInt(production.resources[resourceName])+boostedExtra;
 						}
-					})
+					}
 				}
 				if (production.type === 'random') { // e.g. gentania windmill, eerie terror coaster
 					let goodEra = Technologies.InnoEras[building.eraName]

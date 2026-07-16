@@ -109,7 +109,6 @@ window.PlannerApp = window.PlannerApp || {};
             this.height = SIZE * dims.height;
 
             this.isSelected = false;
-            this.isActive = false;
 
             this.streetReq = this.setNeedsStreet();
             this.population = getBuildingPopulation(meta, data);
@@ -146,6 +145,7 @@ window.PlannerApp = window.PlannerApp || {};
             else if (this.meta.type === 'greatbuilding') color = '#e6542f';
             else if (this.meta.type === 'residential') color = '#7abaff';
             else if (this.meta.type === 'production') color = '#416dff';
+            else if (this.meta.type === 'goods') color = '#7d2a4d';
 
             if (this.streetReq === 0) color = '#793bc9';
             return color;
@@ -158,6 +158,7 @@ window.PlannerApp = window.PlannerApp || {};
             else if (this.meta.type === 'greatbuilding') color = '#af3d2b';
             else if (this.meta.type === 'residential') color = '#219eff';
             else if (this.meta.type === 'production') color = '#2732ff';
+            else if (this.meta.type === 'goods') color = '#6a2a3a';
 
             if (this.streetReq === 0) color = '#3d2783';
             return color;
@@ -169,8 +170,8 @@ window.PlannerApp = window.PlannerApp || {};
             context.save();
             if (outOfBounds) context.globalAlpha = 0.75;
 
-            context.fillStyle = this.isSelected ? '#cfe5f0' : this.isActive ? '#66c440' : this.fill;
-            context.strokeStyle = this.isSelected ? '#2a4670' : this.stroke;
+            context.fillStyle = this.isSelected ? '#66c440' : this.fill;
+            context.strokeStyle = this.isSelected ? '#1d6b2a' : this.stroke;
 
             context.fillRect(this.x, this.y, this.width, this.height);
             context.lineWidth = 2;
@@ -194,7 +195,7 @@ window.PlannerApp = window.PlannerApp || {};
                 context.translate(-cx, -cy);
             }
 
-            context.fillStyle = '#000';
+            context.fillStyle = this.isSelected ? '#fff' : '#000';
             context.font = this.isSelected ? ('bold ' + FONT) : FONT;
 
             const boxWidth = state.rotated ? this.height : this.width;

@@ -160,7 +160,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         const q = query.toLowerCase();
 
-        return Object.values(state.metaData)
+        return Array.from(state.metaById.values())
             .filter(meta => {
                 if (!meta.name) return false;
                 if (EXCLUDED_TYPES.has(meta.type)) return false;

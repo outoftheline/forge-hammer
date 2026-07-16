@@ -218,6 +218,12 @@ window.PlannerApp = window.PlannerApp || {};
             drawBuildingCopy(ctx, state.dragCopy.building, state.dragCopy.x, state.dragCopy.y, state.dragCopy.valid);
         }
 
+        if (state.dragCopies) {
+            for (const copy of state.dragCopies) {
+                drawBuildingCopy(ctx, copy.building, copy.x, copy.y, copy.valid);
+            }
+        }
+
         drawSelectionRect(ctx);
         drawStreetPreview(ctx);
     }
@@ -340,7 +346,8 @@ window.PlannerApp = window.PlannerApp || {};
         context.save();
 
         for (const tile of streetState.previewTiles) {
-            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size);
+            const blocked = app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size) ||
+                app.isFootprintOccupiedByStreet(tile.x, tile.y, size);
             const px = tile.x * SIZE;
             const py = tile.y * SIZE;
 

@@ -54,7 +54,6 @@ window.PlannerApp.dom = {
 };
 
 window.PlannerApp.state = {
-    metaData: {},
     cityData: {},
     mapData: {},
 
@@ -71,9 +70,9 @@ window.PlannerApp.state = {
     selectedBuildings: [],
     selectedStoredMetaId: null,
 
-    activeBuilding: null,
     placingBuilding: null,
     dragCopy: null,
+    dragCopies: null,
     rotated: false,
 
     pendingIncomingData: null,

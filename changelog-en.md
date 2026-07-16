@@ -1,8 +1,34 @@
 # Changelog
  
+## Version 1.3
+### Updated
+- Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green
+- City Overview: Send other players cities to the planner
+- City Planner: Move the map with WASD, move or delete multiple buildings at once, remove streets by using the street placement over them, plans can now be renamed
+- Translations: PL (Thanks to Kafo) updated
+- Tooltips: When a military or goods building is collected or a production is started, the current stock is given:
+    - Includes the currently started production
+    - If the unit window was not opened yet, after the unit amount a +? indicates that the amount of units in stock is unknown
+    - If an expansion can be bought with goods, it's cost is indicated in the tooltip and a progress bar indicates the already produced amount of these costs
+- Changed the default position of the GBG targets to the top bar
+
+### Bug Fixes
+- GB Calculator: A change on Beta broke it for own GBs
+- Goods productions were calculated wrong
+- City Planner: Goods buildings had the wrong color
+- Some windows settings were broken
+- Dropdowns in the Statistics and Infobox were adjusted so they better fit the window
+- Efficiency: Icons for buildings that can be ascended are back! No idea where they went
+- Improved Building of the Building Meta Database
+- Tooltips: Building tooltip was missing the special goods at times
+- Translations: Translation data was partially not read correctly
+
+---
+ 
 ## Version 1.2
 ### New
 - GBG Log: The action log will now be saved when you open it. Please be aware that the game only saves the last 200 entries, so you need to collect data regularly for it to be somewhat accurate. You can access it from the GBG Overview
+- GBG Targets: A bunch of the next targeted sectors will be shown on the map. Disable them or change their position in the GBG window.
 - City planner: A first version is ready! Use the City Overview to send data over. Any descriptions are currently only available in English.
 
 ### Updated

@@ -362,3 +362,29 @@ td:nth-child(3) .HXBuilding .inhabitant {
     background-color: var(--black-50);
     border-radius: 20px;
 }
+
+#QICollectionTooltip {
+    white-space: nowrap;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin-top: 2px;
+    --filled:0%;
+    position:absolute;
+    top: calc(var(--y) - 100px);
+    left: var(--x);
+    transform: translateX(-50%);
+    z-index: 10000;
+    border: 2px solid #a39280;
+    color: #ffe7ba;
+    background: linear-gradient(90deg,#71360b var(--filled), #180d07 var(--filled));
+    box-shadow: var(--window-shadow);
+    text-shadow: 0 1px 2px #000;
+}
+
+#QICollectionTooltip img {
+    max-height: 30px;
+    margin: auto 1px;
+}

@@ -253,7 +253,7 @@ let BattleAssist = {
                 'auto_close': true,
                 'dragdrop': false,
                 'minimize': false,
-                'settings': 'BattleAssist.ShowArmyAdviceConfig()',
+                'settings': BattleAssist.ShowArmyAdviceConfig,
             });
         }
         $('#battleAssistArmyAdviceBody').html(`<span>${advice}</span>`);

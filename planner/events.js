@@ -40,6 +40,69 @@ window.PlannerApp = window.PlannerApp || {};
         return tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable;
     }
 
+    const PAN_KEYS = new Set(['w', 'a', 's', 'd']);
+    const pannedKeys = new Set();
+    const PAN_SPEED = 400; // px/sec at zoomScale 1
+    let panRAF = null;
+    let lastPanTime = null;
+
+    function panStep(timestamp) {
+        if (!pannedKeys.size) {
+            panRAF = null;
+            lastPanTime = null;
+            if (app.saveViewState) app.saveViewState();
+            return;
+        }
+
+        if (lastPanTime === null) lastPanTime = timestamp;
+        const dt = (timestamp - lastPanTime) / 1000;
+        lastPanTime = timestamp;
+
+        let dx = 0, dy = 0;
+        if (pannedKeys.has('a')) dx -= 1;
+        if (pannedKeys.has('d')) dx += 1;
+        if (pannedKeys.has('w')) dy -= 1;
+        if (pannedKeys.has('s')) dy += 1;
+
+        if (dx || dy) {
+            const len = Math.hypot(dx, dy);
+            const worldDelta = (PAN_SPEED * dt) / state.zoomScale;
+            state.camX += (dx / len) * worldDelta;
+            state.camY += (dy / len) * worldDelta;
+            app.redrawMap();
+        }
+
+        panRAF = requestAnimationFrame(panStep);
+    }
+
+    function startPanLoop() {
+        if (panRAF === null) {
+            lastPanTime = null;
+            panRAF = requestAnimationFrame(panStep);
+        }
+    }
+
+    function handlePanKeyDown(e) {
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (isTypingTarget(e.target)) return;
+
+        const key = e.key.toLowerCase();
+        if (!PAN_KEYS.has(key)) return;
+
+        pannedKeys.add(key);
+        startPanLoop();
+    }
+
+    function handlePanKeyUp(e) {
+        const key = e.key.toLowerCase();
+        if (!PAN_KEYS.has(key)) return;
+        pannedKeys.delete(key);
+    }
+
+    function stopPanningAll() {
+        pannedKeys.clear();
+    }
+
     function parseGroupId(groupId) {
         if (typeof groupId !== 'string') return { metaId: groupId, custom: false };
         if (groupId.endsWith(':custom')) return { metaId: groupId.slice(0, -7), custom: true };
@@ -99,6 +162,34 @@ window.PlannerApp = window.PlannerApp || {};
         app.autoSave();
     }
 
+    function deleteSelectedMapBuildings() {
+        const buildings = state.selectedBuildings.slice();
+        if (!buildings.length) return;
+
+        app.pushSnapshot();
+
+        for (const building of buildings) {
+            app.removeBuildingFromOccupiedTiles(building);
+
+            const idx = state.mapBuildings.indexOf(building);
+            if (idx !== -1) state.mapBuildings.splice(idx, 1);
+
+            building.isSelected = false;
+            building.x = 0;
+            building.y = 0;
+
+            state.deletedBuildings = (state.deletedBuildings || []).concat(building);
+        }
+
+        state.selectedBuildings = [];
+        refreshSelectionUi();
+
+        app.showStoredBuildings();
+        app.redrawMap();
+        app.updateStats();
+        app.autoSave();
+    }
+
     function sortStoredBuildingsByAreaDesc() {
         state.storedBuildings.sort((a, b) => {
             const aSize = app.getMetaSize(a.meta);
@@ -111,10 +202,7 @@ window.PlannerApp = window.PlannerApp || {};
         const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
         if (!stored) return;
 
-        if (state.activeBuilding) {
-            state.activeBuilding.isActive = false;
-            state.activeBuilding = null;
-        }
+        clearSelection();
 
         state.placingBuilding = app.createRotatedBuilding(
             {
@@ -125,7 +213,6 @@ window.PlannerApp = window.PlannerApp || {};
             stored.meta
         );
 
-        state.placingBuilding.isActive = true;
         updatePlacingBuildingPreview();
     }
 
@@ -148,7 +235,6 @@ window.PlannerApp = window.PlannerApp || {};
             nextStored.meta
         );
 
-        state.placingBuilding.isActive = true;
         updatePlacingBuildingPreview();
     }
 
@@ -193,9 +279,9 @@ window.PlannerApp = window.PlannerApp || {};
         state.deletedBuildings = [];
         state.selectedBuildings = [];
         state.selectedStoredMetaId = null;
-        state.activeBuilding = null;
         state.placingBuilding = null;
         state.dragCopy = null;
+        state.dragCopies = null;
         state.rotated = false;
         state.camX = 0;
         state.camY = 0;
@@ -213,6 +299,11 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function handleCanvasClick(e) {
+        if (state._suppressCanvasClick) {
+            state._suppressCanvasClick = false;
+            return;
+        }
+
         if (state.placingBuilding) return;
         if (e.altKey || e.ctrlKey) return;
 
@@ -243,20 +334,19 @@ window.PlannerApp = window.PlannerApp || {};
         const building = app.hitTestBuilding(point.x, point.y);
         if (!building) return;
 
-        const currentActiveBuilding = state.mapBuildings.find(x => x.isActive);
+        const alreadySelected = state.selectedBuildings.includes(building);
 
-        if (currentActiveBuilding && currentActiveBuilding !== building) {
-            currentActiveBuilding.isActive = false;
-            state.activeBuilding = building;
-            building.isActive = true;
-        } else if (currentActiveBuilding === building) {
-            building.isActive = false;
-            state.activeBuilding = null;
-        } else {
-            state.activeBuilding = building;
-            building.isActive = true;
+        if (alreadySelected && state.selectedBuildings.length === 1) { // clicking on one building deselects it
+            building.isSelected = false;
+            state.selectedBuildings = [];
+        } else if (alreadySelected) { // do nothing so dragging a group of buildings works
+        } else { // select one building
+            for (const b of state.selectedBuildings) b.isSelected = false;
+            building.isSelected = true;
+            state.selectedBuildings = [building];
         }
 
+        refreshSelectionUi();
         app.redrawMap();
     }
 
@@ -315,7 +405,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.placingBuilding.y = state.dragCopy.y;
         state.placingBuilding.data.x = state.dragCopy.x / SIZE;
         state.placingBuilding.data.y = state.dragCopy.y / SIZE;
-        state.placingBuilding.isActive = false;
         state.placingBuilding._fromMeta = undefined;
 
         state.mapBuildings.push(state.placingBuilding);
@@ -329,7 +418,6 @@ window.PlannerApp = window.PlannerApp || {};
                     { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
                     meta
                 );
-                state.placingBuilding.isActive = true;
                 state.placingBuilding._fromMeta = true;
             } else {
                 state.placingBuilding = null;
@@ -347,7 +435,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function getStreetMetas() {
-        return Object.values(state.metaData).filter(x => x.type === 'street');
+        return Array.from(state.metaById.values()).filter(x => x.type === 'street');
     }
 
     function getStreetFootprintSizes() {
@@ -437,7 +525,16 @@ window.PlannerApp = window.PlannerApp || {};
 
         for (const tile of state.streetPlacement.previewTiles) {
             if (app.isFootprintOccupiedByNonStreet(tile.x, tile.y, size)) continue;
-            if (app.isFootprintOccupiedByStreet(tile.x, tile.y, size)) continue;
+
+            const existingStreets = app.getStreetsInFootprint(tile.x, tile.y, size);
+            if (existingStreets.length) {
+                for (const existing of existingStreets) {
+                    app.removeBuildingFromOccupiedTiles(existing);
+                    const idx = state.mapBuildings.indexOf(existing);
+                    if (idx !== -1) state.mapBuildings.splice(idx, 1);
+                }
+                continue;
+            }
 
             const street = createStreetBuildingAtTile(tile.x, tile.y, streetMeta);
             state.mapBuildings.push(street);
@@ -460,18 +557,18 @@ window.PlannerApp = window.PlannerApp || {};
             if (state.streetPlacement.active && !e.altKey) return;
 
             let mode = null;
+            let grabbed = null;
 
             if (e.altKey) mode = 'pan';
             else if (e.ctrlKey) mode = 'select';
             else {
-                if (state.activeBuilding) {
+                if (state.selectedBuildings.length) {
                     const p = app.getCanvasPointElem(e);
-                    if (
-                        p.x >= state.activeBuilding.x && p.x <= state.activeBuilding.x + state.activeBuilding.width &&
-                        p.y >= state.activeBuilding.y && p.y <= state.activeBuilding.y + state.activeBuilding.height
-                    ) {
-                        mode = 'move';
-                    }
+                    grabbed = state.selectedBuildings.find(b =>
+                        p.x >= b.x && p.x <= b.x + b.width &&
+                        p.y >= b.y && p.y <= b.y + b.height
+                    );
+                    if (grabbed) mode = 'move';
                 }
             }
 
@@ -491,21 +588,29 @@ window.PlannerApp = window.PlannerApp || {};
             };
 
             if (mode === 'move') {
-                drag.building = state.activeBuilding;
+                drag.buildings = state.selectedBuildings.map(b => ({
+                    building: b,
+                    startX: b.x,
+                    startY: b.y
+                }));
+                drag.grabbedStartX = grabbed.x;
+                drag.grabbedStartY = grabbed.y;
+
                 app.pushSnapshot();
-                app.removeBuildingFromOccupiedTiles(drag.building);
 
-                state.dragCopy = {
-                    building: drag.building,
-                    x: drag.building.x,
-                    y: drag.building.y,
+                for (const entry of drag.buildings) {
+                    app.removeBuildingFromOccupiedTiles(entry.building);
+                }
+
+                state.dragCopies = drag.buildings.map(entry => ({
+                    building: entry.building,
+                    x: entry.startX,
+                    y: entry.startY,
                     valid: true
-                };
+                }));
 
-                drag.grabOffsetX = startElem.x - drag.building.x;
-                drag.grabOffsetY = startElem.y - drag.building.y;
-                drag.startBuildingX = drag.building.x;
-                drag.startBuildingY = drag.building.y;
+                drag.grabOffsetX = startElem.x - grabbed.x;
+                drag.grabOffsetY = startElem.y - grabbed.y;
             }
 
             document.addEventListener('mousemove', mouseMoveHandler, { passive: false });
@@ -535,29 +640,40 @@ window.PlannerApp = window.PlannerApp || {};
             if (drag.mode === 'move') {
                 const p = app.getCanvasPointElem(e);
 
-                const desiredX = p.x - drag.grabOffsetX;
-                const desiredY = p.y - drag.grabOffsetY;
+                const desiredGrabbedX = p.x - drag.grabOffsetX;
+                const desiredGrabbedY = p.y - drag.grabOffsetY;
 
-                const snappedX = app.snapToGrid(desiredX);
-                const snappedY = app.snapToGrid(desiredY);
+                const snappedGrabbedX = app.snapToGrid(desiredGrabbedX);
+                const snappedGrabbedY = app.snapToGrid(desiredGrabbedY);
 
-                const valid = app.canPlaceAt(drag.building, snappedX, snappedY);
+                const deltaX = snappedGrabbedX - drag.grabbedStartX;
+                const deltaY = snappedGrabbedY - drag.grabbedStartY;
 
-                state.dragCopy = {
-                    building: drag.building,
-                    x: snappedX,
-                    y: snappedY,
-                    valid
-                };
+                let groupValid = true;
+                const tentative = drag.buildings.map(entry => {
+                    const x = entry.startX + deltaX;
+                    const y = entry.startY + deltaY;
+                    if (!app.canPlaceAt(entry.building, x, y)) groupValid = false;
+                    return { building: entry.building, x, y };
+                });
 
-                if (valid) {
-                    drag.building.x = snappedX;
-                    drag.building.y = snappedY;
-                    drag.building.data.x = snappedX / SIZE;
-                    drag.building.data.y = snappedY / SIZE;
+                state.dragCopies = tentative.map(t => ({
+                    building: t.building,
+                    x: t.x,
+                    y: t.y,
+                    valid: groupValid
+                }));
+
+                // only place if the whole group fits
+                if (groupValid) {
+                    for (const t of tentative) {
+                        t.building.x = t.x;
+                        t.building.y = t.y;
+                        t.building.data.x = t.x / SIZE;
+                        t.building.data.y = t.y / SIZE;
+                    }
                 }
 
-                // Highlight the sidebar when the building is dragged over it.
                 const sidebarRect = dom.buildingsListEl.closest('.sidebar').getBoundingClientRect();
                 const overSidebar =
                     e.clientX >= sidebarRect.left && e.clientX <= sidebarRect.right &&
@@ -621,6 +737,8 @@ window.PlannerApp = window.PlannerApp || {};
             }
 
             if (drag.mode === 'move') {
+                state._suppressCanvasClick = true;
+
                 const sidebar = dom.buildingsListEl.closest('.sidebar');
                 sidebar.classList.remove('drop-target');
 
@@ -630,27 +748,31 @@ window.PlannerApp = window.PlannerApp || {};
                     e.clientY >= sidebarRect.top  && e.clientY <= sidebarRect.bottom;
 
                 if (overSidebar) {
-                    // Building was already removed from occupiedTiles on mousedown —
-                    // just remove it from mapBuildings and send it to storedBuildings.
-                    const idx = state.mapBuildings.indexOf(drag.building);
-                    if (idx !== -1) state.mapBuildings.splice(idx, 1);
+                    for (const entry of drag.buildings) {
+                        const building = entry.building;
+                        const idx = state.mapBuildings.indexOf(building);
+                        if (idx !== -1) state.mapBuildings.splice(idx, 1);
 
-                    drag.building.x = 0;
-                    drag.building.y = 0;
-                    drag.building.data.x = 0;
-                    drag.building.data.y = 0;
-                    drag.building.isActive = false;
-                    state.activeBuilding = null;
-                    state.storedBuildings.push(drag.building);
+                        building.x = 0;
+                        building.y = 0;
+                        building.data.x = 0;
+                        building.data.y = 0;
+                        building.isSelected = false;
+                        state.storedBuildings.push(building);
+                    }
+
+                    state.selectedBuildings = [];
+                    refreshSelectionUi();
 
                     app.showStoredBuildings();
                     app.updateStats();
                 } else {
-                    // Normal drop: place back on the map.
-                    app.addBuildingToOccupiedTiles(drag.building);
+                    for (const entry of drag.buildings) {
+                        app.addBuildingToOccupiedTiles(entry.building);
+                    }
                 }
 
-                state.dragCopy = null;
+                state.dragCopies = null;
                 app.redrawMap();
                 app.autoSave();
 
@@ -674,20 +796,79 @@ window.PlannerApp = window.PlannerApp || {};
         const meta = state.metaById.get(String(metaId));
         if (!meta) return;
 
-        if (state.activeBuilding) {
-            state.activeBuilding.isActive = false;
-            state.activeBuilding = null;
-        }
+        clearSelection();
 
         state.placingBuilding = app.createRotatedBuilding(
             { cityentity_id: meta.id, x: 0, y: 0, era: state.currentEra, custom: true },
             meta
         );
-        state.placingBuilding.isActive = true;
         state.placingBuilding._fromMeta = true;  // flag: not from storedBuildings
 
         app.clearMetaSearch();
         updatePlacingBuildingPreview();
+    }
+
+    function startPlanNameEdit(li, planId) {
+        if (!li || !planId) return;
+
+        const nameEl = li.querySelector('.plan-name');
+        if (!nameEl || li.querySelector('.plan-name-input')) return; // already editing
+
+        const currentName = nameEl.textContent;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = currentName;
+
+        nameEl.replaceWith(input);
+        input.focus();
+        input.select();
+
+        let settled = false;
+
+        const finish = () => {
+            if (input.isConnected) input.replaceWith(nameEl);
+        };
+
+        const commit = async () => {
+            if (settled) return;
+            settled = true;
+
+            const trimmed = input.value.trim();
+            finish();
+
+            if (!trimmed || trimmed === currentName) return;
+
+            nameEl.textContent = trimmed; // optimistic update
+
+            try {
+                const success = await app.renamePlanInDatabase(planId, trimmed);
+                if (!success) throw new Error('Plan rename failed');
+            } catch (err) {
+                console.error('Failed to rename plan:', err);
+                nameEl.textContent = currentName;
+                alert('Failed to rename plan.');
+            }
+        };
+
+        const cancel = () => {
+            if (settled) return;
+            settled = true;
+            finish();
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                input.blur(); // triggers commit via the blur handler below
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancel();
+            }
+        });
+
+        input.addEventListener('blur', commit);
+        input.addEventListener('mousedown', (e) => e.stopPropagation());
     }
 
     async function refreshPlanListUi() {
@@ -722,7 +903,11 @@ window.PlannerApp = window.PlannerApp || {};
                         '<span class="plan-name">' + name + '</span>' +
                         '<span class="plan-meta">' + meta + '</span>' +
                     '</span>' +
+                    '<div>' +
+                    '<button class="btn plan-load" title="Load plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>' +
+                    '<button class="btn plan-rename" title="Rename plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.986L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
                     '<button class="btn plan-delete" title="Delete plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+                    '</div>' +
                 '</li>'
             );
         });
@@ -803,10 +988,6 @@ window.PlannerApp = window.PlannerApp || {};
         const redoBtn = document.getElementById('redo');
         if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
         if (redoBtn) redoBtn.addEventListener('click', () => app.redo());
-        
-        document.querySelector('.info .close').addEventListener('click', () => {
-            document.querySelector('.info span').classList.toggle('hidden');
-        });
 
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') {
@@ -819,13 +1000,24 @@ window.PlannerApp = window.PlannerApp || {};
                 e.preventDefault();
                 app.redo();
             } else if (
-                (e.key === 'Backspace' || e.key === 'Delete') &&
-                state.selectedStoredMetaId &&
+                (e.key === 'Backspace' || e.key === 'Delete' || e.key === 'r') &&
                 !isTypingTarget(e.target)
             ) {
+                if (state.selectedBuildings.length) {
+                    e.preventDefault();
+                    deleteSelectedMapBuildings();
+                } else if (state.selectedStoredMetaId) {
+                    e.preventDefault();
+                    const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
+                    deleteStoredBuildings(metaId, custom);
+                }
+            } else if (
+                e.key === ' ' &&
+                !isTypingTarget(e.target) &&
+                state.selectedBuildings.length
+            ) {
                 e.preventDefault();
-                const { metaId, custom } = parseGroupId(state.selectedStoredMetaId);
-                deleteStoredBuildings(metaId, custom);
+                storeSelectedBuildings();
             }
         });
 
@@ -840,7 +1032,10 @@ window.PlannerApp = window.PlannerApp || {};
 
             state.mapBuildings = [];
             app.rebuildOccupiedTiles();
-            state.activeBuilding = null;
+
+            for (const b of state.selectedBuildings) b.isSelected = false;
+            state.selectedBuildings = [];
+            refreshSelectionUi();
 
             app.showStoredBuildings();
             app.updateStats();
@@ -915,6 +1110,16 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (dom.planListItems) {
             dom.planListItems.addEventListener('click', async (e) => {
+                if (e.target.closest('.plan-name-input')) return;
+
+                const renameBtn = e.target.closest('.plan-rename');
+                if (renameBtn) {
+                    const li = renameBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    startPlanNameEdit(li, Number(li.dataset.planId));
+                    return;
+                }
+
                 const deleteBtn = e.target.closest('.plan-delete');
                 if (deleteBtn) {
                     const li = deleteBtn.closest('li[data-plan-id]');
@@ -931,17 +1136,20 @@ window.PlannerApp = window.PlannerApp || {};
                     return;
                 }
 
-                const li = e.target.closest('li[data-plan-id]');
-                if (!li) return;
-                const planId = Number(li.dataset.planId);
-
-                try {
-                    await app.loadPlanFromDatabase(planId);
-                    dom.planListModal.classList.add('hidden');
-                    dom.submitWindow.classList.add('hidden');
-                } catch (err) {
-                    console.error('Failed to load plan:', err);
-                    alert('Failed to load plan.');
+                const loadBtn = e.target.closest('.plan-load');
+                if (loadBtn) {
+                    const li = loadBtn.closest('li[data-plan-id]');
+                    if (!li) return;
+                    const planId = Number(li.dataset.planId);
+                    try {
+                        await app.loadPlanFromDatabase(planId);
+                        dom.planListModal.classList.add('hidden');
+                        dom.submitWindow.classList.add('hidden');
+                    } catch (err) {
+                        console.error('Failed to load plan:', err);
+                        alert('Failed to load plan.');
+                    }
+                    return;
                 }
             });
         }
@@ -1003,11 +1211,6 @@ window.PlannerApp = window.PlannerApp || {};
                 return;
             }
             
-            if (state.activeBuilding) {
-                state.activeBuilding.isActive = false;
-                state.activeBuilding = null;
-            }
-
             clearSelection();
             app.redrawMap();
         });
@@ -1017,6 +1220,10 @@ window.PlannerApp = window.PlannerApp || {};
             app.rebuildGridLayer();
             app.redrawMap();
         });
+
+        document.addEventListener('keydown', handlePanKeyDown);
+        document.addEventListener('keyup', handlePanKeyUp);
+        window.addEventListener('blur', stopPanningAll);
 
         dom.buildingSort.addEventListener('change', (e) => {
             state.sidebarState.sortBy = e.target.value;
@@ -1074,4 +1281,5 @@ window.PlannerApp = window.PlannerApp || {};
 
     app.bindEvents = bindEvents;
     app.renderStreetSizeOptions = renderStreetSizeOptions;
+    app.clearSelection = clearSelection;
 })(window.PlannerApp);
