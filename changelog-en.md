@@ -1,11 +1,11 @@
 # Changelog
  
-## Version 1.3
+## Version 1.3.1
 ### Updated
 - Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green
 - City Overview: Send other players cities to the planner
 - City Planner: Move the map with WASD, move or delete multiple buildings at once, remove streets by using the street placement over them, plans can now be renamed
-- Translations: PL (Thanks to Kafo) updated
+- Translations: PL (Thanks to Kafo) and FR (Thanks @Damrus le Cruel) updated
 - Tooltips: When a military or goods building is collected or a production is started, the current stock is given:
     - Includes the currently started production
     - If the unit window was not opened yet, after the unit amount a +? indicates that the amount of units in stock is unknown

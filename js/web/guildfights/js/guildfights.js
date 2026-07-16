@@ -135,7 +135,7 @@ let GuildFights = {
 	showOwnSectors: 0,
 	showTileColors: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.showTileColors || 1,
 	showGbgTargets: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.showGbgTargets ?? 1,
-	gbgTargetsPosition: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.gbgTargetsPosition || "bottom",
+	gbgTargetsPosition: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.gbgTargetsPosition || "top",
 	serverOffset: JSON.parse(FH.Storage.getItem("GuildFights.serverOffset")||"null"),
 	discordWebhook: { 
 		url: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhook || "",

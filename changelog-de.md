@@ -1,11 +1,11 @@
 # Changelog
  
-## Version 1.3
+## Version 1.3.1
 ### Update
 - Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
 - Stadtübersicht: Schicke Städte anderer Spieler an den Stadtplaner
 - Stadtplaner: Verbesserungen an der Steuerung, z.B. Karte bewegen mit WASD Tasten, mehrere Gebäude gleichzeitig bewegen/löschen, Straßen können durch überbauen mit der passenden Straße gelöscht werden. Man kann jetzt auch Pläne umbenennen
-- Übersetzungen: PL (Danke an Kafo) aktualisiert
+- Übersetzungen: PL (Danke an Kafo) und FR (Danke an Damrus le Cruel) aktualisiert
 - Tooltips: Wird in den QI ein Güter- oder Militärgebäude geerntet oder eine Produktion angestoßen, wird der Vorrat für diese Produktion angezeigt
     - Die Summe enthält die aktuell angestoßene Produktion
     - Wenn das Einheitenfenster noch nicht geöffnet wurde, steht ein +? hinter der Anzahl der Einheiten, um anzugeben, dass die Anzahl der Einheiten im Vorrat unbekannt ist
