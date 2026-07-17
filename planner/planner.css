@@ -81,7 +81,7 @@ select option {
     margin: 2px 0;
 }
 
-.btn:hover {
+.btn:not(.dupe):hover {
     background-color: #383028;
 }
 
