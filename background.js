@@ -409,103 +409,6 @@ plannerDB.version(1).stores({
 		return {ok: false, error: message};
 	}
 
-
-	/**
-	 * Fetch and cache building metadata per region in the background service worker.
-	 *
-	 * @param {string} region
-	 * @param {Record<string, {url:string, hash:string}>} buildingUrls
-	 * @returns {Promise<Record<string, any>>}
-	 */
-	async function getBuildingMetadata(region, buildingUrls) {
-		if (!buildingUrls || typeof buildingUrls !== 'object' || Array.isArray(buildingUrls)) {
-			return {};
-		}
-
-		await buildingMetaDB.open();
-		const table = buildingMetaDB.table('buildingMeta');
-		const existingEntries = await table.where('region').equals(region).toArray();
-		const buildingsOld = Object.assign({}, ...existingEntries.map(x => ({ [x.id]: x })));
-		const metadata = {};
-		const ids = Object.keys(buildingUrls);
-		const maxConcurrent = 10;
-		const maxRetries = 1;
-		const heartbeatEvery = 10;
-		let active = 0;
-		let index = 0;
-		let processedItems = 0;
-
-		async function touchHeartbeat() {
-			try {
-				await browser.storage.local.set({ buildingMetaHeartbeat: { region, timestamp: Date.now() } });
-			} catch (e) {
-				console.warn('Building meta heartbeat failed', e);
-			}
-		}
-
-		function fetchMeta(id, meta, retries = maxRetries) {
-			return new Promise(resolve => {
-				const controller = new AbortController();
-				const timeout = setTimeout(() => controller.abort(), 3000);
-
-				fetch(meta.url, { signal: controller.signal })
-					.then(async response => {
-						clearTimeout(timeout);
-						if (!response.ok) throw new Error(`HTTP ${response.status}`);
-						const text = await response.text();
-						metadata[id] = JSON.parse(text);
-						await table.put({ region, id, hash: meta.hash, json: text }).catch(e => console.log(e));
-						resolve();
-					})
-					.catch(async error => {
-						clearTimeout(timeout);
-						if (retries > 0) {
-							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-						} else {
-							metadata[id]=null;
-							console.warn('Failed to load', meta.url, error);
-							resolve();
-						}
-					});
-			});
-		}
-
-		async function runNext() {
-			while (active < maxConcurrent && index < ids.length) {
-				const id = ids[index++];
-				const meta = buildingUrls[id];
-				if (!buildingsOld[id] || buildingsOld[id].hash !== meta.hash) {
-					active++;
-					processedItems += 1;
-					if (processedItems % heartbeatEvery === 0) {
-						await touchHeartbeat();
-					}
-					fetchMeta(id, meta).then(() => {
-						active--;
-						runNext();
-					});
-				} else {
-					try {
-						metadata[id] = JSON.parse(buildingsOld[id].json);
-					} catch (e) {
-						metadata[id] = null;
-					}
-				}
-			}
-		}
-
-		await new Promise(resolve => {
-			function checkDone() {
-				if (index >= ids.length && active === 0) resolve();
-				else setTimeout(checkDone, 100);
-			}
-			runNext();
-			checkDone();
-		});
-		await buildingMetaDB.close();
-		return metadata;
-	}
-
 	const Planner = {
 		getPlan: async (id)=>{
 			try {
@@ -834,18 +737,41 @@ plannerDB.version(1).stores({
 
 			} // end of alerts-API
 
-			case 'buildingMeta': { // type
+			case 'buildingMetaGet': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
-				const buildingUrls = request.buildingUrls;
-				const metadata = await getBuildingMetadata(region, buildingUrls);
-				return APIsuccess(metadata);
+				try {
+					await buildingMetaDB.open();
+					const entries = await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
+					await buildingMetaDB.close();
+					const data = Object.assign({}, ...entries.map(x => ({ [x.id]: { hash: x.hash, json: x.json } })));
+					return APIsuccess(data);
+				} catch (e) {
+					await buildingMetaDB.close();
+					return APIerror('buildingMetaGet failed: ' + (e && e.message ? e.message : e));
+				}
 			}
 
-			case 'buildingMetaPreCheck': { // type
+			case 'buildingMetaSet': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
-				await buildingMetaDB.open();
-				const count = await buildingMetaDB.table('buildingMeta').where('region').equals(region).count();
-				return APIsuccess({ existingCount: count });
+				const entries = request.entries;
+				if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
+					return APIerror('buildingMetaSet: invalid entries');
+				}
+				try {
+					await buildingMetaDB.open();
+					const dbEntries = Object.entries(entries).map(([id, data]) => ({
+						region,
+						id,
+						hash: data.hash,
+						json: data.json
+					}));
+					await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
+					await buildingMetaDB.close();
+					return APIsuccess(true);
+				} catch (e) {
+					await buildingMetaDB.close();
+					return APIerror('buildingMetaSet failed: ' + (e && e.message ? e.message : e));
+				}
 			}
 
 			case 'Planner.getPlan':{
