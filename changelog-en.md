@@ -4,6 +4,7 @@
 ### Updated
 - City Planner: Added mouse wheel zoom
 - Sets & Chains: Should always update automatically now
+- Efficiency: You can filter by building entity id now by using an underscore in front: e.g. _expedition or _gr2 for QI buildings
 
 ### Bug Fixes
 - The Building database never completed on older devices or with bad internet connection which made the extension unusable 
