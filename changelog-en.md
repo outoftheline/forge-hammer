@@ -1,5 +1,17 @@
 # Changelog
  
+## Version 1.3.2
+### Updated
+- City Planner: Added mouse wheel zoom
+- Sets & Chains: Should always update automatically now
+
+### Bug Fixes
+- The Building database never completed on older devices or with bad internet connection which made the extension unusable 
+- QI: Progress filter was on by default
+- Stats: CSV Download didn't quite match the previous format
+
+---
+ 
 ## Version 1.3.1
 ### Updated
 - Reconstruction Mode: You can now load saved plans from the city planner into the minimap. If you place buildings of the same size and with the same street requirements / type on the same spot, they will be highlighted in green

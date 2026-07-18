@@ -1,5 +1,17 @@
 # Changelog
  
+## Version 1.3.2
+### Update
+- Stadtplaner: Man kann jetzt auch mit dem Mausrad zoomen
+- Ketten & Sets: Sollten jetzt keine manuellen Updates mehr benötigen
+
+### Bug Fixes
+- Die Gebäudedatenbank hat sich auf älteren Geräten oder bei schlechter Internetverbindung nie fertig aufgebaut, was die Erweiterung nicht mehr nutzbar gemacht hat 
+- QI: Der Filter für Fortschritt war standardmäßig aktiv
+- Statistiken: CSV Download hat nicht ganz zum vorherigen Format gepasst
+
+---
+ 
 ## Version 1.3.1
 ### Update
 - Umbaumodus: In der Karte können jetzt auch gespeicherte Stadtpläne geladen werden. Wenn ihr Gebäude in derselben Größe und mit dem gleichen Typ bzw gleichen Bedingung für Straßen übereinanderlegt, wird das Gebäude grün markiert
