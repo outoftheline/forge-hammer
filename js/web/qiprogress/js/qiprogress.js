@@ -257,8 +257,6 @@ let QiProgress = {
 			if (newPlayerProgress > 0) {
 				$('button#qi_filterProgressList').html('&#8593; ' + newPlayerProgress);
 				$('button#qi_filterProgressList').attr("disabled", false);
-
-				QiProgress.ToggleProgressList('qi_filterProgressList');
 			}
 		});
 

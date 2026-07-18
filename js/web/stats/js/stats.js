@@ -1669,16 +1669,16 @@ let Stats = {
 		let allTimestamps = [...new Set(series.flatMap(s => s.data.map(points => normalise(points).x)))];
 		allTimestamps.sort((a, b) => a - b);
 
-		let headers = ['Date', ...series.map(s => `"${s.name || s.label || ''}"`)];
+		let headers = ['"DateTime"', ...series.map(s => `"${s.name || s.label || ''}"`)];
 
 		// 1 row per timestamp
 		let rows = allTimestamps.map(timestamp => {
-			let date = moment(timestamp).format('YYYY-MM-DD HH:mm');
+			let date = moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
 			let values = series.map(s => {
 				let points = s.data.find(p => normalise(p).x === timestamp);
 				return points !== undefined ? normalise(points).y : '';
 			});
-			return [date, ...values].join(';');
+			return ['"'+date+'"', ...values].join(';');
 		});
 
 		let csv = [headers.join(';'), ...rows].join('\n');
