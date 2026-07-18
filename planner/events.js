@@ -34,29 +34,6 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings.push(building);
     }
 
-    let wheelZoomSaveTimer = null;
-
-    function handleWheelZoom(e) {
-        e.preventDefault();
-
-        const rect = dom.canvas.getBoundingClientRect();
-        const cssX = e.clientX - rect.left;
-        const cssY = e.clientY - rect.top;
-
-        const factor = Math.exp(-e.deltaY * 0.0015);
-        const minZoom = app.MIN_ZOOM || 0.5;
-        const maxZoom = app.MAX_ZOOM || 3;
-        const newScale = Math.min(maxZoom, Math.max(minZoom, state.zoomScale * factor));
-
-        if (newScale === state.zoomScale) return;
-        app.zoomAtScreenPoint(newScale, cssX, cssY, true);
-
-        clearTimeout(wheelZoomSaveTimer);
-        wheelZoomSaveTimer = setTimeout(() => {
-            if (app.saveViewState) app.saveViewState();
-        }, 200);
-    }
-
     function isTypingTarget(target) {
         if (!target) return false;
         const tag = target.tagName;
@@ -992,7 +969,6 @@ window.PlannerApp = window.PlannerApp || {};
         });
         dom.zoomInBtn.addEventListener('click', app.zoomIn);
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
-        dom.canvas.addEventListener('wheel', handleWheelZoom, { passive: false });
         dom.placeStreetBtn.addEventListener('click', startStreetPlacement);
 
         if (dom.streetSizeGroup) {

@@ -262,7 +262,7 @@ window.PlannerApp = window.PlannerApp || {};
         return ZOOM_STEPS[nextIdx];
     }
 
-    function zoomAtScreenPoint(newZoomScale, screenX, screenY, skipSave) {
+    function zoomAtScreenPoint(newZoomScale, screenX, screenY) {
         const pointBefore = screenToWorld(screenX, screenY);
 
         state.zoomScale = newZoomScale;
@@ -272,7 +272,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.camY += pointBefore.y - pointAfter.y;
 
         redrawMap();
-        if (!skipSave && app.saveViewState) app.saveViewState();
+        if (app.saveViewState) app.saveViewState();
     }
 
     function zoomIn() {
@@ -366,9 +366,6 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     app.ctx = ctx;
-    app.ZOOM_STEPS = ZOOM_STEPS;
-    app.MIN_ZOOM = ZOOM_STEPS[0];
-    app.MAX_ZOOM = ZOOM_STEPS[ZOOM_STEPS.length - 1];
     app.getDpr = getDpr;
     app.resizeCanvasToCSSSize = resizeCanvasToCSSSize;
     app.getMapBoundsPx = getMapBoundsPx;

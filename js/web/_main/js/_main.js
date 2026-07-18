@@ -936,114 +936,46 @@ let Main = {
 
 
 	/**
-	 * Fetches and applies city entity metadata from the database and CDN.
-	 * Performs fetch operations in content script context to avoid MV3 service-worker timeout issues.
+	 * Requests and applies city entity metadata from the background service worker.
 	 *
-	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values contain {url, hash}.
+	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values contain metadata URLs and hashes.
 	 * @param {string} [region] - The region code for the current world, e.g. "de".
 	 */
 	CityEntityBuilder: async (buildingUrls, region = String(FH.World).replace(/\d+$/, '') || 'unknown') => {
 		const urlIds = Object.keys(buildingUrls);
 		const urlCount = urlIds.length;
 
-		// Get existing metadata from database
-		const cachedData = await Main.sendExtMessage({
-			type: 'buildingMetaGet',
+		const precheckResponse = await Main.sendExtMessage({
+			type: 'buildingMetaPreCheck',
 			region,
-			timeout: 5000,
-		}) || {};
+			timeout: 1000,
+		});
+		const existingCount = (precheckResponse && typeof precheckResponse.existingCount === 'number') ? precheckResponse.existingCount : 0;
 
-		// Identify missing entries
-		const toFetch = {};
-		for (const id of urlIds) {
-			const urlInfo = buildingUrls[id];
-			if (!cachedData[id] || cachedData[id].hash !== urlInfo.hash) {
-				toFetch[id] = urlInfo;
-			}
-		}
+		const missingCount = urlCount - existingCount;
+		const useLongTimeout = missingCount > 300;
+		const longTimeout = 600000
+		const timeout = useLongTimeout ? longTimeout : 30000;
 
-		const missingCount = Object.keys(toFetch).length;
-		const showWarning = missingCount > 100;
-
-		// Show loading indicator if needed
-		let warningDiv = null;
-		if (showWarning) {
-			warningDiv = document.createElement('div');
-			warningDiv.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+		if (timeout == longTimeout) {
+			let div = document.createElement('div');
+			div.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
 				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
 				<h2>Forge Hammer: ${FH.t("DBCreationWarning.Title")}</h2> </br>
 				${FH.t("DBCreationWarning.ExplanationLine1")}<br> 
 				${FH.t("DBCreationWarning.ExplanationLine2")}</br></br>
 				<div style="position:relative;height:75px;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>
 			</div>`;
-			document.body.appendChild(warningDiv);
+			document.body.appendChild(div);
 		}
 
-		// Fetch missing metadata
-		const fetchedData = {};
-		const maxConcurrent = 10;
-		const timeoutMs = 4000;
-		const maxRetries = 3;
-		let active = 0;
-		let index = 0;
-		const toFetchIds = Object.keys(toFetch);
-
-		const fetchOne = async (id, retries = maxRetries) => {
-			try {
-				const controller = new AbortController();
-				const timeout = setTimeout(() => controller.abort(), timeoutMs);
-				const response = await fetch(toFetch[id].url, { signal: controller.signal });
-				clearTimeout(timeout);
-				if (!response.ok) throw new Error(`HTTP ${response.status}`);
-				const text = await response.text();
-				fetchedData[id] = { hash: toFetch[id].hash, json: text };
-			} catch (error) {
-				clearTimeout(timeout);
-				if (retries > 0) {
-					await new Promise(resolve => setTimeout(resolve, 1000));
-					return fetchOne(id, retries - 1);
-				} else {
-					console.warn('Failed to fetch metadata for', id, error);
-				}
-			}
-		};
-
-		const runNext = async () => {
-			while (active < maxConcurrent && index < toFetchIds.length) {
-				const id = toFetchIds[index++];
-				active++;
-				fetchOne(id).then(() => {
-					active--;
-					runNext();
-				});
-			}
-		};
-
-		await new Promise(resolve => {
-			const checkDone = () => {
-				if (index >= toFetchIds.length && active === 0) {
-					resolve();
-				} else {
-					setTimeout(checkDone, 100);
-				}
-			};
-			runNext();
-			checkDone();
+		const metadata = await Main.sendExtMessage({
+			type: 'buildingMeta',
+			buildingUrls,
+			region,
+			timeout,
 		});
-
-		// Persist fetched data to database
-		if (Object.keys(fetchedData).length > 0) {
-			await Main.sendExtMessage({
-				type: 'buildingMetaSet',
-				region,
-				entries: fetchedData,
-				timeout: 10000,
-			});
-		}
-
-		// Build final metadata object and assign
-		const metadata = Object.assign({},...(Object.entries(cachedData).map(([key,val])=>({[key]:JSON.parse(val.json)}))), ...(Object.entries(fetchedData).map(([key,val])=>({[key]:JSON.parse(val.json)}))));
-		document.getElementById('DBCreationWarning')?.remove();
+		document.getElementById('DBCreationWarning')?.remove()
 
 		Main.CityEntities = metadata || {};
 		Main.correctBuildingType();
@@ -1088,7 +1020,7 @@ let Main = {
 
 		const response = await new Promise((resolve, reject) => {
 			responsePromise.then(resolve, reject);
-			const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : 1000;
+			const timeoutMs = Number.isInteger(data.timeout) ? data.timeout : (data.type === 'buildingMeta' ? 120000 : 1000);
 			setTimeout(() => resolve({ ok: false, error: "response timeout for: " + JSON.stringify(data) }), timeoutMs);
 		});
 

@@ -51,54 +51,10 @@ let Kits = {
 	 * Loads all known sets {@link Kits.KitsjSON JSON} and creates the {@link FH.HTML.Box DOM box}.
 	 */
 	init: ()=> {
-		let out = [];
-
-		out.push({"groupname":"Chains"});
-
-		let reduceList = (List, trackFirsts = false) =>{
-			let assets = [...List]
-			let firsts = []
-			for (let b of List) {
-				if (!Kits.UpgradeSchemes[b]) continue;
-				firsts.push(Kits.UpgradeSchemes[b].upgradeSteps[0].buildingId);
-
-				for (let u of Kits.UpgradeSchemes[b].upgradeSteps) {
-					i = assets.findIndex(x=>x==u.buildingId);
-					if (i > -1) delete assets[i];
-				}
-				i = assets.findIndex(x=>x==b);
-				delete assets[i];
-				if (!trackFirsts) assets.push(Kits.UpgradeSchemes[b].upgradeSteps[0].buildingId);
-			}
-			return trackFirsts ? [assets,firsts] : assets;
-		}
-
-		for ([id,chain] of Object.entries(FH.Main.BuildingChains)){
-			let c={};
-			c.name = id.split("_").map(x=>x.charAt(0).toUpperCase() + x.slice(1)).join("_");
-			c.assets = reduceList(chain.cityEntityIds);
-			//find firsts:
-			let potFirsts = Object.values(FH.Main.CityEntities).filter(
-					b => (b?.abilities?.filter(x => (x.__class__ == "ChainStartAbility" && x.chainId == id))?.length > 0 || 
-					(b?.components?.AllAge?.chain?.config?.__class__ == "ChainStartConfig" &&
-						b?.components?.AllAge?.chain?.chainId == id))
-				).map(b=>b.id)
-			
-			let firsts = reduceList(potFirsts);
-			c.buildings = firsts.map(x=>({"first":x}));
-			out.push(c);
-		}
-		
-		out.push({"groupname":"Sets"});
-		for ([id,set] of Object.entries(FH.Main.BuildingSets)) {
-			let s = {}
-			s.name = id.split("_").map(x=>x.charAt(0).toUpperCase() + x.slice(1)).join("_")+"_Set";
-			let [assets,firsts] = reduceList(set.cityEntityIds,true);
-			s.buildings = firsts.map(x=>({"first": x}));
-			s.assets = assets;
-			out.push(s);
-		}
-		Kits.KitsjSON = out;
+		FH.Main.loadJSON(FH.extUrl + 'js/web/kits/data/sets.json', (data)=> {
+			Kits.KitsjSON = JSON.parse(data);
+			Kits.BuildBox();
+		});
 	},
 
 
@@ -106,9 +62,6 @@ let Kits = {
 	 * Creates the {@link FH.HTML.Box box} with displayed sets.
 	 */
 	BuildBox: ()=> {
-
-		if (!Kits.KitsjSON) Kits.init();
-
 		if ( $('#kits').length === 0 ) {
 
 			FH.HTML.AddCssFile('kits');
@@ -372,7 +325,7 @@ let Kits = {
 					if (!assetRow[l-1].missing) showA = true;
 					if (Kits.upgradeKits[a]) {
 						for (let b of Kits.upgradeKits[a].buildingList) {
-							let l = assetRow.push(create('asset',b,false));
+							let l = assetRow.push(create('update',b,false));
 							if (!assetRow[l-1].missing) showA = true; 				
 						}
 					} 
@@ -444,7 +397,7 @@ let Kits = {
 					KitText = Name.replace(/_/g, ' '); //Upcoming => Fallback to Name
 				}
 
-				let Link = Name.includes("Set") ? Name : "Building_Chains";
+				let Link = kits[set].link ? kits[set].link : Name;
 				KitText = FH.Main.GetBuildingLink(Link, KitText);
 			}
 			else if (GroupName) { // Group is set

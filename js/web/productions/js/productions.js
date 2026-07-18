@@ -2454,17 +2454,12 @@ let Productions = {
 
 			// result: search function
 			$('#efficiencyBuildingFilter').on('input', e => {
-				let filter = $('#efficiencyBuildingFilter').val().toLowerCase();
+				let filter = $('#efficiencyBuildingFilter').val();
 				Productions.RatingSearchTerm = filter;
 				let regEx = new RegExp(filter,"i");
 
 				$('.ratinglist tr td:nth-child(2)').each((x,y) => {
-					let entityId = '';
-					if (filter.startsWith("_"))
-						entityId = $(y).find('.helperTT').attr('data-meta_id').toLowerCase();
-
-					if ((filter !== "" && regEx.test($(y).text())) 
-						|| (filter.startsWith("_") && entityId.includes(filter.slice(1)))) {
+					if (filter !== "" && regEx.test($(y).text())) {
 						y.parentElement.classList.add('highlighted2')
 					} else {
 						y.parentElement.classList.remove('highlighted2')
