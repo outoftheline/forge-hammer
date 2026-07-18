@@ -110,31 +110,58 @@
   "Boxes.BattleAssistAddAdvice": "Dodaj Wskazówkę",
   "Boxes.BattleAssistAddAdvice.Title": "Dodaj Wskazówkę",
   "Boxes.BattleAssistArmyAdvice.Title": "Wskazówki Armii",
-  "Boxes.BetterMusic.Auto": "automatyczne odtwarzanie",
+  "Boxes.BetterMusic.Auto": {
+    "s": "Automatyczne odtwarzanie",
+    "r": "Autoplay"
+  },
   "Boxes.BetterMusic.Battle": "Walka",
   "Boxes.BetterMusic.Colony": "Kolonia",
-  "Boxes.BetterMusic.CurrentEra": "odtwarzaj tylko obecną epokę",
-  "Boxes.BetterMusic.EventT": "odtwarzaj muzykę eventu",
-  "Boxes.BetterMusic.Finish": "odtwarzaj do końca",
+  "Boxes.BetterMusic.CurrentEra": {
+    "s": "Odtwarzaj tylko obecną epokę",
+    "r": "play only current era"
+  },
+  "Boxes.BetterMusic.EventT": {
+    "s": "Odtwarzaj muzykę eventu",
+    "r": "allow event trigger"
+  },
+  "Boxes.BetterMusic.Finish": {
+    "s": "Odtwarzaj do końca",
+    "r": "let titles finish"
+  },
   "Boxes.BetterMusic.GBG": "Pola Chwały",
   "Boxes.BetterMusic.GE": "Wyprawa",
   "Boxes.BetterMusic.GeneralSettings": "Ustawienia ogólne",
   "Boxes.BetterMusic.GvG": "Gildia vs Gildia",
-  "Boxes.BetterMusic.IgnoreEra": "ignoruj epokę",
-  "Boxes.BetterMusic.IgnoreSettlement": "ignoruj rodzaj osady",
+  "Boxes.BetterMusic.IgnoreEra": {
+    "s": "Ignoruj epokę",
+    "r": "ignore era"
+  },
+  "Boxes.BetterMusic.IgnoreSettlement": {
+    "s": "Ignoruj rodzaj osady",
+    "r": "ignore settlement type"
+  },
   "Boxes.BetterMusic.InCity": "W mieście",
   "Boxes.BetterMusic.InColony": "W kolonii",
   "Boxes.BetterMusic.Main": "Miasto",
   "Boxes.BetterMusic.Map": "Mapa",
-  "Boxes.BetterMusic.PvPT": "odtwarzaj muzykę PvP",
+  "Boxes.BetterMusic.PvPT": {
+    "s": "Odtwarzaj muzykę PvP",
+    "r": "allow pvp trigger"
+  },
   "Boxes.BetterMusic.Scenes": "Wybierz, w jakich kontekstach odtwarzać poszczególne utwory",
   "Boxes.BetterMusic.SceneSettings": "Ustawienia kontekstu",
   "Boxes.BetterMusic.Settlement": "Osada",
-  "Boxes.BetterMusic.TavernT": "odtwarzaj muzykę tawerny",
+  "Boxes.BetterMusic.TavernT": {
+    "s": "Odtwarzaj muzykę tawerny",
+    "r": "allow tavern trigger"
+  },
   "Boxes.BetterMusic.Title": "Muzyka w tle",
   "Boxes.BetterMusic.TitleName": "Tytuł utworu",
   "Boxes.BetterMusic.TitleSettings": "Ustawienia utworów",
-  "Boxes.BetterMusic.ToEra": "odtwarzaj do obecnej epoki",
+  "Boxes.BetterMusic.ToEra": {
+    "s": "Odtwarzaj do obecnej epoki",
+    "r": "play up to current era"
+  },
   "Boxes.BetterMusic.Transition": "Przejście między utworami",
   "Boxes.BetterMusic.Volume": "Głośność",
   "Boxes.BlueGalaxy.AvailableCollections": "Dostępne zbiory: ",
@@ -178,7 +205,10 @@
   "Boxes.Calculator.ForderBonusPerConversation": "Zapisz współczynnik darowizny na Rozmowę",
   "Boxes.Calculator.FP": "PR",
   "Boxes.Calculator.FriendlyInvestment": "Pomoc w budowie:",
-  "Boxes.Calculator.LevelWarning": "UWAGA! Zamykanie tej PA!",
+  "Boxes.Calculator.LevelWarning": {
+    "s": "UWAGA! Zamniesz tę PA!",
+    "r": "Warning! Leveling this GB!"
+  },
   "Boxes.Calculator.LGNotConnected": "Ta PA nie jest podłączona do drogi.",
   "Boxes.Calculator.LGNotOpen": "Kolejny poziom tej PA jest aktualnie zablokowany.",
   "Boxes.Calculator.MaxLevel": "Odblokowany poziom",
@@ -343,12 +373,24 @@
   "Boxes.CloseBox.Automation": "Automatyzacja",
   "Boxes.CloseBox.BoxAlignment": "Ustawienie przycisków",
   "Boxes.CloseBox.ButtonSize": "Rozmiar przycisków",
-  "Boxes.CloseBox.CloseAllButton": "przycisk zamykania",
+  "Boxes.CloseBox.CloseAllButton": {
+    "s": "Przycisk zamknięcia wszystkiego",
+    "r": "Close all Button"
+  },
   "Boxes.CloseBox.ExcludeFromClosing": "Nigdy nie zamykaj",
-  "Boxes.CloseBox.HideAllButton": "przycisk ukrywania",
-  "Boxes.CloseBox.Horizontal": "w poziomie",
+  "Boxes.CloseBox.HideAllButton": {
+    "s": "Przycisk ukrycia wszystkiego",
+    "r": "Hide all button"
+  },
+  "Boxes.CloseBox.Horizontal": {
+    "s": "Poziomo",
+    "r": "horizontal"
+  },
   "Boxes.CloseBox.Title": "Okno zamykania",
-  "Boxes.CloseBox.Vertical": "w pionie",
+  "Boxes.CloseBox.Vertical": {
+    "s": "Pionowo",
+    "r": "vertical"
+  },
   "Boxes.CloseBox.View": "Pokaż",
   "Boxes.CombatCalculator.Efficiency": "Wydajność",
   "Boxes.CombatCalculator.EfficiencyTT": "Wynik wydajności zgodnie z ustawieniami w module wydajności",
@@ -360,10 +402,16 @@
   "Boxes.CombatCalculator.Values": "Wartości przyspieszenia",
   "Boxes.CompareFriendsThreads.Information": "Najpierw odwiedź przegląd członków konwersacji społecznościowej, którą chcesz tutaj porównać, żeby dane mogły być porównane.",
   "Boxes.CompareFriendsThreads.Title": "Porównaj przyjaciół w konwersacjach",
-  "Boxes.DBExport.Compression": "kompresja",
+  "Boxes.DBExport.Compression": {
+    "s": "Kompresja",
+    "r": "compression"
+  },
   "Boxes.DBExport.Description": "Opis",
   "Boxes.DBExport.Export": "Eksportuj",
-  "Boxes.DBExport.ExportData": "eksportuj dane",
+  "Boxes.DBExport.ExportData": {
+    "s": "Eksportuj dane",
+    "r": "export data"
+  },
   "Boxes.DBExport.Import": "Importuj",
   "Boxes.DBExport.ImportDescription": "Kliknij tutaj lub przeciągnij wyeksportowany plik JSON/archiwum ZIP do tego pola, aby zaimportować dane.",
   "Boxes.DBExport.ImportFileError": "Ten plik nie może zostać przetworzony lub ma nieprawidłowy format.",
@@ -424,9 +472,18 @@
   "Boxes.EventChests.Steps": "Kroki",
   "Boxes.EventChests.Title": "Asystent wyboru skrzyń eventowych",
   "Boxes.EventPresents.Title": "Nagrody na planszy",
-  "Boxes.findGB.hasProgress": "jest w trakcie",
-  "Boxes.findGB.maxLvl": "najwyższy poziom",
-  "Boxes.findGB.minLvl": "najniższy poziom",
+  "Boxes.findGB.hasProgress": {
+    "s": "Jest w trakcie",
+    "r": "has Progress"
+  },
+  "Boxes.findGB.maxLvl": {
+    "s": "Najwyższy poziom",
+    "r": "max Lvl"
+  },
+  "Boxes.findGB.minLvl": {
+    "s": "Najniższy poziom",
+    "r": "min Lvl"
+  },
   "Boxes.findGB.selectGB": "Wybierz PA",
   "Boxes.findGB.Title": "Śledzenie PA",
   "Boxes.FPCollector.anniversary_event": "Event Rocznicowy",
@@ -798,7 +855,10 @@
   "Boxes.GexStat.Level": "Poziom",
   "Boxes.GexStat.Member": "Członkowie",
   "Boxes.GexStat.MemberParticipation": "Udział członków",
-  "Boxes.GexStat.Never": "nigdy",
+  "Boxes.GexStat.Never": {
+    "s": "Nigdy",
+    "r": "never"
+  },
   "Boxes.GexStat.Participant": "Uczestniczący",
   "Boxes.GexStat.ParticipationNoData": "Brak dostępnych danych! <br>Odwiedź stronę wkładu w ekspedycje gildii w przeglądzie ekspedycji gildii, aby zaktualizować dane.",
   "Boxes.GexStat.Player": "Gracz",
@@ -806,7 +866,10 @@
   "Boxes.GexStat.Rank": "Ranga",
   "Boxes.GexStat.Ranking": "Ranking",
   "Boxes.GexStat.ResultsNoData": "Brak dostępnych danych!<br>Odwiedź stronę wyników przeglądu ekspedycji gildii, aby zaktualizować dane.",
-  "Boxes.GexStat.Rounds": "rundy",
+  "Boxes.GexStat.Rounds": {
+    "s": "Rundy",
+    "r": "rounds"
+  },
   "Boxes.GexStat.Save": "Zapisz",
   "Boxes.GexStat.ShowAxisLabel": "pokaż etykietę osi",
   "Boxes.GexStat.Title": "Statystyki WG",
@@ -886,7 +949,7 @@
   },
   "Boxes.GuildFights.Fights": "Walki",
   "Boxes.GuildFights.GBGTargetsMore": {
-    "s": "więcej",
+    "s": "Więcej",
     "r": "more"
   },
   "Boxes.GuildFights.GBGTargetsPosition": {
@@ -894,15 +957,15 @@
     "r": "Position for targets"
   },
   "Boxes.GuildFights.GBGTargetsPositionBottom": {
-    "s": "dół",
+    "s": "Dół",
     "r": "bottom"
   },
   "Boxes.GuildFights.GBGTargetsPositionLeft": {
-    "s": "lewo",
+    "s": "Lewo",
     "r": "left"
   },
   "Boxes.GuildFights.GBGTargetsPositionTop": {
-    "s": "góra",
+    "s": "Góra",
     "r": "top"
   },
   "Boxes.GuildFights.GBGTargetsShow": {
@@ -927,13 +990,28 @@
   "Boxes.GuildFights.serverOffset": "Przesunięcie względem czasu serwera (minuty)",
   "Boxes.GuildFights.SetAlert": "Ustaw powiadomienie",
   "Boxes.GuildFights.ShowAdjacentSectors": "Wyświetlaj odliczanie tylko do przylegających sektorów",
-  "Boxes.GuildFights.ShowLogButton": "wyświetlaj przycisk dziennika",
+  "Boxes.GuildFights.ShowLogButton": {
+    "s": "Wyświetlaj przycisk dziennika",
+    "r": "Show snapshot log button"
+  },
   "Boxes.GuildFights.ShowOwner": "Pokaż gildie",
   "Boxes.GuildFights.ShowOwnSectors": "Wyświetlaj odliczanie do własnych sektorów",
-  "Boxes.GuildFights.ShowProgressFilter": "wyświetlaj filtr postępu",
-  "Boxes.GuildFights.ShowRoundSelector": "wyświetlaj okno wyboru rundy",
-  "Boxes.GuildFights.ShowServerTime": "wyświetlanie czasu według czasu serwera",
-  "Boxes.GuildFights.ShowTileColors": "kopiuj kolory ataku",
+  "Boxes.GuildFights.ShowProgressFilter": {
+    "s": "Wyświetlaj filtr postępu",
+    "r": "show progress filter"
+  },
+  "Boxes.GuildFights.ShowRoundSelector": {
+    "s": "Wyświetlaj okno wyboru rundy",
+    "r": "show GBG round selector"
+  },
+  "Boxes.GuildFights.ShowServerTime": {
+    "s": "Wyświetlanie czasu według czasu serwera",
+    "r": "Display times in server time"
+  },
+  "Boxes.GuildFights.ShowTileColors": {
+    "s": "Kopiuj kolory ataku",
+    "r": "Copy attack colors"
+  },
   "Boxes.GuildFights.SnapshotLog": "Dziennik",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Zastrzeżenie: Dane te są oparte na zebranych przez użytkownika danych. Przedstawione tutaj liczby prawdopodobnie nie są w 100% dokładne. Musiał(a)byś otworzyć listę o północy, aby były poprawne.",
   "Boxes.GuildFights.Stats.Open": {
@@ -959,9 +1037,15 @@
   "Boxes.GuildFights.Title": "Przegląd aktywności graczy",
   "Boxes.GuildFights.Total": "Całkowity",
   "Boxes.GuildMemberStat.AutoStartOnUpdate": "otwórz przegląd po aktualizacji",
-  "Boxes.GuildMemberStat.Available": "ilość",
+  "Boxes.GuildMemberStat.Available": {
+    "s": "Ilość",
+    "r": "available"
+  },
   "Boxes.GuildMemberStat.Battles": "Bitwy",
-  "Boxes.GuildMemberStat.CalendarWeek": "numer tygodnia",
+  "Boxes.GuildMemberStat.CalendarWeek": {
+    "s": "Numer tygodnia",
+    "r": "calendar week"
+  },
   "Boxes.GuildMemberStat.ChangeView": "Zmień widok",
   "Boxes.GuildMemberStat.ConfirmNo": "Nie",
   "Boxes.GuildMemberStat.ConfirmYes": "Tak",
@@ -969,11 +1053,17 @@
   "Boxes.GuildMemberStat.Days": "dni",
   "Boxes.GuildMemberStat.DeleteDataWarning": "Jeśli skasujesz zapisane dane, zostaną one bezpowrotnie utracone.",
   "Boxes.GuildMemberStat.DeleteExMembersAfter": "Usuń byłego członka po",
-  "Boxes.GuildMemberStat.DeleteGBGRound": "usuń rundę wojen gildyjnych",
+  "Boxes.GuildMemberStat.DeleteGBGRound": {
+    "s": "Usuń rundę wojen gildyjnych",
+    "r": "delete GBG round"
+  },
   "Boxes.GuildMemberStat.DeleteInactivityWarning": "Usuń powiadomienie o braku aktywności",
   "Boxes.GuildMemberStat.EndDate": "Data zakończenia",
   "Boxes.GuildMemberStat.Eras": "Epoki",
-  "Boxes.GuildMemberStat.EraTreasuryGoods": "Dobra skarbowe epoki w magazynie",
+  "Boxes.GuildMemberStat.EraTreasuryGoods": {
+    "s": "Towary gildyjne z epoki w skarbcu",
+    "r": "in stock treasury goods of the era"
+  },
   "Boxes.GuildMemberStat.FpForLevelUp": "PR do wyższego poziomu",
   "Boxes.GuildMemberStat.FpInvested": "Zainwestowane PR",
   "Boxes.GuildMemberStat.GBFRound": "Runda GPCh",
@@ -993,8 +1083,14 @@
   "Boxes.GuildMemberStat.GuildSupportBuildings": "Budynki wspierające gildię",
   "Boxes.GuildMemberStat.GuildTreasuryNotification": "Odwiedź zakładkę Skarbiec w profilu gildii, aby zaktualizować towary ze skarbca swojej gildii.",
   "Boxes.GuildMemberStat.Inactivity": "Nieaktywny",
-  "Boxes.GuildMemberStat.Instantly": "natychmiast",
-  "Boxes.GuildMemberStat.LastUpdate": "ostatnia aktualizacja",
+  "Boxes.GuildMemberStat.Instantly": {
+    "s": "Natychmiast",
+    "r": "instantly"
+  },
+  "Boxes.GuildMemberStat.LastUpdate": {
+    "s": "Ostatnia aktualizacja",
+    "r": "last update"
+  },
   "Boxes.GuildMemberStat.Level": "Poziom",
   "Boxes.GuildMemberStat.MaxLevel": "max. poziom",
   "Boxes.GuildMemberStat.Member": "Członek",
@@ -1009,29 +1105,59 @@
   },
   "Boxes.GuildMemberStat.MemberLeavedGuild": "Gracz nie należy już do Twojej gildii.",
   "Boxes.GuildMemberStat.MemberWithoutGB": "Członkowie bez __greatbuilding__",
-  "Boxes.GuildMemberStat.MinLevel": "min. poziom",
+  "Boxes.GuildMemberStat.MinLevel": {
+    "s": "Min. poziom",
+    "r": "min. level"
+  },
   "Boxes.GuildMemberStat.Negotiations": "Negocjacje",
   "Boxes.GuildMemberStat.Never": "nigdy",
   "Boxes.GuildMemberStat.Points": "Punkty",
-  "Boxes.GuildMemberStat.ProducedTreasuryGoods": "produkowane przez budynki gildii",
+  "Boxes.GuildMemberStat.ProducedTreasuryGoods": {
+    "s": "Produkowane przez budynki gildii",
+    "r": "produced by guild buildings"
+  },
   "Boxes.GuildMemberStat.Rank": "Ranga",
-  "Boxes.GuildMemberStat.ResetMessageCounter": "resetowanie licznika wiadomości",
+  "Boxes.GuildMemberStat.ResetMessageCounter": {
+    "s": "Resetowanie licznika wiadomości",
+    "r": "reset message counter"
+  },
   "Boxes.GuildMemberStat.Search": "Szukaj",
-  "Boxes.GuildMemberStat.ShowBattlesWon": "pokaż wygrane walki",
-  "Boxes.GuildMemberStat.ShowDeletedMembers": "pokaż byłych członków",
+  "Boxes.GuildMemberStat.ShowBattlesWon": {
+    "s": "Pokaż wygrane walki",
+    "r": "show battles won"
+  },
+  "Boxes.GuildMemberStat.ShowDeletedMembers": {
+    "s": "Pokaż byłych członków",
+    "r": "show ex-members"
+  },
   "Boxes.GuildMemberStat.ShowSearchbar": "Pokaż pasek wyszukiwania",
-  "Boxes.GuildMemberStat.ShowZeroValues": "pokaż zerowe wartości (WG/GPCh)",
-  "Boxes.GuildMemberStat.StartDate": "data rozpoczęcia",
+  "Boxes.GuildMemberStat.ShowZeroValues": {
+    "s": "Pokaż zerowe wartości (WG/GPCh)",
+    "r": "show 0-values (GE/GBG)"
+  },
+  "Boxes.GuildMemberStat.StartDate": {
+    "s": "Data rozpoczęcia",
+    "r": "start date"
+  },
   "Boxes.GuildMemberStat.Title": "Przegląd członków gildii",
   "Boxes.GuildMemberStat.TotalGuildGoods": "Łącznie wszystkich towarów",
   "Boxes.GuildMemberStat.TotalGuildPower": "Całkowity potencjał gildii",
   "Boxes.GuildMemberStat.TreasuryGoods": "Towary w skarbcu",
   "Boxes.GuildMemberStat.UnlockedLevel": "Odblokowany poziom",
-  "Boxes.HiddenRewards.CountAll": "wszystkie",
+  "Boxes.HiddenRewards.CountAll": {
+    "s": "Wszystkie",
+    "r": "all"
+  },
   "Boxes.HiddenRewards.Disappears": "Znika",
   "Boxes.HiddenRewards.NoEvents": "Brak zdarzeń losowych.",
-  "Boxes.HiddenRewards.none": "żadne",
-  "Boxes.HiddenRewards.onlyVis": "tylko nieodkryte",
+  "Boxes.HiddenRewards.none": {
+    "s": "Żadne",
+    "r": "none"
+  },
+  "Boxes.HiddenRewards.onlyVis": {
+    "s": "Tylko nieodkryte",
+    "r": "only uncovered"
+  },
   "Boxes.HiddenRewards.Title": "Zdarzenia losowe",
   "Boxes.HiddenRewards.twolaneWarning": {
     "s": "Jeśli zdarzenie losowe jest wyświetlane na drodze dwupasmowej, taka droga musi zostać zbudowana aby móc odebrać nagrodę!",
@@ -1099,9 +1225,15 @@
   "Boxes.Investment.Overview.AdditionalColumns": "Dodatkowe kolumny",
   "Boxes.Investment.Overview.Blueprints": "Plany",
   "Boxes.Investment.Overview.Building": "Budynek",
-  "Boxes.Investment.Overview.DateOfIncrease": "czas ostatniej wpłaty",
+  "Boxes.Investment.Overview.DateOfIncrease": {
+    "s": "Dzas ostatniej wpłaty",
+    "r": "Date of Increase"
+  },
   "Boxes.Investment.Overview.DateOfIncreaseDesc": "Data i czas ostatniej zarejestrowanej wpłaty w perłę",
-  "Boxes.Investment.Overview.EntryTime": "Czas wejścia",
+  "Boxes.Investment.Overview.EntryTime": {
+    "s": "Pierwsza wpłata",
+    "r": "Entry Time"
+  },
   "Boxes.Investment.Overview.EntryTimeDesc": "Kiedy zarejestrowano pierwszą wpłatę?",
   "Boxes.Investment.Overview.HideGB": "Ukryj budynki gildyjne w kalkulacji i na liście.",
   "Boxes.Investment.Overview.Invested": "Zainwestowano",
@@ -1115,8 +1247,14 @@
   "Boxes.Investment.Overview.RemainingFP": "pozostało PR",
   "Boxes.Investment.Overview.RestFP": "Pozostało PR",
   "Boxes.Investment.Overview.RestFPDesc": "Liczba PR pozostałych do podniesienia poziomu",
-  "Boxes.Investment.Overview.SettingsEntryTime": "czas wejścia",
-  "Boxes.Investment.Overview.SettingsHiddenGB": "pokaż ukryte budynki gildyjne",
+  "Boxes.Investment.Overview.SettingsEntryTime": {
+    "s": "Data pierwszej wpłaty",
+    "r": "entry time"
+  },
+  "Boxes.Investment.Overview.SettingsHiddenGB": {
+    "s": "Pokaż ukryte budynki gildyjne",
+    "r": "show hidden GB"
+  },
   "Boxes.Investment.Overview.SettingsRestFP": "pozostałe PR",
   "Boxes.Investment.Overview.SettingsSave": "Zapisz",
   "Boxes.Investment.Overview.SettingsUnsafeCalc": "Oblicz tylko bezpieczny zysk/stratę",
@@ -1124,7 +1262,10 @@
   "Boxes.Investment.PlayerFoundCount": "Znaleziono __count__ nowych zdarzeń dotyczących graczy",
   "Boxes.Investment.PlayerFoundCounter": "znaleziono __count__ nowych zdarzeń dotyczących graczy.",
   "Boxes.Investment.Rank": "Ranga",
-  "Boxes.Investment.Safe": "sejf",
+  "Boxes.Investment.Safe": {
+    "s": "bezpieczne",
+    "r": "safe"
+  },
   "Boxes.Investment.Title": "Podsumowanie inwestycji PR",
   "Boxes.Investment.TotalFP": "Zapas + wpłaty + zysk: ",
   "Boxes.Investment.UpdateRequired": "Lista inwestycji jest starsza, niż 30 minut. Proszę zaktualizować listę inwestycji w ratuszu.",
@@ -1428,11 +1569,26 @@
   "Boxes.PowerLeveling.P5": "Miejsce 5",
   "Boxes.PowerLeveling.StartLevel": "Początkowy poziom",
   "Boxes.PowerLeveling.Title": "Kalkulator maratonów",
-  "Boxes.Productions.AllyRarity.common": "pospolity",
-  "Boxes.Productions.AllyRarity.epic": "epicki",
-  "Boxes.Productions.AllyRarity.legendary": "legendarny",
-  "Boxes.Productions.AllyRarity.rare": "rzadki",
-  "Boxes.Productions.AllyRarity.uncommon": "niezwykły",
+  "Boxes.Productions.AllyRarity.common": {
+    "s": "Pospolity",
+    "r": "common"
+  },
+  "Boxes.Productions.AllyRarity.epic": {
+    "s": "Epicki",
+    "r": "epic"
+  },
+  "Boxes.Productions.AllyRarity.legendary": {
+    "s": "Legendarny",
+    "r": "legendary"
+  },
+  "Boxes.Productions.AllyRarity.rare": {
+    "s": "Rzadki",
+    "r": "rare"
+  },
+  "Boxes.Productions.AllyRarity.uncommon": {
+    "s": "Niezwykły",
+    "r": "uncommon"
+  },
   "Boxes.Productions.AMPMTime": "12-godzinny zegar",
   "Boxes.Productions.att_boost_attacker": "Bonus do ataku armii atakującej",
   "Boxes.Productions.att_boost_defender": "Bonus do ataku armii broniącej",
@@ -1649,6 +1805,10 @@
   "Boxes.QiProgress.SnapShotLogDisclaimer": "Zastrzeżenie: Dane te są oparte na danych zebranych przez użytkownika. Przedstawione tutaj liczby prawdopodobnie nie są w 100% dokładne. Musiałbyś otworzyć listę o północy, aby były poprawne.",
   "Boxes.QiProgress.Title": "Przegląd NK",
   "Boxes.ReconstructionList.Title": "Lista rozmiarów przebudowy",
+  "Boxes.ReconstructionMap.LoadPlan": {
+    "s": "Wczytaj z planera miasta",
+    "r": "Load from City Planner"
+  },
   "Boxes.RecurringQuests.AND": "ORAZ",
   "Boxes.RecurringQuests.OR": "LUB",
   "Boxes.RecurringQuests.showCounter": "Wyświetlaj licznik rozpoczętych zadań w menu",
@@ -1790,8 +1950,14 @@
   "Boxes.Tooltip.Building.perEra": "na erę",
   "Boxes.Tooltip.Building.produces": "Produkuje",
   "Boxes.Tooltip.Building.provides": "Zapewnia",
-  "Boxes.Tooltip.Building.road": "wymagana droga",
-  "Boxes.Tooltip.Building.road2": "wymagana droga 2-pasmowa",
+  "Boxes.Tooltip.Building.road": {
+    "s": "Wymagana droga",
+    "r": "road required"
+  },
+  "Boxes.Tooltip.Building.road2": {
+    "s": "Wymagana droga 2-pasmowa",
+    "r": "2-lane road required"
+  },
   "Boxes.Tooltip.Building.size+time": "Rozmiar i czas budowy",
   "Boxes.Tooltip.Building.traits": "Cechy",
   "Boxes.Tooltip.Building.upgradesAutomatically": {
@@ -1799,6 +1965,10 @@
     "r": "Upgrades automatically to current era"
   },
   "Boxes.Tooltip.Building.when": "kiedy",
+  "Boxes.Tooltip.CurrentStock": {
+    "s": "Aktualny stan",
+    "r": "Current Stock"
+  },
   "Boxes.Tooltip.Efficiency.description": "Możliwe są następujące kombinacje",
   "Boxes.Translation.ClearStorage": {
     "s": "Wyczyść przechowywane",
@@ -1888,7 +2058,10 @@
   "Boxes.Treasury.Resource": "Towar",
   "Boxes.Treasury.RowNumber": "Przetworzone wiersze",
   "Boxes.Treasury.Title": "Eksport dziennika skarbca gildii",
-  "Boxes.Units.alca": "ostatnia produkcja Alcatraz",
+  "Boxes.Units.alca": {
+    "s": "Ostatnia produkcja Alcatraz",
+    "r": "last Alcatraz production"
+  },
   "Boxes.Units.AlcaHarvest": "Alcatraz gotowy do zbioru!",
   "Boxes.Units.arenaDefense": "Armia obronna PvP",
   "Boxes.Units.attack": "Armia atakująca",
@@ -1907,7 +2080,10 @@
   "Boxes.Units.pool": "Wszystkie jednostki",
   "Boxes.Units.Proportionally": "Udział",
   "Boxes.Units.Quantity": "Ilość",
-  "Boxes.Units.random": "losowy",
+  "Boxes.Units.random": {
+    "s": "Losowa",
+    "r": "random"
+  },
   "Boxes.Units.ReadyToLoot": "Gotowe do zbioru!",
   "Boxes.Units.rogue": "Łotr",
   "Boxes.Units.short_ranged": "Jednostka strzelecka",
@@ -1976,7 +2152,10 @@
   "Eras.21.short": "EK:KJ",
   "Eras.22": "Epoka Kosmiczna: Tytan",
   "Eras.22.short": "EK:T",
-  "Eras.23": "Epoka Kosmiczna: Kosmiczny węzeł",
+  "Eras.23": {
+    "s": "Epoka Kosmiczna: Kosmiczny Węzeł",
+    "r": "Space Age Space Hub"
+  },
   "Eras.23.short": "EK:KW",
   "Eras.3": "Epoka Żelaza",
   "Eras.3.short": "EPRZ",
@@ -1991,8 +2170,14 @@
   "Eras.8": "Epoka Przemysłowa",
   "Eras.8.short": "EP",
   "Eras.9": "Epoka Postępowa",
-  "Eras.9.short": "EPOS",
-  "Eras.GvGAllAge": "Wszystkich grup wiekowych",
+  "Eras.9.short": {
+    "s": "EPOST",
+    "r": "PE"
+  },
+  "Eras.GvGAllAge": {
+    "s": "Wszystkie epoki",
+    "r": "All Ages"
+  },
   "Eras.undefined": {
     "s": "Brak epoki",
     "r": "No age"
@@ -2045,7 +2230,10 @@
     "s": "Sukces",
     "r": "Success"
   },
-  "General.Unit": "Jednostki",
+  "General.Unit": {
+    "s": "Jednostka",
+    "r": "Unit"
+  },
   "General.Units": "Jednostki",
   "Global.BoxTitle": {
     "s": "Forge Hammer",
@@ -2090,7 +2278,10 @@
   "Menu.Discord.Desc": "Spowoduj wiadomości w Twoim Discordzie wydarzeniami",
   "Menu.Discord.Title": "Discord Webhooki",
   "Menu.Dropdown": "W menu rozwijanym",
-  "Menu.findGB.Desc": "tworzy listę wszystkich pasujących PA, które spotkasz w listach PA innych graczy lub rankingu",
+  "Menu.findGB.Desc": {
+    "s": "Tworzy listę wszystkich pasujących PA, które spotkasz w listach PA innych graczy lub rankingu",
+    "r": "creates a List of all the matching GB you come accross in other Players GB List or the ranking"
+  },
   "Menu.fpCollector.Desc": "Pokazuje wszystkie PR, które otrzymałeś każdą metodą, uporządkowane według dni.",
   "Menu.fpCollector.Title": "Przegląd kolektora PR",
   "Menu.GexStat.Desc": "Pokazuje wyniki WG twojej gildii.",
@@ -2107,7 +2298,10 @@
   "Menu.HiddenRewards.Title": "Zdarzenia losowe",
   "Menu.Info.Desc": "Wyświetla informacje o zdarzeniach zachodzących w tle.<br><em>Aktualizuje się na bieżąco...</em>",
   "Menu.Info.Title": "Infobox",
-  "Menu.Investment.Desc": "Lista Twoich ostatnich inwestycji",
+  "Menu.Investment.Desc": {
+    "s": "Lista twoich ostatnich wpłat",
+    "r": "List of your latest investments"
+  },
   "Menu.Investment.Title": "Inwestycje PR",
   "Menu.Kits.Desc": "Wyświetla wszystkie dostępne w inwentarzu budynki, ulepszenia i zestawy wyboru z zestawów i łańcuchów.",
   "Menu.Kits.Title": "Zestawy i Łańcuchy",
