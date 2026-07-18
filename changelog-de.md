@@ -4,6 +4,7 @@
 ### Update
 - Stadtplaner: Man kann jetzt auch mit dem Mausrad zoomen
 - Ketten & Sets: Sollten jetzt keine manuellen Updates mehr benötigen
+- Effizienz: Man kann jetzt auch nach Gebäude-EntityId filtern: Unterstrich und dann (Teil-)Begriff eingeben, z.B. _Expedition für Gebäude aus der Expedition, _GR2 für Gebäude aus der QI
 
 ### Bug Fixes
 - Die Gebäudedatenbank hat sich auf älteren Geräten oder bei schlechter Internetverbindung nie fertig aufgebaut, was die Erweiterung nicht mehr nutzbar gemacht hat 
