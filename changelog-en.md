@@ -41,6 +41,7 @@
 ## Version 1.2
 ### New
 - GBG Log: The action log will now be saved when you open it. Please be aware that the game only saves the last 200 entries, so you need to collect data regularly for it to be somewhat accurate. You can access it from the GBG Overview
+- GBG Targets: A bunch of the next targeted sectors will be shown on the map. Disable them or change their position in the GBG window.
 - City planner: A first version is ready! Use the City Overview to send data over. Any descriptions are currently only available in English.
 
 ### Updated

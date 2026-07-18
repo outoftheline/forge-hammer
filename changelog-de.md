@@ -42,6 +42,7 @@
 ## Version 1.2
 ### Neu
 - Gefechtslog: Der Gefechtslog wird nun ausgelesen und gespeichert, dank Arklur! Ihr findet den Button in der Gefechtsübersicht. Bitte beachtet, dass das Spiel nur die letzten 200 Einträge speichert und der Log deshalb nicht vollständig sein wird, wenn die Daten nicht regelmäßig abgerufen werden.
+- GG Ziele: Die nächsten vier markierten Sektoren auf der Karte werden angezeigt. Deaktiviere sie oder ändere die Position in den Einstellungen am GG Fenster
 - Stadtplaner: Eine erste Version des Stadtplaners ist da! Schickt eure Daten in der Stadtübersicht an den Planer und fangt an zu bauen. Aktuell sind alle Beschreibungen noch auf Englisch.
 
 ### Update
