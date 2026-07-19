@@ -989,9 +989,9 @@ let Main = {
 		const toFetchIds = Object.keys(toFetch);
 
 		const fetchOne = async (id, retries = maxRetries) => {
+			const timeout = setTimeout(() => controller.abort(), timeoutMs);
+			const controller = new AbortController();
 			try {
-				const controller = new AbortController();
-				const timeout = setTimeout(() => controller.abort(), timeoutMs);
 				const response = await fetch(toFetch[id].url, { signal: controller.signal });
 				clearTimeout(timeout);
 				if (!response.ok) throw new Error(`HTTP ${response.status}`);
