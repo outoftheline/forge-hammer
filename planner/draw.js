@@ -6,15 +6,13 @@ window.PlannerApp = window.PlannerApp || {};
     const state = app.state;
     const dom = app.dom;
     const SIZE = app.SIZE;
-    const FONT_SIZE = 15;
-    const FONT = FONT_SIZE + 'px Arial';
     const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 
     const canvas = dom.canvas;
     const ctx = canvas.getContext('2d', { alpha: true });
 
     ctx.textBaseline = 'middle';
-    ctx.font = FONT;
+    ctx.font = state.font;
     ctx.textAlign = 'center';
     ctx.lineWidth = 2;
 
@@ -39,7 +37,7 @@ window.PlannerApp = window.PlannerApp || {};
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
-        ctx.font = FONT;
+        ctx.font = state.font;
         ctx.lineWidth = 2;
     }
 
@@ -202,7 +200,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'center';
-        ctx.font = FONT;
+        ctx.font = state.font;
         ctx.lineWidth = 1 / state.zoomScale;
 
         if (state.gridCanvas) {

@@ -15,6 +15,7 @@ window.PlannerApp.dom = {
     zoomInBtn: document.querySelector('#zoomIn'),
     zoomOutBtn: document.querySelector('#zoomOut'),
     informationBtn: document.querySelector('#howto'),
+    fontBtn: document.querySelector('#font'),
 
     canvas: document.getElementById('planner'),
 
@@ -74,6 +75,8 @@ window.PlannerApp.state = {
     dragCopy: null,
     dragCopies: null,
     rotated: false,
+    fontSize: 15,
+    font: '15px Arial',
 
     pendingIncomingData: null,
 
