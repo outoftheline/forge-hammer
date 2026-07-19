@@ -338,20 +338,6 @@
     background-image: url('../../../../images/menu/discord.png'), var(--tabs-bg);
 }
 
-.btn[class*=alertbutton] {
-	background-image: url(../../../../images/menu/alerts.png), var(--btn-bg);
-	background-size: 90%, 100%;
-	background-repeat: no-repeat;
-	background-position: center;
-	width: 22px;
-	height: 22px;
-}
-
-.btn.deletealertbutton {
-	background-image: url(../../../../images/menu/alerts.png), var(--btn-bg-red);
-	width: 26px;
-}
-
 
 
 /*************************************************************************************************************/
