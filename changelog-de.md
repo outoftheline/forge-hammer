@@ -1,8 +1,9 @@
 # Changelog
  
-## Version 1.3.2
+## Version 1.3.3
 ### Update
-- Stadtplaner: Man kann jetzt auch mit dem Mausrad zoomen
+- Stadtplaner: Man kann jetzt auch mit dem Mausrad zoomen und die Schriftgröße der Gebäude verkleinern
+- GG Ziele: Wenn man mit der Maus über das Symbol fährt, kann man nun auch Benachrichtigungen setzen
 - Ketten & Sets: Sollten jetzt keine manuellen Updates mehr benötigen
 - Effizienz: Man kann jetzt auch nach Gebäude-EntityId filtern: Unterstrich und dann (Teil-)Begriff eingeben, z.B. _Expedition für Gebäude aus der Expedition, _GR2 für Gebäude aus der QI
 
