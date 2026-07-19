@@ -5,8 +5,6 @@ window.PlannerApp = window.PlannerApp || {};
 (function (app) {
     const state = app.state;
     const SIZE = 30;
-    const FONT_SIZE = 15;
-    const FONT = FONT_SIZE + 'px Arial';
 
     function getMetaSize(meta) {
         return {
@@ -196,32 +194,32 @@ window.PlannerApp = window.PlannerApp || {};
             }
 
             context.fillStyle = this.isSelected ? '#fff' : '#000';
-            context.font = this.isSelected ? ('bold ' + FONT) : FONT;
+            context.font = this.isSelected ? ('bold ' + state.font) : state.font;
 
             const boxWidth = state.rotated ? this.height : this.width;
             const label = this.displayName;
 
             const text = context.measureText(label);
-            let sizeOffset = FONT_SIZE + Math.ceil(FONT_SIZE * 0.4);
+            let sizeOffset = state.fontSize + Math.ceil(state.fontSize * 0.4);
 
-            if (text.width < boxWidth) {
-                context.fillText(label, this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.3));
-                sizeOffset = FONT_SIZE - 2;
+            if (text.width < (boxWidth - 10)) {
+                context.fillText(label, this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(state.fontSize * 0.3));
+                sizeOffset = state.fontSize - 2;
             } else if (this.height > SIZE && this.width > SIZE) {
                 const ratio = Math.ceil(text.width / (boxWidth - 30));
                 let textStart = 0;
                 let textEnd = Math.ceil(label.length / ratio);
 
-                context.fillText(label.slice(textStart, textEnd), this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(FONT_SIZE * 0.9));
+                context.fillText(label.slice(textStart, textEnd), this.x + this.width / 2, this.y + this.height / 2 - Math.ceil(state.fontSize * 0.9));
                 textStart = textEnd;
                 textEnd = Math.ceil(label.length / ratio) + textStart;
                 const more = (textEnd >= label.length) ? '' : '…';
-                context.fillText(label.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(FONT_SIZE * 0.2));
+                context.fillText(label.slice(textStart, textEnd) + more, this.x + this.width / 2, this.y + this.height / 2 + Math.ceil(state.fontSize * 0.2));
             }
 
             const metaDims  = app.getMetaSize(this.meta);
             const totalSize = metaDims.height + 'x' + metaDims.width;
-            context.font = '12px Arial';
+            context.font = state.font;
             context.fillText(totalSize, this.x + this.width / 2, this.y + this.height / 2 + sizeOffset);
 
             context.restore();

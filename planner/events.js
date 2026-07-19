@@ -1008,6 +1008,13 @@ window.PlannerApp = window.PlannerApp || {};
             });
         }
 
+        dom.fontBtn.addEventListener('click', () => {
+            state.fontSize = (state.fontSize === 15) ? 11 : 15;
+            state.font = state.fontSize + 'px Arial';
+
+            app.redrawMap();
+        });
+
         const undoBtn = document.getElementById('undo');
         const redoBtn = document.getElementById('redo');
         if (undoBtn) undoBtn.addEventListener('click', () => app.undo());
