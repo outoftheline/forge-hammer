@@ -1,8 +1,9 @@
 # Changelog
  
-## Version 1.3.2
+## Version 1.3.3
 ### Updated
-- City Planner: Added mouse wheel zoom
+- City Planner: Added mouse wheel zoom and a smaller font size for buildings
+- GBG Targets: You can set up notifications via the target, just hover the image to see it
 - Sets & Chains: Should always update automatically now
 - Efficiency: You can filter by building entity id now by using an underscore in front: e.g. _expedition or _gr2 for QI buildings
 
