@@ -2573,11 +2573,11 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	color: #fffc;
 	text-shadow: 0 1px 1px var(--black);
 	display: flex;
-	z-index: 200;
 	text-align: left;
 	gap: 12px;
 	padding: 12px;
 	pointer-events: none;
+	overflow-x: hidden;
 }
 
 #GBGTargets.pos-bottom {
@@ -2586,6 +2586,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	align-items: end;
 	overflow: hidden;
 	flex-wrap: nowrap;
+	height: 100px;
 }
 
 #GBGTargets.pos-left {
@@ -2597,7 +2598,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets .gbgTarget {
-	width: 120px;
+	width: 85px;
 }
 
 #GBGTargets .gbgTarget.open .signal-countdown {
@@ -2615,21 +2616,62 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	background-color: var(--black-65);
 	backdrop-filter: blur(2px);
     padding: 0 4px;
-    border-radius: 4px;
+    border-radius: 3px;
+	position: relative;
 }
 
 #GBGTargets .title {
     display: flex;
 	align-items: center;
+	position: relative;
+	z-index: 2;
 }
 
 #GBGTargets .title b {
-	font-size: 250%;
+	font-size: 25px;
 }
 
-#GBGTargets img {
-	height: 30px;
+#GBGTargets .settings {
+	pointer-events: all;
+	position: relative;
+	display: inline-block;
+	z-index: 210;
+}
+
+#GBGTargets .settings img {
+	height: 25px;
     vertical-align: text-bottom;
+}
+
+#GBGTargets .settings .createGBGNotification, #GBGTargets .gbgTarget.open .btn[class*=alertbutton] {
+	display: none;
+}
+
+#GBGTargets .settings:hover img {
+	transform: scale(1.1);
+	transform-origin: center;
+}
+
+#GBGTargets .settings:hover .createGBGNotification {
+	display: block;
+	position: absolute;
+	bottom: 25px;
+	left: -4px;
+	height: 25px;
+}
+
+#GBGTargets.pos-left .settings:hover .createGBGNotification {
+	left: unset;
+	bottom: unset;
+    right: 27px;
+	top: 0;
+	text-align: right;
+}
+
+#GBGTargets.pos-top .settings:hover .createGBGNotification {
+	bottom: unset;
+	top: 0;
+	left: 24px;
 }
 
 #GBGTargets.pos-top {
@@ -2670,6 +2712,8 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	display: block;
 	margin-top: -1px;
 	border-radius: 0 0 4px 4px;
+	position: relative;
+	z-index: 1;
 }
 
 #GBGTargets.pos-top .progress {
@@ -2681,6 +2725,20 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 #GBGTargets.pos-top #target-overflow {
 	display: none;
+}
+
+.btn[class*=alertbutton] {
+	background-image: url(../images/menu/alerts.png), var(--btn-bg);
+	background-size: 90%, 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 22px;
+	height: 22px;
+}
+
+.btn.deletealertbutton {
+	background-image: url(../images/menu/alerts.png), var(--btn-bg-red);
+	width: 26px;
 }
 
 .unit_skill.rogue::before {background-position: calc(-144px*var(--unit_scale)) calc(-48px*var(--unit_scale))}

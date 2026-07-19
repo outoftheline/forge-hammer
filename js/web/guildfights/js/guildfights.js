@@ -268,8 +268,15 @@ let GuildFights = {
 
 
 
-	HandleSignals: (data = null) => {
+	HandleSignals: async (data = null) => {
 		if (!GuildFights.showGbgTargets) return;
+		
+		await GuildFights.GetAlerts();
+
+		$('#nextup td[id^="alert-"]').each(function () {
+			let id = parseInt($(this).attr('id').slice('alert-'.length));
+			$(this).html(GuildFights.GetAlertButton(id));
+		});
 
 		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
 		
@@ -317,12 +324,22 @@ let GuildFights = {
 
 		if (!signals.length || !GuildFights.showGbgTargets || FH.ActiveMap !== 'gg') {
 			$('#GBGTargets').remove();
+			GuildFights.LastSignalOrder = null;
 			return;
 		}
 
 		let container = $('#GBGTargets');
-		if (container.length === 0)
+		if (container.length === 0) {
 			container = $('<div id="GBGTargets"></div>').appendTo('body');
+			container.on('click', '.deletealertbutton', function (e) {
+				GuildFights.DeleteAlert($(this).data('id'));
+				e.stopPropagation();
+			});
+			container.on('click', '.setalertbutton', function (e) {
+				GuildFights.SetAlert($(this).data('id'));
+				e.stopPropagation();
+			});
+		}
 
 		container.attr('class', `pos-${GuildFights.gbgTargetsPosition}`);
 
@@ -341,6 +358,10 @@ let GuildFights = {
 
 		const maxSignals = 5;
 		let visibleSignals = sortedSignals.slice(0, maxSignals);
+
+		let desiredOrder = visibleSignals.map(s => `target-${s.provinceId||0}`).join(',');
+		let orderChanged = desiredOrder !== GuildFights.LastSignalOrder;
+		GuildFights.LastSignalOrder = desiredOrder;
 
 		for (let signal of visibleSignals) {
 			let provinceId = signal.provinceId||0;
@@ -362,16 +383,25 @@ let GuildFights = {
 			}
 
 			let entry = container.find(`#target-${provinceId}`);
+			let isNew = entry.length === 0;
 
-			if (entry.length === 0) {
+			if (isNew) {
 				entry = $(`<div id="target-${provinceId}" class="gbgTarget${unlocked ? ' open':''}">
 					<div class="progress"></div>
 					<span class="title">
-					<img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/> 
+					<div class="settings clickable">
+						<img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/>
+						<div class="createGBGNotification">
+							${GuildFights.GetAlertButton(provinceId)}
+						</div>
+					</div>
 					<b>${province.title}</b>
 					</span>
 					<b class="signal-countdown">${title}</b>
 				</div>`);
+
+				entry.find('[data-original-title]').tooltip({container: 'body'});
+				entry.find('.settings').on('mouseleave', () => $('.tooltip').remove());
 			}
 			else {
 				if (unlocked)
@@ -379,7 +409,8 @@ let GuildFights = {
 				entry.find('.signal-countdown').text(title);
 			}
 
-			entry.appendTo(container);
+			if (isNew || orderChanged)
+				entry.appendTo(container);
 
 			if (unlocked)
 				GuildFights.UpdateSignalProgress(entry.find('.progress'), province.conquestProgress || []);
@@ -720,6 +751,14 @@ let GuildFights = {
 			btn = `<button class="btn btn-slim setalertbutton" data-id="${provId}" data-original-title="${FH.t('Boxes.GuildFights.SetAlert')}"></button>`;
 		}
 		return btn;
+	},
+
+	RefreshAlertButtons: (provId) => {
+		$(`.setalertbutton[data-id="${provId}"], .deletealertbutton[data-id="${provId}"]`).each(function () {
+			$(this).replaceWith(GuildFights.GetAlertButton(provId));
+		});
+		$(`[data-id="${provId}"][data-original-title]`).tooltip({container: 'body'});
+		$('.tooltip').remove();
 	},
 
 
@@ -1896,6 +1935,7 @@ let GuildFights = {
 			// is alert.js included?
 			if (!FH.Alerts) {
 				resolve();
+				return;
 			}
 
 			// fetch all alerts and search the id
@@ -1950,8 +1990,7 @@ let GuildFights = {
 			data: data,
 		}).then((aId) => {
 			GuildFights.Alerts.push({ provId: id, alertId: aId });
-			$(`#alert-${id}`).html(GuildFights.GetAlertButton(id));
-			$('.tooltip').remove();
+			GuildFights.RefreshAlertButtons(id);
 			FH.HTML.ShowToastMsg({
 				head: FH.t('Boxes.GuildFights.SaveMessage.Title'),
 				text: FH.helper.str.Replacer(FH.t('Boxes.GuildFights.SaveMessage.Desc'), { provinceName: prov.title }),
@@ -1972,14 +2011,13 @@ let GuildFights = {
 			id: alert.alertId,
 		}).then(() => {
 			GuildFights.Alerts = GuildFights.Alerts.filter((a) => a.provId != provId);
-			$('.tooltip').remove();
 			FH.HTML.ShowToastMsg({
 				head: FH.t('Boxes.GuildFights.DeleteMessage.Title'),
 				text: FH.helper.str.Replacer(FH.t('Boxes.GuildFights.DeleteMessage.Desc'), { provinceName: prov.title }),
 				type: 'success',
 				hideAfter: 5000
 			});
-			$(`#alert-${provId}`).html(GuildFights.GetAlertButton(provId));
+			GuildFights.RefreshAlertButtons(provId);
 		});
 	},
 
