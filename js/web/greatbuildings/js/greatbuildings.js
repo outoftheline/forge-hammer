@@ -382,7 +382,7 @@ let GreatBuildings = {
                 }
             }
                         
-            let CityEntity = FH.Main.CityEntities[GBData.ID];
+            let CityEntity = FH.Main.CityMapData[GBData.ID];
             if (!CityEntity) continue; //Great building has been removed from the game => skip
 
             let OwnGB = Object.values(CurrentCityMapData).find(obj => (obj['cityentity_id'] === GBData.ID));
