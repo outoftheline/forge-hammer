@@ -2638,6 +2638,21 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	z-index: 210;
 }
 
+#GBGTargets .settings .battleType {
+	width: 7px;
+	height: 7px;
+	border-radius: 4px;
+	display: inline-block;
+	position: absolute;
+	left: calc(50% - 4px);
+	top: calc(50% - 4px);
+	background-color: var(--def);
+}
+
+#GBGTargets .settings .battleType.red {
+	background-color: var(--att);
+}
+
 #GBGTargets .settings img {
 	height: 25px;
     vertical-align: text-bottom;
