@@ -171,7 +171,8 @@
 }
 
 #SettingsBoxBody .soundEffects audio {
-	height: 25px;
+	height: 22px;
+	width: 250px;
 }
 
 #SettingsBoxBody .info-box {

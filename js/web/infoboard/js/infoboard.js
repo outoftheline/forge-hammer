@@ -138,6 +138,9 @@ let Infoboard = {
             Infoboard.PostMessage(element,false);
         }
 
+        if (!Settings.GetSetting('EnableSound'))
+            $('#infoboxTone').hide();
+
         div.on('click', '#infoboxTone', function () {
             let disabled = $(this).hasClass('deactivated');
 
@@ -254,7 +257,7 @@ let Infoboard = {
         $('#BackgroundInfoList').prepend(li);
 
         if (Infoboard.PlayInfoSound && status && filterStatus) {
-            FH.helper.sounds.play("ping");
+            FH.helper.sounds.play("message");
         }
         
     },

@@ -389,7 +389,7 @@ span.resicon.def_boost_defender-battleground {
 }
 
 .simpleList { margin: 0; padding: 0; list-style: none; }
-.simpleList li { margin: 0; padding: 3px; }
+.simpleList li { margin: 0; padding: 2px 0; }
 
 .removable { position: relative; }
 
@@ -2631,14 +2631,14 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	font-size: 25px;
 }
 
-#GBGTargets .settings {
+#GBGTargets .gbgTargetActions {
 	pointer-events: all;
 	position: relative;
 	display: inline-block;
 	z-index: 210;
 }
 
-#GBGTargets .settings .battleType {
+#GBGTargets .gbgTargetActions .battleType {
 	width: 7px;
 	height: 7px;
 	border-radius: 4px;
@@ -2649,25 +2649,25 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	background-color: var(--def);
 }
 
-#GBGTargets .settings .battleType.red {
+#GBGTargets .gbgTargetActions .battleType.red {
 	background-color: var(--att);
 }
 
-#GBGTargets .settings img {
+#GBGTargets .gbgTargetActions img {
 	height: 25px;
     vertical-align: text-bottom;
 }
 
-#GBGTargets .settings .createGBGNotification, #GBGTargets .gbgTarget.open .btn[class*=alertbutton] {
+#GBGTargets .gbgTargetActions .createGBGNotification, #GBGTargets .gbgTarget.open .btn[class*=alertbutton] {
 	display: none;
 }
 
-#GBGTargets .settings:hover img {
+#GBGTargets .gbgTargetActions:hover img {
 	transform: scale(1.1);
 	transform-origin: center;
 }
 
-#GBGTargets .settings:hover .createGBGNotification {
+#GBGTargets .gbgTargetActions:hover .createGBGNotification {
 	display: block;
 	position: absolute;
 	bottom: 25px;
@@ -2675,7 +2675,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	height: 25px;
 }
 
-#GBGTargets.pos-left .settings:hover .createGBGNotification {
+#GBGTargets.pos-left .gbgTargetActions:hover .createGBGNotification {
 	left: unset;
 	bottom: unset;
     right: 27px;
@@ -2683,7 +2683,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	text-align: right;
 }
 
-#GBGTargets.pos-top .settings:hover .createGBGNotification {
+#GBGTargets.pos-top .gbgTargetActions:hover .createGBGNotification {
 	bottom: unset;
 	top: 0;
 	left: 24px;
