@@ -2598,7 +2598,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets .gbgTarget {
-	width: 85px;
+	width: clamp(85px, 7vw, 110px);
 }
 
 #GBGTargets .gbgTarget.open .signal-countdown {
@@ -2628,7 +2628,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets .title b {
-	font-size: 25px;
+	font-size: clamp(25px, 3vh, 33px);
 }
 
 #GBGTargets .gbgTargetActions {
@@ -2654,7 +2654,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 }
 
 #GBGTargets .gbgTargetActions img {
-	height: 25px;
+	height: clamp(25px, 3vh, 33px);
     vertical-align: text-bottom;
 }
 
