@@ -739,9 +739,13 @@ plannerDB.version(1).stores({
 
 			case 'buildingMetaGet': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				// optional: restrict to specific ids so callers aren't forced to pull back the entire regional cache every time
+				const ids = Array.isArray(request.ids) ? request.ids : null;
 				try {
 					await buildingMetaDB.open();
-					const entries = await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
+					const entries = ids
+						? await buildingMetaDB.table('buildingMeta').where('[region+id]').anyOf(ids.map(id => [region, id])).toArray()
+						: await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
 					await buildingMetaDB.close();
 					const data = Object.assign({}, ...entries.map(x => ({ [x.id]: { hash: x.hash, json: x.json } })));
 					return APIsuccess(data);

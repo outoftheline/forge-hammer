@@ -864,8 +864,8 @@ FH.Beta = {
 FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
 /**
- * Splits an { id: value, ... } map into an array of smaller maps, each kept under maxBytes (approximated via JSON.stringify length)
- * Used so a single runtime.sendMessage call never risks exceeding the browser's message size limit (64MiB) when many entries need to be sent at once
+ * Splits an { id: value, ... } map into an array of smaller maps, each kept under maxBytes (approximated via JSON.stringify length). 
+ * Used so a single runtime.sendMessage call never risks exceeding the browser's message size limit (64MiB) when many entries need to be sent at once.
  * @param {Object<string, any>} entries
  * @param {number} [maxBytes]
  * @returns {Object<string, any>[]} an array of entry-object chunks
@@ -980,12 +980,26 @@ let Main = {
 		const urlIds = Object.keys(buildingUrls);
 		const urlCount = urlIds.length;
 
-		// Get existing metadata from database
-		const cachedData = await Main.sendExtMessage({
-			type: 'buildingMetaGet',
-			region,
-			timeout: 5000,
-		}) || {};
+		// Get existing metadata from database - only for the ids this session actually needs, batched so a single response never risks exceeding
+		// the browser's message size limit (64MiB). This also avoids pulling back a user's entire (potentially much larger) regional cache on every run
+		const GET_BATCH_SIZE = 100;
+		const cachedData = {};
+		for (let i = 0; i < urlIds.length; i += GET_BATCH_SIZE) {
+			const idBatch = urlIds.slice(i, i + GET_BATCH_SIZE);
+			try {
+				const batchData = await Main.sendExtMessage({
+					type: 'buildingMetaGet',
+					region,
+					ids: idBatch,
+					timeout: 5000,
+				});
+				Object.assign(cachedData, batchData);
+			} catch (error) {
+				// Any ids in a failed batch simply won't be in `cachedData` below, so they'll be treated as cache-misses and re-fetched from the
+				// CDN (and re-cached) instead of aborting the whole build.
+				console.warn('Forge Hammer: failed to read a building meta batch from cache', error);
+			}
+		}
 
 		// Identify missing entries
 		const toFetch = {};
@@ -1078,6 +1092,8 @@ let Main = {
 						timeout: 15000,
 					});
 				} catch (error) {
+					// Don't let a failed persist of one chunk abort the whole build - the entities are still usable this session from `fetchedData`,
+					// they'll just be re-fetched and re-cached again next time.
 					console.warn('Forge Hammer: failed to persist a building meta chunk', error);
 				}
 			}
