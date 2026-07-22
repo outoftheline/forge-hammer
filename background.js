@@ -739,14 +739,18 @@ plannerDB.version(1).stores({
 
 			case 'buildingMetaGet': { // type
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				// optional: restrict to specific ids so callers aren't forced to pull back the entire regional cache every time
+				const ids = Array.isArray(request.ids) ? request.ids : null;
 				try {
-					await buildingMetaDB.open();
-					const entries = await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
-					await buildingMetaDB.close();
+					// NOTE: DB is not closed afterwards - this handler is called once per batch. Reopening the connection each
+					// time is an avoidable cost. Dexie reuses the open connection; the service worker shutting down closes it
+					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
+					const entries = ids
+						? await buildingMetaDB.table('buildingMeta').where('[region+id]').anyOf(ids.map(id => [region, id])).toArray()
+						: await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
 					const data = Object.assign({}, ...entries.map(x => ({ [x.id]: { hash: x.hash, json: x.json } })));
 					return APIsuccess(data);
 				} catch (e) {
-					await buildingMetaDB.close();
 					return APIerror('buildingMetaGet failed: ' + (e && e.message ? e.message : e));
 				}
 			}
@@ -758,7 +762,8 @@ plannerDB.version(1).stores({
 					return APIerror('buildingMetaSet: invalid entries');
 				}
 				try {
-					await buildingMetaDB.open();
+					// dont close DB, see above
+					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
 					const dbEntries = Object.entries(entries).map(([id, data]) => ({
 						region,
 						id,
@@ -766,10 +771,8 @@ plannerDB.version(1).stores({
 						json: data.json
 					}));
 					await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
-					await buildingMetaDB.close();
 					return APIsuccess(true);
 				} catch (e) {
-					await buildingMetaDB.close();
 					return APIerror('buildingMetaSet failed: ' + (e && e.message ? e.message : e));
 				}
 			}

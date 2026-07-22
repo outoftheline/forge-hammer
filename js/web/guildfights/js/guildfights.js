@@ -389,7 +389,8 @@ let GuildFights = {
 				entry = $(`<div id="target-${provinceId}" class="gbgTarget${unlocked ? ' open':''}">
 					<div class="progress"></div>
 					<span class="title">
-					<div class="settings clickable">
+					<div class="gbgTargetActions clickable">
+						<span class="battleType ${province.isAttackBattleType ? 'red' : ''}">.</span>
 						<img src="${srcLinks.get(`/guild_battlegrounds/map/shared/guild_battlegrounds_target.png`,true)}"/>
 						<div class="createGBGNotification">
 							${GuildFights.GetAlertButton(provinceId)}

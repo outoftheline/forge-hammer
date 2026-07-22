@@ -194,7 +194,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
 		const region = String(FH.World).replace(/\d+$/, '') || 'unknown';
-		setTimeout(()=>{Main.CityEntityBuilder(buildingUrls, region)},500);
+		setTimeout(()=>{
+			Main.CityEntityBuilder(buildingUrls, region).catch(error => {
+				console.error('Forge Hammer: CityEntityBuilder failed', error);
+			});
+		},500);
 	});
 
 	// Building-Upgrades
@@ -859,6 +863,36 @@ FH.Beta = {
 
 FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
+/**
+ * Splits an { id: value, ... } map into an array of smaller maps, each kept under maxBytes (approximated via JSON.stringify length). 
+ * Used so a single runtime.sendMessage call never risks exceeding the browser's message size limit (64MiB) when many entries need to be sent at once.
+ * @param {Object<string, any>} entries
+ * @param {number} [maxBytes]
+ * @returns {Object<string, any>[]} an array of entry-object chunks
+ */
+function chunkEntriesBySize(entries, maxBytes = 8 * 1024 * 1024) {
+	const chunks = [];
+	let current = {};
+	let currentSize = 0;
+
+	for (const [id, value] of Object.entries(entries)) {
+		// rough but cheap approximation of the serialized size of this entry
+		const entrySize = JSON.stringify(value).length;
+
+		if (currentSize + entrySize > maxBytes && Object.keys(current).length > 0) {
+			chunks.push(current);
+			current = {};
+			currentSize = 0;
+		}
+
+		current[id] = value;
+		currentSize += entrySize;
+	}
+
+	if (Object.keys(current).length > 0) chunks.push(current);
+	return chunks;
+}
+
 let Main = {
 	Language: 'en',
 	SelectedMenu: 'RightBar',
@@ -946,12 +980,40 @@ let Main = {
 		const urlIds = Object.keys(buildingUrls);
 		const urlCount = urlIds.length;
 
-		// Get existing metadata from database
-		const cachedData = await Main.sendExtMessage({
-			type: 'buildingMetaGet',
-			region,
-			timeout: 5000,
-		}) || {};
+		// Get existing metadata from database - only for the ids this session actually needs, batched so a single response never risks exceeding
+		// the browser's message size limit (64MiB). Batches are independent, so they run in parallel rather than sequentially.
+		const GET_BATCH_SIZE = 100;
+		const cachedData = {};
+		const idBatches = [];
+		for (let i = 0; i < urlIds.length; i += GET_BATCH_SIZE) {
+			idBatches.push(urlIds.slice(i, i + GET_BATCH_SIZE));
+		}
+
+		const tCacheStart = performance.now();
+		console.debug(`Forge Hammer [meta]: ${urlCount} buildings in lookup, reading cache in ${idBatches.length} batch(es) of ${GET_BATCH_SIZE}`);
+
+		await Promise.all(idBatches.map(async (idBatch, batchIndex) => {
+			try {
+				const batchData = await Main.sendExtMessage({
+					type: 'buildingMetaGet',
+					region,
+					ids: idBatch,
+					timeout: 15000,
+				});
+				// sendExtMessage resolves to undefined on a swallowed API error / timeout, which is otherwise indistinguishable from "nothing cached"
+				if (batchData === undefined) {
+					console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} returned no data (API error or timeout)`);
+				} else {
+					Object.assign(cachedData, batchData);
+				}
+			} catch (error) {
+				// Any ids in a failed batch simply won't be in `cachedData` below, so they'll be treated as cache-misses and re-fetched from the
+				// CDN (and re-cached) instead of aborting the whole build.
+				console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} failed`, error);
+			}
+		}));
+
+		console.debug(`Forge Hammer [meta]: cache read done in ${Math.round(performance.now() - tCacheStart)}ms, ${Object.keys(cachedData).length}/${urlCount} found in cache`);
 
 		// Identify missing entries
 		const toFetch = {};
@@ -965,12 +1027,14 @@ let Main = {
 		const missingCount = Object.keys(toFetch).length;
 		const showWarning = missingCount > 100;
 
+		console.debug(`Forge Hammer [meta]: ${missingCount} building(s) missing or stale -> ${missingCount === 0 ? 'nothing to fetch' : 'fetching from CDN'}`);
+
 		// Show loading indicator if needed
 		let warningDiv = null;
 		if (showWarning) {
 			warningDiv = document.createElement('div');
-			warningDiv.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
-				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
+			warningDiv.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:450px;width:50%;height:max-content;padding:0 1rem 1rem 0;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:0.95rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+				<div style="width:100%;text-align:right;padding-bottom:0.5rem;"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
 				<h2>Forge Hammer: ${FH.t("DBCreationWarning.Title")}</h2> </br>
 				${FH.t("DBCreationWarning.ExplanationLine1")}<br> 
 				${FH.t("DBCreationWarning.ExplanationLine2")}</br></br>
@@ -1019,6 +1083,7 @@ let Main = {
 			}
 		};
 
+		const tFetchStart = performance.now();
 		await new Promise(resolve => {
 			const checkDone = () => {
 				if (index >= toFetchIds.length && active === 0) {
@@ -1030,15 +1095,31 @@ let Main = {
 			runNext();
 			checkDone();
 		});
+		if (toFetchIds.length > 0) {
+			console.debug(`Forge Hammer [meta]: CDN fetch done in ${Math.round(performance.now() - tFetchStart)}ms, ${Object.keys(fetchedData).length}/${toFetchIds.length} succeeded`);
+		}
 
-		// Persist fetched data to database
+		// Persist fetched data to database, split into size-bounded chunks so a single runtime.sendMessage call never risks exceeding the browser's
+		// message size limit (64MiB) when many buildings need caching at once.
 		if (Object.keys(fetchedData).length > 0) {
-			await Main.sendExtMessage({
-				type: 'buildingMetaSet',
-				region,
-				entries: fetchedData,
-				timeout: 10000,
-			});
+			const tPersistStart = performance.now();
+			const metaChunks = chunkEntriesBySize(fetchedData);
+			console.debug(`Forge Hammer [meta]: persisting ${Object.keys(fetchedData).length} entries in ${metaChunks.length} chunk(s)`);
+			for (const chunk of metaChunks) {
+				try {
+					await Main.sendExtMessage({
+						type: 'buildingMetaSet',
+						region,
+						entries: chunk,
+						timeout: 15000,
+					});
+				} catch (error) {
+					// Don't let a failed persist of one chunk abort the whole build - the entities are still usable this session from `fetchedData`,
+					// they'll just be re-fetched and re-cached again next time.
+					console.warn('Forge Hammer [meta]: failed to persist a chunk', error);
+				}
+			}
+			console.debug(`Forge Hammer [meta]: persist done in ${Math.round(performance.now() - tPersistStart)}ms`);
 		}
 
 		// Build final metadata object and assign
@@ -1048,6 +1129,7 @@ let Main = {
 		Main.CityEntities = metadata || {};
 		Main.correctBuildingType();
 		Main.Inactives.check();
+		console.debug(`Forge Hammer [meta]: CityEntityBuilder finished in ${Math.round(performance.now() - tCacheStart)}ms total, ${Object.keys(metadata).length} entities loaded`);
 	},
 
 
@@ -1074,7 +1156,21 @@ let Main = {
 		let _responsePromise = null;
 
 		if (typeof chrome !== 'undefined') {
-			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
+			_responsePromise = new Promise((resolve, reject) => {
+				try {
+					chrome.runtime.sendMessage(FH.BaseData.extID, data, (response) => {
+						if (chrome.runtime.lastError) {
+							// e.g. "Could not establish connection. Receiving end does not exist."
+							reject(new Error(chrome.runtime.lastError.message));
+							return;
+						}
+						resolve(response);
+					});
+				} catch (error) {
+					// e.g. "Message exceeded maximum allowed size of 64MiB."
+					reject(error);
+				}
+			});
 		}
 		else if (FH.BgApiHandler != null) {
 			_responsePromise = FH.BgApiHandler(data);

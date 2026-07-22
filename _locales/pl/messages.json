@@ -1,0 +1,10 @@
+{
+    "appName": {
+        "message": "Forge Hammer",
+        "description": "Wzbogać swoje wrażenia z gry Forge of Empires"
+    },
+    "appDesc": {
+        "message": "Małe narzędzia do wszystkich elementów gry Forge of Empires",
+        "description":"Szybsze wpłaty w Perły Architektury, łatwiejsze zarządzanie polami chwały, narzędzia dla twojej gildii, przegląd budynków w twoim mieście i wiele więcej."
+    }
+}
