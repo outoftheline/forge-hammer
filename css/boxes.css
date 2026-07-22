@@ -389,7 +389,7 @@ span.resicon.def_boost_defender-battleground {
 }
 
 .simpleList { margin: 0; padding: 0; list-style: none; }
-.simpleList li { margin: 0; padding: 2px 0; }
+.simpleList li { margin: 0; padding: 2px; }
 
 .removable { position: relative; }
 

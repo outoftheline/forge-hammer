@@ -981,25 +981,39 @@ let Main = {
 		const urlCount = urlIds.length;
 
 		// Get existing metadata from database - only for the ids this session actually needs, batched so a single response never risks exceeding
-		// the browser's message size limit (64MiB). This also avoids pulling back a user's entire (potentially much larger) regional cache on every run
+		// the browser's message size limit (64MiB). Batches are independent, so they run in parallel rather than sequentially.
 		const GET_BATCH_SIZE = 100;
 		const cachedData = {};
+		const idBatches = [];
 		for (let i = 0; i < urlIds.length; i += GET_BATCH_SIZE) {
-			const idBatch = urlIds.slice(i, i + GET_BATCH_SIZE);
+			idBatches.push(urlIds.slice(i, i + GET_BATCH_SIZE));
+		}
+
+		const tCacheStart = performance.now();
+		console.debug(`Forge Hammer [meta]: ${urlCount} buildings in lookup, reading cache in ${idBatches.length} batch(es) of ${GET_BATCH_SIZE}`);
+
+		await Promise.all(idBatches.map(async (idBatch, batchIndex) => {
 			try {
 				const batchData = await Main.sendExtMessage({
 					type: 'buildingMetaGet',
 					region,
 					ids: idBatch,
-					timeout: 5000,
+					timeout: 15000,
 				});
-				Object.assign(cachedData, batchData);
+				// sendExtMessage resolves to undefined on a swallowed API error / timeout, which is otherwise indistinguishable from "nothing cached"
+				if (batchData === undefined) {
+					console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} returned no data (API error or timeout)`);
+				} else {
+					Object.assign(cachedData, batchData);
+				}
 			} catch (error) {
 				// Any ids in a failed batch simply won't be in `cachedData` below, so they'll be treated as cache-misses and re-fetched from the
 				// CDN (and re-cached) instead of aborting the whole build.
-				console.warn('Forge Hammer: failed to read a building meta batch from cache', error);
+				console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} failed`, error);
 			}
-		}
+		}));
+
+		console.debug(`Forge Hammer [meta]: cache read done in ${Math.round(performance.now() - tCacheStart)}ms, ${Object.keys(cachedData).length}/${urlCount} found in cache`);
 
 		// Identify missing entries
 		const toFetch = {};
@@ -1013,12 +1027,14 @@ let Main = {
 		const missingCount = Object.keys(toFetch).length;
 		const showWarning = missingCount > 100;
 
+		console.debug(`Forge Hammer [meta]: ${missingCount} building(s) missing or stale -> ${missingCount === 0 ? 'nothing to fetch' : 'fetching from CDN'}`);
+
 		// Show loading indicator if needed
 		let warningDiv = null;
 		if (showWarning) {
 			warningDiv = document.createElement('div');
-			warningDiv.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:500px;width:50%;height:max-content;padding:1rem;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:1rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
-				<div style="width:100%;text-align:right"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
+			warningDiv.innerHTML = `<div><div id="DBCreationWarning" style="position:fixed;bottom:0;right:0;min-width:300px;max-width:450px;width:50%;height:max-content;padding:0 1rem 1rem 0;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:0.95rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c">
+				<div style="width:100%;text-align:right;padding-bottom:0.5rem;"><span style="cursor:pointer" onclick="document.getElementById('DBCreationWarning').remove()">${FH.t("DBCreationWarning.CloseOverlay")} <b>&#10799;</b></span></div>
 				<h2>Forge Hammer: ${FH.t("DBCreationWarning.Title")}</h2> </br>
 				${FH.t("DBCreationWarning.ExplanationLine1")}<br> 
 				${FH.t("DBCreationWarning.ExplanationLine2")}</br></br>
@@ -1067,6 +1083,7 @@ let Main = {
 			}
 		};
 
+		const tFetchStart = performance.now();
 		await new Promise(resolve => {
 			const checkDone = () => {
 				if (index >= toFetchIds.length && active === 0) {
@@ -1078,11 +1095,16 @@ let Main = {
 			runNext();
 			checkDone();
 		});
+		if (toFetchIds.length > 0) {
+			console.debug(`Forge Hammer [meta]: CDN fetch done in ${Math.round(performance.now() - tFetchStart)}ms, ${Object.keys(fetchedData).length}/${toFetchIds.length} succeeded`);
+		}
 
 		// Persist fetched data to database, split into size-bounded chunks so a single runtime.sendMessage call never risks exceeding the browser's
 		// message size limit (64MiB) when many buildings need caching at once.
 		if (Object.keys(fetchedData).length > 0) {
+			const tPersistStart = performance.now();
 			const metaChunks = chunkEntriesBySize(fetchedData);
+			console.debug(`Forge Hammer [meta]: persisting ${Object.keys(fetchedData).length} entries in ${metaChunks.length} chunk(s)`);
 			for (const chunk of metaChunks) {
 				try {
 					await Main.sendExtMessage({
@@ -1094,9 +1116,10 @@ let Main = {
 				} catch (error) {
 					// Don't let a failed persist of one chunk abort the whole build - the entities are still usable this session from `fetchedData`,
 					// they'll just be re-fetched and re-cached again next time.
-					console.warn('Forge Hammer: failed to persist a building meta chunk', error);
+					console.warn('Forge Hammer [meta]: failed to persist a chunk', error);
 				}
 			}
+			console.debug(`Forge Hammer [meta]: persist done in ${Math.round(performance.now() - tPersistStart)}ms`);
 		}
 
 		// Build final metadata object and assign
@@ -1106,6 +1129,7 @@ let Main = {
 		Main.CityEntities = metadata || {};
 		Main.correctBuildingType();
 		Main.Inactives.check();
+		console.debug(`Forge Hammer [meta]: CityEntityBuilder finished in ${Math.round(performance.now() - tCacheStart)}ms total, ${Object.keys(metadata).length} entities loaded`);
 	},
 
 
