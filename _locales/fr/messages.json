@@ -1,0 +1,10 @@
+{
+	"appName": {
+		"message": "Forge Hammer",
+		"description": "Améliorez votre expérience de Forge of Empires"
+	},
+	"appDesc": {
+		"message": "De petits outils pour tous les aspects de Forge of Empires",
+		"description":"Contributions plus rapides aux Grands Monuments, gestion simplifiée des Champs de bataille, outils pour votre guilde, aperçu des bâtiments de votre cité et bien plus encore."
+	}
+}
