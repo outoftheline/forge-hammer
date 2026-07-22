@@ -194,7 +194,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
 		const region = String(FH.World).replace(/\d+$/, '') || 'unknown';
-		setTimeout(()=>{Main.CityEntityBuilder(buildingUrls, region)},500);
+		setTimeout(()=>{
+			Main.CityEntityBuilder(buildingUrls, region).catch(error => {
+				console.error('Forge Hammer: CityEntityBuilder failed', error);
+			});
+		},500);
 	});
 
 	// Building-Upgrades
@@ -859,6 +863,36 @@ FH.Beta = {
 
 FH.BgApiHandler = /** @type {null|((request: {type: string}&object) => Promise<{ok:true, data: any}|{ok:false, error:string}>)}*/ (null);
 
+/**
+ * Splits an { id: value, ... } map into an array of smaller maps, each kept under maxBytes (approximated via JSON.stringify length)
+ * Used so a single runtime.sendMessage call never risks exceeding the browser's message size limit (64MiB) when many entries need to be sent at once
+ * @param {Object<string, any>} entries
+ * @param {number} [maxBytes]
+ * @returns {Object<string, any>[]} an array of entry-object chunks
+ */
+function chunkEntriesBySize(entries, maxBytes = 8 * 1024 * 1024) {
+	const chunks = [];
+	let current = {};
+	let currentSize = 0;
+
+	for (const [id, value] of Object.entries(entries)) {
+		// rough but cheap approximation of the serialized size of this entry
+		const entrySize = JSON.stringify(value).length;
+
+		if (currentSize + entrySize > maxBytes && Object.keys(current).length > 0) {
+			chunks.push(current);
+			current = {};
+			currentSize = 0;
+		}
+
+		current[id] = value;
+		currentSize += entrySize;
+	}
+
+	if (Object.keys(current).length > 0) chunks.push(current);
+	return chunks;
+}
+
 let Main = {
 	Language: 'en',
 	SelectedMenu: 'RightBar',
@@ -1031,14 +1065,22 @@ let Main = {
 			checkDone();
 		});
 
-		// Persist fetched data to database
+		// Persist fetched data to database, split into size-bounded chunks so a single runtime.sendMessage call never risks exceeding the browser's
+		// message size limit (64MiB) when many buildings need caching at once.
 		if (Object.keys(fetchedData).length > 0) {
-			await Main.sendExtMessage({
-				type: 'buildingMetaSet',
-				region,
-				entries: fetchedData,
-				timeout: 10000,
-			});
+			const metaChunks = chunkEntriesBySize(fetchedData);
+			for (const chunk of metaChunks) {
+				try {
+					await Main.sendExtMessage({
+						type: 'buildingMetaSet',
+						region,
+						entries: chunk,
+						timeout: 15000,
+					});
+				} catch (error) {
+					console.warn('Forge Hammer: failed to persist a building meta chunk', error);
+				}
+			}
 		}
 
 		// Build final metadata object and assign
@@ -1074,7 +1116,21 @@ let Main = {
 		let _responsePromise = null;
 
 		if (typeof chrome !== 'undefined') {
-			_responsePromise = new Promise(resolve => chrome.runtime.sendMessage(FH.BaseData.extID, data, resolve));
+			_responsePromise = new Promise((resolve, reject) => {
+				try {
+					chrome.runtime.sendMessage(FH.BaseData.extID, data, (response) => {
+						if (chrome.runtime.lastError) {
+							// e.g. "Could not establish connection. Receiving end does not exist."
+							reject(new Error(chrome.runtime.lastError.message));
+							return;
+						}
+						resolve(response);
+					});
+				} catch (error) {
+					// e.g. "Message exceeded maximum allowed size of 64MiB."
+					reject(error);
+				}
+			});
 		}
 		else if (FH.BgApiHandler != null) {
 			_responsePromise = FH.BgApiHandler(data);
