@@ -1077,6 +1077,30 @@ let Main = {
 		Main.CityEntities = Metadata;
 		Main.correctBuildingType();
 		Main.Inactives.check();
+
+		async function updateBackgroundDB(Metadata) {
+			const metaChunks = [];
+			let metaArray=Object.entries(Metadata)
+			let chunksize = 400;
+			for (let i = 0; i < metaArray.length; i += chunksize) {
+				metaChunks.push(metaArray.slice(i, i + chunksize));
+			}
+
+			for (const chunk of metaChunks) {
+				chunkObj = Object.assign({},...chunk.map(x=>({[x[0]]:x[1]})));
+				try {
+					await Main.sendExtMessage({
+						type: 'buildingMetaSet',
+						region: String(FH.World).replace(/\d+$/, '') || 'unknown',
+						entries: chunkObj,
+						timeout: 15000,
+					});
+				} catch (error) {
+					console.warn('Forge Hammer [meta]: failed to persist a chunk', error);
+				}
+			}
+		}
+		updateBackgroundDB(Metadata);
 	},
 
 

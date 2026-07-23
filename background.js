@@ -15,11 +15,15 @@ catch {
 // @ts-ignore
 let alertsDB = new Dexie("Alerts");
 let plannerDB = new Dexie("HammerPlanner");
-Dexie.delete('FoEBuildingMeta')
+let buildingMetaDB = new Dexie("FoEBuildingMeta");
 
 // Define Database Schema
 alertsDB.version(1).stores({
 	alerts: "++id,[server+playerId],data.expires"
+});
+
+buildingMetaDB.version(1).stores({
+	buildingMeta: "[region+id],region,id,hash,json"
 });
 
 plannerDB.version(1).stores({
@@ -741,6 +745,28 @@ plannerDB.version(1).stores({
 				} // end of limited alerts-API
 
 			} // end of alerts-API
+
+
+			case 'buildingMetaSet': { // type
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				const entries = request.entries;
+				if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
+					return APIerror('buildingMetaSet: invalid entries');
+				}
+				try {
+					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
+					const dbEntries = Object.entries(entries).map(([id, data]) => ({
+						region,
+						id,
+						hash: data.hash || null,
+						json: data.json || JSON.stringify(data)
+					}));
+					await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
+					return APIsuccess(true);
+				} catch (e) {
+					return APIerror('buildingMetaSet failed: ' + (e && e.message ? e.message : e));
+				}
+			}
 
 			case 'Planner.getPlan':{
 				if (!request.planId) return APIerror('Planner.getPlan: Parameter {planId} expected!');
