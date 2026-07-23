@@ -193,9 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addMetaHandler('building_entity_lookup', (xhr, postData) => {
 		let buildingUrlsRaw = JSON.parse(xhr.responseText || "[]");
 		let buildingUrls = Object.assign({}, ...buildingUrlsRaw.map((x) => ({ [x.identifier.replace("building_entity_","")]: {url: x.url, hash: x.url.replace(/.*?([^-]+$)/gm,"$1")} })));
-		const region = String(FH.World).replace(/\d+$/, '') || 'unknown';
 		setTimeout(()=>{
-			Main.CityEntityBuilder(buildingUrls, region).catch(error => {
+			Main.CityEntityBuilder(buildingUrls).catch(error => {
 				console.error('Forge Hammer: CityEntityBuilder failed', error);
 			});
 		},500);
@@ -976,55 +975,27 @@ let Main = {
 	 * @param {Object} buildingUrls - A mapping where keys represent building IDs and values contain {url, hash}.
 	 * @param {string} [region] - The region code for the current world, e.g. "de".
 	 */
-	CityEntityBuilder: async (buildingUrls, region = String(FH.World).replace(/\d+$/, '') || 'unknown') => {
+	CityEntityBuilder: async (buildingUrls) => {
+		await IndexDB.getDB();
+		let buildingsOld = await IndexDB.db.buildingMeta.toArray();
+		buildingsOld = Object.assign({}, ...buildingsOld.map(x => ({ [x.id]: x })));
+		let Metadata = {};
+		let updated = [];
 		const urlIds = Object.keys(buildingUrls);
-		const urlCount = urlIds.length;
+		const maxConcurrent = 10; // z.B. 10 gleichzeitige Requests
+		let active = 0;
+		let index = 0;
 
-		// Get existing metadata from database - only for the ids this session actually needs, batched so a single response never risks exceeding
-		// the browser's message size limit (64MiB). Batches are independent, so they run in parallel rather than sequentially.
-		const GET_BATCH_SIZE = 100;
-		const cachedData = {};
-		const idBatches = [];
-		for (let i = 0; i < urlIds.length; i += GET_BATCH_SIZE) {
-			idBatches.push(urlIds.slice(i, i + GET_BATCH_SIZE));
-		}
-
-		const tCacheStart = performance.now();
-		console.debug(`Forge Hammer [meta]: ${urlCount} buildings in lookup, reading cache in ${idBatches.length} batch(es) of ${GET_BATCH_SIZE}`);
-
-		await Promise.all(idBatches.map(async (idBatch, batchIndex) => {
-			try {
-				const batchData = await Main.sendExtMessage({
-					type: 'buildingMetaGet',
-					region,
-					ids: idBatch,
-					timeout: 15000,
-				});
-				// sendExtMessage resolves to undefined on a swallowed API error / timeout, which is otherwise indistinguishable from "nothing cached"
-				if (batchData === undefined) {
-					console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} returned no data (API error or timeout)`);
-				} else {
-					Object.assign(cachedData, batchData);
-				}
-			} catch (error) {
-				// Any ids in a failed batch simply won't be in `cachedData` below, so they'll be treated as cache-misses and re-fetched from the
-				// CDN (and re-cached) instead of aborting the whole build.
-				console.warn(`Forge Hammer [meta]: cache read batch ${batchIndex + 1}/${idBatches.length} failed`, error);
-			}
-		}));
-
-		console.debug(`Forge Hammer [meta]: cache read done in ${Math.round(performance.now() - tCacheStart)}ms, ${Object.keys(cachedData).length}/${urlCount} found in cache`);
-
-		// Identify missing entries
-		const toFetch = {};
+		const toFetch = [];
 		for (const id of urlIds) {
 			const urlInfo = buildingUrls[id];
-			if (!cachedData[id] || cachedData[id].hash !== urlInfo.hash) {
-				toFetch[id] = urlInfo;
-			}
+			if (!buildingsOld[id] || buildingsOld[id].hash !== urlInfo.hash) {
+				toFetch.push(id);
+			} else 
+				try { Metadata[id] = JSON.parse(buildingsOld[id].json); } catch (e) { Metadata[id] = null; }
 		}
 
-		const missingCount = Object.keys(toFetch).length;
+		const missingCount = toFetch.length;
 		const showWarning = missingCount > 100;
 
 		console.debug(`Forge Hammer [meta]: ${missingCount} building(s) missing or stale -> ${missingCount === 0 ? 'nothing to fetch' : 'fetching from CDN'}`);
@@ -1043,93 +1014,69 @@ let Main = {
 			document.body.appendChild(warningDiv);
 		}
 
-		// Fetch missing metadata
-		const fetchedData = {};
-		const maxConcurrent = 10;
-		const timeoutMs = 4000;
-		const maxRetries = 3;
-		let active = 0;
-		let index = 0;
-		const toFetchIds = Object.keys(toFetch);
+		function fetchMeta(id, meta, retries = 3) {
+			return new Promise(resolve => {
+				const xhr = new XMLHttpRequest();
+				xhr.open("GET", meta.url, true);
 
-		const fetchOne = async (id, retries = maxRetries) => {
-			const timeout = setTimeout(() => controller.abort(), timeoutMs);
-			const controller = new AbortController();
-			try {
-				const response = await fetch(toFetch[id].url, { signal: controller.signal });
-				clearTimeout(timeout);
-				if (!response.ok) throw new Error(`HTTP ${response.status}`);
-				const text = await response.text();
-				fetchedData[id] = { hash: toFetch[id].hash, json: text };
-			} catch (error) {
-				clearTimeout(timeout);
-				if (retries > 0) {
-					await new Promise(resolve => setTimeout(resolve, 1000));
-					return fetchOne(id, retries - 1);
-				} else {
-					console.warn('Failed to fetch metadata for', id, error);
-				}
-			}
-		};
+				let timeout = setTimeout(() => {
+					xhr.abort();
+				}, 10000); // 10 Sekunden Timeout
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === XMLHttpRequest.DONE) {
+						clearTimeout(timeout);
+						if (xhr.status === 200) {
+							try {
+								Metadata[id] = JSON.parse(xhr.responseText);
+								IndexDB.db.buildingMeta.put({ id: id, hash: meta.hash, json: xhr.responseText })
+							} catch (e) { Metadata[id] = null; }
+							resolve();
+						} else if (retries > 0) {
+							// Bei Fehler: Retry mit Delay
+							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
+						} else {
+							console.warn('Failed to load', meta.url, xhr.status);
+							resolve();
+						}
+					}
+				};
+				xhr.onerror = () => {
+					clearTimeout(timeout);
+					if (retries > 0) {
+						setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
+					} else {
+						resolve();
+					}
+				};
+				xhr.send();
+			});
+		}
 
-		const runNext = async () => {
-			while (active < maxConcurrent && index < toFetchIds.length) {
-				const id = toFetchIds[index++];
+		async function runNext() {
+			while (active < maxConcurrent && index < toFetch.length) {
+				const id = toFetch[index++];
+				const meta = buildingUrls[id];
+				
 				active++;
-				fetchOne(id).then(() => {
+				fetchMeta(id, meta).then(() => {
 					active--;
 					runNext();
 				});
 			}
-		};
+		}
 
-		const tFetchStart = performance.now();
 		await new Promise(resolve => {
-			const checkDone = () => {
-				if (index >= toFetchIds.length && active === 0) {
-					resolve();
-				} else {
-					setTimeout(checkDone, 100);
-				}
-			};
+			function checkDone() {
+				if (index >= toFetch.length && active === 0) resolve();
+				else setTimeout(checkDone, 100);
+			}
 			runNext();
 			checkDone();
 		});
-		if (toFetchIds.length > 0) {
-			console.debug(`Forge Hammer [meta]: CDN fetch done in ${Math.round(performance.now() - tFetchStart)}ms, ${Object.keys(fetchedData).length}/${toFetchIds.length} succeeded`);
-		}
-
-		// Persist fetched data to database, split into size-bounded chunks so a single runtime.sendMessage call never risks exceeding the browser's
-		// message size limit (64MiB) when many buildings need caching at once.
-		if (Object.keys(fetchedData).length > 0) {
-			const tPersistStart = performance.now();
-			const metaChunks = chunkEntriesBySize(fetchedData);
-			console.debug(`Forge Hammer [meta]: persisting ${Object.keys(fetchedData).length} entries in ${metaChunks.length} chunk(s)`);
-			for (const chunk of metaChunks) {
-				try {
-					await Main.sendExtMessage({
-						type: 'buildingMetaSet',
-						region,
-						entries: chunk,
-						timeout: 15000,
-					});
-				} catch (error) {
-					// Don't let a failed persist of one chunk abort the whole build - the entities are still usable this session from `fetchedData`,
-					// they'll just be re-fetched and re-cached again next time.
-					console.warn('Forge Hammer [meta]: failed to persist a chunk', error);
-				}
-			}
-			console.debug(`Forge Hammer [meta]: persist done in ${Math.round(performance.now() - tPersistStart)}ms`);
-		}
-
-		// Build final metadata object and assign
-		const metadata = Object.assign({},...(Object.entries(cachedData).map(([key,val])=>({[key]:JSON.parse(val.json)}))), ...(Object.entries(fetchedData).map(([key,val])=>({[key]:JSON.parse(val.json)}))));
-		document.getElementById('DBCreationWarning')?.remove();
-
-		Main.CityEntities = metadata || {};
+		if (warningDiv) warningDiv.remove();
+		Main.CityEntities = Metadata;
 		Main.correctBuildingType();
 		Main.Inactives.check();
-		console.debug(`Forge Hammer [meta]: CityEntityBuilder finished in ${Math.round(performance.now() - tCacheStart)}ms total, ${Object.keys(metadata).length} entities loaded`);
 	},
 
 
