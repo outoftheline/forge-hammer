@@ -1087,7 +1087,7 @@ let Main = {
 			}
 
 			for (const chunk of metaChunks) {
-				chunkObj = Object.assign({},...chunk.map(x=>({[x[0]]:x[1]})));
+				let chunkObj = Object.assign({},...chunk.map(x=>({[x[0]]:x[1]})));
 				try {
 					await Main.sendExtMessage({
 						type: 'buildingMetaSet',
