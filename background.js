@@ -370,6 +370,15 @@ plannerDB.version(1).stores({
 		if(lng !== 'de' && lng !== 'en'){
 			lng = 'en';
 		}
+
+		browser.tabs.query({ url: ["https://*.forgeofempires.com/game/*"] }, (tabs) => {
+			tabs.forEach((tab) => {
+			// Force a complete page reload by re-assigning the URL
+			if (tab.id && tab.url) {
+				chrome.tabs.update(tab.id, { url: tab.url });
+			}
+			});
+		});
 	});
 
 
