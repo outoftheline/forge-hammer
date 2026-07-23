@@ -14,16 +14,12 @@ catch {
 
 // @ts-ignore
 let alertsDB = new Dexie("Alerts");
-let buildingMetaDB = new Dexie("FoEBuildingMeta");
 let plannerDB = new Dexie("HammerPlanner");
+Dexie.delete('FoEBuildingMeta')
 
 // Define Database Schema
 alertsDB.version(1).stores({
 	alerts: "++id,[server+playerId],data.expires"
-});
-
-buildingMetaDB.version(1).stores({
-	buildingMeta: "[region+id],region,id,hash,json"
 });
 
 plannerDB.version(1).stores({
@@ -736,46 +732,6 @@ plannerDB.version(1).stores({
 				} // end of limited alerts-API
 
 			} // end of alerts-API
-
-			case 'buildingMetaGet': { // type
-				const region = typeof request.region === 'string' ? request.region : 'unknown';
-				// optional: restrict to specific ids so callers aren't forced to pull back the entire regional cache every time
-				const ids = Array.isArray(request.ids) ? request.ids : null;
-				try {
-					// NOTE: DB is not closed afterwards - this handler is called once per batch. Reopening the connection each
-					// time is an avoidable cost. Dexie reuses the open connection; the service worker shutting down closes it
-					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
-					const entries = ids
-						? await buildingMetaDB.table('buildingMeta').where('[region+id]').anyOf(ids.map(id => [region, id])).toArray()
-						: await buildingMetaDB.table('buildingMeta').where('region').equals(region).toArray();
-					const data = Object.assign({}, ...entries.map(x => ({ [x.id]: { hash: x.hash, json: x.json } })));
-					return APIsuccess(data);
-				} catch (e) {
-					return APIerror('buildingMetaGet failed: ' + (e && e.message ? e.message : e));
-				}
-			}
-
-			case 'buildingMetaSet': { // type
-				const region = typeof request.region === 'string' ? request.region : 'unknown';
-				const entries = request.entries;
-				if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
-					return APIerror('buildingMetaSet: invalid entries');
-				}
-				try {
-					// dont close DB, see above
-					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
-					const dbEntries = Object.entries(entries).map(([id, data]) => ({
-						region,
-						id,
-						hash: data.hash,
-						json: data.json
-					}));
-					await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
-					return APIsuccess(true);
-				} catch (e) {
-					return APIerror('buildingMetaSet failed: ' + (e && e.message ? e.message : e));
-				}
-			}
 
 			case 'Planner.getPlan':{
 				if (!request.planId) return APIerror('Planner.getPlan: Parameter {planId} expected!');
