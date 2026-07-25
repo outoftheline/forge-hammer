@@ -33,6 +33,27 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 	}
 });
 
+// My GBs tab: my own GB progress since the last visit + live contributor capture
+FH.proxy.addHandler('StartupService', 'getData', async (data) => {
+	Investment.VisitTime = FH.Main.getCurrentDate();
+	// GB names + the srcLinks icon list load asynchronously => wait for both,
+	// otherwise the table shows code names and the change icon has no image
+	await FH.ExistenceConfirmed('Main.CityEntities||srcLinks.FileList');
+	Investment.CheckProgress(data.responseData);
+});
+
+// Owner donations to own GBs => keep the snapshot in sync so they aren't flagged next load
+FH.proxy.addHandler('CityMapService', 'updateEntity', (data) => {
+	Investment.UpdateSnapshotEntities(data?.responseData);
+	Investment.StashOwnGB(data?.responseData);
+});
+
+// Contributor rankings of my own GBs (on open or contribute) => capture for the per-player breakdown
+FH.proxy.addHandler('GreatBuildingsService', 'all', (data, postData) => {
+	if (data.requestMethod !== 'getConstruction' && data.requestMethod !== 'contributeForgePoints') return;
+	let Rankings = data.requestMethod === 'getConstruction' ? data.responseData?.rankings : data.responseData;
+	Investment.CaptureContributors(Rankings, postData);
+});
 
 let Investment = {
 	Data: null,
@@ -42,9 +63,19 @@ let Investment = {
 	HiddenElements: 0,
 	RequestBlockTime: 0,
 
+	// My GBs tab: progress of my own Great Buildings since the last visit
+	ProgressList: [],
+	ProgressTotal: 0,
+	VisitTime: 0,
+	LastOwnGBEntity: null,
 
-	BuildBox: (event)=> {
-		if ($('#Investment').length === 0) {
+
+	BuildBox: (event, activeTab)=> {
+		Investment.ProgressTotal = 0; // Reset total progress when clicking on the icon
+		Investment.RefreshChangeBar();
+		let firstOpen = $('#Investment').length === 0;
+
+		if (firstOpen) {
 			FH.HTML.Box({
 				id: 'Investment',
 				title: FH.t('Boxes.Investment.Title'),
@@ -56,13 +87,34 @@ let Investment = {
 			});
 
 			FH.HTML.AddCssFile('investment');
+			Investment.BuildTabs(activeTab === 'mygbs' ? 2 : 1);
 		}
-		else if(!event) {
+		else if(!event || activeTab === 'mygbs') {
 			FH.HTML.CloseOpenBox('Investment');
 			return;
 		}
 
 		Investment.Show();
+		Investment.ShowMyGBs();
+	},
+
+
+	/**
+	 * Builds the tab skeleton (Contributions + My GBs) inside the box body once.
+	 */
+	BuildTabs: (activeTab) => {
+		let h = [];
+		h.push('<div class="tabs investment-tabs">');
+		h.push('<ul class="horizontal dark-bg">');
+		h.push(`<li class="tab-contributions"><a href="#invest-contributions">${FH.t('Boxes.Investment.Tabs.Contributions')}</a></li>`);
+		h.push(`<li class="tab-mygbs"><a href="#invest-mygbs">${FH.t('Boxes.Investment.Tabs.MyGBs')}</a></li>`);
+		h.push('</ul>');
+		h.push('<div id="invest-contributions"></div>');
+		h.push('<div id="invest-mygbs"></div>');
+		h.push('</div>');
+
+		$('#InvestmentBody').html(h.join(''));
+		$('.investment-tabs').tabslet({ active: activeTab || 1 });
 	},
 
 
@@ -151,7 +203,7 @@ let Investment = {
 
 		b.push(`<div id="history-wrapper"></div>`);
 
-		$('#InvestmentBody').html(b.join('')).promise().done(function(){
+		$('#invest-contributions').html(b.join('')).promise().done(function(){
 			Investment.CalcFPs();
 		});
 
@@ -259,7 +311,7 @@ let Investment = {
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 22px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 18px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
 			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
@@ -390,7 +442,19 @@ let Investment = {
 	},
 
 
+	/**
+	 * Settings gear is tab-aware: render the panel for whichever tab is active.
+	 */
 	ShowInvestmentSettings: () => {
+		if ($('.investment-tabs .horizontal li.active').hasClass('tab-mygbs')) {
+			Investment.ShowMyGBsSettings();
+		} else {
+			Investment.ShowContributionsSettings();
+		}
+	},
+
+
+	ShowContributionsSettings: () => {
 		let c = [],
 			InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings')),
 			showEntryDate = (InvestmentSettings && InvestmentSettings.showEntryDate !== undefined) ? InvestmentSettings.showEntryDate : 0,
@@ -413,6 +477,32 @@ let Investment = {
 		c.push(`<p><button id="save-Investment-settings" class="btn saveSettings" onclick="Investment.SettingsSaveValues()">${FH.t('Boxes.Investment.Overview.SettingsSave')}</button></p>`);
 
 		$('#InvestmentSettingsBox').html(c.join(''));
+	},
+
+
+	ShowMyGBsSettings: () => {
+		let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings')),
+			showChangeBar = (InvestmentSettings && InvestmentSettings.showChangeBar !== undefined) ? InvestmentSettings.showChangeBar : 1;
+
+		let c = [];
+		c.push(`<input id="showchangebar" name="showchangebar" value="1" type="checkbox" ${(showChangeBar === 1) ? ' checked="checked"':''} /> <label for="showchangebar">${FH.t('Boxes.GreatBuildingsProgress.SettingsShowIcon')}</label>`);
+		c.push(`<p><button id="save-mygbs-settings" class="btn saveSettings" onclick="Investment.SaveMyGBsSettings()">${FH.t('Boxes.Investment.Overview.SettingsSave')}</button></p>`);
+
+		$('#InvestmentSettingsBox').html(c.join(''));
+	},
+
+
+	SaveMyGBsSettings: () => {
+		let value = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
+
+		value['showChangeBar'] = $("#showchangebar").is(':checked') ? 1 : 0;
+
+		FH.Storage.setItem('InvestmentSettings', JSON.stringify(value));
+
+		$(`#InvestmentSettingsBox`).fadeToggle('fast', function () {
+			$(this).remove();
+			Investment.RefreshChangeBar();
+		});
 	},
 
 
@@ -765,6 +855,372 @@ let Investment = {
 			});
 
 		}
+	},
+
+
+	/**
+	 * Compares my own GB progress against the last visit, stores the new state and updates the change icon. 
+	 * Owner donations are kept in sync via UpdateSnapshotEntities so they are not flagged as a change on the next load.
+	 */
+	CheckProgress: (ResponseData) => {
+		let Entities = ResponseData?.city_map?.entities;
+		if (!Entities) return;
+
+		let StorageKey = 'GreatBuildingsSnapshot.' + (FH.Player?.ID || 'unknown');
+
+		// Current state, keyed by cityentity_id (only one GB per city => unique)
+		let Current = {};
+		for (let Entity of Entities) {
+			if (Entity.type !== 'greatbuilding') continue;
+			let State = Entity.state || {};
+			Current[Entity.cityentity_id] = {
+				name: FH.Main.CityEntities?.[Entity.cityentity_id]?.name || Entity.cityentity_id,
+				level: Entity.level,
+				invested: State.invested_forge_points || 0,
+				needed: State.forge_points_for_level_up || 0
+			};
+		}
+
+		let Previous = null;
+		try {
+			Previous = JSON.parse(FH.Storage.getItem(StorageKey));
+		} catch (e) { }
+
+		// Save the state for the next visit
+		FH.Storage.setItem(StorageKey, JSON.stringify(Current));
+
+		// Full list of GBs; each entry is flagged as changed or not since the last visit
+		let List = [];
+		for (let ID in Current) {
+			let C = Current[ID],
+				P = Previous ? Previous[ID] : null;
+
+			if (!P) { // newly built since the last visit (or nothing to compare on the first load)
+				let NewlyBuilt = Previous !== null;
+				List.push({ CeId: ID, Name: C.name, PrevLevel: NewlyBuilt ? null : C.level, NewLevel: C.level, PrevFP: NewlyBuilt ? 0 : C.invested, PrevNeeded: NewlyBuilt ? null : C.needed, NewFP: C.invested, Needed: C.needed, DeltaFP: NewlyBuilt ? C.invested : 0, Changed: NewlyBuilt });
+				continue;
+			}
+
+			let LeveledUp = C.level !== P.level,
+				HasChange = LeveledUp || C.invested > P.invested,
+				// Same level: invested FP. Level-up: remainder to the old level + FP in the new level.
+				DeltaFP = !HasChange ? 0 : (LeveledUp ? (P.needed - P.invested) + C.invested : C.invested - P.invested);
+
+			List.push({ CeId: ID, Name: C.name, PrevLevel: P.level, NewLevel: C.level, PrevFP: P.invested, PrevNeeded: P.needed, NewFP: C.invested, Needed: C.needed, DeltaFP: DeltaFP, Changed: HasChange });
+		}
+
+		// Changed GBs first, then the rest; each group sorted by name
+		List.sort((a, b) => (b.Changed - a.Changed) || a.Name.localeCompare(b.Name));
+		Investment.ProgressList = List;
+		Investment.ProgressTotal = List.reduce((sum, g) => sum + (g.Changed ? g.DeltaFP : 0), 0);
+
+		Investment.RefreshChangeBar();
+
+		// keep the My GBs tab in sync if the box is already open
+		if ($('#invest-mygbs').length !== 0) Investment.ShowMyGBs();
+	},
+
+
+	/**
+	 * Small clickable icon on the UI showing the total FP change across my GBs since the last visit. 
+	 * Click opens the Investment box on the My GBs tab.
+	 */
+	RefreshChangeBar: async () => {
+		let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
+		let showChangeBar = (InvestmentSettings && InvestmentSettings.showChangeBar !== undefined) ? InvestmentSettings.showChangeBar : 1;
+
+		if (!showChangeBar) {
+			$('#gb-change-bar').remove();
+			return;
+		}
+
+		let Total = Investment.ProgressTotal || 0;
+
+		if ($('#gb-change-bar').length === 0) {
+			// wait for hammerBar
+			await FH.ExistenceConfirmed(`$('#hammerBar')`);
+
+			if ($('#gb-change-bar').length === 0) { // re-check: another call may have created it while waiting
+				FH.HTML.AddCssFile('investment'); // icon can show before the box is ever opened
+
+				let $bar = $('<div />')
+					.attr({ id: 'gb-change-bar', class: 'game-cursor MapActivityHide ActiveOnmain', title: FH.t('Boxes.GreatBuildingsProgress.SubTitle') })
+					.append('<img />')
+					.append('<span class="gb-change-total"></span>')
+					.on('click', () => Investment.BuildBox(true, 'mygbs'));
+				$('#hammerBar').append($bar);
+
+				// Main city only; the ActiveMapUpdated handler shows/hides it on later map changes
+				if (FH.ActiveMap !== 'main') $('#gb-change-bar').hide();
+			}
+		}
+
+		$('#gb-change-bar img').attr('src', srcLinks.get('/shared/icons/great_building.png', true));
+		$('#gb-change-bar')
+			.toggleClass('has-change', Total > 0)
+			.find('.gb-change-total').text(Total > 0 ? '+' + FH.HTML.Format(Total) : '0');
+	},
+
+
+	/**
+	 * Renders the My GBs tab: every GB with changed ones first (see CheckProgress). Click a row to expand the per-player breakdown.
+	 */
+	ShowMyGBs: () => {
+		let List = Investment.ProgressList;
+
+		let h = [];
+
+		h.push('<table class="foe-table">');
+		h.push('<thead class="sticky"><tr>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildings.GreatBulding') + '</th>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildings.Level') + '</th>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildingsProgress.Progress') + '</th>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildingsProgress.DeltaFP') + '</th>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildingsProgress.MyFP') + '</th>');
+		h.push('<th>' + FH.t('Boxes.GreatBuildingsProgress.Donators') + '</th>');
+		h.push('</tr></thead><tbody>');
+
+		// Per-GB contributor summary (my FP + donator count), only for GBs opened in-game this session
+		let ContribStore = {};
+		try { ContribStore = JSON.parse(FH.Storage.getItem('GreatBuildingsContributors.' + (FH.Player?.ID || 'unknown'))) || {}; } catch (e) { }
+
+		for (let Entry of List) {
+			h.push(`<tr class="gbprow${Entry.Changed ? ' changed' : ''}" data-ceid="${Entry.CeId}">`);
+			h.push(Investment.BuildProgressRowCells(Entry, ContribStore[Entry.CeId]));
+			h.push('</tr>');
+		}
+
+		h.push('</tbody></table>');
+
+		$('#invest-mygbs').html(h.join('')).promise().done(function () {
+			$('#invest-mygbs .gbprow').on('click', function () {
+				Investment.ToggleContributors($(this));
+			});
+		});
+	},
+
+
+	/**
+	 * Inner cells (name / level / progress bar / delta / my FP / donators) of one My GBs row.
+	 * Contrib is this GB's captured contributor entry (or undefined if not opened in-game yet).
+	 */
+	BuildProgressRowCells: (Entry, Contrib) => {
+		let LeveledUp = Entry.PrevLevel !== null && Entry.NewLevel !== Entry.PrevLevel,
+			Invested = Entry.NewFP || 0,
+			Needed = Entry.Needed || 0,
+			Width = Needed > 0 ? Math.min(100, Invested / Needed * 100) : 100,
+			LevelHtml = Entry.PrevLevel === null ? ('&ndash; &rarr; ' + Entry.NewLevel) : (LeveledUp ? (Entry.PrevLevel + ' &rarr; ' + Entry.NewLevel) : Entry.NewLevel);
+
+		let Curr = Contrib && Contrib.curr ? Contrib.curr : null,
+			MyId = FH.Player?.ID,
+			MyFP = Curr ? ((MyId != null && Curr[MyId]) ? Curr[MyId].fp : 0) : null,
+			Donators = Curr ? Object.keys(Curr).length : null;
+
+		let c = [];
+		c.push('<td>' + Entry.Name + '</td>');
+		c.push('<td' + (LeveledUp ? ' class="leveled"' : '') + '>' + LevelHtml + '</td>');
+		c.push(`<td class="progress"><div class="progbar" style="width: ${Width}%"></div> ${FH.HTML.Format(Invested)} / ${FH.HTML.Format(Needed)}</td>`);
+		c.push('<td>' + (Entry.Changed ? '<strong class="success">' + (Entry.DeltaFP > 0 ? '+' : '') + FH.HTML.Format(Entry.DeltaFP) + '</strong>' : '') + '</td>');
+		c.push('<td class="is-number text-center">' + (MyFP !== null ? FH.HTML.Format(MyFP) : '') + '</td>');
+		c.push('<td class="is-number text-center">' + (Donators !== null ? Donators : '') + '</td>');
+		return c.join('');
+	},
+
+
+	/**
+	 * Expands/collapses the per-player contributor breakdown under a GB row.
+	 */
+	ToggleContributors: ($row) => {
+		if ($row.next('tr.gbpdetail').length) {
+			$row.next('tr.gbpdetail').remove();
+			$row.removeClass('open');
+			return;
+		}
+
+		$row.addClass('open');
+		let ColSpan = $row.find('td').length;
+		let d = [];
+		d.push(`<tr class="gbpdetail dark-bg"><td colspan="${ColSpan}">`);
+		d.push(Investment.BuildContributorsHtml($row.attr('data-ceid')));
+		d.push('</td></tr>');
+		$(d.join('')).insertAfter($row);
+	},
+
+
+	/**
+	 * Builds the per-player contributor table for one GB from the captured rankings.
+	 * Contributor data only exists once the GB has been opened in-game.
+	 */
+	BuildContributorsHtml: (CeId) => {
+		let StorageKey = 'GreatBuildingsContributors.' + (FH.Player?.ID || 'unknown');
+		let Store = {};
+		try { Store = JSON.parse(FH.Storage.getItem(StorageKey)) || {}; } catch (e) { }
+
+		let Entry = Store[CeId];
+		if (!Entry || !Entry.curr) {
+			return '<div class="gbp-note">' + FH.t('Boxes.GreatBuildingsProgress.NoContributors') + '</div>';
+		}
+
+		let Curr = Entry.curr,
+			Prev = Entry.prev || {},
+			HasBaseline = !!Entry.prevCapturedAt; // no baseline on first capture / after a level-up
+
+		let Rows = Object.keys(Curr).map((Pid) => {
+			let C = Curr[Pid],
+				P = Prev[Pid];
+			return { name: C.name, fp: C.fp, delta: HasBaseline ? C.fp - (P ? P.fp : 0) : 0 };
+		});
+		Rows.sort((a, b) => b.fp - a.fp);
+
+		let Since = HasBaseline ? moment(Entry.prevCapturedAt).format(FH.t('DateTime')) : FH.t('Boxes.GreatBuildingsProgress.FirstVisit');
+
+		let b = [];
+		b.push('<div class="gbp-note">' + FH.t('Boxes.GreatBuildingsProgress.ContributorsSince').replace('__date__', Since) + '</div>');
+		b.push('<table class="gbp-contrib">');
+		b.push('<tr><th>' + FH.t('Boxes.GreatBuildingsProgress.Player') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.NewFP') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.DeltaFP') + '</th></tr>');
+
+		for (let R of Rows) {
+			b.push('<tr' + (R.delta > 0 ? ' class="gbp-new"' : '') + '><td>' + R.name + '</td><td>' + FH.HTML.Format(R.fp) + '</td><td>' + (R.delta > 0 ? '<strong class="success">+' + FH.HTML.Format(R.delta) + '</strong>' : '') + '</td></tr>');
+		}
+
+		b.push('</table>');
+		return b.join('');
+	},
+
+
+	/**
+	 * Re-renders the expanded contributor breakdown of one GB in the open My GBs tab.
+	 */
+	RefreshContributors: (CeId) => {
+		if ($('#invest-mygbs').length === 0) return; // tab not rendered
+
+		let $detail = $('#invest-mygbs .gbprow[data-ceid="' + CeId + '"]').next('tr.gbpdetail');
+		if (!$detail.length) return; // row not expanded => next open reads storage anyway
+
+		$detail.children('td').html(Investment.BuildContributorsHtml(CeId)); // outer cell only, not the nested table's
+	},
+
+
+	/**
+	 * Keeps the snapshot in sync with owner donations (CityMapService.updateEntity), so dropping FP on my own GB 
+	 * is not reported as a change on the next load.
+	 */
+	UpdateSnapshotEntities: (Entities) => {
+		if (!Array.isArray(Entities)) return;
+
+		let StorageKey = 'GreatBuildingsSnapshot.' + (FH.Player?.ID || 'unknown');
+		let Snapshot = null;
+		try { Snapshot = JSON.parse(FH.Storage.getItem(StorageKey)); } catch (e) { }
+		if (!Snapshot) return; // no baseline yet => CheckProgress seeds it on the next load
+
+		let Changed = false;
+		for (let Entity of Entities) {
+			if (Entity.type !== 'greatbuilding') continue;
+			if (Entity.player_id !== undefined && Entity.player_id !== FH.Player.ID) continue; // another player's GB
+
+			let State = Entity.state || {},
+				Invested = State.invested_forge_points || 0,
+				Needed = State.forge_points_for_level_up || 0;
+
+			Snapshot[Entity.cityentity_id] = {
+				name: FH.Main.CityEntities?.[Entity.cityentity_id]?.name || Entity.cityentity_id,
+				level: Entity.level,
+				invested: Invested,
+				needed: Needed
+			};
+			Changed = true;
+			// Silent: my own donation must not show up in the icon/list. Only the baseline
+			// is synced so it also isn't counted as a change on the next load.
+		}
+
+		if (Changed) FH.Storage.setItem(StorageKey, JSON.stringify(Snapshot));
+	},
+
+
+	/**
+	 * Remembers the own GB entity from a CityMapService.updateEntity within the current
+	 * batch, so the contributor rankings that follow can be tied to it. Cleared on the next microtask.
+	 */
+	StashOwnGB: (Entities) => {
+		if (!Array.isArray(Entities)) return;
+
+		for (let Entity of Entities) {
+			if (Entity.type !== 'greatbuilding') continue;
+			if (Entity.player_id !== undefined && Entity.player_id !== FH.Player.ID) continue;
+
+			Investment.LastOwnGBEntity = { CeId: Entity.cityentity_id, Level: Entity.level };
+			Promise.resolve().then(() => { Investment.LastOwnGBEntity = null; });
+			break;
+		}
+	},
+
+
+	/**
+	 * Captures the contributor rankings of one of my own GBs (opened or contributed to in-game). 
+	 * Stores current + previous-visit maps per cityentity_id so the breakdown can show 
+	 * who contributed since the last visit; the baseline is frozen per visit.
+	 */
+	CaptureContributors: (Rankings, PostData) => {
+		if (!Array.isArray(Rankings)) return;
+
+		let CeId, Level;
+
+		// Primary: the own GB entity from the updateEntity in this same batch
+		if (Investment.LastOwnGBEntity) {
+			CeId = Investment.LastOwnGBEntity.CeId;
+			Level = Investment.LastOwnGBEntity.Level;
+		}
+		// Fallback: resolve the numeric map entity id carried in the request
+		else if (Array.isArray(PostData)) {
+			let Req = PostData.find((p) => p && p.requestClass === 'GreatBuildingsService' &&
+				(p.requestMethod === 'getConstruction' || p.requestMethod === 'contributeForgePoints'));
+			if (Req && Array.isArray(Req.requestData)) {
+				for (let v of Req.requestData) {
+					let e = FH.Main.CityMapData?.[v];
+					if (e && e.type === 'greatbuilding') { CeId = e.cityentity_id; Level = e.level; break; }
+				}
+			}
+		}
+
+		if (CeId === undefined) return; // not one of my own GBs (e.g. another player's)
+
+		let Players = {};
+		for (let Row of Rankings) {
+			let Pid = Row?.player?.player_id;
+			if (Pid === undefined) continue; // "No contributor yet" placeholder slots
+			// Own donations are listed here too; only the gb-change-bar ignores them (UpdateSnapshotEntities).
+			Players[Pid] = { name: Row.player.name, fp: Row.forge_points || 0 };
+		}
+
+		let StorageKey = 'GreatBuildingsContributors.' + (FH.Player?.ID || 'unknown');
+		let Store = {};
+		try { Store = JSON.parse(FH.Storage.getItem(StorageKey)) || {}; } catch (e) { }
+
+		let Existing = Store[CeId];
+		let Prev, PrevAt;
+		if (Existing && Existing.level === Level && Existing.visit === Investment.VisitTime) {
+			Prev = Existing.prev || {};       // same visit => keep the frozen baseline
+			PrevAt = Existing.prevCapturedAt || null;
+		} else if (Existing && Existing.level === Level) {
+			Prev = Existing.curr || {};       // new visit => last visit's state becomes the baseline
+			PrevAt = Existing.capturedAt || null;
+		} else {
+			Prev = {};                        // first capture or a level-up => fresh baseline
+			PrevAt = null;
+		}
+
+		Store[CeId] = {
+			level: Level,
+			visit: Investment.VisitTime,
+			capturedAt: FH.Main.getCurrentDate(),
+			prevCapturedAt: PrevAt,
+			curr: Players,
+			prev: Prev
+		};
+
+		FH.Storage.setItem(StorageKey, JSON.stringify(Store));
+
+		Investment.RefreshContributors(CeId); // update the open My GBs tab, if any
 	}
 
 };

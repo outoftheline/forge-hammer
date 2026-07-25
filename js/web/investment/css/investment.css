@@ -14,6 +14,18 @@
 	overflow: auto;
 }
 
+/* Keep the tab bar pinned while the tab content scrolls */
+#Investment #InvestmentBody .investment-tabs > ul.horizontal {
+	position: sticky;
+	top: 0;
+	z-index: 210;
+}
+
+/* Column headers stick just below the sticky tab bar */
+#Investment #InvestmentBody .investment-tabs thead.sticky {
+	top: 37px;
+}
+
 #InvestmentBody .total-wrapper {
 	display: inline-flex;
 	justify-content: space-around;
@@ -130,21 +142,30 @@
 	color: var(--text-highlight);
 }
 
+/* Compact rows: trim vertical cell padding and the in-row icons that drive row height */
+#InvestmentBody table tbody td {
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
 #InvestmentBody table tbody td img.rank {
-	width: 22px;
+	width: 18px;
 }
 #InvestmentBody table tbody td .hideicon {
-	width: 24px;
-	height: 24px;
+	width: 18px;
+	height: 18px;
 	cursor: pointer;
 	display: block;
+	background-size: contain;
 }
 #InvestmentBody table tbody td .hideicon.ishidden-off {
 	background: url(../images/visible.png);
+	background-size: contain;
 }
 
 #InvestmentBody table tbody td .hideicon.ishidden-on {
 	background: url(../images/unvisible.png);
+	background-size: contain;
 }
 
 #InvestmentBody #hidden-bar.hide{
@@ -269,4 +290,138 @@
 #InvestmentBody tr th span.medal {
 	background: url(../../x_img/medal.png) center no-repeat;
 	background-size: contain;
+}
+
+
+/* My GBs tab (own GB changes since last visit) */
+#invest-mygbs .header {
+	padding: 1em;
+}
+
+#invest-mygbs th,
+#invest-mygbs td {
+	text-align: center;
+	padding: 0.3rem 5px;
+}
+
+#invest-mygbs th:first-child,
+#invest-mygbs td:first-child {
+	text-align: left;
+}
+
+#invest-mygbs strong.success {
+	color: var(--success);
+}
+
+#invest-mygbs .leveled {
+	color: var(--text-highlight);
+	font-weight: bold;
+}
+
+#invest-mygbs tr.gbprow {
+	cursor: pointer;
+}
+
+#invest-mygbs tr.gbprow td:first-child {
+	background-image: url('../../../../images/hud/chevron-left.svg');
+	background-size: 14px 14px;
+	background-position: left center;
+	background-repeat: no-repeat;
+	padding-left: 18px;
+}
+
+#invest-mygbs tr.gbprow.open td:first-child {
+	background-image: url('../../../../images/hud/chevron-down.svg');
+}
+
+/* Subtle highlight on the expanded row so it stands out from collapsed ones.
+   Use background-color (not the shorthand) so the chevron's repeat/size/position aren't reset. */
+#invest-mygbs tr.gbprow.open > td {
+	background-color: var(--table-bg-bright);
+}
+
+/* keep the progress track transparent so its bar stays visible */
+#invest-mygbs tr.gbprow.open > td.progress {
+	background-color: transparent;
+}
+
+/* Highlight GBs that changed since the last visit (listed first) */
+#invest-mygbs tr.gbprow.changed td:first-child {
+	color: var(--text-highlight);
+	font-weight: bold;
+}
+
+#invest-mygbs td.progress {
+	position: relative;
+	background: none;
+	color: var(--white);
+	white-space: nowrap;
+	overflow: hidden;
+	/* frame the track so the 100% mark (right edge) is visible */
+	border-left: 1px solid var(--border-table-top);
+	border-right: 1px solid var(--border-table-top);
+}
+
+#invest-mygbs td.progress .progbar {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	background: var(--btn-bg-green-fallback);
+	background: var(--btn-bg-green);
+	z-index: -1;
+}
+
+#invest-mygbs tr.gbpdetail > td {
+	padding: 0;
+}
+
+#invest-mygbs .gbp-note {
+	padding: 4px 8px;
+	color: var(--text-highlight);
+	text-align: left;
+}
+
+#invest-mygbs table.gbp-contrib {
+	width: 100%;
+}
+
+#invest-mygbs table.gbp-contrib th,
+#invest-mygbs table.gbp-contrib td {
+	padding: 2px 8px;
+}
+
+#invest-mygbs table.gbp-contrib th:first-child,
+#invest-mygbs table.gbp-contrib td:first-child {
+	text-align: left;
+	padding-left: 50px;
+}
+
+#invest-mygbs table.gbp-contrib tr.gbp-new td {
+	background: var(--table-bg-success);
+}
+
+
+/* Clickable icon: total FP change across my GBs since the last visit */
+#gb-change-bar {
+	display: flex;
+	align-items: center;
+	margin: 1px 1px 0 0;
+	height: 26px;
+	padding: 0 8px 0 4px;
+	background: rgba(0, 0, 0, 0.50);
+	border: 1px solid rgba(113, 74, 35, 1);
+	border-radius: 4px;
+	color: var(--beige);
+	user-select: none;
+}
+
+#gb-change-bar.has-change .gb-change-total {
+	color: var(--success);
+}
+
+#gb-change-bar img {
+	width: 24px;
+	height: 24px;
+	margin-right: 4px;
 }
