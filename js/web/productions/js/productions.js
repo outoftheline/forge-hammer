@@ -62,6 +62,7 @@ let Productions = {
 	RatingCurrentTab: 'Results',
 	RatingFilteredSizes: [],
 	RatingSearchTerm: '',
+	ScoreModifierPending: [],
 
 	fragmentsSet: new Set(),
 	efficiencySettings: Object.assign(
@@ -88,6 +89,8 @@ let Productions = {
 		Presets: null,
 		PresetStorageKey: 'Productions.Rating.Presets',
 		LegacyStorageKey: 'Productions.Rating.Data',
+		ScoreModifiers: null,
+		ScoreModifierStorageKey: 'Productions.Rating.ScoreModifiers',
 
 
 		getDefaultData: () => ({
@@ -318,6 +321,32 @@ let Productions = {
 				preset.data = Productions.Rating.Data;
 			}
 			Productions.Rating.savePresets();
+		},
+
+
+		loadModifiers: () => {
+			if (Productions.Rating.ScoreModifiers) return;
+			try {
+				Productions.Rating.ScoreModifiers = JSON.parse(FH.Storage.getItem(Productions.Rating.ScoreModifierStorageKey) || "{}");
+			} catch (e) {
+				Productions.Rating.ScoreModifiers = {};
+			}
+		},
+
+		saveModifiers: () => {
+			FH.Storage.setItem(Productions.Rating.ScoreModifierStorageKey, JSON.stringify(Productions.Rating.ScoreModifiers || {}));
+		},
+
+		getModifier: (entityId) => {
+			Productions.Rating.loadModifiers();
+			return Productions.Rating.ScoreModifiers[entityId] || 0;
+		},
+
+		setModifier: (entityId, value) => {
+			Productions.Rating.loadModifiers();
+			if (!value) delete Productions.Rating.ScoreModifiers[entityId];
+			else Productions.Rating.ScoreModifiers[entityId] = value;
+			Productions.Rating.saveModifiers();
 		}
 	},
 
@@ -2052,8 +2081,47 @@ let Productions = {
 			$(this).toggleClass('highlighted')
 		});
 
+		// edit a per-building score modifier
+		$('.edit-score-modifier').on('click', function (e) {
+			e.stopPropagation();
+			let icon = $(this);
+			let cell = icon.closest('td');
+			if (cell.find('input.score-modifier-input').length) return;
+			let entityId = icon.attr('data-meta_id');
+			let current = Productions.Rating.getModifier(entityId);
+			cell.children('.score-value, .score-modifier-badge, .edit-score-modifier').hide();
+			let input = $('<input type="number" step="1" class="score-modifier-input" value="' + current + '">');
+			cell.append(input);
+			input.trigger('focus').trigger('select');
+
+			let done = false;
+			let commit = (save) => {
+				if (done) return;
+				done = true;
+				let val = Math.round(parseFloat(input.val())) || 0;
+				if (save && val !== current) {
+					Productions.Rating.setModifier(entityId, val);
+					if ($('#ScoreModifiers').length) Productions.BuildScoreModifiersBody();
+					Productions.CalcRatingBody();
+				} else {
+					input.remove();
+					cell.children('.score-value, .score-modifier-badge, .edit-score-modifier').show();
+				}
+			};
+			input.on('blur', () => commit(true));
+			input.on('click', (ev) => ev.stopPropagation());
+			input.on('keydown', (ev) => {
+				if (ev.key === 'Enter') { ev.preventDefault(); commit(true); }
+				else if (ev.key === 'Escape') { ev.preventDefault(); commit(false); }
+			});
+		});
+
 		$('#addMetaBuilding').on('click',function (){
 			$('#ProductionsRatingBody .overlay').show()
+		})
+
+		$('#ScoreModifiersBtn').on('click', function () {
+			Productions.ShowScoreModifiers();
 		})
 
 		// closing "add building" screen
@@ -2383,6 +2451,7 @@ let Productions = {
 
 			h.push('<div class="ratingtable">');
 			h.push('<a id="RatingsResults" class="toggle-tab btn btn-slim" data-value="Settings">' + FH.t('Boxes.ProductionsRating.Settings') + '</a>')
+			h.push('<a id="ScoreModifiersBtn" class="btn btn-slim">' + FH.t('Boxes.ProductionsRating.ModifiersButton') + '</a>')
 			h.push('<table class="foe-table sortable-table TSinactive exportable">');
 			h.push('<thead class="sticky">');
 
@@ -2457,7 +2526,13 @@ let Productions = {
 
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
 				h.push(`<tr class="${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
-				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="text-right">'+Math.round(building.rating.totalScore * 100)+'</td>')
+				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
+				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="text-right score-cell'+(scoreModifier !== 0 ? ' has-modifier' : '')+'">')
+				h.push('<span class="score-value">'+Math.round(building.rating.totalScore * 100)+'</span>')
+				if (scoreModifier !== 0)
+					h.push('<span class="score-modifier-badge '+(scoreModifier > 0 ? 'pos' : 'neg')+'">'+(scoreModifier > 0 ? '+' : '')+scoreModifier+'</span>')
+				h.push('<span class="edit-score-modifier game-cursor" data-meta_id="'+building.entityId+'" data-original-title="'+FH.t('Boxes.ProductionsRating.ScoreModifierTooltip')+'">✎</span>')
+				h.push('</td>')
 
 				h.push('<td exportvalue="'+building.name+'" data-text="'+FH.helper.str.cleanup(building.name)+'" class="'+(FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'"><div class="flex-between"><div>');
 				if (!building.highlight && !building.isInInventory)
@@ -2680,6 +2755,10 @@ let Productions = {
 				}
 			}
 		}
+		let scoreModifier = Productions.Rating.getModifier(building.entityId);
+		score.scoreModifier = scoreModifier;
+		if (scoreModifier) score.totalScore += scoreModifier / 100;
+
 		return score;
 	},
 
@@ -2828,6 +2907,200 @@ let Productions = {
 		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('.ratingtable table'),'json','EfficiencyRating')">JSON</button></span></p>`);
 
 		$('#ProductionsRatingSettingsBox').html(c.join(''));
+	},
+
+
+	ShowScoreModifiers: () => {
+		if ($('#ScoreModifiers').length === 0) {
+			FH.HTML.Box({
+				id: 'ScoreModifiers',
+				title: FH.t('Boxes.ProductionsRating.ModifiersTitle'),
+				auto_close: true,
+				dragdrop: true,
+				minimize: true,
+				resize: true
+			});
+			FH.HTML.AddCssFile('productions');
+		}
+		Productions.ScoreModifierPending = [];
+		Productions.BuildScoreModifiersBody();
+	},
+
+
+	getModifierBaseScore: (entityId) => {
+		if (!FH.Main.CityEntities?.[entityId]) return null;
+		try {
+			let rated = Productions.rateBuildings([entityId], true, FH.CurrentEra);
+			if (!rated?.[0]?.rating) return null;
+			return Math.round(rated[0].rating.totalScore * 100) - Math.round(rated[0].rating.scoreModifier || 0);
+		} catch (e) {
+			return null;
+		}
+	},
+
+
+	ScoreModifierRowHtml: (entityId) => {
+		let name = FH.Main.CityEntities?.[entityId]?.name || entityId;
+		let base = Productions.getModifierBaseScore(entityId);
+		let modifier = Productions.Rating.getModifier(entityId);
+		return '<tr data-meta_id="' + entityId + '">' +
+			'<td class="modifier-id" data-text="' + FH.helper.str.cleanup(entityId) + '">' + entityId + '</td>' +
+			'<td data-text="' + FH.helper.str.cleanup(name) + '" data-callback_tt="building" data-era="' + (FH.CurrentEra === 'AllAge' ? '' : FH.CurrentEra) + '" data-meta_id="' + entityId + '">' + name + '</td>' +
+			'<td class="text-right modifier-base" data-number="' + (base === null ? 0 : base) + '">' + (base === null ? '–' : base) + '</td>' +
+			'<td class="text-right" data-number="' + modifier + '"><input type="number" step="1" class="modifier-value" value="' + modifier + '"></td>' +
+			'<td class="text-center"><span class="modifier-delete game-cursor" data-original-title="' + FH.t('Boxes.ProductionsRating.ModifierDelete') + '">✕</span></td>' +
+			'</tr>';
+	},
+
+
+	// Header text-filter (button + popup) for a Score Modifiers column; colIdx is matched against the row cells
+	ScoreModifierFilterControl: (colIdx) =>
+		'<button type="button" class="scoremod-filterbtn" title="' + FH.t('Boxes.ProductionsRating.ColumnFilter') + '">▾</button>' +
+		'<div class="scoremod-filter-popup" data-col="' + colIdx + '" style="display:none"><input type="text" class="scoremod-filter"></div>',
+
+	// Shows/hides rows by the active column text filters (substring, case-insensitive); marks filtered columns
+	FilterScoreModifiers: () => {
+		let body = document.getElementById('ScoreModifiersBody');
+		if (!body) return;
+
+		let filters = [];
+		body.querySelectorAll('.scoremod-filter-popup').forEach((p) => {
+			let input = p.querySelector('.scoremod-filter'),
+				val = input ? input.value.trim() : '',
+				btn = p.parentNode.querySelector('.scoremod-filterbtn');
+			if (btn) btn.classList.toggle('scoremod-flt-on', val.length > 0);
+			if (val) filters.push({ col: +p.dataset.col, val: val.toUpperCase() });
+		});
+
+		body.querySelectorAll('.scoreModifierList tr').forEach((tr) => {
+			let cells = tr.getElementsByTagName('td'),
+				show = filters.every(f => cells[f.col] && cells[f.col].textContent.toUpperCase().indexOf(f.val) !== -1);
+			tr.style.display = show ? '' : 'none';
+		});
+	},
+
+	// Toggles the clicked column's filter popup (one open at a time)
+	onScoreModifierFilterBtnClick: function (e) {
+		e.stopImmediatePropagation(); // don't let tableSorter treat this as a header sort
+		let $popup = $(this).siblings('.scoremod-filter-popup'),
+			wasOpen = $popup.is(':visible');
+		Productions.hideScoreModifierPopups();
+		if (!wasOpen) $popup.show().find('.scoremod-filter').trigger('focus');
+	},
+
+	hideScoreModifierPopups: () => {
+		let body = document.getElementById('ScoreModifiersBody');
+		if (body) $(body).find('.scoremod-filter-popup').hide();
+	},
+
+
+	BuildScoreModifiersBody: () => {
+		Productions.Rating.loadModifiers();
+
+		let ids = Object.keys(Productions.Rating.ScoreModifiers || {});
+		for (let id of Productions.ScoreModifierPending)
+			if (!ids.includes(id)) ids.push(id);
+
+		let h = [];
+		h.push('<div class="score-modifiers">');
+
+		// add-building search across all city entities (filter by id + name)
+		h.push('<div class="score-modifiers-add">');
+		h.push('<h2>' + FH.t('Boxes.ProductionsRating.ModifierAddBuilding') + '</h2>');
+		h.push('<input type="text" id="scoreModifierSearch" placeholder="' + FH.t('Boxes.ProductionsRating.ModifierAddFilter') + '">');
+		h.push('<ul class="results"></ul>');
+		h.push('</div>');
+
+		h.push('<table class="foe-table sortable-table"><thead class="sticky"><tr class="sorter-header">');
+		h.push('<th data-type="scoreModifierList" class="scoremod-filter-th">' + FH.t('Boxes.ProductionsRating.ModifierId') + Productions.ScoreModifierFilterControl(0) + '</th>');
+		h.push('<th data-type="scoreModifierList" class="scoremod-filter-th">' + FH.t('Boxes.ProductionsRating.BuildingName') + Productions.ScoreModifierFilterControl(1) + '</th>');
+		h.push('<th data-type="scoreModifierList" class="is-number text-center">' + FH.t('Boxes.ProductionsRating.ModifierBaseScore') + '</th>');
+		h.push('<th data-type="scoreModifierList" class="is-number text-center">' + FH.t('Boxes.ProductionsRating.ModifierValue') + '</th>');
+		h.push('<th class="no-sort"></th>');
+		h.push('</tr></thead>');
+		h.push('<tbody class="scoreModifierList">');
+		for (let id of ids)
+			h.push(Productions.ScoreModifierRowHtml(id));
+		h.push('</tbody></table>');
+		h.push('<p class="score-modifiers-empty' + (ids.length ? ' hidden' : '') + '">' + FH.t('Boxes.ProductionsRating.ModifierEmpty') + '</p>');
+		h.push('</div>');
+
+		$('#ScoreModifiersBody').html(h.join('')).promise().done(function () {
+			let $body = $('#ScoreModifiersBody');
+			$body.off('.scoremod'); // avoid stacking delegated handlers on rebuild
+
+			// Column filters
+			let $table = $body.find('.sortable-table');
+			$table.on('click', '.scoremod-filterbtn', Productions.onScoreModifierFilterBtnClick);
+			$table.on('click', '.scoremod-filter-popup', (e) => e.stopImmediatePropagation());
+			$table.tableSorter();
+
+			$body.on('input.scoremod', '.scoremod-filter', Productions.FilterScoreModifiers);
+			// Close an open filter popup when clicking outside it; self-unbinds once the box is gone
+			$(document).off('click.scoremodfilter').on('click.scoremodfilter', (e) => {
+				if (!document.getElementById('ScoreModifiersBody')) { $(document).off('click.scoremodfilter'); return; }
+				if ($(e.target).closest('.scoremod-filter-popup, .scoremod-filterbtn').length) return;
+				Productions.hideScoreModifierPopups();
+			});
+
+			let toggleEmpty = () => {
+				$body.find('.score-modifiers-empty').toggleClass('hidden', $body.find('.scoreModifierList tr').length > 0);
+			};
+			// keep an open Results table in sync with modifier changes
+			let syncRating = () => {
+				if ($('#ProductionsRating').length) Productions.CalcRatingBody();
+			};
+
+			// edit a modifier value (0 removes it from storage)
+			$body.on('change.scoremod', '.modifier-value', function () {
+				let entityId = $(this).closest('tr').attr('data-meta_id');
+				let val = Math.round(parseFloat($(this).val())) || 0;
+				Productions.Rating.setModifier(entityId, val);
+				$(this).val(val).closest('td').attr('data-number', val).data('number', val);
+				syncRating();
+			});
+			// don't let editing the input trigger tableSorter's row highlight
+			$body.on('click.scoremod', '.modifier-value', (e) => e.stopPropagation());
+
+			// remove a modifier
+			$body.on('click.scoremod', '.modifier-delete', function () {
+				let $row = $(this).closest('tr');
+				let entityId = $row.attr('data-meta_id');
+				Productions.Rating.setModifier(entityId, 0);
+				Productions.ScoreModifierPending = Productions.ScoreModifierPending.filter(x => x !== entityId);
+				$row.remove();
+				toggleEmpty();
+				syncRating();
+			});
+
+			// add-building search
+			let entities = Object.values(FH.Main.CityEntities || {}).filter(x => x?.id && x?.name);
+			$('#scoreModifierSearch').on('input', function () {
+				let term = $(this).val().trim();
+				let $results = $body.find('.score-modifiers-add .results');
+				$results.html('');
+				if (!term) return;
+				let regEx = new RegExp(term, 'i');
+				let existing = new Set($body.find('.scoreModifierList tr').map((i, el) => $(el).attr('data-meta_id')).get());
+				let matches = entities.filter(x => !existing.has(x.id) && regEx.test(x.id + ';' + x.name)).sort((a, b) => (a.name > b.name ? 1 : -1));
+				let limit = 100;
+				for (let building of matches.slice(0, limit))
+					$results.append('<li data-meta_id="' + building.id + '"><span class="name">' + building.name + '</span><span class="id">' + building.id + '</span></li>');
+				if (matches.length > limit)
+					$results.append('<li class="more">…</li>');
+			});
+
+			// add a building from the search results as a new row
+			$body.on('click.scoremod', '.score-modifiers-add .results li:not(.more)', function () {
+				let entityId = $(this).attr('data-meta_id');
+				if (!entityId) return;
+				if (!Productions.ScoreModifierPending.includes(entityId)) Productions.ScoreModifierPending.push(entityId);
+				$body.find('.scoreModifierList').append(Productions.ScoreModifierRowHtml(entityId));
+				$(this).remove();
+				toggleEmpty();
+				$body.find('.scoreModifierList tr[data-meta_id="' + entityId + '"] .modifier-value').trigger('focus').trigger('select');
+			});
+		});
 	},
 
 
