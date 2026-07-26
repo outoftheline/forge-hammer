@@ -544,5 +544,5 @@ let BattleAssist = {
         if ($('#battleAssistAAConfig').length > 0) BattleAssist.ShowArmyAdviceConfig();
     }
 };
-FH.BattleAssist = {ShowArmyAdviceConfig: BattleAssist.ShowArmyAdviceConfig};
+FH.BattleAssist = BattleAssist;
 }
