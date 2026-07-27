@@ -90,8 +90,8 @@ let Calculator = {
 
         // BuildingName could not be loaded from the BuildingInfo
 		let BuildingName = FH.Main.CityEntities[FH.Main.CurrentGB.Entity['cityentity_id']]['name'];
-		let Level = (FH.Main.CurrentGB.Entity.level !== undefined ? FH.Main.CurrentGB.Entity.level : 0);
-		let MaxLevel = (FH.Main.CurrentGB.Entity.max_level !== undefined ? FH.Main.CurrentGB.Entity.max_level : 0);
+		let Level = (FH.Main.CurrentGB.Entity.level || 0);
+		let MaxLevel = (FH.Main.CurrentGB.Entity.max_level || 0);
 
 		h.push(`<div id="gbCalc">
 				<div class="header text-center dark-bg p5">

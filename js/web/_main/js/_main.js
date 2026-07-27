@@ -702,7 +702,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
 		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
 		if (dataId == currentId && $('#OwnPartBox').length > 0) {
-			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level || Main.CurrentGB.Entity.max_level;
 			Parts.CalcBody();
 		}
 	});
@@ -711,7 +711,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		let currentId = (Main.CurrentGB?.Entity?.player_id || "unknown")+ "_" + (Main.CurrentGB?.Entity?.id || "unknown");
 		let dataId = data.responseData[0]?.player_id + "_" + data.responseData[0]?.id
 		if (dataId == currentId && $('#OwnPartBox').length > 0) {
-			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level;
+			Main.CurrentGB.Entity.max_level = data.responseData[0]?.max_level || Main.CurrentGB.Entity.max_level;
 			Parts.CalcBody();
 		}
 	});
