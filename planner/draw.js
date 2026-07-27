@@ -246,7 +246,7 @@ window.PlannerApp = window.PlannerApp || {};
             dom.populationEl.textContent = population;
             dom.populationEl.classList.toggle('negative', population < 0);
             dom.populationEl.title = population < 0
-                ? 'Warning: population is negative — this layout needs more residences.'
+                ? app.t('XPlan.Population.NegativeWarning', '')
                 : '';
         }
     }
@@ -363,6 +363,40 @@ window.PlannerApp = window.PlannerApp || {};
         context.restore();
     }
 
+    function renderFullMapCanvas() {
+        const bounds = getMapBoundsPx();
+        const dpr = getDpr();
+
+        const cssW = state.rotated ? bounds.height : bounds.width;
+        const cssH = state.rotated ? bounds.width : bounds.height;
+
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = Math.max(1, Math.round(cssW * dpr));
+        exportCanvas.height = Math.max(1, Math.round(cssH * dpr));
+
+        const exportCtx = exportCanvas.getContext('2d');
+        exportCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        if (state.rotated) {
+            exportCtx.transform(0, 1, -1, 0, bounds.height, 0);
+        }
+
+        exportCtx.textBaseline = 'middle';
+        exportCtx.textAlign = 'center';
+        exportCtx.font = state.font;
+        exportCtx.lineWidth = 1;
+
+        if (state.gridCanvas) {
+            exportCtx.drawImage(state.gridCanvas, 0, 0, bounds.width, bounds.height);
+        }
+
+        for (const building of state.mapBuildings) {
+            building.draw(exportCtx);
+        }
+
+        return exportCanvas;
+    }
+
     app.ctx = ctx;
     app.ZOOM_STEPS = ZOOM_STEPS;
     app.MIN_ZOOM = ZOOM_STEPS[0];
@@ -388,4 +422,5 @@ window.PlannerApp = window.PlannerApp || {};
     app.zoomOut = zoomOut;
     app.drawSelectionRect = drawSelectionRect;
     app.drawStreetPreview = drawStreetPreview;
+    app.renderFullMapCanvas = renderFullMapCanvas;
 })(window.PlannerApp);

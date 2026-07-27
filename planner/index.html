@@ -8,7 +8,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>City Planner - Forge Hammer</title>
+    <title data-t="true">XPlan.DocumentTitle</title>
     <link rel="icon" type="image/x-icon" href="../images/app48.png">
     <link href="planner.css" rel="stylesheet">
 </head>
@@ -16,65 +16,68 @@
 <body>
     <section id="submitWindow" class="modal">
         <div class="modal-inner">
-            <h1>Forge Hammer - City Planner</h1>
-            <p>Please use the "Send to planner" function in the City Overview.</p>
+            <h1 data-t="true">XPlan.SubmitWindow.Title</h1>
+            <p data-t="true">XPlan.SubmitWindow.Text</p>
         </div>
     </section>
 
 
     <div class="wrapper">
         <section class="sidebar">
-            <h1><img src="../images/app48.png" /> City Planner v1.0</h1>
-            <div id="populationStat">Population: <span class="pop-stat">0</span></div>
+            <h1><img src="../images/app48.png" /> <span data-t="true">XPlan.Title</span>
+                <select id="languageSelect" class="lang-select" data-t-title="XPlan.Language.Title" title=""><option value="auto">…</option></select>
+            </h1>
+            <div id="populationStat"><span data-t="true">XPlan.Population.Label</span> <span class="pop-stat">0</span></div>
             <div class="filter">
                 <div id="metaSearch">
-                    <input id="metaSearchInput" type="text" placeholder="Add a new building…" autocomplete="off">
+                    <input id="metaSearchInput" type="text" data-t-placeholder="XPlan.Search.Placeholder" placeholder="" autocomplete="off">
                     <ul id="metaSearchResults"></ul>
                 </div>
 
-                <input id="buildingFilterText" type="text" placeholder="Find buildings">
+                <input id="buildingFilterText" type="text" data-t-placeholder="XPlan.Filter.Placeholder" placeholder="">
 
                 <div class="flex stretch">
                     <select id="buildingSort">
-                        <option value="name-asc">A–Z</option>
-                        <option value="name-desc">Z–A</option>
-                        <option value="width-asc">y ↑</option>
-                        <option value="width-desc">y ↓</option>
-                        <option value="height-asc">x ↑</option>
-                        <option value="height-desc">x ↓</option>
+                        <option value="name-asc" data-t="true">XPlan.Sort.NameAsc</option>
+                        <option value="name-desc" data-t="true">XPlan.Sort.NameDesc</option>
+                        <option value="width-asc" data-t="true">XPlan.Sort.WidthAsc</option>
+                        <option value="width-desc" data-t="true">XPlan.Sort.WidthDesc</option>
+                        <option value="height-asc" data-t="true">XPlan.Sort.HeightAsc</option>
+                        <option value="height-desc" data-t="true">XPlan.Sort.HeightDesc</option>
                     </select>
 
                     <select id="buildingTypeFilter">
-                        <option value="all">Types</option>
-                        <option value="residential">Residential</option>
-                        <option value="production">Production</option>
-                        <option value="greatbuilding">GB</option>
-                        <option value="military">Military</option>
+                        <option value="all" data-t="true">XPlan.Type.All</option>
+                        <option value="residential" data-t="true">XPlan.Type.Residential</option>
+                        <option value="production" data-t="true">XPlan.Type.Production</option>
+                        <option value="greatbuilding" data-t="true">XPlan.Type.GreatBuilding</option>
+                        <option value="military" data-t="true">XPlan.Type.Military</option>
                     </select>
 
                     <select id="buildingStreetFilter">
-                        <option value="all">Streets</option>
-                        <option value="street">With street</option>
-                        <option value="nostreet">No streets</option>
+                        <option value="all" data-t="true">XPlan.Street.All</option>
+                        <option value="street" data-t="true">XPlan.Street.With</option>
+                        <option value="nostreet" data-t="true">XPlan.Street.Without</option>
                     </select>
                 </div>
             </div>
             <ul id="storedBuildingsList"></ul>
 
             <div class="save">
-                <button id="loadPlan" class="btn">Load Plan</button>
                 <div class="group">
-                    <button id="export" class="btn">Export</button>
-                    <button id="import" class="btn">Import</button>
+                    <button id="export" class="btn" data-t-title="XPlan.Buttons.Export"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-down-icon lucide-folder-down"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M12 10v6"/><path d="m15 13-3 3-3-3"/></svg></button>
+                    <button id="import" class="btn" data-t-title="XPlan.Buttons.Import"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder-up-icon lucide-folder-up"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M12 10v6"/><path d="m9 13 3-3 3 3"/></svg></button>
+                    <button id="exportImage" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-down-icon lucide-image-down"><path d="M10.3 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10l-3.1-3.1a2 2 0 0 0-2.814.014L6 21"/><path d="m14 19 3 3v-5.5"/><path d="m17 22 3-3"/><circle cx="9" cy="9" r="2"/></svg></button>
+                    <button id="loadPlan" class="btn" data-t="true">XPlan.Buttons.LoadPlan</button>
                 </div>
-                <button id="save" class="btn">Save</button>
+                <button id="save" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg><span data-t="true">XPlan.Buttons.Save</span></button>
             </div>
         </section>
         <div class="content">
             <section id="map">
                 <div class="buttons left">
                     <div class="group">
-                        <span class="btn dupe"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        <span class="btn dupe" data-t-title="XPlan.Buttons.StoreBuildings" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
                                 class="lucide lucide-download-icon lucide-download">
@@ -82,11 +85,11 @@
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                 <path d="m7 10 5 5 5-5" />
                             </svg></span>
-                        <button id="storeSelection" class="btn">Selection <span></span></button>
-                        <button id="storeAll" class="btn">Everything</button>
+                        <button id="storeSelection" class="btn"><span data-t="true">XPlan.Buttons.Selection</span> <span class="count"></span></button>
+                        <button id="storeAll" class="btn" data-t="true">XPlan.Buttons.Everything</button>
                     </div>
                     <div class="group">
-                        <span class="btn dupe"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        <span class="btn dupe" data-t-title="XPlan.Street.All" title=""><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
                                 class="lucide lucide-road-icon lucide-road">
@@ -96,8 +99,8 @@
                                 <path
                                     d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z" />
                             </svg></span>
-                        <button id="removeStreets" class="btn">Remove All</button>
-                        <button id="placeStreet" class="btn">Place</button>
+                        <button id="removeStreets" class="btn" data-t="true">XPlan.Buttons.RemoveAll</button>
+                        <button id="placeStreet" class="btn" data-t="true">XPlan.Buttons.Place</button>
                     </div>
                     <div class="group" id="streetSizeGroup"></div>
                     <input type="file" id="importFileInput" accept=".json" style="display:none">
@@ -157,7 +160,7 @@
                         <button id="font" class="btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alarge-small-icon lucide-a-large-small"><path d="m15 16 2.536-7.328a1.02 1.02 1 0 1 1.928 0L22 16"/><path d="M15.697 14h5.606"/><path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16"/><path d="M3.304 13h6.392"/></svg>
                         </button>
-                    <a href="https://ko-fi.com/forgehammer" target="_blank" title="Support us on Ko-Fi"><img src="../images/kofi.png" width="35" /></a>
+                    <a href="https://ko-fi.com/forgehammer" target="_blank" data-t-title="XPlan.KoFi.Title"><img src="../images/kofi.png" width="35" /></a>
                 </div>
                 <div class="info"></div>
                 <div id="canvasWrapper">
@@ -169,7 +172,7 @@
     <div id="planListModal" class="modal hidden">
         <div class="modal-inner">
             <div class="modal-header">
-                <h2>Saved Plans</h2>
+                <h2 data-t="true">XPlan.Modal.SavedPlans</h2>
                 <button id="planListClose" class="btn modal-close">✕</button>
             </div>
             <ul id="planListItems"></ul>
@@ -178,43 +181,42 @@
     <div id="newDataModal" class="modal hidden">
         <div class="modal-inner">
             <div class="modal-header">
-                <h2>Incoming Data</h2>
+                <h2 data-t="true">XPlan.Modal.IncomingData</h2>
             </div>
-            <p id="newDataModalText">Do you want to start working with the data you just sent? Your currently saved plan will not be deleted.</p>
+            <p id="newDataModalText" data-t="true">XPlan.Modal.IncomingDataText</p>
             <div class="flex stretch">
-                <input type="text" id="newDataPlanName" placeholder="New plan name">
+                <input type="text" id="newDataPlanName" data-t-placeholder="XPlan.Modal.NewPlanNamePlaceholder" placeholder="" />
             </div>
             <div>
-                <button id="newDataSaveBtn" class="btn btn-mid">Save as New Plan</button>
-                <button id="newDataDiscardBtn" class="btn btn-mid">Discard and Continue</button>
+                <button id="newDataSaveBtn" class="btn btn-mid" data-t="true">XPlan.Modal.SaveAsNewPlan</button>
+                <button id="newDataDiscardBtn" class="btn btn-mid" data-t="true">XPlan.Modal.DiscardAndContinue</button>
             </div>
         </div>
     </div>
     <div id="information" class="modal hidden">
         <div class="modal-inner">
             <div class="modal-header">
-                <h2>How to use this planner</h2>
+                <h2 data-t="true">XPlan.Modal.HowTo.Title</h2>
                 <button class="btn modal-close">✕</button>
             </div>
-            <p>Please report any issues you run into. We'll add more features in the future!</p>
+            <p data-t="true">XPlan.Modal.HowTo.Intro</p>
             <ul>
-                <li>Cancel any action with <b>right click</b></li>
-                <li>Select one building by clicking it. Move it by dragging. Delete it with DEL, backspace or R. Store it with the space bar or by dragging it to the sidebar.</li>
-                <li>Select multiple buildings with the CTRL key. <br />
-                    You can deselect any building from your selection by holding the CTRL key and clicking it. 
-                    You can move all selected buildings at once to a free space by dragging. <br />
-                    Store selected buildings either by dragging them to the sidebar, clicking the space bar or clicking in the top right corner next to the <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg>
+                <li data-t="true">XPlan.Modal.HowTo.Cancel</li>
+                <li data-t="true">XPlan.Modal.HowTo.SingleSelect</li>
+                <li>
+                    <span data-t="true">XPlan.Modal.HowTo.MultiSelect</span> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg>
                 </li>
-                <li>Move the map by holding the ALT key and using your mouse or using the WASD keys!</li>
-                <li>Delete buildings from the sidebar or map by using the backspace, R or DEL key.</li>
-                <li>Delete street tiles by using the street placement over them.</li>
+                <li data-t="true">XPlan.Modal.HowTo.MoveMap</li>
+                <li data-t="true">XPlan.Modal.HowTo.DeleteFromSidebar</li>
+                <li data-t="true">XPlan.Modal.HowTo.DeleteStreets</li>
             </ul>
-            <p>Buildings added in the planner are marked with a *<br />Undo and redo actions are limited to the last 5 actions.</p>
+            <p data-t="true">XPlan.Modal.HowTo.Footer</p>
         </div>
     </div>
 
     <script src="../vendor/browser-polyfill/browser-polyfill.min.js"></script>
     <script src="../vendor/dexie/dexie.min.js"></script>
+    <script src="i18n.js"></script>
     <script src="vars.js"></script>
     <script src="mapbuilding.js"></script>
     <script src="placement.js"></script>

@@ -115,13 +115,15 @@ window.PlannerApp = window.PlannerApp || {};
 
     function showDeletedLi(item) {
         const name = (item.custom ? '* ' : '') + item.name;
+        const restoreHint = app.t('XPlan.Sidebar.ClickToRestore', 'Click to restore');
+        const restoreLabel = app.t('XPlan.Sidebar.Restore', 'Restore');
 
         return (
-            '<li data-id="' + item.id + '" class="deleted ' + item.type + '" title="Click to restore">' +
+            '<li data-id="' + item.id + '" class="deleted ' + item.type + '" title="' + restoreHint + '">' +
                 '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
                 '<span class="name">' + name + '</span>' +
                 ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
-                '<span class="restore-icon" title="Restore">↺</span>' +
+                '<span class="restore-icon" title="' + restoreLabel + '">↺</span>' +
             '</li>'
         );
     }
@@ -138,7 +140,7 @@ window.PlannerApp = window.PlannerApp || {};
         const deletedGroups = sortStoredBuildingGroups(getDeletedBuildingGroups());
         let deletedHtml = '';
         if (deletedGroups.length) {
-            deletedHtml = '<li class="section-header">Deleted</li>' +
+            deletedHtml = '<li class="section-header">' + app.t('XPlan.Sidebar.Deleted', 'Deleted') + '</li>' +
                 deletedGroups.map(showDeletedLi).join('');
         }
 

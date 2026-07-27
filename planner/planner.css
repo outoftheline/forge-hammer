@@ -1,14 +1,14 @@
 @import url('../css/variables.css');
 
 body {
-    scrollbar-color: #47677d #0e171d;
+    scrollbar-color: #5f5751 #111213;
     font-family: sans-serif;
 }
 
 body, html {
     margin: 0;
     padding: 0;
-    background-color: #0e171d;
+    background: #111213 url('../images/hud/grey-bg.png');
     color: #eee;
     overflow-x: hidden;
 }
@@ -74,6 +74,8 @@ select option {
 
 .btn {
     padding: 3px 6px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .btn.btn-mid {
@@ -98,7 +100,7 @@ select option {
     user-select: none;
     width: 290px;
     max-height: 100vh;
-    border-right: 1px dotted #47677d;
+    border-right: 1px dotted #5c5953;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -108,6 +110,13 @@ select option {
 
 .sidebar h1 img {
     height: 30px;
+}
+
+.sidebar h1 .lang-select {
+    margin-left: auto;
+    max-width: 92px;
+    font-size: 11px;
+    padding: 2px 4px;
 }
 
 .sidebar .filter, .sidebar .save {
@@ -162,7 +171,7 @@ select option {
     justify-content: flex-start;
     padding-top: 8px;
     margin-top: 4px;
-    border-top: 1px dotted #47677d;
+    border-top: 1px dotted #615c55;
     font-size: 80%;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -352,7 +361,7 @@ button, .btn {
 	height: 100%;
 	width: 100%;
     pointer-events: none;
-    box-shadow: inset 0 0 20px #0b1217, inset 0 0 5px #0b1217 !important;
+    box-shadow: inset 0 0 20px #170b0b, inset 0 0 5px #170b0b !important;
 }
 
 #canvasWrapper canvas {
@@ -474,8 +483,8 @@ button, .btn {
     line-height: 18px;
     display: flex;
     flex-direction: column;
-    background-color: #0e171d;
-    border: 1px solid #47677d;
+    background-color: #181715;
+    border: 1px solid #555758;
     border-radius: 8px;
     box-sizing: border-box;
     padding: 10px;
@@ -512,11 +521,11 @@ button, .btn {
     justify-content: space-between;
     gap: 8px;
     padding: 6px 4px;
-    border-bottom: 1px dotted #47677d;
+    border-bottom: 1px dotted #555758;
 }
 
 #planListItems li:hover {
-    background-color: #2a3f50bd;
+    background-color: #4b4332bd;
 }
 
 #planListItems .plan-info {
@@ -540,7 +549,7 @@ button, .btn {
     border: none !important;
     padding: 1px;
     outline: none;
-    background-color: #2a3f50bd;
+    background-color: #41352fbd;
     box-shadow: 0 0 1px 1px #fff2;
 }
 
