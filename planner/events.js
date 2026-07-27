@@ -870,7 +870,7 @@ window.PlannerApp = window.PlannerApp || {};
             } catch (err) {
                 console.error('Failed to rename plan:', err);
                 nameEl.textContent = currentName;
-                alert('Failed to rename plan.');
+                alert(app.t('XPlan.Alerts.RenameFailed', 'Failed to rename plan.'));
             }
         };
 
@@ -897,27 +897,32 @@ window.PlannerApp = window.PlannerApp || {};
     async function refreshPlanListUi() {
         if (!dom.planListItems) return;
 
-        dom.planListItems.innerHTML = '<li class="empty">Loading…</li>';
+        dom.planListItems.innerHTML = '<li class="empty">' + app.t('XPlan.PlanList.Loading', 'Loading…') + '</li>';
 
         let plans = [];
         try {
             plans = await app.getPlanList();
         } catch (err) {
             console.error('Failed to load plan list:', err);
-            dom.planListItems.innerHTML = '<li class="empty">Failed to load saved plans.</li>';
+            dom.planListItems.innerHTML = '<li class="empty">' + app.t('XPlan.PlanList.LoadFailed', 'Failed to load saved plans.') + '</li>';
             return;
         }
 
         if (!plans || !plans.length) {
-            dom.planListItems.innerHTML = '<li class="empty">No saved plans yet.</li>';
+            dom.planListItems.innerHTML = '<li class="empty">' + app.t('XPlan.PlanList.Empty', 'No saved plans yet.') + '</li>';
             return;
         }
 
         plans.sort((a, b) => (b.date || 0) - (a.date || 0));
 
+        const loadTitle = app.t('XPlan.PlanList.LoadPlan', 'Load plan');
+        const renameTitle = app.t('XPlan.PlanList.RenamePlan', 'Rename plan');
+        const deleteTitle = app.t('XPlan.PlanList.DeletePlan', 'Delete plan');
+        const unnamed = app.t('XPlan.PlanList.UnnamedPlan', 'Unnamed plan');
+
         const html = plans.map(plan => {
             const dateStr = plan.date ? new Date(plan.date * 1000).toLocaleString() : '';
-            const name = plan.name || 'Unnamed plan';
+            const name = plan.name || unnamed;
             const meta = [plan.world, plan.playerName, dateStr].filter(Boolean).join(' · ');
 
             return (
@@ -927,9 +932,9 @@ window.PlannerApp = window.PlannerApp || {};
                         '<span class="plan-meta">' + meta + '</span>' +
                     '</span>' +
                     '<div>' +
-                    '<button class="btn plan-load" title="Load plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>' +
-                    '<button class="btn plan-rename" title="Rename plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.986L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
-                    '<button class="btn plan-delete" title="Delete plan"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+                    '<button class="btn plan-load" title="' + loadTitle + '"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right-icon lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>' +
+                    '<button class="btn plan-rename" title="' + renameTitle + '"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.986L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg></button>' +
+                    '<button class="btn plan-delete" title="' + deleteTitle + '"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
                     '</div>' +
                 '</li>'
             );
@@ -963,7 +968,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (!dom.newDataModal) return;
 
         if (dom.newDataPlanNameInput) {
-            dom.newDataPlanNameInput.value = 'Plan ' + new Date().toLocaleDateString();
+            dom.newDataPlanNameInput.value = app.t('XPlan.Plan.FallbackName', 'Plan') + ' ' + new Date().toLocaleDateString();
         }
 
         if (dom.newDataDiscardBtn) {
@@ -990,6 +995,13 @@ window.PlannerApp = window.PlannerApp || {};
         dom.informationBtn.addEventListener('click', () => {
             openModal(document.querySelector('#information'));
         });
+
+        if (dom.languageSelect) {
+            dom.languageSelect.addEventListener('change', () => {
+                app.setLanguage(dom.languageSelect.value);
+            });
+        }
+
         dom.zoomInBtn.addEventListener('click', app.zoomIn);
         dom.zoomOutBtn.addEventListener('click', app.zoomOut);
         dom.canvas.addEventListener('wheel', handleWheelZoom, { passive: false });
@@ -1107,7 +1119,7 @@ window.PlannerApp = window.PlannerApp || {};
         });
 
         dom.resetBtn.addEventListener('click', () => {
-            const reset = confirm('Do you want to restart from scratch? Your changes will not be saved');
+            const reset = confirm(app.t('XPlan.Confirms.Restart', 'Do you want to restart from scratch? Your changes will not be saved'));
             if (reset) {
                 app.clearSavedLayout();
                 resetCity();
@@ -1120,11 +1132,13 @@ window.PlannerApp = window.PlannerApp || {};
 
                 const originalText = dom.saveBtn.textContent;
                 dom.saveBtn.disabled = true;
-                dom.saveBtn.textContent = 'Saving…';
+                dom.saveBtn.textContent = app.t('XPlan.Save.Saving', 'Saving…');
 
                 const success = await app.savePlanToDatabase();
 
-                dom.saveBtn.textContent = success ? 'Saved' : 'Failed to save';
+                dom.saveBtn.textContent = success
+                    ? app.t('XPlan.Save.Saved', 'Saved')
+                    : app.t('XPlan.Save.Failed', 'Failed to save');
                 setTimeout(() => {
                     dom.saveBtn.textContent = originalText;
                     dom.saveBtn.disabled = false;
@@ -1156,13 +1170,13 @@ window.PlannerApp = window.PlannerApp || {};
                     const li = deleteBtn.closest('li[data-plan-id]');
                     if (!li) return;
                     const planId = Number(li.dataset.planId);
-                    if (!confirm('Delete this plan? This cannot be undone.')) return;
+                    if (!confirm(app.t('XPlan.Confirms.DeletePlan', 'Delete this plan? This cannot be undone.'))) return;
                     try {
                         await app.removePlanFromDatabase(planId);
                         await refreshPlanListUi();
                     } catch (err) {
                         console.error('Failed to delete plan:', err);
-                        alert('Failed to delete plan.');
+                        alert(app.t('XPlan.Alerts.DeletePlanFailed', 'Failed to delete plan.'));
                     }
                     return;
                 }
@@ -1178,7 +1192,7 @@ window.PlannerApp = window.PlannerApp || {};
                         dom.submitWindow.classList.add('hidden');
                     } catch (err) {
                         console.error('Failed to load plan:', err);
-                        alert('Failed to load plan.');
+                        alert(app.t('XPlan.Alerts.LoadPlanFailed', 'Failed to load plan.'));
                     }
                     return;
                 }

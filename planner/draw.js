@@ -246,7 +246,7 @@ window.PlannerApp = window.PlannerApp || {};
             dom.populationEl.textContent = population;
             dom.populationEl.classList.toggle('negative', population < 0);
             dom.populationEl.title = population < 0
-                ? 'Warning: population is negative — this layout needs more residences.'
+                ? app.t('XPlan.Population.NegativeWarning', '')
                 : '';
         }
     }

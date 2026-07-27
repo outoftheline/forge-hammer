@@ -8,7 +8,7 @@ window.PlannerApp.dom = {
 
     storeBuildingsBtn: document.querySelector('#storeAll'),
     storeSelectionBtn: document.querySelector('#storeSelection'),
-    storeSelectionCount: document.querySelector('#storeSelection span'),
+    storeSelectionCount: document.querySelector('#storeSelection .count'),
 
     buildingsListEl: document.querySelector('#storedBuildingsList'),
 
@@ -16,6 +16,7 @@ window.PlannerApp.dom = {
     zoomOutBtn: document.querySelector('#zoomOut'),
     informationBtn: document.querySelector('#howto'),
     fontBtn: document.querySelector('#font'),
+    languageSelect: document.querySelector('#languageSelect'),
 
     canvas: document.getElementById('planner'),
 

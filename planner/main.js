@@ -149,7 +149,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.pendingIncomingData = null;
         state.planId = null;
         saveSavedPlanId(null);
-        state.planName = (planName && planName.trim()) || 'New Plan';
+        state.planName = (planName && planName.trim()) || app.t('XPlan.Plan.DefaultName', 'New Plan');
 
         await applyCityData(data);
     }
@@ -253,7 +253,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (!state.metaById || !state.metaById.size) return false;
 
         const world = state.region || 'unknown';
-        const planName = state.planName || 'Plan';
+        const planName = state.planName || app.t('XPlan.Plan.FallbackName', 'Plan');
         const playerId = state.playerId || 'unknown';
         const playerName = state.playerName || 'unknown';
         const boostData = {};
@@ -486,7 +486,7 @@ window.PlannerApp = window.PlannerApp || {};
             downloadJSON(filename, data);
         } catch (e) {
             console.error('Failed to export plan:', e);
-            alert('Failed to export the plan.');
+            alert(app.t('XPlan.Alerts.ExportFailed', 'Failed to export the plan.'));
         }
     }
 
@@ -505,7 +505,7 @@ window.PlannerApp = window.PlannerApp || {};
             text = await file.text();
         } catch (e) {
             console.error('Failed to read import file:', e);
-            alert('Could not read the selected file.');
+            alert(app.t('XPlan.Alerts.ReadFileFailed', 'Could not read the selected file.'));
             return;
         }
 
@@ -513,16 +513,16 @@ window.PlannerApp = window.PlannerApp || {};
         try {
             saved = JSON.parse(text);
         } catch (e) {
-            alert('That file is not valid JSON.');
+            alert(app.t('XPlan.Alerts.InvalidJSON', 'That file is not valid JSON.'));
             return;
         }
 
         if (!isValidImportedState(saved)) {
-            alert('That file does not look like a valid City Planner export.');
+            alert(app.t('XPlan.Alerts.InvalidExport', 'That file does not look like a valid City Planner export.'));
             return;
         }
 
-        if (!confirm('Importing will replace your current layout. Continue?')) return;
+        if (!confirm(app.t('XPlan.Confirms.ImportReplace', 'Importing will replace your current layout. Continue?'))) return;
 
         try {
             await deserializeState(saved);
@@ -530,7 +530,7 @@ window.PlannerApp = window.PlannerApp || {};
             // clear save states
             state.planId = null;
             saveSavedPlanId(null);
-            state.planName = saved.planName || state.planName || 'Imported Plan';
+            state.planName = saved.planName || state.planName || app.t('XPlan.Plan.ImportedName', 'Imported Plan');
 
             state.history = [];
             state.future = [];
@@ -540,7 +540,7 @@ window.PlannerApp = window.PlannerApp || {};
             if (app.dom.submitWindow) app.dom.submitWindow.classList.add('hidden');
         } catch (e) {
             console.error('Failed to import plan:', e);
-            alert('Failed to import the plan.');
+            alert(app.t('XPlan.Alerts.ImportFailed', 'Failed to import the plan.'));
         }
     }
 
