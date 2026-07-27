@@ -1129,18 +1129,19 @@ window.PlannerApp = window.PlannerApp || {};
         if (dom.saveBtn) {
             dom.saveBtn.addEventListener('click', async () => {
                 if (dom.saveBtn.disabled) return;
+                let textElem = document.querySelector('#save span');
 
-                const originalText = dom.saveBtn.textContent;
+                const originalText = textElem.textContent;
                 dom.saveBtn.disabled = true;
-                dom.saveBtn.textContent = app.t('XPlan.Save.Saving', 'Saving…');
+                textElem.textContent = app.t('XPlan.Save.Saving', 'Saving…');
 
                 const success = await app.savePlanToDatabase();
 
-                dom.saveBtn.textContent = success
+                textElem.textContent = success
                     ? app.t('XPlan.Save.Saved', 'Saved')
                     : app.t('XPlan.Save.Failed', 'Failed to save');
                 setTimeout(() => {
-                    dom.saveBtn.textContent = originalText;
+                    textElem.textContent = originalText;
                     dom.saveBtn.disabled = false;
                 }, 1500);
             });
@@ -1225,6 +1226,13 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (dom.exportBtn) {
             dom.exportBtn.addEventListener('click', () => app.exportSaveToFile());
+        }
+
+        if (dom.exportImageBtn) {
+            dom.exportImageBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                app.exportToImage();
+            });
         }
 
         if (dom.importBtn) {

@@ -39,6 +39,7 @@ window.PlannerApp.dom = {
 
     saveBtn: document.querySelector('#save'),
     exportBtn: document.querySelector('#export'),
+    exportImageBtn: document.querySelector('#exportImage'),
     importBtn: document.querySelector('#import'),
     importFileInput: document.querySelector('#importFileInput'),
     overlayImportFileInput: document.querySelector('#overlayImportFileInput'),
