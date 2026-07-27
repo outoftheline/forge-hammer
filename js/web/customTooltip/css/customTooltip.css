@@ -373,8 +373,8 @@ td:nth-child(3) .HXBuilding .inhabitant {
     margin-top: 2px;
     --filled:0%;
     position:absolute;
-    top: calc(var(--y) - 100px);
-    left: var(--x);
+    top: clamp(0px, calc(var(--y) - 100px));
+    left: clamp(150px, var(--x), calc(100% - 150px));
     transform: translateX(-50%);
     z-index: 10000;
     border: 2px solid #a39280;
