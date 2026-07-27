@@ -424,21 +424,6 @@ button, .btn {
     background: #2a3f50;
 }
 
-#metaSearchResults li::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background-color: #888;
-}
-
-#metaSearchResults li.residential::before   { background-color: #7abaff; }
-#metaSearchResults li.greatbuilding::before { background-color: #e6542f; }
-#metaSearchResults li.production::before    { background-color: #416dff; }
-#metaSearchResults li.main_building::before { background-color: #ffb300; }
-#metaSearchResults li.military::before      { background-color: #fff; }
-
 #metaSearchResults .name {
     flex-grow: 1;
     white-space: nowrap;
