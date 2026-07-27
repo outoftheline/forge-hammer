@@ -110,6 +110,13 @@ select option {
     height: 30px;
 }
 
+.sidebar h1 .lang-select {
+    margin-left: auto;
+    max-width: 92px;
+    font-size: 11px;
+    padding: 2px 4px;
+}
+
 .sidebar .filter, .sidebar .save {
     padding: 3px;
     box-sizing: border-box;
