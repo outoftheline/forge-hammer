@@ -943,8 +943,8 @@ let Investment = {
 			if ($('#gb-change-bar').length === 0) { // re-check: another call may have created it while waiting
 				FH.HTML.AddCssFile('investment'); // icon can show before the box is ever opened
 
-				let $bar = $('<div />')
-					.attr({ id: 'gb-change-bar', class: 'game-cursor MapActivityHide ActiveOnmain', title: FH.t('Boxes.GreatBuildingsProgress.SubTitle') })
+				let $bar = $('<div id="gb-change-bar" />')
+					.attr({ class: 'game-cursor barItem MapActivityHide ActiveOnmain', title: FH.t('Boxes.GreatBuildingsProgress.SubTitle') })
 					.append('<img />')
 					.append('<span class="gb-change-total"></span>')
 					.on('click', () => Investment.BuildBox(true, 'mygbs'));
@@ -1077,7 +1077,7 @@ let Investment = {
 		let b = [];
 		b.push('<div class="gbp-note">' + FH.t('Boxes.GreatBuildingsProgress.ContributorsSince').replace('__date__', Since) + '</div>');
 		b.push('<table class="gbp-contrib">');
-		b.push('<tr><th>' + FH.t('Boxes.GreatBuildingsProgress.Player') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.NewFP') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.DeltaFP') + '</th></tr>');
+		b.push('<tr><th>' + FH.t('General.Player') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.NewFP') + '</th><th>' + FH.t('Boxes.GreatBuildingsProgress.DeltaFP') + '</th></tr>');
 
 		for (let R of Rows) {
 			b.push('<tr' + (R.delta > 0 ? ' class="gbp-new"' : '') + '><td>' + R.name + '</td><td>' + FH.HTML.Format(R.fp) + '</td><td>' + (R.delta > 0 ? '<strong class="success">+' + FH.HTML.Format(R.delta) + '</strong>' : '') + '</td></tr>');
