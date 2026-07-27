@@ -490,6 +490,33 @@ window.PlannerApp = window.PlannerApp || {};
         }
     }
 
+    function exportToImage() {
+        try {
+            const filename = sanitizeFilename(state.planName || 'city-plan') + '.png';
+            const source = app.renderFullMapCanvas ? app.renderFullMapCanvas() : app.dom.canvas;
+
+            source.toBlob((blob) => {
+                if (!blob) {
+                    console.error('Failed to export image');
+                    alert(app.t('XPlan.Alerts.ExportFailed', 'Failed to export the plan.'));
+                    return;
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.download = filename;
+                a.href = url;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        } catch (e) {
+            console.error('Failed to export image:', e && e.name, e && e.message, e);
+            alert(app.t('XPlan.Alerts.ExportFailed', 'Failed to export the plan.'));
+        }
+    }
+
     function isValidImportedState(saved) {
         return !!saved &&
             typeof saved === 'object' &&
@@ -756,6 +783,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.serializeState = serializeState;
     app.deserializeState = deserializeState;
     app.exportSaveToFile = exportSaveToFile;
+    app.exportToImage = exportToImage;
     app.importStateFromFile = importStateFromFile;
 
     (async () => {
