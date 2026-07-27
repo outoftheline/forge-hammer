@@ -67,8 +67,10 @@ window.PlannerApp = window.PlannerApp || {};
             if (meta.type === 'decoration') return 0;
             if (meta.type === 'greatbuilding') {
                 let cityData = Object.values(state.cityData).find(x => x.cityentity_id === data.cityentity_id)
-                if (cityData.bonus && cityData.bonus.type === "population")
+                if (cityData?.bonus && cityData?.bonus?.type === "population")
                     return cityData.bonus.value;
+                else
+                    return 0;
             };
             const cost = meta.requirements.cost.resources.population;
             return cost ? cost * -1 : 0;
