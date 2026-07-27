@@ -402,20 +402,6 @@
 }
 
 
-/* Clickable icon: total FP change across my GBs since the last visit */
-#gb-change-bar {
-	display: flex;
-	align-items: center;
-	margin: 1px 1px 0 0;
-	height: 26px;
-	padding: 0 8px 0 4px;
-	background: rgba(0, 0, 0, 0.50);
-	border: 1px solid rgba(113, 74, 35, 1);
-	border-radius: 4px;
-	color: var(--beige);
-	user-select: none;
-}
-
 #gb-change-bar.has-change .gb-change-total {
 	color: var(--success);
 }
@@ -423,5 +409,5 @@
 #gb-change-bar img {
 	width: 24px;
 	height: 24px;
-	margin-right: 4px;
+	margin: 0 3px 0 -2px;
 }

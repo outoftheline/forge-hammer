@@ -1096,21 +1096,24 @@ hammerBar */
 	margin-left: 416px;
 	display: flex;
 	justify-content: flex-end;
+	align-items: stretch;
 	user-select: none;
+	height: 29px;
+	gap: 1px;
+}
+
+#hammerBar .barItem {
+	background: rgba(0, 0, 0, 0.50);
+	border: 1px solid rgba(113, 74, 35, 1);
+	border-radius: 4px;
+	display: inline-flex;
+    align-items: center;
+	padding: 0 4px;
 }
 
 #hammerBar .fp-storage,
 #hammerBar .buyable-fp {
-	margin: 1px 1px 0 0;
-	height: 26px;
-	line-height: 26px;
 	padding: 0 4px 0 26px;
-}
-
-#hammerBar .fp-storage, #hammerBar .buyable-fp {
-	background: rgba(0, 0, 0, 0.50);
-	border: 1px solid rgba(113, 74, 35, 1);
-	border-radius: 4px;
 }
 
 #hammerBar .fp-storage::before, #hammerBar .buyable-fp::before {
