@@ -34,7 +34,7 @@
                 GBList[id].state.invested_forge_points = x.current_progress;
                 GBList[id].state.forge_points_for_level_up = x.max_progress;
                 GBList[id].level = x.level;
-                GBList[id].max_level = x.maxLevel;
+                GBList[id].max_level = x.maxLevel || GBList[id].max_level;
             }
         })
 	});
