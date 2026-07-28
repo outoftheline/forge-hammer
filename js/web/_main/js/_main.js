@@ -622,7 +622,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 	
 	FH.proxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
-		Main.AddInventoryAmount(data.responseData);
+		Main.UpdateInventoryAmount2(data.responseData);
 	});
 
 
@@ -965,7 +965,7 @@ let Main = {
 					if (Main.InventoryUpdateEvent.activateAfterTimeout) f()
 					Main.InventoryUpdateEvent.timeout = null;
 					Main.InventoryUpdateEvent.activateAfterTimeout = false;
-				}, 20);
+				}, 100);
 			} else {
 				Main.InventoryUpdateEvent.activateAfterTimeout = true;
 			}
@@ -2045,13 +2045,13 @@ let Main = {
 			Main.InventoryUpdateEvent.trigger();
 	},
 
-	AddInventoryAmount: (Item) => {
+	UpdateInventoryAmount2: (Item) => {
 			let ID = Item.id,
 			Amount = Item.amount,
 			receivedAt = Item.receivedAt;
 			try {
 				if (!(Main.Inventory[ID]?.receivedAt > receivedAt)) {
-					Main.Inventory[ID].inStock += Amount;
+					Main.Inventory[ID].inStock = Amount;
 				}
 			} catch (e) {
 			}
