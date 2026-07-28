@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		FH.LastMapPlayerID = FH.Player.ID;
 
 		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
-		FH.proxy.triggerCustomHandler('CityMapUpdated');
+		Main.CityMapUpdateEvent.trigger();
 		Main.SetArkBonus2();
 
 		if (FH.ActiveMap === 'gg') return; // getEntities wurde in den GG ausgelöst => Map nicht ändern
@@ -506,7 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					delete Main.CityBuildingsData[ID];
 			}
 		}
-		FH.proxy.triggerCustomHandler('CityMapUpdated');
+		Main.CityMapUpdateEvent.trigger();
 	});
 
 	// production is started, collected, aborted
@@ -720,14 +720,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		for (let b of data.responseData) {
 			Main.CityMapData[b.id]=b;
 		}
-		FH.proxy.triggerCustomHandler('CityMapUpdated');
+		Main.CityMapUpdateEvent.trigger();
 	});
 
 	FH.proxy.addWsHandler('CityProductionService', 'pickupProduction', data => {
 		for (let b of data.responseData.updatedEntities||[]) {
 			Main.CityMapData[b.id]=b;
 		}
-		FH.proxy.triggerCustomHandler('CityMapUpdated');
+		Main.CityMapUpdateEvent.trigger();
 	});
 
 	FH.proxy.addRequestHandler('InventoryService', 'useItem', (postData) => {
@@ -926,6 +926,25 @@ let Main = {
 	SelectionKits: null,
 	
 	BuildingFamilyLimits: null,
+	CityMapUpdateEvent: {
+		timeout:null,
+		trigger:()=>{
+			if (Main.CityMapUpdateEvent.timeout) clearTimeout(Main.CityMapUpdateEvent.timeout);
+			Main.CityMapUpdateEvent.timeout = setTimeout(()=>{
+				FH.proxy.triggerCustomHandler('CityMapUpdated');
+				if ($('#bluegalaxy').length > 0) {
+					FH.BlueGalaxy.CalcBody(Buildings);
+				}
+			},10);
+		}
+	},	
+	InventoryUpdateEvent: {
+		timeout:null,
+		trigger:()=>{
+			if (Main.InventoryUpdateEvent.timeout) clearTimeout(Main.InventoryUpdateEvent.timeout);
+			Main.InventoryUpdateEvent.timeout = setTimeout(()=>{FH.proxy.triggerCustomHandler('InventoryUpdated')},10);
+		}
+	},
 
 	/**
 	* Version specific StartUp Code
@@ -1969,7 +1988,7 @@ let Main = {
 			let ID = Items[i]['id'];
 			Main.Inventory[ID] = Items[i];
 		}
-		FH.proxy.triggerCustomHandler('InventoryUpdated');
+		Main.InventoryUpdateEvent.trigger();
 	},
 
 
@@ -1981,7 +2000,7 @@ let Main = {
 	UpdateInventoryItem: (Item) => {
 		let ID = Item['id'];
 		Main.Inventory[ID] = Item;
-		FH.proxy.triggerCustomHandler('InventoryUpdated');
+		Main.InventoryUpdateEvent.trigger();
 	},
 
 
@@ -1997,7 +2016,7 @@ let Main = {
 				Main.Inventory[ID].inStock = Amount;
 			} catch (e) {
 			}
-			FH.proxy.triggerCustomHandler('InventoryUpdated');
+			Main.InventoryUpdateEvent.trigger();
 	},
 
 
@@ -2020,14 +2039,11 @@ let Main = {
 				CityMap.QI.data[b.id] = b;
 			} else {
 				Main.CityMapData[b.id] = b;
-				Main.SetArkBonus2();
-				if ($('#bluegalaxy').length > 0) {
-					FH.BlueGalaxy.CalcBody(Buildings);
-				}
+				if (b?.bonus?.type === "contribution_boost") Main.SetArkBonus2();
 			}
 		}		
 		FPCollector.CityMapDataNew = Buildings;
-		FH.proxy.triggerCustomHandler('CityMapUpdated');
+		Main.CityMapUpdateEvent.trigger();
 	},
 
 
