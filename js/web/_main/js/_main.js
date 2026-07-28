@@ -620,6 +620,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addHandler('InventoryService', 'getItemAmount', (data, postData) => {
 		Main.UpdateInventoryAmount(data.responseData);
 	});
+	
+	FH.proxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
+		Main.AddInventoryAmount(data.responseData);
+	});
 
 
 	// --------------------------------------------------------------------------------------------------
@@ -927,22 +931,44 @@ let Main = {
 	
 	BuildingFamilyLimits: null,
 	CityMapUpdateEvent: {
-		timeout:null,
+		activateAfterTimeout: false,
+		timeout: null,
 		trigger:()=>{
-			if (Main.CityMapUpdateEvent.timeout) clearTimeout(Main.CityMapUpdateEvent.timeout);
-			Main.CityMapUpdateEvent.timeout = setTimeout(()=>{
+			f = ()=>{
 				FH.proxy.triggerCustomHandler('CityMapUpdated');
 				if ($('#bluegalaxy').length > 0) {
 					FH.BlueGalaxy.CalcBody(Buildings);
 				}
-			},10);
+			}
+			if (!Main.CityMapUpdateEvent.timeout) {
+				f();
+				Main.CityMapUpdateEvent.timeout = setTimeout(()=>{
+					if (Main.CityMapUpdateEvent.activateAfterTimeout) f()
+					Main.CityMapUpdateEvent.timeout = null;
+					Main.CityMapUpdateEvent.activateAfterTimeout = false;
+				}, 20);
+			} else {
+				Main.CityMapUpdateEvent.activateAfterTimeout = true;
+			}			
 		}
 	},	
 	InventoryUpdateEvent: {
+		activateAfterTimeout: false,
 		timeout:null,
 		trigger:()=>{
-			if (Main.InventoryUpdateEvent.timeout) clearTimeout(Main.InventoryUpdateEvent.timeout);
-			Main.InventoryUpdateEvent.timeout = setTimeout(()=>{FH.proxy.triggerCustomHandler('InventoryUpdated')},10);
+			f = ()=>{
+				FH.proxy.triggerCustomHandler('InventoryUpdated');
+			}
+			if (!Main.InventoryUpdateEvent.timeout) {
+				f();
+				Main.InventoryUpdateEvent.timeout = setTimeout(()=>{
+					if (Main.InventoryUpdateEvent.activateAfterTimeout) f()
+					Main.InventoryUpdateEvent.timeout = null;
+					Main.InventoryUpdateEvent.activateAfterTimeout = false;
+				}, 20);
+			} else {
+				Main.InventoryUpdateEvent.activateAfterTimeout = true;
+			}
 		}
 	},
 
@@ -2014,6 +2040,19 @@ let Main = {
 			Amount = Item[1];
 			try {
 				Main.Inventory[ID].inStock = Amount;
+			} catch (e) {
+			}
+			Main.InventoryUpdateEvent.trigger();
+	},
+
+	AddInventoryAmount: (Item) => {
+			let ID = Item.id,
+			Amount = Item.amount,
+			receivedAt = Item.receivedAt;
+			try {
+				if (!(Main.Inventory[ID]?.receivedAt > receivedAt)) {
+					Main.Inventory[ID].inStock += Amount;
+				}
 			} catch (e) {
 			}
 			Main.InventoryUpdateEvent.trigger();
