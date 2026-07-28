@@ -64,7 +64,7 @@ let Recurring = {
         Recurring.SetCounter();
         if ($('#RecurringQuestsBox').length < 1) return;
         
-        if (Recurring.data.filter.length + Recurring.data.filter2.length === 0) {
+        if ((Recurring.data?.filter?.length || 0) + (Recurring.data?.filter2?.length || 0) === 0) {
             $('#RecurringQuestsBox').fadeOut('500', function() {
                 $(this).remove();
             });
