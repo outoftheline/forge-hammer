@@ -3055,38 +3055,32 @@ let Productions = {
 			`popOut-ProductionsRatingBody`,
 			`width=1200,height=600,screenX=100,screenY=100`
 		);
-	}
+	},
+	UpdateEfficiencyEvent: {
+		timeout:null,
+		trigger:()=>{
+			if (Productions.UpdateEfficiencyEvent.timeout) clearTimeout(Productions.UpdateEfficiencyEvent.timeout);
+			Productions.UpdateEfficiencyEvent.timeout = setTimeout(()=>{
+				Productions.CalcRatingBody();
+			}, 250);
+		}
+	},
 };
 
 FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
-		setTimeout(() => {
-				Productions.CalcRatingBody();
-		}, 250);
+		Productions.UpdateEfficiencyEvent.trigger()
 	}
 });
 
 FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
 	if ($('#ProductionsRating').length > 0) {
-		setTimeout(() => {
-			Productions.CalcRatingBody();
-		}, 250);
+		Productions.UpdateEfficiencyEvent.trigger()
 	}
 });
 
-FH.proxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
-	if ($('#ProductionsRating').length > 0) {
-		setTimeout(() => {
-			Productions.CalcRatingBody();
-		}, 250);
-	}
+FH.proxy.addCustomHandler('InventoryUpdated',()=>{
+	Productions.UpdateEfficiencyEvent.trigger();
 });
 
-FH.proxy.addHandler('InventoryService', 'useItem', (data, postData) => {
-	if ($('#ProductionsRating').length > 0) {
-		setTimeout(() => {
-			Productions.CalcRatingBody();
-		}, 250);
-	}
-});
 FH.Tooltips.addCallback('Efficiency', Productions.efficiencyTT);
