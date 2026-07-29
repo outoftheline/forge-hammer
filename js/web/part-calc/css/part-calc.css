@@ -77,8 +77,8 @@
 }
 
 #OwnPartBox .gbLevels .btn {
-	padding: 1px 3px;
-	margin: -2px 0;
+	padding: 2px 3px;
+	margin: -3px 0;
 	line-height: 1;
 }
 
@@ -359,4 +359,39 @@
 
 #calcReminder .gbEntry:hover {
     text-decoration: line-through;
+}
+
+#OwnPartBox.closed .btn-group, #OwnPartBox.closed .level-switch,.closed .dark-bg, #OwnPartBox.closed .dark-bg:hover, #OwnPartBox.closed .activity, #OwnPartBox.closed svg {
+	display: none;
+}
+#OwnPartBox.closed #OwnPartTable, .closed .gbLevels, .closed .text-smaller, #OwnPartBox.closed .title, #OwnPartBox.closed #costTableFordern {
+	visibility: hidden;
+}
+#OwnPartBox.closed .header,.closed .header:hover {
+	display: block;
+	text-align: left;
+	background: transparent !important;
+	box-shadow: none;
+	position: absolute;
+	top: -44px;
+	left: -28px;
+	width: 220px;
+	transform: scale(0.75);
+}
+#OwnPartBox.closed #gbCalc .header,.closed #gbCalc .header:hover {
+	top: -13px;
+}
+#OwnPartBox.closed #OwnPartBoxBody {
+	visibility: visible !important;
+	overflow: visible;
+}
+#OwnPartBox.closed .player-name a {
+	position: relative;
+	top: -5px;
+	color: var(--beige);
+	letter-spacing: 1px;
+}
+.closed #gbCosts, .closed #gbCalc, #OwnPartBox.closed .gbLevels {
+	height: 0px;
+	pointer-events: none;
 }
