@@ -958,7 +958,7 @@ let Investment = {
 		$('#gb-change-bar img').attr('src', srcLinks.get('/shared/icons/great_building.png', true));
 		$('#gb-change-bar')
 			.toggleClass('has-change', Total > 0)
-			.find('.gb-change-total').text(Total > 0 ? '+' + FH.HTML.Format(Total) : '0');
+			.find('.gb-change-total').text(Total > 0 ? '+' + FH.HTML.Format(Total) : '');
 	},
 
 

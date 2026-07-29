@@ -162,19 +162,7 @@ let StrategyPoints = {
 
 		let delimiter = Number(1000).toLocaleString().substring(1,2);
 
-		// the animation function checks if start_value != end_value
-		$('#hammerBar div.fp-storage').easy_number_animate({
-			start_value: old,
-			end_value: StrategyPoints.InventoryFP,
-			delimiter: delimiter,
-			duration: 750,
-			after: (el, val) => {
-				// this seems to be necessary due to a bug with the easy_number_animate
-				// jQuery plugin = if many animations run in a quick succession the order
-				// in which they finish is not guaranteed!
-				el.text( FH.HTML.Format( StrategyPoints.InventoryFP ) );
-			}
-		});
+		$('#hammerBar div.fp-storage').text( FH.HTML.Format( StrategyPoints.InventoryFP ) );
 
 		StrategyPoints.ShowFPBar();
 	},
