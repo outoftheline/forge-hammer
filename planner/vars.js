@@ -9,6 +9,7 @@ window.PlannerApp.dom = {
     storeBuildingsBtn: document.querySelector('#storeAll'),
     storeSelectionBtn: document.querySelector('#storeSelection'),
     storeSelectionCount: document.querySelector('#storeSelection .count'),
+    searchMap: document.querySelector('#mapSearch'),
 
     buildingsListEl: document.querySelector('#storedBuildingsList'),
 
