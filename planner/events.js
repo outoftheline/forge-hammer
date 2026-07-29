@@ -34,8 +34,35 @@ window.PlannerApp = window.PlannerApp || {};
         state.storedBuildings.push(building);
     }
 
-    let wheelZoomSaveTimer = null;
+    let mapSearchDelay = null;
+    function selectBuildingsFromSearch(searchvalue) {
+        let searchTerm = (searchvalue || '').trim().toLowerCase();
 
+        if (query.length < 3) {
+            clearSelection();
+            app.redrawMap();
+            return;
+        }
+
+        for (let b of state.selectedBuildings) 
+            b.isSelected = false;
+
+        let matches = state.mapBuildings.filter(building => {
+            let nameMatch = !!building.meta.name && building.meta.name.toLowerCase().includes(searchTerm);
+            let idMatch = building.meta.id !== undefined && String(building.meta.id).toLowerCase().includes(searchTerm) && searchTerm.startsWith("_");
+            return nameMatch || idMatch;
+        });
+
+        for (let b of matches) 
+            b.isSelected = true;
+
+        state.selectedBuildings = matches;
+
+        refreshSelectionUi();
+        app.redrawMap();
+    }
+
+    let wheelZoomSaveTimer = null;
     function handleWheelZoom(e) {
         e.preventDefault();
 
@@ -1136,6 +1163,18 @@ window.PlannerApp = window.PlannerApp || {};
             app.redrawMap();
             app.updateStats();
             app.autoSave();
+        });
+
+        dom.searchMap.addEventListener('input', (e) => {
+            clearTimeout(mapSearchDelay);
+            const value = e.target.value;
+            mapSearchDelay = setTimeout(() => selectBuildingsFromSearch(value), 200);
+        });
+
+        dom.searchMap.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                e.target.blur();
+            }
         });
 
         dom.resetBtn.addEventListener('click', () => {

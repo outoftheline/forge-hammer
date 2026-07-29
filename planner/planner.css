@@ -344,7 +344,7 @@ select option {
     cursor: pointer;
 }
 
-button, .btn {
+button, .btn, .content input {
     backdrop-filter: blur(5px) brightness(0.5) contrast(1.2);
     text-shadow: 0 0 2px #000, 0 0 1px #000, 0 0 2px #000;
     border-radius: 3px;
