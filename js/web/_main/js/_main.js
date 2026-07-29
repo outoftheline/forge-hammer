@@ -624,6 +624,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addHandler('InventoryService', 'updateItem', (data, postData) => {
 		Main.UpdateInventoryAmount2(data.responseData);
 	});
+	FH.proxy.addWsHandler('InventoryService', 'updateItem', data => {
+		Main.UpdateInventoryAmount2(data.responseData);
+	});
+
 
 
 	// --------------------------------------------------------------------------------------------------
