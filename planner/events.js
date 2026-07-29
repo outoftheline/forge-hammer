@@ -585,13 +585,26 @@ window.PlannerApp = window.PlannerApp || {};
             if (e.altKey) mode = 'pan';
             else if (e.ctrlKey) mode = 'select';
             else {
-                if (state.selectedBuildings.length) {
-                    const p = app.getCanvasPointElem(e);
+                const p = app.getCanvasPointElem(e);
+
+                if (state.selectedBuildings.length > 1) {
                     grabbed = state.selectedBuildings.find(b =>
                         p.x >= b.x && p.x <= b.x + b.width &&
                         p.y >= b.y && p.y <= b.y + b.height
                     );
                     if (grabbed) mode = 'move';
+                } else {
+                    const hit = app.hitTestBuilding(p.x, p.y);
+                    if (hit) {
+                        if (state.selectedBuildings.length > 0)
+                            state.selectedBuildings[0].isSelected = false;
+                        hit.isSelected = true;
+                        state.selectedBuildings = [hit];
+                        refreshSelectionUi();
+
+                        grabbed = hit;
+                        mode = 'move';
+                    }
                 }
             }
 
