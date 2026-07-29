@@ -53,7 +53,7 @@ h1 {
     align-items: center;
     gap: 5px;
     padding: 0 5px;
-    font-size: 22px;
+    font-size: 20px;
 }
 
 textarea, button, input, .btn, select {
@@ -108,15 +108,21 @@ select option {
     gap: 5px;
 }
 
+.sidebar h1 {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .sidebar h1 img {
     height: 30px;
 }
 
 .sidebar h1 .lang-select {
     margin-left: auto;
-    max-width: 92px;
+    width: 40px;
     font-size: 11px;
-    padding: 2px 4px;
+    justify-self: end;
+    flex-shrink: 2;
 }
 
 .sidebar .filter, .sidebar .save {
