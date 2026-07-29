@@ -112,33 +112,23 @@ if (typeof globalThis.FH == 'undefined') {
             if (url.indexOf("game/json?h=") > -1) {
                 let d = /** @type {FoE_NETWORK_TYPE[]} */(JSON.parse(this.responseText));
 
-                let requestData = postData;
-
                 try {
-                    requestData = JSON.parse(new TextDecoder().decode(postData));
-                    // StartUp Service als erstes behandeln
-                    for (let entry of d) {
-                        if (entry['requestClass'] === 'StaticDataService' && entry['requestMethod'] === 'getMetadata') {
-                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
-                        }
+                    let requestData = JSON.parse(new TextDecoder().decode(postData));
+                    if (requestData.map(x=>x.requestClass + "." + x.requestMethod).includes("StartupService.getData")) {
+                        let i = d.findIndex(x=> x.requestClass + "." + x.requestMethod == 'StartupService.getData'),
+                            j = d.findIndex(x=> x.requestClass + "." + x.requestMethod == 'StaticDataService.getMetadata');
+                        // StartupService als zweites behandeln
+                        let sus = d.splice(i, 1);
+                        d.unshift(...sus);
+                        j = i > j ? j + 1 : j;
+                        // StaticDataService als erstes behandeln
+                        let sds = d.splice(j, 1);
+                        d.unshift(...sds);
                     }
-                    // StartUp Service als zweites behandeln
                     for (let entry of d) {
-                        if (entry['requestClass'] === 'StartupService' && entry['requestMethod'] === 'getData') {
-                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
-                        }
+                        FH.proxy._addToHistory(entry);
+                        FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
                     }
-
-                    for (let entry of d) {
-                        if (!(entry['requestClass'] === 'StartupService' && entry['requestMethod'] === 'getData') &&
-                            !(entry['requestClass'] === 'StaticDataService' && entry['requestMethod'] === 'getMetadata')) {
-                            FH.proxy._addToHistory(entry.requestClass + '.' + entry.requestMethod);
-                            FH.proxy._proxyAction(entry.requestClass, entry.requestMethod, entry, requestData);
-                        }
-                    }
-
                 } catch (e) {
                     console.log('Can\'t parse postData: ', postData, e);
                 }
@@ -215,7 +205,7 @@ if (typeof globalThis.FH == 'undefined') {
         let proxyRaw = [];
         const wsHandlerMap = {};
         let wsRawHandler = [];
-        let JSONhistory = [];
+        let history = {JSON:[], JSONfull:[],WS:[]};
         let wsQueue = [];
         let proxyEnabled = true;
 
@@ -248,6 +238,7 @@ if (typeof globalThis.FH == 'undefined') {
         }
 
         function wsMessageHandler(evt) {
+            FH.proxy._addWShistory(evt);
             if (wsQueue) {
                 wsQueue.push(evt);
                 return;
@@ -359,7 +350,7 @@ if (typeof globalThis.FH == 'undefined') {
 
         return {
             getHistory: function () {
-                return JSONhistory;
+                return history;
             },
 
             addHandler: function (service, method, callback) {
@@ -537,7 +528,20 @@ if (typeof globalThis.FH == 'undefined') {
             _getProxyRequestsMap: () => proxyRequestsMap,
             _proxyAction: proxyAction,
             _proxyRequestAction: proxyRequestAction,
-            _addToHistory: (entry) => { JSONhistory.push(entry); }
+            _addToHistory: (entry) => { 
+                history.JSON.push(entry.requestClass + '.' + entry.requestMethod); 
+                history.JSONfull.push(entry); 
+                if (history.JSONfull.length > 15) {
+                    history.JSONfull.shift();
+                }
+            },
+            _addWShistory: (entry) => {
+                if (['PONG','PING'].includes(entry.data)) return;
+                history.WS.push(JSON.parse(entry.data));
+                if (history.WS.length > 50) {
+                    history.WS.shift();
+                }
+            }
         };
     })());
 }
