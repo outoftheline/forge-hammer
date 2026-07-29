@@ -311,7 +311,7 @@ let Investment = {
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img style="max-width: 18px" src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
+				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
 			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			

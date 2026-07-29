@@ -142,8 +142,8 @@
 	color: var(--text-highlight);
 }
 
-#InvestmentBody table tbody td img.rank {
-	width: 18px;
+#InvestmentBody table tbody td img {
+	max-height: 18px;
 }
 #InvestmentBody table tbody td .hideicon {
 	width: 18px;
@@ -172,15 +172,12 @@
 }
 
 #InvestmentBody .last-update-message {
-    position: absolute;
-    bottom: 1px;
-    right: 4px;
-    background: rgba(0, 0, 0, 0.392);
-    padding: 1px 10px 1px 5px;
-    font-size: 0.9em;
+    background: var(--black-50);
+    padding: 2px 5px;
     box-sizing: border-box;
     line-height: 18px;
     display: flex;
+	justify-content: center;
 }
 
 #InvestmentBody .last-update-message .updaterequired {
@@ -198,42 +195,6 @@
 #InvestmentBody .last-update-message .icon.uptodate {
     background: url(../images/uptodate.svg);
 	background-size: 18px 18px;
-
-}
-
-#InvestmentBody .last-update-message .icon.updaterequired {
-    background: url(../images/update_required.svg);
-	background-size: 18px 18px;
-}
-
-#InvestmentBody .last-update-message {
-    position: absolute;
-    bottom: 1px;
-    right: 4px;
-    background: rgba(0, 0, 0, 0.392);
-    padding: 1px 10px 1px 5px;
-    font-size: 0.9em;
-    box-sizing: border-box;
-    line-height: 18px;
-    display: flex;
-}
-
-#InvestmentBody .last-update-message .updaterequired {
-    color: var(--text-highlight);
-}
-
-#InvestmentBody .last-update-message span.icon {
-    display: block;
-    text-indent: -9999px;
-    width: 18px;
-    height: 18px;
-    margin-right: 5px;
-}
-
-#InvestmentBody .last-update-message .icon.uptodate {
-    background: url(../images/uptodate.svg);
-	background-size: 18px 18px;
-
 }
 
 #InvestmentBody .last-update-message .icon.updaterequired {
@@ -295,7 +256,6 @@
 #invest-mygbs th,
 #invest-mygbs td {
 	text-align: center;
-	padding: 0.3rem 5px;
 }
 
 #invest-mygbs th:first-child,
