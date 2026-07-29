@@ -95,8 +95,8 @@ let Calculator = {
 
 		h.push(`<div id="gbCalc">
 				<div class="header text-center dark-bg p5">
-					<strong><span class="building-name">${BuildingName}</span></strong>
-					<p style="margin: 0 0 5px">${Level} &rarr; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</p>`);
+					<h1>${BuildingName}</h1>
+					<div class="gbLevels">${Level} &rarr; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</div>`);
  
 			if (Calculator.PlayerName) {
 				h.push(`<span class="player-name">
@@ -104,7 +104,7 @@ let Calculator = {
 					${FH.Main.GetPlayerLink(PlayerID, Calculator.PlayerName)}`);
 
 				if (Calculator.ClanName) {
-					h.push(`<br> ${FH.Main.GetGuildLink(Calculator.ClanId, Calculator.ClanName)}`);
+					h.push(`<br> <span class="text-smaller">${FH.Main.GetGuildLink(Calculator.ClanId, Calculator.ClanName)}</span>`);
 				}
 
 				h.push(`</span></strong>`);
@@ -147,12 +147,13 @@ let Calculator = {
         // how much is missing to level up?
 		let rest = FH.Main.CurrentGB.Entity['state']['forge_points_for_level_up'] - FH.Main.CurrentGB.Rankings.reduce((acc,entry)=>acc+(entry?.forge_points|0),0);
 
-		if (!FH.Main.CurrentGB.isPreviousLevel)
-			h.push('<div class="text-center dark-bg p5"><em>' + FH.t('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + FH.HTML.Format(rest) + '</span> ' + FH.t('Boxes.Calculator.FP') + '</em>');
+		if (!FH.Main.CurrentGB.isPreviousLevel) {
+			h.push('<div class="text-center dark-bg p5 text-smaller"><em>' + FH.t('Boxes.Calculator.Up2LevelUp') + ': <span id="up-to-level-up">' + FH.HTML.Format(rest) + '</span> ' + FH.t('Boxes.Calculator.FP') + '</em>');
 
-		h.push(Calculator.GetRecurringQuestsLine(Calculator.PlayInfoSound));
+			h.push(Calculator.GetRecurringQuestsLine(Calculator.PlayInfoSound));
 
-		h.push('</div>');
+			h.push('</div>');
+		}
 
         $('#OwnPartBox').find('.tooltip').remove();
 
@@ -531,6 +532,8 @@ let Calculator = {
 	GetRecurringQuestsLine: (PlaySound) => {
 		let h = [],
 			RecurringQuests = 0;
+		
+		h.push(`<div class="text-center flex gap" style="margin:3px 0"><span class="donequests-icon"></span>`);
 
 		for (let Quest of FH.Main.Quests) {
 			if (Quest.id >= 900000 && Quest.id < 1000000) {
@@ -547,11 +550,14 @@ let Calculator = {
 							RecurringQuestString = FH.t('Boxes.Calculator.Done');
 						}
 
-						h.push('<div class="rq"><em>' + FH.t('Boxes.Calculator.ActiveRecurringQuest') + ' <span class="recurringquests copy-fp clickable" data-copy="'+ (MaxProgress - CurrentProgress) +'">' + RecurringQuestString + '</span></em></div>');
+						h.push(`<span class="rq" title="${FH.t('Boxes.Calculator.ActiveRecurringQuest')}"> 
+							<em class="recurringquests copy-fp clickable" data-copy="${(MaxProgress - CurrentProgress)}">${RecurringQuestString}</em>
+							</span>`);
 					}
 				}
 			}
 		}
+		h.push(`</div>`);
 
 		if (Calculator.LastRecurringQuests !== undefined && RecurringQuests !== Calculator.LastRecurringQuests) { 
 			if (PlaySound) { //Nicht durch Funktion PlaySound ersetzen!!! GetRecurringQuestLine wird auch vom EARechner aufgerufen.
@@ -561,7 +567,10 @@ let Calculator = {
 
 		Calculator.LastRecurringQuests = RecurringQuests;
 
-		return h.join('');
+		if (h.length > 2)
+			return h.join('');
+
+		return '';
 	},
 
 
