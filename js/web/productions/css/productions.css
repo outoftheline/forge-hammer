@@ -133,9 +133,6 @@
 	background: transparent url('../../x_img/guild_raids.png') no-repeat;
 	background-size: contain;
 }
-#Productions td.ally::after {
-	content: ' 🙋';
-}
 #ProductionsRatingBody .settings label[for="inventorybuildingscore"], 
 #ProductionsRatingBody .settings label[for="showLimited"], 
 #ProductionsRatingBody .ratingtable tr.hidden, 
@@ -293,7 +290,7 @@
 	filter: saturate(0.1);
 	opacity: 0.7;
 }
-#ProductionsRatingBody tr td.ally:nth-child(2) span:nth-child(2)::after, #ProductionsRatingBody tr span.inventory::after {
+#ProductionsRatingBody tr td.ally:nth-child(2) span:nth-child(2)::after, #ProductionsRatingBody tr span.inventory::after, #Productions td.ally::after {
 	content: ' ';
 	background: url('../../x_img/ally.png') no-repeat center;
 	background-size: contain;
