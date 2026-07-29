@@ -22,30 +22,6 @@
 	color: var(--text-highlight);
 }
 
-#gbCalc .header {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-size: 90%;
-}
-
-#gbCalc .header span {
-	color: var(--beige);
-}
-
-#gbCalc .header .building-name {
-	font-size: 125%;
-}
-
-#gbCalc .header .player-name {
-	display: block;
-	white-space: nowrap;
-}
-
-#gbCalc .rq {
-	font-size: 90%;
-}
-
 #gbCalc table.foe-table {
 	margin-top: 2px;
 }

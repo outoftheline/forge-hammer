@@ -524,9 +524,12 @@ table.foe-table.vertical-top td {
 	vertical-align: top;
 }
 
-table.foe-table tr th,
-table.foe-table tr td, ul.foe-table li {
+table.foe-table tr th, table.foe-table tr td, ul.foe-table li {
 	padding: 2px 5px;
+}
+
+table.foe-table.slim tr th, table.foe-table.slim tr td, ul.foe-table.slim li {
+	padding: 1px 4px;
 }
 
 table.foe-table tr td, ul.foe-table li {
@@ -587,6 +590,7 @@ p { margin: 0 0 10px 0; }
 .flex.gap { gap: 2px; }
 
 .text-smaller { font-size: 90% }
+.text-smaller2 { font-size: 85% }
 
 .p2 { padding: 2px; }
 .p5 { padding: 5px; }
