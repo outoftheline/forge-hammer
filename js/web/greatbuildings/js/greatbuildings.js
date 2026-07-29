@@ -607,7 +607,7 @@ let GreatBuildings = {
                     }
                                         
                     h.push('<td>' + FH.Main.CityEntities[GBData.ID]['name'] + '</td>');
-                    h.push('<td style="white-space:nowrap">' + CurrentLevel + ' &rarr; ' + (BestLevel + 1) + '</td>');
+                    h.push('<td style="white-space:nowrap">' + CurrentLevel + ' &#129130; ' + (BestLevel + 1) + '</td>');
                     h.push('<td title="' + FH.HTML.Tooltip(CostsTT) + '">' + FH.HTML.Format(FH.Main.round(Costs)) + '</td>');
                     h.push('<td title="' + FH.HTML.Tooltip(FPProductionTT) + '">' + FPValueSign + FH.HTML.Format(FH.Main.round(FPProduction * 10) / 10) + '</td>');
                     if (GreatBuildings.ShowGoods) h.push('<td>' + GoodsValueSign + FH.HTML.Format(FH.Main.round(GoodsProduction * 10) / 10) + '</td>');

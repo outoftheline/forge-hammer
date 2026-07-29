@@ -96,7 +96,7 @@ let Calculator = {
 		h.push(`<div id="gbCalc">
 				<div class="header text-center dark-bg p5">
 					<h1>${BuildingName}</h1>
-					<div class="gbLevels">${Level} &rarr; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</div>`);
+					<div class="gbLevels">${Level} &#129130; ${(Level + 1)} &middot; ${FH.t('Boxes.Calculator.MaxLevel')}: ${MaxLevel}</div>`);
  
 			if (Calculator.PlayerName) {
 				h.push(`<span class="player-name">

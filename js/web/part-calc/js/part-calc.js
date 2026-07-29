@@ -253,16 +253,6 @@ let Parts = {
 				Parts.ShowPowerLeveling(false);
 			});
 
-			/* needs bug fix: minimize and change GB needs to update the title
-			$('#OwnPartBox').off('click', '.window-minimize').on('click', '.window-minimize', function () {
-				let gbName = $('#OwnPartBox h1').text();
-				let hammer = ` <small>🔨</small>`;
-				if ($('#OwnPartBox .title').text() == gbName+' 🔨' && $('#OwnPartBox').hasClass('.closed'))
-					$('#OwnPartBox .title').html(FH.t('Boxes.OwnpartCalculator.Title') + hammer);
-				else 
-					$('#OwnPartBox .title').html(gbName + hammer);
-			});*/
-
 			$('#OwnPartBox').on('click', '.button-own', function () {
 				let copyParts = Parts.CopyFunction($(this), 'copy');
 				FH.helper.str.copyToClipboardLegacy(copyParts);
@@ -784,18 +774,18 @@ let Parts = {
 			if (Parts.IsPreviousLevel) {
 				let Level = GreatBuildings.GetLevel(EntityID, Total);
 				if (Level) 
-					h.push((Level-1) + ' &rarr; ' + (Level));
+					h.push((Level-1) + ' &#129130; ' + (Level));
 				else // Level unknown
 					h.push(FH.t('Boxes.OwnpartCalculator.OldLevel'));
 			}
 			else {
 				if (Parts.IsNextLevel) 
-					h.push(`<button class="btn btn-set-level" data-value="${(Parts.Level - 1)}">&lt;</button> `);
+					h.push(`<button class="btn btn-set-level" data-value="${(Parts.Level - 1)}">&#9204;</button> `);
 
-				h.push(Parts.Level + ' &rarr; ' + (parseInt(Parts.Level) + 1));
+				h.push(Parts.Level + ' &#129130; ' + (parseInt(Parts.Level) + 1));
 
 				if (GreatBuildings.Rewards[Era] && GreatBuildings.Rewards[Era][Parts.Level + 1]) 
-					h.push(' <button class="btn btn-set-level" data-value="' + (Parts.Level + 1) + '">&gt;</button>');
+					h.push(' <button class="btn btn-set-level" data-value="' + (Parts.Level + 1) + '">&#9205;</button>');
 			}
 			h.push('</div>');
 
