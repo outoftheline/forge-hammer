@@ -592,7 +592,11 @@ window.PlannerApp = window.PlannerApp || {};
                         p.x >= b.x && p.x <= b.x + b.width &&
                         p.y >= b.y && p.y <= b.y + b.height
                     );
-                    if (grabbed) mode = 'move';
+                    if (grabbed) 
+                        mode = 'move';
+                    else {
+                        mode = 'pan';
+                    }
                 } else {
                     const hit = app.hitTestBuilding(p.x, p.y);
                     if (hit) {
@@ -604,6 +608,9 @@ window.PlannerApp = window.PlannerApp || {};
 
                         grabbed = hit;
                         mode = 'move';
+                    }
+                    else {
+                        mode = 'pan';
                     }
                 }
             }
