@@ -3063,6 +3063,7 @@ let Productions = {
 	UpdateEfficiencyEvent: {
 		timeout:null,
 		trigger:()=>{
+			if ($('#ProductionsRating').length == 0) return;
 			if (Productions.UpdateEfficiencyEvent.timeout) clearTimeout(Productions.UpdateEfficiencyEvent.timeout);
 			Productions.UpdateEfficiencyEvent.timeout = setTimeout(()=>{
 				Productions.CalcRatingBody();
@@ -3072,15 +3073,11 @@ let Productions = {
 };
 
 FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
-	if ($('#ProductionsRating').length > 0) {
-		Productions.UpdateEfficiencyEvent.trigger()
-	}
+	Productions.UpdateEfficiencyEvent.trigger()
 });
 
 FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
-	if ($('#ProductionsRating').length > 0) {
-		Productions.UpdateEfficiencyEvent.trigger()
-	}
+	Productions.UpdateEfficiencyEvent.trigger()
 });
 
 FH.proxy.addCustomHandler('InventoryUpdated',()=>{
