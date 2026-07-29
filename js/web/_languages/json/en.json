@@ -1107,7 +1107,7 @@
   "Boxes.Productions.SearchInput": "Search Building… ",
   "Boxes.Productions.SizeTT": "Size including average road space requirement of __streetnettosize__ tiles",
   "Boxes.Productions.Time24": "24 hour clock",
-  "Boxes.Productions.Title": "Current Production (Daily)",
+  "Boxes.Productions.Title": "Current Daily Production",
   "Boxes.Productions.Total": "Total: ",
   "Boxes.Productions.TTGoodsEra": "This column shows the era of the building, NOT the era of the produced goods",
   "Boxes.Productions.Units": "Units",

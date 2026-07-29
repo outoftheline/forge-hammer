@@ -142,12 +142,6 @@
 	color: var(--text-highlight);
 }
 
-/* Compact rows: trim vertical cell padding and the in-row icons that drive row height */
-#InvestmentBody table tbody td {
-	padding-top: 1px;
-	padding-bottom: 1px;
-}
-
 #InvestmentBody table tbody td img.rank {
 	width: 18px;
 }

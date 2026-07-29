@@ -209,7 +209,7 @@ let Investment = {
 
 		// Table for history
 
-		h.push('<table id="InvestmentTable" class="foe-table">');
+		h.push('<table id="InvestmentTable" class="foe-table slim">');
 		h.push('<thead class="sticky">' +
 			'<tr class="sorter-header">' +
 			'<th class="case-sensitive" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Player') + '</th>' +
@@ -970,7 +970,7 @@ let Investment = {
 
 		let h = [];
 
-		h.push('<table class="foe-table">');
+		h.push('<table class="foe-table slim">');
 		h.push('<thead class="sticky"><tr>');
 		h.push('<th>' + FH.t('Boxes.GreatBuildings.GreatBulding') + '</th>');
 		h.push('<th>' + FH.t('Boxes.GreatBuildings.Level') + '</th>');
