@@ -1162,9 +1162,6 @@ let Productions = {
 				rowA.push('</td>')
 			}
 
-			Profile.goods = erasTotal;
-			Profile.update();
-
 			rowA.push('<td data-number="'+Technologies.Eras[building.eraName]+'">' + FH.t("Eras."+Technologies.Eras[building.eraName]+".short") + '</td>')
 			let time = "-"
 			let showRelativeProductionTime = JSON.parse(FH.Storage.getItem('productionsShowRelativeTime')||"false")
@@ -1188,6 +1185,9 @@ let Productions = {
 			rowA.push('</td>')
 			rowA.push('</tr>')
 		}
+
+		Profile.goods = erasTotal;
+		Profile.update();
 
 		// single view table
 		table.push('<table id="'+type+'-list" class="foe-table sortable-table exportable TSinactive '+type+'-list active">')
@@ -1889,7 +1889,7 @@ let Productions = {
 			
 			FH.HTML.AddCssFile('productions');
 
-			$('body').on('click', '.toggle-tab', async function () {
+			$('body').off('click', '.toggle-tab').on('click', '.toggle-tab', async function () {
 				FH.helper.preloader.show('#ProductionsRating');
 				Productions.RatingCurrentTab = $(this).data('value');
 
@@ -1973,6 +1973,10 @@ let Productions = {
 
 
 	BindRatingHandlers: (era = '') => {
+		$('#ProductionsRatingBody').off('click', '#ProductionsRatingSettings input[type=checkbox]');
+		$('#ProductionsRatingBody .overlay .results').off('click', 'li');
+		$('#ProductionsRatingBody .overlay .selectMetaBuildings').off('click');
+
 		$('.TSinactive').removeClass('TSinactive');
 		const refreshPresetSelect = () => {
 			Productions.Rating.ensurePresets();
