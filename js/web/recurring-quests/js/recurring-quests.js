@@ -6,27 +6,20 @@
 FH.proxy.addHandler('QuestService', 'getUpdates', (data, postData) => {
     
     if (!data.responseData) return;
-    for (let q in data.responseData) {
-        if (!data.responseData.hasOwnProperty(q)) continue;
-        let quest = data.responseData[q];
-        if (quest.type=="generic" && quest.id >= 900000 && quest.id < 1000000  ) {
-            if (quest.genericRewards?.length > 0) {
-                if (!Recurring.data.Questlist[quest.id] && quest.genericRewards[0].flags.includes('random')) {
-                    Recurring.data.Questlist[quest.id] = {'title':quest.title, 'diamonds': false};
-                }
-                if (quest.genericRewards[0].subType == "medals" || quest.genericRewards[0].subType == "premium") {
-                    Recurring.data.Questlist[quest.id].diamonds = true;
-                }
-                if (!Recurring.data.Questlist[quest.id].era) Recurring.data.Questlist[quest.id].era = FH.CurrentEraID;
-                if (!Recurring.data.Questlist[quest.id].conditions) {
-                    Recurring.data.Questlist[quest.id].conditions = quest.successConditions;
-                    Recurring.data.Questlist[quest.id].groups = quest.successConditionGroups;
-                }
-            }
-        }
+    for (let quest of data.responseData) {
+        if (quest.type !=="generic" || quest.id < 900000 || quest.id >= 1000000  ) continue;
+        if (!(quest.genericRewards?.length > 0)) continue;
+        if (!quest.genericRewards.map(x=>x.flags).flat().includes('random')) continue;
+        let q = Recurring.data.Questlist[quest.id] || {'title':quest.title}
+
+        q.diamonds = q.diamonds || quest.genericRewards[0].subType == "medals" || quest.genericRewards[0].subType == "premium";
+        q.era = q.era || FH.CurrentEraID;
+        q.conditions = q.conditions || quest.successConditions;
+        q.groups = q.groups || quest.successConditionGroups;
+
+        Recurring.data.Questlist[quest.id] = q;
+
     }
-    Recurring.data.count=0;
-    Recurring.filter()
     Recurring.SaveSettings();
     Recurring.RefreshGui();
 });
@@ -76,17 +69,16 @@ let Recurring = {
         Recurring.data.filter = [];
         Recurring.data.filter2 = [];
         Recurring.data.count = 0;
-        for (let q in Recurring.data.Questlist) {
-            if (!Recurring.data.Questlist[q]) continue;
-            if (Recurring.data.Questlist[q].era == FH.CurrentEraID) {
-                if (!Recurring.data.Questlist[q].diamonds){
-                    Recurring.data.filter.push(q);
+        for (let [id,q] of Object.entries(Recurring.data.Questlist)) {
+            if (q.era == FH.CurrentEraID) {
+                if (!q.diamonds){
+                    Recurring.data.filter.push(id);
                     Recurring.data.count++;
                 } else {
-                    Recurring.data.filter2.push(q);
+                    Recurring.data.filter2.push(id);
                 }
-            } else if (FH.CurrentEraID - Recurring.data.Questlist[q].era > 1) {
-                delete Recurring.data.Questlist[q];
+            } else if (FH.CurrentEraID - q.era > 2) {
+                delete Recurring.data.Questlist[id];
             }
         }
     },
