@@ -18,9 +18,9 @@ FH.proxy.addHandler('ResearchService', 'getProgress', (data, postData) => {
 });
 
 FH.proxy.addHandler('ResearchService', 'payTechnology', (data, postData) => {
-	let era = data.responseData.technology.era;
+	let era = Technologies.AllTechnologies.find(x=>x.id == data.responseData.progress.tech_id).era;
     if (Technologies.Eras[era] > FH.CurrentEraID) {
-        FH.CurrentEraID = Technologies.EraNames[era];
+        FH.CurrentEraID = Technologies.Eras[era];
         FH.CurrentEra = era;
     }
 });
