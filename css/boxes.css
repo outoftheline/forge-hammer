@@ -1122,6 +1122,12 @@ hammerBar */
 	gap: 1px;
 }
 
+#hammerBar .fpContainer {
+	height: inherit;
+	display: inline-flex;
+    align-items: stretch;
+}
+
 #hammerBar .barItem {
 	background: rgba(0, 0, 0, 0.50);
 	border: 1px solid rgba(113, 74, 35, 1);

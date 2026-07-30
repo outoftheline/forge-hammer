@@ -133,7 +133,7 @@ let StrategyPoints = {
 		}
 
 		if($('div.buyable-fp').length === 0) {
-			$('#hammerBar').append(`<div class="buyable-fp barItem" title="${FH.HTML.Tooltip(FH.t('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
+			$('#hammerBar .fpContainer').append(`<div class="buyable-fp barItem" title="${FH.HTML.Tooltip(FH.t('StrategyPoints.BuyableFP'))}">${ FH.HTML.Format(amount)}</div>`);
 
 		} else {
 			$('div.buyable-fp').text(FH.HTML.Format(amount));
@@ -153,7 +153,7 @@ let StrategyPoints = {
 			let div = $('<div />').attr({
 				id: 'hammerBar',
 				class: `game-cursor ${FH.ActiveMap}`
-			}).append( `<div class="fp-storage barItem">0</div>` );
+			}).append( `<div class="fpContainer"><div class="fp-storage barItem">0</div></div>` );
 
 			$('body').append(div);
 		}
