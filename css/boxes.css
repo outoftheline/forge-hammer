@@ -1270,6 +1270,7 @@ a:hover, input[type="radio"], .clickable {
 	border: var(--window-border);
 	border-radius: 5px;
 	max-height: calc(100vh - 6px);
+	max-width: calc(100vw - 6px);
 }
 
 .window-box.window-warning {
