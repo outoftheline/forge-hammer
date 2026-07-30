@@ -1,5 +1,34 @@
 # Changelog
  
+## Version 1.4.0
+### New
+- New contributions to your own GBs since your last login are now tracked via a new tab in the investment tracker. Click on the GB icon in the top bar when in your city. You can remove the icon in the windows settings.
+
+### Update
+- City Planner: Improvements for building selection and map movement, added a selection filter to the map
+- GB Calculator: Got a facelift to make both views more similar. When the window is minimized, you will now see the GB and player name
+- Added building tooltips to the production overview
+
+### Bug Fixes
+- Final improvements to the building database
+- Added ally unit production
+- FP in your inventory weren't updated anymore due to a game update
+- Settings (local storage) can now be transferred to other worlds (on the same server) again
+- Multiple bug fixes for the recurring quest tracker
+- The Blue Galaxy Helper slowed down ingame collection
+- GB Calculator: Max level was set to zero when switching views
+
+---
+ 
+## Version 1.3.4
+### Update
+- GBG Targets: Added color for attack type
+
+### Bug Fixes
+- Further fixes for the building database
+
+---
+ 
 ## Version 1.3.3
 ### Updated
 - City Planner: Added mouse wheel zoom and a smaller font size for buildings
