@@ -94,6 +94,7 @@ h1 {
 
 .fullpage h1 { font-size: 1.5em; }
 .fullpage h2 { font-size: 1.2em; }
+.fullpage h3 { font-size: 1.1em; }
 
 a {
 	color: #ef9444;
@@ -318,13 +319,13 @@ code {
 	flex-wrap: wrap;
 	gap: 3px;
 	justify-content: center;
-	display: none;
+	position: relative;
+	padding-bottom: 20px;
 }
 
 .hud-btn {
 	width: 50px;
 	height: 50px;
-	position: relative;
 	box-sizing: border-box;
 	border: 2px solid transparent;
 	border-radius: 4px;
@@ -334,7 +335,16 @@ code {
 	justify-content: center;
 }
 
-.hud-btn span {
+.hud-btn:hover {
+	background: linear-gradient(#161513, #161513) padding-box, linear-gradient(to bottom, #bea948, #865f24) border-box;
+	border-width: 3px;
+}
+
+.hud-btn:hover span:first-child {
+	filter: contrast(1.1) brightness(1.2);
+}
+
+.hud-btn span:first-child {
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -344,10 +354,20 @@ code {
 	max-width: 30px;
 }
 
-.tooltip {
-	background: #000;
-	width: 300px;
+.hud-btn span:last-child {
+	display: none;
 	position: absolute;
-	padding: 5px;
-	top: 50px;
+	bottom: -10px;
+	left: 0;
+	max-width: 700px;
+	width: calc(100vw - 2em);
+	text-align: center;
+	background: transparent !important;
+	font-weight: bold;
+	font-size: 1.1em;
+	color: #ddd;
+}
+
+.hud-btn:hover span:last-child {
+	display: block;
 }
