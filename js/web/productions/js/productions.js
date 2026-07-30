@@ -2531,10 +2531,11 @@ let Productions = {
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
 				h.push(`<tr class="${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
 				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
+				let score = Math.round(building.rating.totalScore * 100); // totalScore already includes the modifier!
+				let baseScore = score - scoreModifier;
 				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="wsnw text-center score-cell'+(scoreModifier !== 0 ? ' has-modifier' : '')+'">')
-				let score = Math.round(building.rating.totalScore * 100) + scoreModifier;
-				h.push(`<span class="score-value ${(scoreModifier > 0 ? 'pos' : (scoreModifier < 0 ? 'neg' : ''))}" 
-					data-original-title="${Math.round(building.rating.totalScore * 100) + (scoreModifier > 0 ? ' + ' : (scoreModifier < 0 ? ' - ' : '')) + (scoreModifier !== 0 ? Math.abs(scoreModifier) : '')}">${score}</span>`);
+				h.push(`<span class="score-value ${(scoreModifier > 0 ? 'pos' : (scoreModifier < 0 ? 'neg' : ''))}"
+					data-original-title="${baseScore + (scoreModifier > 0 ? ' + ' : (scoreModifier < 0 ? ' - ' : '')) + (scoreModifier !== 0 ? Math.abs(scoreModifier) : '')}">${score}</span>`);
 				h.push('<span class="edit-score-modifier game-cursor" data-meta_id="'+building.entityId+'" data-original-title="'+FH.t('Boxes.ProductionsRating.ScoreModifierTooltip')+'">✎</span>')
 				h.push('</td>')
 
@@ -2934,9 +2935,16 @@ let Productions = {
 	getModifierBaseScore: (entityId) => {
 		if (!FH.Main.CityEntities?.[entityId]) return null;
 		try {
-			let rated = Productions.rateBuildings([entityId], true, FH.CurrentEra);
-			if (!rated?.[0]?.rating) return null;
-			return Math.round(rated[0].rating.totalScore * 100) - Math.round(rated[0].rating.scoreModifier || 0);
+			let building = (Productions.ratedBuildings || []).find(x => x?.entityId === entityId)
+				|| Object.values(FH.Main.CityBuildingsData || {}).find(x => x?.entityId === entityId);
+
+			if (!building) {
+				if (FH.Main.CityEntities[entityId].type === 'greatbuilding') return null;
+				building = Productions.rateBuildings([entityId], true, FH.CurrentEra)[0];
+			}
+
+			if (!building?.rating) return null;
+			return Math.round(building.rating.totalScore * 100) - Math.round(building.rating.scoreModifier || 0);
 		} catch (e) {
 			return null;
 		}
