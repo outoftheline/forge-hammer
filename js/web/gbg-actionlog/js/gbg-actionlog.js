@@ -475,7 +475,7 @@ let GBGActionLog = {
 
         let match = type === 'select' ? 'exact' : type,
             active = opts.active ? ' gbg-flt-on' : '';
-        return `<button type="button" class="gbg-log-filterbtn${active}" title="${FH.t('Boxes.GBGActionLog.Filter')}">▾</button>`
+        return `<button type="button" class="btn btn-round gbg-log-filterbtn${active}" title="${FH.t('Boxes.GBGActionLog.Filter')}">▾</button>`
              + `<div class="gbg-log-popup" data-col="${idx}" data-match="${match}" style="display:none">${inner}</div>`;
     },
 

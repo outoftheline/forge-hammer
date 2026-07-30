@@ -2093,7 +2093,7 @@ let Productions = {
 			if (cell.find('input.score-modifier-input').length) return;
 			let entityId = icon.attr('data-meta_id');
 			let current = Productions.Rating.getModifier(entityId);
-			cell.children('.score-value, .score-modifier-badge, .edit-score-modifier').hide();
+			cell.addClass('editScore');
 			let input = $('<input type="number" step="1" class="score-modifier-input" value="' + current + '">');
 			cell.append(input);
 			input.trigger('focus').trigger('select');
@@ -2109,7 +2109,7 @@ let Productions = {
 					Productions.CalcRatingBody();
 				} else {
 					input.remove();
-					cell.children('.score-value, .score-modifier-badge, .edit-score-modifier').show();
+					cell.removeClass('editScore');
 				}
 			};
 			input.on('blur', () => commit(true));
@@ -2531,10 +2531,10 @@ let Productions = {
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
 				h.push(`<tr class="${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
 				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
-				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="text-right score-cell'+(scoreModifier !== 0 ? ' has-modifier' : '')+'">')
-				h.push('<span class="score-value">'+Math.round(building.rating.totalScore * 100)+'</span>')
-				if (scoreModifier !== 0)
-					h.push('<span class="score-modifier-badge '+(scoreModifier > 0 ? 'pos' : 'neg')+'">'+(scoreModifier > 0 ? '+' : '')+scoreModifier+'</span>')
+				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="wsnw text-center score-cell'+(scoreModifier !== 0 ? ' has-modifier' : '')+'">')
+				let score = Math.round(building.rating.totalScore * 100) + scoreModifier;
+				h.push(`<span class="score-value ${(scoreModifier > 0 ? 'pos' : (scoreModifier < 0 ? 'neg' : ''))}" 
+					data-original-title="${Math.round(building.rating.totalScore * 100) + (scoreModifier > 0 ? ' + ' : (scoreModifier < 0 ? ' - ' : '')) + Math.abs(scoreModifier)}">${score}</span>`);
 				h.push('<span class="edit-score-modifier game-cursor" data-meta_id="'+building.entityId+'" data-original-title="'+FH.t('Boxes.ProductionsRating.ScoreModifierTooltip')+'">✎</span>')
 				h.push('</td>')
 
@@ -2959,7 +2959,7 @@ let Productions = {
 
 	// Header text-filter (button + popup) for a Score Modifiers column; colIdx is matched against the row cells
 	ScoreModifierFilterControl: (colIdx) =>
-		'<button type="button" class="scoremod-filterbtn" title="' + FH.t('Boxes.ProductionsRating.ColumnFilter') + '">▾</button>' +
+		'<button type="button" class="btn btn-round scoremod-filterbtn" title="' + FH.t('Boxes.ProductionsRating.ColumnFilter') + '">▾</button>' +
 		'<div class="scoremod-filter-popup" data-col="' + colIdx + '" style="display:none"><input type="text" class="scoremod-filter"></div>',
 
 	// Shows/hides rows by the active column text filters (substring, case-insensitive); marks filtered columns
