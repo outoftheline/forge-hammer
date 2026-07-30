@@ -71,6 +71,10 @@
     "s": "8g",
     "r": "8h"
   },
+  "Boxes.Alerts.Title": {
+    "s": "Alerty",
+    "r": "Notifications"
+  },
   "Boxes.AllyList.All": "Wszystkie rzadkości",
   "Boxes.AllyList.Ally": "Sojusznik",
   "Boxes.AllyList.Boosts": "Bonusy",
@@ -340,7 +344,7 @@
   "Boxes.CityMap.residential": "Mieszkalne",
   "Boxes.CityMap.roadless": "Budynki bez dróg",
   "Boxes.CityMap.SendToPlanner": {
-    "s": "Wyślij do plannera",
+    "s": "Wyślij do planera",
     "r": "Send to planner"
   },
   "Boxes.CityMap.SetBuildings": {
@@ -910,6 +914,54 @@
   "Boxes.GreatBuildings.TTGoodCostsColumn": "Wyświetla koszt PR związany z zakupem potrzebnych towarów (dotyczy jedynie niewybudowanych pereł)",
   "Boxes.GreatBuildings.TTGoodsValue": "Ta wartość jest używana do oceniania budynków produkujących towary. Ile PR jest dla Ciebie wart jeden towar?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Opcjonalnie: ile nagród PR otrzymujesz dziennie? Informacje te są wykorzystywane do obliczania rentowności kolejnych poziomów Arki. Aby otrzymać sugestię, przejdź do Historii wydarzeń w Dzienniku wydarzeń i przewiń wszystkie strony",
+  "Boxes.GreatBuildingsProgress.ContributorsSince": {
+    "s": "Zmiany wpłacających od __date__",
+    "r": "Contributor changes since __date__"
+  },
+  "Boxes.GreatBuildingsProgress.DeltaFP": {
+    "s": "Wpłacone PR",
+    "r": "FP added"
+  },
+  "Boxes.GreatBuildingsProgress.Donators": {
+    "s": "Wpłacający",
+    "r": "Donators"
+  },
+  "Boxes.GreatBuildingsProgress.FirstVisit": {
+    "s": "Pierwsze załadowanie",
+    "r": "first load"
+  },
+  "Boxes.GreatBuildingsProgress.MyFP": {
+    "s": "Moje PR",
+    "r": "My FP"
+  },
+  "Boxes.GreatBuildingsProgress.NewFP": {
+    "s": "Aktualne PR",
+    "r": "Current FP"
+  },
+  "Boxes.GreatBuildingsProgress.NoContributors": {
+    "s": "Otwórz tę PA w grze by załadować wpłacających.",
+    "r": "Open this GB in-game to load its contributors."
+  },
+  "Boxes.GreatBuildingsProgress.PrevFP": {
+    "s": "Poprzednie PR",
+    "r": "Previous FP"
+  },
+  "Boxes.GreatBuildingsProgress.Progress": {
+    "s": "Postęp",
+    "r": "Progress"
+  },
+  "Boxes.GreatBuildingsProgress.SettingsShowIcon": {
+    "s": "Wyświetl ikonę postępu na ekranie",
+    "r": "Show the on-screen progress icon"
+  },
+  "Boxes.GreatBuildingsProgress.SubTitle": {
+    "s": "Perła Architektura zmieniła się od Twojej ostatniej wizyty",
+    "r": "Great Building changes since your last visit"
+  },
+  "Boxes.GreatBuildingsProgress.Title": {
+    "s": "Postęp PA",
+    "r": "GB Progress"
+  },
   "Boxes.GuildFights.AlertOffset": {
     "s": "Pokaż powiadomienie na x sekund przed otwarciem prowincji",
     "r": "Show notification x amount of seconds before the province opens"
@@ -1265,6 +1317,14 @@
   "Boxes.Investment.Safe": {
     "s": "bezpieczne",
     "r": "safe"
+  },
+  "Boxes.Investment.Tabs.Contributions": {
+    "s": "Wkłady",
+    "r": "Contributions"
+  },
+  "Boxes.Investment.Tabs.MyGBs": {
+    "s": "Moje PA",
+    "r": "My GBs"
   },
   "Boxes.Investment.Title": "Podsumowanie inwestycji PR",
   "Boxes.Investment.TotalFP": "Zapas + wpłaty + zysk: ",
@@ -1664,6 +1724,10 @@
   "Boxes.ProductionsRating.AddBuildings": "Dodaj wybrane budynki",
   "Boxes.ProductionsRating.Best": "Najlepszy",
   "Boxes.ProductionsRating.BuildingName": "Budynki",
+  "Boxes.ProductionsRating.ColumnFilter": {
+    "s": "Filtr",
+    "r": "Filter"
+  },
   "Boxes.ProductionsRating.ConfirmReset": {
     "s": "Potwierdzasz zresetowanie?",
     "r": "Confirm Reset?"
@@ -1682,6 +1746,42 @@
   "Boxes.ProductionsRating.InventoryBuildingScore": "Minimalny wynik",
   "Boxes.ProductionsRating.InventoryBuildingScoreExplanation": "Wyświetlaj tylko budynki z inwentarza z oceną równą lub wyższą niż x",
   "Boxes.ProductionsRating.InventoryTooltip": "Ten budynek znajduje się w twoim inwentarzu",
+  "Boxes.ProductionsRating.ModifierAddBuilding": {
+    "s": "Dodaj budynek",
+    "r": "Add building"
+  },
+  "Boxes.ProductionsRating.ModifierAddFilter": {
+    "s": "Wyszukaj przez nazwę lub ID",
+    "r": "Search by name or ID"
+  },
+  "Boxes.ProductionsRating.ModifierBaseScore": {
+    "s": "Wynik bazowy",
+    "r": "Base score"
+  },
+  "Boxes.ProductionsRating.ModifierDelete": {
+    "s": "Usuń ten modyfikator",
+    "r": "Remove this modifier"
+  },
+  "Boxes.ProductionsRating.ModifierEmpty": {
+    "s": "Nie ustawiono jeszcze żadnych modyfikatorów punktacji: dodaj budynek poniżej.",
+    "r": "No score modifiers set yet. Add a building below."
+  },
+  "Boxes.ProductionsRating.ModifierId": {
+    "s": "ID budynku",
+    "r": "Building ID"
+  },
+  "Boxes.ProductionsRating.ModifiersButton": {
+    "s": "Modifikatory wyników",
+    "r": "Score Modifiers"
+  },
+  "Boxes.ProductionsRating.ModifiersTitle": {
+    "s": "Modifikatory wyników",
+    "r": "Score Modifiers"
+  },
+  "Boxes.ProductionsRating.ModifierValue": {
+    "s": "Modyfikator",
+    "r": "Modifier"
+  },
   "Boxes.ProductionsRating.NoGBsExplanation": "Pokaż Perły Architektury",
   "Boxes.ProductionsRating.NoLimitedExplanation": "Pokaż wzniesione/ograniczone budynki",
   "Boxes.ProductionsRating.PresetActive": {
@@ -1764,6 +1864,10 @@
   "Boxes.ProductionsRating.Reset": "Przywróć ustawienia domyślne",
   "Boxes.ProductionsRating.Results": "Wyniki",
   "Boxes.ProductionsRating.Score": "Wynik",
+  "Boxes.ProductionsRating.ScoreModifierTooltip": {
+    "s": "Modyfikator wyniku – dodawany do obliczonego wyniku (aby go obniżyć, należy użyć wartości ujemnej)",
+    "r": "Edit score modifier — added to the calculated score (use a negative value to lower it)"
+  },
   "Boxes.ProductionsRating.Settings": "Ustawienia",
   "Boxes.ProductionsRating.ShowAllies": {
     "s": "Uwzględnij w ocenie bonusy od sojuszników",
@@ -2640,5 +2744,306 @@
   "StrategyPoints.FPInBar": {
     "s": "Forge Hammer: Ilość PR na pasku.",
     "r": "Forge Hammer: Number of FPs in your bar."
+  },
+  "undefined": {},
+  "XPlan.Alerts.DeletePlanFailed": {
+    "s": "Nie udało się usunąć planu miasta.",
+    "r": "Failed to delete plan."
+  },
+  "XPlan.Alerts.ExportFailed": {
+    "s": "Nie udało się eksportować planu miasta.",
+    "r": "Failed to export the plan."
+  },
+  "XPlan.Alerts.ImportFailed": {
+    "s": "Nie udało się zaimportować planu miasta.",
+    "r": "Failed to import the plan."
+  },
+  "XPlan.Alerts.InvalidExport": {
+    "s": "Ten plik nie jest poprawnym eksportem z Planera miasta.",
+    "r": "That file does not look like a valid City Planner export."
+  },
+  "XPlan.Alerts.InvalidJSON": {
+    "s": "Ten plik nie jest poprawnym JSON.",
+    "r": "That file is not valid JSON."
+  },
+  "XPlan.Alerts.LoadPlanFailed": {
+    "s": "Nie udało się załadować planu miasta.",
+    "r": "Failed to load plan."
+  },
+  "XPlan.Alerts.ReadFileFailed": {
+    "s": "Nie udało się odczytać wybranego pliku.",
+    "r": "Could not read the selected file."
+  },
+  "XPlan.Alerts.RenameFailed": {
+    "s": "Nie udało się zmienić nazwy planu miasta.",
+    "r": "Failed to rename plan."
+  },
+  "XPlan.Buttons.Everything": {
+    "s": "Wszystko",
+    "r": "Everything"
+  },
+  "XPlan.Buttons.Export": {
+    "s": "Zapisz ten plan miasta na moim komputerze",
+    "r": "Save this plan on my computer"
+  },
+  "XPlan.Buttons.Import": {
+    "s": "Wczytaj plan miasta z mojego komputera",
+    "r": "Import a plan from my computer"
+  },
+  "XPlan.Buttons.LoadPlan": {
+    "s": "Plany",
+    "r": "Plans"
+  },
+  "XPlan.Buttons.Place": {
+    "s": "Wstaw",
+    "r": "Place"
+  },
+  "XPlan.Buttons.RemoveAll": {
+    "s": "Usuń wszystko",
+    "r": "Remove All"
+  },
+  "XPlan.Buttons.Save": {
+    "s": "Zapisz",
+    "r": "Save"
+  },
+  "XPlan.Buttons.Selection": {
+    "s": "Wybór",
+    "r": "Selection"
+  },
+  "XPlan.Buttons.StoreBuildings": {
+    "s": "Przechowaj budynki",
+    "r": "Store buildings"
+  },
+  "XPlan.Confirms.DeletePlan": {
+    "s": "Usunąć ten plan miasta? Nie można tego cofnąć.",
+    "r": "Delete this plan? This cannot be undone."
+  },
+  "XPlan.Confirms.ImportReplace": {
+    "s": "Zaimportowanie zastąpi obecny układ miasta. Czy chcesz kontynuować?",
+    "r": "Importing will replace your current layout. Continue?"
+  },
+  "XPlan.Confirms.Restart": {
+    "s": "Czy chcesz zacząć od nowa? Twoje zmiany nie zostaną zapisane.",
+    "r": "Do you want to restart from scratch? Your changes will not be saved"
+  },
+  "XPlan.DocumentTitle": {
+    "s": "Planer miasta - Forge Hammer",
+    "r": "City Planner - Forge Hammer"
+  },
+  "XPlan.Filter.Placeholder": {
+    "s": "Znajdź budynki",
+    "r": "Find buildings"
+  },
+  "XPlan.KoFi.Title": {
+    "s": "Wesprzyj nas na Ko-Fi",
+    "r": "Support us on Ko-Fi"
+  },
+  "XPlan.Language.SystemDefault": {
+    "s": "Język",
+    "r": "Language"
+  },
+  "XPlan.Modal.DiscardAndContinue": {
+    "s": "Odrzuć i kontynuuj",
+    "r": "Discard and Continue"
+  },
+  "XPlan.Modal.HowTo.Cancel": {
+    "s": "Anuluj dowolną czynność za pomocą <b>prawego przycisku</b>",
+    "r": "Cancel any action with <b>right click</b>"
+  },
+  "XPlan.Modal.HowTo.DeleteFromSidebar": {
+    "s": "Aby usunąć budynki z paska bocznego lub mapy, użyj klawisza Backspace, R lub DEL.",
+    "r": "Delete buildings from the sidebar or map by using the backspace, R or DEL key."
+  },
+  "XPlan.Modal.HowTo.DeleteStreets": {
+    "s": "Aby usunąć pola z drogą, użyj ponownie wstawienia drogi na nich.",
+    "r": "Delete street tiles by using the street placement over them."
+  },
+  "XPlan.Modal.HowTo.Footer": {
+    "s": "Buildings added in the planner are marked with a *<br>Funkcje cofania i ponawiania są ograniczone do ostatnich 5 czynności.",
+    "r": "Buildings added in the planner are marked with a *<br />Undo and redo actions are limited to the last 5 actions."
+  },
+  "XPlan.Modal.HowTo.Intro": {
+    "s": "Prosimy o zgłaszanie wszelkich napotkanych problemów. W przyszłości dodamy więcej funkcji!",
+    "r": "Please report any issues you run into. We'll add more features in the future!"
+  },
+  "XPlan.Modal.HowTo.MoveMap": {
+    "s": "Aby przesuwać mapę, przytrzymaj klawisz ALT i użyj myszki lub klawiszy WASD!",
+    "r": "Move the map by holding the ALT key and using your mouse or using the WASD keys!"
+  },
+  "XPlan.Modal.HowTo.MultiSelect": {
+    "s": "Aby zaznaczyć wiele budynków, użyj klawisza CTRL. <br> Aby odznaczyć dowolny budynek z zaznaczenia, należy przytrzymać klawisz CTRL i kliknąć na nim. Wszystkie zaznaczone budynki można jednocześnie przenieść na wolne miejsce, przeciągając je myszką. <br> Wybrane budynki można przechować przeciągając je do paska bocznego, naciskając klawisz spacji lub klikając w prawym górnym rogu obok ikony.",
+    "r": "Select multiple buildings with the CTRL key. <br /> You can deselect any building from your selection by holding the CTRL key and clicking it. You can move all selected buildings at once to a free space by dragging. <br /> Store selected buildings either by dragging them to the sidebar, clicking the space bar or clicking in the top right corner next to the icon."
+  },
+  "XPlan.Modal.HowTo.SingleSelect": {
+    "s": "Wybierz jeden budynek, klikając na niego. Przesuń go przeciągając myszką. Usuń go za pomocą klawisza DEL, Backspace lub R. Przechowasz go, naciskając klawisz spacji lub przeciągając go do ",
+    "r": "Select one building by clicking it. Move it by dragging. Delete it with DEL, backspace or R. Store it with the space bar or by dragging it to the sidebar."
+  },
+  "XPlan.Modal.HowTo.Title": {
+    "s": "Jak korzystać z tego planera",
+    "r": "How to use this planner"
+  },
+  "XPlan.Modal.IncomingData": {
+    "s": "Dane przychodzące",
+    "r": "Incoming Data"
+  },
+  "XPlan.Modal.IncomingDataText": {
+    "s": "Czy chcesz zacząć pracować z danymi, które właśnie przesłałeś? Twój aktualnie zapisany plan miasta nie zostanie usunięty.",
+    "r": "Do you want to start working with the data you just sent? Your currently saved plan will not be deleted."
+  },
+  "XPlan.Modal.NewPlanNamePlaceholder": {
+    "s": "Nowa nazwa planu",
+    "r": "New plan name"
+  },
+  "XPlan.Modal.SaveAsNewPlan": {
+    "s": "Zapisz jako nowy plan",
+    "r": "Save as New Plan"
+  },
+  "XPlan.Modal.SavedPlans": {
+    "s": "Zapisane plany",
+    "r": "Saved Plans"
+  },
+  "XPlan.Plan.DefaultName": {
+    "s": "Nowy plan",
+    "r": "New Plan"
+  },
+  "XPlan.Plan.FallbackName": {
+    "s": "Plan",
+    "r": "Plan"
+  },
+  "XPlan.Plan.ImportedName": {
+    "s": "Zaimportowany plan",
+    "r": "Imported Plan"
+  },
+  "XPlan.PlanList.DeletePlan": {
+    "s": "Usuń plan",
+    "r": "Delete plan"
+  },
+  "XPlan.PlanList.Empty": {
+    "s": "Brak zapisanych jeszcze planów.",
+    "r": "No saved plans yet."
+  },
+  "XPlan.PlanList.LoadFailed": {
+    "s": "Nie udało się wczytać zapisanych planów.",
+    "r": "Failed to load saved plans."
+  },
+  "XPlan.PlanList.Loading": {
+    "s": "Ładowanie...",
+    "r": "Loading…"
+  },
+  "XPlan.PlanList.LoadPlan": {
+    "s": "Załaduj plan",
+    "r": "Load plan"
+  },
+  "XPlan.PlanList.RenamePlan": {
+    "s": "Zmiana nazwy planu",
+    "r": "Rename plan"
+  },
+  "XPlan.PlanList.UnnamedPlan": {
+    "s": "Plan bez nazwy",
+    "r": "Unnamed plan"
+  },
+  "XPlan.Population.Label": {
+    "s": "Populacja:",
+    "r": "Population:"
+  },
+  "XPlan.Population.NegativeWarning": {
+    "s": "Uwaga: populacja jest ujemna - ten układ wymaga więcej budynków mieszkalnych.",
+    "r": "Warning: population is negative — this layout needs more residences."
+  },
+  "XPlan.Save.Failed": {
+    "s": "Nie udało się zapisać",
+    "r": "Failed to save"
+  },
+  "XPlan.Save.Saved": {
+    "s": "Zapisane",
+    "r": "Saved"
+  },
+  "XPlan.Save.Saving": {
+    "s": "Zapisywanie...",
+    "r": "Saving…"
+  },
+  "XPlan.Search.Placeholder": {
+    "s": "Dodaj nowy budynek...",
+    "r": "Add a new building…"
+  },
+  "XPlan.Sidebar.ClickToRestore": {
+    "s": "Kliknij, aby przywrócić",
+    "r": "Click to restore"
+  },
+  "XPlan.Sidebar.Deleted": {
+    "s": "Usunięto",
+    "r": "Deleted"
+  },
+  "XPlan.Sidebar.Restore": {
+    "s": "Przywróć",
+    "r": "Restore"
+  },
+  "XPlan.Sort.HeightAsc": {
+    "s": "x ↑",
+    "r": "x ↑"
+  },
+  "XPlan.Sort.HeightDesc": {
+    "s": "x ↓",
+    "r": "x ↓"
+  },
+  "XPlan.Sort.NameAsc": {
+    "s": "A-Z",
+    "r": "A–Z"
+  },
+  "XPlan.Sort.NameDesc": {
+    "s": "Z-A",
+    "r": "Z–A"
+  },
+  "XPlan.Sort.WidthAsc": {
+    "s": "y ↑",
+    "r": "y ↑"
+  },
+  "XPlan.Sort.WidthDesc": {
+    "s": "y ↓",
+    "r": "y ↓"
+  },
+  "XPlan.Street.All": {
+    "s": "Drogi",
+    "r": "Streets"
+  },
+  "XPlan.Street.With": {
+    "s": "Wymaga drogi",
+    "r": "With street"
+  },
+  "XPlan.Street.Without": {
+    "s": "Bez drogi",
+    "r": "No streets"
+  },
+  "XPlan.SubmitWindow.Text": {
+    "s": "Proszę skorzystać z funkcji \"Wyślij do planera\" w Przeglądzie miasta.",
+    "r": "Please use the \"Send to planner\" function in the City Overview."
+  },
+  "XPlan.SubmitWindow.Title": {
+    "s": "Forge Hammer - Planer miasta",
+    "r": "Forge Hammer - City Planner"
+  },
+  "XPlan.Title": {
+    "s": "Planer miasta",
+    "r": "City Planner"
+  },
+  "XPlan.Type.All": {
+    "s": "Typy",
+    "r": "Types"
+  },
+  "XPlan.Type.GreatBuilding": {
+    "s": "Perły",
+    "r": "GB"
+  },
+  "XPlan.Type.Military": {
+    "s": "Militarne",
+    "r": "Military"
+  },
+  "XPlan.Type.Production": {
+    "s": "Produkcyjne",
+    "r": "Production"
+  },
+  "XPlan.Type.Residential": {
+    "s": "Mieszkalne",
+    "r": "Residential"
   }
 }
