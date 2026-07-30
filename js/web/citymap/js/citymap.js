@@ -2048,7 +2048,7 @@ let CityBuildings = {
 										type = "goods";
 									}
 
-									let name = this.setRewardNameFromLookupData(lookupData, metaData)
+									let name = this.setRewardNameFromLookupData(lookupData, metaData);
 									let newReward = {
 										id: reward.product.reward.id,
 										name: name,
@@ -2303,6 +2303,12 @@ let CityBuildings = {
 				};
 				return this.setGoodsRewardFromGeneric(reward);
 			}
+			else if (product.flags?.length > 0) {
+				for (let flag of product.flags)
+					if (flag.includes('ally')) {
+						lookupData = product.reward;
+					}
+			}
 
 			// For all other cases, if we found lookupData, ensure amount is set
 			if (lookupData) {
@@ -2314,9 +2320,10 @@ let CityBuildings = {
 			if (isNaN(amount)) amount = lookupData.amount;
 		}
 
-		let name = ""
-		if (lookupData) 
-			name = this.setRewardNameFromLookupData(lookupData, metaData)
+		let name = "";
+		if (lookupData) {
+			name = this.setRewardNameFromLookupData(lookupData, metaData);
+		}
 		else {
 			console.log("setGenericReward() data missing for", metaData.name, metaData, product);
 			name = "DEFINE NAME";
@@ -2324,8 +2331,14 @@ let CityBuildings = {
 		
 		// units
 		if (lookupData?.type === "chest" && lookupData.id.search("genb_random_") !== -1 && lookupData.id.search("fragment") === -1 || lookupData?.type === "unit"|| lookupData?.icon === "military") {
-			let units = this.setUnitReward(product)
-			return units
+			if (product.flags?.length > 0) {
+				for (let flag of product.flags)
+					if (flag.includes('ally')) {
+						product = product.reward;
+					}
+			}
+			let units = this.setUnitReward(product);
+			return units;
 		}
 		// wish fountain (AllProductions)
 		else if (lookupData?.type === "chest" && lookupData.id.search("fragment") !== -1) {
@@ -2361,13 +2374,12 @@ let CityBuildings = {
 		if (reward.type === "good")
 			return this.setGoodsRewardFromGeneric(reward)
 
-		return reward
+		return reward;
 	},
 
 
 	setGoodsRewardFromGeneric(reward) {
 		let amount = reward.amount
-
 
 		if (reward.possible_rewards !== undefined) // random productions
 			amount = parseInt(reward.id.split('#').reverse()[0]) // grab the amount from the id "goods#random#NextEra#508"
@@ -2394,75 +2406,83 @@ let CityBuildings = {
 
 
 	setUnitReward(product, isEmissary = false) {
-		let amount, type
+		let amount, type;
 		if (isEmissary) {
-			amount = product.amount
+			amount = product.amount;
 			if (product.id.search("#") !== -1) { // era_unit#light_melee#NextEra#1
-				let prefix = ""
+				let prefix = "";
 				if (product.id.search("NextEra") !== -1) 
-					prefix = "next#"
+					prefix = "next#";
 				
-				type = prefix + product.id.split("#")[1]
+				type = prefix + product.id.split("#")[1];
 			}
 			else 
-				type = "random"
+				type = "random";
 		}
 		else if (product.type === 'genericReward') {
 			let amountFromString = product.reward.id.match(/\d+$/)
 			amount = parseInt(amountFromString ? amountFromString[0] : 1) 	// if its only one unit, there is no number in the string
 			type = product.reward.id.replace("unit_","").replace(/\d+/,"") 	// grabs e.g. "heavy_melee" from unit_heavy_melee3 or rogue from unit_rogue3 
-			if (type.search("random") !== -1) type = "random"
+			if (type.search("random") !== -1) type = "random";
 			if (product.reward.id.search("#") !== -1) { // era_unit#light_melee#NextEra#1
-				let prefix = ""
+				let prefix = "";
 				if (product.reward.id.search("NextEra") !== -1) 
-					prefix = "next#"
+					prefix = "next#";
 				
-				type = prefix + product.reward.id.split("#")[1]
+				type = prefix + product.reward.id.split("#")[1];
 			}
 		}
 		else if (product.type === 'unit') {
-			amount = product.amount
-			type = product.unitTypeId
+			amount = product.amount;
+			type = product.unitTypeId;
+			if (product.id !== undefined && product.id?.search("#") !== -1) { // era_unit#light_melee#NextEra#1
+				let prefix = "";
+				if (product.id?.search("NextEra") !== -1) 
+					prefix = "next#";
+				
+				type = prefix + product.id?.split("#")[1];
+			}
 		}
-		return { [type]: amount }
+		return { [type]: amount };
 	},
 
 
 	setRewardNameFromLookupData(lookupData, metaData) {
-		let name = ""
+		let name = "";
+
 		if (lookupData.subType === "fragment") 
-			name = lookupData.assembledReward.name
+			name = lookupData.assembledReward.name;
 		else if (lookupData.__class__ === "GenericRewardSet") // this is a dirty workaround for trees of patience, because i lack patience
-			name = lookupData.rewards[0]?.name 
+			name = lookupData.rewards[0]?.name;
 		else if (lookupData.subType === "speedup_item" || lookupData.subType === "reward_item" || lookupData.subType === "boost_item" || lookupData.type === "forgepoint_package" || lookupData.type === "resource") 
-			name = lookupData.name
+			name = lookupData.name;
 		else if (lookupData.type === "unit") { // -> (next_)light_melee
 			if (lookupData.id.search("#") !== -1) { // era_unit#light_melee#NextEra#1
-				let prefix = ""
+				let prefix = "";
 				if (lookupData.id.search("NextEra") !== -1) 
-					prefix = "next_"
+					prefix = "next_";
 				
-				name = prefix + lookupData.id.split("#")[1]
+				name = prefix + lookupData.id.split("#")[1];
 			}
 			else 
-				name = lookupData.id.replace("unit_","").replace(/\d+/,"")
+				name = lookupData.id.replace("unit_","").replace(/\d+/,"");
 		}
 		else if (lookupData.type === "blueprint")  // id: "blueprint#random#3"
-			name = lookupData.name.replace(/^\+?\d+\s*/,"")
+			name = lookupData.name.replace(/^\+?\d+\s*/,"");
 		else if (lookupData.type === "chest" && lookupData.id.includes("blueprint")) { // remove +20 from the name becuase the amount is in the amount
-			name = lookupData.name.replace(/^\+?\d+\s*/,"")
+			name = lookupData.name.replace(/^\+?\d+\s*/,"");
 		}
 		else if (lookupData.type === "chest") { // chest can be: BP - see above, units, goods (next age)
-			name = lookupData.name
+			name = lookupData.name;
 		}
 		else if (lookupData.type === "consumable")
-			name = lookupData.name
+			name = lookupData.name;
 		else if (lookupData.type === "good"){
-			name = lookupData.name.replace(/^\+?\d+\s]*/,"")
+			name = lookupData.name.replace(/^\+?\d+\s]*/,"");
 		} else {
 			console.log("setRewardNameFromLookupData(): undefined name from type", metaData.name, lookupData, lookupData.type, lookupData.subType)
 		}
-		return name
+		return name;
 	},
 
 
