@@ -2534,7 +2534,7 @@ let Productions = {
 				h.push('<td data-number="'+ (building.rating.totalScore * 100) +'" class="wsnw text-center score-cell'+(scoreModifier !== 0 ? ' has-modifier' : '')+'">')
 				let score = Math.round(building.rating.totalScore * 100) + scoreModifier;
 				h.push(`<span class="score-value ${(scoreModifier > 0 ? 'pos' : (scoreModifier < 0 ? 'neg' : ''))}" 
-					data-original-title="${Math.round(building.rating.totalScore * 100) + (scoreModifier > 0 ? ' + ' : (scoreModifier < 0 ? ' - ' : '')) + Math.abs(scoreModifier)}">${score}</span>`);
+					data-original-title="${Math.round(building.rating.totalScore * 100) + (scoreModifier > 0 ? ' + ' : (scoreModifier < 0 ? ' - ' : '')) + (scoreModifier !== 0 ? Math.abs(scoreModifier) : '')}">${score}</span>`);
 				h.push('<span class="edit-score-modifier game-cursor" data-meta_id="'+building.entityId+'" data-original-title="'+FH.t('Boxes.ProductionsRating.ScoreModifierTooltip')+'">✎</span>')
 				h.push('</td>')
 
