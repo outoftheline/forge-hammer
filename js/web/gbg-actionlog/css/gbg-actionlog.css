@@ -44,26 +44,9 @@
 	width: 4em;
 }
 
-#GBGActionLogBody .gbg-log-filterbtn {
-	cursor: pointer;
-	padding: 0 3px;
-	margin-left: 4px;
-	font-weight: normal;
-}
-
-#GBGActionLogBody .gbg-log-filterbtn {
-	opacity: .5;
-}
-
-#GBGActionLogBody .gbg-log-filterbtn:hover {
-	opacity: 1;
-}
-
 /* active filter: column currently has a value */
 #GBGActionLogBody .gbg-log-filterbtn.gbg-flt-on {
-	opacity: 1;
-	color: var(--text-dark);
-	background-color: var(--golden);
+	background: var(--btn-bg-active);
 }
 
 #GBGActionLogBody .gbg-log-popup {

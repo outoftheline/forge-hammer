@@ -516,7 +516,7 @@
 	width: 120px;
 	font-size: 1rem;
 }
-#RatingsResults {
+#RatingsResults, #ScoreModifiersBtn {
 	position: sticky;
 	top: 3px;
 	float: right;
@@ -568,48 +568,37 @@ input[id*="ProdPerTile"] {
 	color: var(--danger-red);
 }
 /* per-building score modifier */
-#ProductionsRatingBody table td.score-cell {
-	white-space: nowrap;
+#ProductionsRatingBody .score-value {
+	padding: 0 10px;
+}
+#ProductionsRatingBody .score-cell:hover .score-value {
+	padding: 0;
 }
 #ProductionsRatingBody td.score-cell.has-modifier .score-value {
 	text-decoration: underline dotted;
 }
-#ProductionsRatingBody .score-modifier-badge {
-	display: inline-block;
-	margin-left: 4px;
-	font-size: 80%;
-	font-weight: bold;
-	vertical-align: middle;
+#ProductionsRatingBody .score-value.pos::after, #ProductionsRatingBody .score-value.neg::after {
+	content: '+';
+	display: inline;
 }
-#ProductionsRatingBody .score-modifier-badge.pos {
-	color: var(--limegreen);
-}
-#ProductionsRatingBody .score-modifier-badge.neg {
-	color: var(--danger-red);
+#ProductionsRatingBody .score-value.neg::after {
+	content: '-';
 }
 #ProductionsRatingBody .edit-score-modifier {
+	display: none;
 	margin-left: 4px;
 	font-size: 90%;
-	opacity: 0.35;
-	vertical-align: middle;
 }
-#ProductionsRatingBody .edit-score-modifier:hover {
-	opacity: 1;
+#ProductionsRatingBody .score-cell:not(.editScore):hover .edit-score-modifier {
+	display: inline-block;
+}
+#ProductionsRatingBody .score-cell.editScore .score-value {
+	display: none;
 }
 #ProductionsRatingBody .score-modifier-input {
 	width: 46px;
 	font-weight: normal;
-}
-/* button that opens the score modifiers management box (sits left of Settings) */
-#ScoreModifiersBtn {
-	position: sticky;
-	top: 3px;
-	float: right;
-	margin-right: 6px;
-	height: 20px;
-	line-height: 20px;
-	margin-bottom: -24px;
-	z-index: 201;
+	padding: 1px 4px;
 }
 /* score modifiers management box */
 #ScoreModifiersBody {
@@ -674,20 +663,8 @@ input[id*="ProdPerTile"] {
 #ScoreModifiersBody th.scoremod-filter-th {
 	position: relative;
 }
-#ScoreModifiersBody .scoremod-filterbtn {
-	cursor: pointer;
-	padding: 0 3px;
-	margin-left: 4px;
-	font-weight: normal;
-	opacity: 0.5;
-}
-#ScoreModifiersBody .scoremod-filterbtn:hover {
-	opacity: 1;
-}
 #ScoreModifiersBody .scoremod-filterbtn.scoremod-flt-on {
-	opacity: 1;
-	color: var(--text-dark);
-	background-color: var(--golden);
+	background: var(--btn-bg-active);
 }
 #ScoreModifiersBody .scoremod-filter-popup {
 	position: absolute;

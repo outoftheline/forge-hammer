@@ -205,6 +205,22 @@ a[target="_blank"] svg {
 	border-radius: 2px;
 }
 
+.btn-round {
+	margin: 1px;
+	padding: 0;
+	width: 16px;
+	height: 16px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	border-radius: 10px;
+	background: var(--btn-bg-disabled);
+}
+.btn-round:hover {
+	background: var(--btn-bg);
+}
+
 .btn-mid {
 	padding: 0.15rem 0.3rem !important;
 }
