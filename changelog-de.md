@@ -1,5 +1,34 @@
 # Changelog
  
+## Version 1.4.0
+### New
+- Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in der Einstellungen des Fensters entfernen.
+
+### Update
+- Stadtplaner: Verbesserungen beim Bewegen der Karte und Auswählen einzelner Gebäude, Filter für die Karte hinzugefügt
+- LG Rechner: Änderungen am Aussehen, um die Rechner etwas anzugleichen, sowie einige sperrige Dinge vereinfacht. Außerdem sieht man nun den Namen des LG + Spieler, wenn man das Fenster verkleinert
+- Gebäude-Tooltips in der Produktionsübersicht hinzugefügt
+
+### Bug Fixes
+- Finale Verbesserungen an der Gebäudedatenbank
+- Einheiten-Produktionen von Verbündeten hinzugefügt
+- Die Forge-Punkte im Inventar wurden wegen Spieländerungen nicht mehr aktualisiert
+- Einstellungen (Local Storage) können nun wieder von Welt zu Welt übertragen werden
+- Mehrere Fehlerbehebungen für den wiederkehrende Quests Tracker
+- Der Blaue Galaxie Helfer hat das Einsammeln im Spiel verlangsamt
+- LG Rechner: Max. Stufe wurde auf 0 gesetzt beim ändern der Ansicht
+
+---
+ 
+## Version 1.3.4
+### Update
+- GG Ziele: Farbliche Markierung für den Angriffstypen hinzugefügt
+
+### Bug Fixes
+- Weitere Änderungen an dem Aufbau der Gebäudedatenbank
+
+---
+ 
 ## Version 1.3.3
 ### Update
 - Stadtplaner: Man kann jetzt auch mit dem Mausrad zoomen und die Schriftgröße der Gebäude verkleinern
