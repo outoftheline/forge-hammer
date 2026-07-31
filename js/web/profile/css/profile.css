@@ -235,6 +235,10 @@
     gap: 1.25em;
 }
 
+.playerprofile h1 a {
+    color: inherit;
+}
+
 .playerprofile .basicInfo img {
     border-radius: 7px;
     width: 90px;

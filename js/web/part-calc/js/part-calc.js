@@ -766,7 +766,10 @@ let Parts = {
 		h.push(`<div id="gbCosts">`);
 
 		h.push(`<div class="dark-bg header text-center p5">
-			<div class="flex gap" style="justify-content:space-between;align-items:end;margin-bottom:5px;">
+			<div class="flex gap" style="justify-content:space-between;align-items:center;margin-bottom:5px;">
+			${PlayerID === FH.Player.ID ? 
+				'<a class="player-portrait" href="'+FH.Main.GetPlayerLinkURL(PlayerID)+'" target="_blank"><img height="30" src="'+srcLinks.GetPortrait(FH.Player.Avatar)+'" /><svg xmlns="http://www.w3.org/2000/svg" width="22pt" height="22pt" viewBox="0 0 22 22"><g><path id="fham-external-link-icon" d="M 13 0 L 13 2 L 18.5625 2 L 6.28125 14.28125 L 7.722656 15.722656 L 20 3.4375 L 20 9 L 22 9 L 22 0 Z M 0 4 L 0 22 L 18 22 L 18 9 L 16 11 L 16 20 L 2 20 L 2 6 L 11 6 L 13 4 Z M 0 4 "></path></g></svg></a>' : ``
+			}
 			<div class="lb-info">
 			<h1>${CityEntity['name']}</h1>`);
 
@@ -790,7 +793,7 @@ let Parts = {
 			h.push('</div>');
 
 			if (PlayerName) {
-				h.push(`<span class="player-name">
+				h.push(`<span class="player-name ${PlayerID === FH.Player.ID ? 'isSelf' : ''}">
 				<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span> ${FH.Main.GetPlayerLink(PlayerID, PlayerName)}`);
 
 				if (FH.Players.Dict[PlayerID].ClanName !== undefined) {

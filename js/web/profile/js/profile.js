@@ -314,7 +314,7 @@ const Profile = {
             cc.push('<img class="colorToggle clickable" src="'+srcLinks.GetPortrait(player.Avatar)+'" />');
             cc.push('</div>');
                 cc.push('<div>');
-                cc.push('<h1>'+player.PlayerName+'</h1>');
+                cc.push('<h1><a class="player-portrait" href="'+FH.Main.GetPlayerLinkURL(player.id)+'" target="_blank">'+player.PlayerName+'</a></h1>');
                 cc.push('<span>'+FH.t('Eras.'+FH.CurrentEraID)+'</span><br>');
                 cc.push('<span class="ranking">'+FH.HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
                 cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
