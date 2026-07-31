@@ -314,7 +314,7 @@ const Profile = {
             cc.push('<img class="colorToggle clickable" src="'+srcLinks.GetPortrait(player.Avatar)+'" />');
             cc.push('</div>');
                 cc.push('<div>');
-                cc.push('<h1><a class="player-portrait" href="'+FH.Main.GetPlayerLinkURL(player.id)+'" target="_blank">'+player.PlayerName+'</a></h1>');
+                cc.push('<h1><a href="'+FH.Main.GetPlayerLinkURL(player.PlayerID)+'" target="_blank">'+player.PlayerName+'</a></h1>');
                 cc.push('<span>'+FH.t('Eras.'+FH.CurrentEraID)+'</span><br>');
                 cc.push('<span class="ranking">'+FH.HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
                 cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
@@ -562,7 +562,7 @@ const Profile = {
         content.push('<div class="basicInfo pad">');
         content.push('<img src="'+srcLinks.GetPortrait(Profile.otherPlayer.other_player.avatar)+'" />');
         content.push('<div>');
-        content.push('<b>'+Profile.otherPlayer.other_player.name+'</b><br>');
+        content.push(`<b><a href="${FH.Main.GetPlayerLinkURL(Profile.otherPlayer.other_player.player_id)}" target="_blank">${Profile.otherPlayer.other_player.name}</a></b><br>`);
         content.push('<span>'+FH.t('Eras.'+Technologies.Eras[CityMap.OtherPlayer.eraName])+'</span><br>');
         content.push('<span class="ranking">'+FH.HTML.Format(parseInt(Profile.otherPlayer.other_player.score))+'</span>');
         content.push('</div>');
