@@ -63,6 +63,35 @@
 	font-size: 90%;
 }
 
+#OwnPartBox .header .player-portrait {
+	width: 30px;
+	padding-left: 5px;
+	margin-right: -25px;
+	position: relative;
+    z-index: 5;
+}
+
+#OwnPartBox .header .player-portrait img {
+	width: 30px;
+	border-radius: 3px;
+}
+
+#OwnPartBox .header .player-portrait:hover img {
+	filter: brightness(1.2);
+}
+
+#OwnPartBox .header .player-portrait svg {
+	color: var(--info-blue);
+	display: none;
+	position: absolute;
+	top: 24px;
+    left: 30px;
+}
+
+#OwnPartBox .header .player-portrait:hover svg {
+	display: block;
+}
+
 #OwnPartBox .header span {
 	color: var(--beige);
 }
@@ -70,6 +99,10 @@
 #OwnPartBox .header .player-name {
 	display: block;
 	white-space: nowrap;
+}
+
+#OwnPartBox .header .player-name.isSelf {
+	display: none;
 }
 
 #OwnPartBox .gbLevels {
