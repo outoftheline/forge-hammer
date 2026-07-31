@@ -83,7 +83,8 @@
     margin: 0 auto;
     max-width: 400px;
     z-index: 200;
-    height: 35px;
+    height: 25px;
+    margin-bottom: 10px;
     box-sizing: border-box;
     position: relative;
 }

@@ -1359,6 +1359,22 @@ let Main = {
 
 
 	/**
+	 * @param {string} PlayerID - The unique identifier for the player
+	 * @returns {string} A URL to the player's profile if links are enabled in settings or #
+	 */
+	GetPlayerLinkURL: (PlayerID) => {
+		if (Settings.GetSetting('ShowLinks')) {
+			let PlayerLink = FH.helper.str.Replacer(FH.Links.Player.scoredb, { 'world': FH.World.toUpperCase(), 'playerid': PlayerID });
+			if (FH.Storage.getItem('linkSite') === 'siteForgedb')
+				PlayerLink = FH.helper.str.Replacer(FH.Links.Player.foestats, { 'server': FH.World.toLowerCase().replace(/[0-9]/g, ''), 'world': FH.World.toLowerCase(), 'playerid': PlayerID });
+
+			return PlayerLink;
+		}
+		return '#';
+	},
+
+
+	/**
 	 * @param {string} GuildID - The unique identifier for the guild.
 	 * @param {string} GuildName - The name of the guild.
 	 * @param {string} [WorldId] - The world identifier. Defaults to `FH.World` when not provided.
@@ -1618,6 +1634,11 @@ let Main = {
 			Main.Allies.updateAllyList()
 		},
 
+
+		toggleFragmentedAllies:()=>{
+			$('#AllyListTable .fragmented').toggle();
+		},
+
 		updateAllyList:()=>{
 			Main.Allies.buildingBoostSums=[]	
 			if ($('#AllyList').length === 0) return;
@@ -1688,12 +1709,14 @@ let Main = {
 				unassigned++
 			})
 
-			html=`<div class="dark-bg">
+			html=`<div class="dark-bg p5">
 				<select id="AllyFilter"><option value="">${FH.t('Boxes.AllyList.All')}</option>`
 				for (let r of Object.values(Main.Allies.rarities)) {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
 				}
-			html+=`</select></div>`
+			html+=`</select>
+				</div>`
+				// <span onclick="FH.Main.Allies.toggleFragmentedAllies()">${srcLinks.icons("icon_tooltip_fragment")}</span>
 			html+=`<table id="AllyListTable" class="foe-table">`
 			html+=`<thead class="sticky"><tr class="sorter-header sort2">
 							<th class="no-sort">${FH.t('Boxes.AllyList.Ally')}</th>
@@ -1716,7 +1739,7 @@ let Main = {
 				rarities.push(r.allyRarity)
 				rarities=rarities.map(x=>"Rarity-"+x)
 
-				html+=`<tr class="allyRoomRow ${rarities.join(" ")}">
+				html+=`<tr class="allyRoomRow ${rarities.join(" ")} ${r.fragmentsAmount?"fragmented":""}">
 						   	<td style="white-space:nowrap">
 								${Main.Allies.rarityStars(r.allyRarity)}
 								${r.allyName || ""}${r.fragmentsAmount?srcLinks.icons("icon_tooltip_fragment") + r.fragmentsAmount+"/"+r.fragmentsNeeded:""}
