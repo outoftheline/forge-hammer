@@ -38,7 +38,7 @@ window.PlannerApp = window.PlannerApp || {};
     function selectBuildingsFromSearch(searchvalue) {
         let searchTerm = (searchvalue || '').trim().toLowerCase();
 
-        if (query.length < 3) {
+        if (searchTerm.length < 3) {
             clearSelection();
             app.redrawMap();
             return;
