@@ -6,6 +6,7 @@ window.PlannerApp = window.PlannerApp || {};
     const state = app.state;
     const dom = app.dom;
     const SIZE = app.SIZE;
+    const ARROW_KEYS = new Set(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
 
     function clearSelection() {
         for (const b of state.selectedBuildings) b.isSelected = false;
@@ -183,6 +184,7 @@ window.PlannerApp = window.PlannerApp || {};
         ) {
             state.placingBuilding = null;
             state.dragCopy = null;
+            state.placementAnchor = null;
         }
 
         state.selectedStoredMetaId = null;
@@ -262,6 +264,7 @@ window.PlannerApp = window.PlannerApp || {};
             },
             stored.meta
         );
+        state.placementAnchor = null;
 
         updatePlacingBuildingPreview();
     }
@@ -272,6 +275,7 @@ window.PlannerApp = window.PlannerApp || {};
         if (!nextStored) {
             state.placingBuilding = null;
             state.dragCopy = null;
+            state.placementAnchor = null;
             app.redrawMap();
             return;
         }
@@ -439,29 +443,26 @@ window.PlannerApp = window.PlannerApp || {};
         app.redrawMap();
     }
 
-    function handleCanvasMouseDownPlace(e) {
-        if (e.button !== 0) return;
-        if (!state.placingBuilding || !state.dragCopy) return;
-        if (e.altKey || e.ctrlKey) return;
-        if (!state.dragCopy.valid) return;
-
+    function placeBuilding(x, y) {
         const placedMetaId = state.placingBuilding.meta.id || false;
         const placedCustom = !!state.placingBuilding.custom;
         const fromMeta = state.placingBuilding._fromMeta === true;
 
         app.pushSnapshot();
 
-        state.placingBuilding.x = state.dragCopy.x;
-        state.placingBuilding.y = state.dragCopy.y;
-        state.placingBuilding.data.x = state.dragCopy.x / SIZE;
-        state.placingBuilding.data.y = state.dragCopy.y / SIZE;
+        state.placingBuilding.x = x;
+        state.placingBuilding.y = y;
+        state.placingBuilding.data.x = x / SIZE;
+        state.placingBuilding.data.y = y / SIZE;
         state.placingBuilding._fromMeta = undefined;
 
         state.mapBuildings.push(state.placingBuilding);
         app.addBuildingToOccupiedTiles(state.placingBuilding);
 
+        // for the next arrow-key adjacent placement
+        state.placementAnchor = state.placingBuilding;
+
         if (fromMeta) {
-            // Re-arm immediately with a fresh copy of the same building.
             const meta = state.metaById.get(String(placedMetaId));
             if (meta) {
                 state.placingBuilding = app.createRotatedBuilding(
@@ -472,6 +473,7 @@ window.PlannerApp = window.PlannerApp || {};
             } else {
                 state.placingBuilding = null;
                 state.dragCopy = null;
+                state.placementAnchor = null;
             }
         } else {
             const idx = state.storedBuildings.findIndex(b => String(b.meta.id) === String(placedMetaId) && !!b.custom === !!placedCustom);
@@ -482,6 +484,64 @@ window.PlannerApp = window.PlannerApp || {};
         app.showStoredBuildings(String(placedMetaId) + (placedCustom ? ':custom' : ''));
         app.updateStats();
         app.autoSave();
+
+        updatePlacingBuildingPreview();
+    }
+
+    function handleCanvasMouseDownPlace(e) {
+        if (e.button !== 0) return;
+        if (!state.placingBuilding || !state.dragCopy) return;
+        if (e.altKey || e.ctrlKey) return;
+        if (!state.dragCopy.valid) return;
+
+        placeBuilding(state.dragCopy.x, state.dragCopy.y);
+    }
+
+    function getArrowPlacementDirection(key) {
+        const rotated = state.rotated;
+
+        switch (key) {
+            case 'ArrowRight': return rotated ? { axis: 'y', sign: -1 } : { axis: 'x', sign: 1 };
+            case 'ArrowLeft':  return rotated ? { axis: 'y', sign: 1 }  : { axis: 'x', sign: -1 };
+            case 'ArrowDown':  return rotated ? { axis: 'x', sign: 1 }  : { axis: 'y', sign: 1 };
+            case 'ArrowUp':    return rotated ? { axis: 'x', sign: -1 } : { axis: 'y', sign: -1 };
+            default: return null;
+        }
+    }
+
+    function placeAdjacent(direction) {
+        const anchor = state.placementAnchor;
+        const building = state.placingBuilding;
+        if (!anchor || !building) return;
+
+        let newX = anchor.x;
+        let newY = anchor.y;
+
+        if (direction.axis === 'x') {
+            newX = anchor.x + direction.sign * anchor.width;
+        } else {
+            newY = anchor.y + direction.sign * anchor.height;
+        }
+
+        if (!app.canPlaceAt(building, newX, newY)) return; // out of space: do nothing
+
+        placeBuilding(newX, newY);
+    }
+
+    function handleArrowPlacementKeyDown(e) {
+        if (!ARROW_KEYS.has(e.key)) return;
+        if (!state.placingBuilding) return;
+        if (isTypingTarget(e.target)) return;
+        if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+        e.preventDefault();
+
+        if (!state.placementAnchor) return; // nothing placed yet in this chain
+
+        const direction = getArrowPlacementDirection(e.key);
+        if (!direction) return;
+
+        placeAdjacent(direction);
     }
 
     function getStreetMetas() {
@@ -873,6 +933,7 @@ window.PlannerApp = window.PlannerApp || {};
             meta
         );
         state.placingBuilding._fromMeta = true;  // flag: not from storedBuildings
+        state.placementAnchor = null;
 
         app.clearMetaSearch();
         updatePlacingBuildingPreview();
@@ -1172,7 +1233,7 @@ window.PlannerApp = window.PlannerApp || {};
         });
 
         dom.searchMap.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
+            if (e.key === 'Escape' || e.key === 'Enter') {
                 e.target.blur();
             }
         });
@@ -1319,6 +1380,7 @@ window.PlannerApp = window.PlannerApp || {};
             if (state.placingBuilding) {
                 state.placingBuilding = null;
                 state.dragCopy = null;
+                state.placementAnchor = null;
                 app.redrawMap();
                 return;
             }
@@ -1336,6 +1398,8 @@ window.PlannerApp = window.PlannerApp || {};
         document.addEventListener('keydown', handlePanKeyDown);
         document.addEventListener('keyup', handlePanKeyUp);
         window.addEventListener('blur', stopPanningAll);
+
+        document.addEventListener('keydown', handleArrowPlacementKeyDown);
 
         dom.buildingSort.addEventListener('change', (e) => {
             state.sidebarState.sortBy = e.target.value;

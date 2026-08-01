@@ -75,6 +75,7 @@ window.PlannerApp.state = {
     selectedStoredMetaId: null,
 
     placingBuilding: null,
+    placementAnchor: null,
     dragCopy: null,
     dragCopies: null,
     rotated: false,
