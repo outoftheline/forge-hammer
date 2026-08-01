@@ -365,3 +365,7 @@
 	height: 24px;
 	margin: 0 3px 0 -2px;
 }
+
+.reconstruction #gb-change-bar {
+	display: none;
+}

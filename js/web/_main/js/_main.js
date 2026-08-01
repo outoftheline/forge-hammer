@@ -108,7 +108,7 @@ FH.Players = {
 FH.RessourceStock = [];
 FH.StartUpDone = new Promise(resolve => 
 		window.addEventListener('forgehammer#StartUpDone', resolve, {once: true, passive: true}));
-FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost'];
+FH.possibleMaps = ['main', 'gex', 'gg', 'era_outpost', 'guild_raids', 'cultural_outpost', 'reconstruction'];
 
 FH.Links = {
 	Player:{
@@ -2246,13 +2246,6 @@ let Main = {
 
 		return text.replace(RegEx, '');
 	},
-
-
-	/*ResizeFunctions: () => {
-		// hammerBar
-		if (document.getElementById('game_body'))
-			StrategyPoints.HandleWindowResize();
-	},*/
 
 
 	/**

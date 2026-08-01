@@ -1131,10 +1131,12 @@ hammerBar */
 #hammerBar .barItem {
 	background: rgba(0, 0, 0, 0.50);
 	border: 1px solid rgba(113, 74, 35, 1);
+	color: var(--beige);
 	border-radius: 4px;
 	display: inline-flex;
     align-items: center;
 	padding: 0 4px;
+	height: inherit;
 }
 
 #hammerBar .fp-storage,
@@ -1171,14 +1173,14 @@ hammerBar */
 #hammerBar.guild_raids {
 	margin-left: 461px;
 }
-#hammerBar.gg, #hammerBar.guild_raids .buyable-fp, #hammerBar.guild_raids .fp-storage, #hammerBar.guild_raids .fpbar, #hammerBar.gex .buyable-fp {
+#hammerBar.gg, #hammerBar.guild_raids .fpContainer, #hammerBar.gex .buyable-fp, #hammerBar.reconstruction .fpContainer, #hammerBar.main .fpbar {
 	display: none;
 }
 #hammerBar.gex {
 	margin-left: 354px;
 }
-#hammerBar.main .fpbar{
-	display:none;
+#hammerBar.reconstruction {
+	margin-left: 0;
 }
 
 #hammerBar .fpbar {

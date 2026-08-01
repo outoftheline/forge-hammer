@@ -84,7 +84,7 @@ let StrategyPoints = {
 
 		$('#hammerBar').removeClass(FH.possibleMaps).addClass(FH.ActiveMap);
 		if( $('.fpbar').length === 0){
-			$('#hammerBar').addClass(`game-cursor`).append(`<div class="fpbar"><div class="number"></div><div class="bars"></div></div>`);
+			$('#hammerBar .fpContainer').addClass(`game-cursor`).append(`<div class="fpbar"><div class="number"></div><div class="bars"></div></div>`);
 		}
 		// necessary to wait for gift in gg + diplomatic gift
 		setTimeout(()=>{
