@@ -1815,6 +1815,8 @@
   "XPlan.Modal.HowTo.Intro": "Bitte gib uns bei Problemen Bescheid. Mehr Funktionen sind in Planung!",
   "XPlan.Modal.HowTo.MoveMap": "Drücke ALT und nutze deine Maus, um die Karte zu bewegen oder nutze die WASD Tasten!",
   "XPlan.Modal.HowTo.MultiSelect": "Markiere mehrere Gebäude mit Strg. <br /> Du kannst ein Gebäude mit Strg + Klick aus der Auswahl entfernen. Du kannst alle ausgewählten Gebäude gleichzeitig bewegen. <br /> Verstaue markierte Gebäude durch ziehen in die Seitenleiste, mit der Leertaste oder indem du auf Verstauen oben links klickst.",
+  "XPlan.Modal.HowTo.PlaceBuilding": "Wenn du mehrere Gebäude eines Typs hast, kannst du mit den Pfeiltasten in eine Richtung drücken und Gebäude werden daneben platziert.",
+  "XPlan.Modal.HowTo.SelectFromSidebar": "Wähle Gebäude 1-9 aus der Seitenleiste zum Platzieren mit den Tasten 1-9.",
   "XPlan.Modal.HowTo.SingleSelect": "Wähle ein Gebäude durch Klick aus, bewege es anschließend durch Ziehen. Lösch es mit den Tasten Löschen, Entfernen oder R. Verstaue es in der Seitenleiste durch Ziehen oder mit der Leertaste.",
   "XPlan.Modal.HowTo.Title": "Funktionen des Stadtplaners",
   "XPlan.Modal.IncomingData": "Neue Daten!",

@@ -76,6 +76,7 @@ select option {
     padding: 3px 6px;
     display: inline-flex;
     align-items: center;
+    position: relative;
 }
 
 .btn.btn-mid {
@@ -289,11 +290,16 @@ select option {
     align-items: center;
 }
 
+#map .btn, #map input {
+    border-width: 2px;
+    border-radius: 5px;
+}
+
 .group {
     display: inline-flex;
 }
 
-.group .btn {
+.group .btn, #map .group .btn {
     border-radius: 0;
     border-left: none;
 }
@@ -303,7 +309,12 @@ select option {
     border-radius: 5px 0 0 5px;
 }
 
-.group .btn:last-child {
+#map .group .btn:first-child {
+    border-left: 2px solid #eeea;
+    border-radius: 5px 0 0 5px;
+}
+
+.group .btn:last-child, #map .group .btn:last-child {
     border-radius: 0 5px 5px 0;
 }
 
@@ -317,13 +328,38 @@ select option {
     border-top: none;
 }
 
+#map .group.column .btn {
+    border: 2px solid #eeea;
+    border-radius: 0;
+    border-bottom: none;
+}
+
 .group.column .btn:first-child {
     border-top: 1px solid #eeea;
     border-radius: 5px 5px 0 0;
 }
 
-.group.column .btn:last-child {
+#map .group.column .btn:first-child {
+    border-top-width: 2px;
+    border-radius: 5px 5px 0 0;
+}
+
+.group.column .btn:last-child, #map .group.column .btn:last-child {
     border-radius: 0 0 5px 5px;
+    border-bottom: 2px solid #eeea;
+}
+
+.btn#howto {
+    border-color: #e6972f;
+}
+
+#currentStreetAmount {
+    position: absolute;
+    bottom: -4px;
+    right: 0;
+    background-color: #333;
+    padding: 1px 2px;
+    border-radius: 3px;
 }
 
 #map .info {

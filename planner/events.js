@@ -250,6 +250,29 @@ window.PlannerApp = window.PlannerApp || {};
         });
     }
 
+    function selectStoredBuildingLi(li) {
+        if (!li) return;
+
+        const groupId = li.dataset.id;
+        const { metaId, custom } = parseGroupId(groupId);
+
+        const prevActive = dom.buildingsListEl.querySelector('li.active');
+        if (prevActive && prevActive !== li) prevActive.classList.remove('active');
+
+        state.selectedStoredMetaId = groupId;
+        li.classList.add('active');
+        startPlacingStoredBuilding(metaId, custom);
+    }
+
+    function selectFromStoredBuildings(index) {
+        const items = dom.buildingsListEl.querySelectorAll('li[data-id]:not(.deleted)');
+        const li = items[index];
+        if (!li) return false;
+
+        selectStoredBuildingLi(li);
+        return true;
+    }
+
     function startPlacingStoredBuilding(metaId, custom = false) {
         const stored = state.storedBuildings.find(b => String(b.meta.id) === String(metaId) && !!b.custom === !!custom);
         if (!stored) return;
@@ -1169,6 +1192,13 @@ window.PlannerApp = window.PlannerApp || {};
             ) {
                 e.preventDefault();
                 storeSelectedBuildings();
+            } else if (
+                e.key >= '1' && e.key <= '9' &&
+                !isTypingTarget(e.target) &&
+                !e.ctrlKey && !e.metaKey && !e.altKey
+            ) {
+                const selected = selectFromStoredBuildings(Number(e.key) - 1);
+                if (selected) e.preventDefault();
             }
         });
 
@@ -1200,17 +1230,13 @@ window.PlannerApp = window.PlannerApp || {};
             const li = e.target.closest('li[data-id]');
             if (!li) return;
 
-            const groupId = li.dataset.id;
-            const { metaId, custom } = parseGroupId(groupId);
-
             if (li.classList.contains('deleted')) {
+                const { metaId, custom } = parseGroupId(li.dataset.id);
                 restoreDeletedBuildings(metaId, custom);
                 return;
             }
 
-            state.selectedStoredMetaId = groupId;
-            li.classList.add('active');
-            startPlacingStoredBuilding(metaId, custom);
+            selectStoredBuildingLi(li);
         });
 
         dom.canvas.addEventListener('click', handleCanvasClick);
@@ -1385,7 +1411,10 @@ window.PlannerApp = window.PlannerApp || {};
                 return;
             }
             
+            // mac os triggers right click when clicking and holding the control key at the same time which would clear the selection
+            if (e.ctrlKey) return;
             clearSelection();
+
             app.redrawMap();
         });
 
