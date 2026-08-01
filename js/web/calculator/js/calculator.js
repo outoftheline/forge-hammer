@@ -339,10 +339,10 @@ let Calculator = {
 			}
 		}
 
-		h.push('<thead><tr>' +
-			'<th>#</th>' +
-			'<th><span class="forgepoints" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment')) + '"></span></th>' +
-			'<th>' + FH.t('Boxes.Calculator.Profit') + '</th>');
+		h.push(`<thead><tr>
+			<th>#</th>
+			<th><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment'))}"></span></th>
+			<th><b title="${FH.t('Boxes.Calculator.Profit')}">+/-</b></th>`);
 			h.push('<th><span class="blueprint" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs')) + '"></span></th>');
 			h.push('<th><span class="medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds')) + '"></span></th>');
 		h.push('</tr></thead>');
@@ -503,7 +503,7 @@ let Calculator = {
 				<tr>
 				<th>#</th>
 				<th><span class="forgepoints" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Commitment'))}"></span></th>
-				<th>${FH.t('Boxes.Calculator.Profit')}</th>
+				<th><b title="${FH.t('Boxes.Calculator.Profit')}">+/-</b></th>
 				<th><span class="blueprint" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.BPs'))}"></span></th>
 				<th><span class="medal" title="${FH.HTML.Tooltip(FH.t('Boxes.Calculator.Meds'))}"></span></th>
 				</tr>
