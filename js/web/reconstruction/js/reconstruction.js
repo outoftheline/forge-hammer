@@ -5,7 +5,8 @@
  */
 
 FH.proxy.addHandler('CityReconstructionService', 'getDraft', (data, postData) => {
-    if(!Settings.GetSetting('ShowReconstructionList')) return;
+    FH.Main.UpdateActiveMap('reconstruction');
+    reconstruction.addToHammerBar();
     if (data?.responseData?.length==0) {
         data.responseData = Object.values(FH.Main.CityMapData).map(x=>({
             "entityId": x.id,
@@ -35,23 +36,29 @@ FH.proxy.addHandler('CityReconstructionService', 'getDraft', (data, postData) =>
             if (reconstruction.count[id].stored == 1) reconstruction.pageUpdate(id)   
         }
     }
-
+    if(!Settings.GetSetting('ShowReconstructionList')) return;
     reconstruction.showTable();
 });
 
 FH.proxy.addHandler('AutoAidService', 'getStates', (data, postData) => {
+    FH.Main.UpdateActiveMap('main');
     $('#ReconstructionList').remove();
     $('#ReconstructionMap').remove();
+    $('#ReconstructionButtons').remove();
+    reconstruction.draft = {};
 });
 
 
 FH.proxy.addHandler('InventoryService', 'getGreatBuildings', (data, postData) => {
+    FH.Main.UpdateActiveMap('main');
     $('#ReconstructionList').remove();
     $('#ReconstructionMap').remove();
+    $('#ReconstructionButtons').remove();
 });
 
 FH.proxy.addRequestHandler('CityReconstructionService', 'saveDraft', (data) => {
-    if(!Settings.GetSetting('ShowReconstructionList')) return;
+    FH.Main.UpdateActiveMap('reconstruction');
+    reconstruction.addToHammerBar();
     for (let x of data.requestData[0]) {
         let id = FH.Main.CityMapData[x.entityId].cityentity_id + "#" + (FH.Main.CityMapData[x.entityId].level||0);
         let pagesUpdated=false;
@@ -136,6 +143,7 @@ let reconstruction = {
         }
     },
     showTable:()=>{
+
         if (!reconstruction.rcIcons) {
             reconstruction.rcIcons = {
                 happ:srcLinks.get("/shared/gui/reconstructionmenu/rc_icon_happynessbuildings.png",true),
@@ -151,7 +159,6 @@ let reconstruction = {
         }             
         
         if ( $('#ReconstructionList').length === 0 ) {
-
 			FH.HTML.AddCssFile('reconstruction');
 
 			FH.HTML.Box({
@@ -161,10 +168,12 @@ let reconstruction = {
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-                custom_buttons: [{class: "window-map", callback: reconstruction.showMap}],
-			    active_maps:"main"
+			    active_maps: "reconstruction"
 			});
-        }           
+        } else {
+            FH.HTML.CloseOpenBox('ReconstructionList');
+            return;
+        }
         
         h =`<table class="sortable-table foe-table">
                 <thead class="sticky">
@@ -194,25 +203,37 @@ let reconstruction = {
         h +=`</tbody></table>`
 
 
-        $('#ReconstructionListBody').html(h)
-        $('#ReconstructionListBody .sortable-table').tableSorter()
-        setTimeout(reconstruction.updateTable,200)
+        $('#ReconstructionListBody').html(h);
+        $('#ReconstructionListBody .sortable-table').tableSorter();
+        setTimeout(reconstruction.updateTable,200);
 
     },
+    addToHammerBar:()=>{
+        if ($('#ReconstructionButtons').length === 0) {
+            $('#hammerBar').append(`<div id="ReconstructionButtons">
+                <span class="barItem" onclick="reconstruction.showTable();">${FH.t('Boxes.ReconstructionList.Button')}</span>
+                <span class="barItem" onclick="reconstruction.showMap();">${FH.t('Boxes.ReconstructionMap.Title')}</span>
+                </div>`);
+        }
+    },
 
-    showMap:()=>{
+    showMap:(stayOpen = false)=>{
         if ( $('#ReconstructionMap').length === 0 ) {
             FH.HTML.Box({
                 id: 'ReconstructionMap',
-                title: '💭',
+                title: FH.t('Boxes.ReconstructionMap.Title'),
                 auto_close: true,
                 dragdrop: true,
                 minimize: true,
                 resize: true,
-                active_maps:"main",
+			    active_maps: "reconstruction",
                 settings: reconstruction.mapSettings
             });
+        } else if (stayOpen) {
+            FH.HTML.CloseOpenBox('ReconstructionMap');
+            return;
         }
+
         let storedUnit = parseInt(FH.Storage.getItem('ReconstructionMapScale') || 80);
 
         let c = `<div class="map-grid-wrapper" style="--scale:${storedUnit}">
@@ -266,13 +287,13 @@ let reconstruction = {
 
     isPlanMatch:(x,y,width,height,type)=>{
         if (!reconstruction.planBuildings) return false;
-        return reconstruction.planBuildings.some(b => b.x === x||0 && b.y === y||0 && b.width === width && b.height === height && b.type === type);
+        return reconstruction.planBuildings.some(b => (b.x === x||0) && (b.y === y||0) && b.width === width && b.height === height && b.type === type);
     },
 
     loadPlanOverlay: async (planId) => {
         if (!planId) {
             reconstruction.planBuildings = null;
-            reconstruction.showMap();
+            reconstruction.showMap(true);
             return;
         }
         try {
