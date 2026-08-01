@@ -6,7 +6,7 @@ window.PlannerApp = window.PlannerApp || {};
     const state = app.state;
     const dom = app.dom;
     const SIZE = app.SIZE;
-    const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+    const ZOOM_STEPS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 
     const canvas = dom.canvas;
     const ctx = canvas.getContext('2d', { alpha: true });
@@ -238,8 +238,8 @@ window.PlannerApp = window.PlannerApp || {};
         const oldStreetAmount = Object.values(state.cityData).filter(x => x.type === 'street').length;
         if (dom.oldStreetsEl) dom.oldStreetsEl.textContent = oldStreetAmount;
 
-        const streetAmount = state.mapBuildings.filter(x => x.data.type === 'street').length;
-        if (dom.newStreetsEl) dom.newStreetsEl.textContent = streetAmount;
+        const streetAmount = state.mapBuildings.filter(x => x.meta.type === 'street').length;
+        if (dom.currentStreetAmountEl) dom.currentStreetAmountEl.textContent = streetAmount;
 
         const population = calculatePopulation();
         if (dom.populationEl) {

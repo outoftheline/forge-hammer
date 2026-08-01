@@ -33,7 +33,7 @@ window.PlannerApp.dom = {
     metaSearchResults: document.querySelector('#metaSearchResults'),
 
     oldStreetsEl: document.querySelector('.old .streets'),
-    newStreetsEl: document.querySelector('.new .streets'),
+    currentStreetAmountEl: document.querySelector('#currentStreetAmount'),
     placeStreetBtn: document.querySelector('#placeStreet'),
     streetSizeGroup: document.querySelector('#streetSizeGroup'),
     populationEl: document.querySelector('#populationStat .pop-stat'),
