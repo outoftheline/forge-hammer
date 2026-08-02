@@ -742,6 +742,7 @@ let Calculator = {
 				title: FH.t('Boxes.Calculator.GBList'),
 				auto_close: true,
 				dragdrop: true,
+				settings: Calculator.showToPaySettings,
 			});
 			$('#calcReminder').append('<div class="content" />')
 			$(`#calcReminder .content`).append(output.join('\n'));
@@ -750,5 +751,24 @@ let Calculator = {
 		$('#calcReminder').off('click', '.gbEntry').on('click', '.gbEntry', function() {
 			removeFromList(this);
 		});
-	}
+	},
+
+	showToPaySettings: () => {
+		let autoOpen = Settings.GetSetting('CalcGBReminder');
+
+		let h = [];
+		h.push(`<p><label><input id="CalcGBReminderAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+		h.push(`<p><button class="btn btn-green" onclick="Calculator.SaveToPaySettings()" id="save-calcreminder-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+
+		$('#calcReminderSettingsBox').html(h.join(''));
+	},
+
+	SaveToPaySettings: () => {
+		let value = false;
+		if ($("#CalcGBReminderAutoOpen").is(':checked'))
+			value = true;
+		FH.Storage.setItem('CalcGBReminder', value);
+		
+		$(`#calcReminderSettingsBox`).remove();
+	},
 };

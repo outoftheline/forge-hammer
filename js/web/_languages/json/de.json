@@ -1213,7 +1213,7 @@
   "Boxes.scoutingTimes.ScoutingTime": "Erkundungsdauer",
   "Boxes.scoutingTimes.Title": "Späherstatus",
   "Boxes.Settings.Active": "Aktiv",
-  "Boxes.Settings.Autostart": "Fenster automatisch bei Spielstart öffnen",
+  "Boxes.Settings.Autostart": "Fenster automatisch öffnen",
   "Boxes.Settings.DeletedBoxCoordsBody": "Alle Box Koordinaten wurden zurück gesetzt, bzw. gelöscht.",
   "Boxes.Settings.DeletedBoxCoordsHead": "Gelöscht!",
   "Boxes.Settings.GameFilters.Brightness": "Helligkeit",

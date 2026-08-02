@@ -837,8 +837,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Messages: Thread opened
 	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		Main.OpenConversation = data.responseData;
-		Calculator.ConversationContent = data.responseData.messages[0].text;
+		if (data.responseData.adminIds?.length === 0) { // prevent in private messages
+			Main.OpenConversation = data.responseData;
+			Calculator.ConversationContent = data.responseData.messages[0].text;
+		}
 	});
 	// Messages: New message in thread
 	FH.proxy.addWsHandler('ConversationService', 'getNewMessage', (data, postData) => {
