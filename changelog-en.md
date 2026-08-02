@@ -2,11 +2,13 @@
  
 ## Version 1.4.0
 ### New
-- New contributions to your own GBs since your last login are now tracked via a new tab in the investment tracker. Click on the GB icon in the top bar when in your city. You can remove the icon in the windows settings.
+- New contributions to your own GBs since your last login are now tracked via a new tab in the investment tracker. Click on the GB icon in the top bar when in your city. You can remove the icon in the windows settings. Thank you, Arklur
+- Building Efficiency: You can now add or substract a number from the calculated score to modify it. Again, thanks to Arklur!
 
 ### Update
 - City Planner: Improvements for building selection and map movement, added a selection filter to the map
 - GB Calculator: Got a facelift to make both views more similar. When the window is minimized, you will now see the GB and player name
+- GBG Overview: Added Guild results to previous seasons
 - Added building tooltips to the production overview
 
 ### Bug Fixes

@@ -2,10 +2,12 @@
  
 ## Version 1.4.0
 ### New
-- Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in der Einstellungen des Fensters entfernen.
+- Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in den Einstellungen des Fensters entfernen. Danke an Arklur
+- Gebäude Effizienz: Score-Modifikatoren hinzugefügt. Addiere oder subtrahiere einen Wert von der eigentlichen Bewertung! Danke auch hier an Arklur
 
 ### Update
 - Stadtplaner: Verbesserungen beim Bewegen der Karte und Auswählen einzelner Gebäude, Filter für die Karte hinzugefügt
+- GG Übersicht: Bei vergangenen Gefechten werden jetzt auch die Gilden-Platzierungen angezeigt
 - LG Rechner: Änderungen am Aussehen, um die Rechner etwas anzugleichen, sowie einige sperrige Dinge vereinfacht. Außerdem sieht man nun den Namen des LG + Spieler, wenn man das Fenster verkleinert
 - Gebäude-Tooltips in der Produktionsübersicht hinzugefügt
 
