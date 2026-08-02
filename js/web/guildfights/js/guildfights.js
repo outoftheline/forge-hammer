@@ -1545,7 +1545,17 @@ let GuildFights = {
 					}
 				}
 				
-				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''}" data-tab="nextup" data-id=${prov[x].id}>
+				
+				let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
+				let bgColor = false;
+				if (remaining < 3600 * 1000) {
+					if (prov[x].gainAttritionChance === 100)
+						bgColor = 'bg-red';
+					else if (prov[x].gainAttritionChance > 20)
+						bgColor = 'bg-yellow';
+				}
+
+				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''}" data-tab="nextup" data-id=${prov[x].id}>
 					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
 					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span>
 					<span class="battletype ${battleType}"></span>
@@ -1558,7 +1568,7 @@ let GuildFights = {
 					nextup.push(`<td>${prov[x].owner}</td>`);
 
 				let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
-				nextup.push(`<td class="time-static" style="user-select:text">${timeAt.format('HH:mm:ss')}</td>
+				nextup.push(`<td class="time-static" style="user-select:text"><span data-original-title="${FH.t('Boxes.GuildFights.Attrition')}: ${prov[x].gainAttritionChance}%">${timeAt.format('HH:mm:ss')}</span></td>
 							<td class="time-dynamic" id="counter-${prov[x].id}">${countDownDate.format('HH:mm:ss')}</td>`);
 
 				let discordButtons = '';
