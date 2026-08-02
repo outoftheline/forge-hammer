@@ -209,6 +209,10 @@
   "Boxes.Calculator.ForderBonusPerConversation": "Zapisz współczynnik darowizny na Rozmowę",
   "Boxes.Calculator.FP": "PR",
   "Boxes.Calculator.FriendlyInvestment": "Pomoc w budowie:",
+  "Boxes.Calculator.GBList": {
+    "s": "Lista PA",
+    "r": "GB List"
+  },
   "Boxes.Calculator.LevelWarning": {
     "s": "UWAGA! Zamniesz tę PA!",
     "r": "Warning! Leveling this GB!"
@@ -1024,6 +1028,10 @@
     "s": "Pokaż cele",
     "r": "Show targets"
   },
+  "Boxes.GuildFights.GuildResults": {
+    "s": "Wyniki gildii",
+    "r": "Guild Results"
+  },
   "Boxes.GuildFights.LastSnapshot": " - Ostatnia aktualizacja: __time__ temu",
   "Boxes.GuildFights.Negotiations": "Negocjacje",
   "Boxes.GuildFights.NoOwner": "Brak właściciela",
@@ -1593,10 +1601,16 @@
     "r": "Places"
   },
   "Boxes.OwnpartCalculator.PlayerName": "Gracz",
-  "Boxes.OwnpartCalculator.PowerLeveling": "Kalkulator maratonów",
+  "Boxes.OwnpartCalculator.PowerLeveling": {
+    "s": "Więcej poziomów",
+    "r": "Power Leveling"
+  },
   "Boxes.OwnpartCalculator.Preview": "Przegląd",
   "Boxes.OwnpartCalculator.Step": "Poziom",
-  "Boxes.OwnpartCalculator.Title": "Kalkulator budowy pereł (PA)",
+  "Boxes.OwnpartCalculator.Title": {
+    "s": "Kalkulator budowy PA",
+    "r": "GB Calculator"
+  },
   "Boxes.OwnpartCalculator.Trust": "Ufaj",
   "Boxes.PlayerProfile.BattleBoosts": "Wzmocnienia bitewne",
   "Boxes.PlayerProfile.DailyProduction": "Codzienna produkcja",
@@ -1908,10 +1922,18 @@
   "Boxes.QiProgress.SnapshotLog": "Dziennik migawek NK",
   "Boxes.QiProgress.SnapShotLogDisclaimer": "Zastrzeżenie: Dane te są oparte na danych zebranych przez użytkownika. Przedstawione tutaj liczby prawdopodobnie nie są w 100% dokładne. Musiałbyś otworzyć listę o północy, aby były poprawne.",
   "Boxes.QiProgress.Title": "Przegląd NK",
+  "Boxes.ReconstructionList.Button": {
+    "s": "Tabela rozmiarów",
+    "r": "Size List"
+  },
   "Boxes.ReconstructionList.Title": "Lista rozmiarów przebudowy",
   "Boxes.ReconstructionMap.LoadPlan": {
     "s": "Wczytaj z planera miasta",
     "r": "Load from City Planner"
+  },
+  "Boxes.ReconstructionMap.Title": {
+    "s": "Mapa",
+    "r": "Map"
   },
   "Boxes.RecurringQuests.AND": "ORAZ",
   "Boxes.RecurringQuests.OR": "LUB",
@@ -2496,6 +2518,14 @@
     "s": "Blokada zbioru wszystkiego",
     "r": "Collect All Blocker"
   },
+  "Settings.CalcGBReminder.Desc": {
+    "s": "Spowoduje to wygenerowanie listy wszystkich PA, do których chcesz się przyłączyć, począwszy od ostatniej wiadomości wysłanej w danym wątku, po uruchomieniu Kalkulatora PA i otwarciu jednej z PA.",
+    "r": "This will generate a list of all GBs you want to contribute to from the last message you sent in a thread once the GB Calculator and one GB is open."
+  },
+  "Settings.CalcGBReminder.Title": {
+    "s": "Wyświetl listę wkładów w PA",
+    "r": "Display GB Contribution List"
+  },
   "Settings.ChangeLanguage.Desc": "Wybierz preferowany język z listy rozwijanej",
   "Settings.ChangeLanguage.Title": "Zmień język",
   "Settings.ChangeLanguage.Translate": {
@@ -2519,6 +2549,10 @@
   "Settings.Entry.BlockCollectAll": {
     "s": "Blokada zbioru wszystkiego",
     "r": "Collect All Blocker"
+  },
+  "Settings.Entry.CalcGBReminder": {
+    "s": "Lista wkładów PA",
+    "r": "GB Contribution List"
   },
   "Settings.Entry.ChangeLanguage": "Język",
   "Settings.Entry.doubleFPtimeout": "Blokada podwójnego wkładu",
@@ -2613,7 +2647,7 @@
   "Settings.InfoboxEntryCount.Title": "Liczba wpisów w Infoboxie",
   "Settings.LoadBeta2.Button": "Pobierz rozszerzenie Beta",
   "Settings.LoadBeta2.Desc": {
-    "s": "Rozszerzenie Beta musi zostać zainstalowane i zaktualizowane ręcznie. Regularnie klikaj poniższy przycisk, aby pobrać aktualną wersję beta lub użyj Git-Managera<br><br>Rozpakuj pobrany plik zip i w ustawieniach rozszerzenia Chrome aktywuj tryb programisty, aby „załadować rozpakowane rozszerzenie”.<br><br>Tylko jedna wersja Forge Hammer powinna być aktywna w danym momencie, aby zapobiec zakłóceniom!",
+    "s": "Rozszerzenie Beta musi zostać zainstalowane i zaktualizowane ręcznie. Regularnie klikaj poniższy przycisk, aby pobrać aktualną wersję beta lub użyj Git-Managera<br><br>Rozpakuj pobrany plik zip i w ustawieniach rozszerzeń Chrome aktywuj tryb programisty, aby „załadować rozpakowane rozszerzenie”.<br><br>Tylko jedna wersja Forge Hammer powinna być aktywna w danym momencie, aby zapobiec zakłóceniom!",
     "r": "The Beta-Extension musst be installed and updated manually. Either regularly click the button below to download the current beta or use a Git-Manager<br><br>Unpack the downloaded zip and activate developer mode in the Chrome extension settings to 'load unpacked extension'.<br><br>Only one Version of the Forge Hammer should be active at any time to prevent interference!"
   },
   "Settings.LoadBeta2.Title": "Załaduj aktualną wersję Beta",
@@ -2799,7 +2833,7 @@
     "r": "Place"
   },
   "XPlan.Buttons.RemoveAll": {
-    "s": "Usuń wszystko",
+    "s": "Usuń wszystkie",
     "r": "Remove All"
   },
   "XPlan.Buttons.Save": {
@@ -2873,6 +2907,14 @@
   "XPlan.Modal.HowTo.MultiSelect": {
     "s": "Aby zaznaczyć wiele budynków, użyj klawisza CTRL. <br> Aby odznaczyć dowolny budynek z zaznaczenia, należy przytrzymać klawisz CTRL i kliknąć na nim. Wszystkie zaznaczone budynki można jednocześnie przenieść na wolne miejsce, przeciągając je myszką. <br> Wybrane budynki można przechować przeciągając je do paska bocznego, naciskając klawisz spacji lub klikając w prawym górnym rogu obok ikony.",
     "r": "Select multiple buildings with the CTRL key. <br /> You can deselect any building from your selection by holding the CTRL key and clicking it. You can move all selected buildings at once to a free space by dragging. <br /> Store selected buildings either by dragging them to the sidebar, clicking the space bar or clicking in the top right corner next to the icon."
+  },
+  "XPlan.Modal.HowTo.PlaceBuilding": {
+    "s": "Jeśli masz więcej niż jeden budynek danego typu, możesz umieścić je obok właśnie wybudowanego, używając strzałek na klawiaturze.",
+    "r": "If you have more that one building of a type, you can place them adjacent to the one you just built by using arrow keys."
+  },
+  "XPlan.Modal.HowTo.SelectFromSidebar": {
+    "s": "Wybierz budynek (grupę budynków) o numerze od 1 do 9 z paska bocznego za pomocą klawiszy od 1 do 9.",
+    "r": "Choose building(group)s 1-9 from the sidebar with keys 1-9."
   },
   "XPlan.Modal.HowTo.SingleSelect": {
     "s": "Wybierz jeden budynek, klikając na niego. Przesuń go przeciągając myszką. Usuń go za pomocą klawisza DEL, Backspace lub R. Przechowasz go, naciskając klawisz spacji lub przeciągając go do ",
