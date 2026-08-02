@@ -229,6 +229,11 @@
 	margin: -1px;
 }
 
+#LiveGuildFightingBody #nextup .focus .battletype {
+	border: 1px solid var(--white);
+	margin: -1px;
+}
+
 #LiveGuildFightingBody #progress {
 	width: 100%;
 	overflow: hidden;

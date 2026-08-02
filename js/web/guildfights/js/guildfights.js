@@ -267,7 +267,6 @@ let GuildFights = {
 	},
 
 
-
 	HandleSignals: async (data = null) => {
 		if (!GuildFights.showGbgTargets) return;
 		
@@ -1554,8 +1553,12 @@ let GuildFights = {
 					else if (prov[x].gainAttritionChance > 20)
 						bgColor = 'bg-yellow';
 				}
+				let signal = Object.values(GuildFights.Signals).find(s => s.provinceId === prov[x].id);
+				let signalClass = '';
+				if (signal)
+					signalClass = signal.signal;
 
-				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''}" data-tab="nextup" data-id=${prov[x].id}>
+				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''} ${signalClass}" data-tab="nextup" data-id=${prov[x].id}>
 					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
 					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span>
 					<span class="battletype ${battleType}"></span>
