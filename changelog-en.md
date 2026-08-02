@@ -4,6 +4,7 @@
 ### New
 - New contributions to your own GBs since your last login are now tracked via a new tab in the investment tracker. Click on the GB icon in the top bar when in your city. You can remove the icon in the windows settings. Thank you, Arklur
 - Building Efficiency: You can now add or substract a number from the calculated score to modify it. Again, thanks to Arklur!
+- GB Contribution List: A window will show up with all GBs you want to contribute to based on your message sent in a thread once you open a GB and the calculator. Cross out GBs you contributed to with a click and disable it in the general settings under Pop Ups
 
 ### Update
 - City Planner: Improvements for building selection and map movement, added a selection filter to the map

@@ -94,6 +94,12 @@
 		"sort": 40
 	},
 	{
+		"name": "CalcGBReminder",
+		"status": true,
+		"group": "Boxes",
+		"sort": 1
+	},
+	{
 		"name": "ShowPlayersMotivation",
 		"status": true,
 		"group": "Boxes",
