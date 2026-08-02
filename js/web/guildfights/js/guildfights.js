@@ -954,7 +954,7 @@ let GuildFights = {
 			tF += playerNew['battlesWon'];
 			tA += playerNew['attrition']
 
-			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
+			b.push('<tr data-player="' + playerNew['player_id'] + '" data-gbground="' + gbground + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-row ' : '') + (change === true ? 'bg-green' : '') + '">');
 			b.push('<td style="display:none;">' + playerNew.player_id + '.</td>');
 
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
@@ -997,12 +997,37 @@ let GuildFights = {
 
 		let tNF = (tN * 2) + tF;
 
+		if (histView) {
+			t.push(`<div class="fham-accordion">
+				<h2 class="fham-accordion-head">${FH.t('Boxes.GuildFights.GuildResults')}</h2>
+				<div class="fham-accordion-body">
+				<table class="foe-table">`);
+			
+			let GuildResults = await GuildFights.db.guildHistory
+			.where({
+				gbground: gbground
+			})
+			.last();
+
+			if (GuildResults?.guilds) {
+				let i = 0;
+				for (let guild of GuildResults.guilds) {
+					t.push(`<tr ${FH.Guild.ID === guild.id ? 'class="mark-row"':''}>
+						<td class="tdmin">${++i}</td>
+						<td class="tdmin"><img src="${srcLinks.get('/shared/clanflags/' + guild.flag.toLowerCase() + '.jpg', true)}" /></td>
+						<td>${guild.name}</td>
+						<td class="text-right">${FH.HTML.Format(guild.points)}</td>
+						</tr>`);
+				}
+			}
+			t.push(`</table></div></div>`);
+		}
+
 		t.push('<table id="GuildPlayersTable" class="exportable foe-table' + (histView === false ? ' chevron-right' : '') + '">');
 
-		t.push('<thead class="sticky">');
-		t.push('<tr>');
-
-		t.push('<th style="display:none;" data-export="Player_ID"></th>');
+		t.push(`<thead class="sticky"> 
+				<tr>
+				<th style="display:none;" data-export="Player_ID"></th>`);
 		t.push('<th colspan="3" data-export3="Player">' + FH.t('Boxes.GuildFights.Player') + '</th>');
 		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
@@ -1018,7 +1043,16 @@ let GuildFights = {
 		t.push('</tbody>');
 
 		$('#gbgContentWrapper').html(t.join('')).promise().done(function () {
+			$('#GuildPlayersBody .fham-accordion-head').on('click',function (event) {
+				let $this = $(event.target).parent('.fham-accordion'),
+					isOpen = $this.hasClass('open');
 
+				$('#GuildPlayersBody .fham-accordion').removeClass('open');
+
+				if(!isOpen){
+					$this.addClass('open');
+				}
+			});
 			$('#GuildPlayersBody tr.showdetailview').off('click').on('click', function () {
 				let player_id = $(this).data('player');
 				let gbground = $(this).data('gbground');
@@ -1941,7 +1975,7 @@ let GuildFights = {
 
 			// fetch all alerts and search the id
 			return FH.Alerts.getAll().then((resp) => {
-				if (resp.length === 0) {
+				if (resp === undefined || resp?.length === 0) {
 					resolve();
 				}
 
@@ -1949,7 +1983,7 @@ let GuildFights = {
 
 				GuildFights.Alerts = [];
 
-				resp.forEach((alert) => {
+				resp?.forEach((alert) => {
 					if (alert['data']['category'] === 'gbg') {
 						let alertTime = alert['data']['expires'],
 							name = alert['data']['title'],
