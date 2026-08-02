@@ -633,6 +633,16 @@
     100% {transform: scale(1.2,1.2);}
 }
 
+#sidebar.main #area-state .openList {
+	opacity: 0.5;
+}
+#sidebar.main #area-state .openList:hover {
+	opacity: 1;
+}
+#sidebar.main #area-state .openList img {
+	width: 19px;
+}
+
 #citymapExtraBody {
 	overflow: auto;
 	max-height: calc(98vh - 30px);

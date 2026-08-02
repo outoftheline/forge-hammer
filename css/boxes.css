@@ -1118,7 +1118,7 @@ hammerBar */
 	justify-content: flex-end;
 	align-items: stretch;
 	user-select: none;
-	height: 29px;
+	height: 27px;
 	gap: 1px;
 }
 
