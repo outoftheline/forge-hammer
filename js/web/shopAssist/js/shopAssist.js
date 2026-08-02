@@ -587,7 +587,7 @@ let shopAssist = {
 
         let h = [];
         h.push(`<p><label><input id="shopAssistAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
-        h.push(`<p><button onclick="shopAssist.SaveSettings()" id="save-bghelper-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><button onclick="shopAssist.SaveSettings()" id="save-shop-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#shopAssistSettingsBox').html(h.join(''));
     },

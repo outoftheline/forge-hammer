@@ -16,11 +16,6 @@
     border-radius: 2px;
 }
 
-#QiProgressTable .tdmin {
-    width: 1%;
-    white-space: nowrap;
-}
-
 #QiProgressPlayerDetails {
     width: 400px;
 }

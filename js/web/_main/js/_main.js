@@ -1867,7 +1867,7 @@ let Main = {
 
 			let h = [];
 			h.push(`<p><label><input id="allyListAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
-			h.push(`<p><button class="btn btn-green" onclick="FH.Main.Allies.SaveSettings()" id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+			h.push(`<p><button class="btn btn-green" onclick="FH.Main.Allies.SaveSettings()" id="save-ally-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 			$('#AllyListSettingsBox').html(h.join(''));
 		},

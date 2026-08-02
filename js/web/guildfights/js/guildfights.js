@@ -1548,7 +1548,7 @@ let GuildFights = {
 				
 				let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
 				let bgColor = false;
-				if (remaining < 3600 * 1000) {
+				if (remaining < 600 * 1000) {
 					if (prov[x].gainAttritionChance === 100)
 						bgColor = 'bg-red';
 					else if (prov[x].gainAttritionChance > 20)

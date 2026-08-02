@@ -274,10 +274,11 @@ a[target="_blank"] svg {
 }
 
 .btn.discord:hover, .btn.discord:active, .btn.discord.custom:hover {
-    background-image: url('../../images/menu/discord.png'), var(--btn-bg-active);
+    background-image: url('../../images/menu/discord.png'), var(--btn-bg-discord);
     background-size: 80%, cover;
     background-repeat: no-repeat, repeat;
     background-position: center;
+	filter: brightness(1);
 }
 
 .btn-group {
@@ -585,6 +586,12 @@ table.foe-table tr.bg-blue td {
 table.foe-table td .error {
 	text-shadow: 0 0 3px var(--bg-darkest), 0 0 1px var(--bg-darkest), 0 1px 0 var(--bg-darkest), 0 1px 4px var(--bg-darkest);
 	display: inline-block;
+}
+
+table.foe-table .tdmin,
+table.foe-table .tdmin {
+	width: 1%;
+	white-space: nowrap;
 }
 
 p { margin: 0 0 10px 0; }

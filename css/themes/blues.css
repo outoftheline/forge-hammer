@@ -45,7 +45,7 @@
 
 	--window-settings-bg: #0f2336;
 
-	--btn-bg: linear-gradient(transparent, transparent);
+	--btn-bg: linear-gradient(#0f233655, #0f233666);
 	--btn-bg-disabled: linear-gradient(to bottom, #0a1a27 0%,#2a2a2a 1%,#1e1e1e 30%,#1f1f1f 99%, #252525 100%);
 	--btn-bg-active: linear-gradient(to bottom, #48c8e8 0%,#2aa8cc 1%,#1880aa 30%,#0f5a80 99%,#1a6a9e 100%);
 	--btn-bg-onclick: linear-gradient(to bottom, #48c8e8 0%,#2aa8cc 1%,#1880aa 20%,#0a3e60 80%,#155078 100%);
