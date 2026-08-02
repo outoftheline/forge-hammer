@@ -7,8 +7,10 @@
 
 ### Update
 - Stadtplaner: Verbesserungen beim Bewegen der Karte und Auswählen einzelner Gebäude, Filter für die Karte hinzugefügt
+- Stadt Übersicht: Man kann jetzt auch eine Liste aller Gebäude, die aufgewertet werden könnten, öffnen
 - GG Übersicht: Bei vergangenen Gefechten werden jetzt auch die Gilden-Platzierungen angezeigt
 - LG Rechner: Änderungen am Aussehen, um die Rechner etwas anzugleichen, sowie einige sperrige Dinge vereinfacht. Außerdem sieht man nun den Namen des LG + Spieler, wenn man das Fenster verkleinert
+- Umbaumodus: Liste und Karte sind jetzt immer über Buttons oben links verfügbar
 - Gebäude-Tooltips in der Produktionsübersicht hinzugefügt
 
 ### Bug Fixes

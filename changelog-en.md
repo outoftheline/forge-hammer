@@ -7,8 +7,10 @@
 
 ### Update
 - City Planner: Improvements for building selection and map movement, added a selection filter to the map
+- City Map: You can now also grab a list of all ascendable buildings
 - GB Calculator: Got a facelift to make both views more similar. When the window is minimized, you will now see the GB and player name
-- GBG Overview: Added Guild results to previous seasons
+- GBG Overview: Added Guild results to previous seasons when there is data
+- Reconstruction Mode: Building list and map are now always available via buttons in the top left corner
 - Added building tooltips to the production overview
 
 ### Bug Fixes

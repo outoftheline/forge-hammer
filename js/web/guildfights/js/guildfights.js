@@ -998,11 +998,6 @@ let GuildFights = {
 		let tNF = (tN * 2) + tF;
 
 		if (histView) {
-			t.push(`<div class="fham-accordion">
-				<h2 class="fham-accordion-head">${FH.t('Boxes.GuildFights.GuildResults')}</h2>
-				<div class="fham-accordion-body">
-				<table class="foe-table">`);
-			
 			let GuildResults = await GuildFights.db.guildHistory
 			.where({
 				gbground: gbground
@@ -1010,6 +1005,10 @@ let GuildFights = {
 			.last();
 
 			if (GuildResults?.guilds) {
+				t.push(`<div class="fham-accordion">
+				<h2 class="fham-accordion-head">${FH.t('Boxes.GuildFights.GuildResults')}</h2>
+				<div class="fham-accordion-body">
+				<table class="foe-table">`);
 				let i = 0;
 				for (let guild of GuildResults.guilds) {
 					t.push(`<tr ${FH.Guild.ID === guild.id ? 'class="mark-row"':''}>
@@ -1019,8 +1018,8 @@ let GuildFights = {
 						<td class="text-right">${FH.HTML.Format(guild.points)}</td>
 						</tr>`);
 				}
+				t.push(`</table></div></div>`);
 			}
-			t.push(`</table></div></div>`);
 		}
 
 		t.push('<table id="GuildPlayersTable" class="exportable foe-table' + (histView === false ? ' chevron-right' : '') + '">');

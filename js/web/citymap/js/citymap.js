@@ -961,8 +961,18 @@ let CityMap = {
 			'<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.roadless')+', '+parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)+'" />' + CityMap.metrics.roadlessBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.roadlessBuildingsArea + '</span></li>' +
 			'<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromGBG')+', '+parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)+'" />' + CityMap.metrics.gbgBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.gbgArea+ '</span></li>' +
 			'<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.buildingFromQI')+', '+parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)+'" />' + CityMap.metrics.qiBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.qiArea+ '</span></li>' + 
-			'<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.limited')+', '+parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" />' + CityMap.metrics.limitedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.limitedBuildingsArea + '</span></li>' +
-			'<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowAscendableBuildings')+', '+parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img src="'+srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)+'" />' + CityMap.metrics.ascendableBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.ascendableBuildingsArea + '</span></li>' +
+			`<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.limited')}, ${parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+			<span>
+			<img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" />${CityMap.metrics.limitedBuildings}
+			<span class="openList" onclick="CityMap.buildingGroupList('limited')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+			</span> 
+			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.limitedBuildingsArea}</span></li>` +
+			`<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowAscendableBuildings')}, ${parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+			<span>
+			<img src="${srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)}" />${CityMap.metrics.ascendableBuildings} 
+			<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+			</span> 
+			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` +
 			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
 
 		areaStats.push('<li class="ratings clickable">')
@@ -1037,45 +1047,6 @@ let CityMap = {
 
 	highlightLimitedBuildings: ()=> {
 		$('#grid-outer').toggleClass('showLimited');
-
-		if ($('#citymapExtra').length !== 0) {
-			FH.HTML.CloseOpenBox('citymapExtra');
-			return;
-		}
-		
-		FH.HTML.Box({
-			id: 'citymapExtra',
-			title: FH.t('Boxes.CityMap.limited'),
-			dragdrop: true,
-			auto_close: true,
-			resize: true,
-		});
-		
-		let limitedBuildings = [];
-		for (let building of Object.values(FH.Main.CityBuildingsData)) {
-			if (!building.isLimited) continue;
-			limitedBuildings.push(building);
-		}
-		
-		limitedBuildings.sort((a,b)=>{
-			if (a.state.decayTime < b.state.decayTime) return -1;
-			if (a.state.decayTime > b.state.decayTime) return 1;
-			return 0;
-		});
-		
-		let output = [];
-		output.push(`<ul class="foe-table text-smaller">`);
-		for (let building of limitedBuildings) {
-			output.push(`<li class="flex between">
-				<span>
-					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${FH.extUrl}images/hud/open-eye.png"></span> 
-					${building.name}
-				</span> 
-				<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>
-			</li>`);
-		}
-		output.push(`</ul>`)
-		$('#citymapExtraBody').html(output.join(''));
 	},
 
 
@@ -1093,6 +1064,58 @@ let CityMap = {
 		$('.rating10').toggleClass('highlight4');
 		$('.rating20').toggleClass('highlight4');
 		$('.rating30').toggleClass('highlight4');
+	},
+
+	buildingGroupList: async (type) => {
+		let title = FH.t('Boxes.CityMap.limited');
+		let buildings = [];
+		
+		if (type === 'limited')
+			for (let building of Object.values(FH.Main.CityBuildingsData)) {
+				if (!building.isLimited) continue;
+				buildings.push(building);
+			}
+		else if (type === 'acendable') {
+			title = FH.t('Boxes.CityMap.ShowAscendableBuildings');
+			for (let building of Object.values(FH.Main.CityBuildingsData)) {
+				if (building.type === "street") continue;
+				let canAscend = (await CityBuildings.canAscend(building.entityId) ? ' ascendable' : false);
+				if (canAscend !== false)
+					buildings.push(building);
+			}
+		}
+		
+		buildings.sort((a,b)=>{
+			if (a.state.decayTime < b.state.decayTime) return -1;
+			if (a.state.decayTime > b.state.decayTime) return 1;
+			return 0;
+		});
+
+		if ($('#citymapExtra').length === 0)
+			FH.HTML.Box({
+				id: 'citymapExtra',
+				title,
+				dragdrop: true,
+				auto_close: true,
+				resize: true,
+			});
+		
+		$('#citymapExtra .title').text(title);
+		
+		let output = [];
+		output.push(`<ul class="foe-table text-smaller">`);
+		for (let building of buildings) {
+			output.push(`<li class="flex between">
+				<span>
+					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${FH.extUrl}images/hud/open-eye.png"></span> 
+					${building.name}
+				</span> 
+				${(type === 'limited') ? 
+					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>` : ``}
+			</li>`);
+		}
+		output.push(`</ul>`)
+		$('#citymapExtraBody').html(output.join(''));
 	},
 
 
