@@ -840,7 +840,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		Main.OpenConversation = data.responseData;
 		Calculator.ConversationContent = data.responseData.messages[0].text;
 	});
-
+	// Messages: New message in thread
+	FH.proxy.addWsHandler('ConversationService', 'getNewMessage', (data, postData) => {
+		if (Main.OpenConversation && Main.OpenConversation.id === data.responseData.conversationId)
+			Calculator.ConversationContent = data.responseData.text;
+	});
 	// Messages: Thread closed
 	FH.proxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
 		Main.OpenConversation = null;

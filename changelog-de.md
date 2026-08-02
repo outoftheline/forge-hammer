@@ -4,6 +4,7 @@
 ### New
 - Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in den Einstellungen des Fensters entfernen. Danke an Arklur
 - Gebäude Effizienz: Score-Modifikatoren hinzugefügt. Addiere oder subtrahiere einen Wert von der eigentlichen Bewertung! Danke auch hier an Arklur
+- LG Förderliste: Ein Popup mit allen Plätzen, die du austragen willst, öffnet sich sobald du den Rechner und ein LG öffnest. Du kannst LG mit einem Klick aus der Liste entfernen. Schalte es in den Einstellungen unter "Pop Ups" aus
 
 ### Update
 - Stadtplaner: Verbesserungen beim Bewegen der Karte und Auswählen einzelner Gebäude, Filter für die Karte hinzugefügt

@@ -739,7 +739,7 @@ let Calculator = {
 		else {
 			FH.HTML.Box({
 				id: 'calcReminder',
-				title: '',
+				title: FH.t('Boxes.Calculator.GBList'),
 				auto_close: true,
 				dragdrop: true,
 			});

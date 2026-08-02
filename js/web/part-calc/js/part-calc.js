@@ -450,8 +450,8 @@ let Parts = {
 		await FH.StartUpDone;
 		if (FH.Main.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
 
-		let openPayReminder = FH.Storage.getItem('CalcGBReminder');
-		if (openPayReminder === '1' && Calculator.ConversationContent && Calculator.ConversationContentNew) {
+		let openPayReminder = JSON.parse(FH.Storage.getItem('CalcGBReminder'));
+		if (openPayReminder && Calculator.ConversationContent && Calculator.ConversationContentNew) {
 			Calculator.showToPay();
 		}
 			
