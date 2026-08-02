@@ -830,7 +830,7 @@ let Productions = {
 						if (building.chainBuilding !== undefined)
 						rowA.push('<img src="' + srcLinks.get('/shared/icons/' + building.chainBuilding.name + '.png', true) + '" class="chain-set-ico">')
 					rowA.push('</td>')
-					rowA.push('<td data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'" data-text="'+FH.helper.str.cleanup(building.name)+'" exportvalue="'+building.name+'">' + building.name + '</td>')
+					rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'" exportvalue="'+building.name+'"><span data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
 					if (!type.includes('att') && !type.includes('def')) {
 						if (type !== 'items') {
@@ -1045,7 +1045,7 @@ let Productions = {
 
 				table.push('<tr class="sorter-header exportheader">')
 
-				table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
+				table.push('<th class="no-sort tdmin" data-type="prodlist'+type+'"> </th>')
 				table.push('<th class="ascending" data-type="prodlist'+type+'" data-export="' + FH.t('Boxes.BlueGalaxy.Building') + '">' + FH.t('Boxes.BlueGalaxy.Building') + '</th>')
 
 				if (!type.includes('att') && !type.includes('def')) 
@@ -1147,7 +1147,7 @@ let Productions = {
 			rowA.push('<td>')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'" data-text="'+FH.helper.str.cleanup(building.name)+'">' + building.name + '</td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><span data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
@@ -1264,7 +1264,7 @@ let Productions = {
 		for (const building of groupedBuildings) {
 			rowB.push('<tr>')
 			rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-			rowB.push('<td data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'" data-text="'+building.building.name.replace(/[. -]/g,"")+'">'+ building.building.name +'</td>')
+			rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"><span  data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</span></td>')
 			for (const era of eras) {
 				rowB.push('<td data-number="'+building[era]+'" class="text-center">')
 				rowB.push(FH.HTML.Format(building[era]))
@@ -1311,7 +1311,7 @@ let Productions = {
 			rowA.push('<td>')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'" data-text="'+FH.helper.str.cleanup(building.name)+'">' + building.name + '</td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><spandata-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
@@ -3290,7 +3290,7 @@ let Productions = {
 								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
 								<link rel="stylesheet" href="${FH.extUrl}js/web/productions/css/productions.css">
 								<link rel="stylesheet" href="${FH.extUrl}js/web/customTooltip/css/customTooltip.css">
-								<style>#RatingsResults, #addMetaBuilding, label[for="inventorybuildingscore"], label[for="showallies"] {display: none !important;}</style>
+								<style>#RatingsResults, #addMetaBuilding, label[for="inventorybuildingscore"], label[for="showallies"], .edit-score-modifier, #ScoreModifiersBtn {display: none !important;}</style>
 							</head>
 							<body class="popup-body"><div id="ProductionsRatingBody">${content}</div></body>
 							<script src="${FH.extUrl}vendor/jQuery/jquery.min.js"></script>

@@ -80,12 +80,6 @@
 	border-bottom: 1px solid var(--text-highlight);
 }
 
-#GuildPlayersBody table .tdmin,
-#GuildPlayersDetailViewBody table .tdmin {
-	width: 1%;
-	white-space: nowrap;
-}
-
 #GuildPlayersSettingsBox .settingtitle {
 	display: block;
 	margin-bottom: 7px;

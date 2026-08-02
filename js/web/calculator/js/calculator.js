@@ -758,7 +758,7 @@ let Calculator = {
 
 		let h = [];
 		h.push(`<p><label><input id="CalcGBReminderAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
-		h.push(`<p><button class="btn btn-green" onclick="Calculator.SaveToPaySettings()" id="save-calcreminder-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+		h.push(`<p><button class="btn btn-green" onclick="Calculator.SaveToPaySettings()" id="save-calcreminder-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#calcReminderSettingsBox').html(h.join(''));
 	},

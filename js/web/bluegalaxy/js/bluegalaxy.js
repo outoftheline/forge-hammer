@@ -330,7 +330,7 @@ let BlueGalaxy = {
         let h = [];
         h.push(`<p><input id="autoStartBGHelper" name="autoStartBGHelper" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} /> <label for="autoStartBGHelper">${FH.t('Boxes.Settings.Autostart')}</label></p>`);
         h.push(`<p><input id="showBGFragments" name="showBGFragments" value="1" type="checkbox" ${(showBGFragments === true) ? ' checked="checked"' : ''} /> <label for="showBGFragments">${FH.t('Boxes.Settings.showBGFragments')}</label></p>`);
-        h.push(`<p><button id="save-bghelper-settings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
+        h.push(`<p><button id="save-bghelper-settings" class="btn saveSettings" >${FH.t('Boxes.Settings.Save')}</button></p>`);
 
         $('#bluegalaxySettingsBox').html(h.join(''));
         $('#save-bghelper-settings').on('click', BlueGalaxy.SaveSettings);
