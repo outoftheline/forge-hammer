@@ -1392,6 +1392,7 @@ a:hover, input[type="radio"], .clickable {
 .window-settings, .fh-icon-settings { background-position: -193px -3px, 0 0; }
 .window-popout { background-position: -234px -3px, 0 0; }
 .window-viewswitch { background-position: -275px -3px, 0 0; }
+.window-refresh { background-position: -355px -3px, 0 0; }
 .window-viewswitch.inactive {
 	opacity: 0.1;
 }
