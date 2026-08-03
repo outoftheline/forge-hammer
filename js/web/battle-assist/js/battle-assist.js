@@ -383,7 +383,7 @@ let BattleAssist = {
             let elm=event.target;
             let id = elm.dataset.id
             if (!id) return;
-            elm.innerHTML = `<input type="Number" value="${BattleAssist.armyAdvice[id]?.bonus ? BattleAssist.armyAdvice[id]?.bonus:""}" onkeydown="BattleAssist.SetBonus(event)" onfocusout="BattleAssist.ShowArmyAdviceConfig()">`;
+            elm.innerHTML = `<input type="Number" value="${BattleAssist.armyAdvice[id]?.bonus ? BattleAssist.armyAdvice[id]?.bonus:""}" onkeydown="FH.BattleAssist.SetBonus(event)" onfocusout="FH.BattleAssist.ShowArmyAdviceConfig()">`;
             $ (`.AASetBonus[data-id="${id}"] input`)[0].select();
         });
         
@@ -394,7 +394,7 @@ let BattleAssist = {
             BattleAssist.overrideId=null
             
             elm.innerHTML = `
-                <textarea maxlength="180" onfocusout="BattleAssist.ShowArmyAdviceConfig()" onkeydown="BattleAssist.SetAdvice(event)">${BattleAssist.armyAdvice[id]?.advice || ""}</textarea>`;
+                <textarea maxlength="180" onfocusout="FH.BattleAssist.ShowArmyAdviceConfig()" onkeydown="FH.BattleAssist.SetAdvice(event)">${BattleAssist.armyAdvice[id]?.advice || ""}</textarea>`;
             $ (`.AASetAdvice[data-id="${id}"] textarea`)[0].select();
         });
         $(`.battleAssistOverrideType`).on("click",(event)=>{
