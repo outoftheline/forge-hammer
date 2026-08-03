@@ -2242,6 +2242,7 @@ let ProvinceMap = {
 	Provinces: [],
 	StrokeColor: '#111',
 	selectedProvince: null,
+	hoveredProvince: null,
 
 	mapDrag: () => {
 		const wrapper = document.getElementById('province-map-wrap');	
@@ -2278,6 +2279,44 @@ let ProvinceMap = {
         ProvinceMap.Map.addEventListener('mousedown', function (e) {
 			wrapper.addEventListener('mousedown', mouseDownHandler);
         }, false);
+	},
+
+	trackHover: () => {
+		ProvinceMap.Map.addEventListener('mousemove', function (e) {
+			const canvasPos = ProvinceMap.getCanvasPoint(e);
+			ProvinceMap.setHoveredProvince(ProvinceMap.findProvinceAt(canvasPos.x, canvasPos.y));
+		});
+
+		ProvinceMap.Map.addEventListener('mouseleave', function () {
+			ProvinceMap.setHoveredProvince(null);
+		});
+	},
+
+	trackClick: () => {
+		ProvinceMap.Map.addEventListener('click', function (e) {
+			const canvasPos = ProvinceMap.getCanvasPoint(e);
+			const province = ProvinceMap.findProvinceAt(canvasPos.x, canvasPos.y);
+			if (!province) return;
+
+			$(`#LiveGuildFightingBody tr[data-tab="nextup"][data-id="${province.id}"]`).toggleClass('highlight-row');
+			GuildFights.ToggleCopyButton();
+		});
+	},
+
+	setHoveredProvince: (province) => {
+		if (province === ProvinceMap.hoveredProvince) return;
+
+		if (ProvinceMap.hoveredProvince) {
+			$(`#LiveGuildFightingBody tr[data-tab="nextup"][data-id="${ProvinceMap.hoveredProvince.id}"], #LiveGuildFightingBody tr[data-tab="gbgowned"][data-id="${ProvinceMap.hoveredProvince.id}"]`)
+				.removeClass('province-hover');
+		}
+
+		ProvinceMap.hoveredProvince = province;
+
+		if (province) {
+			$(`#LiveGuildFightingBody tr[data-tab="nextup"][data-id="${province.id}"], #LiveGuildFightingBody tr[data-tab="gbgowned"][data-id="${province.id}"]`)
+				.addClass('province-hover');
+		}
 	},
 
 	getSectorColors: (ownerID) => {
@@ -2335,6 +2374,8 @@ let ProvinceMap = {
 		$('#ProvinceMapBody').html(wrapper).append('<span id="zoomGBGMap" class="btn">'+FH.t('Boxes.General.Zoom')+'</span><div id="provDetails"></div>');
 		
 		ProvinceMap.mapDrag();
+		ProvinceMap.trackHover();
+		ProvinceMap.trackClick();
 
 		$('#zoomGBGMap').click(function (e) {
 			$('#province-map').toggleClass('zoomed');
@@ -2669,11 +2710,6 @@ let ProvinceMap = {
 
 		let x = (e.clientX - rect.left) * scaleX;
 		let y = (e.clientY - rect.top) * scaleY;
-
-		if (GuildFights.MapData.map['id'] === "volcano_archipelago") {
-			x -= ProvinceMap.Size.width / 2;
-			y -= ProvinceMap.Size.height / 2;
-		}
 
 		return { x, y };
 	},
