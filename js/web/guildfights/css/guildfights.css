@@ -250,6 +250,10 @@
 	color: var(--text-highlight);
 }
 
+#LiveGuildFightingBody table.foe-table tr.province-hover {
+	background-color: var(--table-bg-hover);
+}
+
 #LiveGuildFightingBody tr td {
 	transition: background-color .6s;
 }
