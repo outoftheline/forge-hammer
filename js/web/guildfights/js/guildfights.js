@@ -2243,6 +2243,7 @@ let ProvinceMap = {
 	StrokeColor: '#111',
 	selectedProvince: null,
 	hoveredProvince: null,
+	hoverAdjacentProvincesIds: [],
 
 	mapDrag: () => {
 		const wrapper = document.getElementById('province-map-wrap');	
@@ -2311,12 +2312,35 @@ let ProvinceMap = {
 				.removeClass('province-hover');
 		}
 
+		ProvinceMap.clearAdjacentProvincesHighlight();
+
 		ProvinceMap.hoveredProvince = province;
 
 		if (province) {
 			$(`#LiveGuildFightingBody tr[data-tab="nextup"][data-id="${province.id}"], #LiveGuildFightingBody tr[data-tab="gbgowned"][data-id="${province.id}"]`)
 				.addClass('province-hover');
+
+			ProvinceMap.highlightAdjacentProvincess(province);
 		}
+	},
+
+	highlightAdjacentProvincess: (province) => {
+		if (province.lockedUntil === undefined || !province.links) return;
+
+		ProvinceMap.hoverAdjacentProvincesIds = province.links.filter((linkId) => {
+			const adjacent = ProvinceMap.Provinces[linkId];
+			return adjacent && adjacent.lockedUntil !== undefined && adjacent.lockedUntil < province.lockedUntil;
+		});
+
+		ProvinceMap.hoverAdjacentProvincesIds.forEach((id) => ProvinceMap.Provinces[id]?.updateMapSector());
+	},
+
+	clearAdjacentProvincesHighlight: () => {
+		if (ProvinceMap.hoverAdjacentProvincesIds.length === 0) return;
+
+		const idsToRedraw = ProvinceMap.hoverAdjacentProvincesIds;
+		ProvinceMap.hoverAdjacentProvincesIds = [];
+		idsToRedraw.forEach((id) => ProvinceMap.Provinces[id]?.updateMapSector());
 	},
 
 	getSectorColors: (ownerID) => {
@@ -2454,7 +2478,7 @@ let ProvinceMap = {
 			
 			else {
 				ProvinceMap.MapCTX.fillStyle = sector.owner.colors.highlight;
-				if (this.isSelected) ProvinceMap.MapCTX.fillStyle = this.owner.colors.base;
+				if (this.isSelected || ProvinceMap.hoverAdjacentProvincesIds.includes(this.id)) ProvinceMap.MapCTX.fillStyle = this.owner.colors.base;
 
 				if (ProvinceMap.view == "battleType" && sector.battleType == "red" && sector.owner.colors.cid !== "own_guild_colour")
 					ProvinceMap.MapCTX.fillStyle = "#cf401e";
@@ -2489,7 +2513,8 @@ let ProvinceMap = {
 		Province.prototype.drawUnlockTime = function(mapStuff) {
 			ProvinceMap.MapCTX.font = 'bold 20px Courier New';
 			ProvinceMap.MapCTX.fillStyle = '#000';
-			if (this.isSelected) ProvinceMap.MapCTX.fillStyle = '#fff';
+			if (ProvinceMap.hoverAdjacentProvincesIds.includes(this.id) || this.isSelected) ProvinceMap.MapCTX.fillStyle = '#fff';
+
 			let provinceUnlockTime = (moment.unix(this.lockedUntil).format('HH:mm') != 'Invalid date') ? moment.unix(this.lockedUntil).format('HH:mm') : '';
 			ProvinceMap.MapCTX.fillText(provinceUnlockTime,mapStuff.x,mapStuff.y+5);
 		}
@@ -2505,7 +2530,7 @@ let ProvinceMap = {
 			// do not draw dots for own sectors
 			if (this.owner.colors.cid != "own_guild_colour") {
 				ProvinceMap.MapCTX.strokeStyle = '#000';
-				if (this.isSelected) ProvinceMap.MapCTX.strokeStyle = '#fff';
+				if (ProvinceMap.hoverAdjacentProvincesIds.includes(this.id)) ProvinceMap.MapCTX.strokeStyle = '#fff';
 
 				ProvinceMap.MapCTX.beginPath();
 				ProvinceMap.MapCTX.arc(x-36, titleY+12, 5, 0, 2*Math.PI);
@@ -2521,13 +2546,14 @@ let ProvinceMap = {
 			}
 
 			ProvinceMap.MapCTX.strokeStyle = '#fff5';
-			if (this.isSelected) ProvinceMap.MapCTX.strokeStyle = '#000';
+			if (this.isSelected || ProvinceMap.hoverAdjacentProvincesIds.includes(this.id)) ProvinceMap.MapCTX.strokeStyle = '#000';
 
 			ProvinceMap.MapCTX.font = 'bold 28px Arial';
 			ProvinceMap.MapCTX.strokeText(this.short, x, titleY);
 
 			ProvinceMap.MapCTX.fillStyle = '#000';
-			if (this.isSelected) ProvinceMap.MapCTX.fillStyle = '#fff';
+			if (ProvinceMap.hoverAdjacentProvincesIds.includes(this.id)) ProvinceMap.MapCTX.fillStyle = '#fff';
+			if (this.isSelected) ProvinceMap.MapCTX.fillStyle = this.owner.colors.highlight;
 
 			ProvinceMap.MapCTX.fillText(this.short, x, titleY);
 			
