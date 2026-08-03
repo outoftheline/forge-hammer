@@ -837,7 +837,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Messages: Thread opened
 	FH.proxy.addHandler('ConversationService', 'getConversation', (data, postData) => {
-		if (data.responseData.adminIds?.length === 0) { // prevent in private messages
+		if (data.responseData.adminIds?.length !== 0) { // prevent in private messages
 			Main.OpenConversation = data.responseData;
 			Calculator.ConversationContent = data.responseData.messages[0].text;
 		}
@@ -856,7 +856,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
 		Calculator.ConversationContentNew = data.responseData.text;
-		//	Calculator.showToPay(Calculator.ConversationContent, Calculator.ConversationContentNew)
 	});
 
 })();
