@@ -775,6 +775,7 @@ let GuildFights = {
 				resize: true,
 				minimize: true,
 				settings: GuildFights.ShowLiveFightSettings,
+				custom_buttons: [{class: "window-refresh", callback: GuildFights.BuildFightContent}]
 			    //active_maps:"gg"
 			});
 
