@@ -41,6 +41,8 @@ FH.proxy.addHandler('CityReconstructionService', 'getDraft', (data, postData) =>
 });
 
 FH.proxy.addHandler('AutoAidService', 'getStates', (data, postData) => {
+    if (FH.ActiveMap !== 'reconstruction') return;
+    
     FH.Main.UpdateActiveMap('main');
     $('#ReconstructionList').remove();
     $('#ReconstructionMap').remove();
@@ -50,6 +52,8 @@ FH.proxy.addHandler('AutoAidService', 'getStates', (data, postData) => {
 
 
 FH.proxy.addHandler('InventoryService', 'getGreatBuildings', (data, postData) => {
+    if (FH.ActiveMap !== 'reconstruction') return;
+
     FH.Main.UpdateActiveMap('main');
     $('#ReconstructionList').remove();
     $('#ReconstructionMap').remove();
