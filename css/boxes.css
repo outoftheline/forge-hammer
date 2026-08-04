@@ -1265,6 +1265,7 @@ a {
 .button-own:hover,
 .button--lg:hover,
 .hud-btn:hover,
+.hud-btn-toggle:hover,
 a:hover, input[type="radio"], .clickable {
 	cursor: url('../images/cursor_hover.cur'), auto !important;
 }
@@ -2037,7 +2038,7 @@ input[type="range"]::-webkit-slider-thumb {
 	left: -14px;
 }
 
-.hud-btn-right:hover, .hud-btn-left:hover {
+.hud-btn-right:hover, .hud-btn-left:hover, .hud-btn-up:hover, .hud-btn-down:hover, .hud-btn-toggle:hover {
 	filter: brightness(1.3) contrast(1.1);
 }
 

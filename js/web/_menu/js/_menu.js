@@ -17,7 +17,7 @@ _menu = {
 	HudWidth: 0,
 	TopOffset: 0,
 
-	MenuOptions: ['BottomBar', 'RightBar', 'Box'],
+	MenuOptions: ['BottomBar', 'RightBar', 'RightBar2', 'Box'],
 	
 	Items: [
 		'partCalc',
@@ -72,6 +72,10 @@ _menu = {
 		if (selMenu === 'RightBar') {
 			_menu.selectedMenu = 'RightBar';
 			_menu_right.BuildOverlayMenu();
+		}
+		else if (selMenu === 'RightBar2') {
+			_menu.selectedMenu = 'RightBar2';
+			_menu_right2.BuildOverlayMenu();
 		}
 		else if (selMenu === 'BottomBar') {
 			_menu.selectedMenu = 'BottomBar';
@@ -129,7 +133,7 @@ _menu = {
 	
 	toolTipp: (btn, title, desc) => {
 		$(btn).attr('title', desc);
-		let pos = (_menu.selectedMenu === 'RightBar' ? 'left' : 'top');
+		let pos = (_menu.selectedMenu === 'RightBar' || _menu.selectedMenu === 'RightBar2' ? 'left' : 'top');
 
 		// fix the tooltip position when menu is box and at the top border
 		if(_menu.selectedMenu === 'Box' && _menu.TopOffset < 120){
@@ -927,11 +931,10 @@ let _menu_bottom = {
 			return;
 		} 
 			
-		// hat der Spieler eine Länge vorgebeben?
+
 		let MenuLength = FH.Storage.getItem('MenuLength');
 
-		if (MenuLength !== null && MenuLength < _menu.HudCount)
-		{
+		if (MenuLength !== null && MenuLength < _menu.HudCount) {
 			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
 		}
 
@@ -1518,6 +1521,187 @@ let _menu_right = {
 		} else if (_menu.ActiveSlide === _menu.SlideParts){
 			$('.hud-btn-down').removeClass('hud-btn-down-active');
 		}
+	},
+};
+
+/**
+ menu_right2
+ */
+let _menu_right2 = {
+
+	HudOpenWidth: 0,
+	HudRows: 1,
+	gap: 2,
+
+	BuildOverlayMenu: () => {
+		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-right2'}).addClass('game-cursor'),
+			hudWrapper = $('<div />').attr('id', 'forgehammer-hud-wrapper'),
+			hudInner = $('<div />').attr('id', 'forgehammer-hud-slider'),
+			btnToggle = $('<span />').addClass('hud-btn-toggle');
+
+		hudWrapper.append(hudInner);
+
+		hud.append(hudWrapper);
+		hud.append(btnToggle);
+
+		window.onresize = function (event) {
+			if (event.target == window) _menu_right2.SetMenuSize();
+		};
+
+		$('body').append(hud).ready(async function () {
+
+			_menu.ListLinks(_menu_right2.InsertMenuItem);
+			await _menu_right2.CheckButtons();
+
+			_menu_right2.SetMenuSize();
+
+			window.dispatchEvent(new CustomEvent('forgehammer#menu_loaded'));
+		});
+
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#forgehammer-hud-slider').append(MenuItem);
+    },
+
+
+	SetMenuSize: () => {
+		let $slider = $('#forgehammer-hud-slider'),
+			$items = $slider.children(),
+			MenuItemCount = $items.length;
+
+		if (MenuItemCount === 0) return;
+
+		let $firstBtn = $items.first(),
+			btnWidth = $firstBtn.outerWidth(true),
+			btnHeight = $firstBtn.outerHeight(true);
+
+		// MenuLength, default 5
+		let MenuLength = FH.Storage.getItem('MenuLength');
+		_menu_right2.HudRows = (MenuLength !== null ? Math.max(1, parseInt(MenuLength)) : 5);
+		_menu_right2.HudRows = Math.min(_menu_right2.HudRows, MenuItemCount);
+
+		let HudColumns = Math.ceil(MenuItemCount / _menu_right2.HudRows);
+
+		_menu_right2.HudOpenWidth = (HudColumns * btnWidth) + ((HudColumns - 1) * _menu_right2.gap);
+		_menu_right2.HudPanelHeight = (_menu_right2.HudRows * btnHeight) + ((_menu_right2.HudRows - 1) * _menu_right2.gap);
+
+		$slider.css({
+			'grid-template-rows': 'repeat(' + _menu_right2.HudRows + ', ' + btnHeight + 'px)',
+			'grid-auto-columns': btnWidth + 'px',
+			'width': _menu_right2.HudOpenWidth + 'px'
+		});
+
+		$('#forgehammer-hud').css({
+			'--hud-open-width': _menu_right2.HudOpenWidth + 'px',
+			'--hud-collapsed-width': btnWidth + 'px',
+			'--hud-panel-height': _menu_right2.HudPanelHeight + 'px'
+		});
+	},
+
+
+	/**
+	 * open and close (.hud-btn-toggle).
+	 * Hover cancel timer for close
+	 * Hover dont open
+	 */
+	CheckButtons: async () => {
+		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
+
+	let closeTimer = null;
+
+$('#forgehammer-hud')
+    .on('mouseenter', function () {
+        clearTimeout(closeTimer);
+    })
+    .on('mouseleave', function () {
+        closeTimer = setTimeout(() => {
+            _menu_right2.Close();
+        }, 250);
+    });
+
+$('body')
+    .on('mouseenter', '.tooltip', function () {
+        clearTimeout(closeTimer);
+    })
+    .on('mouseleave', '.tooltip', function () {
+        closeTimer = setTimeout(() => {
+            _menu_right2.Close();
+        }, 250);
+    });
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-toggle").length == 0) {
+			$('body').on('click', '.hud-btn-toggle', function () {
+				$('#forgehammer-hud').hasClass('is--open') ? _menu_right2.Close() : _menu_right2.Open();
+			});
+		};
+
+		// Tooltipp top ermitteln und einblenden
+		$('.hud-btn').stop().hover(function () {
+			let $this = $(this),
+				id = $this.attr('id'),
+				y = ($this.offset().top + 30);
+
+			$('[data-btn="' + id + '"]').css({ 'top': y + 'px' }).show();
+
+		}, function () {
+			let id = $(this).attr('id');
+
+			$('[data-btn="' + id + '"]').hide();
+		});
+
+		// Sort + axis XY
+		$('#forgehammer-hud-slider').sortable({
+			placeholder: 'menu-placeholder',
+			distance: 22,
+			start: function () {
+				$('#forgehammer-hud').addClass('is--sorting');
+			},
+			stop: function () {
+				_menu.Items = [];
+
+				$('.hud-btn').each(function () {
+					_menu.Items.push($(this).data('slug'));
+				});
+
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
+
+				$('#forgehammer-hud').removeClass('is--sorting');
+
+				FH.HTML.ShowToastMsg({
+					show: 'force',
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
+					type: 'success',
+					hideAfter: 5000
+				});
+			}
+		});
+
+		HiddenRewards.SetCounter();
+		FH.BlueGalaxy.SetCounter();
+	},
+
+
+	
+	 // open
+	 
+	Open: () => {
+		$('#forgehammer-hud').addClass('is--open');
+	},
+
+
+	
+	 // close
+	 
+	Close: () => {
+		$('#forgehammer-hud').removeClass('is--open');
 	},
 };
 
