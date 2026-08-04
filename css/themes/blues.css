@@ -6,14 +6,13 @@
 :root {
 	--white: #fff;
 	--beige: #dce8f5;
-	--dark-beige: #8faec8;
+	--text-link: #59d4d8;
 	--text-highlight: #59d4d8;
 	--text-medium: #6a8499;
 	--text-medium2: #4a6a82;
 	--text-dark: #263544;
 	--text-dark2: #1d2b38;
 	--text-darker: #161c27;
-	--bg-darkest: #090b11;
 	--ash: #8a8a8a;
 	--light-blue: #9fc6ee;
 
@@ -31,12 +30,14 @@
 	--bg-light: #e2ebf3;
 	--bg-medium: #6e8fa8;
 	--bg-dark: #071828;
+	--bg-darkest: #090b11;
 
 	--window-border: 2px solid #0e0f10;
 	--window-shadow: none;
 	--window-bg: url('../images/hud/blue-bg.png') center center repeat;
 
 	--window-head-bg: linear-gradient(-50deg, #0e181e, #203e52);
+	--window-head-text: #dce8f5;
 	--window-head-shadow: none;
 	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #2a5878, #1e4a68);
 	--window-head-btn-shadow:  none;
@@ -47,8 +48,8 @@
 
 	--btn-bg: linear-gradient(#0f233655, #0f233666);
 	--btn-bg-disabled: linear-gradient(to bottom, #0a1a27 0%,#2a2a2a 1%,#1e1e1e 30%,#1f1f1f 99%, #252525 100%);
-	--btn-bg-active: linear-gradient(to bottom, #48c8e8 0%,#2aa8cc 1%,#1880aa 30%,#0f5a80 99%,#1a6a9e 100%);
-	--btn-bg-onclick: linear-gradient(to bottom, #48c8e8 0%,#2aa8cc 1%,#1880aa 20%,#0a3e60 80%,#155078 100%);
+	--btn-bg-active: linear-gradient(to bottom, #48c8e8 1%,#1880aa ,#1a6a9e);
+	--btn-bg-onclick: linear-gradient(to bottom, #48c8e8 1%,#1880aa ,#155078);
 	--btn-bg-green: linear-gradient(to bottom, #267c52 0%,#195339 100%);
 	--btn-green-color: #a1ebc6;
 	--btn-border: 1px solid #1a3e60;
@@ -58,12 +59,15 @@
 	--btn-bg-red-active: linear-gradient(to bottom, #9e2a2a 0%,#520e0e 100%);
 	--btn-bg-red-onclick: linear-gradient(to bottom, #5a0a0a 0%,#2a0505 100%);
 
+	--switch-text: #9fc6ee;
+    --switch-text-active: #9fc6ee;
+    --input-accent: #59d4d8;
+
 	--tabs-bg: linear-gradient(#28303e, #1c2330);
 	--tabs-bg-active: linear-gradient(#2a4a6e, #1e3858);
 	--tabs-bg-shadow: inset 0 1px 1px #0f1e31, inset 0 2px 0 #3a4a62, 0 -1px 3px #000;
 	--tabs-bg-shadow-active: inset 0 1px 0 #5a7898;
 	--tabs-border: 2px solid #0f3a5e;
-	--tabs-border-active: 2px solid #2a6a9e;
 	--border-tab: #2a4a6e;
 	--border-tab-vertical: linear-gradient(45deg,#2a4a6e, var(--text-darker)) 10;
 
@@ -90,11 +94,14 @@
 	--hud-border-error: #9c2d18;
 	--hud-border-success: #2a9e60;
 
-	--tooltip-border: 2px solid #1a2a38;
-	--tooltip-bg: #1e2e3e;
-	--tooltip-disabled: #f79090;
-	--tooltip: #deeaf5;
-	--tooltip-head-bg: #0000002a;
+	--menu-tooltip-border: 2px solid #1a2a38;
+	--menu-tooltip-bg: #1e2e3e;
+	--menu-tooltip-disabled: #f79090;
+	--menu-tooltip-text: #deeaf5;
+	--menu-tooltip-head-bg: #0000002a;
+
+    --tooltip-bg: #090b11;
+    --tooltip-text: #deeaf5;
 
 	--hud-counter-color: #48a8e8;
 	--hud-counter-success: #2a8a50;
@@ -138,8 +145,9 @@
 	--ascended: #e79d2e;
 	--def: #3e68f7;
 	--att: #c72c2c;
+	--questcounter-bg: #c9af7f;
 	
-	--tooltip-inhabitant: #a4a45d;
+	--menu-tooltip-inhabitant: #a4a45d;
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);

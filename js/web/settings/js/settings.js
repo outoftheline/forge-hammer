@@ -520,7 +520,8 @@ let Settings = {
 			{name: "Forge Hammer", path: "themes/hammer"},
 			{name: "Oldschool", path: "variables"},
 			{name: "Dark", path: "themes/grey"},
-			{name: "Blues", path: "themes/blues"}
+			{name: "Blues", path: "themes/blues"},
+			{name: "Quantum", path: "themes/qi"}
 		];
 
 		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";

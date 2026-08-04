@@ -19,10 +19,6 @@
     overflow: auto;
 }
 
-.text-bright {
-    color: var(--text-highlight);
-}
-
 #GuildMemberStat #GuildMemberStatBody {
     font-size: 0.9rem;
     overflow-y: scroll;

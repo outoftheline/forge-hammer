@@ -139,7 +139,7 @@ div.alert-popup #alert-expires,
 }
 
 .box-inner .error-text {
-    color: var(--tooltip-disabled);
+    color: var(--menu-tooltip-disabled);
 }
 
 .box-inner input[type="text"].error-box,
@@ -202,7 +202,7 @@ div.alert-popup #alert-expires,
 
 .radio-toolbar input[type="radio"]:checked + label,
 .radio-toolbar input[type="radio"]:hover + label {
-    background: var(--btn-bg-active);
+    filter: brightness(1.3);
 	cursor: url('../../../../images/cursor_hover.cur'), auto;
 }
 

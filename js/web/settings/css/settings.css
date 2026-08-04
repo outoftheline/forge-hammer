@@ -46,7 +46,7 @@
 }
 
 #SettingsBoxBody .item-row a {
-	color: var(--text-highlight);
+	color: var(--text-link);
 }
 
 #SettingsBoxBody .item-row .desc {
@@ -79,11 +79,15 @@
 	text-align: center;
 	line-height: 30px;
 	font-size: 0.9rem;
-	color: var(--light-blue);
+	color: var(--switch-text-active);
 	font-weight: 700;
 	width: 113px;
 	line-height: 26px;
 	border-right: 1px solid var(--table-bb-info);
+}
+
+#SettingsBoxBody .item-row .check.unchecked span.toogle-word {
+	color: var(--switch-text);
 }
 
 #SettingsBoxBody .item-row .btn,

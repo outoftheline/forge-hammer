@@ -6,7 +6,7 @@
 :root {
 	--white: #fff;
 	--beige: #ffe7ba;
-	--dark-beige: #c9af7f;
+	--text-link: #ffB539;
 	--text-highlight: #ffB539;
 	--text-medium: #93795D;
 	--text-medium2: #7b5730;
@@ -37,6 +37,7 @@
 	--window-bg: url('../images/hud/hammer-bg.png') center center repeat;
 
 	--window-head-bg: linear-gradient(90deg, #610b05, #7f3f09);
+	--window-head-text: #ffe7ba;
 	--window-head-shadow: none;
 	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #591e00, #572611);
 	--window-head-btn-shadow: inset 0 0 0 1px #411709;
@@ -47,8 +48,8 @@
 
 	--btn-bg: linear-gradient(to bottom, #a75920, #773714);
 	--btn-bg-disabled: linear-gradient(to bottom, #444444 1%,#2c2c2c 30%,#2d2d2d 99%);
-	--btn-bg-active: linear-gradient(to bottom, #df9a34 1%,#ba6320 30%,#924715 99%);
-	--btn-bg-onclick: linear-gradient(to bottom, #df9a34 1%,#ba6320 20%,#673213 80%);
+	--btn-bg-active: linear-gradient(to bottom, #df9a34 1%,#ba6320,#924715);
+	--btn-bg-onclick: linear-gradient(to bottom, #df9a34 1%,#ba6320,#673213);
 	--btn-bg-green: linear-gradient(to bottom, #469e2b, #1f6517);
 	--btn-border: 1px solid #281207;
 	--btn-border-active-color: #281207;
@@ -58,12 +59,15 @@
 	--btn-bg-red-active: linear-gradient(to bottom, #a71f1f,#590d0d);
 	--btn-bg-red-onclick: linear-gradient(to bottom, #610a0a,#2e0505);
 
+	--switch-text: #d4aa72;
+    --switch-text-active: #d4aa72;
+    --input-accent: #ffB539;
+
 	--tabs-bg: linear-gradient(#43433c, #332f2b);
 	--tabs-bg-active: linear-gradient(#955d24, #ad6318);
 	--tabs-bg-shadow: inset 0 2px 0 #5a5155;
 	--tabs-bg-shadow-active: inset 2px 2px 0 0 #bb6f21, inset -2px 1px 0 0 #bb6f21;
 	--tabs-border: 2px solid #522c0f;
-	--tabs-border-active: 2px solid #895022;
 	--border-tab: #bb6f21;
 	--border-tab-vertical: linear-gradient(45deg,#bb6f21, var(--text-darker)) 10;
 
@@ -91,11 +95,14 @@
 	--border-table-bottom: #271e15;
 	--border-table-bottom-darker: #170602;
 
-	--tooltip-border: 2px solid #2a2c27;
-	--tooltip-bg: #3e423f;
-	--tooltip-disabled: #f79090;
-	--tooltip: #f2ede1;
-	--tooltip-head-bg: #0000002a;
+	--menu-tooltip-border: 2px solid #2a2c27;
+	--menu-tooltip-bg: #3e423f;
+	--menu-tooltip-disabled: #f79090;
+	--menu-tooltip-text: #f2ede1;
+	--menu-tooltip-head-bg: #0000002a;
+
+    --tooltip-bg: #180d07;
+    --tooltip-text: #f2ede1;
 
 	--hud-counter-color: #468fca;
 	--hud-counter-success: #5c8d20;
@@ -139,8 +146,9 @@
 	--ascended: #e79d2e;
 	--def: #3e68f7;
 	--att: #c72c2c;
+	--questcounter-bg: #c9af7f;
 
-	--tooltip-inhabitant: #a4a45d;
+	--menu-tooltip-inhabitant: #a4a45d;
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);

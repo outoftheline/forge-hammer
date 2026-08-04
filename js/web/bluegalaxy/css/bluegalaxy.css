@@ -26,10 +26,6 @@
     color: var(--danger-red);
 }
 
-.text-bright {
-    color: var(--text-highlight);
-}
-
 #bluegalaxy .title {
     font-size: 115%;
 }
