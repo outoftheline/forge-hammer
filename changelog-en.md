@@ -11,6 +11,8 @@
 - City Map: You can now also grab a list of all ascendable buildings
 - GB Calculator: Got a facelift to make both views more similar. When the window is minimized, you will now see the GB and player name
 - GBG Overview: Added Guild results to previous seasons when there is data
+- GBG List: Added attrition when hovering the time and a highlight in the last 10 minutes before a province unlocks if the attrition is below 20%. Please note that at all times only *current* attrtion is shown, it can change any time.
+- GBG Map: Now interacts with the list. Also, when hovering a province adjacent provinces that unlock earlier, will be highlighted
 - Reconstruction Mode: Building list and map are now always available via buttons in the top left corner
 - Added building tooltips to the production overview
 

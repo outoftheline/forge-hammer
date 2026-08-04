@@ -10,6 +10,8 @@
 - Stadtplaner: Verbesserungen beim Bewegen der Karte und Auswählen einzelner Gebäude, Filter für die Karte hinzugefügt
 - Stadt Übersicht: Man kann jetzt auch eine Liste aller Gebäude, die aufgewertet werden könnten, öffnen
 - GG Übersicht: Bei vergangenen Gefechten werden jetzt auch die Gilden-Platzierungen angezeigt
+- GG Liste: Aktuelle Zermürbung wird angezeigt, wenn man mit der Maus über die Uhrzeit fährt. Außerdem wird ein Sektor in den letzten 10 Minuten bevor er verfügbar wird farblich markiert, wenn die Zermürbungschance höher als 20% ist. *Wichtig:* Bitte beachtet, dass zu jedem Zeitpunkt lediglich die aktuelle Chance angezeigt wird. Sie kann sich jederzeit ändern, wenn ein benachbarter Sektor eingenommen wird oder Gebäude fertig werden!
+- GG Karte: Interagiert nun mit der Liste. Außerdem werden, wenn man mit der Maus über einem Sektor ist, benachbarte Sektoren, die vorher auf gehen, farblich markiert
 - LG Rechner: Änderungen am Aussehen, um die Rechner etwas anzugleichen, sowie einige sperrige Dinge vereinfacht. Außerdem sieht man nun den Namen des LG + Spieler, wenn man das Fenster verkleinert
 - Umbaumodus: Liste und Karte sind jetzt immer über Buttons oben links verfügbar
 - Gebäude-Tooltips in der Produktionsübersicht hinzugefügt
