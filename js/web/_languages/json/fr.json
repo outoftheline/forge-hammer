@@ -173,6 +173,10 @@
   "Boxes.Calculator.ForderBonusPerConversation": "Enregistrer le facteur de don par conversation",
   "Boxes.Calculator.FP": "PF",
   "Boxes.Calculator.FriendlyInvestment": "Investit à :",
+  "Boxes.Calculator.GBList": {
+    "s": "Liste des GM",
+    "r": "GB List"
+  },
   "Boxes.Calculator.LevelWarning": "ATTENTION : Élévation du GM à son niveau supérieur !",
   "Boxes.Calculator.LGNotConnected": "Ce GM n'est pas relié à une route.",
   "Boxes.Calculator.LGNotOpen": "Le niveau suivant de ce GM est bloqué.",
@@ -841,6 +845,10 @@
     "s": "Afficher les cibles",
     "r": "Show targets"
   },
+  "Boxes.GuildFights.GuildResults": {
+    "s": "Résultat de guilde",
+    "r": "Guild Results"
+  },
   "Boxes.GuildFights.LastSnapshot": " - Dernière capture il y a __time__",
   "Boxes.GuildFights.Negotiations": "Négociations",
   "Boxes.GuildFights.NoOwner": "Aucun propriétaire pour le moment",
@@ -1391,6 +1399,10 @@
   "Boxes.ProductionsRating.AddBuildings": "Ajouter tous les bâtiments sélectionnés",
   "Boxes.ProductionsRating.Best": "Meilleur",
   "Boxes.ProductionsRating.BuildingName": "Bâtiment",
+  "Boxes.ProductionsRating.ColumnFilter": {
+    "s": "Filtre",
+    "r": "Filter"
+  },
   "Boxes.ProductionsRating.ConfirmReset": "Confirmer la réinitialisation ?",
   "Boxes.ProductionsRating.CountTooltip": "Nombre actuel placé dans votre ville. Remarque : tous les bâtiments ne correspondent peut-être pas à l'ère indiquée à côté du nom. Vérifiez la carte pour être sûr !",
   "Boxes.ProductionsRating.Disclaimer": "Pour les bâtiments de chaîne, l’ensemble de la chaîne est traité comme un seul bâtiment. Pour les ensembles, nous supposons que toutes les pièces sont entièrement connectées.",
@@ -1406,6 +1418,42 @@
   "Boxes.ProductionsRating.InventoryBuildingScore": "Score minimum",
   "Boxes.ProductionsRating.InventoryBuildingScoreExplanation": "Afficher uniquement les bâtiments d'inventaire avec une note égale ou supérieure à x",
   "Boxes.ProductionsRating.InventoryTooltip": "Ce bâtiment est dans votre inventaire",
+  "Boxes.ProductionsRating.ModifierAddBuilding": {
+    "s": "Ajouter un bâtiment",
+    "r": "Add building"
+  },
+  "Boxes.ProductionsRating.ModifierAddFilter": {
+    "s": "Rechercher par nom ou ID",
+    "r": "Search by name or ID"
+  },
+  "Boxes.ProductionsRating.ModifierBaseScore": {
+    "s": "Score de base",
+    "r": "Base score"
+  },
+  "Boxes.ProductionsRating.ModifierDelete": {
+    "s": "Enlever ce modificateur",
+    "r": "Remove this modifier"
+  },
+  "Boxes.ProductionsRating.ModifierEmpty": {
+    "s": "Aucun modificateur de score n'a encore été défini. Ajoutez un bâtiment ci-dessous.",
+    "r": "No score modifiers set yet. Add a building below."
+  },
+  "Boxes.ProductionsRating.ModifierId": {
+    "s": "ID du bâtiment",
+    "r": "Building ID"
+  },
+  "Boxes.ProductionsRating.ModifiersButton": {
+    "s": "Modificateurs de score",
+    "r": "Score Modifiers"
+  },
+  "Boxes.ProductionsRating.ModifiersTitle": {
+    "s": "Modificateurs de score",
+    "r": "Score Modifiers"
+  },
+  "Boxes.ProductionsRating.ModifierValue": {
+    "s": "Modificateur",
+    "r": "Modifier"
+  },
   "Boxes.ProductionsRating.NoGBsExplanation": "Afficher les Grands Monuments",
   "Boxes.ProductionsRating.NoLimitedExplanation": "Afficher les bâtiments augmentés/limités",
   "Boxes.ProductionsRating.PresetActive": "préréglage actif",
@@ -1431,6 +1479,10 @@
   "Boxes.ProductionsRating.Reset": "Rétablissement des valeurs par défaut",
   "Boxes.ProductionsRating.Results": "Résultat",
   "Boxes.ProductionsRating.Score": "Note",
+  "Boxes.ProductionsRating.ScoreModifierTooltip": {
+    "s": "Modificateur de note — ajouté à la note calculée (utilisez une valeur négative pour la réduire)",
+    "r": "Edit score modifier — added to the calculated score (use a negative value to lower it)"
+  },
   "Boxes.ProductionsRating.Settings": "Réglages",
   "Boxes.ProductionsRating.ShowAllies": "Inclure les boosts des Alliés dans la notation",
   "Boxes.ProductionsRating.ShowFSPCalculator": "Afficher la calculatrice TTPS",
@@ -1465,10 +1517,18 @@
   "Boxes.QiProgress.SnapshotLog": "IQ Log aperçu instantané",
   "Boxes.QiProgress.SnapShotLogDisclaimer": "Avis de non-responsabilité : ces données sont basées sur vos données collectées. Les chiffres présentés ici ne sont probablement pas exacts à 100 %. Il faudrait ouvrir la liste à minuit pour qu'ils soient corrects.",
   "Boxes.QiProgress.Title": "Aperçu IQ",
+  "Boxes.ReconstructionList.Button": {
+    "s": "liste des tailles",
+    "r": "Size List"
+  },
   "Boxes.ReconstructionList.Title": "Liste de tailles des objets en Reconstruction",
   "Boxes.ReconstructionMap.LoadPlan": {
     "s": "Charger depuis le planificateur de cité",
     "r": "Load from City Planner"
+  },
+  "Boxes.ReconstructionMap.Title": {
+    "s": "Carte",
+    "r": "Map"
   },
   "Boxes.RecurringQuests.AND": "ET",
   "Boxes.RecurringQuests.OR": "OU",
@@ -1935,6 +1995,14 @@
   "Settings.AutoOpenInfoBox.Title": "Ouverture automatique de la fenêtres des infos",
   "Settings.BlockCollectAll.Desc": "Affiche une boîte qui couvre le bouton « Collecter tout », lorsque les PF ne peuvent pas être collectés ou que tous les bâtiments ne sont pas motivés.",
   "Settings.BlockCollectAll.Title": "Bloqueur Collecter Tout",
+  "Settings.CalcGBReminder.Desc": {
+    "s": "Cela générera une liste de tous les GB auxquels vous souhaitez participer, à partir du dernier message que vous avez envoyé dans un fil de discussion, dès que la calculatrice GM sera ouvert et qu'un GB sera disponible.",
+    "r": "This will generate a list of all GBs you want to contribute to from the last message you sent in a thread once the GB Calculator and one GB is open."
+  },
+  "Settings.CalcGBReminder.Title": {
+    "s": "Afficher la liste des contributions aux GM",
+    "r": "Display GB Contribution List"
+  },
   "Settings.ChangeLanguage.Desc": "Choisissez votre langue préférée dans la liste déroulante",
   "Settings.ChangeLanguage.Title": "Changer de langue",
   "Settings.ChangeLanguage.Translate": "Traduire",
@@ -1950,6 +2018,10 @@
   "Settings.Entry.AutoOpenCloseBox": "Fermer toutes les fenêtres",
   "Settings.Entry.AutoOpenInfoBox": "Fenêtre d'info",
   "Settings.Entry.BlockCollectAll": "Bloqueur Collecter Tout",
+  "Settings.Entry.CalcGBReminder": {
+    "s": "Liste des contributions aux GM",
+    "r": "GB Contribution List"
+  },
   "Settings.Entry.ChangeLanguage": "Langue",
   "Settings.Entry.doubleFPtimeout": "Bloqueur de double don",
   "Settings.Entry.EnableSound": "Activer le son",
@@ -2242,6 +2314,14 @@
   "XPlan.Modal.HowTo.MultiSelect": {
     "s": "Sélectionnez plusieurs bâtiments à l'aide de la touche CTRL. <br> Vous pouvez désélectionner un bâtiment de votre sélection en maintenant la touche CTRL enfoncée et en cliquant dessus. Vous pouvez déplacer tous les bâtiments sélectionnés en même temps vers un espace libre en les faisant glisser. <br> Rangez les bâtiments sélectionnés soit en les faisant glisser vers la barre latérale, soit en appuyant sur la barre d'espace, soit en cliquant dans le coin supérieur droit, à côté de l'icône.",
     "r": "Select multiple buildings with the CTRL key. <br /> You can deselect any building from your selection by holding the CTRL key and clicking it. You can move all selected buildings at once to a free space by dragging. <br /> Store selected buildings either by dragging them to the sidebar, clicking the space bar or clicking in the top right corner next to the icon."
+  },
+  "XPlan.Modal.HowTo.PlaceBuilding": {
+    "s": "Si vous disposez de plusieurs bâtiments d'un même type, vous pouvez les placer à côté de celui que vous venez de construire à l'aide des touches fléchées.",
+    "r": "If you have more that one building of a type, you can place them adjacent to the one you just built by using arrow keys."
+  },
+  "XPlan.Modal.HowTo.SelectFromSidebar": {
+    "s": "Sélectionnez le ou les bâtiments (groupes) 1 à 9 dans la barre latérale à l'aide des touches 1 à 9.",
+    "r": "Choose building(group)s 1-9 from the sidebar with keys 1-9."
   },
   "XPlan.Modal.HowTo.SingleSelect": {
     "s": "Sélectionnez un bâtiment en cliquant dessus. Déplacez-le en le faisant glisser. Supprimez-le à l'aide de la touche Suppr, de la touche Retour arrière ou de la touche R. Enregistrez-le à l'aide de la barre d'espace ou en le faisant glisser vers la barre latérale.",
