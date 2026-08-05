@@ -43,6 +43,8 @@
 	--window-head-btn-shadow: inset 0 0 0 1px #411709;
 
 	--window-body-scroll-bg: #3a2c26;
+	--window-body-scroll-border: #47352d;
+	--window-body-scroll-color: #281207;
 
 	--window-settings-bg: #2c241f;
 
@@ -61,7 +63,11 @@
 
 	--switch-text: #d4aa72;
     --switch-text-active: #d4aa72;
+
     --input-accent: #ffB539;
+    --input-bg: #ffe7ba;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
 
 	--tabs-bg: linear-gradient(#43433c, #332f2b);
 	--tabs-bg-active: linear-gradient(#955d24, #ad6318);
@@ -71,6 +77,10 @@
 	--border-tab: #bb6f21;
 	--border-tab-vertical: linear-gradient(45deg,#bb6f21, var(--text-darker)) 10;
 
+
+	--border-table-top: transparent;
+	--border-table-bottom: #271e15;
+	--border-table-bottom-darker: #170602;
 	--table-bg-hover: #ffb45733;
 	--table-bg-odd: #cf9b6c12;
 	--table-bg-darker: #40190080;
@@ -90,10 +100,6 @@
 
 	--hud-border-error: #9c2d18;
 	--hud-border-success: #93c554;
-
-	--border-table-top: #554739e0;
-	--border-table-bottom: #271e15;
-	--border-table-bottom-darker: #170602;
 
 	--menu-tooltip-border: 2px solid #2a2c27;
 	--menu-tooltip-bg: #3e423f;

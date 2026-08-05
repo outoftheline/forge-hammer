@@ -444,25 +444,25 @@ span.resicon.def_boost_defender-battleground {
 .window-body * ::-webkit-scrollbar {
 	width: 7px;
 	background: var(--window-body-scroll-bg);
-	border-left: 1px solid var(--border-table-top);
-	border-right: 1px solid var(--border-table-top);
+	border-left: 1px solid var(--window-body-scroll-border);
+	border-right: 1px solid var(--window-body-scroll-border);
 }
 .window-box ::-webkit-scrollbar-thumb,
 .window-body::-webkit-scrollbar-thumb,
 .window-body * ::-webkit-scrollbar-thumb {
-	background: var(--bg-dark);
+	background: var(--window-body-scroll-color);
 	border-radius: 4px;
-	border-top: 1px solid var(--border-table-top);
-	border-right: 1px solid var(--border-table-bottom);
-	border-bottom: 1px solid var(--border-table-bottom);
-	border-left: 1px solid var(--border-table-top);
+	border-top: 1px solid var(--window-body-scroll-border);
+	border-right: 1px solid var(--window-body-scroll-border);
+	border-bottom: 1px solid var(--window-body-scroll-border);
+	border-left: 1px solid var(--window-body-scroll-border);
 }
 
 /* Firefox */
 @supports(-moz-appearance:none) {
 	.window-box,
 	.window-body {
-		scrollbar-color: var(--bg-dark) var(--window-body-scroll-bg);
+		scrollbar-color: var(--window-body-scroll-color) var(--window-body-scroll-bg);
 		scrollbar-width: thin;
 	}
 }
@@ -1425,24 +1425,24 @@ a:hover, input[type="radio"], .clickable {
 	accent-color: var(--input-accent);
 }
 
-.window-body input[type=text]:focus,
-.window-body input[type=number]:focus,
+.window-body input:focus,
 .window-body select:focus,
 .window-body textarea:focus {
-    border: 1px solid var(--text-medium);
+    border: 1px solid var(--input-border);
     outline: none;
-    box-shadow: 0 0 0 1pt var(--beige), 0 0 2pt 1pt var(--beige);
+    box-shadow: 0 0 0 1pt var(--input-accent), 0 0 2pt 1pt var(--input-accent);
 }
 
-.window-body input[type=text],
-.window-body input[type=number],
+.window-body input,
 .window-body select,
 .window-body textarea,
-.settingsbox-wrapper select {
-	background-color: var(--bg-light);
-	color: var(--text-dark);
+.settingsbox-wrapper select,
+.window-body select {
+	background-color: var(--input-bg);
+	color: var(--input-color);
 	background-clip: padding-box;
-	border: 1px solid var(--text-dark);
+	border: var(--input-border);
+	font-family: inherit;
 	font-size: 0.8rem;
 	line-height: 18px;
 	padding: 2px 5px;
@@ -1454,7 +1454,7 @@ a:hover, input[type="radio"], .clickable {
 	text-align: center;
 }
 
-.window-body input[type=text].error, .window-body textarea.error {
+.window-body input.error, .window-body textarea.error {
 	border: 2px solid var(--danger-red) !important;
 }
 

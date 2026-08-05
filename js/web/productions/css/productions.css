@@ -189,7 +189,6 @@
 	box-sizing: border-box;
 	padding: 0.5em;
 	font-size: 120%;
-	background-color: var(--bg-light);
 	border: none;
 	border-radius: 3px;
 }

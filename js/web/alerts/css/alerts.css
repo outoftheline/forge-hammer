@@ -65,26 +65,10 @@ div.alert-popup {
     left: 50%;
     max-height: 550px;
     min-height: 160px;
-    width: 650px;
+    width: 550px;
 }
 
 div.alert-popup .box-inner { padding: 8px; }
-div.alert-popup .box-inner-content {
-    border: .5px solid var(--border-table-top);
-    margin-bottom: 15px;
-    box-shadow: 0 4px 3px 0 var(--black-30);
-}
-div.alert-popup .box-inner-content h3 {
-    background-color: var(--black-30);
-    box-shadow: 0 20px 12px -22px var(--table-bg-hover) inset;
-    border-bottom: 1px solid var(--text-dark);
-    color: var(--text-highlight);
-    display: block;
-    font-weight: 700;
-    font-size: 90%;
-    margin: 0;
-    padding: 4px 10px;
-}
 div.alert-popup .box-inner-form {
     padding: 10px;
 }
@@ -96,38 +80,6 @@ div.alert-popup .box-inner-form {
 }
 
 .box-inner input { box-sizing: border-box; }
-.box-inner input:focus,
-.box-inner textarea:focus {
-    outline: 3px solid var(--beige);
-}
-
-.box-inner input[type="text"],
-.box-inner input[type="number"],
-.box-inner input[type="datetime-local"],
-.box-inner textarea,
-.box-inner select {
-    background-color: var(--bg-light);
-    color: var(--text-medium);
-    background-clip: padding-box;
-    border: 1px solid var(--text-dark);
-    line-height: 18px;
-    margin: 0 0 4px 0;
-    padding: 4px;
-}
-
-div.alert-popup #alert-expires,
-.box-inner select {
-    padding: 7px 4px;
-}
-
-.box-inner input[type="text"],
-.box-inner input[type="number"] {
-    font-size: 0.8rem;
-}
-.box-inner textarea {
-    font-size: 0.9rem;
-}
-
 
 .box-inner button,
 .box-inner input[type="text"],
@@ -135,18 +87,10 @@ div.alert-popup #alert-expires,
 .box-inner select,
 .box-inner textarea {
     width: 100%;
-    border: 1px solid var(--black);
 }
 
 .box-inner .error-text {
     color: var(--menu-tooltip-disabled);
-}
-
-.box-inner input[type="text"].error-box,
-.box-inner input[type="datetime-local"].error-box,
-.box-inner select.error-box
-.box-inner textarea.error-box {
-    border: 1px solid var(--hud-border-error);
 }
 
 .box-inner form {
@@ -173,11 +117,6 @@ div.alert-popup #alert-expires,
     margin: 0 0 8px 0;
 }
 
-.box-inner button,
-.box-inner input,
-.box-inner textarea {
-    padding: 1em;
-}
 .box-inner textarea {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;

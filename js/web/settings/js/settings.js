@@ -349,7 +349,6 @@ let Settings = {
 		});
 
 		return dp.join('');
-
 	},
 
 

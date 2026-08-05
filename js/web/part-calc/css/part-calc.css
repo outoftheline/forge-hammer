@@ -32,13 +32,6 @@
 	top: -3px;
 }
 
-#OwnPartBox .OwnPartDrops .inputWrapper input, #OwnPartBox .OwnPartDrops div select, #gbCosts input, #PowerLevelingBox input, .OwnPartBoxBackgroundBody input, .OwnPartBoxBackgroundBody select  {
-	background-color: var(--bg-light);
-	color: var(--text-medium);
-	background-clip: padding-box;
-	border: 1px solid var(--text-dark);
-}
-
 #OwnPartBox .OwnPartDrops .inputWrapper input {
 	max-width: 45px;
 	text-align: right;
@@ -192,10 +185,7 @@
 }
 
 #gbCosts #arc-percent {
-	background-color: var(--bg-light);
-	color: var(--text-medium);
 	background-clip: padding-box;
-	border: 1px solid var(--text-dark);
 	text-align: center;
 	width: 30px;
 	margin: 0 5px;

@@ -37,6 +37,8 @@
 	--window-head-btn-shadow: inset 0 0 0 1px #074538;
 
 	--window-body-scroll-bg: #3a2c26;
+	--window-body-scroll-border: #ff845733;
+	--window-body-scroll-color: #1b1617;
 
 	--window-settings-bg: #151313;
 
@@ -53,7 +55,11 @@
 
     --switch-text: #dae9e3;
     --switch-text-active: #03372c;
+
     --input-accent: #b02b53;
+    --input-bg: #ddd1cd;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
 
 	--btn-bg-red: linear-gradient(to bottom, #7c0d2c, #340510);
 	--btn-bg-red-active: linear-gradient(to bottom, #a71f36,#590d24);
@@ -69,6 +75,9 @@
 	--text-tab-active: #01241e;
 	--text-tab: #b3ac9b;
 
+	--border-table-top: transparent;
+	--border-table-bottom: transparent;
+	--border-table-bottom-darker: #170602;
 	--table-bg-hover: #ff845733;
 	--table-bg-odd: #cf866c12;
 	--table-bg-darker: #40190080;
@@ -88,10 +97,6 @@
 
 	--hud-border-error: #9c2d18;
 	--hud-border-success: #93c554;
-
-	--border-table-top: #554739e0;
-	--border-table-bottom: #271e15;
-	--border-table-bottom-darker: #170602;
 
 	--menu-tooltip-border: 2px solid #1f151d;
 	--menu-tooltip-bg: #2b2128;
@@ -150,8 +155,8 @@
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);
-	--activity-warning: linear-gradient(linear-gradient(to bottom, #f5cd48 0%,#df9a34 1%,#ba6320 30%,#924715 99%,#a35d28 100%));
-	--activity-inactive: linear-gradient(to bottom, #871313 0%,#440909 100%);
+	--activity-warning: linear-gradient(linear-gradient(to bottom,#df9a34 ,#ba6320, #a35d28));
+	--activity-inactive: linear-gradient(to bottom, #871313,#440909);
 
 	/* city map buildings*/
 
@@ -193,9 +198,4 @@
 
 .window-body .tabs ul.horizontal li a span, #SettingsBoxBody .item-row .check span.toogle-word, .window-body .tabs ul.horizontal li.active a {
     text-shadow: none;
-}
-
-table.foe-table tr td, ul.foe-table li {
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
 }

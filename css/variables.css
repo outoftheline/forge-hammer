@@ -40,6 +40,8 @@
 	--window-head-btn-shadow:  none;
 
 	--window-body-scroll-bg: #57250c;
+	--window-body-scroll-border: #281207;
+	--window-body-scroll-color: #281207;
 
 	--window-settings-bg: #3a2313;
 
@@ -58,7 +60,11 @@
 
 	--switch-text: #b0bbcd;
     --switch-text-active: #b0bbcd;
+	
     --input-accent: #ffB539;
+    --input-bg: #ffe7ba;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
 
 	--tabs-bg: linear-gradient(#3c3c43, #2b2c33);
 	--text-tab: #9c9c9c;
@@ -68,6 +74,9 @@
 	--tabs-border: 2px solid #522c0f;
 	--text-tab-active: #e2e2e2;
 
+	--border-table-top: #694c2e;
+	--border-table-bottom: #3D250F;
+	--border-table-bottom-darker: #170602;
 	--table-bg-hover: #ffb45733;
 	--table-bg-odd: #ff9e4512;
 	--table-bg-darker: #40190080;
@@ -90,9 +99,6 @@
 
 	--border-tab: #44516d;
 	--border-tab-vertical: linear-gradient(45deg,#44516d, var(--text-darker)) 10;
-	--border-table-top: #694c2e;
-	--border-table-bottom: #3D250F;
-	--border-table-bottom-darker: #170602;
 
 	--menu-tooltip-border: 2px solid #2a2c27;
 	--menu-tooltip-bg: #3e423f;

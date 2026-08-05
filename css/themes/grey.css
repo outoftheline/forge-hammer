@@ -47,6 +47,8 @@
 	--window-head-btn-shadow: none;
 
 	--window-body-scroll-bg: #181614;
+	--window-body-scroll-border: #2d2928de;
+	--window-body-scroll-color: #0a0908;
 
 	--window-settings-bg: #141210;
 
@@ -67,7 +69,11 @@
 
 	--switch-text: #a8a28a;
     --switch-text-active: #a8a28a;
+
     --input-accent: #f9ce79;
+    --input-bg: #e7e4e2;
+    --input-color: #2e2c28;
+    --input-border: 1px solid #2e2c28;
 
 	--tabs-bg: linear-gradient(#242220,#242220);
 	--tabs-bg-active: linear-gradient(#201a52, #081a43);
