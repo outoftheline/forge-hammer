@@ -1,5 +1,14 @@
 # Changelog
  
+## Version 1.4.1
+### New
+- New Color added: Quantum
+
+### Bug Fixes
+- GBG window could be empty
+
+---
+ 
 ## Version 1.4.0
 ### New
 - New contributions to your own GBs since your last login are now tracked via a new tab in the investment tracker. Click on the GB icon in the top bar when in your city. You can remove the icon in the windows settings. Thank you, Arklur

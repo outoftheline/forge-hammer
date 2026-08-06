@@ -1,7 +1,16 @@
 # Changelog
  
-## Version 1.4.0
+## Version 1.4.1
 ### New
+- Neue Farbe für die Fenster: Quantum
+
+### Bug Fixes
+- GG Fenster konnte manchmal leer sein
+
+---
+ 
+## Version 1.4.0
+### Neu
 - Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in den Einstellungen des Fensters entfernen. Danke an Arklur
 - Gebäude Effizienz: Score-Modifikatoren hinzugefügt. Addiere oder subtrahiere einen Wert von der eigentlichen Bewertung! Danke auch hier an Arklur
 - LG Förderliste: Ein Popup mit allen Plätzen, die du austragen willst, öffnet sich sobald du den Rechner und ein LG öffnest. Du kannst LG mit einem Klick aus der Liste entfernen. Schalte es in den Einstellungen unter "Pop Ups" aus
