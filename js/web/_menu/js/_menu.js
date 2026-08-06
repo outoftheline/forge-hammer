@@ -17,7 +17,7 @@ _menu = {
 	HudWidth: 0,
 	TopOffset: 0,
 
-	MenuOptions: ['BottomBar', 'RightBar', 'RightBar2', 'Box'],
+	MenuOptions: ['BottomBar', 'RightBar', 'Box'], // 'RightBar2'
 	
 	Items: [
 		'partCalc',

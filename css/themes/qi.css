@@ -57,7 +57,7 @@
     --switch-text-active: #03372c;
 
     --input-accent: #b02b53;
-    --input-bg: #ddd1cd;
+    --input-bg: #ebe7d9;
     --input-color: #3f2a1b;
     --input-border: 1px solid #3f2a1b;
 
@@ -155,7 +155,7 @@
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);
-	--activity-warning: linear-gradient(linear-gradient(to bottom,#df9a34 ,#ba6320, #a35d28));
+	--activity-warning: linear-gradient(to bottom,#df9a34 ,#ba6320, #a35d28);
 	--activity-inactive: linear-gradient(to bottom, #871313,#440909);
 
 	/* city map buildings*/

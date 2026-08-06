@@ -64,7 +64,7 @@
 	--switch-text: #d4aa72;
     --switch-text-active: #d4aa72;
 
-    --input-accent: #ffB539;
+    --input-accent: #871313;
     --input-bg: #ffe7ba;
     --input-color: #3f2a1b;
     --input-border: 1px solid #3f2a1b;
@@ -85,17 +85,17 @@
 	--table-bg-odd: #cf9b6c12;
 	--table-bg-darker: #40190080;
 	--table-bg-info: #003c6d4d;
-	--table-bt-info: #455461;
-	--table-bb-info: #252a43;
+	--table-bt-info: transparent;
+	--table-bb-info: #455461;
 	--table-bg-success: #127d094d;
-	--table-bt-success: #667f34;
-	--table-bb-success: #293d0f;
+	--table-bt-success: transparent;
+	--table-bb-success: #3e5f00;
 	--table-bg-error: #7908084d;
-	--table-bt-error: #7a2f2f;
-	--table-bb-error: #4f0e0e;
+	--table-bt-error: transparent;
+	--table-bb-error: #6f0d0d;
 	--table-bg-bright: #dd85002e;
-	--table-bt-bright: #dd8e1866;
-	--table-bb-bright: #492e0566;
+	--table-bt-bright: transparent;
+	--table-bb-bright: #dd8e1866;
 	--table-bg-highlight: #281207cc;
 
 	--hud-border-error: #9c2d18;
@@ -158,8 +158,8 @@
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);
-	--activity-warning: linear-gradient(linear-gradient(to bottom, #f5cd48 0%,#df9a34 1%,#ba6320 30%,#924715 99%,#a35d28 100%));
-	--activity-inactive: linear-gradient(to bottom, #871313 0%,#440909 100%);
+	--activity-warning: linear-gradient(to bottom, #df9a34, #a35d28);
+	--activity-inactive: linear-gradient(to bottom, #871313,#440909);
 
 	/* city map buildings*/
 
