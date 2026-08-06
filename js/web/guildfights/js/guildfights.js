@@ -122,7 +122,7 @@ let GuildFights = {
 	GBGHistoryView: false,
 	GBGRoundGuilds: null,
 	LogDatePicker: null,
-	Signals: null,
+	Signals: [],
 	curDateFilter: null,
 	curDateEndFilter: null,
 	curDetailViewFilter: null,
@@ -277,7 +277,7 @@ let GuildFights = {
 			$(this).html(GuildFights.GetAlertButton(id));
 		});
 
-		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
 		
 		if (GuildFights.Signals?.length > 0) {
 			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
@@ -1554,7 +1554,7 @@ let GuildFights = {
 					else if (prov[x].gainAttritionChance > 20)
 						bgColor = 'bg-yellow';
 				}
-				let signal = Object.values(GuildFights.Signals).find(s => s.provinceId === prov[x].id);
+				let signal = (GuildFights.Signals || []).find(s => s.provinceId === prov[x].id);
 				let signalClass = '';
 				if (signal)
 					signalClass = signal.signal;
