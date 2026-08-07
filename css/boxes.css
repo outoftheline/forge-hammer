@@ -583,6 +583,11 @@ table.foe-table tr.bg-blue td {
     border-bottom-color: var(--table-bb-info);
 }
 
+table.foe-table tr.mark-row td {
+	border-top: 1px solid var(--text-highlight);
+	border-bottom: 1px solid var(--text-highlight);
+}
+
 table.foe-table td .error {
 	text-shadow: 0 0 3px var(--bg-darkest), 0 0 1px var(--bg-darkest), 0 1px 0 var(--bg-darkest), 0 1px 4px var(--bg-darkest);
 	display: inline-block;

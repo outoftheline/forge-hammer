@@ -75,11 +75,6 @@
 	border-radius: 2px;
 }
 
-#GuildPlayersBody tr.mark-row td {
-	border-top: 1px solid var(--text-highlight);
-	border-bottom: 1px solid var(--text-highlight);
-}
-
 #GuildPlayersSettingsBox .settingtitle {
 	display: block;
 	margin-bottom: 7px;
