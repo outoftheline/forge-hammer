@@ -101,6 +101,43 @@ _menu = {
 		_menu.OverflowCheck(_menu.selectedMenu, true);
 	},
 
+
+	LoadMenuCss: (selMenu) => {
+		let menuCss = '_menu_' + selMenu.toLowerCase().replace('bar', ''),
+			cssId = 'css-' + menuCss;
+
+		if ($('#' + cssId).length > 0) {
+			return Promise.resolve();
+		}
+
+		return new Promise((resolve) => {
+			let css = $('<link />')
+				.attr('href', FH.extUrl + 'css/' + menuCss + '.css?v=' + FH.BaseData.extVersion)
+				.attr('id', cssId)
+				.attr('rel', 'stylesheet')
+				.on('load error', resolve);
+
+			$('head').append(css);
+		});
+	},
+
+	SwitchMenu: (selMenu) => {
+		let $slider = $('#forgehammer-hud-slider');
+
+		if ($slider.hasClass('ui-sortable')) {
+			$slider.sortable('destroy');
+		}
+
+		$('#forgehammer-hud, #menu_box').remove();
+		$('.tooltip').remove();
+
+		FH.Main.SelectedMenu = selMenu;
+
+		_menu.LoadMenuCss(selMenu).then(() => {
+			_menu.CallSelectedMenu(selMenu);
+		});
+	},
+
 	OverflowCheck: (selMenu='Box', flag) => {
 		if (window.innerHeight >= 600 && window.innerWidth >= 950 && (!flag && selMenu != FH.Main.SelectedMenu)) {			
 			$('#menu_box').remove();

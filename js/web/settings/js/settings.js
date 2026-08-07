@@ -342,10 +342,8 @@ let Settings = {
 
 		$('#SettingsBoxBody').on('change', '#change-menu', function () {
 			let selMenu = $(this).val();
-
 			FH.Storage.setItem('SelectedMenu', selMenu);
-
-			location.reload();
+			FH.menu.SwitchMenu(selMenu);
 		});
 
 		return dp.join('');

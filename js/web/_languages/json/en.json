@@ -1721,7 +1721,7 @@
   "Settings.ResetBoxPositions.Title": "Box Coordinates",
   "Settings.RivalSound.Desc": "Shall a sound be played when completing a rival quest?",
   "Settings.RivalSound.Title": "Sound for Rival-Quest",
-  "Settings.SelectedMenu.Desc": "Choose your preferred menu style from the drop-down list (game will automatically reload)",
+  "Settings.SelectedMenu.Desc": "Choose your preferred menu style from the drop-down list",
   "Settings.SelectedMenu.Title": "Change menu position",
   "Settings.Show2kQuestMark.Desc": "Shows a small badge with a counter of how many quests you can still abort.",
   "Settings.Show2kQuestMark.Title": "2000 Quest Mark",
