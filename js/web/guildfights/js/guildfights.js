@@ -297,7 +297,7 @@ let GuildFights = {
 				let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
 				if (province?.ownerId === GuildFights.MapData.currentParticipantId) return;
 
-				GuildFights.Signals.push({provinceId: provinceId, signal: "focus"});
+				GuildFights.Signals.push({provinceId: (provinceId||0), signal: "focus"});
 			}
 			else if (data.signal === undefined || data.signal === "ignore") {
 				let signal = GuildFights.Signals.findIndex(prov => prov.provinceId === provinceId);
