@@ -854,15 +854,27 @@ _menu = {
 		});
 
 		return btn.append(btn_sp);
+	},
+
+	UpdateMenuLength: () => {
+		if (_menu.selectedMenu === 'RightBar') {
+			_menu_right.SetMenuHeight(true);
+		}
+		else if (_menu.selectedMenu === 'BottomBar') {
+			_menu_bottom.SetMenuWidth(true);
+		}
+		else if (_menu.selectedMenu === 'RightBar2') {
+			_menu_right2.SetMenuSize();
+		}
 	}
 }
+
 let _menu_bottom = {
 
 	btnSize: 42,
 
 	/**
 	 * Create the div holders and put them to the DOM
-	 *
 	 * @constructor
 	 */
 
@@ -1005,6 +1017,18 @@ let _menu_bottom = {
 			});
 		};
 
+		// Scroll to switch slides
+		$('#forgehammer-hud-wrapper').on('wheel', function (e) {
+			e.preventDefault();
+
+			let delta = e.originalEvent.deltaY;
+
+			if (delta > 0 && _menu.ActiveSlide < _menu.SlideParts) {
+				_menu_bottom.ClickButtonRight();
+			} else if (delta < 0 && _menu.ActiveSlide > 1) {
+				_menu_bottom.ClickButtonLeft();
+			}
+		});
 
 		// Tooltipp top ermitteln und einblenden
 		$('.hud-btn').stop().hover(function(){
@@ -1409,18 +1433,29 @@ let _menu_right = {
 		});
 
 		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-down-active").length == 0) {
-			// Klick auf Pfeil nach unten
 			$('body').on('click', '.hud-btn-down-active', function () {
 				_menu_right.ClickButtonDown();
 			});
 		};
 
 		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-up-active").length == 0) {
-			// Klick auf Pfeil nach oben
 			$('body').on('click', '.hud-btn-up-active', function () {
 				_menu_right.ClickButtonUp();
 			});
 		};
+
+		// Scroll to switch slides
+		$('#forgehammer-hud-wrapper').on('wheel', function (e) {
+			e.preventDefault();
+
+			let delta = e.originalEvent.deltaY;
+
+			if (delta > 0 && _menu.ActiveSlide < _menu.SlideParts) {
+				_menu_right.ClickButtonDown();
+			} else if (delta < 0 && _menu.ActiveSlide > 1) {
+				_menu_right.ClickButtonUp();
+			}
+		});
 
 		// Tooltipp top ermitteln und einblenden
 		$('.hud-btn').stop().hover(function () {

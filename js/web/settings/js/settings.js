@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
- * Copyright (C) 2026 Forge Hammer - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -563,7 +563,7 @@ let Settings = {
 				FH.Storage.removeItem('MenuLength');
 			}
 
-			FH.menu.SetMenuHeight(true);
+			FH.menu.UpdateMenuLength();
 		});
 
 		return ip;
