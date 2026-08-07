@@ -1761,7 +1761,7 @@
   "Settings.ShowOwnPartBP.Desc": "Show Blueprints",
   "Settings.ShowOwnPartIncludeStart.Desc": "Include initial FP in sum",
   "Settings.ShowOwnPartMedals.Desc": "Show Medals",
-  "Settings.ShowOwnPartMinView.Desc": "Hide most details",
+  "Settings.ShowOwnPartMinView.Desc": "Hide custom input columns",
   "Settings.ShowOwnPartOnAllGBs.Desc": "Use current view for GBs of other players",
   "Settings.ShowOwnPartOnAllGBs.Title": "Updates the 'GB calculator' for all GBs",
   "Settings.ShowPlayersMotivation.Desc": "Should the motivation activities be logged via the event history? Make sure to regularly track all events to have a full list of activities.",
