@@ -1,11 +1,21 @@
 # Changelog
  
-## Version 1.4.1
+## Version 1.4.2
 ### New
 - New Color added: Quantum
+- A slightly different menu option was added, thanks to W0LFI
+
+### Update
+- Settings: Menu length and position now update without reloading the game
+- Menu: The right and bottom menu now also slide when you scroll
+- Added attrition to the GBG player view
+- Changed the setting that disabled most of the GB calculator to just disable the custom inputs instead
+- City Overview: The building lists now highlight the building on mouse over instead of clickling on the eye icon
+- GBG Building Reccomendation: Options that will give 80%+ are now highlighted
 
 ### Bug Fixes
 - GBG window could be empty
+- GB Calculator sometimes didn't update after leveling
 
 ---
  
