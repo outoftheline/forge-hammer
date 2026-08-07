@@ -777,7 +777,7 @@ let Parts = {
 			if (Parts.IsPreviousLevel) {
 				let Level = GreatBuildings.GetLevel(EntityID, Total);
 				if (Level) 
-					h.push((Level-1) + ' &#129130; ' + (Level));
+					h.push((Level-1) + ' &rarr; ' + (Level));
 				else // Level unknown
 					h.push(FH.t('Boxes.OwnpartCalculator.OldLevel'));
 			}
@@ -785,7 +785,7 @@ let Parts = {
 				if (Parts.IsNextLevel) 
 					h.push(`<button class="btn btn-set-level" data-value="${(Parts.Level - 1)}">&#9204;</button> `);
 
-				h.push(Parts.Level + ' &#129130; ' + (parseInt(Parts.Level) + 1));
+				h.push(Parts.Level + ' &rarr; ' + (parseInt(Parts.Level) + 1));
 
 				if (GreatBuildings.Rewards[Era] && GreatBuildings.Rewards[Era][Parts.Level + 1]) 
 					h.push(' <button class="btn btn-set-level" data-value="' + (Parts.Level + 1) + '">&#9205;</button>');

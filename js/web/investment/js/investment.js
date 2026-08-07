@@ -1009,7 +1009,7 @@ let Investment = {
 			Invested = Entry.NewFP || 0,
 			Needed = Entry.Needed || 0,
 			Width = Needed > 0 ? Math.min(100, Invested / Needed * 100) : 100,
-			LevelHtml = Entry.PrevLevel === null ? ('&ndash; &#129130; ' + Entry.NewLevel) : (LeveledUp ? (Entry.PrevLevel + ' &#129130; ' + Entry.NewLevel) : Entry.NewLevel);
+			LevelHtml = Entry.PrevLevel === null ? ('&ndash; &rarr; ' + Entry.NewLevel) : (LeveledUp ? (Entry.PrevLevel + ' &rarr; ' + Entry.NewLevel) : Entry.NewLevel);
 
 		let Curr = Contrib && Contrib.curr ? Contrib.curr : null,
 			MyId = FH.Player?.ID,
