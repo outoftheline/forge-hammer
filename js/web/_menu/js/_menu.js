@@ -17,7 +17,7 @@ _menu = {
 	HudWidth: 0,
 	TopOffset: 0,
 
-	MenuOptions: ['BottomBar', 'RightBar', 'Box'], // 'RightBar2'
+	MenuOptions: ['BottomBar', 'RightBar', 'Box', 'RightBar2'],
 	
 	Items: [
 		'partCalc',
@@ -890,11 +890,9 @@ let _menu_bottom = {
 	 * @param reset
 	 */
 	SetMenuWidth: (reset = true) => {
-		// Breite ermitteln und setzten
 		_menu_bottom.Prepare();
 
 		if (reset) {
-			// Slider nach links resetten
 			$('#forgehammer-hud-slider').css({ 
 				left: 0
 			});
@@ -907,7 +905,7 @@ let _menu_bottom = {
 			if (_menu.SlideParts > 1) {
 				$('.hud-btn-right').addClass('hud-btn-right-active');
 			}
-			else { //Gesamtes Menü passt auf 1 Seite => Kein Scrollbutton nach unten
+			else {
 				$('.hud-btn-right').removeClass('hud-btn-right-active');
 			}
 		}
@@ -916,7 +914,6 @@ let _menu_bottom = {
 
 	/**
 	 * Ermittelt die Fensterhöhe und ermittelt die passende Höhe
-	 *
 	 */
 	Prepare: () => {
 		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
@@ -949,7 +946,6 @@ let _menu_bottom = {
 
 	/**
 	 * Panel scrollbar machen
-	 *
 	 */
 	CheckButtons: async () => {
 		let activeIdx = 0;
@@ -1576,22 +1572,35 @@ let _menu_right2 = {
 			$items = $slider.children(),
 			MenuItemCount = $items.length;
 
-		if (MenuItemCount === 0) return;
+		if (MenuItemCount === 0) {
+			$('#forgehammer-hud .hud-btn-toggle').hide();
+			return;
+		}
 
 		let $firstBtn = $items.first(),
 			btnWidth = $firstBtn.outerWidth(true),
 			btnHeight = $firstBtn.outerHeight(true);
 
-		// MenuLength, default 5
-		let MenuLength = FH.Storage.getItem('MenuLength');
-		_menu_right2.HudRows = (MenuLength !== null ? Math.max(1, parseInt(MenuLength)) : 5);
+		let MenuLength = FH.Storage.getItem('MenuLength'),
+			ParsedMenuLength = parseInt(MenuLength);
+
+		if (MenuLength === null || MenuLength === 'true' || (!isNaN(ParsedMenuLength) && ParsedMenuLength === 0)) {
+			_menu_right2.HudRows = Math.max(1, Math.ceil(MenuItemCount / 4));   // 0, null, true -> auto 1/4
+		} else if (MenuLength === 'false' || isNaN(ParsedMenuLength) || ParsedMenuLength < 0) {
+			_menu_right2.HudRows = 5;                                          // false, negative number -> 5
+		} else {
+			_menu_right2.HudRows = ParsedMenuLength; // 1 or more
+		}
+
 		_menu_right2.HudRows = Math.min(_menu_right2.HudRows, MenuItemCount);
 
 		let HudColumns = Math.ceil(MenuItemCount / _menu_right2.HudRows);
 
+		$('#forgehammer-hud .hud-btn-toggle').toggle(HudColumns > 1);
+
 		_menu_right2.HudOpenWidth = (HudColumns * btnWidth) + ((HudColumns - 1) * _menu_right2.gap);
 		_menu_right2.HudPanelHeight = (_menu_right2.HudRows * btnHeight) + ((_menu_right2.HudRows - 1) * _menu_right2.gap);
-
+		
 		$slider.css({
 			'grid-template-rows': 'repeat(' + _menu_right2.HudRows + ', ' + btnHeight + 'px)',
 			'grid-auto-columns': btnWidth + 'px',
@@ -1614,27 +1623,27 @@ let _menu_right2 = {
 	CheckButtons: async () => {
 		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
 
-	let closeTimer = null;
+		let closeTimer = null;
 
-$('#forgehammer-hud')
-    .on('mouseenter', function () {
-        clearTimeout(closeTimer);
-    })
-    .on('mouseleave', function () {
-        closeTimer = setTimeout(() => {
-            _menu_right2.Close();
-        }, 250);
-    });
+		$('#forgehammer-hud')
+			.on('mouseenter', function () {
+				clearTimeout(closeTimer);
+			})
+			.on('mouseleave', function () {
+				closeTimer = setTimeout(() => {
+					_menu_right2.Close();
+				}, 250);
+			});
 
-$('body')
-    .on('mouseenter', '.tooltip', function () {
-        clearTimeout(closeTimer);
-    })
-    .on('mouseleave', '.tooltip', function () {
-        closeTimer = setTimeout(() => {
-            _menu_right2.Close();
-        }, 250);
-    });
+		$('body')
+			.on('mouseenter', '.tooltip', function () {
+				clearTimeout(closeTimer);
+			})
+			.on('mouseleave', '.tooltip', function () {
+				closeTimer = setTimeout(() => {
+					_menu_right2.Close();
+				}, 250);
+			});
 
 		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-toggle").length == 0) {
 			$('body').on('click', '.hud-btn-toggle', function () {
@@ -1688,18 +1697,12 @@ $('body')
 		FH.BlueGalaxy.SetCounter();
 	},
 
-
-	
-	 // open
-	 
+	// open
 	Open: () => {
 		$('#forgehammer-hud').addClass('is--open');
 	},
-
-
 	
-	 // close
-	 
+	// close
 	Close: () => {
 		$('#forgehammer-hud').removeClass('is--open');
 	},
@@ -1707,6 +1710,3 @@ $('body')
 
 FH.menu = _menu;
 };
-
-
-
