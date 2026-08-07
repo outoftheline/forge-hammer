@@ -2550,12 +2550,12 @@ let Productions = {
 					h.push(" ("+FH.t("Eras."+Technologies.Eras[building.eraName]+".short") +')');
 
 				if (await CityBuildings.canAscend(building.entityId)) {
-						let ascendedId = (await CityMap.AscendingBuildings)[building.entityId];
-						
-						let inInventory = Object.keys(InventoryBuildings).find(x => x === ascendedId);
-						if (inInventory)
-							h.push(`<span class="upgrades helperTT" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>`);
-					}
+					let ascendedId = (await CityMap.AscendingBuildings)[building.entityId];
+					
+					let inInventory = Object.keys(InventoryBuildings).find(x => x === ascendedId);
+					if (inInventory)
+						h.push(`<span class="upgrades helperTT" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>`);
+				}
 
 				h.push(`</div></td>`);
 				

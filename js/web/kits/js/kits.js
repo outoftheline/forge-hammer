@@ -828,7 +828,7 @@ let Kits = {
 	},
 
 
-	BuildingsFromInventory: () =>{
+	BuildingsFromInventory: (ascendedBuildingIds = null) =>{
 		let output = {}
 		let upgradeBuildings = Object.keys(Kits.UpgradeSchemes);
 		upgradeBuildings.push(...(Object.values(Kits.UpgradeSchemes)).map(x => x.upgradeSteps.map(y => y.buildingId)).flat());
@@ -890,22 +890,27 @@ let Kits = {
 		//flatten CityBuildings
 		cityBuildings = {}
 		Object.values(FH.Main.CityMapData).forEach(x=>cityBuildings[x.cityentity_id]=(cityBuildings[x.cityentity_id] || 0)+1);
-		//check non-upgrade scheme selection kit items
-		for (let [id,kits] of Object.entries(Kits.selectionOptions)) {
-			if (id.substring(1,2)=="_" && !upgradeBuildings.includes(id)) {
-				for (let kit of kits) {
-					if (!Inventory[kit]) continue
-					if (output[id]) {
-						output[id].kitsUsed = (output[id].kitsUsed||0) + Inventory[kit];
-						output[id].amount = (output[id].amount||0) + Inventory[kit];
-						output[id].chains.push({chain:[{type:"selectionKit",id:kit,from:"inventory",count:1}],count:Inventory[kit]});
-					} else 
-						output[id] = {kitsUsed:Inventory[kit],amount:Inventory[kit],chains:[{chain:[{type:"selectionKit",id:kit,from:"inventory",count:1}],count:Inventory[kit]}]};
+		//check non-upgrade scheme selection kit items 
+		if (!ascendedBuildingIds) {
+			for (let [id,kits] of Object.entries(Kits.selectionOptions)) {
+				if (id.substring(1,2)=="_" && !upgradeBuildings.includes(id)) {
+					for (let kit of kits) {
+						if (!Inventory[kit]) continue
+						if (output[id]) {
+							output[id].kitsUsed = (output[id].kitsUsed||0) + Inventory[kit];
+							output[id].amount = (output[id].amount||0) + Inventory[kit];
+							output[id].chains.push({chain:[{type:"selectionKit",id:kit,from:"inventory",count:1}],count:Inventory[kit]});
+						} else 
+							output[id] = {kitsUsed:Inventory[kit],amount:Inventory[kit],chains:[{chain:[{type:"selectionKit",id:kit,from:"inventory",count:1}],count:Inventory[kit]}]};
+					}
 				}
 			}
 		}
-		//check each scheme
-		for (let [buildingId, scheme] of Object.entries(Kits.UpgradeSchemes)) {
+		// check each scheme
+		let schemeEntries = ascendedBuildingIds
+			? Object.entries(Kits.UpgradeSchemes).filter(([id]) => ascendedBuildingIds.includes(id))
+			: Object.entries(Kits.UpgradeSchemes);
+		for (let [buildingId, scheme] of schemeEntries) {
 			let ignoreAscended = false
 			do { //repeat for non-ascended version if ascended version is found
 				let upgradeSteps = scheme.upgradeSteps;

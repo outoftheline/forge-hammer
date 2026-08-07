@@ -1019,46 +1019,42 @@ let CityMap = {
 		$('.too-old-legends').slideToggle();
 	},
 
-
 	highlightNotPolivatedBuildings: ()=> {
 		$('#map-buildings').toggleClass('transparent');
 	},
-
 
 	highlightCollectableBuildings: ()=> {
 		$('#grid-outer').toggleClass('desaturated');
 	},
 
-
 	highlightNoStreetBuildings: ()=> {
 		$('.noStreet').toggleClass('highlight');
 	},
-
 
 	highlightAscendableBuildings: ()=> {
 		$('.ascendable').toggleClass('highlight2');
 	},
 
+	hoverHighlightBuilding: (id, show) => {
+		$('#grid-outer').toggleClass('desaturate', show);
+		$(`.entity[data-id="${id}"]`).toggleClass('highlighted', show);
+	},
 
 	highlightDecayedBuildings: ()=> {
 		$('.decayed').toggleClass('highlight3');
 	},
 
-
 	highlightLimitedBuildings: ()=> {
 		$('#grid-outer').toggleClass('showLimited');
 	},
-
 
 	highlightGBGBuildings: ()=> {
 		$('#grid-outer').toggleClass('showGBG');
 	},
 
-
 	highlightQIBuildings: ()=> {
 		$('#grid-outer').toggleClass('showQI');
 	},
-
 
 	highlightWorstBuildings: ()=> {
 		$('.rating10').toggleClass('highlight4');
@@ -1069,6 +1065,7 @@ let CityMap = {
 	buildingGroupList: async (type) => {
 		let title = FH.t('Boxes.CityMap.limited');
 		let buildings = [];
+		let InventoryBuildings = {};
 		
 		if (type === 'limited')
 			for (let building of Object.values(FH.Main.CityBuildingsData)) {
@@ -1083,6 +1080,9 @@ let CityMap = {
 				if (canAscend !== false)
 					buildings.push(building);
 			}
+			let ascendingMap = await CityMap.AscendingBuildings;
+			let ascendedIds = buildings.map(b => ascendingMap[b.entityId]).filter(Boolean);
+			InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
 		}
 		
 		buildings.sort((a,b)=>{
@@ -1105,14 +1105,18 @@ let CityMap = {
 		let output = [];
 		output.push(`<ul class="foe-table text-smaller">`);
 		for (let building of buildings) {
-			output.push(`<li class="flex between">
+			output.push(`<li class="flex between" onmouseenter="CityMap.hoverHighlightBuilding(${building.id}, true)" onmouseleave="CityMap.hoverHighlightBuilding(${building.id}, false)">
 				<span>
-					<span class="show-entity" onclick="Productions.ShowOnMap(${building.id})"><img src="${FH.extUrl}images/hud/open-eye.png"></span> 
 					${building.name}
 				</span> 
 				${(type === 'limited') ? 
-					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>` : ``}
-			</li>`);
+					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>` : ``}`);
+				if (type === 'acendable') {
+					let ascendedId = (await CityMap.AscendingBuildings)[building.entityId];
+					if (ascendedId && InventoryBuildings[ascendedId])
+						output.push(`<span class="upgrades helperTT text-right" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>`);
+				}
+			output.push(`</li>`);
 		}
 		output.push(`</ul>`)
 		$('#citymapExtraBody').html(output.join(''));
