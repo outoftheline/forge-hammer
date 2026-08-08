@@ -777,7 +777,7 @@ let Parts = {
 			if (Parts.IsPreviousLevel) {
 				let Level = GreatBuildings.GetLevel(EntityID, Total);
 				if (Level) 
-					h.push((Level-1) + ' &#129130; ' + (Level));
+					h.push((Level-1) + ' &rarr; ' + (Level));
 				else // Level unknown
 					h.push(FH.t('Boxes.OwnpartCalculator.OldLevel'));
 			}
@@ -785,7 +785,7 @@ let Parts = {
 				if (Parts.IsNextLevel) 
 					h.push(`<button class="btn btn-set-level" data-value="${(Parts.Level - 1)}">&#9204;</button> `);
 
-				h.push(Parts.Level + ' &#129130; ' + (parseInt(Parts.Level) + 1));
+				h.push(Parts.Level + ' &rarr; ' + (parseInt(Parts.Level) + 1));
 
 				if (GreatBuildings.Rewards[Era] && GreatBuildings.Rewards[Era][Parts.Level + 1]) 
 					h.push(' <button class="btn btn-set-level" data-value="' + (Parts.Level + 1) + '">&#9205;</button>');
@@ -869,9 +869,8 @@ let Parts = {
 				h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 				h.push('<td class="text-center"><span class="' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
 				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
-				if (printsEnabled && medalsEnabled) h.push('<td colspan="4"></td>');
-				else if (printsEnabled || medalsEnabled) h.push('<td colspan="3"></td>');
-				else if (!minView) h.push('<td colspan="2"></td>');
+				let restColspan = 1 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
+				h.push('<td colspan="' + restColspan + '"></td>');
 				h.push('</tr>');
 			}
 			else {
@@ -880,10 +879,8 @@ let Parts = {
 					let OwnPartText = opt(Eigens[i], EigenCounter);
 					h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 					h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'highlighted-text') + '">' + OwnPartText + '</td>');
-					if (printsEnabled && medalsEnabled) h.push('<td colspan="5"></td>');
-					else if (printsEnabled || medalsEnabled) h.push('<td colspan="4"></td>');
-					else if (!minView) h.push('<td colspan="3"></td>');
-					if (minView) h.push('<td></td>');
+					let restColspan = 1 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
+					h.push('<td colspan="' + restColspan + '"></td>');
 					h.push('</tr>');
 				}
 			}
@@ -961,7 +958,8 @@ let Parts = {
 			let OwnPartRestText = opt(Eigens[5], EigenCounter);
 			h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 			h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'highlighted-text') + '">' + OwnPartRestText + '</td>');
-			h.push('<td colspan="5"></td>');
+			let restColspan = 1 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
+			h.push('<td colspan="' + restColspan + '"></td>');
 			h.push('</tr>');
 		}
 
@@ -975,21 +973,19 @@ let Parts = {
 			${FH.t('Boxes.OwnpartCalculator.ExistingPayments')}: 
 			<input id="lockexistingpayments" class="lockexistingpayments game-cursor" ${(Parts.LockExistingPlaces ? 'checked' : '')} type="checkbox">${FH.t('Boxes.OwnpartCalculator.Lock')}
 			<input id="trustexistingpayments" class="trustexistingpayments game-cursor" ${(Parts.TrustExistingPlaces ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.OwnpartCalculator.Trust')}
-			</div>`);
-
-		if (!minView) {
-			h.push(`<div class="flex between" style="padding:3px 0;">
+			</div>
+			
+			<div class="flex between" style="padding:3px 0;">
 				<div>
 					${FH.t('Boxes.OwnpartCalculator.PatronPart')}: <strong class="${(PlayerID === FH.Player.ID ? '' : 'success')}">${FH.HTML.Format(MaezenTotal + ExtTotal)}</strong>
-				</div>`);
-			h.push(`<div class="text-right">
+				</div>
+				<div class="text-right">
 				${FH.t('Boxes.OwnpartCalculator.OwnPart')}: `);
 				if (EigenStart > 0)
 					h.push(`<strong title="${FH.t('Boxes.OwnpartCalculator.OwnPartRemaining')}" data-copy="${(EigenTotal - EigenStart)}" class="clickable copy-fp ${(PlayerID === FH.Player.ID ? 'success' : '')}">${FH.HTML.Format(EigenTotal - EigenStart)}</strong> / `);
 				h.push(`<strong data-copy="${(EigenTotal)}" class="clickable copy-fp ${(PlayerID === FH.Player.ID ? 'success' : '')}">${FH.HTML.Format(EigenTotal)}</strong>
 			</div>
 			</div>`);
-		}
 
 		Parts.CalcBackgroundBody();
 
@@ -1001,14 +997,12 @@ let Parts = {
 			else 
 				rest = FH.Main.CurrentGB.Entity['state']['forge_points_for_level_up'] - FH.Main.CurrentGB.Rankings.reduce((acc,entry)=>acc+(entry?.forge_points|0),0);
 			
-			if (!minView) {
-				h.push(`<div class="text-center d-flex">
-					<em>${FH.t('Boxes.OwnpartCalculator.LGTotalFP')}: `);
-					if (rest !== Total)
-						h.push(`<span id="up-to-level-up" class="copy-fp clickable" data-copy="${rest}" title="${FH.t('Boxes.Calculator.Up2LevelUp')}"> ${FH.HTML.Format(rest)}</span> / `);
-					h.push(`<span class="highlighted-text">${FH.HTML.Format(Total)}</span></em>
-				</div>`);
-			}
+			h.push(`<div class="text-center d-flex">
+				<em>${FH.t('Boxes.OwnpartCalculator.LGTotalFP')}: `);
+				if (rest !== Total)
+					h.push(`<span id="up-to-level-up" class="copy-fp clickable" data-copy="${rest}" title="${FH.t('Boxes.Calculator.Up2LevelUp')}"> ${FH.HTML.Format(rest)}</span> / `);
+				h.push(`<span class="highlighted-text">${FH.HTML.Format(Total)}</span></em>
+			</div>`);
 
 			// nur zeigen wenn relevant
 			h.push(Calculator.GetRecurringQuestsLine(Parts.PlayInfoSound));

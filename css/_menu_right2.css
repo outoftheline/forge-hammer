@@ -1,0 +1,90 @@
+#forgehammer-hud.hud-right2 {
+	right: 0;
+	top: 420px;
+	height: calc(var(--hud-panel-height, var(--menu-btn-size)) + 22px);
+	width: calc(var(--hud-collapsed-width, var(--menu-btn-size))); 
+	max-width: calc(100vw - 22px); 
+	overflow: hidden;
+	box-sizing: border-box;
+	transition: width 0.3s ease-in-out;
+}
+
+#forgehammer-hud.hud-right2.is--open {
+	width: var(--hud-open-width);
+}
+
+.hud-right2 #forgehammer-hud-wrapper {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.hud-right2 #forgehammer-hud-slider {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	display: grid;
+	grid-auto-flow: column;
+	gap: 2px;
+	direction: rtl;
+}
+
+.hud-right2 .hud-btn {
+	width: var(--menu-btn-size);
+	height: var(--menu-btn-size);
+	direction: ltr;
+}
+
+.hud-right2 .hud-btn span.hud-counter {
+	padding: 2px;
+	width: var(--hud-counter-size);
+	height: var(--hud-counter-size);
+	bottom: 2px;
+	left: 2px;
+	line-height: var(--hud-counter-size);
+}
+
+.hud-right2 .menu-placeholder {
+	width: calc(var(--menu-btn-size) - 2px);
+	height: calc(var(--menu-btn-size) - 2px);
+}
+
+.hud-btn-toggle {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: inherit;
+	height: 20px;
+	box-sizing: border-box;
+	box-shadow: var(--menu-shadow);
+	background: var(--menu-arrow-bg);
+    border-radius: 3px 0 0 3px;
+}
+
+.hud-btn-toggle::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-right: 8px solid var(--menu-arrow-color);
+	transform: translate(-50%, -50%);
+	transition: transform 0.3s ease-in-out;
+}
+
+#forgehammer-hud.hud-right2.is--open .hud-btn-toggle::before {
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+
+#forgehammer-hud.hud-right2 {
+    --menu-bg: transparent;
+    --menu-shadow: none;
+}

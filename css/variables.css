@@ -6,14 +6,13 @@
 :root {
 	--white: #fff;
 	--beige: #ffe7ba;
-	--dark-beige: #c9af7f;
+	--text-link: #ffB539;
 	--text-highlight: #ffB539;
 	--text-medium: #93795D;
 	--text-medium2: #7b5730;
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
 	--text-darker: #271911;
-	--bg-darkest: #180d07;
 	--ash: #8a8a8a;
 	--light-blue: #b0bbcd;
 
@@ -22,26 +21,27 @@
 	--info-blue: #5cb1f6;
 	--danger-red: #f34f4f;
 
-	--text-tab-active: #e2e2e2;
-	--text-tab: #9c9c9c;
-
 	--text-btn-disabled: #999;
 	--text-btn: #f3D6A0;
 
 	--bg-light: #F9EBC6;
 	--bg-medium: #b3a582;
 	--bg-dark: #281207;
+	--bg-darkest: #180d07;
 
 	--window-border: 2px solid #9f7553;
 	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
 	--window-bg: url('../images/hud/box-bg.png') center center repeat;
 
 	--window-head-bg: linear-gradient(90deg, #67100a, #57281e);
+	--window-head-text: #ffe7ba;
 	--window-head-shadow: none;
 	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #7a4e38, #724532);
 	--window-head-btn-shadow:  none;
 
 	--window-body-scroll-bg: #57250c;
+	--window-body-scroll-border: #281207;
+	--window-body-scroll-color: #281207;
 
 	--window-settings-bg: #3a2313;
 
@@ -58,13 +58,25 @@
 	--btn-bg-red-active: linear-gradient(to bottom, #a71f1f 0%,#590d0d 100%);
 	--btn-bg-red-onclick: linear-gradient(to bottom, #610a0a 0%,#2e0505 100%);
 
+	--switch-text: #b0bbcd;
+    --switch-text-active: #b0bbcd;
+	
+    --input-accent: #ffB539;
+    --input-bg: #ffe7ba;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
+
 	--tabs-bg: linear-gradient(#3c3c43, #2b2c33);
+	--text-tab: #9c9c9c;
 	--tabs-bg-active: linear-gradient(#4a5c7a, #3b4863);
 	--tabs-bg-shadow: inset 0 1px 1px #2a1f31, inset 0 2px 0 #5a5155, 0 -1px 3px #000;
 	--tabs-bg-shadow-active: inset 0 1px 0 #737793;
 	--tabs-border: 2px solid #522c0f;
-	--tabs-border-active: 2px solid #895022;
+	--text-tab-active: #e2e2e2;
 
+	--border-table-top: #694c2e;
+	--border-table-bottom: #3D250F;
+	--border-table-bottom-darker: #170602;
 	--table-bg-hover: #ffb45733;
 	--table-bg-odd: #ff9e4512;
 	--table-bg-darker: #40190080;
@@ -87,15 +99,15 @@
 
 	--border-tab: #44516d;
 	--border-tab-vertical: linear-gradient(45deg,#44516d, var(--text-darker)) 10;
-	--border-table-top: #694c2e;
-	--border-table-bottom: #3D250F;
-	--border-table-bottom-darker: #170602;
 
-	--tooltip-border: 2px solid #2a2c27;
-	--tooltip-bg: #3e423f;
-	--tooltip-disabled: #f79090;
-	--tooltip: #f2ede1;
-	--tooltip-head-bg: #0000002a;
+	--menu-tooltip-border: 2px solid #2a2c27;
+	--menu-tooltip-bg: #3e423f;
+	--menu-tooltip-disabled: #f79090;
+	--menu-tooltip-text: #f2ede1;
+	--menu-tooltip-head-bg: #0000002a;
+
+    --tooltip-bg: #180d07;
+    --tooltip-text: #f2ede1;
 
 	--hud-counter-color: #468fca;
 	--hud-counter-success: #5c8d20;
@@ -139,8 +151,9 @@
 	--ascended: #e79d2e;
 	--def: #3e68f7;
 	--att: #c72c2c;
+	--questcounter-bg: #c9af7f;
 
-	--tooltip-inhabitant: #a4a45d;
+	--menu-tooltip-inhabitant: #a4a45d;
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);

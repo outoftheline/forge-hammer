@@ -122,7 +122,7 @@ let GuildFights = {
 	GBGHistoryView: false,
 	GBGRoundGuilds: null,
 	LogDatePicker: null,
-	Signals: null,
+	Signals: [],
 	curDateFilter: null,
 	curDateEndFilter: null,
 	curDetailViewFilter: null,
@@ -277,7 +277,7 @@ let GuildFights = {
 			$(this).html(GuildFights.GetAlertButton(id));
 		});
 
-		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals;
+		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
 		
 		if (GuildFights.Signals?.length > 0) {
 			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
@@ -297,7 +297,7 @@ let GuildFights = {
 				let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
 				if (province?.ownerId === GuildFights.MapData.currentParticipantId) return;
 
-				GuildFights.Signals.push({provinceId: provinceId, signal: "focus"});
+				GuildFights.Signals.push({provinceId: (provinceId||0), signal: "focus"});
 			}
 			else if (data.signal === undefined || data.signal === "ignore") {
 				let signal = GuildFights.Signals.findIndex(prov => prov.provinceId === provinceId);
@@ -1134,11 +1134,12 @@ let GuildFights = {
 				let date = moment.unix(obj.time).format('YYYYMMDD');
 
 				if (!(date in res)) {
-					res.__array.push(res[date] = { date: date, time: obj.time, battles: obj.battles, negotiations: obj.negotiations });
+					res.__array.push(res[date] = { date: date, time: obj.time, battles: obj.battles, negotiations: obj.negotiations, attrition: obj.attrition || 0 });
 				}
 				else {
 					res[date].battles += +obj.battles;
 					res[date].negotiations += +obj.negotiations;
+					res[date].attrition += +(obj.attrition || 0);
 				}
 				return res;
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
@@ -1152,6 +1153,7 @@ let GuildFights = {
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
+			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Attrition')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-playerlog-group">');
 
@@ -1163,6 +1165,7 @@ let GuildFights = {
 				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${day.attrition}">${FH.HTML.Format(day.attrition)}</td>`);
 				h.push('</tr>');
 			});
 
@@ -1183,6 +1186,7 @@ let GuildFights = {
 			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
 			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
 			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
+			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Attrition')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
 
@@ -1197,6 +1201,7 @@ let GuildFights = {
 				h.push(`<td class="is-number text-center" data-number="${e.negotiations}">${FH.HTML.Format(e.negotiations)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${e.battles}">${FH.HTML.Format(e.battles)}</td>`);
 				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
+				h.push(`<td class="is-number text-center" data-number="${e.attrition || 0}">${FH.HTML.Format(e.attrition || 0)}</td>`);
 				h.push('</tr>');
 				lastDataId = e.time;
 			});
@@ -1274,7 +1279,7 @@ let GuildFights = {
 			h.push(`<td style="width: ${data.width.b}px" class="text-center">${e.negotiations}</td>`);
 			h.push(`<td style="width: ${data.width.c}px" class="text-center">${e.battles}</td>`);
 			h.push(`<td style="width: ${data.width.d}px" class="text-center">${(e.battles + e.negotiations * 2)}</td>`);
-			h.push(`<td style="width: ${data.width.e}px"></td>`);
+			h.push(`<td style="width: ${data.width.e}px" class="text-center">${e.attrition || 0}</td>`);
 			h.push(`</tr>`);
 		});
 
@@ -1554,7 +1559,7 @@ let GuildFights = {
 					else if (prov[x].gainAttritionChance > 20)
 						bgColor = 'bg-yellow';
 				}
-				let signal = Object.values(GuildFights.Signals).find(s => s.provinceId === prov[x].id);
+				let signal = (GuildFights.Signals || []).find(s => s.provinceId === prov[x].id);
 				let signalClass = '';
 				if (signal)
 					signalClass = signal.signal;

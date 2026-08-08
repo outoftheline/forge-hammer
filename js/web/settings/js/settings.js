@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
- * Copyright (C) 2026 Forge Hammer - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -342,14 +342,11 @@ let Settings = {
 
 		$('#SettingsBoxBody').on('change', '#change-menu', function () {
 			let selMenu = $(this).val();
-
 			FH.Storage.setItem('SelectedMenu', selMenu);
-
-			location.reload();
+			FH.menu.SwitchMenu(selMenu);
 		});
 
 		return dp.join('');
-
 	},
 
 
@@ -520,7 +517,8 @@ let Settings = {
 			{name: "Forge Hammer", path: "themes/hammer"},
 			{name: "Oldschool", path: "variables"},
 			{name: "Dark", path: "themes/grey"},
-			{name: "Blues", path: "themes/blues"}
+			{name: "Blues", path: "themes/blues"},
+			{name: "Quantum", path: "themes/qi"}
 		];
 
 		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";
@@ -565,7 +563,7 @@ let Settings = {
 				FH.Storage.removeItem('MenuLength');
 			}
 
-			FH.menu.SetMenuHeight(true);
+			FH.menu.UpdateMenuLength();
 		});
 
 		return ip;

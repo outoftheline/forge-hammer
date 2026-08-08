@@ -1,17 +1,8 @@
 /*
- *
- *  * **************************************************************************************
- *  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
- *  * You may use, distribute and modify this code under the
- *  * terms of the AGPL license.
- *  *
- *  * See file LICENSE.md or go to
- *  * https://github.com/mainIine/foe-helfer-extension/blob/master/LICENSE.md
- *  * for full license details.
- *  *
- *  * **************************************************************************************
- *
- */
+ * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
+ * Licensed under AGPL - see LICENSE.md for details.
+*/
 
 
 FH.proxy.addHandler('GuildBattlegroundBuildingService', 'getBuildings', (data, postData) => {
@@ -270,7 +261,7 @@ let GBGBuildings = {
 				highlight = "cost";
 			}
 			
-			h+=`<tr ${highlight=="chance"?'class="breakline"':''}><td >`
+			h+=`<tr data-value="${s.block}" ${highlight=="chance"?'class="breakline"':''}><td>`
 			for (let b of s.needed) {
 				if (b=="free") continue;
 				h+=`<img class="building" src="${src(b)}" title="${GBGBuildings.BuildingData[b].name}">`

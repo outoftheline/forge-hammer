@@ -1347,17 +1347,17 @@ let Alerts = function(){
 					<span id="alert-expires"></span>
 				
 					<div class="btn-group" role="group" aria-label="Date Group">						
-						<span class="btn datetime-preset" data-time="-60">-${labels.times['1m']}</span>
-						<span class="btn datetime-preset" data-time="60">${labels.times['1m']}</span>
-						<span class="btn datetime-preset" data-time="300">${labels.times['5m']}</span>
-						<span class="btn datetime-preset" data-time="900">${labels.times['15m']}</span>
-						<span class="btn datetime-preset" data-time="3600">${labels.times['1h']}</span>
-						<span class="btn datetime-preset" data-time="14400">${labels.times['4h']}</span>
-						<span class="btn datetime-preset" data-time="18000">${labels.times['5h']}</span>
-						<span class="btn datetime-preset" data-time="28800">${labels.times['8h']}</span>
-						<span class="btn datetime-preset" data-time="36000">${labels.times['10h']}</span>
-						<span class="btn datetime-preset" data-time="86400">${labels.times['1d']}</span>
-						<span class="btn datetime-preset" data-time="604800">${labels.times['7d']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="-60">-${labels.times['1m']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="60">${labels.times['1m']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="300">${labels.times['5m']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="900">${labels.times['15m']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="3600">${labels.times['1h']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="14400">${labels.times['4h']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="18000">${labels.times['5h']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="28800">${labels.times['8h']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="36000">${labels.times['10h']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="86400">${labels.times['1d']}</span>
+						<span class="btn btn-mid datetime-preset" data-time="604800">${labels.times['7d']}</span>
 					</div>
 				</div>
 				<div class="col">

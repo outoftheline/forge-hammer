@@ -75,7 +75,7 @@
     position: absolute;
     right: 320px;
     bottom: 10px;
-    background: var(--tooltip-inhabitant);
+    background: var(--menu-tooltip-inhabitant);
 }
 .HXBuilding .inhabitant {
     max-width: unset;
@@ -83,7 +83,7 @@
     position: absolute;
     right: 320px;
     bottom: 10px;
-    background: var(--tooltip-inhabitant);
+    background: var(--menu-tooltip-inhabitant);
 }
 td:nth-child(3) .HXBuilding .inhabitant {
     display: none;

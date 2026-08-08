@@ -200,7 +200,7 @@ let QiProgress = {
 			tA += playerNew.actions;
 			tP += playerNew.progress;
 
-			b.push('<tr data-player="' + playerNew['player_id'] + '" data-qiround="' + qiRound + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-player ' : '') + (change === true ? 'bg-green' : '') + '">');
+			b.push('<tr data-player="' + playerNew['player_id'] + '" data-qiround="' + qiRound + '" class="' + newProgressClass + (!histView ? 'showdetailview ' : '') + (playerNew['player_id'] === FH.Player.ID ? 'mark-row ' : '') + (change === true ? 'bg-green' : '') + '">');
 			b.push('<td style="display:none">' + playerNew.player_id + '</td>');
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
 			b.push('<td class="tdmin"><img src="' + srcLinks.GetPortrait(playerNew.avatar) + '"></td>');

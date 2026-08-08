@@ -17,7 +17,7 @@ _menu = {
 	HudWidth: 0,
 	TopOffset: 0,
 
-	MenuOptions: ['BottomBar', 'RightBar', 'Box'],
+	MenuOptions: ['BottomBar', 'RightBar', 'Box', 'RightBar2'],
 	
 	Items: [
 		'partCalc',
@@ -73,6 +73,10 @@ _menu = {
 			_menu.selectedMenu = 'RightBar';
 			_menu_right.BuildOverlayMenu();
 		}
+		else if (selMenu === 'RightBar2') {
+			_menu.selectedMenu = 'RightBar2';
+			_menu_right2.BuildOverlayMenu();
+		}
 		else if (selMenu === 'BottomBar') {
 			_menu.selectedMenu = 'BottomBar';
 			_menu_bottom.BuildOverlayMenu();
@@ -95,6 +99,43 @@ _menu = {
 		}
 		
 		_menu.OverflowCheck(_menu.selectedMenu, true);
+	},
+
+
+	LoadMenuCss: (selMenu) => {
+		let menuCss = '_menu_' + selMenu.toLowerCase().replace('bar', ''),
+			cssId = 'css-' + menuCss;
+
+		if ($('#' + cssId).length > 0) {
+			return Promise.resolve();
+		}
+
+		return new Promise((resolve) => {
+			let css = $('<link />')
+				.attr('href', FH.extUrl + 'css/' + menuCss + '.css?v=' + FH.BaseData.extVersion)
+				.attr('id', cssId)
+				.attr('rel', 'stylesheet')
+				.on('load error', resolve);
+
+			$('head').append(css);
+		});
+	},
+
+	SwitchMenu: (selMenu) => {
+		let $slider = $('#forgehammer-hud-slider');
+
+		if ($slider.hasClass('ui-sortable')) {
+			$slider.sortable('destroy');
+		}
+
+		$('#forgehammer-hud, #menu_box').remove();
+		$('.tooltip').remove();
+
+		FH.Main.SelectedMenu = selMenu;
+
+		_menu.LoadMenuCss(selMenu).then(() => {
+			_menu.CallSelectedMenu(selMenu);
+		});
 	},
 
 	OverflowCheck: (selMenu='Box', flag) => {
@@ -129,7 +170,7 @@ _menu = {
 	
 	toolTipp: (btn, title, desc) => {
 		$(btn).attr('title', desc);
-		let pos = (_menu.selectedMenu === 'RightBar' ? 'left' : 'top');
+		let pos = (_menu.selectedMenu === 'RightBar' || _menu.selectedMenu === 'RightBar2' ? 'left' : 'top');
 
 		// fix the tooltip position when menu is box and at the top border
 		if(_menu.selectedMenu === 'Box' && _menu.TopOffset < 120){
@@ -813,15 +854,27 @@ _menu = {
 		});
 
 		return btn.append(btn_sp);
+	},
+
+	UpdateMenuLength: () => {
+		if (_menu.selectedMenu === 'RightBar') {
+			_menu_right.SetMenuHeight(true);
+		}
+		else if (_menu.selectedMenu === 'BottomBar') {
+			_menu_bottom.SetMenuWidth(true);
+		}
+		else if (_menu.selectedMenu === 'RightBar2') {
+			_menu_right2.SetMenuSize();
+		}
 	}
 }
+
 let _menu_bottom = {
 
 	btnSize: 42,
 
 	/**
 	 * Create the div holders and put them to the DOM
-	 *
 	 * @constructor
 	 */
 
@@ -886,11 +939,9 @@ let _menu_bottom = {
 	 * @param reset
 	 */
 	SetMenuWidth: (reset = true) => {
-		// Breite ermitteln und setzten
 		_menu_bottom.Prepare();
 
 		if (reset) {
-			// Slider nach links resetten
 			$('#forgehammer-hud-slider').css({ 
 				left: 0
 			});
@@ -903,7 +954,7 @@ let _menu_bottom = {
 			if (_menu.SlideParts > 1) {
 				$('.hud-btn-right').addClass('hud-btn-right-active');
 			}
-			else { //Gesamtes Menü passt auf 1 Seite => Kein Scrollbutton nach unten
+			else {
 				$('.hud-btn-right').removeClass('hud-btn-right-active');
 			}
 		}
@@ -912,7 +963,6 @@ let _menu_bottom = {
 
 	/**
 	 * Ermittelt die Fensterhöhe und ermittelt die passende Höhe
-	 *
 	 */
 	Prepare: () => {
 		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
@@ -927,11 +977,10 @@ let _menu_bottom = {
 			return;
 		} 
 			
-		// hat der Spieler eine Länge vorgebeben?
+
 		let MenuLength = FH.Storage.getItem('MenuLength');
 
-		if (MenuLength !== null && MenuLength < _menu.HudCount)
-		{
+		if (MenuLength !== null && MenuLength < _menu.HudCount) {
 			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
 		}
 
@@ -946,7 +995,6 @@ let _menu_bottom = {
 
 	/**
 	 * Panel scrollbar machen
-	 *
 	 */
 	CheckButtons: async () => {
 		let activeIdx = 0;
@@ -969,6 +1017,18 @@ let _menu_bottom = {
 			});
 		};
 
+		// Scroll to switch slides
+		$('#forgehammer-hud-wrapper').on('wheel', function (e) {
+			e.preventDefault();
+
+			let delta = e.originalEvent.deltaY;
+
+			if (delta > 0 && _menu.ActiveSlide < _menu.SlideParts) {
+				_menu_bottom.ClickButtonRight();
+			} else if (delta < 0 && _menu.ActiveSlide > 1) {
+				_menu_bottom.ClickButtonLeft();
+			}
+		});
 
 		// Tooltipp top ermitteln und einblenden
 		$('.hud-btn').stop().hover(function(){
@@ -1373,18 +1433,29 @@ let _menu_right = {
 		});
 
 		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-down-active").length == 0) {
-			// Klick auf Pfeil nach unten
 			$('body').on('click', '.hud-btn-down-active', function () {
 				_menu_right.ClickButtonDown();
 			});
 		};
 
 		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-up-active").length == 0) {
-			// Klick auf Pfeil nach oben
 			$('body').on('click', '.hud-btn-up-active', function () {
 				_menu_right.ClickButtonUp();
 			});
 		};
+
+		// Scroll to switch slides
+		$('#forgehammer-hud-wrapper').on('wheel', function (e) {
+			e.preventDefault();
+
+			let delta = e.originalEvent.deltaY;
+
+			if (delta > 0 && _menu.ActiveSlide < _menu.SlideParts) {
+				_menu_right.ClickButtonDown();
+			} else if (delta < 0 && _menu.ActiveSlide > 1) {
+				_menu_right.ClickButtonUp();
+			}
+		});
 
 		// Tooltipp top ermitteln und einblenden
 		$('.hud-btn').stop().hover(function () {
@@ -1521,8 +1592,193 @@ let _menu_right = {
 	},
 };
 
-FH.menu = _menu;
+/**
+ menu_right2
+ */
+let _menu_right2 = {
+
+	HudOpenWidth: 0,
+	HudRows: 1,
+	gap: 2,
+
+	BuildOverlayMenu: () => {
+		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-right2'}).addClass('game-cursor'),
+			hudWrapper = $('<div />').attr('id', 'forgehammer-hud-wrapper'),
+			hudInner = $('<div />').attr('id', 'forgehammer-hud-slider'),
+			btnToggle = $('<span />').addClass('hud-btn-toggle');
+
+		hudWrapper.append(hudInner);
+
+		hud.append(hudWrapper);
+		hud.append(btnToggle);
+
+		window.onresize = function (event) {
+			if (event.target == window) _menu_right2.SetMenuSize();
+		};
+
+		$('body').append(hud).ready(async function () {
+
+			_menu.ListLinks(_menu_right2.InsertMenuItem);
+			await _menu_right2.CheckButtons();
+
+			_menu_right2.SetMenuSize();
+
+			window.dispatchEvent(new CustomEvent('forgehammer#menu_loaded'));
+		});
+
+	},
+
+
+	/**
+	* Fügt ein MenüItem ein
+	*
+	* @param MenuItem
+	*/
+	InsertMenuItem: (MenuItem) => {
+		$('#forgehammer-hud-slider').append(MenuItem);
+    },
+
+
+	SetMenuSize: () => {
+		let $slider = $('#forgehammer-hud-slider'),
+			$items = $slider.children(),
+			MenuItemCount = $items.length;
+
+		if (MenuItemCount === 0) {
+			$('#forgehammer-hud .hud-btn-toggle').hide();
+			return;
+		}
+
+		let $firstBtn = $items.first(),
+			btnWidth = $firstBtn.outerWidth(true),
+			btnHeight = $firstBtn.outerHeight(true);
+
+		let MenuLength = FH.Storage.getItem('MenuLength'),
+			ParsedMenuLength = parseInt(MenuLength);
+
+		if (MenuLength === null || MenuLength === 'true' || (!isNaN(ParsedMenuLength) && ParsedMenuLength === 0)) {
+			_menu_right2.HudRows = Math.max(1, Math.ceil(MenuItemCount / 4));   // 0, null, true -> auto 1/4
+		} else if (MenuLength === 'false' || isNaN(ParsedMenuLength) || ParsedMenuLength < 0) {
+			_menu_right2.HudRows = 5;                                          // false, negative number -> 5
+		} else {
+			_menu_right2.HudRows = ParsedMenuLength; // 1 or more
+		}
+
+		_menu_right2.HudRows = Math.min(_menu_right2.HudRows, MenuItemCount);
+
+		let HudColumns = Math.ceil(MenuItemCount / _menu_right2.HudRows);
+
+		$('#forgehammer-hud .hud-btn-toggle').toggle(HudColumns > 1);
+
+		_menu_right2.HudOpenWidth = (HudColumns * btnWidth) + ((HudColumns - 1) * _menu_right2.gap);
+		_menu_right2.HudPanelHeight = (_menu_right2.HudRows * btnHeight) + ((_menu_right2.HudRows - 1) * _menu_right2.gap);
+		
+		$slider.css({
+			'grid-template-rows': 'repeat(' + _menu_right2.HudRows + ', ' + btnHeight + 'px)',
+			'grid-auto-columns': btnWidth + 'px',
+			'width': _menu_right2.HudOpenWidth + 'px'
+		});
+
+		$('#forgehammer-hud').css({
+			'--hud-open-width': _menu_right2.HudOpenWidth + 'px',
+			'--hud-collapsed-width': btnWidth + 'px',
+			'--hud-panel-height': _menu_right2.HudPanelHeight + 'px'
+		});
+	},
+
+
+	/**
+	 * open and close (.hud-btn-toggle).
+	 * Hover cancel timer for close
+	 * Hover dont open
+	 */
+	CheckButtons: async () => {
+		await FH.ExistenceConfirmed("jQuery._data($('body').get(0), 'events' ).click||$('.hud-btn')");
+
+		let closeTimer = null;
+
+		$('#forgehammer-hud')
+			.on('mouseenter', function () {
+				clearTimeout(closeTimer);
+			})
+			.on('mouseleave', function () {
+				closeTimer = setTimeout(() => {
+					_menu_right2.Close();
+				}, 250);
+			});
+
+		$('body')
+			.on('mouseenter', '.tooltip', function () {
+				clearTimeout(closeTimer);
+			})
+			.on('mouseleave', '.tooltip', function () {
+				closeTimer = setTimeout(() => {
+					_menu_right2.Close();
+				}, 250);
+			});
+
+		if (jQuery._data($('body').get(0), 'events' ).click.filter((elem) => elem.selector == ".hud-btn-toggle").length == 0) {
+			$('body').on('click', '.hud-btn-toggle', function () {
+				$('#forgehammer-hud').hasClass('is--open') ? _menu_right2.Close() : _menu_right2.Open();
+			});
+		};
+
+		// Tooltipp top ermitteln und einblenden
+		$('.hud-btn').stop().hover(function () {
+			let $this = $(this),
+				id = $this.attr('id'),
+				y = ($this.offset().top + 30);
+
+			$('[data-btn="' + id + '"]').css({ 'top': y + 'px' }).show();
+
+		}, function () {
+			let id = $(this).attr('id');
+
+			$('[data-btn="' + id + '"]').hide();
+		});
+
+		// Sort + axis XY
+		$('#forgehammer-hud-slider').sortable({
+			placeholder: 'menu-placeholder',
+			distance: 22,
+			start: function () {
+				$('#forgehammer-hud').addClass('is--sorting');
+			},
+			stop: function () {
+				_menu.Items = [];
+
+				$('.hud-btn').each(function () {
+					_menu.Items.push($(this).data('slug'));
+				});
+
+				FH.Storage.setItem('MenuSort', JSON.stringify(_menu.Items));
+
+				$('#forgehammer-hud').removeClass('is--sorting');
+
+				FH.HTML.ShowToastMsg({
+					show: 'force',
+					head: FH.t('Menu.SaveMessage.Title'),
+					text: FH.t('Menu.SaveMessage.Desc'),
+					type: 'success',
+					hideAfter: 5000
+				});
+			}
+		});
+
+		HiddenRewards.SetCounter();
+		FH.BlueGalaxy.SetCounter();
+	},
+
+	// open
+	Open: () => {
+		$('#forgehammer-hud').addClass('is--open');
+	},
+	
+	// close
+	Close: () => {
+		$('#forgehammer-hud').removeClass('is--open');
+	},
 };
 
-
-
+FH.menu = _menu;
+};

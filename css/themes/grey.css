@@ -6,7 +6,7 @@
 :root {
 	--white: #fff;
 	--beige: #e7e4e2;
-	--dark-beige: #8c8880;
+	--text-link: #f9ce79;
 	--text-highlight: #f9ce79;
 	--text-medium: #7a7670;
 	--text-medium2: #5e5a55;
@@ -41,11 +41,14 @@
 	--window-bg: url('../images/hud/grey-bg.png') center center repeat;
 
 	--window-head-bg: linear-gradient(90deg, #201a52, #081a43);
+	--window-head-text: #e7e4e2;
 	--window-head-shadow: none;
 	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #1d2a55, #0b143b);
 	--window-head-btn-shadow: none;
 
 	--window-body-scroll-bg: #181614;
+	--window-body-scroll-border: #2d2928de;
+	--window-body-scroll-color: #0a0908;
 
 	--window-settings-bg: #141210;
 
@@ -64,12 +67,19 @@
 	--btn-bg-red-active: linear-gradient(to bottom, #6a1a1a,#380a0a);
 	--btn-bg-red-onclick: linear-gradient(to bottom, #3a0808, #1e0404);
 
+	--switch-text: #a8a28a;
+    --switch-text-active: #a8a28a;
+
+    --input-accent: #f9ce79;
+    --input-bg: #e7e4e2;
+    --input-color: #2e2c28;
+    --input-border: 1px solid #2e2c28;
+
 	--tabs-bg: linear-gradient(#242220,#242220);
 	--tabs-bg-active: linear-gradient(#201a52, #081a43);
 	--tabs-bg-shadow: inset 0 1px 1px #0a0808, inset 0 2px 0 #2a2825, 0 -1px 3px #000;
 	--tabs-bg-shadow-active: inset 0 1px 0 #4b3aaa;
 	--tabs-border: 2px solid #081a43;
-	--tabs-border-active: 2px solid #552a9a;
 	--border-tab: #091a43;
 	--border-tab-vertical: linear-gradient(45deg,#2a2825, var(--text-darker)) 10;
 
@@ -97,11 +107,14 @@
 	--hud-border-success: #3a6e28;
 
 
-	--tooltip-border: 2px solid #141210;
-	--tooltip-bg: #1c1a18;
-	--tooltip-disabled: #a06060;
-	--tooltip: #c8c4be;
-	--tooltip-head-bg: #0000002a;
+	--menu-tooltip-border: 2px solid #141210;
+	--menu-tooltip-bg: #1c1a18;
+	--menu-tooltip-disabled: #a06060;
+	--menu-tooltip-text: #c8c4be;
+	--menu-tooltip-head-bg: #0000002a;
+
+    --tooltip-bg: #0e0d0b;
+    --tooltip-text: #c8c4be;
 
 	--hud-counter-color: #7a5aaa;
 	--hud-counter-success: #3a6e28;
@@ -138,12 +151,13 @@
 	--ascended: #e79d2e;
 	--def: #3e68f7;
 	--att: #c72c2c;
+	--questcounter-bg: #c9af7f;
 	
-	--tooltip-inhabitant: #a4a45d;
+	--menu-tooltip-inhabitant: #a4a45d;
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
 
 	--activity-active: linear-gradient(#4a5c7a, #3b4863);
-	--activity-warning: linear-gradient(linear-gradient(to bottom, #f5cd48 0%,#df9a34 1%,#ba6320 30%,#924715 99%,#a35d28 100%));
+	--activity-warning: linear-gradient(to bottom, #f5cd48 0%,#df9a34 1%,#ba6320 30%,#924715 99%,#a35d28 100%);
 	--activity-inactive: linear-gradient(to bottom, #871313 0%,#440909 100%);
 
 	/* city map buildings*/

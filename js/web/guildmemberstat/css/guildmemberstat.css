@@ -19,10 +19,6 @@
     overflow: auto;
 }
 
-.text-bright {
-    color: var(--text-highlight);
-}
-
 #GuildMemberStat #GuildMemberStatBody {
     font-size: 0.9rem;
     overflow-y: scroll;
@@ -345,18 +341,10 @@
 }
 
 #GuildMemberStat #gms-filter-input {
-    background-color: var(--bg-light);
     font-size: 1rem;
     padding: 3px 5px;
-    background-color: var(--text-btn);
     position: relative;
     z-index: 1;
-}
-
-#GuildMemberStat #gms-filter-input.highlight {
-    border-color: var(--text-highlight);
-    background-color: var(--text-highlight);
-    color: var(--black);
 }
 
 #GuildMemberStat .activeCircle {

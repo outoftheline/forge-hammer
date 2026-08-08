@@ -10,10 +10,6 @@
 	text-align: center;
 	padding: 1px 5px;
 	line-height: 1.5;
-	background-color: var(--bg-light);
-	color: var(--text-medium);
-	background-clip: padding-box;
-	border: 1px solid var(--text-dark);
 	border-radius: 0 4px 4px 0;
 	transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }

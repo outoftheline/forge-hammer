@@ -226,9 +226,6 @@
 #GBGActionLogBody input[type="number"],
 #GBGActionLogBody input[type="date"],
 #GBGActionLogBody input[type="datetime-local"] {
-	background-color: var(--bg-light);
-	color: var(--text-dark);
-	border: 1px solid var(--text-dark);
 	border-radius: 4px;
 	padding: .2rem;
 }

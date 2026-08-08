@@ -1,7 +1,26 @@
 # Changelog
  
+## Version 1.4.2
+### Neu
+- Neue Farbe für die Fenster: Quantum
+- Neues Menü an der rechten Seite, das ein bisschen anders funktioniert
+
+### Update
+- Einstellungen: Menü Länge und -Position ändern sich jetzt sofort
+- Menü: das untere und rechte Menü reagieren jetzt auch auf Scrollen
+- GG Übersicht: Zermürbung für die Einzelansicht hinzugefügt
+- Einstellung am LG Rechner geändert: Anstatt das meiste auszublenden, werden jetzt nur die Spalten mit einzelnen Eingaben ausgeblendet
+- Stadtübersicht: Die Gebäudelisten zeigen das Gebäude jetzt direkt auf der Karte anstatt auf das Auge klicken zu müssen
+- GG Gebäude Empfehlungen: Optionen mit 80% werden nun hervorgehoben
+
+### Bug Fixes
+- GG Fenster konnte manchmal leer sein
+- LG Rechner hat manchmal nach dem leveln nicht die richtigen Daten geladen
+
+---
+ 
 ## Version 1.4.0
-### New
+### Neu
 - Spenden in eigene LGs seit letztem Login werden jetzt auch erfasst, klicke dafür auf das LG Symbol in der oberen Leiste, wenn du in deiner Stadt bist. Du kannst das Symbol in den Einstellungen des Fensters entfernen. Danke an Arklur
 - Gebäude Effizienz: Score-Modifikatoren hinzugefügt. Addiere oder subtrahiere einen Wert von der eigentlichen Bewertung! Danke auch hier an Arklur
 - LG Förderliste: Ein Popup mit allen Plätzen, die du austragen willst, öffnet sich sobald du den Rechner und ein LG öffnest. Du kannst LG mit einem Klick aus der Liste entfernen. Schalte es in den Einstellungen unter "Pop Ups" aus
