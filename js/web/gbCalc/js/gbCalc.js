@@ -20,6 +20,11 @@
 		let GBs  = data.responseData.filter(x=>x.type=="greatbuilding");
         GBList = Object.assign(GBList, ...GBs.map(x => ({[x.player_id+ '_' + x.id]:x})));
 	});
+    //own GB leveled up by other player while opened
+    FH.proxy.addWsHandler('CityMapService', 'updateEntity', data => {
+        let GBs  = data.responseData.filter(x=>x.type=="greatbuilding");
+        GBList = Object.assign(GBList, ...GBs.map(x => ({[x.player_id+ '_' + x.id]:x})));
+    });
     // any player GB opened
     FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
 		let x = data.responseData;
