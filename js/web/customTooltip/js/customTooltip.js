@@ -200,9 +200,10 @@ let Tooltips = {
                     all_goods_of_age:"treasury_goods",
                     all_goods_of_next_age:"treasury_goods_of_next_age",
                     all_goods_of_previous_age:"treasury_goods_of_previous_age",
+                    random_good_of_age: "treasury_goods",
                 }
             }
-            return m?.[group][res]||res
+            return m?.[group]?.[res]||res
         }
     
         let span = (x,withHighlight=false) => `<span ${withHighlight ? `class="${x>0 ? "positive" : "negative"}"`:''}>${numberWithCommas(x)}</span>`;
