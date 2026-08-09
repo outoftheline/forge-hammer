@@ -575,6 +575,7 @@ plannerDB.version(1).stores({
 		if (!sender.origin) sender.origin = sender.url;
 		// remove sender.id if it was just a forwarded message, so it can't run into private API's
 		if (typeof request === 'object' && request.type === 'packed') {
+			if (sender.id !== browser.runtime.id) return APIerror('packed messages are only allowed from the extension itself');
 			delete sender.id;
 			request = request.data;
 		}
