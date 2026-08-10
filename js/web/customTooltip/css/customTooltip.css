@@ -5,19 +5,38 @@
 }
 
 #TooltipContainer.window-box .foe-table tr td {
-	border-top: 1px solid #fff3;
+	border-top: 1px solid transparent;
     border-bottom: 1px solid #0004;
 }
 
-#TooltipContainer.window-box .foe-table th {
+#TooltipContainer.window-box .foe-table th, .buildingTT .buildingTTtable h3 {
     background: #0004;
-    box-shadow: inset 0 0 0 2000px var(--black-50), 0 1px 0 0 #fff3, 0 2px 0 0 #0004;
+    box-shadow: inset 0 0 0 2000px var(--black-50), 0 2px 0 0 #0004;
+    padding: 2px 5px;
 }
 
 .buildingTT table.foe-table tbody tr:nth-child(odd), .buildingTT .foe-table li:nth-child(odd) {
     background-color: #fff1;
     backdrop-filter: none;
 }
+
+.buildingTT .sizeTimeRoad {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+    padding: 2px;
+}
+
+.buildingTT .sizeTimeRoad div { width: 49%; }
+.buildingTT .sizeTimeRoad .roadTT { width: 90%; }
+
+.buildingTT .sizeTimeRoad .roadTT img { max-height: 25px; }
+
+
+.buildingTT .imgContainer .sizeTimeRoad {
+    justify-content: space-evenly;
+}
+.buildingTT .imgContainer .sizeTimeRoad div, .buildingTT .imgContainer .sizeTimeRoad .roadTT { width: auto; }
 
 .buildingTT {
     width: min-content;
@@ -40,13 +59,17 @@
 .buildingTT .imgContainer {
     min-width:150px; 
     max-width:150px; 
-    vertical-align:top
+    vertical-align:top;
+    padding:0;
+    text-align: center;
 }
 
-.buildingTT .imgContainer img {
+.buildingTT .imgContainer img.buildingPrev {
     display: block;
     margin: 0 auto;
+    padding: 2px 5px;
     max-width: 100%;
+    box-sizing: border-box;
 }
 
 .HXBuilding th {

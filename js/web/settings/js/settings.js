@@ -242,7 +242,7 @@ let Settings = {
 
 
 	LoadBeta: () => {
-		return `<a href="https://github.com/outoftheline/forge-hammer/archive/refs/heads/develop.zip" class="btn">${FH.t('Settings.LoadBeta2.Button')}</a>`;
+		return `<a href="https://github.com/outoftheline/forge-hammer/archive/refs/heads/main.zip" class="btn">${FH.t('Settings.LoadBeta2.Button')}</a>`;
 	},
 
 

@@ -1320,7 +1320,7 @@
   "Boxes.Tooltip.Building.provides": "Stellt bereit",
   "Boxes.Tooltip.Building.road": "Straße benötigt",
   "Boxes.Tooltip.Building.road2": "zweispurige Straße benötigt",
-  "Boxes.Tooltip.Building.size+time": "Größe und Bauzeit",
+  "Boxes.Tooltip.Building.size+time": "Größe & Bauzeit",
   "Boxes.Tooltip.Building.traits": "Merkmale",
   "Boxes.Tooltip.Building.upgradesAutomatically": "Automatisch im aktuellen Zeitalter",
   "Boxes.Tooltip.Building.when": "wenn",

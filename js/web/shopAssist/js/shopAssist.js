@@ -268,7 +268,7 @@ let shopAssist = {
 						canBuy = false;
 					costs += `<div class="text-right">${FH.HTML.Format(cost) + srcLinks.icons(res)}</div>`
 				})
-				h += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"} helperTT" data-callback_tt="shopAssist.allTT" data-slotid="${slot.slotId}F">
+				h += `<td class="costs ${(canBuy && !limitReached && unlocked) ? "canBuy" : "canNotBuy"} helperTT" data-callback_tt="shopAssistAll" data-slotid="${slot.slotId}F">
 					<div><span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(neededFragments)}</span> <span>(${neededBuys}x)</span></div>
 					${costs}
 				</td>`
@@ -308,7 +308,7 @@ let shopAssist = {
 					costs += `<div class="text-right">` + FH.HTML.Format(cost) + srcLinks.icons(res)+ "</div>"
 				})
 			}
-			h += `<td class="costs ${(maxBuys>0 && maxBuys==limitedBuys) || (maxBuys>0 && limitedBuys == Infinity)?"canBuy":""} ${limitedBuys > 0 && limitedBuys < Infinity ? 'helperTT" data-callback_tt="shopAssist.allTT" data-slotid="' + slot.slotId + '"':'"'}>
+			h += `<td class="costs ${(maxBuys>0 && maxBuys==limitedBuys) || (maxBuys>0 && limitedBuys == Infinity)?"canBuy":""} ${limitedBuys > 0 && limitedBuys < Infinity ? 'helperTT" data-callback_tt="shopAssistAll" data-slotid="' + slot.slotId + '"':'"'}>
 					<div>
 						${slot.reward.subType == "fragment" && maxBuys != Infinity && maxBuys != 0 ? 
 							`<span>${srcLinks.icons("icon_tooltip_fragment") + FH.HTML.Format(maxBuys*slot.reward.amount)}</span>`:``} 
@@ -522,9 +522,11 @@ let shopAssist = {
 
 		for (let b of buildingIds) {		
 			if (buildingIds.length<=limit) {
-				head +=`<td style="width:100%; vertical-align:top"><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
-				body += `<td style="width:100%; vertical-align:top">`;
+				head +=`<td style="width:100%; vertical-align:top;padding:0 1px;" colspan=2><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
+				body += `<td style="width:100%; vertical-align:top;padding:0;">`;
 				body += await FH.Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff);
+				body += `</table>`
+        		body += await FH.Tooltips.SizeTimeRoadData(meta[b]) + `</td>`;
 				body += `</td>`
 			} else {
 				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`
@@ -553,7 +555,6 @@ let shopAssist = {
 	allTT: async (e) => {
 		let slotId=e?.currentTarget?.dataset?.slotid
 		if (!slotId) return
-		return shopAssist.allTTContent[slotId]		
 	},
 
 	checkAlerts: () => {

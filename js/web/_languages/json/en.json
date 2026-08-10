@@ -1325,7 +1325,7 @@
   "Boxes.Tooltip.Building.provides": "Provides",
   "Boxes.Tooltip.Building.road": "road required",
   "Boxes.Tooltip.Building.road2": "2-lane road required",
-  "Boxes.Tooltip.Building.size+time": "Size and Building Time",
+  "Boxes.Tooltip.Building.size+time": "Size & Build Time",
   "Boxes.Tooltip.Building.traits": "Traits",
   "Boxes.Tooltip.Building.upgradesAutomatically": "Upgrades automatically to current era",
   "Boxes.Tooltip.Building.when": "when",
