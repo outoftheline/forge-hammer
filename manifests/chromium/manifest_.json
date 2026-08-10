@@ -70,8 +70,7 @@
 	],
 
 	"externally_connectable" : {
-		"matches": ["https://*.forgeofempires.com/*"],
-		"ids": ["*"]
+		"matches": ["https://*.forgeofempires.com/*"]
 	},
 
 	"background": {

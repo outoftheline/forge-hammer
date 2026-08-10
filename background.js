@@ -418,6 +418,16 @@ plannerDB.version(1).stores({
 		return {ok: false, error: message};
 	}
 
+
+	/**
+	 * checks whether a message originated from this extension's own context
+	 * @param {browser.runtime.MessageSender} sender
+	 * @returns {boolean}
+	 */
+	function isInternalSender(sender) {
+		return sender.id === browser.runtime.id;
+	}
+
 	const Planner = {
 		getPlan: async (id)=>{
 			try {
@@ -748,6 +758,7 @@ plannerDB.version(1).stores({
 
 
 			case 'buildingMetaSet': { // type
+				if (!isInternalSender(sender)) return APIerror('buildingMetaSet: not permitted for external senders');
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
 				const entries = request.entries;
 				if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
@@ -769,6 +780,7 @@ plannerDB.version(1).stores({
 			}
 
 			case 'Planner.getPlan':{
+				if (!isInternalSender(sender)) return APIerror('Planner.getPlan: not permitted for external senders');
 				if (!request.planId) return APIerror('Planner.getPlan: Parameter {planId} expected!');
 				try {
 					const plan = await Planner.getPlan(request.planId);
@@ -778,10 +790,12 @@ plannerDB.version(1).stores({
 				} 
 			}
 			case 'Planner.getPlanList': {
+				if (!isInternalSender(sender)) return APIerror('Planner.getPlanList: not permitted for external senders');
 				const plans = await Planner.getPlanList();
 				return APIsuccess(plans);
 			}
 			case 'Planner.removePlan': {
+				if (!isInternalSender(sender)) return APIerror('Planner.removePlan: not permitted for external senders');
 				if (!request.planId) return APIerror('Planner.removePlan: Parameter {planId} expected!');
 				try {
 					await Planner.removePlan(request.planId);
@@ -792,6 +806,7 @@ plannerDB.version(1).stores({
 				}
 			}
 			case 'Planner.newPlan': {
+				if (!isInternalSender(sender)) return APIerror('Planner.newPlan: not permitted for external senders');
 				if (!request.world || !request.planName || !request.playerId || !request.playerName || !request.boostData || !request.mapData) {
 					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
 				}
@@ -804,6 +819,7 @@ plannerDB.version(1).stores({
 				}
 			}
 			case 'Planner.updatePlan': {
+				if (!isInternalSender(sender)) return APIerror('Planner.updatePlan: not permitted for external senders');
 				if (!request.planId || (request.world === undefined && request.planName === undefined && request.playerId === undefined && request.playerName === undefined && request.boostData === undefined && request.mapData === undefined)) {
 					return APIerror('Planner.updatePlan: Parameters {planId} and at least one of {world}, {planName}, {playerId}, {playerName}, {boostData} or {mapData} expected!');
 				}
@@ -816,6 +832,7 @@ plannerDB.version(1).stores({
 				}
 			}
 			case 'Planner.renamePlan': {
+				if (!isInternalSender(sender)) return APIerror('Planner.renamePlan: not permitted for external senders');
 				if (!request.planId || !request.planName) return APIerror('Planner.renamePlan: Parameters {planId} and {planName} expected!');
 				try {
 					await Planner.renamePlan(request.planId,request.planName);
@@ -826,6 +843,7 @@ plannerDB.version(1).stores({
 				}
 			}
 			case 'Planner.getBuildingList': {
+				if (!isInternalSender(sender)) return APIerror('Planner.getBuildingList: not permitted for external senders');
 				if (!request.planId) return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
 				try {
 					const buildings = await Planner.getBuildingList(request.planId);
@@ -836,6 +854,7 @@ plannerDB.version(1).stores({
 			}
 
 			case 'message': { // type
+				if (!isInternalSender(sender)) return APIerror('message: not permitted for external senders');
 				let t = request.time;
 				const opt = {
 					type: "basic",
@@ -854,11 +873,13 @@ plannerDB.version(1).stores({
 			}
 
 			case 'storeData': { // type
+				if (!isInternalSender(sender)) return APIerror('storeData: not permitted for external senders');
 				await browser.storage.local.set({ [request.key] : request.data });
 				return APIsuccess(true);
 			}
 
 			case 'showNotification': { // type
+				if (!isInternalSender(sender)) return APIerror('showNotification: not permitted for external senders');
 				try {
 					const title = request.title;
 					const options = request.options;
