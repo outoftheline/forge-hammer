@@ -207,7 +207,7 @@
 	margin: 1rem auto;
 	padding: 1em;
 	box-sizing: border-box;
-	background: linear-gradient(to bottom, #1e06006e, #270f005e), url(../../../../images/hud/box-bg.png) center center repeat;
+	background: var(--bg-dark);
 	color: var(--beige);
 	border-radius: 5px;
 }
@@ -494,7 +494,7 @@
 	box-shadow: 0 0 500px #000;
 }
 #ProductionsRatingBody .settings th {
-	border-bottom: 1px dotted var(--text-darker);
+	border-bottom: 1px dotted var(--bg-dark);
 }
 #ProductionsRatingSettings {
 	position: relative;
@@ -764,7 +764,7 @@ input[id*="ProdPerTile"] {
 	float: right;
 }
 #ItemSourcesBody .innerTable {
-	background: var(--text-darker);
+	background: var(--bg-dark);
 	margin: 0 -5px;
 }
 #ItemSourcesBody .innerTable:not(:empty) {

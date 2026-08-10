@@ -67,7 +67,7 @@
 #kits h1 {
 	color: var(--beige);
 	text-align: center;
-	background-color: var(--text-darker);
+	background-color: var(--bg-dark);
 	border-top: 1px solid var(--black-50)
 }
 
@@ -76,7 +76,7 @@
 }
 
 #kits h2 {
-	background: linear-gradient(to bottom, var(--text-darker), #281207cc);
+	background: linear-gradient(to bottom, var(--bg-dark), #281207cc);
 	padding: 5px;
 	width: 100%;
 	box-sizing: border-box;

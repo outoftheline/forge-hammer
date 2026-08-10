@@ -47,7 +47,7 @@
 	right: 240px;
 	bottom: 0;
 	left: 0;
-	border-right: 2px solid var(--text-darker);
+	border-right: 2px solid var(--bg-dark);
 	background-color: var(--black-50);
 	box-sizing: border-box;
 }
@@ -82,7 +82,7 @@
 }
 
 #sidebar.main #area-state ul + b {
-	border-top: 1px dotted var(--text-darker);
+	border-top: 1px dotted var(--bg-dark);
 	padding: 5px 0;
 	margin: 5px 0 2px;
 	color: var(--text-highlight);
@@ -125,7 +125,7 @@
 }
 
 .outpost .metaSums {
-	background: linear-gradient(180deg, var(--text-dark2) 20%, transparent);
+	background: linear-gradient(180deg, var(--bg-dark) 20%, transparent);
 	padding: 7px;
 }
 .outpost.guild_raids .metaSums span {

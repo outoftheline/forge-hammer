@@ -732,8 +732,8 @@
   "Boxes.MergerGame.Keys.care": "Sleutels",
   "Boxes.MergerGame.Keys.soccer": "Badges",
   "Boxes.MergerGame.KeysLeft.anniversary": "Er zijn nog sleutels over op het bord!",
-  "Boxes.MergerGame.KeysLeft.care": "FoE-Helper: Er zijn nog sleutels op het veld!",
-  "Boxes.MergerGame.KeysLeft.soccer": "FoE-Helper: Er zijn nog badges op het veld!",
+  "Boxes.MergerGame.KeysLeft.care": "Forge Hammer: Er zijn nog sleutels op het veld!",
+  "Boxes.MergerGame.KeysLeft.soccer": "Forge Hammer: Er zijn nog badges op het veld!",
   "Boxes.MergerGame.KeyValue.anniversary": "Waarde per sleutel",
   "Boxes.MergerGame.KeyValue.care": "Voortgang per sleutel",
   "Boxes.MergerGame.KeyValue.soccer": "Voortgang per badge",
@@ -1403,6 +1403,6 @@
   "Settings.Version.PlayerId": "Speler-ID:",
   "Settings.Version.Title": "Versie",
   "Settings.Version.World": "Wereld:",
-  "StrategyPoints.BuyableFP": "FoE-Helper: Aantal FP dat kan worden gekocht met munten.",
-  "StrategyPoints.FPInBar": "FoE-Helper: Aantal FP in je balk."
+  "StrategyPoints.BuyableFP": "Forge Hammer: Aantal FP dat kan worden gekocht met munten.",
+  "StrategyPoints.FPInBar": "Forge Hammer: Aantal FP in je balk."
 }

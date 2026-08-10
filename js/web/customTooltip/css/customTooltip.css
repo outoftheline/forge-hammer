@@ -208,7 +208,7 @@ td:nth-child(3) .HXBuilding .inhabitant {
     padding: 2px;
     margin-top: 2px;
     color: var(--beige);
-    background: var(--text-darker);
+    background: var(--bg-dark);
     border: 2px solid var(--text-dark);
 }
 

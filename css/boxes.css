@@ -664,7 +664,7 @@ p { margin: 0 0 10px 0; }
 #playerProfile-Btn span img {
 	border-radius: 3px 3px 10px 3px;
     box-shadow: 0 2px 2px var(--black-65);
-    border: 1px solid var(--text-darker);
+    border: 1px solid var(--bg-dark);
 	width: 100%;
 }
 
@@ -672,7 +672,7 @@ p { margin: 0 0 10px 0; }
 	background-image: url('../images/menu/profile.jpg');
 	border-radius: 3px 3px 10px 3px;
     box-shadow: 0 2px 2px var(--black-65);
-    border: 1px solid var(--text-darker);
+    border: 1px solid var(--bg-dark);
 }
 
 [id$=market-Btn] span {
@@ -951,7 +951,7 @@ Tabs */
 
 .window-body .tabs ul.vertical li.active a,
 .window-body .tabs ul.vertical li:hover a {
-	background-color: var(--text-darker);
+	background-color: var(--bg-dark);
 }
 
 .window-body .tabs ul.vertical li.active a {
@@ -960,9 +960,8 @@ Tabs */
 
 .window-body .tabs .sub-tab {
 	margin-left: 120px;
-	border-left: 2px solid #864c1e;
 	padding: 10px;
-	background-color: var(--text-darker);
+	background-color: var(--bg-dark);
 }
 
 
@@ -1934,10 +1933,10 @@ SettingsBox */
 	text-align: center;
 	padding: 1px 5px;
 	line-height: 1.5;
-	background-color: var(--bg-light);
-	color: var(--text-medium);
+	background-color: var(--input-bg);
+	color: var(--input-color);
 	background-clip: padding-box;
-	border: 1px solid var(--text-dark);
+	border: var(--input-border);
 	transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 

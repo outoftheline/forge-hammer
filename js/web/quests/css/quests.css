@@ -22,7 +22,7 @@
     background: var(--questcounter-bg) url('../../x_img/quest.png') no-repeat 1px center;
     background-size: 39%;
     border-radius: 0 25px 25px 0;
-    border: 2px solid var(--text-darker);
+    border: 2px solid var(--bg-dark);
     border-left: none;
     margin: 2px 0;
     box-shadow: none;

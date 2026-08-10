@@ -1,0 +1,201 @@
+/*
+ * Copyright (C) 2026 Forge Hammer
+ * Licensed under AGPL - see LICENSE.md for details.
+ */
+
+:root {
+	--white: #fff;
+	--beige: #ebe1cd;
+	--text-link: #39efff;
+	--text-highlight: #ffB539;
+	--text-medium: #93795D;
+	--text-medium2: #7b5730;
+	--text-dark: #4c2f1e;
+	--text-dark2: #3f2a1b;
+	--text-darker: #201a18;
+	--ash: #8a8a8a;
+	--light-blue: #d4aa72;
+
+	--success: #8acb37;
+	--limegreen: #4dbd19;
+	--info-blue: #7a93ff;
+	--danger-red: #f35e5e;
+
+	--bg-light: #ebe7dd;
+	--bg-medium: #829fb3;
+	--bg-dark: #1b1e1f;
+	--bg-darkest: #141211;
+
+	--window-border: 2px solid #db4a2e;
+	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
+	--window-bg: #1f232a;
+
+	--window-body-scroll-bg: #1f232a;
+	--window-body-scroll-border: #1f232a;
+	--window-body-scroll-color: #ebe7dd;
+
+	--window-settings-bg: #212324;
+
+	--window-head-bg: linear-gradient(-45deg, #e5e1cf 80px, #fc7c48 81px, #fc6f44 94px, #fcf8d3 95px, #fff 107px, #fc6f44 108px, #fc9254);
+	--window-head-text: #1e2228;
+	--window-head-shadow: inset 0 -1px 0 0 #db4a2e;
+	--window-head-btn-bg: url(../images/hud/box-sprite-dark.png), linear-gradient(to bottom, #d9d4ba, #dbd4b3);
+	--window-head-btn-shadow: inset 0 0 0 1px #e0e0e0;
+
+	--btn-bg: linear-gradient(to bottom, #0072a2, #004a70);
+	--btn-bg-disabled: linear-gradient(to bottom, #444444 #2d2d2d);
+	--btn-bg-active: linear-gradient(to bottom, #0982b6, #035a85);
+	--btn-bg-onclick: linear-gradient(to bottom, #117faa, #053163);
+	--btn-bg-green: linear-gradient(to bottom, #359e2b, #176517);
+    --btn-border: 1px solid #16234b;
+    --btn-border-active-color: #133853;
+	--btn-green-color: #dde9ca;
+	--text-btn-disabled: #999;
+	--text-btn: #dcd6d6;
+
+    --switch-text: #dae9e3;
+    --switch-text-active: #03372c;
+
+    --input-accent: #b04a2b;
+    --input-bg: #ebe7d9;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
+
+	--btn-bg-red: linear-gradient(to bottom, #7c0d2c, #340510);
+	--btn-bg-red-active: linear-gradient(to bottom, #a71f36,#590d24);
+	--btn-bg-red-onclick: linear-gradient(to bottom, #610a33,#2e0505);
+
+	--tabs-bg: linear-gradient(#3f4a4f, #3f4a4f);
+	--tabs-bg-active: linear-gradient(-45deg, #c3c2ab 10px, #db5e2e 11px);
+	--tabs-bg-shadow: inset 0 2px 0 #5a5155;
+	--tabs-bg-shadow-active: inset 1px 1px 0 0 #e9e8e0, inset -1px 1px 0 0 #e9e8e0;
+	--tabs-border: 2px solid #805d2e;
+	--border-tab: #c3c2ab;
+	--border-tab-vertical: linear-gradient(45deg,#c3c2ab, var(--bg-dark)) 10;
+	--text-tab-active: #fff;
+	--text-tab: #eee;
+
+	--border-table-top: transparent;
+	--border-table-bottom: transparent;
+	--border-table-bottom-darker: #170602;
+	--table-bg-hover: #57f4ff33;
+	--table-bg-odd: #6cc0cf17;
+	--table-bg-darker: #40190080;
+	--table-bg-info: #003c6d4d;
+	--table-bt-info: #455461;
+	--table-bb-info: #252a43;
+	--table-bg-success: #097d2b4d;
+	--table-bt-success: #347f40;
+	--table-bb-success: #0b350b;
+	--table-bg-error: #7908234d;
+	--table-bt-error: #7a2f2f;
+	--table-bb-error: #4f0e0e;
+	--table-bg-bright: #dd85002e;
+	--table-bt-bright: #dd8e1866;
+	--table-bb-bright: #492e0566;
+	--table-bg-highlight: #281207cc;
+
+	--hud-border-error: #9c2d18;
+	--hud-border-success: #93c554;
+
+	--menu-tooltip-border: 2px solid #1b1817;
+	--menu-tooltip-bg: #22201f;
+	--menu-tooltip-disabled: #f79090;
+	--menu-tooltip-text: #ddd6c6;
+	--menu-tooltip-head-bg: #0a11133b;
+
+    --tooltip-bg: #0e0e13;
+    --tooltip-text: #ddd6c6;
+
+	--hud-counter-color: #468fca;
+	--hud-counter-success: #5c8d20;
+	--hud-counter-bg: 1px 0 0 1px #0000003e;
+	--hud-counter-size: 16px;
+
+	--menu-bg: #00000080;
+	--menu-shadow: none;
+	--menu-arrow-bg: linear-gradient(to bottom, #db5e2e, #db532e);
+	--menu-arrow-color: #e5e1cf;
+	--menu-btn-size: 45px;
+	--menu-btn-bg-green: linear-gradient(to bottom, #23ebeb, #0093c3) border-box;
+	--menu-btn-bg-red: linear-gradient(to bottom, #6b4e4e, #4b2b2b) border-box;
+	--menu-btn-bg-grey: linear-gradient(#1e2126, #1e2126) border-box;
+	--menu-btn-bg: linear-gradient(#272121, #292624) padding-box, var(--menu-btn-bg-green);
+	--menu-btn-bg-color: #312c29;
+	--menu-btn-shadow: inset 0 0 1px 1px #1f1309cc;
+	--menu-btn-shadow-disabled: inset 0 0 1px 1px #60261e38, 0 0 2px #000000c9;
+	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
+	--menu-btn-bg-settings: linear-gradient(#2e2e2e,#2e2e2e) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
+	--menu-boxed-head-bg: linear-gradient(90deg, #054f3e, #022f27);
+	--menu-boxed-head-shadow: none;
+	--menu-boxed-head-color: #eee;
+
+	--bg-chart: #2227;
+
+	/* static */
+
+	--grey: #444;
+	--black: #000;
+	--black-30: #00000048;
+	--black-50: #00000080;
+	--black-65: #000000a6;
+	--white-65: #ffffffa6;
+	
+	--red: #930909;
+	--orange: #ff8c00;
+	--silver: #b8b9b9;
+	--golden: #fedc00;
+	--platinum: #e9ceef;
+	--ascended: #e79d2e;
+	--def: #3e68f7;
+	--att: #c72c2c;
+	--questcounter-bg: #c9af7f;
+
+	--menu-tooltip-inhabitant: #a4a45d;
+	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);
+
+	--activity-active: linear-gradient(#4a5c7a, #3b4863);
+	--activity-warning: linear-gradient(to bottom,#df9a34 ,#ba6320, #a35d28);
+	--activity-inactive: linear-gradient(to bottom, #871313,#440909);
+
+	/* city map buildings*/
+
+	--background-color-ascendable: #f37317;
+	--border-color-ascendable: #ce5900;
+	--background-color-decayed: #2b2b2b;
+	--border-color-decayed: #161616;
+	--background-color-military: #fff;
+	--border-color-military: #bbb;
+	--background-color-residential: #7abaff;
+	--border-color-residential: #219eff;
+	--background-color-qi: #51ffd9;
+	--border-color-qi: #13cfcf;
+	--background-color-noStreet: #793bc9;
+	--border-color-noStreet: #3d2783;
+	--background-color-chain: #bb23ae;
+	--border-color-chain: #86127d;
+	--background-color-decoration: #497445;
+	--border-color-decoration: #1c7430;
+	--background-color-street: #666666;
+	--border-color-street: #636363;
+	--background-color-goods: #7d2a4d;
+	--border-color-goods: #6a2a3a;
+	--background-color-culture: #7d4900;
+	--border-color-culture: #582c00;
+	--background-color-main_building: #ffb300;
+	--border-color-main_building: #ffb300;
+	--background-color-production: #416dff;
+	--border-color-production: #2732ff;
+	--background-color-greatbuilding: #e6542f;
+	--border-color-greatbuilding: #af3d2b;
+	--background-color-random_production: #a8ff18;
+	--border-color-random_production: #4cff11;
+	--background-color-tower: #cdcdcd;
+	--border-color-tower: #787a7a;
+	--background-color-gbg: #ffeac2;
+	--border-color-gbg: #dac195;
+}
+
+.window-head, .btn, .btn:not([disabled]):hover, .btn-active:not([disabled]), .btn-active:not([disabled]):hover, #SettingsBoxBody .item-row .check span.toogle-word {
+    text-shadow: none;
+}
