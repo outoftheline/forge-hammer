@@ -421,6 +421,7 @@ let Technologies = {
             OutputList.push('stel_stellar_capacity');
             OutputList.push('stel_void_shard');
             OutputList.push('stel_stellar_points');
+            OutputList.push('stel_mission_reward_encoded_tablets');
 
             for (let i = 110; i < FH.Goods.List.length; i++) {
                 OutputList.push(FH.Goods.List[i]['id']);
