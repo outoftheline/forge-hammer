@@ -6,8 +6,8 @@
 :root {
 	--white: #fff;
 	--beige: #ebe1cd;
-	--text-link: #39efff;
-	--text-highlight: #ffB539;
+	--text-link: #48dae7;
+	--text-highlight: #ffa641;
 	--text-medium: #93795D;
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
@@ -17,7 +17,7 @@
 
 	--success: #8acb37;
 	--limegreen: #4dbd19;
-	--info-blue: #7a93ff;
+	--info-blue: #6db9f8;
 	--danger-red: #f35e5e;
 
 	--border-medium: #7b4b30;
@@ -84,16 +84,16 @@
 	--table-bg-info: #003c6d4d;
 	--table-bt-info: #455461;
 	--table-bb-info: #252a43;
-	--table-bg-success: #097d2b4d;
-	--table-bt-success: #347f40;
+	--table-bg-success: #277d094d;
+	--table-bt-success: #367f34;
 	--table-bb-success: #0b350b;
-	--table-bg-error: #7908234d;
+	--table-bg-error: #7908084d;
 	--table-bt-error: #7a2f2f;
 	--table-bb-error: #4f0e0e;
 	--table-bg-bright: #dd85002e;
 	--table-bt-bright: #dd8e1866;
 	--table-bb-bright: #492e0566;
-	--table-bg-highlight: #281207cc;
+	--table-bg-highlight: #071628cc;
 
 	--hud-border-error: #9c2d18;
 	--hud-border-success: #93c554;
