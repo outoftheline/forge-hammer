@@ -103,7 +103,8 @@ let Technologies = {
         SpaceAgeJupiterMoon: 21,
         SpaceAgeTitan: 22,
         SpaceAgeSpaceHub: 23,
-        NextEra: 24,
+        StellarAgeDiscovery:24,
+        NextEra: 25,
     },
 
     // need this for cityentities
@@ -131,7 +132,8 @@ let Technologies = {
         SpaceAgeJupiterMoon: 20,
         SpaceAgeTitan: 21,
         SpaceAgeSpaceHub: 22,
-        NextEra: 23,
+        StellarAgeDiscovery: 23,
+        NextEra: 24,
     },
 
 
@@ -159,7 +161,8 @@ let Technologies = {
         20: 'SpaceAgeVenus',
         21: 'SpaceAgeJupiterMoon',
         22: 'SpaceAgeTitan',
-        23: 'SpaceAgeSpaceHub'
+        23: 'SpaceAgeSpaceHub',
+        24: 'StellarAgeDiscovery',
     },
 
     // need this for cityentities
@@ -186,7 +189,8 @@ let Technologies = {
         19: 'SpaceAgeVenus',
         20: 'SpaceAgeJupiterMoon',
         21: 'SpaceAgeTitan',
-        22: 'SpaceAgeSpaceHub'
+        22: 'SpaceAgeSpaceHub',
+        23: 'StellarAgeDiscovery',
     },
     maxEra:null,
     getMaxEra:()=>{ // 1 more than "InnoEra"
@@ -380,39 +384,46 @@ let Technologies = {
             // Reihenfolge der Ausgabe generieren
             let OutputList = ['strategy_points', 'money', 'supplies'];
             for (let i = 0; i < 70; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'promethium';
+            OutputList.push('promethium');
             for (let i = 70; i < 75; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'orichalcum';
+            OutputList.push('orichalcum');
             for (let i = 75; i < 80; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'mars_ore';
+            OutputList.push('mars_ore');
             for (let i = 80; i < 85; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'asteroid_ice';
+            OutputList.push('asteroid_ice');
             for (let i = 85; i < 90; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'venus_carbon';
+            OutputList.push('venus_carbon');
             for (let i = 90; i < 95; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'unknown_dna';
+            OutputList.push('unknown_dna');
             for (let i = 95; i < 100; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'crystallized_hydrocarbons';
+            OutputList.push('crystallized_hydrocarbons');
             for (let i = 100; i < 105; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
             }
-            OutputList[OutputList.length] = 'dark_matter';
+            OutputList.push('dark_matter');
             for (let i = 105; i < FH.Goods.List.length; i++) {
-                OutputList[OutputList.length] = FH.Goods.List[i]['id'];
+                OutputList.push(FH.Goods.List[i]['id']);
+            }
+            OutputList.push('stel_stellar_capacity');
+            OutputList.push('stel_void_shard');
+            OutputList.push('stel_stellar_points');
+
+            for (let i = 110; i < FH.Goods.List.length; i++) {
+                OutputList.push(FH.Goods.List[i]['id']);
             }
 
             for (let i = 0; i < OutputList.length; i++) {
