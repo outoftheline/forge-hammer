@@ -334,12 +334,13 @@ let Technologies = {
 
                     if (Tech.researchCost?.resources?.strategy_points)
                         RequiredResources.strategy_points += (Tech.researchCost.resources.strategy_points) - (Tech['currentSP']||0);
-
-                    for (let ResourceName in Tech.requirements.resources) {
+                    let res = Tech.requirements?.resources || Tech.cost?.resources || {};
+                    for (let ResourceName in res) {
+                        if (!res.hasOwnProperty(ResourceName)) continue;
                         if (RequiredResources[ResourceName] === undefined)
                         	RequiredResources[ResourceName] = 0;
 
-                        RequiredResources[ResourceName] += Tech.requirements.resources[ResourceName];
+                        RequiredResources[ResourceName] += res[ResourceName];
                     }
 
                     TechCount++;
