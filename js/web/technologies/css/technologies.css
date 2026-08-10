@@ -10,57 +10,65 @@
 	height: 500px;
 }
 
-#technologies #technologiesBody {
+#technologies {
 	overflow-x: hidden;
 	overflow-y: auto;
 }
 
-#technologies #technologiesBody .techno-head {
+#technologies .techno-head {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	padding: 5px;
 }
 
-#technologies #technologiesBody .techno-head strong {
+#technologies .techno-head strong {
 	color: var(--text-highlight);
 }
 
-#technologies #technologiesBody table th {
+#technologies table th {
 	cursor: pointer;
 	font-size: 85%;
 }
 
-#technologies #technologiesBody tr.total-row td {
+#technologies tr.total-row td {
 	border-top: 2px solid var(--beige);
 	font-weight: 700;
 }
 
-#technologies #technologiesBody tr.resource-row td {
+#technologies tr.resource-row td {
 	color: var(--text-highlight);
 	font-weight: 700;
 }
 
-#technologies #technologiesBody .text-danger {
+#technologies .text-danger {
 	color: var(--danger-red);
 	font-weight: 700;
 }
 
-#technologies #technologiesBody .text-success {
+#technologies .text-success {
 	color: var(--success);
 	font-weight: 700;
 }
 
-#technologies #technologiesBody .text-muted {
+#technologies .text-muted {
 	color: var(--ash);
 }
 
-#technologies #technologiesBody td {
+#technologies td {
 	position: relative;
 	font-size: 85%;
 }
 
-#technologies #technologiesBody .diplomacy-ask {
+#technologies th.text-right span:first-child {
+	color: var(--success);
+}
+
+#technologies th.text-right span:last-child {
+	color: var(--danger-red);
+}
+
+#technologies .diplomacy-ask {
 	font-weight: 700;
 	display: inline-block;
 	margin-left: 6px;
@@ -72,7 +80,7 @@
 	z-index: 1;
 }
 
-#technologies #technologiesBody .diplomacy-tip {
+#technologies .diplomacy-tip {
 	position: absolute;
 	white-space: nowrap;
 	text-align: left;
@@ -84,21 +92,21 @@
 	display: none;
 }
 
-#technologies #technologiesBody .diplomacy-ask:hover .diplomacy-tip {
+#technologies .diplomacy-ask:hover .diplomacy-tip {
 	display: block;
 }
-#technologies #technologiesBody td.goods-image { 
+#technologies td.goods-image { 
 	padding: 0;
 	background-color: var(--black-50);
 }
 
-#technologies #technologiesBody .sprite-35 {
+#technologies .sprite-35 {
 	width: 25px;
 	height: 25px;
 	text-align: center;
 }
 
-#technologies #technologiesBody .sprite-35::before { 
+#technologies .sprite-35::before { 
 	overflow: hidden;
 	display: inline-block;
 }

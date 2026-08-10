@@ -251,8 +251,8 @@
 	height: 0;
 	margin: 10px auto;
 	width: 80%;
-	border-top: 1px solid var(--text-medium2);
-	border-bottom: 1px solid #9e774e;
+	border-top: 1px solid var(--border-medium);
+	border-bottom: 1px solid  var(--border-medium);
 }
 
 .OwnPartBoxBackgroundBody {

@@ -1633,6 +1633,7 @@ a:hover, input[type="radio"], .clickable {
 	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 	font-size: 0.9rem;
 	font-weight: 400;
+	box-shadow: none !important;
 }
 
 .tooltip.top.foe-skin > .tooltip-arrow {
@@ -1905,7 +1906,7 @@ SettingsBox */
 	position: absolute;
 	right: 5px;
 	top: 35px;
-	border: 2px solid var(--text-medium2);
+	border: var(--window-border);
 	background-color: var(--window-settings-bg);
 	color: var(--beige);
 	padding: 5px;
@@ -1950,7 +1951,7 @@ SettingsBox */
 
 .settingsbox-wrapper hr {
 	border-top: 1px solid var(--black-50);
-	border-bottom: 1px solid var(--text-medium2);
+	border-bottom: var(--window-border);
 	border-left: none;
 	border-right: none;
 	margin: 0.5em 0;
@@ -2481,11 +2482,11 @@ tr.sorter-header th:not(.no-sort).descending:after {
 
 .loading-data {
     position: absolute;
-    top: 36px;
+    top: 29px;
     left: 0;
     width: 100%;
-    height: calc(100% - 36px);
-    background: var(--bg-darkest);
+    height: calc(100% - 29px);
+    background: var(--black-30);
     z-index: 300;
     opacity: 1;
 }

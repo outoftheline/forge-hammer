@@ -9,7 +9,6 @@
 	--text-link: #59d4d8;
 	--text-highlight: #59d4d8;
 	--text-medium: #6a8499;
-	--text-medium2: #4a6a82;
 	--text-dark: #263544;
 	--text-dark2: #1d2b38;
 	--text-darker: #161c27;
@@ -27,6 +26,7 @@
 	--text-btn-disabled: #899aaa;
 	--text-btn: #c8dff0;
 
+	--border-medium: #4a6a82;
 	--bg-light: #e2ebf3;
 	--bg-medium: #6e8fa8;
 	--bg-dark: #161c27;

@@ -189,7 +189,7 @@
 	bottom: 0.3em;
 	left: calc(50% + 0.5em);
 	background-color: #281207;
-	border: 1px solid var(--text-medium2);
+	border: 1px solid var(--border-medium);
 	display: inline-block;
 	padding: 0 0.4em;
 	box-sizing: border-box;
