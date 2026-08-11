@@ -1,5 +1,21 @@
 # Changelog
  
+## Version 1.5.0
+### Neu
+- Neue Farbe für die Fenster: Titan
+
+### Update
+- Daten für das nächste Zeitalter hinzugefügt
+- Gebäude Effizienz: Fenster überarbeitet und Ansicht für erhabene Gebäude hinzugefügt
+- Stadt Übersicht: Suche zeigt jetzt auch die Anzahl der gefundenen Gebäude und kann auch nach nach MetaId suchen
+- Stadtplaner: kleine Gebäude-Info hinzugefügt
+
+### Bug Fixes
+- LG Rechner hat manchmal nach dem leveln nicht die richtigen Daten geladen (jetzt wirklich repariert!)
+- Tooltips: Gildengüter waren falsch berechnet
+
+---
+ 
 ## Version 1.4.2
 ### Neu
 - Neue Farbe für die Fenster: Quantum

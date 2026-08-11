@@ -1,5 +1,21 @@
 # Changelog
  
+## Version 1.5.0
+### New
+- New window color added: Titan
+
+### Update
+- Added data for the next era
+- Building Efficiency: Reworked the UI and added a filter for ascended buildings
+- City Overview: Search now shows the amount of buildings found and can filter by entity id
+- City Planner: added building info when only one is selected
+
+### Bug Fixes
+- GB Calculator sometimes didn't update after leveling (really fixed now!)
+- Tooltips: Guild goods were calculated wrong
+
+---
+ 
 ## Version 1.4.2
 ### New
 - New Color added: Quantum
