@@ -854,9 +854,13 @@ p { margin: 0 0 10px 0; }
 Tabs */
 
 .window-body .tabs ul.horizontal {
+	list-style: none;
 	margin: 5px 0 0 0;
-	padding: 0 0 0 6px;
+	padding: 0;
 	border-bottom: 2px solid var(--border-tab);
+	display: flex;
+	align-items: end;
+	gap: 3px;
 }
 
 .window-body .dark-bg .tabs ul.horizontal, .window-body .tabs ul.horizontal.dark-bg, .window-body .tabs.dark-bg ul.horizontal {
@@ -867,7 +871,6 @@ Tabs */
 .window-body .tabs ul.horizontal li {
 	margin: 2px 4px 0 0;
 	padding: 0;
-	display: inline-block;
 	line-height: 30px;
 	position: relative;
 	border-radius: 5px 5px 0 0;
@@ -1859,7 +1862,7 @@ a:hover, input[type="radio"], .clickable {
 /* date picker overwrite */
 
 :root{
-	--litepickerBgColor: var(--text-dark) !important;
+	--litepickerBgColor: var(--bg-dark) !important;
 	--litepickerMonthHeaderTextColor: var(--beige) !important;
 	--litepickerMonthButton: var(--text-medium) !important;
 	--litepickerMonthButtonHover: var(--text-highlight) !important;
@@ -1879,7 +1882,7 @@ a:hover, input[type="radio"], .clickable {
 	--litepickerButtonCancelColor: var(--text-dark) !important;
 	--litepickerButtonCancelBg: var(--text-medium) !important;
 	--litepickerButtonApplyColor: var(--text-dark) !important;
-	--litepickerButtonApplyBg: var(--text-highlight) !important;
+	--litepickerButtonApplyBg: var(--bg-highlight) !important;
 	--litepickerButtonResetBtn: #909090 !important;
 	--litepickerButtonResetBtnHover: var(--text-highlight) !important;
 	--litepickerHighlightedDayColor: #333 !important;

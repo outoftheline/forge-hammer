@@ -60,6 +60,7 @@ let Productions = {
 	],
 
 	RatingCurrentTab: 'Results',
+	RatingBuildingTab: 'everything',
 	RatingFilteredSizes: [],
 	RatingSearchTerm: '',
 	ScoreModifierPending: [],
@@ -71,8 +72,7 @@ let Productions = {
 			"tilevalues":false,
 			"showitems":true,
 			"showhighlighted":false,
-			"inventorybuildings":false,
-			"inventorybuildingscore":0,
+			"inventorybuildingscore":50,
 			"gBs":true,
 			"showLimited":true,
 			"showallies":true
@@ -96,7 +96,7 @@ let Productions = {
 		getDefaultData: () => ({
 			'strategy_points': {order:1,perTile:8,active:true,group:1},
 			'forge_points_production': {order:2,perTile:0.25,active:true,group:1},
-			'fsp': {order:3,perTile:0.8,active:true,group:1},
+			'fsp': {order:3,perTile:0.5,active:true,group:1},
 			'goods-previous': {order:5,perTile:7,active:true,group:1},
 			'goods-current': {order:7,perTile:6,active:true,group:1},
 			'goods-next': {order:9,perTile:5,active:true,group:1},
@@ -106,8 +106,8 @@ let Productions = {
 			'medals': {order:16,perTile:null,active:false,group:1},
 			'population': {order:17,perTile:null,active:false,group:1},
 			'happiness': {order:19,perTile:null,active:false,group:1},
-			'clan_goods': {order:21,perTile:10,active:true,group:1},
-			'units': {order:22,perTile:4,active:true,group:2},
+			'clan_goods': {order:21,perTile:30,active:true,group:1},
+			'units': {order:22,perTile:6,active:true,group:2},
 			'att_boost_attacker-all': {order:23,perTile:8,active:true,group:2} ,
 			'att_boost_attacker-guild_expedition': {order:24,perTile:11,active:true,group:2},
 			'att_boost_attacker-battleground': {order:25,perTile:10,active:true,group:2} ,
@@ -1911,7 +1911,7 @@ let Productions = {
 				minimize: true,
 				resize: true,
 				settings: Productions.RSettings,
-				custom_buttons: [{class: "window-popout", callback: Productions.ratingPopOut}],
+				//custom_buttons: [{class: "window-popout", callback: Productions.ratingPopOut}],
 			});
 			
 			FH.helper.preloader.show('#ProductionsRating');
@@ -2152,9 +2152,20 @@ let Productions = {
 		if (Productions.efficiencySettings.tilevalues !== $('#tilevalues').is(':checked')) $('#tilevalues').trigger("click")
 		if (Productions.efficiencySettings.showitems !== $('#showitems').is(':checked')) $('#showitems').trigger("click")
 		if (Productions.efficiencySettings.showhighlighted !== $('#showhighlighted').is(':checked')) $('#showhighlighted').trigger("click")
-		if (Productions.efficiencySettings.inventorybuildings !== $('#inventorybuildings').is(':checked')) $('#inventorybuildings').trigger("click")
 		if (Productions.efficiencySettings.gBs !== $('#gBs').is(':checked')) $('#gBs').trigger("click")
 		if (Productions.efficiencySettings.showLimited !== $('#showLimited').is(':checked')) $('#showLimited').trigger("click")
+
+		if (Productions.RatingBuildingTab === 'ascended') $('#ProductionsRatingBody').addClass('showLimited');
+
+		// building-type tabs: everything / city / inventory / ascended.
+		// Every row/control for every tab is already in the DOM (tagged via tab-* row classes and
+		// [data-tabs] on controls), so switching tabs is just a visibility toggle - no recompute, no preloader.
+		$('.ratingtable .buildingTypeTabs li').off('click').on('click', function () {
+			let value = $(this).data('value');
+			if (!value || value === Productions.RatingBuildingTab) return;
+			Productions.RatingBuildingTab = value;
+			Productions.ApplyRatingFilters();
+		});
 
 		$('#findMetaBuilding').on('input', function () {
 			let regEx=new RegExp($(this).val(),"i");
@@ -2271,22 +2282,7 @@ let Productions = {
 				Productions.RatingFilteredSizes.push(filter);
 			}
 
-			$('.ratinglist tr').addClass('hidden');
-			if (isNaN(parseInt(filter)) || Productions.RatingFilteredSizes.length === 0) {
-				$('.ratinglist tr').removeClass('hidden');
-				return;
-			}
-			$('.ratinglist tr').each((i,elem) => {
-				let size = Array.from(elem.classList).find(x => x.includes('size'));
-				if (size) {
-					for (let filteredSize of Productions.RatingFilteredSizes) {
-						if ("size"+filteredSize === size) {
-							elem.classList.remove('hidden');
-							return;
-						}
-					}
-				}
-			});
+			Productions.ApplyRatingFilters();
 		});
 
 		// change minimum score for inventory buildings
@@ -2307,25 +2303,45 @@ let Productions = {
 		});
 
 		FH.helper.preloader.hide('#ProductionsRating');
-		//$('#ProductionsRatingBody').fadeIn(501);
 
 		if (Productions.RatingSearchTerm !== "") {
 			$('#efficiencyBuildingFilter').trigger('input');
 		}
 
+		Productions.ApplyRatingFilters();
+	},
+
+	ApplyRatingFilters: () => {
+		let tab = Productions.RatingBuildingTab || 'everything';
+
+		$('.ratingtable [data-original-title]').tooltip('hide');
+		$('#game_body > .tooltip').remove();
+
+		$('.ratingtable .buildingTypeTabs li').removeClass('active').filter('[data-value="'+tab+'"]').addClass('active');
+
+		$('.ratingtable [data-tabs]').each(function () {
+			let tabs = ($(this).attr('data-tabs') || '').split(' ');
+			let applicable = tabs.includes(tab);
+			$(this).css({opacity: applicable ? '' : '0.4', pointerEvents: applicable ? '' : 'none'});
+			$(this).find('input').prop('disabled', !applicable);
+		});
+
+		$('.ratinglist tr').addClass('hidden');
+		let rows = $('.ratinglist tr.tab-' + tab);
 		if (Productions.RatingFilteredSizes.length > 0) {
-			$('.ratinglist tr').addClass('hidden');
-			$('.ratinglist tr').each((i,elem) => {
+			rows.each((i, elem) => {
 				let size = Array.from(elem.classList).find(x => x.includes('size'));
 				if (size) {
 					for (let filteredSize of Productions.RatingFilteredSizes) {
-						if ("size"+filteredSize === size) {
+						if ("size" + filteredSize === size) {
 							elem.classList.remove('hidden');
 							return;
 						}
 					}
 				}
 			});
+		} else {
+			rows.removeClass('hidden');
 		}
 	},
 
@@ -2345,11 +2361,18 @@ let Productions = {
 			return;
 		}
 
+		// inventory/ascended tabs make no sense without inventory data (e.g. other players' cities)
+		if (FH.ActiveMap === 'OtherPlayer' && ['inventory','ascended'].includes(Productions.RatingBuildingTab))
+			Productions.RatingBuildingTab = 'everything';
+
+		let tab = Productions.RatingBuildingTab || 'everything';
+
 		let buildingCount = {};
 		let uniqueBuildings = [];
 		let buildingSizes = [];
 		let ratedBuildings = [];
 		let h = [];
+		// computed once regardless of tab, so switching tabs afterward is a pure client-side visibility toggle
 		let withAllies = Productions.efficiencySettings.showallies;
 		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData),withAllies));
 		Productions.setChainsAndSets(Productions.BuildingsAll);
@@ -2453,39 +2476,47 @@ let Productions = {
 
 			let colNumber = Object.values(Productions.Rating.Data).filter(x=>x.active).length;
 
-			h.push('<div class="ratingtable">');
-			h.push('<a id="RatingsResults" class="toggle-tab btn btn-slim" data-value="Settings">' + FH.t('Boxes.ProductionsRating.Settings') + '</a>')
-			h.push('<a id="ScoreModifiersBtn" class="btn btn-slim">' + FH.t('Boxes.ProductionsRating.ModifiersButton') + '</a>')
-			h.push('<table class="foe-table sortable-table TSinactive exportable">');
-			h.push('<thead class="sticky">');
-
-			h.push('<tr class="settings">');
-				h.push('<th colspan="'+(colNumber+5)+'"><div class="options">');
-				h.push('<a class="btn" id="addMetaBuilding">' + FH.t('Boxes.ProductionsRating.AddBuilding') + '</a>');
-				h.push('<label for="tilevalues"><input type="checkbox" id="tilevalues" />' + FH.t('Boxes.ProductionsRating.ShowValuesPerTile') + '</label>');
-				h.push('<input type="text" id="efficiencyBuildingFilter" size=20 value="' + Productions.RatingSearchTerm + '" placeholder="' + FH.t('Boxes.ProductionsRating.Filter') + ': neo|eden" />');
-				h.push('<label for="showhighlighted" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')+'"><input type="checkbox" id="showhighlighted" />' + FH.t('Boxes.ProductionsRating.ShowHighlighted') + '</label>')
-				h.push('<div>');
-				h.push('<label for="gBs" data-original-title="'+FH.t('Boxes.ProductionsRating.NoGBsExplanation')+'"><input type="checkbox" id="gBs" /><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" /></label>');
-				if (FH.ActiveMap !== 'OtherPlayer') {
-					h.push('<div class="inventory">'+
-						'<label for="inventorybuildings" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowInventoryBuildingsExplanation')+'"><input type="checkbox" id="inventorybuildings" /><img class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png"></label>'+
-						'<label for="inventorybuildingscore" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryBuildingScoreExplanation')+'">' + FH.t('Boxes.ProductionsRating.InventoryBuildingScore') + ': <input type="number" size="6" value="'+(Productions.efficiencySettings.inventorybuildingscore*100)+'" id="inventorybuildingscore" /></label>'+
-						'<label for="showLimited" data-original-title="'+FH.t('Boxes.ProductionsRating.NoLimitedExplanation')+'"><input type="checkbox" id="showLimited" /><img src="'+srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)+'" /></label>'+
-						'</div>');
-						h.push('<label for="showallies" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowAllies')+'"><input type="checkbox" id="showallies" '+(Productions.efficiencySettings.showallies? 'checked' : '')+' /><span class="filter showallies"></span></label>');
-
-				}
-				h.push('<label for="showitems" data-original-title="'+FH.t('Boxes.ProductionsRating.ShowItems')+'"><input type="checkbox" id="showitems" /><span class="filter showitems"></span></label>');
-				h.push('</div></div></th>');
-			h.push('</tr>');
-
-			h.push('<tr class="sorter-header exportheader sort2">');
-			h.push('<th data-type="ratinglist" class="is-number descending" data-export="' + FH.t('Boxes.ProductionsRating.Score') + '">' + FH.t('Boxes.ProductionsRating.Score') + '</th>');
-			h.push('<th data-type="ratinglist" data-export="'+ FH.t('Boxes.ProductionsRating.BuildingName') +'"><div class="flex-between"><span>'+ FH.t('Boxes.ProductionsRating.BuildingName') +'</span>' +
-			' <div id="buildingsize"><span>'+FH.t('Boxes.Productions.Headings.size')+'</span><ul>');
+			h.push(`<div class="ratingtable">
+				<a id="RatingsResults" class="toggle-tab btn btn-slim" data-value="Settings">${FH.t('Boxes.ProductionsRating.Settings')}</a>
+				<a id="ScoreModifiersBtn" class="btn btn-slim">${FH.t('Boxes.ProductionsRating.ModifiersButton')}</a>
+				<table class="foe-table sortable-table TSinactive exportable">
+				<thead class="sticky">
+				<tr class="settings">
+					<th colspan="${colNumber+5}">
+						<div class="options">
+						<div class="tabs">
+						<a class="btn" id="addMetaBuilding">${FH.t('Boxes.ProductionsRating.AddBuilding')}</a>
+						<ul class="horizontal dark-bg clickable buildingTypeTabs">
+							<li data-value="everything" class="${tab==='everything'?'active':''}"> ${FH.t('General.Everything')}</li> 
+							<li data-value="city" class="${tab==='city'?'active':''}"><img src="${FH.extUrl}images/menu/citymap.png"> ${FH.t('General.City')}</li> `);
+					if (FH.ActiveMap !== 'OtherPlayer') {
+						h.push(`<li data-value="inventory" class="${tab==='inventory'?'active':''}"><img src="${FH.extUrl}js/web/x_img/inventory.png"> ${FH.t('General.Inventory')}</li>`);
+					}
+				h.push(`<li data-value="ascended" class="${tab==='ascended'?'active':''}"><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" /> ${FH.t('Boxes.CityMap.limited')}</li></ul>
+						<input type="text" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')} : neo|eden" />
+						<label for="showhighlighted" data-original-title="${FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')}"><input type="checkbox" id="showhighlighted" />${FH.t('Boxes.ProductionsRating.ShowHighlighted')}</label>
+						</div>
+						<div class="listmodifiers">
+						<label for="tilevalues"><input type="checkbox" id="tilevalues" />${FH.t('Boxes.ProductionsRating.ShowValuesPerTile')}</label>
+						<label for="showitems" data-original-title="${FH.t('Boxes.ProductionsRating.ShowItems')}"><input type="checkbox" id="showitems" /><span class="filter showitems"></span></label>
+						<label for="showallies" data-original-title="${FH.t('Boxes.ProductionsRating.ShowAllies')}" data-tabs="everything city ascended"><input type="checkbox" id="showallies" ${(Productions.efficiencySettings.showallies? 'checked' : '')} /><span class="filter showallies"></span></label>
+						<label for="gBs" data-original-title="${FH.t('Boxes.ProductionsRating.NoGBsExplanation')}" data-tabs="everything city"><input type="checkbox" id="gBs" /><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)}" /></label>`);
+					if (FH.ActiveMap !== 'OtherPlayer') {
+						h.push(`<div class="inventory">
+							<label for="inventorybuildingscore" data-original-title="${FH.t('Boxes.ProductionsRating.InventoryBuildingScoreExplanation')}" data-tabs="everything inventory ascended"><img class="game-cursor" src="${FH.extUrl}js/web/x_img/inventory.png"> ${FH.t('Boxes.ProductionsRating.InventoryBuildingScore')}: <input type="number" size="6" value="${(Productions.efficiencySettings.inventorybuildingscore*100)}" id="inventorybuildingscore" /></label>
+							<label for="showLimited" data-original-title="${FH.t('Boxes.ProductionsRating.NoLimitedExplanation')}" data-tabs="everything inventory ascended"><input type="checkbox" id="showLimited" /><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" /></label>
+							</div>`);
+					}
+				h.push(`</div>
+				</div>
+				</th>
+				</tr>
+				<tr class="sorter-header exportheader sort2">
+				<th data-type="ratinglist" class="is-number descending" data-export="${FH.t('Boxes.ProductionsRating.Score')}">${FH.t('Boxes.ProductionsRating.Score')}</th>
+				<th data-type="ratinglist" data-export="${FH.t('Boxes.ProductionsRating.BuildingName')}"><div class="flex-between"><span>${FH.t('Boxes.ProductionsRating.BuildingName')}</span>
+				<div id="buildingsize"><span>${FH.t('Boxes.Productions.Headings.size')}</span><ul>`);
 				for (let size of buildingSizes) {
-					h.push('<li data-value="'+size+'" class="' + (Productions.RatingFilteredSizes.includes(size) ? 'selected' : '') + '">'+size+'</li>')
+					h.push(`<li data-value="${size}" class="${(Productions.RatingFilteredSizes.includes(size) ? 'selected' : '') }">${size}</li>`)
 				}
 			h.push('</ul></div></div></th><th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png" /></th>');
 
@@ -2520,16 +2551,28 @@ let Productions = {
 			h.push('<tbody class="ratinglist">');
 
 			for (const building of ratedBuildings) {
-				// skip inventory buildings with a score lower than the threshold
-				if (building.isInInventory && building.rating.totalScore < Productions.efficiencySettings.inventorybuildingscore) continue;
+				// figure out which tabs this row belongs to, ONCE, so switching tabs afterward is a pure
+				// client-side visibility toggle (no recompute, no preloader flash)
+				let alreadyInCity = building.isInInventory && (buildingCount[building.entityId+"C"] !== undefined || buildingCount[building.entityId+"C"] >= 1);
+				let belowThreshold = building.isInInventory && building.rating.totalScore < Productions.efficiencySettings.inventorybuildingscore;
 
-				// skip inventory buildings that are already in the city
-				if (building.isInInventory && (buildingCount[building.entityId+"C"] !== undefined || buildingCount[building.entityId+"C"] >= 1)) continue;
+				let tabClasses = [];
+				// everything: all buildings, except inventory buildings below the threshold or already owned in the city
+				if (!building.isInInventory || (!alreadyInCity && !belowThreshold)) tabClasses.push('tab-everything');
+				// city only: no inventory buildings at all
+				if (!building.isInInventory) tabClasses.push('tab-city');
+				// inventory only: no city buildings, still respect the score threshold (dupes with city are fine here)
+				if (building.isInInventory && !belowThreshold) tabClasses.push('tab-inventory');
+				// ascended only: limited buildings from both city and inventory, respect the threshold/already-owned rule
+				if (building.isLimited && (!building.isInInventory || (!alreadyInCity && !belowThreshold))) tabClasses.push('tab-ascended');
+
+				// not eligible for any tab at all -> skip the row entirely
+				if (tabClasses.length === 0) continue;
 
 				let buildingSize = building.size.length * building.size.width;
 
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
-				h.push(`<tr class="${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
+				h.push(`<tr class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
 				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
 				let score = Math.round(building.rating.totalScore * 100); // totalScore already includes the modifier!
 				let baseScore = score - scoreModifier;

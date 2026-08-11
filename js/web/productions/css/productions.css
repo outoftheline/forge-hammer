@@ -81,8 +81,8 @@
 	color: var(--text-highlight);
 	white-space: nowrap;
 }
-#Productions #ProductionsBody .tabs ul li {
-	margin: 0 1px 0 0;
+#Productions #ProductionsBody .tabs ul {
+	gap: 0;
 }
 #Productions #ProductionsBody .tabs ul li.premium, #Productions #ProductionsBody .tabs ul li.happiness, #Productions #ProductionsBody .tabs ul li.def_boost_defender {
 	margin: 0 7px 0 0;
@@ -133,8 +133,7 @@
 	background: transparent url('../../x_img/guild_raids.png') no-repeat;
 	background-size: contain;
 }
-#ProductionsRatingBody .settings label[for="inventorybuildingscore"], 
-#ProductionsRatingBody .settings label[for="showLimited"], 
+
 #ProductionsRatingBody .ratingtable tr.hidden, 
 #ProductionsRatingBody.tilevalues .buildingvalue, 
 #ProductionsRatingBody:not(.tilevalues) .tilevalue, 
@@ -142,18 +141,11 @@
 #ProductionsRating #ProductionsRatingSettings .foe-table li input.hidden {
 	display: none;
 }
-#ProductionsRatingBody.inventorybuildings .settings label[for="inventorybuildingscore"],
-#ProductionsRatingBody.inventorybuildings .settings label[for="showLimited"] 
- {
-	display: inline-flex;
-}
-#ProductionsRatingBody.inventorybuildings .inventory {
-	box-shadow: inset 1px 2px 8px #000000b8;
-	border: 1px solid #000000c4;
-	border-left: 1px dotted var(--text-dark);
-	border-right: 1px dotted var(--text-dark);
-	margin: -2px;
-	padding: 1px;
+#ProductionsRatingBody .settings .inventory {
+	border-left: 2px solid var(--bg-darkest);
+	border-right: 2px solid var(--bg-darkest);
+	padding: 0 10px;
+	background: var(--bg-dark);
 }
 
 #ProductionsRatingBody.showitems .items {
@@ -165,20 +157,13 @@
 }
 #ProductionsRatingBody #addMetaBuilding {
 	padding: 0.15em 0.4em;
-}
-#ProductionsRatingBody .settings label {
-	margin-right: 0.3em;
-	display: inline-flex;
-	align-items: center;
-}
-#ProductionsRatingBody .settings img {
-	height: 24px;
+	margin-left: 10px;
 }
 #ProductionsRatingBody .overlay {
 	width: 100%;
-	height: calc(100% - 36px);
+	height: calc(100% - 29px);
 	position: absolute;
-	top: 36px;
+	top: 29px;
 	left: 0;
 	z-index: 2100;
 	background: var(--black-65);
@@ -260,13 +245,38 @@
 #ProductionsRatingBody .ratingtable tr.settings th {
 	padding: 0;
 }
-#ProductionsRatingBody .ratingtable tr.settings div {
+#ProductionsRatingBody .settings label {
+	display: inline-flex;
+	align-items: center;
+}
+#ProductionsRatingBody .settings img {
+	height: 24px;
+}
+#ProductionsRatingBody .tabs ul.horizontal.buildingTypeTabs {
+	padding: 0 10px;
+	border-bottom: none;
+}
+#ProductionsRatingBody .tabs ul.horizontal.buildingTypeTabs li {
+	margin: 4px 2px 0 !important;
+	padding: 0 10px;
+}
+#ProductionsRatingBody .ratingtable tr.settings .options .tabs {
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	border-bottom: 2px solid var(--border-tab);
 }
-#ProductionsRatingBody .ratingtable tr.settings .options {
-	padding: 0.1rem 0.25rem;
+#ProductionsRatingBody .ratingtable tr.settings .options .listmodifiers {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: var(--window-bg);
+	border-bottom: 2px solid var(--bg-darkest);
+}
+#ProductionsRatingBody .options .inventory {
+	display: flex;
+}
+#ProductionsRatingBody .ratingtable tr.settings .options .listmodifiers label {
+	padding: 4px 2px 2px;
 }
 #ProductionsRatingBody #inventorybuildingscore {
 	width: 52px;
@@ -280,6 +290,9 @@
 }
 #ProductionsRatingBody.inventorybuildings .inventory-building td:nth-child(2) {
 	font-style: italic;
+}
+#ProductionsRatingBody tr.sorter-header.sort2 th {
+	padding: 3px 4px 6px;
 }
 #ProductionsRatingBody tr.highlighted2 td:nth-child(2) {
 	color: var(--white);
@@ -337,11 +350,10 @@
 #ProductionsRatingBody tfoot tr, 
 #ProductionsRatingBody.showhighlighted tbody tr.highlighted-explained, 
 #ProductionsRatingBody.showhighlighted tbody tr.highlighted, 
-#ProductionsRatingBody.showhighlighted tbody tr.highlighted2, 
+#ProductionsRatingBody.showhighlighted tbody tr:not(.hidden).highlighted2, 
 #ProductionsRatingBody.showhighlighted tbody tr.additional{
 	display: table-row;
 }
-#ProductionsRatingBody:not(.inventorybuildings) tbody tr.inventory-building,
 #ProductionsRatingBody:not(.gBs) tbody tr.gb,
 #ProductionsRatingBody:not(.showLimited) tbody tr.inventory-building.limited,
 #ProductionsRatingBody.showhighlighted tbody tr {
@@ -493,9 +505,6 @@
 	margin: 3px auto 1em;
 	box-shadow: 0 0 500px #000;
 }
-#ProductionsRatingBody .settings th {
-	border-bottom: 1px dotted var(--bg-dark);
-}
 #ProductionsRatingSettings {
 	position: relative;
 }
@@ -517,7 +526,7 @@
 }
 #RatingsResults, #ScoreModifiersBtn {
 	position: sticky;
-	top: 3px;
+	top: 5px;
 	float: right;
 	margin-right: 2px;
 	height: 20px;
@@ -546,7 +555,6 @@ input[id*="ProdPerTile"] {
 }
 #ProductionsRatingBody table thead {
 	font-size: 85%;
-	cursor: pointer;
 }
 #ProductionsRatingBody table td {
 	font-size: 85%;

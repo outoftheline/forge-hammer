@@ -83,7 +83,7 @@
 	font-weight: 700;
 	width: 113px;
 	line-height: 26px;
-	border-right: 1px solid var(--table-bb-info);
+	border-right: 1px solid var(--bg-dark);
 }
 
 #SettingsBoxBody .item-row .check.unchecked span.toogle-word {

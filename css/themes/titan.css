@@ -54,7 +54,7 @@
 	--text-btn: #dcd6d6;
 
     --switch-text: #dae9e3;
-    --switch-text-active: #03372c;
+    --switch-text-active: #f8fdff;
 
     --input-accent: #b04a2b;
     --input-bg: #ebe7d9;
@@ -126,7 +126,7 @@
 	--menu-btn-shadow-disabled: inset 0 0 1px 1px #60261e38;
 	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
 	--menu-btn-bg-settings: linear-gradient(#2e2e2e,#2e2e2e) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
-	--menu-boxed-head-bg: linear-gradient(90deg, #054f3e, #022f27);
+	--menu-boxed-head-bg: linear-gradient(-45deg, #e5e1cf 33px, #fc7c48 34px, #fc6f44 47px, #fcf8d3 48px, #fff 60px, #fc6f44 61px, #ff8b47);
 	--menu-boxed-head-shadow: none;
 	--menu-boxed-head-color: #eee;
 
