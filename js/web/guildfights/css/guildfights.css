@@ -51,7 +51,9 @@
 }
 
 #GuildPlayersBody tr th span,
-#GuildPlayersDetailViewBody tr th span {
+#GuildPlayersDetailViewBody tr th span,
+#GuildPlayersBody tr th img,
+#GuildPlayersDetailViewBody tr th img {
 	display: inline-block;
 	width: 25px;
 	height: 25px;

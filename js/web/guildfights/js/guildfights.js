@@ -1030,8 +1030,8 @@ let GuildFights = {
 		t.push('<th colspan="3" data-export3="Player">' + FH.t('Boxes.GuildFights.Player') + '</th>');
 		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Total">' + FH.t('Boxes.GuildFights.Total') + ' <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Attrition">' + FH.t('Boxes.GuildFights.Attrition') + ' <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Total"> <img class="game-cursor" alt="'+FH.t('Boxes.GuildFights.Total')+'" src="' + FH.extUrl + 'js/web/x_img/gbg-sum.png"> <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Attrition"> <img class="game-cursor" alt="'+FH.t('Boxes.GuildFights.Attrition')+'" src="' + FH.extUrl + 'js/web/x_img/attrition.png"> <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
 
 		t.push('<th></th>');
 		t.push('</tr>');
@@ -1152,21 +1152,21 @@ let GuildFights = {
 			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
-			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
-			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group">${FH.t('Boxes.GuildFights.Attrition')}</th>`);
-			h.push('</tr>');
-			h.push('</thead><tbody class="gbg-playerlog-group">');
+			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group"><img class="game-cursor" title="${FH.t('Boxes.GuildFights.Total')}" src="${FH.extUrl}js/web/x_img/gbg-sum.png"></th>
+				<th class="is-number text-center" data-type="gbg-playerlog-group"><img class="game-cursor" title="${FH.t('Boxes.GuildFights.Attrition')}" src="${FH.extUrl}js/web/x_img/attrition.png"></th>
+			</tr>
+			</thead><tbody class="gbg-playerlog-group">`);
 
 			dailyFights.forEach(day => {
 				let id = moment.unix(day.time).format(FH.t('DateTime'));
 				let sum = (day.battles + day.negotiations * 2);
-				h.push(`<tr id="gbgdetail_${id}" data-gbground="${gbground}" data-player="${player_id}" data-id="${id}">`);
-				h.push(`<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(FH.t('Date'))}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>`);
-				h.push(`<td class="is-number text-center" data-number="${day.attrition}">${FH.HTML.Format(day.attrition)}</td>`);
-				h.push('</tr>');
+				h.push(`<tr id="gbgdetail_${id}" data-gbground="${gbground}" data-player="${player_id}" data-id="${id}">
+					<td class="is-number" data-number="${day.time}">${moment.unix(day.time).format(FH.t('Date'))}</td>
+					<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>
+					<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>
+					<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>
+					<td class="is-number text-center" data-number="${day.attrition}">${FH.HTML.Format(day.attrition)}</td>
+				</tr>`);
 			});
 
 			h.push('</tbody></table>');

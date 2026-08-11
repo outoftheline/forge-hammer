@@ -195,22 +195,11 @@
 	color: var(--text);
 	border-radius: 5px;
 }
-#ProductionsRatingBody .overlay .content ul {
+#ProductionsRatingBody .overlay .content ul.foe-table {
 	height: calc(100% - 90px);
 	overflow: auto;
 	margin: 10px 0;
-	padding: 0;
-	box-sizing: border-box;
-	list-style: none;
-}
-#ProductionsRatingBody .overlay .content li {
-	padding: 0.1rem 0.2rem;
-	border-top: 1px solid var(--border-table-top);
-	border-bottom: 1px solid var(--border-table-bottom);
-}
-#ProductionsRatingBody .overlay .content li:hover {
-	color: var(--text-highlight);
-	background: var(--table-bg-hover);
+	max-width: 100%;
 }
 #ProductionsRatingBody .overlay .content li.selected {
 	color: var(--text-highlight);

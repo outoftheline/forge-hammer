@@ -5,10 +5,10 @@
  */
 
 #SettingsBox {
-	top: calc(50vh - 165px);
-	left: calc(50vw - 305px);
-	width: 680px;
-	height: 410px;
+	top: calc(50vh - 210px);
+	left: calc(50vw - 350px);
+	width: 700px;
+	height: 420px;
 	font-size: 90%;
 }
 

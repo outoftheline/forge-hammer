@@ -2675,8 +2675,8 @@ let Productions = {
 			h.push('</table>');
 				h.push('<div class="overlay"><a class="window-close closeMetaBuilding"></a>')
 					h.push('<div class="content">')
-						h.push('<input id="findMetaBuilding" placeholder="'+FH.t('Boxes.ProductionsRating.FindSpecialBuilding')+'" value="">')
-						h.push('<ul class="results"></ul>')
+						h.push('<input id="findMetaBuilding" placeholder="'+FH.t('Boxes.ProductionsRating.FindSpecialBuilding')+': _gbg" value="">')
+						h.push('<ul class="results foe-table"></ul>')
 						h.push('<div class="btns">')
 						h.push('<a class="btn selectMetaBuildings">'+FH.t('Boxes.ProductionsRating.ToggleBuildingSelection')+'</a>')
 						h.push('<a class="btn closeMetaBuilding btn-green">'+FH.t('Boxes.ProductionsRating.AddBuildings')+'</a>')
