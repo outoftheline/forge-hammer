@@ -249,6 +249,45 @@ window.PlannerApp = window.PlannerApp || {};
                 ? app.t('XPlan.Population.NegativeWarning', '')
                 : '';
         }
+
+        updateSelectionInfo();
+    }
+
+    function getEraLabel(era) {
+        const eraId = app.InnoEras ? app.InnoEras[era] : undefined;
+        const key = 'Eras.' + (eraId !== undefined ? (eraId + 1) : 'undefined');
+        return app.t(key, era || 'No age');
+    }
+
+    function updateSelectionInfo() {
+        if (!dom.infoEl) return;
+
+        if (state.selectedBuildings.length !== 1) {
+            dom.infoEl.innerHTML = '';
+            return;
+        }
+
+        const building = state.selectedBuildings[0];
+        const dims = app.getMetaSize(building.meta);
+        const population = building.population || 0;
+        const populationText = (population > 0 ? '+' : '') + population;
+
+        const rows = [
+            [null, building.displayName, false],
+            [null, getEraLabel(building.data && building.data.era), false],
+            [null, dims.height + 'x' + dims.width, false]
+        ];
+
+        if (population !== 0) {
+            rows.push([app.t('XPlan.Info.Population', 'Population'), populationText, population < 0]);
+        }
+
+        dom.infoEl.innerHTML = rows.map(([label, value, negative]) =>
+            '<div class="info-row' + (negative ? ' negative' : '') + '">' +
+                (label ? '<span class="info-label">' + label + '</span>' : '') +
+                '<span class="info-value">' + value + '</span>' +
+            '</div>'
+        ).join('');
     }
 
     function clampZoomToSteps(dir) {
@@ -415,6 +454,7 @@ window.PlannerApp = window.PlannerApp || {};
     app.drawEmptyMap = drawEmptyMap;
     app.redrawMap = redrawMap;
     app.updateStats = updateStats;
+    app.updateSelectionInfo = updateSelectionInfo;
     app.calculatePopulation = calculatePopulation;
     app.clampZoomToSteps = clampZoomToSteps;
     app.zoomAtScreenPoint = zoomAtScreenPoint;

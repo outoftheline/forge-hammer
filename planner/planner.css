@@ -373,11 +373,13 @@ select option {
     backdrop-filter: blur(2px);
     border-radius: 5px 0 0 0;
     pointer-events: none;
+    text-align: center;
 }
 
-#map .info b {
-    pointer-events: all;
-    cursor: pointer;
+#map .info .info-row:first-child {
+    font-weight: bold;
+    font-size: 110%;
+    padding: 2px;
 }
 
 button, .btn, .content input {

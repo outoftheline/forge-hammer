@@ -13,6 +13,7 @@ window.PlannerApp = window.PlannerApp || {};
         state.selectedBuildings = [];
         dom.storeSelectionCount.textContent = '';
         dom.storeSelectionBtn.classList.remove('show');
+        if (app.updateSelectionInfo) app.updateSelectionInfo();
     }
 
     function refreshSelectionUi() {
@@ -22,6 +23,7 @@ window.PlannerApp = window.PlannerApp || {};
         } else {
             dom.storeSelectionBtn.classList.remove('show');
         }
+        if (app.updateSelectionInfo) app.updateSelectionInfo();
     }
 
     function storeBuilding(building) {
