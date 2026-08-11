@@ -37,6 +37,7 @@ window.PlannerApp.dom = {
     placeStreetBtn: document.querySelector('#placeStreet'),
     streetSizeGroup: document.querySelector('#streetSizeGroup'),
     populationEl: document.querySelector('#populationStat .pop-stat'),
+    infoEl: document.querySelector('#map .info'),
 
     saveBtn: document.querySelector('#save'),
     exportBtn: document.querySelector('#export'),

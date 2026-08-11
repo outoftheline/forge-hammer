@@ -524,9 +524,18 @@
 	padding: 0.3rem;
 }
 
-#BuildingsFilter {
+#citymap-wrapper .mapTopRight {
 	margin-left: auto;
+	width: 170px;
+	text-align: right;
+}
+
+#citymap-wrapper .mapTopRight input {
 	width: 130px;
+}
+
+#citymap-wrapper .mapTopRight span {
+	display: inline-block;
 }
 
 #area-state p {

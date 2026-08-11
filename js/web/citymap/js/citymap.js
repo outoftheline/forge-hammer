@@ -223,7 +223,7 @@ let CityMap = {
 
 		// Button for submit Box
 		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'OtherPlayer') {
-			menu.append($('<input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)">'));
+			menu.append($('<div class="mapTopRight"><span class="mapFilterCounter"></span> <input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)"></div>'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
 					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(FH.t('Boxes.CityMap.CopyMetaInfos')))
@@ -1233,7 +1233,8 @@ let CityMap = {
 		let spans = $('span.entity');
 		if (/[0-9]+x[0-9]*/.test(string)) string = ","+string
 		for (let sp of spans) {
-			let title = $(sp).attr('data-title') +","+ $(sp).attr('data-size');
+			let title = $(sp).attr('data-title') +","+ $(sp).attr('data-size') +", _"+ $(sp).attr('data-meta_id');
+
 			if ((string !== "") && (title.substr(0,title.toLowerCase().indexOf(string.toLowerCase()) > -1))) {
 				$(sp).addClass('highlighted');
 			} else {
@@ -1244,6 +1245,11 @@ let CityMap = {
 		if (string === '') {
 			$('#grid-outer').removeClass('desaturate');
 		}
+		let buildingcounter = $('#grid-outer .highlighted').length;
+		if (buildingcounter !== 0)
+			$('#citymap-wrapper .mapTopRight .mapFilterCounter').text(buildingcounter + 'x');
+		else
+			$('#citymap-wrapper .mapTopRight .mapFilterCounter').text('');
 	},
 
 
