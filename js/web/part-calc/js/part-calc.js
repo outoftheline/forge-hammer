@@ -971,8 +971,8 @@ let Parts = {
 
 		h.push(`<div class="text-center">
 			${FH.t('Boxes.OwnpartCalculator.ExistingPayments')}: 
-			<input id="lockexistingpayments" class="lockexistingpayments game-cursor" ${(Parts.LockExistingPlaces ? 'checked' : '')} type="checkbox">${FH.t('Boxes.OwnpartCalculator.Lock')}
-			<input id="trustexistingpayments" class="trustexistingpayments game-cursor" ${(Parts.TrustExistingPlaces ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.OwnpartCalculator.Trust')}
+			<label for="lockexistingpayments"><input id="lockexistingpayments" class="lockexistingpayments game-cursor" ${(Parts.LockExistingPlaces ? 'checked' : '')} type="checkbox">${FH.t('Boxes.OwnpartCalculator.Lock')}</label>
+			<label for="trustexistingpayments"><input id="trustexistingpayments" class="trustexistingpayments game-cursor" ${(Parts.TrustExistingPlaces ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.OwnpartCalculator.Trust')}</label>
 			</div>
 			
 			<div class="flex between" style="padding:3px 0;">
