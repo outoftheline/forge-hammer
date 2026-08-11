@@ -108,7 +108,7 @@ table {
 }
 
 #DBExport #debex_import_wrapper .errmsg {
-	color: var(--beige);
+	color: var(--text);
 	font-size: 0.8rem;
 	display: block;
 }
@@ -151,7 +151,7 @@ table {
 	bottom: 15px;
 	border-radius: 50%;
 	border: 3px solid transparent;
-	border-top-color: var(--beige);
+	border-top-color: var(--text);
 	-webkit-animation: spin 1.5s linear infinite;
 	animation: spin 1.5s linear infinite;
 }

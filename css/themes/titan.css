@@ -5,15 +5,15 @@
 
 :root {
 	--white: #fff;
-	--beige: #ebe1cd;
+	--text: #ebe1cd;
 	--text-link: #48dae7;
-	--text-highlight: #ffa641;
 	--text-medium: #93795D;
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
 	--text-darker: #201a18;
 	--ash: #8a8a8a;
-	--light-blue: #d49372;
+	--text-highlight: #ffa641;
+	--text-highlight2: #d49372;
 
 	--success: #8acb37;
 	--limegreen: #4dbd19;

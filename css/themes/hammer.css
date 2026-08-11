@@ -5,7 +5,7 @@
 
 :root {
 	--white: #fff;
-	--beige: #ffe7ba;
+	--text: #ffe7ba;
 	--text-link: #ffB539;
 	--text-highlight: #ffB539;
 	--text-medium: #93795D;
@@ -14,7 +14,7 @@
 	--text-dark2: #3f2a1b;
 	--text-darker: #201a18;
 	--ash: #8a8a8a;
-	--light-blue: #d4aa72;
+	--text-highlight2: #d4aa72;
 
 	--success: #95c567;
 	--limegreen: #7ce64c;

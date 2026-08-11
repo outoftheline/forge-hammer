@@ -2485,7 +2485,7 @@ let Productions = {
 					<th colspan="${colNumber+5}">
 						<div class="options">
 						<div class="tabs">
-						<a class="btn" id="addMetaBuilding">${FH.t('Boxes.ProductionsRating.AddBuilding')}</a>
+						<a class="btn btn-mid" id="addMetaBuilding">${FH.t('Boxes.ProductionsRating.AddBuilding')}</a>
 						<ul class="horizontal dark-bg clickable buildingTypeTabs">
 							<li data-value="everything" class="${tab==='everything'?'active':''}"> ${FH.t('General.Everything')}</li> 
 							<li data-value="city" class="${tab==='city'?'active':''}"><img src="${FH.extUrl}images/menu/citymap.png"> ${FH.t('General.City')}</li> `);
@@ -2611,8 +2611,9 @@ let Productions = {
 
 				h.push('<td class="text-center">')
 				// show additional buildings from inventory
-				if ((buildingCount[building.entityId+"I"] !== undefined && !building.isInInventory) || building.isInInventory)
-					h.push('<span data-callback_tt="InventoryKits" data-id="'+building.entityId+'" class="helperTT"><img alt="" class="game-cursor" src="' + srcLinks.get(`/shared/gui/event_hub/event_meta_icon_checkmark.png`,true) + '" /></span> ')
+				if ((buildingCount[building.entityId+"I"] !== undefined && !building.isInInventory) || building.isInInventory) {
+					h.push(`<b data-callback_tt="InventoryKits" data-id="${building.entityId}" class="helperTT inventoryAmount">${buildingCount[building.entityId+"I"]}x</b> `)
+				}
 				h.push('</td>')
 
 				for (const type of combinedRatingTypes) {

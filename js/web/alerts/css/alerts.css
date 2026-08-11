@@ -133,7 +133,7 @@ div.alert-popup .box-inner-form {
     font-size: 0.8rem;
     line-height: 1.5;
     background: var(--btn-bg);
-    color: var(--beige);
+    color: var(--text);
     cursor: url('../../../../images/cursor_default.cur'), auto;
     transition: color .15s ease-in-out,background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     outline: none !important;

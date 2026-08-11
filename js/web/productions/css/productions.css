@@ -82,7 +82,7 @@
 	white-space: nowrap;
 }
 #Productions #ProductionsBody .tabs ul {
-	gap: 0;
+	gap: 1px;
 }
 #Productions #ProductionsBody .tabs ul li.premium, #Productions #ProductionsBody .tabs ul li.happiness, #Productions #ProductionsBody .tabs ul li.def_boost_defender {
 	margin: 0 7px 0 0;
@@ -156,7 +156,6 @@
 	width: 120px;
 }
 #ProductionsRatingBody #addMetaBuilding {
-	padding: 0.15em 0.4em;
 	margin-left: 10px;
 }
 #ProductionsRatingBody .overlay {
@@ -193,7 +192,7 @@
 	padding: 1em;
 	box-sizing: border-box;
 	background: var(--bg-dark);
-	color: var(--beige);
+	color: var(--text);
 	border-radius: 5px;
 }
 #ProductionsRatingBody .overlay .content ul {
@@ -257,7 +256,7 @@
 	border-bottom: none;
 }
 #ProductionsRatingBody .tabs ul.horizontal.buildingTypeTabs li {
-	margin: 4px 2px 0 !important;
+	margin: 4px 0 0 !important;
 	padding: 0 10px;
 }
 #ProductionsRatingBody .ratingtable tr.settings .options .tabs {
@@ -574,6 +573,13 @@ input[id*="ProdPerTile"] {
 #ProductionsRatingBody table td:first-child[data-number^="-"] {
 	color: var(--danger-red);
 }
+#ProductionsRatingBody table .inventoryAmount {
+	background: var(--bg-dark);
+	color: var(--text-highlight2);
+	text-shadow: none;
+	padding: 1px 5px;
+	border-radius: 7px;
+}
 /* per-building score modifier */
 #ProductionsRatingBody .score-value {
 	padding: 0 10px;
@@ -789,7 +795,7 @@ input[id*="ProdPerTile"] {
 
 #buildingsize {
 	width: 45px;
-	background-color: var(--beige);
+	background-color: var(--text);
 	color: var(--text-darker);
 	text-shadow: none;
 	overflow: visible;
@@ -826,7 +832,7 @@ input[id*="ProdPerTile"] {
 	padding: 2px;
 	margin: 0;
 	width: calc(100% - 4px);
-	background-color: var(--beige);
+	background-color: var(--text);
 	text-align: right;
 	border-radius: 0 0 2px 2px;
 }

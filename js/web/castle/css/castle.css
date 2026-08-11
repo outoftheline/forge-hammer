@@ -85,7 +85,7 @@
 }
 
 #Castle #casLogWrapper tr.caption td {
-	color: var(--beige);
+	color: var(--text);
 }
 
 #Castle #casLogWrapper tr.caption td span,

@@ -246,12 +246,12 @@
 }
 
 #BackgroundInfoList a[target="_blank"] {
-	color: var(--beige);
+	color: var(--text);
 	text-decoration: underline;
 }
 
 #BackgroundInfoList a[target="_blank"] svg {
-	fill: var(--beige);
+	fill: var(--text);
 }
 
 input.textfilter{

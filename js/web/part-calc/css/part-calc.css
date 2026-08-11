@@ -86,7 +86,7 @@
 }
 
 #OwnPartBox .header span {
-	color: var(--beige);
+	color: var(--text);
 }
 
 #OwnPartBox .header .player-name {
@@ -411,7 +411,7 @@
 #OwnPartBox.closed .player-name a {
 	position: relative;
 	top: -5px;
-	color: var(--beige);
+	color: var(--text);
 	letter-spacing: 1px;
 }
 .closed #gbCosts, .closed #gbCalc, #OwnPartBox.closed .gbLevels {

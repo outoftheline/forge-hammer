@@ -251,11 +251,11 @@
 #GBGActionLogBody .gbgal-bld-barracks { background-color: #be1a1a; }
 #GBGActionLogBody .gbgal-bld-outpost  { background-color: #6b3f16; }
 #GBGActionLogBody .gbgal-bld-camp     { background-color: #36a983; }
-#GBGActionLogBody .gbgal-bld-other    { background-color: var(--beige); }
+#GBGActionLogBody .gbgal-bld-other    { background-color: var(--text); }
 
 #GBGActionLogBody .gbgal-act-bld-placed { background-color: #25cc25; }
 #GBGActionLogBody .gbgal-act-bld-dstr   { background-color: #eed21e; }
 #GBGActionLogBody .gbgal-act-prov-conq  { background-color: #dfdfdf; }
 #GBGActionLogBody .gbgal-act-prov-lost  { background-color: #111111; }
 #GBGActionLogBody .gbgal-act-att-ign    { background-color: #c00f0f }
-#GBGActionLogBody .gbgal-act-other      { background-color: var(--beige); }
+#GBGActionLogBody .gbgal-act-other      { background-color: var(--text); }

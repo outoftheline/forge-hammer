@@ -32,7 +32,7 @@
 }
 
 #technologies tr.total-row td {
-	border-top: 2px solid var(--beige);
+	border-top: 2px solid var(--text);
 	font-weight: 700;
 }
 

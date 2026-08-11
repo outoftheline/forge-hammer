@@ -39,7 +39,7 @@
 
 @keyframes battleAssistBlink {
     0% {color: var(--text-highlight);}
-    50% {color: var(--beige);}
+    50% {color: var(--text);}
     100% {color: var(--text-highlight);}
 }
 

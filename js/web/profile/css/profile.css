@@ -920,7 +920,7 @@
 .playerprofile.window-box.foe {
     --main-background: linear-gradient(to bottom, #1e06006e, #270f005e), url(../../../../images/hud/box-bg.png) center center repeat;
     --main-border: 3px solid #9f652a;
-    --main-color: var(--beige);
+    --main-color: var(--text);
     --daysPlayed-background: none;
     --daysPlayed-color: #c7a882;
     --important-color: var(--danger-red);
@@ -928,7 +928,7 @@
     --crit-background: linear-gradient(132deg, #ff8a0085, #61270755);
     --header-background: linear-gradient(#661919, #3d0b0b 50%, #7d5229 50%, #7d5229 52%, #0001 52%, #0000);
     --secondary-background: linear-gradient(to bottom, #00000000, #0000003d);
-    --secondary-color: var(--beige);
+    --secondary-color: var(--text);
     --h2-background: linear-gradient(to bottom, #493f42de, #252730ad 75%);
     --item-border-color: #00000040;
 }

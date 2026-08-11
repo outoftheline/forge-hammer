@@ -5,7 +5,7 @@
 
 :root {
 	--white: #fff;
-	--beige: #ddd1cd;
+	--text: #ddd1cd;
 	--text-link: #8aedd3;
 	--text-highlight: #3ed9b4;
 	--text-medium: #93795D;
@@ -14,7 +14,7 @@
 	--text-dark2: #3f2a1b;
 	--text-darker: #1b1617;
 	--ash: #8a8a8a;
-	--light-blue: #d4aa72;
+	--text-highlight2: #d4aa72;
 
 	--success: #afc859;
 	--limegreen: #7ce64c;
@@ -196,6 +196,6 @@
 	--border-color-gbg: #dac195;
 }
 
-.window-body .tabs ul.horizontal li a span, #SettingsBoxBody .item-row .check span.toogle-word, .window-body .tabs ul.horizontal li.active a {
+.window-body .tabs ul.horizontal li a span, #SettingsBoxBody .item-row .check span.toogle-word, .window-body .tabs ul.horizontal li.active {
     text-shadow: none;
 }

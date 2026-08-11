@@ -19,7 +19,7 @@
 #SettingsBoxBody h2 {
 	font-size: 115%;
 	font-weight: 700;
-	color: var(--light-blue);
+	color: var(--text-highlight2);
 	margin: 0 0 5px;
 }
 
