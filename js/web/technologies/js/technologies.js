@@ -289,63 +289,83 @@ let Technologies = {
 
 
     CalcBody: ()=> {
-        let h = [],
-            TechDict = [];
-
-        // Index aufbauen (Namen => Index)
-        for (let i = 1; i < Technologies.AllTechnologies.length; i++) {
-            TechDict[Technologies.AllTechnologies[i]['id']] = i;
-        }
-
-        // Look up researched tech
-        for (let node of Technologies.UnlockedTechnologies.unlockedNodes) {
-            if (!TechDict[node]) continue;
-            Technologies.AllTechnologies[TechDict[node]].isResearched = true;
-            Technologies.AllTechnologies[TechDict[node]]['currentSP'] = Technologies.AllTechnologies[TechDict[node]]['maxSP'];
-        }
-
-        // Teilweise erforscht
-        for (let i = 0; i < Technologies.UnlockedTechnologies['inProgressTechnologies'].length; i++) {
-            let InProgTech = Technologies.UnlockedTechnologies['inProgressTechnologies'][i];
-            let Index = TechDict[InProgTech['tech_id']];
-            Technologies.AllTechnologies[Index]['currentSP'] = InProgTech['currentSP'];
-        }
+        let h = [];
 
         // Count goods
-        let RequiredResources = [],
-            TechCount = 0;
-        for (let i = 1; i < Technologies.AllTechnologies.length; i++) {
-            let Tech = Technologies.AllTechnologies[i];
-            if (Tech['currentSP'] === undefined)
-            	Tech['currentSP'] = 0;
+        let RequiredResources = {},
+            BranchRessourcesMax = {},
+            TechCount = 0,
+            Techs = Object.assign({}, ...Technologies.AllTechnologies.map(x => ({[x.id]: x}))),
+            children = ['root'],
+            i = 0;
+            processedTechs = new Set();
+            inProgress = Object.assign({}, ...Technologies.UnlockedTechnologies.inProgressTechnologies.map(x => ({[x.tech_id]: x.researchCostPaid})));
 
-            //console.log(Tech.isResearched, Tech.id)
+        let processTech = (Tech, ressourceObject) => {
+            let EraID = Technologies.Eras[Tech['era']];
 
-            if (!Tech['isResearched'] && !Tech['isTeaser']) {
-                let EraID = Technologies.Eras[Tech['era']];
+            if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) return ressourceObject; // Vorherige ZA ausblenden
+            if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) return ressourceObject; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
 
-                if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) continue; // Vorherige ZA ausblenden
-                if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) continue; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
+            if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
 
-                if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
+                let res = Object.assign({}, Tech.researchCost?.resources || Tech.cost?.resources || {}, Tech.requirements?.resources || Tech.cost?.resources || {});
+                for (let [ResourceName,amount] of Object.entries(res)) {
+                    amount = amount - (inProgress?.[Tech.id]?.[ResourceName] || 0);
+                    ressourceObject[ResourceName] = (ressourceObject[ResourceName] || 0) + amount;
+                }
+                TechCount++;
+            }
+            return ressourceObject;
+        };
+        
+        while (i < children.length) {
+            let techId = children[i];
+            let Tech = Techs[techId];
+            if (processedTechs.has(Tech.id)) {
+                i++;
+                continue;
+            }
+            processedTechs.add(techId);
 
-                    if (RequiredResources.strategy_points === undefined)
-                    	RequiredResources.strategy_points = 0;
-
-                    if (Tech.researchCost?.resources?.strategy_points)
-                        RequiredResources.strategy_points += (Tech.researchCost.resources.strategy_points) - (Tech['currentSP']||0);
-                    let res = Tech.requirements?.resources || Tech.cost?.resources || {};
-                    for (let ResourceName in res) {
-                        if (!res.hasOwnProperty(ResourceName)) continue;
-                        if (RequiredResources[ResourceName] === undefined)
-                        	RequiredResources[ResourceName] = 0;
-
-                        RequiredResources[ResourceName] += res[ResourceName];
+            children.push(...(Tech.children||[]));
+            
+            if (!Technologies.UnlockedTechnologies.unlockedNodes.includes(techId) && 
+                !Tech.isTeaser && 
+                Tech.__class__ !== 'BranchChoiceCompositeNode') {
+                RequiredResources = processTech(Tech, RequiredResources);
+            } else if (Tech.__class__ == 'BranchChoiceCompositeNode') {
+                let branchRes = [];
+                for (let branch of Tech.branches) {
+                    let resSum = {};
+                    for (let Tech of branch.nodes) {
+                        if (!Technologies.UnlockedTechnologies.unlockedNodes.includes(Tech.id) &&
+                            !Tech['isTeaser'] && 
+                            Tech.__class__ !== 'BranchChoiceCompositeNode') {
+                            resSum = processTech(Tech, resSum);
+                        }
                     }
-
-                    TechCount++;
+                    branchRes.push(resSum);
+                }
+                if (branchRes.length > 0) {
+                    let minRes = Object.assign({}, ...branchRes);
+                    let maxRes = structuredClone(minRes);
+                    for (let ResourceName of Object.keys(minRes)) {
+                        for (let branch of branchRes) {
+                            minRes[ResourceName] = Math.min(minRes[ResourceName], branch[ResourceName]||0);
+                            maxRes[ResourceName] = Math.max(maxRes[ResourceName], branch[ResourceName]||0);
+                        }
+                    }
+                    for (let [ResourceName, amount] of Object.entries(minRes)) {
+                        if (amount > 0) {
+                            maxRes[ResourceName] -= amount;
+                            RequiredResources[ResourceName] = (RequiredResources[ResourceName] || 0) + amount;
+                        }
+                        BranchRessourcesMax[ResourceName] = (BranchRessourcesMax[ResourceName] || 0) + maxRes[ResourceName];
+                    }
                 }
             }
+            i++;
         }
 
         let PreviousEraID = Math.max(Technologies.SelectedEraID - 1, FH.CurrentEraID),
@@ -416,7 +436,7 @@ let Technologies = {
                 OutputList.push(FH.Goods.List[i]['id']);
             }
             OutputList.push('dark_matter');
-            for (let i = 105; i < FH.Goods.List.length; i++) {
+            for (let i = 105; i < 110; i++) {
                 OutputList.push(FH.Goods.List[i]['id']);
             }
             OutputList.push('stel_stellar_capacity');
@@ -435,13 +455,17 @@ let Technologies = {
                     let Stock = (ResourceName === 'strategy_points' ? StrategyPoints.AvailableFP : FH.RessourceStock[ResourceName]);
                     if (Stock === undefined) Stock = 0;
                     let Diff = Stock - Required;
+                    let DiffMax = Stock - (Required + (BranchRessourcesMax[ResourceName] || 0));
 
                     h.push('<tr>');
                     h.push('<td class="goods-image" style="width:25px"><span class="goods-sprite sprite-35 '+ FH.Goods.Data[ResourceName]['id'] +'"></span></td>');
                     h.push('<td>' + FH.Goods.Data[ResourceName]['name'] + '</td>');
-                    h.push('<td>' + FH.HTML.Format(Required) + '</td>');
+                    h.push('<td>' + FH.HTML.Format(Required) + (BranchRessourcesMax[ResourceName] ? ' - ' + FH.HTML.Format(Required + BranchRessourcesMax[ResourceName]) : '') + '</td>');
                     h.push('<td>' + FH.HTML.Format(Stock) + '</td>');
-                    h.push('<td class="text-right text-' + (Diff < 0 ? 'danger' : 'success') + '">' + FH.HTML.Format(Diff) + '</td>');
+                    h.push(`<td class="text-right">
+                                ${DiffMax < Diff ? `<span class="text-${DiffMax < 0 ? 'danger' : 'success'}"'>${FH.HTML.Format(DiffMax)}</span> - `:''}
+                                <span class="text-${Diff < 0 ? 'danger' : 'success'}"'>${FH.HTML.Format(Diff)}</span>
+                            </td>`);
                     h.push('</tr>');
                 }
             }

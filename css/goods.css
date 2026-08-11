@@ -1964,9 +1964,10 @@ styles for extra-goods.png - manually created!!!!
 .goods-sprite.castle_points::before,
 .goods-sprite.doubloons::before,
 .goods-sprite.stel_stellar_capacity::before, 
-.goods-sprite.stel_mission_reward_encoded_tablets::before {
+.goods-sprite.stel_mission_reward_encoded_tablets::before,
+.goods-sprite.stel_stellar_points::before  {
 	background: url('../images/goods/goods-extra.png') top left no-repeat;
-	background-size: 640px 128px;
+	background-size: 704px 128px;
 	width: 64px;
 	height: 64px;
 }
@@ -2029,4 +2030,7 @@ styles for extra-goods.png - manually created!!!!
 }
 .goods-sprite.stel_mission_reward_encoded_tablets::before{
 	background-position: -576px -64px;
+}
+.goods-sprite.stel_stellar_points::before {
+	background-position: -640px 0;
 }
