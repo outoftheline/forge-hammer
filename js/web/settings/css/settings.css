@@ -184,8 +184,9 @@
 	padding: 5px;
 	user-select: all;
 	display: flex;
-    gap: 10px;
+    gap: 5px 20px;
     justify-content: center;
+	flex-wrap: wrap;
 }
 
 #SettingsBoxBody hr {

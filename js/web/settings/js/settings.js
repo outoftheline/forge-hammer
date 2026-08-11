@@ -236,6 +236,7 @@ let Settings = {
 					<span><b>${FH.t('Settings.Version.PlayerId')}</b> ${FH.Player.ID}</span>
 					<span><b>${FH.t('Settings.Version.GuildId')}</b> ${(FH.Guild.ID ? FH.Guild.ID : 'N/A')}</span>
 					<span><b>${FH.t('Settings.Version.World')}</b> ${FH.World}</span>
+					<span><small><code>${navigator.userAgent}</code></small></span>
 				</div>`;
 		return v;
 	},
