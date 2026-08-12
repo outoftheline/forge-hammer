@@ -869,8 +869,9 @@ let Parts = {
 				h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 				h.push('<td class="text-center"><span class="' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
 				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
-				let restColspan = 1 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
-				h.push('<td colspan="' + restColspan + '"></td>');
+				let restColspan = 0 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
+				if (restColspan > 0)
+					h.push('<td colspan="' + restColspan + '"></td>');
 				h.push('</tr>');
 			}
 			else {
