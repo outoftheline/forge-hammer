@@ -919,7 +919,7 @@
   "Boxes.GreatBuildings.TTGoodsValue": "Ta wartość jest używana do oceniania budynków produkujących towary. Ile PR jest dla Ciebie wart jeden towar?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Opcjonalnie: ile nagród PR otrzymujesz dziennie? Informacje te są wykorzystywane do obliczania rentowności kolejnych poziomów Arki. Aby otrzymać sugestię, przejdź do Historii wydarzeń w Dzienniku wydarzeń i przewiń wszystkie strony",
   "Boxes.GreatBuildingsProgress.ContributorsSince": {
-    "s": "Zmiany wpłacających od __date__",
+    "s": "Zmiana wpłacających od __date__",
     "r": "Contributor changes since __date__"
   },
   "Boxes.GreatBuildingsProgress.DeltaFP": {
@@ -931,7 +931,7 @@
     "r": "Donators"
   },
   "Boxes.GreatBuildingsProgress.FirstVisit": {
-    "s": "Pierwsze załadowanie",
+    "s": "otwórz perłę",
     "r": "first load"
   },
   "Boxes.GreatBuildingsProgress.MyFP": {
@@ -959,7 +959,7 @@
     "r": "Show the on-screen progress icon"
   },
   "Boxes.GreatBuildingsProgress.SubTitle": {
-    "s": "Perła Architektura zmieniła się od Twojej ostatniej wizyty",
+    "s": "Zmiany w Perłach Architektury od ostatniej wizyty",
     "r": "Great Building changes since your last visit"
   },
   "Boxes.GreatBuildingsProgress.Title": {
@@ -1093,7 +1093,10 @@
   "Boxes.GuildFights.Switch": "Widok przełącznika",
   "Boxes.GuildFights.Time": "Godzina",
   "Boxes.GuildFights.TimeZoneWarning.Desc": "Od teraz czasy są kopiowane w czasie serwera. Jeśli chcesz zmienić wyświetlane czasy na czas serwera, sprawdź ustawienia.",
-  "Boxes.GuildFights.TimeZoneWarning.Title": "Zmiana w zachowaniu kopiowania!",
+  "Boxes.GuildFights.TimeZoneWarning.Title": {
+    "s": "Zmiany w zachowaniu kopiowania!",
+    "r": "Change in Copy Behavior!"
+  },
   "Boxes.GuildFights.Title": "Przegląd aktywności graczy",
   "Boxes.GuildFights.Total": "Całkowity",
   "Boxes.GuildMemberStat.AutoStartOnUpdate": "otwórz przegląd po aktualizacji",
@@ -1543,7 +1546,7 @@
   "Boxes.OtherGuildActivity.Title": "Aktywni członkowie gildii",
   "Boxes.Outpost.DescInStock": "Aktualny stan magazynowy",
   "Boxes.Outpost.DescRequired": "Całkowity",
-  "Boxes.Outpost.DescStillMissing": "<span>Nadmiar</span> / <span>Brak</span>",
+  "Boxes.Outpost.DescStillMissing": "<span style=\"color:#29b206\">Nadmiar</span> / <span style=\"color:#ff4040\">Brak</span>",
   "Boxes.Outpost.ExpansionsSum": "Rozszerzenia",
   "Boxes.Outpost.including4x": "w praktyce - zwiększa szanse x4",
   "Boxes.Outpost.infoLine": "__runNumber__. osada, szansa na bonus x4 : __chanceX4__%",
@@ -2050,7 +2053,7 @@
   "Boxes.Stats.Title": "Statystyki",
   "Boxes.Technologies.DescInStock": "Dostępne",
   "Boxes.Technologies.DescRequired": "Wymagane",
-  "Boxes.Technologies.DescStillMissing": "<span>Nadmiar</span> / <span>Brak</span>",
+  "Boxes.Technologies.DescStillMissing": "<span style=\"color:#29b206\">Nadmiar</span> / <span style=\"color:#ff4040\">Brak</span>",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignoruj opcjonalne technologie obecnych/przyszłych epok",
   "Boxes.Technologies.IgnorePrevEra": "Ignoruj opcjonalne technologie z poprzednich epok",
   "Boxes.Technologies.NoTechs": "Osiągnąłeś koniec tej epoki",
@@ -2476,6 +2479,10 @@
   "Menu.recurringQuests.Desc": "Śledzi, które zadania powtarzalne dały już diamenty",
   "Menu.recurringQuests.Title": "Zadania powtarzalne",
   "Menu.RightBar": "Po prawej",
+  "Menu.RightBar2": {
+    "s": "Po prawej, rozwijany",
+    "r": "Right, expanding"
+  },
   "Menu.SaveMessage.Desc": "Nowa kolejność menu została zapisana",
   "Menu.SaveMessage.Title": "Zapisane!",
   "Menu.Settings.Desc": {
