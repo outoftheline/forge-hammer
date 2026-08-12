@@ -1628,6 +1628,7 @@ let Main = {
 					minimize: true,
 					resize: true,
 					settings: Main.Allies.ShowSettings,
+					popout: true,
 					active_maps:"main",				
 				});
 			} else {

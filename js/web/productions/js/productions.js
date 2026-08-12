@@ -421,6 +421,7 @@ let Productions = {
 			dragdrop: true,
 			minimize: true,
 			resize: true,
+			popout: {w: 1000, h: 700},
         	settings: Productions.ShowSettings
 		});
 
@@ -1911,14 +1912,15 @@ let Productions = {
 				minimize: true,
 				resize: true,
 				settings: Productions.RSettings,
-				//custom_buttons: [{class: "window-popout", callback: Productions.ratingPopOut}],
+				popout: {w: 1200, h: 700},
 			});
 			
 			FH.helper.preloader.show('#ProductionsRating');
 			
 			FH.HTML.AddCssFile('productions');
 
-			$('body').off('click', '.toggle-tab').on('click', '.toggle-tab', async function () {
+			// delegate on the box, not on body - the box may live in a pop-out window
+			$('#ProductionsRatingBody').off('click', '.toggle-tab').on('click', '.toggle-tab', async function () {
 				FH.helper.preloader.show('#ProductionsRating');
 				Productions.RatingCurrentTab = $(this).data('value');
 
@@ -1946,39 +1948,6 @@ let Productions = {
 		tooltip += `<tr><td>${FH.t("Boxes.ProductionsRating.top10percent")}:</td><td>${y[Math.round((y.length-1)*0.9)].toFixed(2)}</td></tr></table>`
 		return tooltip
 	},
-
-	popoutBuildingTT: async (e) => {
-		let buildingId = e?.currentTarget?.dataset?.id
-		let id = e?.currentTarget?.dataset?.meta_id || FH.Main?.CityMapData[buildingId]?.cityentity_id
-		if (!id) return
-
-		let era = e?.currentTarget?.dataset?.era || Technologies.InnoEraNames[FH.Main?.CityMapData[buildingId]?.level]
-		let meta = FH.Main.CityEntities[id]
-		let allies = JSON.parse(e?.currentTarget?.dataset?.allies || "null")
-		let eff = Math.round(JSON.parse(e?.currentTarget?.dataset?.eff || "null"))
-		if (!eff && era) eff = Math.round(100 * Productions.rateBuildings([id], true, era)?.[0]?.rating.totalScore || 0)
-
-		let upgrades = ""
-		let upgradeCount = Kits.allBuildingsUpgradeCounts[id] || {}
-		if (Object.keys(upgradeCount).length > 0) {
-			upgrades = '<span class="upgrades"><span class="base">1</span>';
-			for (let i in upgradeCount) {
-				if (!upgradeCount[i]) continue;
-				upgrades += `<span class="${i}">${upgradeCount[i]}</span>`;
-			}
-			upgrades += '</span>';
-		}
-
-		let h = `<div class="buildingTT">
-				<h2><span>${meta.name}  ${eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})`:''}</span>${upgrades}</h2>
-				<table class="foe-table">
-				<tr><td class="imgContainer"><img src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}"></td>`+
-				`<td style="width:100%; vertical-align:top"">`;
-		h += await FH.Tooltips.BuildingData(meta, era, allies, eff);
-		h += "</td></tr></table></div>"
-		return h
-	},
-
 
 	calculateFSP: (type,value) =>{
 		let sum = 0
@@ -2291,7 +2260,8 @@ let Productions = {
 			await Productions.CalcRatingBody();
 		});
 
-		$('#ProductionsRatingBody [data-original-title]').tooltip({container: "#game_body", html:true});
+		let $ratingTooltips = $('#ProductionsRatingBody [data-original-title]');
+		$ratingTooltips.tooltip({container: FH.HTML.tooltipHost($ratingTooltips), html:true});
 
 		$('.sortable-table').tableSorter();
 
@@ -2315,7 +2285,7 @@ let Productions = {
 		let tab = Productions.RatingBuildingTab || 'everything';
 
 		$('.ratingtable [data-original-title]').tooltip('hide');
-		$('#game_body > .tooltip').remove();
+		FH.HTML.clearTooltips();
 
 		$('.ratingtable .buildingTypeTabs li').removeClass('active').filter('[data-value="'+tab+'"]').addClass('active');
 
@@ -2967,7 +2937,8 @@ let Productions = {
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
-				resize: true
+				resize: true,
+				popout: true
 			});
 			FH.HTML.AddCssFile('productions');
 		}
@@ -3093,8 +3064,9 @@ let Productions = {
 
 			$body.on('input.scoremod', '.scoremod-filter', Productions.FilterScoreModifiers);
 			// Close an open filter popup when clicking outside it; self-unbinds once the box is gone
-			$(document).off('click.scoremodfilter').on('click.scoremodfilter', (e) => {
-				if (!document.getElementById('ScoreModifiersBody')) { $(document).off('click.scoremodfilter'); return; }
+			let modDoc = $body[0] ? $body[0].ownerDocument : document;
+			$(modDoc).off('click.scoremodfilter').on('click.scoremodfilter', (e) => {
+				if (!document.getElementById('ScoreModifiersBody')) { $(modDoc).off('click.scoremodfilter'); return; }
 				if ($(e.target).closest('.scoremod-filter-popup, .scoremod-filterbtn').length) return;
 				Productions.hideScoreModifierPopups();
 			});
@@ -3188,7 +3160,8 @@ let Productions = {
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
-				resize: true
+				resize: true,
+				popout: true
 			});
 		}
 
@@ -3276,7 +3249,8 @@ let Productions = {
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
-				resize: true
+				resize: true,
+				popout: true
 			});
 		}
 
@@ -3320,71 +3294,6 @@ let Productions = {
 	},
 
 
-	ratingPopOut: ()=> {
-		let skinCss = FH.Storage.getItem('HammerSkin')||'variables';
-		let id = 'ProductionsRating',
-			content = $('#ProductionsRatingBody').html(),
-			winHtml = `<!DOCTYPE html>
-						<html>
-							<head id="popout-${id}-head">
-								<meta charset="utf-8" />
-								<title>${FH.t('Menu.ProductionsRating.Title')} - Alpha Version - Forge Hammer</title>
-								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${FH.extUrl}css/${skinCss}.css">
-								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
-								<link rel="stylesheet" href="${FH.extUrl}js/web/productions/css/productions.css">
-								<link rel="stylesheet" href="${FH.extUrl}js/web/customTooltip/css/customTooltip.css">
-								<style>#RatingsResults, #addMetaBuilding, label[for="inventorybuildingscore"], label[for="showallies"], .edit-score-modifier, #ScoreModifiersBtn {display: none !important;}</style>
-							</head>
-							<body class="popup-body"><div id="ProductionsRatingBody">${content}</div></body>
-							<script src="${FH.extUrl}vendor/jQuery/jquery.min.js"></script>
-							<script src="${FH.extUrl}vendor/tooltip/tooltip.js"></script>
-							<script src="${FH.extUrl}vendor/tableSorter/table-sorter.js"></script>
-							<script src="${FH.extUrl}js/foeproxy.js"></script>
-							<script src="${FH.extUrl}js/web/_main/js/_main.js"></script>
-							<script src="${FH.extUrl}js/web/_helper/js/_helper.js"></script>
-							<script src="${FH.extUrl}js/web/productions/js/popout.js"></script>
-						</html>`;
-
-		const winUrl = URL.createObjectURL(
-			new Blob([winHtml], { type: "text/html;charset=utf8" })
-		);
-
-		// objects needed for the popout to work and functions that need to be adjusted
-		window.popoutReady = () => {
-			winObj.Productions = Productions;
-			winObj.i18n = FH.t;
-			winObj.helper = FH.helper;
-			winObj.SaveSettings = SaveSettings;
-			winObj.StartUpDone = Promise.resolve();
-			winObj.srcLinks = srcLinks;
-			winObj.QIActions = { TT: () => {} }; // stub to prevent throw on line 56
-			winObj.FH.HTML= {
-				AddCssFile: (name) => {
-					const link = winObj.document.createElement('link');
-					link.rel = 'stylesheet';
-					link.href = `${FH.extUrl}css/${name}.css`;
-					winObj.document.head.appendChild(link);
-				}
-			};
-			const popoutTooltips = Object.assign({}, FH.Tooltips);
-			popoutTooltips.callbacks = {
-				building: Productions.popoutBuildingTT,
-				Efficiency: Productions.efficiencyTT,
-				InventoryKits: Kits.InventoryTooltip
-			};
-			winObj.Tooltips = popoutTooltips;
-			winObj.Kits = Object.assign({}, FH.Kits);
-			winObj.initPopout();
-			$('#ProductionsRating').remove();
-		};
-
-		const winObj = window.open(
-			winUrl,
-			`popOut-ProductionsRatingBody`,
-			`width=1200,height=600,screenX=100,screenY=100`
-		);
-	},
 	UpdateEfficiencyEvent: {
 		timeout:null,
 		trigger:()=>{

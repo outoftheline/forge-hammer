@@ -16,95 +16,182 @@ e.g.:
 {
 let Tooltips = {
 
-    Container:null,
+    /** @type {Map<Document, HTMLElement>} one tooltip container per document (game window + pop-outs) */
+    hosts: new Map(),
+    activeDoc: null,
     containerActive:false,
     targetElement:null,
     callbacks:{},
     mousePosition:{},
+
+    /** container of the game window - kept for backwards compatibility */
+    get Container() {
+        return Tooltips.hosts.get(document) || null;
+    },
     
     init: async () => {
         await FH.StartUpDone
 
 		FH.HTML.AddCssFile('customTooltip');
-        let container = document.createElement("div");
-        container.id = "TooltipContainer"
-        container.className = "window-box"
-        container.setAttribute('style', 'z-index:1000; position: absolute; display: none; pointer-events: none;');
-        (document.getElementById('game_body') ? $('#game_body') : $('body')).append(container);
-        Tooltips.Container = container;
 
-        window.addEventListener("pointermove", Tooltips.followMouse);
-        
-        
-        $('body').on("pointerenter",".helperTT", async (e)=>{
-            if (e.currentTarget.dataset.callback_tt) {
-                Tooltips.activate()
-        
-                Tooltips.Container.style.left = (event.x+10) + "px";
-                Tooltips.Container.style.top = (event.y+10) + "px";
-                Tooltips.checkposition()
-                
-                let f = e.currentTarget.dataset.callback_tt;
-                if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
-                if (typeof(f) == "function") {
-                    let content = await(f(e));
-                    if (content) {
-                        Tooltips.set(content)
-                    } else {
-                        Tooltips.deactivate()
-                    }
-                } else
-                    Tooltips.set(f);
-            }
-        })
-        $('body').on("pointerleave",".helperTT",(e)=>{
-            Tooltips.deactivate()
-        })    
+        Tooltips.attach(document);
+
         $(`<div id="QIActions" class="helperTT" data-callback_tt="QIActions">${srcLinks.icons("time")}</div>`).appendTo('body').hide();    
         $(`<div id="RewardsList"></div>`).appendTo('body');    
     },
 
-    set: (content) => {
+    /**
+     * Creates a tooltip container in the given document and binds the .helperTT handlers to it.
+     * Called for the game document on startup and for every pop-out window that is opened.
+     *
+     * @param {Document} doc
+     */
+    attach: (doc) => {
+        if (!doc || Tooltips.hosts.has(doc)) return Tooltips.hosts.get(doc);
+
+        let container = doc.createElement("div");
+        container.id = "TooltipContainer"
+        container.className = "window-box"
+        container.setAttribute('style', 'z-index:1000; position: absolute; display: none; pointer-events: none;');
+        (doc.getElementById('game_body') || doc.body).appendChild(container);
+
+        Tooltips.hosts.set(doc, container);
+
+        doc.defaultView.addEventListener("pointermove", Tooltips.followMouse);
+
+        $(doc.body).on("pointerenter", ".helperTT", Tooltips.onEnter);
+        $(doc.body).on("pointerleave", ".helperTT", Tooltips.onLeave);
+
+        return container;
+    },
+
+    /**
+     * @param {Document} doc
+     */
+    detach: (doc) => {
+        if (!doc || !Tooltips.hosts.has(doc)) return;
+
+        if (Tooltips.activeDoc === doc) Tooltips.deactivate();
+
+        try {
+            doc.defaultView?.removeEventListener("pointermove", Tooltips.followMouse);
+            $(doc.body).off("pointerenter", ".helperTT", Tooltips.onEnter);
+            $(doc.body).off("pointerleave", ".helperTT", Tooltips.onLeave);
+            Tooltips.hosts.get(doc)?.remove();
+        } catch (e) {}
+
+        Tooltips.hosts.delete(doc);
+    },
+
+    /**
+     * Tooltip container belonging to an element / event target
+     *
+     * @param target DOM element, event or nothing
+     */
+    containerFor: (target) => {
+        let node = target?.currentTarget || target?.target || target,
+            doc = node?.ownerDocument || document;
+
+        return Tooltips.hosts.get(doc) || Tooltips.hosts.get(document) || null;
+    },
+
+    /** container of the tooltip that is currently shown */
+    activeContainer: () => {
+        return Tooltips.hosts.get(Tooltips.activeDoc || document) || null;
+    },
+
+    onEnter: async (e) => {
+        if (!e.currentTarget.dataset.callback_tt) return;
+
+        Tooltips.activate(e.currentTarget)
+        Tooltips.position(e)
+
+        let f = e.currentTarget.dataset.callback_tt;
+        if (Tooltips.callbacks[f]) f = Tooltips.callbacks[f];
+        if (typeof(f) == "function") {
+            let content = await(f(e));
+            if (content) {
+                Tooltips.set(content, e.currentTarget)
+            } else {
+                Tooltips.deactivate()
+            }
+        } else
+            Tooltips.set(f, e.currentTarget);
+    },
+
+    onLeave: () => {
+        Tooltips.deactivate()
+    },
+
+    set: (content, target = null) => {
         if (!content) return
-        Tooltips.Container.innerHTML = content;
+        let container = target ? Tooltips.containerFor(target) : Tooltips.activeContainer();
+        if (!container) return
+        container.innerHTML = content;
         Tooltips.checkposition()
     },
     addCallback: (id,callback) => {
         Tooltips.callbacks[id] = callback;
     },
+    position: (event) => {
+        let container = Tooltips.activeContainer();
+        if (!container) return
+
+        let win = container.ownerDocument.defaultView;
+
+        container.style.left = (event.x + win.scrollX + 10) + "px";
+        container.style.top = (event.y + win.scrollY + 10) + "px";
+        Tooltips.checkposition()
+    },
     checkposition: () => {
         try {
-            if(Tooltips.containerActive) {
-                if (Tooltips.Container.firstChild.clientHeight+7+Number(Tooltips.Container.style.top.replace("px","")) > Tooltips.Container.parentElement.clientHeight) {
-                    newTop = Tooltips.Container.parentElement.clientHeight-Tooltips.Container.firstChild.clientHeight-7
+            let container = Tooltips.activeContainer();
+
+            if(Tooltips.containerActive && container) {
+                const win = container.ownerDocument.defaultView;
+
+                if (container.firstChild.clientHeight+7+Number(container.style.top.replace("px","")) > container.parentElement.clientHeight + win.scrollY) {
+                    let newTop = container.parentElement.clientHeight + win.scrollY - container.firstChild.clientHeight-7
                     if (newTop<0) newTop=0
-                    Tooltips.Container.style.top=newTop+"px"
+                    container.style.top=newTop+"px"
                 }
-                if (Tooltips.Container.firstChild.clientWidth+7+Number(Tooltips.Container.style.left.replace("px","")) > Tooltips.Container.parentElement.clientWidth) {
-                    let newLeft = Tooltips.Container.parentElement.clientWidth-Tooltips.Container.firstChild.clientWidth-7
+                if (container.firstChild.clientWidth+7+Number(container.style.left.replace("px","")) > container.parentElement.clientWidth + win.scrollX) {
+                    let newLeft = container.parentElement.clientWidth + win.scrollX - container.firstChild.clientWidth-7
                     if (newLeft<0) newLeft=0
-                    Tooltips.Container.style.left=newLeft+"px"
+                    container.style.left=newLeft+"px"
                 }
             }
         } catch (e) {
 
         }
     },
-    activate:() => {
+    activate:(target = null) => {
+        let container = target ? Tooltips.containerFor(target) : Tooltips.activeContainer();
+        if (!container) return
+
+        // a tooltip in another window may still be visible
+        if (Tooltips.activeDoc && Tooltips.activeDoc !== container.ownerDocument) Tooltips.deactivate();
+
+        Tooltips.activeDoc = container.ownerDocument;
         Tooltips.containerActive = true;
-        Tooltips.Container.style.display = "block";
+        container.style.display = "block";
     },
                 
     deactivate:() => {
+        let container = Tooltips.activeContainer();
+
         Tooltips.containerActive = false;
-        Tooltips.Container.style.display = "none";
+        if (container) container.style.display = "none";
     },
     followMouse:(event)=>{
         Tooltips.mousePosition={x:event.x,y:event.y};
         if (!Tooltips.containerActive) return;
-        Tooltips.Container.style.left = (event.x+10) + "px";
-        Tooltips.Container.style.top = (event.y+10) + "px";
-        Tooltips.checkposition()
+
+        // only the window the tooltip is shown in moves it
+        let container = Tooltips.activeContainer();
+        if (!container || container.ownerDocument !== (event.target?.ownerDocument || event.view?.document || document)) return;
+
+        Tooltips.position(event)
     },
     buildingTT: async (e)=>{
         let buildingId=e?.currentTarget?.dataset?.id
@@ -1055,6 +1142,16 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 Tooltips.init();
 Tooltips.addCallback("building", Tooltips.buildingTT);
 Tooltips.addCallback("QIActions", QIActions.TT);
-FH.Tooltips = {deactivate: Tooltips.deactivate, BuildingData: Tooltips.BuildingData, SizeTimeRoadData: Tooltips.SizeTimeRoadData, addCallback: Tooltips.addCallback};
+FH.Tooltips = {
+	deactivate: Tooltips.deactivate,
+	activate: Tooltips.activate,
+	set: Tooltips.set,
+	attach: Tooltips.attach,
+	detach: Tooltips.detach,
+	containerFor: Tooltips.containerFor,
+	BuildingData: Tooltips.BuildingData,
+	SizeTimeRoadData: Tooltips.SizeTimeRoadData,
+	addCallback: Tooltips.addCallback
+};
 FH.QIActions = {setCapacity: QIActions.setCapacity};
 }
