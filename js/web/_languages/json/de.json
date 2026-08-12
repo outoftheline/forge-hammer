@@ -1140,7 +1140,7 @@
   "Boxes.ProductionsRating.ModifiersTitle": "Score-Modifikatoren",
   "Boxes.ProductionsRating.ModifierValue": "Modifikator",
   "Boxes.ProductionsRating.NoGBsExplanation": "Zeige Legendäre Bauwerke",
-  "Boxes.ProductionsRating.NoLimitedExplanation": "Zeige erhabenen/eingeschränkten Gebäude",
+  "Boxes.ProductionsRating.NoLimitedExplanation": "Zeige erhabenen/eingeschränkten Gebäude aus dem Inventar",
   "Boxes.ProductionsRating.PresetActive": "Aktives Preset",
   "Boxes.ProductionsRating.PresetConfirmDelete": "Dieses Preset löschen?",
   "Boxes.ProductionsRating.PresetConfirmReset": "Dieses Preset auf Standardwerte zurücksetzen?",

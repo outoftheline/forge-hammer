@@ -1144,7 +1144,7 @@
   "Boxes.ProductionsRating.ModifiersTitle": "Score Modifiers",
   "Boxes.ProductionsRating.ModifierValue": "Modifier",
   "Boxes.ProductionsRating.NoGBsExplanation": "Show Great Buildings",
-  "Boxes.ProductionsRating.NoLimitedExplanation": "Show ascended/limited buildings",
+  "Boxes.ProductionsRating.NoLimitedExplanation": "Show ascended/limited buildings from inventory",
   "Boxes.ProductionsRating.PresetActive": "Active preset",
   "Boxes.ProductionsRating.PresetConfirmDelete": "Delete this preset?",
   "Boxes.ProductionsRating.PresetConfirmReset": "Reset this preset to default values?",

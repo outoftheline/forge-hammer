@@ -295,6 +295,7 @@
 
 #statsBody.stats-doughnut .stats-legend-item {
 	white-space: normal;
+	display: block;
 }
 
 #statsBody.stats-doughnut #statsTitle {

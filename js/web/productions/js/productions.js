@@ -1017,7 +1017,7 @@ let Productions = {
 				table.push('<table id="'+type+'-list" class="foe-table sortable-table TSinactive '+type+'-list active exportable">')
 				table.push('<thead class="sticky">')
 				table.push('<tr>')
-				table.push('<th colspan="3"><span class="btn change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
+				table.push('<th colspan="3"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
 				if (!type.includes('att') && !type.includes('def') && type!='items') {
 					table.push('<th colspan="3" class="textright">')
 					table.push((typeCurrentSum >= 10000 ? FH.HTML.FormatNumberShort(typeCurrentSum) : FH.HTML.Format(typeCurrentSum))+ "/" + (typeSum >= 10000 ? FH.HTML.FormatNumberShort(typeSum) : FH.HTML.Format(typeSum)))
@@ -1039,7 +1039,7 @@ let Productions = {
 					table.push('</th>')
 				}
 				else {
-					table.push('<th colspan="8" class="textright">'+(type=="items" ? '<span class="btn" onclick="Productions.showItemSources(event)" style="float:right;">'+FH.t('Boxes.ItemSources.Title')+'</span>' : '')+'</th>')
+					table.push('<th colspan="8" class="textright">'+(type=="items" ? '<span class="btn btn-mid" onclick="Productions.showItemSources(event)" style="float:right;">'+FH.t('Boxes.ItemSources.Title')+'</span>' : '')+'</th>')
 				}
 				table.push('</tr>')
 
@@ -1222,7 +1222,7 @@ let Productions = {
 		table.push('<table id="'+type+'-list" class="foe-table sortable-table exportable TSinactive '+type+'-list active">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
-		table.push('<th colspan="5"><span class="btn change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
+		table.push('<th colspan="5"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
 		table.push(`<th colspan=${eras.length+1} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))} 	<button class="typeBoost btn btn-slim"><a href="#special_goods" class="game-cursor">★</a></button> </th>`)
 		table.push('</tr>')
 
@@ -1247,7 +1247,7 @@ let Productions = {
 		table.push('<table class="foe-table sortable-table TSinactive '+type+'-group">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
-		table.push('<th><span class="btn change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
+		table.push('<th><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
 		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header">')
@@ -1386,7 +1386,7 @@ let Productions = {
 		table.push('<table id="'+type+'-list" class="foe-table sortable-table exportable TSinactive '+type+'-list active">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
-		table.push('<th colspan="'+(6+eras.length)+'"><span class="btn change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">')
+		table.push('<th colspan="'+(6+eras.length)+'"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">')
 		table.push(`<span style="float:right;">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</span></th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header exportheader">')
@@ -1409,7 +1409,7 @@ let Productions = {
 		table.push('<table class="foe-table sortable-table TSinactive '+type+'-group">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
-		table.push('<th><span class="btn change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
+		table.push('<th><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
 		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header">')
@@ -1447,7 +1447,7 @@ let Productions = {
 		tableGr.push('<table class="foe-table sortable-table TSinactive '+type+'-group">')
 		tableGr.push('<thead class="sticky">')
 		tableGr.push('<tr>')
-		tableGr.push('<th colspan="7"><span class="btn change-view game-cursor" data-type="' + type + '">' + (type=="items" || type=="units" ?FH.t('Boxes.Productions.ModeSum') : FH.t('Boxes.Productions.ModeSingle')) + '</span></th>')
+		tableGr.push('<th colspan="7"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + (type=="items" || type=="units" ?FH.t('Boxes.Productions.ModeSum') : FH.t('Boxes.Productions.ModeSingle')) + '</span></th>')
 		tableGr.push('</tr>')
 		tableGr.push('<tr class="sorter-header">')
 		tableGr.push('<th data-type="prodgroup'+type+'" class="is-number">' + FH.t('Boxes.Productions.Headings.number') + '</th>')
@@ -1509,7 +1509,7 @@ let Productions = {
 		table.push('<table class="foe-table '+type+'-sum">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
-		table.push('<th colspan="8"><span class="btn change-view game-cursor">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
+		table.push('<th colspan="8"><span class="btn btn-mid change-view game-cursor">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
 		table.push('</tr>')
 		table.push('<tr >')
 		table.push('<th colspan="'+(type=="items"?1:2) +'">' + FH.t('Boxes.Productions.Headings.number') + '</th>')
@@ -1522,7 +1522,7 @@ let Productions = {
 				let amount = (e.amount ? parseFloat(Math.round(e.amount*100)/100) : "") 
 							+ (e.random && e.amount ? " + " : "") 
 							+ (e.random ? "Ø " + parseFloat(Math.round(e.random*100)/100) : "")
-				table.push (`<tr><td class="text-right">${amount}</td><td>${(e.fragment ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" />` : "" )}</td><td colspan="5">${e.name}</td></tr>`)
+				table.push (`<tr><td class="text-right">${amount}</td><td>${(e.fragment ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" />` : "" )}</td><td colspan="5">${e.name}</td></tr>`)
 			} else {//units
 				let currentamount = (e.current?.amount ? parseFloat(Math.round(e.current.amount*100)/100) : (e.theory?.type !== "random" ? "0" :""))
 
@@ -1659,7 +1659,7 @@ let Productions = {
 				if (production.resources?.icon?.includes("good")) return false;
 
 				let frag = production.resources.subType === "fragment";
-				allItems += '<span>'+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + production.resources.name + "</span><br>";
+				allItems += '<span>'+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + production.resources.name + "</span><br>";
 				itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0});
 			}
 		}
@@ -1674,9 +1674,9 @@ let Productions = {
 							let frag = resource.subType === "fragment"
 							let amount = parseFloat(Math.round(resource.amount*resource.dropChance * 100) / 100)
 							if (resource.type === "unit") {
-								allUnits += "Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + `<img src='${srcLinks.get("/shared/icons/"+resource.name.replace(/next./,"").replace("random","random_production")+".png",true)}'>` + "<br>"
+								allUnits += "Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + `<img src='${srcLinks.get("/shared/icons/"+resource.name.replace(/next./,"").replace("random","random_production")+".png",true)}'>` + "<br>"
 							} else {
-								allItems += "<span>Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + resource.name + "</span><br>"
+								allItems += "<span>Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + resource.name + "</span><br>"
 								itemArray.push({fragment:frag,name:resource.name,amount:0,random:amount})
 							}
 						}
@@ -1690,7 +1690,7 @@ let Productions = {
 						let itemId = production.resources.id.split('#')[1]
 						itemId = (itemId === undefined) ? '' : itemId
 						let frag = production.resources.subType === "fragment"
-						allItems += `<span class="'${itemId}'">`+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + production.resources.name.replace(/^\d+/, "") + "</span><br>"
+						allItems += `<span class="'${itemId}'">`+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + production.resources.name.replace(/^\d+/, "") + "</span><br>"
 						itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0})
 					}
 				}

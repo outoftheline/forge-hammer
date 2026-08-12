@@ -8,7 +8,9 @@
 - Daten für das nächste Zeitalter hinzugefügt
 - Gebäude Effizienz: Fenster überarbeitet und Ansicht für erhabene Gebäude hinzugefügt
 - Stadt Übersicht: Suche zeigt jetzt auch die Anzahl der gefundenen Gebäude und kann auch nach nach MetaId suchen
+- Stadtübersicht: Anzahl der Erweiterungen für andere Spieler hinzugefügt
 - Stadtplaner: kleine Gebäude-Info hinzugefügt
+- BG Helfer: Ansicht etwas vereinfacht und die Güter-Logik umgekehrt
 
 ### Bug Fixes
 - LG Rechner hat manchmal nach dem leveln nicht die richtigen Daten geladen (jetzt wirklich repariert!)

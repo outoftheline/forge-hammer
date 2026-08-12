@@ -8,7 +8,9 @@
 - Added data for the next era
 - Building Efficiency: Reworked the UI and added a filter for ascended buildings
 - City Overview: Search now shows the amount of buildings found and can filter by entity id
-- City Planner: added building info when only one is selected
+- City Overview: Added expansions for other players cities
+- City Planner: Added building info when only one is selected
+- BG Helper: Simplified the UI and reversed the goods rating logic
 
 ### Bug Fixes
 - GB Calculator sometimes didn't update after leveling (really fixed now!)
