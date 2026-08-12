@@ -1,0 +1,67 @@
+/*
+ * Copyright (C) 2026 Forge Hammer
+ * Licensed under AGPL - see LICENSE.md for details.
+ */
+
+/* ---------------------------------------------------------------- game window */
+
+/* marker that keeps the position of a box that is currently popped out */
+.fh-popout-placeholder {
+	display: none;
+}
+
+/* the pop-out button in the box header */
+.window-head .window-popout {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+	line-height: 0;
+}
+
+.window-head .window-popout:hover {
+	opacity: 1;
+}
+
+/* ----------------------------------------------------------- pop-out window */
+
+body.fh-popout-host {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	overflow: hidden;
+}
+
+body.fh-popout-host .window-box.popped-out {
+	position: static;
+	left: auto;
+	top: auto;
+	right: auto;
+	bottom: auto;
+	margin: 0;
+	width: 100% !important;
+	height: 100vh !important;
+	min-width: 0;
+	min-height: 0;
+	max-width: none;
+	max-height: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	transform: none;
+}
+
+body.fh-popout-host .window-box.popped-out > .window-body {
+	height: 100vh;
+	max-height: none;
+	overflow: auto;
+	visibility: visible !important;
+}
+
+.window-box.popped-out .window-head {
+	display: none !important;
+}
+
+body.fh-popout-host > #TooltipContainer {
+	z-index: 1000;
+}

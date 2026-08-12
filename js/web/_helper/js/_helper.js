@@ -218,12 +218,19 @@ helper.loadChartJS = () => {
 };
 let HTML = {
 
-	customFunctions: [],
+	customFunctions: {},
+
+	/**
+	 * Registry of all boxes that were created with `popout: true`
+	 * id => {args, hooks}
+	 */
+	Boxes: {},
+
 	callCustomFunction: (id) => {
-		if (HTML.customFunctions[id] && typeof HTML.customFunctions[id] === 'function') {
-			HTML.customFunctions[id]();
-		} else {
-			new Function(`${HTML.customFunctions[id + 'PopOut']}`)();
+		const callback = HTML.customFunctions[id];
+
+		if (typeof callback === 'function') {
+			callback();
 		}
 	},
 	IsReversedFloatFormat: undefined,
@@ -281,6 +288,21 @@ let HTML = {
 			if (typeof args['settings'] !== 'boolean') {
 				HTML.customFunctions[`${args['id']}Settings`] = args['settings'];
 			}
+		}
+
+		// pop-out button, enabled per box with `popout: true` or `popout: {w, h, onPopout, onDock, onResize}`
+		if (args['popout']) {
+			let pop = $('<span />')
+				.addClass('window-popout')
+				.attr('id', `${args['id']}-popout`)
+				.attr('title', FH.t('Boxes.PopOut.Button'));
+
+			buttons.prepend(pop);
+
+			HTML.Boxes[args['id']] = {
+				args: args,
+				hooks: (typeof args['popout'] === 'object' && args['popout'] !== null) ? args['popout'] : {}
+			};
 		}
 
 		if (args['custom_buttons']) {
@@ -390,11 +412,12 @@ let HTML = {
 			}
 
 			if (args['popout']) {
-				if (typeof args['popout'] !== 'boolean') {
-					$(`#${args['id']}`).on('click', `#${args['id']}-popout`, function () {
-						HTML.PopOutBox(args['id']);
-					});
-				}
+				$(`#${args['id']}`).on('click', `#${args['id']}-popout`, function () {
+					HTML.PopOutBox(args['id']);
+				});
+
+				// was this box popped out in the previous session?
+				HTML.Popout?.queueRestore(args['id']);
 			}
 
 			if (args['resize']) {
@@ -422,10 +445,14 @@ let HTML = {
 				e.stopPropagation();
 			});
 
-			// Brings the clicked window to the front
-			$('body').on('click', '.window-box', function () {
-				HTML.BringToFront($(this));
-			});
+			// Brings the clicked window to the front (bound once, not once per box)
+			if (!HTML.bringToFrontBound) {
+				HTML.bringToFrontBound = true;
+
+				$('body').on('click', '.window-box', function () {
+					HTML.BringToFront($(this));
+				});
+			}
 
 			return true;
 		});
@@ -652,7 +679,13 @@ let HTML = {
 
 
 	PopOutBox: (id) => {
-		HTML.callCustomFunction(id + 'PopOut');
+		// a module can take over completely by registering HTML.customFunctions[id + 'PopOut']
+		if (typeof HTML.customFunctions[id + 'PopOut'] === 'function') {
+			HTML.callCustomFunction(id + 'PopOut');
+			return;
+		}
+
+		HTML.Popout.open(id);
 	},
 
 
@@ -670,6 +703,9 @@ let HTML = {
 	 * @returns {boolean}
 	 */
 	CloseOpenBox: (cssid) => {
+
+		// dock a popped out box first, so it is removed from the game DOM as usual
+		if (HTML.Popout?.isPopped(cssid)) HTML.Popout.close(cssid);
 
 		let box = $('#' + cssid);
 
@@ -701,6 +737,8 @@ let HTML = {
 			.attr('rel', 'stylesheet');
 
 		$('head').append(css);
+
+		HTML.Popout?.syncCssAll();
 	},
 
 
@@ -715,6 +753,8 @@ let HTML = {
 			.attr('rel', 'stylesheet');
 
 		$('head').append(css);
+
+		HTML.Popout?.syncCssAll();
 	},
 
 
@@ -799,7 +839,10 @@ let HTML = {
 
 
 	BringToFront: ($this) => {
-		$('.window-box').removeClass('on-top');
+		// a popped out box is alone in its window and never competes for z-index
+		if ($this.hasClass('popped-out')) return;
+
+		$('.window-box').not('.popped-out').removeClass('on-top');
 
 		$this.addClass('on-top');
 	},
@@ -875,32 +918,56 @@ let HTML = {
 	},
 
 
-	PopOutBoxBuilder: (params) => {
+	/**
+	 * Delegated event handlers must not be bound to body/document, otherwise they
+	 * stop firing as soon as the box is moved into a pop-out window.
+	 *
+	 * @param id      box id
+	 * @param events  e.g. 'click'
+	 * @param selector
+	 * @param handler
+	 */
+	on: (id, events, selector, handler) => {
+		return $(`#${id}Body`).off(events, selector).on(events, selector, handler);
+	},
 
-		let id = params['id'];
 
-		const winHtml = `<!DOCTYPE html>
-						<html>
-							<head id="popout-${id}-head">
-								<title>PopOut Test - ${FH.t('Boxes.Outpost.Title')}</title>
-								<link rel="stylesheet" href="${FH.extUrl}css/variables.css">
-								<link rel="stylesheet" href="${FH.extUrl}css/boxes.css">
-								<link rel="stylesheet" href="${FH.extUrl}css/goods.css">
-							</head>
-							<body id="popout-${id}-body"></body>
-						</html>`;
+	/**
+	 * Is the box currently in the DOM? (game window or pop-out window)
+	 *
+	 * @param id
+	 * @returns {boolean}
+	 */
+	isOpen: (id) => {
+		return document.getElementById(id) !== null;
+	},
 
-		const winUrl = URL.createObjectURL(
-			new Blob([winHtml], { type: "text/html" })
-		);
 
-		const winObject = window.open(
-			winUrl,
-			`popOut-${id}`,
-			`width=${params['width']},height=${params['height']},screenX=200,screenY=200`
-		);
+	/**
+	 * Container for bootstrap tooltips ($.tooltip({container: ...})) of an element,
+	 * which may live in the game window or in a pop-out window.
+	 *
+	 * @param el DOM element or jQuery object
+	 */
+	tooltipHost: (el) => {
+		let node = (el && el.jquery) ? el[0] : el,
+			doc = (node && node.ownerDocument) ? node.ownerDocument : document;
 
-		return winObject;
+		if (doc !== document) return doc.body;
+
+		return document.getElementById('game_body') ? '#game_body' : 'body';
+	},
+
+
+	/**
+	 * Removes leftover bootstrap tooltips in the game window and in all pop-outs
+	 */
+	clearTooltips: () => {
+		$('#game_body > .tooltip').remove();
+
+		for (const doc of (HTML.Popout ? HTML.Popout.documents() : [])) {
+			$(doc.body).children('.tooltip').remove();
+		}
 	},
 
 
