@@ -40,12 +40,13 @@
     min-width: 30px;
 	filter: saturate(0.8);
 }
-#bluegalaxy table th.icon span::before  {
+#bluegalaxy table th.icon span::before, #bluegalaxy span.icon {
     background: transparent url('../../productions/images/productions.png') -233px 2px no-repeat;
     width: 27px;
-    height: 30px;
+    height: 27px;
     content: "";
-    display: block;
+    display: inline-block;
+    vertical-align: bottom;
 }
 #bluegalaxy tr.sorter-header th {
 	padding: 5px 6px 7px;
@@ -70,11 +71,11 @@
     cursor: pointer
 }
 
-#bluegalaxy table th.icon.goods span::before  {
+#bluegalaxy table th.icon.goods span::before, #bluegalaxy span.icon.goods  {
     background-position: -104px 3px;
 }
 
-#bluegalaxy table th.icon.old_goods span::before  {
+#bluegalaxy table th.icon.old_goods span::before, #bluegalaxy span.icon.old_goods {
     background-position: -524px 3px;
 }
 

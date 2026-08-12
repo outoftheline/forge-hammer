@@ -77,8 +77,8 @@ let BlueGalaxy = {
             FH.HTML.AddCssFile('bluegalaxy');
 
             $('#bluegalaxy').on('blur', '#goodsValue', function () {
-                BlueGalaxy.GoodsValue = parseFloat($('#goodsValue').val());
-                if (isNaN(BlueGalaxy.GoodsValue)) BlueGalaxy.GoodsValue = 0;
+                let GoodsPerFP = parseFloat($('#goodsValue').val());
+                BlueGalaxy.GoodsValue = (isNaN(GoodsPerFP) || GoodsPerFP <= 0) ? 0 : 1 / GoodsPerFP;
                 FH.Storage.setItem('BlueGalaxyGoodsValue', BlueGalaxy.GoodsValue);
 
                 BlueGalaxy.CalcBody();
@@ -86,8 +86,8 @@ let BlueGalaxy = {
 
 
             $('#bluegalaxy').on('blur', '#OlderGoodsValue', function () {
-                BlueGalaxy.OlderGoodsValue = parseFloat($('#OlderGoodsValue').val());
-                if (isNaN(BlueGalaxy.OlderGoodsValue)) BlueGalaxy.OlderGoodsValue = 0;
+                let OlderGoodsPerFP = parseFloat($('#OlderGoodsValue').val());
+                BlueGalaxy.OlderGoodsValue = (isNaN(OlderGoodsPerFP) || OlderGoodsPerFP <= 0) ? 0 : 1 / OlderGoodsPerFP;
                 FH.Storage.setItem('BlueGalaxyOlderGoodsValue', BlueGalaxy.OlderGoodsValue);
 
                 BlueGalaxy.CalcBody();
@@ -211,28 +211,17 @@ let BlueGalaxy = {
         });
 
         let h = [];
-        h.push('<div class="text-center dark-bg header">');
-
-        //let Title = FH.t('Boxes.BlueGalaxy.DoneProductionsTitle');
-        //h.push('<strong class="title">' + Title + '</strong><br>');
-
+        let GoodsPerFP = BlueGalaxy.GoodsValue > 0 ? Math.round(1/BlueGalaxy.GoodsValue*100)/100 : 0;
+        let OlderGoodsPerFP = BlueGalaxy.OlderGoodsValue > 0 ? Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100 : 0;
         if (BlueGalaxy.DoubleCollections > 0)
-            h.push(FH.t('Boxes.BlueGalaxy.AvailableCollections')+ " " + BlueGalaxy.DoubleCollections+"<br>");
-
-        h.push(FH.t('Boxes.BlueGalaxy.GoodsValue') + ' ');
-        h.push('<input type="number" id="goodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.GoodsValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
-        if (BlueGalaxy.GoodsValue > 0) {
-            h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.GoodsValue*100)/100}) + ')</small>')
-        }
-
-        h.push('<br>');
-        h.push(FH.t('Boxes.BlueGalaxy.OlderGoodsValue') + ' ');
-        h.push('<input type="number" id="OlderGoodsValue" step="0.01" min="0" max="1000" value="' + BlueGalaxy.OlderGoodsValue + '" title="' + FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue')) + '">');   
-        if (BlueGalaxy.OlderGoodsValue > 0) {
-            h.push('<small> (' + FH.helper.str.Replacer(FH.t('Boxes.BlueGalaxy.GoodsPerFP'), {goods: Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100}) + ')</small>')
-        }
-
-        h.push('</div>');       
+            $('#bluegalaxy .title').html(`${FH.t('Boxes.BlueGalaxy.Title')} - <small title="${FH.t('Boxes.BlueGalaxy.AvailableCollections')}${BlueGalaxy.DoubleCollections}">${BlueGalaxy.DoubleCollections}</small>`);
+        
+        h.push(`<div class="text-center dark-bg header">
+                ${FH.t('Boxes.BlueGalaxy.ValueRating')} 
+                <input type="number" id="goodsValue" step="1" min="0" max="100" size="3" value="${GoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon goods"></span> 
+                &middot; 
+                ${FH.t('Boxes.BlueGalaxy.ValueRating')}
+                <input type="number" id="OlderGoodsValue" step="1" min="0" max="100" size="3" value="${OlderGoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon old_goods"></span></div>`);       
 
         let table = [];
 
@@ -320,9 +309,6 @@ let BlueGalaxy = {
     },
 
 
-    /**
-    *
-    */
 	ShowSettings: () => {
 		let autoOpen = Settings.GetSetting('ShowBlueGalaxyHelper');
         let showBGFragments = JSON.parse(FH.Storage.getItem('showBGFragments')||"true");
@@ -337,9 +323,6 @@ let BlueGalaxy = {
     },
 
 
-    /**
-    *
-    */
     SaveSettings: () => {
         let value = false;
 		if ($("#autoStartBGHelper").is(':checked'))

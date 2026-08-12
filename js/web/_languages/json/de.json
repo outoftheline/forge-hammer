@@ -145,6 +145,7 @@
   "Boxes.BlueGalaxy.OlderGoodsValue": "Bewertung Güter aus früheren Zeitaltern in FP",
   "Boxes.BlueGalaxy.Title": "Blaue Galaxie Helfer",
   "Boxes.BlueGalaxy.TTGoodsValue": "Dieser Wert dient zur Bewertung von Gebäuden, die Güter produzieren. Wieviele FP ist dir ein Gut wert?",
+  "Boxes.BlueGalaxy.ValueRating": "1 FP = ",
   "Boxes.BonusService.aid_goods": "Friedensturm: übrige Hilfen mit Gütern",
   "Boxes.BonusService.diplomatic_gifts": "Weltraumfrachter: übrige Versuche für diplomatische Geschenke.",
   "Boxes.BonusService.donequests": "Zeigt erledigte Quests",
