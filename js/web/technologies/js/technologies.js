@@ -304,8 +304,8 @@ let Technologies = {
         let processTech = (Tech, ressourceObject) => {
             let EraID = Technologies.Eras[Tech['era']];
 
-            if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) return ressourceObject; // Vorherige ZA ausblenden
-            if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) return ressourceObject; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
+            if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) return; // Vorherige ZA ausblenden
+            if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) return; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
 
             if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
 
@@ -316,7 +316,6 @@ let Technologies = {
                 }
                 TechCount++;
             }
-            return ressourceObject;
         };
         
         while (i < children.length) {
@@ -333,17 +332,28 @@ let Technologies = {
             if (!Technologies.UnlockedTechnologies.unlockedNodes.includes(techId) && 
                 !Tech.isTeaser && 
                 Tech.__class__ !== 'BranchChoiceCompositeNode') {
-                RequiredResources = processTech(Tech, RequiredResources);
+                processTech(Tech, RequiredResources);
             } else if (Tech.__class__ == 'BranchChoiceCompositeNode') {
                 let branchRes = [];
                 for (let branch of Tech.branches) {
-                    let resSum = {};
-                    for (let Tech of branch.nodes) {
-                        if (!Technologies.UnlockedTechnologies.unlockedNodes.includes(Tech.id) &&
-                            !Tech['isTeaser'] && 
-                            Tech.__class__ !== 'BranchChoiceCompositeNode') {
-                            resSum = processTech(Tech, resSum);
+                    let resSum = {},
+                        branchActive = false;
+                    for (let tech of branch.nodes) {
+                        if (Technologies.UnlockedTechnologies.unlockedNodes.includes(tech.id) ||
+                            inProgress?.[tech.id]) 
+                            branchActive = true;
+                        if (!Technologies.UnlockedTechnologies.unlockedNodes.includes(tech.id) &&
+                            !tech['isTeaser'] && 
+                            tech.__class__ !== 'BranchChoiceCompositeNode') {
+                            processTech(tech, resSum);
                         }
+                    }
+                    if (branchActive) {
+                        branchRes = [];
+                        for (let [ResourceName, amount] of Object.entries(resSum)) {
+                            RequiredResources[ResourceName] = (RequiredResources[ResourceName] || 0) + amount;
+                        }
+                        break;
                     }
                     branchRes.push(resSum);
                 }
