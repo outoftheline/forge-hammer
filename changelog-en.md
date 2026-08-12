@@ -11,6 +11,7 @@
 - City Overview: Added expansions for other players cities
 - City Planner: Added building info when only one is selected
 - BG Helper: Simplified the UI and reversed the goods rating logic
+- Stats: Added the eye icon in the legend, which let's you toggle all values
 
 ### Bug Fixes
 - GB Calculator sometimes didn't update after leveling (really fixed now!)

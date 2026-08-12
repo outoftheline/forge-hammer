@@ -1180,6 +1180,20 @@ let Stats = {
 
 
 	/**
+	 * "toggle all" legend entry that hides/shows everything at once
+	 *
+	 * @param allHidden
+	 * @returns {string}
+	 */
+	renderToggleAllLegendItem: (allHidden) => {
+		const state = allHidden ? 'stats-legend-hidden' : '';
+		return `<div class="stats-legend-item stats-legend-toggleall ${state} clickable" data-toggleall="1">
+			<span class="stats-legend-label"><img class="show-entity" src="${ FH.extUrl + 'images/hud/open-eye.png'}"></span>
+		</div>`;
+	},
+
+
+	/**
 	 * Update chart
 	 *
 	 * @param series
@@ -1240,7 +1254,9 @@ let Stats = {
 				if (!container) return;
 
 				const items = chart.options.plugins.legend.labels.generateLabels(chart);
-				container.innerHTML = items.map(item => {
+				const allHidden = items.length > 0 && items.every(item => item.hidden);
+
+				container.innerHTML = Stats.renderToggleAllLegendItem(allHidden) + items.map(item => {
 					const hidden = item.hidden ? 'stats-legend-hidden' : '';
 					const meta = chart.data.datasets[item.datasetIndex]?._meta || {};
 					const img = meta.unitUrl
@@ -1255,7 +1271,18 @@ let Stats = {
 					</div>`;
 				}).join('');
 
-				container.querySelectorAll('.stats-legend-item').forEach(el => {
+				const toggleAllEl = container.querySelector('[data-toggleall]');
+				if (toggleAllEl) {
+					toggleAllEl.addEventListener('click', () => {
+						const nowHidden = !allHidden;
+						chart.data.datasets.forEach((_, i) => {
+							chart.getDatasetMeta(i).hidden = nowHidden;
+						});
+						chart.update();
+					});
+				}
+
+				container.querySelectorAll('.stats-legend-item[data-index]').forEach(el => {
 					el.addEventListener('click', () => {
 						const index = Number(el.dataset.index);
 						const meta = chart.getDatasetMeta(index);
@@ -1544,7 +1571,9 @@ let Stats = {
 
 				const dataset = chart.data.datasets[0];
 				const meta = chart.getDatasetMeta(0);
-				container.innerHTML = chart.data.labels.map((label, i) => {
+				const allHidden = meta.data.length > 0 && meta.data.every(point => point?.hidden);
+
+				container.innerHTML = Stats.renderToggleAllLegendItem(allHidden) + chart.data.labels.map((label, i) => {
 					const color = dataset.backgroundColor[i] || '#ccc';
 					const hidden = meta.data[i]?.hidden ? 'stats-legend-hidden' : '';
 					const pointImage = dataset._pointImages?.[i] || '';
@@ -1556,7 +1585,18 @@ let Stats = {
 					</span>`;
 				}).join('');
 
-				container.querySelectorAll('.stats-legend-item').forEach(el => {
+				const toggleAllEl = container.querySelector('[data-toggleall]');
+				if (toggleAllEl) {
+					toggleAllEl.addEventListener('click', () => {
+						const nowHidden = !allHidden;
+						chart.getDatasetMeta(0).data.forEach(point => {
+							point.hidden = nowHidden;
+						});
+						chart.update();
+					});
+				}
+
+				container.querySelectorAll('.stats-legend-item[data-index]').forEach(el => {
 					el.addEventListener('click', () => {
 						const index = Number(el.dataset.index);
 						const pointMeta = chart.getDatasetMeta(0).data[index];
@@ -1863,7 +1903,9 @@ let Stats = {
 				if (!container) return;
 
 				let items = chart.options.plugins.legend.labels.generateLabels(chart);
-				container.innerHTML = items.map(item => {
+				let allHidden = items.length > 0 && items.every(item => item.hidden);
+
+				container.innerHTML = Stats.renderToggleAllLegendItem(allHidden) + items.map(item => {
 					let hidden = item.hidden ? 'stats-legend-hidden' : '';
 					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
 						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
@@ -1871,7 +1913,18 @@ let Stats = {
 					</div>`;
 				}).join('');
 
-				container.querySelectorAll('.stats-legend-item').forEach(el => {
+				let toggleAllEl = container.querySelector('[data-toggleall]');
+				if (toggleAllEl) {
+					toggleAllEl.addEventListener('click', () => {
+						let nowHidden = !allHidden;
+						chart.data.datasets.forEach((_, i) => {
+							chart.getDatasetMeta(i).hidden = nowHidden;
+						});
+						chart.update();
+					});
+				}
+
+				container.querySelectorAll('.stats-legend-item[data-index]').forEach(el => {
 					el.addEventListener('click', () => {
 						let index = Number(el.dataset.index);
 						let meta = chart.getDatasetMeta(index);
@@ -2026,7 +2079,9 @@ let Stats = {
 					};
 					return lastY(b) - lastY(a);
 				});
-				container.innerHTML = items.map(item => {
+				let allHidden = items.length > 0 && items.every(item => item.hidden);
+
+				container.innerHTML = Stats.renderToggleAllLegendItem(allHidden) + items.map(item => {
 					let hidden = item.hidden ? 'stats-legend-hidden' : '';
 					let playerInfo = players[playerIds[item.datasetIndex]] || {};
 					let avatarUrl = playerInfo.avatar ? srcLinks.GetPortrait(playerInfo.avatar) : '';
@@ -2038,7 +2093,18 @@ let Stats = {
 					</div>`;
 				}).join('');
 
-				container.querySelectorAll('.stats-legend-item').forEach(el => {
+				let toggleAllEl = container.querySelector('[data-toggleall]');
+				if (toggleAllEl) {
+					toggleAllEl.addEventListener('click', () => {
+						let nowHidden = !allHidden;
+						chart.data.datasets.forEach((_, i) => {
+							chart.getDatasetMeta(i).hidden = nowHidden;
+						});
+						chart.update();
+					});
+				}
+
+				container.querySelectorAll('.stats-legend-item[data-index]').forEach(el => {
 					el.addEventListener('click', () => {
 						let index = Number(el.dataset.index);
 						let meta = chart.getDatasetMeta(index);

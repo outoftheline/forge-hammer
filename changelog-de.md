@@ -11,6 +11,7 @@
 - Stadtübersicht: Anzahl der Erweiterungen für andere Spieler hinzugefügt
 - Stadtplaner: kleine Gebäude-Info hinzugefügt
 - BG Helfer: Ansicht etwas vereinfacht und die Güter-Logik umgekehrt
+- Statistiken: Mit dem Auge-Symbol kann man nun auf einen Schlag alles aus- oder einblenden
 
 ### Bug Fixes
 - LG Rechner hat manchmal nach dem leveln nicht die richtigen Daten geladen (jetzt wirklich repariert!)
