@@ -82,8 +82,8 @@
 	--table-bg-odd: #6cc0cf17;
 	--table-bg-darker: #40190080;
 	--table-bg-info: #003c6d63;
-	--table-bt-info: #455461;
-	--table-bb-info: #252a43;
+	--table-bt-info: transparent;
+	--table-bb-info: #131938;
 	--table-bg-success: #277d094d;
 	--table-bt-success: #367f34;
 	--table-bb-success: #0b350b;

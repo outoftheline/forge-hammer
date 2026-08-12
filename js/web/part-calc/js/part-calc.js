@@ -566,7 +566,8 @@ let Parts = {
 			ExtTotal = 0, // Summe aller Externen Einzahlungen
 			EigenCounter = 0, // Eigenanteile Counter während Tabellenerstellung
 			Rest = Total, // Verbleibende FP: Counter während Berechnung
-			AlreadyPaid = 0; // Bereits gezahlter Anteil für aktuellen Platz (Fremde LG)
+			AlreadyPaid = 0, // paid FP (other players GBs)
+			SelfPlace = -1; // own position, -1 if not in the top 5
 
 		Parts.PlaceAvailables = [false, false, false, false, false]; // Wird auf true gesetz, wenn auf einem Platz noch eine (nicht externe) Zahlung einzuzahlen ist (wird in Spalte Einzahlen angezeigt)
 		Parts.DangerPlaces = [0, 0, 0, 0, 0]; // Feld mit Dangerinformationen. Wenn > 0, dann die gefährdeten FP
@@ -612,6 +613,10 @@ let Parts = {
 
 				let Place = FH.Main.CurrentGB.Rankings[i]['rank'] - 1,
 					MedalCount = 0;
+
+				if (FH.Main.CurrentGB.Rankings[i]?.player?.is_self) {
+					SelfPlace = Place;
+				}
 
 				Parts.Maezens[Place] = CurrentMaezen;
 				if (Parts.Maezens[Place] === undefined) Parts.Maezens[Place] = 0;
@@ -867,7 +872,7 @@ let Parts = {
 				h.push('<tr>');
 				let OwnPartStartText = (Eigens[i] > 0 ? opt(Eigens[i], EigenCounter): '-');
 				h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
-				h.push('<td class="text-center"><span class="' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
+				h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'highlighted-text') + '"><span class="' + (PlayerID === FH.Player.ID ? 'success' : '') + '">' + OwnPartStartText + '</span></td>');
 				h.push('<td class="text-center paidFP"><b>' + FH.HTML.Format(EigenStart) + '</b></td>');
 				let restColspan = 0 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
 				if (restColspan > 0)
@@ -887,7 +892,8 @@ let Parts = {
 			}
 
 			// other players contributions
-			h.push(`<tr>
+			let ownSpot = (SelfPlace === i && FH.Main.CurrentGB.Entity?.player_id !== FH.Player.ID);
+			h.push(`<tr ${ownSpot? `class="bg-blue"` : ``}>
 				<td ${Parts.PlaceAvailables[i] ? `class="notTaken" onClick="Parts.reRank(${i})"` : ''}><b>` + (i+1) + '</b></td>');
 
 			if (Parts.PlaceAvailables[i]) {
