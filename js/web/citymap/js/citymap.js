@@ -1080,7 +1080,7 @@ let CityMap = {
 			}
 			let ascendingMap = await CityMap.AscendingBuildings;
 			let ascendedIds = buildings.map(b => ascendingMap[b.entityId]).filter(Boolean);
-			InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
+			InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
 		}
 		
 		buildings.sort((a,b)=>{
@@ -1111,8 +1111,12 @@ let CityMap = {
 					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>` : ``}`);
 				if (type === 'acendable') {
 					let ascendedId = (await CityMap.AscendingBuildings)[building.entityId];
-					if (ascendedId && InventoryBuildings[ascendedId])
-						output.push(`<span class="upgrades helperTT text-right" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>`);
+					if (ascendedId && InventoryBuildings[ascendedId]) {
+						output.push(`<div class="text-right">
+							<b data-callback_tt="InventoryKits" data-id="${ascendedId}" class="helperTT inventoryAmount">${InventoryBuildings[ascendedId].amount}x</b>
+							<span class="upgrades helperTT text-right" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>
+							</div>`);
+					}
 				}
 			output.push(`</li>`);
 		}
