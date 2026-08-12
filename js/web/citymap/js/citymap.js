@@ -922,12 +922,10 @@ let CityMap = {
 		}
 
 
-		if (FH.ActiveMap !== 'OtherPlayer') {
-			$('.building-stats').html(
-				'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
-				'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
-				'</span> / <span data-original-title="'+FH.t('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
-		}
+		$('.building-stats').html(
+			'<img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />'+
+			'<span data-original-title="'+FH.t('Boxes.CityMap.FreeArea')+'">' + txtFree + 
+			'</span> / <span data-original-title="'+FH.t('Boxes.CityMap.WholeArea')+'">' + total + '</span>').addClass('text-right');
 
 		let sortedBldTypes = [];
 		for(let x in CityMap.metrics.buildingTypes) sortedBldTypes.push([x, CityMap.metrics.buildingTypes[x]]);
@@ -1231,16 +1229,27 @@ let CityMap = {
 
 	filterBuildings: (string) => {
 		let spans = $('span.entity');
-		if (/[0-9]+x[0-9]*/.test(string)) string = ","+string
-		for (let sp of spans) {
-			let title = $(sp).attr('data-title') +","+ $(sp).attr('data-size') +", _"+ $(sp).attr('data-meta_id');
+		let isEntitySearch = string.startsWith("_");
+		let searchString = string;
 
-			if ((string !== "") && (title.substr(0,title.toLowerCase().indexOf(string.toLowerCase()) > -1))) {
+		if (!isEntitySearch && /[0-9]+x[0-9]*/.test(searchString)) {
+			searchString = "," + searchString;
+		}
+		let filter = searchString.toLowerCase();
+
+		for (let sp of spans) {
+			let title = ($(sp).attr('data-title') + "," + $(sp).attr('data-size')).toLowerCase();
+			let entityId = ($(sp).attr('data-meta_id') || '').toLowerCase();
+
+			if (isEntitySearch && entityId.includes(filter.slice(1))) {
+				$(sp).addClass('highlighted');
+			} else if (!isEntitySearch && filter !== "" && title.includes(filter)) {
 				$(sp).addClass('highlighted');
 			} else {
 				$(sp).removeClass('highlighted');
 			}
 		}
+
 		$('#grid-outer').addClass('desaturate');
 		if (string === '') {
 			$('#grid-outer').removeClass('desaturate');

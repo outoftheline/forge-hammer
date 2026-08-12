@@ -651,7 +651,7 @@ p { margin: 0 0 10px 0; }
 .text-danger, .danger { color: var(--danger-red); }
 .text-info, .info { color: var(--info-blue); }
 .text-muted { color: var(--ash); }
-.show-entity, .show-entity img, .show-all img { height: 18px; display: inline-block; }
+.show-entity, .show-entity img, .show-all img, .fragIcon { height: 18px; display: inline-block; }
 
 .text-bold { font-weight: 700; }
 
