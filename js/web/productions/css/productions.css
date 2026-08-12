@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -15,12 +16,10 @@
 	width: 95vw;
 }
 
-#ProductionsRatingBody {
-	opacity: 1;
-}
-#Productions #ProductionsBody {
+#ProductionsRatingBody, #Productions #ProductionsBody {
 	overflow-x: hidden;
 	overflow-y: auto;
+	opacity: 1;
 }
 #Productions strong.success, #Productions span.success {
 	color: var(--success);
@@ -132,6 +131,9 @@
 #Productions th.boost.guild_raids span {
 	background: transparent url('../../x_img/guild_raids.png') no-repeat;
 	background-size: contain;
+}
+#Productions table img {
+	max-height: 18px;
 }
 
 #ProductionsRatingBody .ratingtable tr.hidden, 
@@ -483,10 +485,6 @@
 }
 #Productions .items-sum td:nth-child(2) {
 	width: 15px;
-}
-#ProductionsRatingBody {
-	overflow-x: hidden;
-	overflow-y: auto;
 }
 #ProductionsRatingBody ul.foe-table {
 	max-width: 500px;

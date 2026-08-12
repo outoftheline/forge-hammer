@@ -1522,7 +1522,7 @@ let Productions = {
 				let amount = (e.amount ? parseFloat(Math.round(e.amount*100)/100) : "") 
 							+ (e.random && e.amount ? " + " : "") 
 							+ (e.random ? "Ø " + parseFloat(Math.round(e.random*100)/100) : "")
-				table.push (`<tr><td class="text-right">${amount}</td><td>${(e.fragment ? "🧩 " : "" )}</td><td colspan="5">${e.name}</td></tr>`)
+				table.push (`<tr><td class="text-right">${amount}</td><td>${(e.fragment ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" />` : "" )}</td><td colspan="5">${e.name}</td></tr>`)
 			} else {//units
 				let currentamount = (e.current?.amount ? parseFloat(Math.round(e.current.amount*100)/100) : (e.theory?.type !== "random" ? "0" :""))
 
@@ -1659,7 +1659,7 @@ let Productions = {
 				if (production.resources?.icon?.includes("good")) return false;
 
 				let frag = production.resources.subType === "fragment";
-				allItems += '<span>'+production.resources.amount + "x " + (frag ? "🧩 " : "" ) + production.resources.name + "</span><br>";
+				allItems += '<span>'+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + production.resources.name + "</span><br>";
 				itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0});
 			}
 		}
@@ -1674,9 +1674,9 @@ let Productions = {
 							let frag = resource.subType === "fragment"
 							let amount = parseFloat(Math.round(resource.amount*resource.dropChance * 100) / 100)
 							if (resource.type === "unit") {
-								allUnits += "Ø " + amount + "x " + (frag ? "🧩 " : "" ) + `<img src='${srcLinks.get("/shared/icons/"+resource.name.replace(/next./,"").replace("random","random_production")+".png",true)}'>` + "<br>"
+								allUnits += "Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + `<img src='${srcLinks.get("/shared/icons/"+resource.name.replace(/next./,"").replace("random","random_production")+".png",true)}'>` + "<br>"
 							} else {
-								allItems += "<span>Ø " + amount + "x " + (frag ? "🧩 " : "" ) + resource.name + "</span><br>"
+								allItems += "<span>Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + resource.name + "</span><br>"
 								itemArray.push({fragment:frag,name:resource.name,amount:0,random:amount})
 							}
 						}
@@ -1690,7 +1690,7 @@ let Productions = {
 						let itemId = production.resources.id.split('#')[1]
 						itemId = (itemId === undefined) ? '' : itemId
 						let frag = production.resources.subType === "fragment"
-						allItems += `<span class="'${itemId}'">`+production.resources.amount + "x " + (frag ? "🧩 " : "" ) + production.resources.name.replace(/^\d+/, "") + "</span><br>"
+						allItems += `<span class="'${itemId}'">`+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" /> ` : "" ) + production.resources.name.replace(/^\d+/, "") + "</span><br>"
 						itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0})
 					}
 				}
