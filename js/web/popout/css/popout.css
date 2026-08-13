@@ -65,3 +65,17 @@ body.fh-popout-host .window-box.popped-out > .window-body {
 body.fh-popout-host > #TooltipContainer {
 	z-index: 1000;
 }
+
+body.fh-popout-host #TooltipContainer h2 {
+	font-size: 90%;
+}
+
+body.fh-popout-host #TooltipContainer .HXBuilding td {
+	padding: 1px 3px;
+	font-size: 95%;
+}
+
+body.fh-popout-host #TooltipContainer .HXBuilding img {
+    max-width: 20px;
+    max-height: 21px;
+}

@@ -304,7 +304,7 @@ let Popout = {
 
 		let text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
 
-		return text || id;
+		return (text || id)+` - Forge Hammer`;
 	},
 
 
@@ -496,9 +496,10 @@ let Popout = {
 		Popout.nativeFind = jQuery.find;
 
 		jQuery.find = Object.assign(function (selector, context, results, seed) {
-			let found = Popout.nativeFind(selector, context, results, seed);
+			let start = results ? results.length : 0,
+				found = Popout.nativeFind(selector, context, results, seed);
 
-			if (context === document) {
+			if (context === document && found.length === start) {
 				for (const doc of Popout.documents()) Popout.nativeFind(selector, doc, found, seed);
 			}
 			return found;
