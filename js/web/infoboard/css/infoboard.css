@@ -62,6 +62,7 @@
 #BackgroundInfoList li {
 	justify-content: space-between;
 	position: relative;
+	background: transparent;
 }
 
 #BackgroundInfoList .icon {
