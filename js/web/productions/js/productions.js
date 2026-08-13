@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 FoE-Helper team 
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -61,7 +62,6 @@ let Productions = {
 
 	RatingCurrentTab: 'Results',
 	RatingBuildingTab: 'everything',
-	RatingFilteredSizes: [],
 	RatingSearchTerm: '',
 	ScoreModifierPending: [],
 
@@ -2197,19 +2197,30 @@ let Productions = {
 		$('#efficiencyBuildingFilter').on('input', e => {
 			let filter = $('#efficiencyBuildingFilter').val().toLowerCase();
 			Productions.RatingSearchTerm = filter;
-			let regEx = new RegExp(filter,"i");
+
+			let terms = filter.split('|').map(t => t.trim()).filter(t => t !== '');
+			let sizeTermRegEx = /^\d+x\d*$/;
 
 			$('.ratinglist tr td:nth-child(2)').each((x,y) => {
-				let entityId = '';
-				if (filter.startsWith("_"))
-					entityId = $(y).find('.helperTT').attr('data-meta_id').toLowerCase();
+				let matched = false;
 
-				if ((filter !== "" && regEx.test($(y).text())) 
-					|| (filter.startsWith("_") && entityId.includes(filter.slice(1)))) {
-					y.parentElement.classList.add('highlighted2')
-				} else {
-					y.parentElement.classList.remove('highlighted2')
+				if (terms.length > 0) {
+					let size = (y.dataset.size || '').toLowerCase();
+					let entityId = $(y).find('.helperTT').attr('data-meta_id')?.toLowerCase() || '';
+					let text = $(y).text();
+
+					matched = terms.some(term => {
+						if (term.startsWith('_')) {
+							return entityId.includes(term.slice(1));
+						}
+						if (sizeTermRegEx.test(term)) {
+							return size.startsWith(term);
+						}
+						return new RegExp(term,"i").test(text);
+					});
 				}
+
+				y.parentElement.classList.toggle('highlighted2', matched);
 			});
 		});
 		// settings: show FSP calculator
@@ -2231,28 +2242,6 @@ let Productions = {
 				})
 			})
 		})
-
-		$('#buildingsize').on('click', e => {
-			e.stopPropagation();
-			$('#buildingsize').toggleClass('active');
-		});
-
-		// result: building size filter
-		$('#buildingsize li').on('click', e => {
-			e.stopPropagation();
-			let filter = parseInt(e.target.getAttribute('data-value'));
-			e.target.classList.toggle('selected');
-
-			if (Productions.RatingFilteredSizes.includes(filter)) {
-				let index = Productions.RatingFilteredSizes.indexOf(filter);
-				Productions.RatingFilteredSizes.splice(index, 1);
-			}
-			else {
-				Productions.RatingFilteredSizes.push(filter);
-			}
-
-			Productions.ApplyRatingFilters();
-		});
 
 		// change minimum score for inventory buildings
 		$('#inventorybuildingscore').on('blur', async e => {
@@ -2289,30 +2278,16 @@ let Productions = {
 
 		$('.ratingtable .buildingTypeTabs li').removeClass('active').filter('[data-value="'+tab+'"]').addClass('active');
 
+		$('.ratinglist tr').each(function () {
+			$(this).css('display', $(this).hasClass('tab-' + tab) ? '' : 'none');
+		});
+
 		$('.ratingtable [data-tabs]').each(function () {
 			let tabs = ($(this).attr('data-tabs') || '').split(' ');
 			let applicable = tabs.includes(tab);
 			$(this).css({opacity: applicable ? '' : '0.4', pointerEvents: applicable ? '' : 'none'});
 			$(this).find('input').prop('disabled', !applicable);
 		});
-
-		$('.ratinglist tr').addClass('hidden');
-		let rows = $('.ratinglist tr.tab-' + tab);
-		if (Productions.RatingFilteredSizes.length > 0) {
-			rows.each((i, elem) => {
-				let size = Array.from(elem.classList).find(x => x.includes('size'));
-				if (size) {
-					for (let filteredSize of Productions.RatingFilteredSizes) {
-						if ("size" + filteredSize === size) {
-							elem.classList.remove('hidden');
-							return;
-						}
-					}
-				}
-			});
-		} else {
-			rows.removeClass('hidden');
-		}
 	},
 
 	CalcRatingSettingsOnly: (era = '') => {
@@ -2339,7 +2314,6 @@ let Productions = {
 
 		let buildingCount = {};
 		let uniqueBuildings = [];
-		let buildingSizes = [];
 		let ratedBuildings = [];
 		let h = [];
 		// computed once regardless of tab, so switching tabs afterward is a pure client-side visibility toggle
@@ -2393,18 +2367,7 @@ let Productions = {
 				if (Technologies.InnoEras[foundBuilding.eraName] < Technologies.InnoEras[building.eraName])
 					uniqueBuildings[foundBuildingIndex] = building;
 			}
-
-			// gather building sizes
-			let buildingSize = building.size.length * building.size.width;
-			if (buildingSizes.find(x => x === buildingSize) === undefined)
-				buildingSizes.push(buildingSize);
 		}
-
-		buildingSizes.sort((a,b)=>{
-			if (a < b) return -1
-			if (a > b) return 1
-			return 0
-		});
 
 		let selectedAdditionals = Object.values(Productions.AdditionalSpecialBuildings).filter(x=>x.selected).map(x=>x.id);
 
@@ -2463,7 +2426,7 @@ let Productions = {
 						h.push(`<li data-value="inventory" class="${tab==='inventory'?'active':''}"><img src="${FH.extUrl}js/web/x_img/inventory.png"> ${FH.t('General.Inventory')}</li>`);
 					}
 				h.push(`<li data-value="ascended" class="${tab==='ascended'?'active':''}"><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" /> ${FH.t('Boxes.CityMap.limited')}</li></ul>
-						<input type="text" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')} : neo|eden" />
+						<input type="text" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')}: neo|_gbg|4x4" />
 						<label for="showhighlighted" data-original-title="${FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')}"><input type="checkbox" id="showhighlighted" />${FH.t('Boxes.ProductionsRating.ShowHighlighted')}</label>
 						</div>
 						<div class="listmodifiers">
@@ -2483,12 +2446,9 @@ let Productions = {
 				</tr>
 				<tr class="sorter-header exportheader sort2">
 				<th data-type="ratinglist" class="is-number descending" data-export="${FH.t('Boxes.ProductionsRating.Score')}">${FH.t('Boxes.ProductionsRating.Score')}</th>
-				<th data-type="ratinglist" data-export="${FH.t('Boxes.ProductionsRating.BuildingName')}"><div class="flex-between"><span>${FH.t('Boxes.ProductionsRating.BuildingName')}</span>
-				<div id="buildingsize"><span>${FH.t('Boxes.Productions.Headings.size')}</span><ul>`);
-				for (let size of buildingSizes) {
-					h.push(`<li data-value="${size}" class="${(Productions.RatingFilteredSizes.includes(size) ? 'selected' : '') }">${size}</li>`)
-				}
-			h.push('</ul></div></div></th><th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png" /></th>');
+				<th data-type="ratinglist" data-export="${FH.t('Boxes.ProductionsRating.BuildingName')}"><div class="flex-between"><span>${FH.t('Boxes.ProductionsRating.BuildingName')}</span></th>
+				`);
+			h.push('<th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png" /></th>');
 
 			for (const type of combinedRatingTypes) {
 				let firstType = type;
@@ -2539,10 +2499,10 @@ let Productions = {
 				// not eligible for any tab at all -> skip the row entirely
 				if (tabClasses.length === 0) continue;
 
-				let buildingSize = building.size.length * building.size.width;
+				let buildingSize = `${building.size.length}x${building.size.width}`;
 
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
-				h.push(`<tr class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}size${buildingSize}">`)
+				h.push(`<tr class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}">`)
 				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
 				let score = Math.round(building.rating.totalScore * 100); // totalScore already includes the modifier!
 				let baseScore = score - scoreModifier;
@@ -2552,7 +2512,7 @@ let Productions = {
 				h.push('<span class="edit-score-modifier game-cursor" data-meta_id="'+building.entityId+'" data-original-title="'+FH.t('Boxes.ProductionsRating.ScoreModifierTooltip')+'">✎</span>')
 				h.push('</td>')
 
-				h.push('<td exportvalue="'+building.name+'" data-text="'+FH.helper.str.cleanup(building.name)+'" class="'+(FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'"><div class="flex-between"><div>');
+				h.push(`<td exportvalue="${building.name}" data-text="${FH.helper.str.cleanup(building.name)}" data-size="${buildingSize}" class="${(FH.Main.Allies.buildingList?.[building.id]?"ally" : "")}"><div class="flex-between"><div>`);
 				if (!building.highlight && !building.isInInventory)
 					h.push('<span class="show-all" data-original-title="'+FH.t('Boxes.General.ShowOnMap')+'" data-name="'+building.name+'"><img class="game-cursor" alt="" src="' + FH.extUrl + 'images/hud/open-eye.png"></span>');
 

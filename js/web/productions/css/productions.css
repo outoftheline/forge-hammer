@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 FoE-Helper team 
  * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
@@ -284,13 +284,16 @@
 #ProductionsRatingBody tr.sorter-header.sort2 th {
 	padding: 3px 4px 6px;
 }
-#ProductionsRatingBody tr.highlighted2 td:nth-child(2) {
-	color: var(--white);
+#ProductionsRatingBody tr.highlighted2 td:nth-child(2), #ProductionsRatingBody tr.highlighted2 td.ally:nth-child(2) {
+	color: var(--text-highlight2);
 }
 #ProductionsRatingBody tr.highlighted2 td:nth-child(2) div div:first-child::after {
 	content: ' 🔎';
 	filter: saturate(0.1);
 	opacity: 0.7;
+}
+#ProductionsRatingBody tr.highlighted2 td, #ProductionsRatingBody tr.highlighted td {
+	background: var(--table-bg-highlight);
 }
 #ProductionsRatingBody tr td.ally:nth-child(2) span:nth-child(2)::after, #ProductionsRatingBody tr span.inventory::after, #Productions td.ally::after {
 	content: ' ';
@@ -303,9 +306,6 @@
 }
 #ProductionsRatingBody tr span.inventory::after {
 	background: url('../../x_img/inventory.png') no-repeat center;
-}
-#ProductionsRatingBody tr.highlighted2 td.ally:nth-child(2) {
-	color: var(--white);
 }
 #ProductionsRatingBody tr.additional td:nth-child(1) {
 	color: var(--info-blue) !important;

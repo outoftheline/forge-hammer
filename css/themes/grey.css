@@ -14,7 +14,7 @@
 	--text-dark2: #2e2c28;
 	--text-darker: #1c1a17;
 	--ash: #6a6a6a;
-	--text-highlight2: #a8a28a;
+	--text-highlight2: #bdad83;
 
 	--grey: #3a3a3a;
 	--black: #000;
@@ -95,10 +95,10 @@
 	--table-bg-error: #2e08084d;
 	--table-bt-error: #4e1c1c;
 	--table-bb-error: #280808;
-	--table-bg-bright: #4a1a6e30;
-	--table-bt-bright: #5a2a8055;
-	--table-bb-bright: #1e0a3055;
-	--table-bg-highlight: #0e0c0acc;
+	--table-bg-bright: #6e5f1a30;
+	--table-bt-bright: #80732a55;
+	--table-bb-bright: #30260a55;
+	--table-bg-highlight: #10081dcc;
 	--border-table-top: #2d2928de;
 	--border-table-bottom: #060606;
 	--border-table-bottom-darker: #000;
