@@ -147,7 +147,6 @@ let reconstruction = {
         }
     },
     showTable:()=>{
-
         if (!reconstruction.rcIcons) {
             reconstruction.rcIcons = {
                 happ:srcLinks.get("/shared/gui/reconstructionmenu/rc_icon_happynessbuildings.png",true),
@@ -181,6 +180,7 @@ let reconstruction = {
         
         h =`<table class="sortable-table foe-table">
                 <thead class="sticky">
+                    <tr><th colspan="6"><input name="reconstructionFilter" id="reconstructionFilter" placeholder="${FH.t('Boxes.ProductionsRating.Filter')}: neo|_gbg|4x4" value="" /></th></tr>
                     <tr class="sorter-header">
                         <th data-type="reconstructionSizes">${FH.t('Boxes.CityMap.Building')}</th>
                         <th class="no-sort">#</th>
@@ -195,7 +195,7 @@ let reconstruction = {
             let width = meta.width||meta.components.AllAge.placement.size.x
             let length = meta.length||meta.components.AllAge.placement.size.y
             let road = meta?.components?.AllAge.streetConnectionRequirement?.requiredLevel || meta?.requirements?.street_connection_level || 0
-            h+=`<tr class="reconstructionLine helperTT" data-callback_tt="building" data-page_id="${id}" data-meta_id="${id.split("#")[0]}" ${b.stored==0 ? ' style="display:none"' : ""}>
+            h+=`<tr class="reconstructionLine helperTT" data-callback_tt="building" data-page_id="${id}" data-meta_id="${id.split("#")[0]}" ${b.stored==0 ? ' style="display:none"' : ""} data-size="${length}x${width}">
                     <td data-text="${FH.helper.str.cleanup(meta.name)}">${meta.name}</td>
                     <td>x${b.stored}</td>
                     <td></td>
@@ -208,10 +208,41 @@ let reconstruction = {
 
 
         $('#ReconstructionListBody').html(h);
+        $('#reconstructionFilter').on('input', e => {
+			let filter = $('#reconstructionFilter').val().toLowerCase();
+
+			let terms = filter.split('|').map(t => t.trim()).filter(t => t !== '');
+			let sizeTermRegEx = /^\d+x\d*$/;
+
+			$('#ReconstructionListBody tbody').toggleClass('filtering', terms.length > 0);
+
+			$('.reconstructionLine').each((x,y) => {
+				let matched = false;
+
+				if (terms.length > 0) {
+					let size = (y.dataset.size || '').toLowerCase();
+					let entityId = $(y).attr('data-meta_id')?.toLowerCase() || '';
+					let text = ($(y).find('[data-text]').attr('data-text') || '').toLowerCase();
+
+					matched = terms.some(term => {
+						if (term.startsWith('_')) {
+							return entityId.includes(term.slice(1));
+						}
+						if (sizeTermRegEx.test(term)) {
+							return size.startsWith(term);
+						}
+						return new RegExp(term,"i").test(text);
+					});
+				}
+
+				y.classList.toggle('matched', matched);
+			});
+		});
         $('#ReconstructionListBody .sortable-table').tableSorter();
         setTimeout(reconstruction.updateTable,200);
 
     },
+    
     addToHammerBar:()=>{
         if ($('#ReconstructionButtons').length === 0) {
             $('#hammerBar').append(`<div id="ReconstructionButtons">
