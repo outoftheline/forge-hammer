@@ -22,7 +22,7 @@ FH.proxy.addHandler('LeagueService', 'getRank', (data, postData) => {
 	if (["buyChest"].includes(postData[0].requestMethod)) return;
 	if (worldChallenge.count === undefined) return;
 	worldChallenge.count++;
-	if (worldChallenge.count >=20) FH.helper.sounds.play("message");
+	if (worldChallenge.count >=20) FH.helper.sounds.play("GameEvents");
 
 });
 

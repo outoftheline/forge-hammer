@@ -560,8 +560,8 @@ let Calculator = {
 		h.push(`</div>`);
 
 		if (Calculator.LastRecurringQuests !== undefined && RecurringQuests !== Calculator.LastRecurringQuests) { 
-			if (PlaySound) { //Nicht durch Funktion PlaySound ersetzen!!! GetRecurringQuestLine wird auch vom EARechner aufgerufen.
-				FH.helper.sounds.play("message");
+			if (PlaySound) {
+				FH.helper.sounds.play("Calculator");
 			}
         }
 
@@ -594,7 +594,7 @@ let Calculator = {
 		
     PlaySound: () => {
         if (Calculator.PlayInfoSound) {
-			FH.helper.sounds.play("message");
+			FH.helper.sounds.play("Calculator");
         }
     },
 
@@ -639,6 +639,7 @@ let Calculator = {
 			<label for="openonaliengb"><input type="checkbox" id="openonaliengb" class="openonaliengb game-cursor" ${((!allGB) ? 'checked' : '')}> ${FH.t('Settings.ShowOwnPartOnAllGBs.Desc')}</label><br>
 			<label for="forderbonusperconversation"><input id="forderbonusperconversation" class="forderbonusperconversation game-cursor" ${(Calculator.ForderBonusPerConversation ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Calculator.ForderBonusPerConversation')}</label><br/>
 			<label for="CalculatorTone"><input id="CalculatorTone" class="CalculatorTone game-cursor" ${(Calculator.PlayInfoSound ? 'checked' : '')} type="checkbox"> ${FH.t('Boxes.Calculator.PlayInfoSound')}</label>
+			<a href="#" class="change-sound-link" onclick="Settings.OpenModuleSoundSettings(); return false;">${FH.t('Settings.ModuleSounds.ChangeSoundLink')}</a>
 		</p>`);
 
 		c.push(`<p class="text-center"><button id="save-calculator-settings" class="btn btn-green" onclick="Calculator.SettingsSaveValues()">${FH.t('Boxes.Calculator.Settings.Save')}</button></p>`);

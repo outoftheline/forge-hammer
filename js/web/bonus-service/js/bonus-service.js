@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 FoE-Helper team
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 {
@@ -246,7 +247,7 @@ let BonusService = {
 					si.addClass('bonus-blink');
 
 					if (bt[i] === 'donequests') {
-						FH.helper.sounds.play("message");
+						FH.helper.sounds.play("BonusService");
 					}
 
 					setTimeout(()=>{

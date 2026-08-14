@@ -150,9 +150,37 @@ helper.permutations = (()=>{
 
 helper.sounds = {
 	ping: new Audio(FH.extUrl + 'vendor/sounds/ping.mp3'),
-	message: new Audio(FH.extUrl + 'vendor/sounds/'+(FH.Storage.getItem('hammerSound')||"message").replace(/^on$/,"message")+'.mp3'),  //temporary fix for faulty setting
-	play: (sound) => {
-		if (Settings.GetSetting('EnableSound')) helper.sounds[sound].play();
+	_cache: {},
+
+	/**
+	 * @param {string} [moduleId] e.g. "Calculator", "BonusService"
+	 * @returns {string} sound file name
+	 */
+	getSoundFile: (moduleId) => {
+		let perModule = moduleId ? FH.Storage.getItem('hammerSound_' + moduleId) : null,
+			file = perModule || FH.Storage.getItem('hammerSound') || 'message';
+
+		return file.replace(/^on$/, 'message'); //temporary fix for faulty setting
+	},
+
+	/**
+	 * @param {string} file sound file name
+	 */
+	playFile: (file) => {
+		if (!helper.sounds._cache[file]) {
+			helper.sounds._cache[file] = new Audio(FH.extUrl + 'vendor/sounds/' + file + '.mp3');
+		}
+
+		helper.sounds._cache[file].play();
+	},
+
+	/**
+	 * @param {string} [moduleId]
+	 */
+	play: (moduleId) => {
+		if (!Settings.GetSetting('EnableSound')) return;
+
+		helper.sounds.playFile(helper.sounds.getSoundFile(moduleId));
 	},
 };
 

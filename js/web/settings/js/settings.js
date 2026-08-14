@@ -22,6 +22,25 @@ let Settings = {
 	],
 
 	/**
+	 * Sound files (vendor/sounds/<name>.mp3)
+	 */
+	SoundList: [
+		'message',
+		'notification1',
+		'notification2',
+		'notification3',
+		'notification4',
+		'notification5',
+		'notification6'
+	],
+	SoundModules: [
+		{ id: 'Calculator', label: 'Menu.Calculator.Title' },
+		{ id: 'Infoboard', label: 'Menu.Info.Title' },
+		{ id: 'BonusService', label: 'Boxes.BonusService.quest_sound' },
+		{ id: 'GameEvents', label: 'Settings.Entry.ShowEventChest' }
+	],
+
+	/**
 	 * load the settings from the json
 	 */
 	Init: () => {
@@ -171,9 +190,27 @@ let Settings = {
 		});
 
 
-		$('#SettingsBoxBody').on('click', 'input.setting-check', function () {
-			Settings.StoreSettings($(this));
-		});
+		$('#SettingsBoxBody').off('click.settings change.settings')
+			.on('click.settings', 'input.setting-check', function () {
+				Settings.StoreSettings($(this));
+			})
+			.on('change.settings', 'input[name="nSound"]:checked', function () {
+				FH.Storage.setItem('hammerSound', $(this).val());
+			})
+			.on('change.settings', '.module-sound-select', function () {
+				let mod = $(this).data('module'),
+					val = $(this).val();
+
+				if (val === '') {
+					FH.Storage.removeItem('hammerSound_' + mod);
+				} else {
+					FH.Storage.setItem('hammerSound_' + mod, val);
+				}
+			})
+			.on('click.settings', '.sound-preview', function () {
+				let file = $(this).data('file') || FH.helper.sounds.getSoundFile($(this).data('module'));
+				FH.helper.sounds.playFile(file);
+			});
 		$('.setting [data-original-title]').tooltip({
 			container: 'body',
 			html: true,
@@ -313,7 +350,8 @@ let Settings = {
 				key.indexOf('CopyName') > -1 ||
 				key.indexOf('MenuSort') > -1 ||
 				key.indexOf('Tone') > -1 ||
-				key.indexOf('ForderBonus') > -1
+				key.indexOf('ForderBonus') > -1 ||
+				key.indexOf('hammerSound') > -1
 			) {
 				settings[key] = FH.Storage.getItem(key);
 			}
@@ -351,46 +389,50 @@ let Settings = {
 	},
 
 
+	SoundPreviewButton: (file, moduleId) => {
+		let attr = file ? `data-file="${file}"` : `data-module="${moduleId}"`;
+		return `<button type="button" class="btn btn-mid sound-preview" ${attr}>${FH.t('Settings.SoundEffects.play')}</button>`;
+	},
+
+
 	SoundEffects: () => {
-		let chosenSound = FH.Storage.getItem('hammerSound')||"message";
+		let chosenSound = FH.Storage.getItem('hammerSound') || 'message';
 
-		let v =	`<ul class="soundEffects simpleList">
-					<li> 
-						<input name="nSound" value="message" type="radio" ${chosenSound == "message" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/message.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification1" type="radio" ${chosenSound == "notification1" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification1.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification2" type="radio" ${chosenSound == "notification2" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification2.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification3" type="radio" ${chosenSound == "notification3" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification3.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification4" type="radio" ${chosenSound == "notification4" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification4.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification5" type="radio" ${chosenSound == "notification5" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification5.mp3" type="audio/mpeg" /></audio> 
-					</li>
-					<li> 
-						<input name="nSound" value="notification6" type="radio" ${chosenSound == "notification6" ? 'checked' : ''} />
-						<audio controls controlslist="noplaybackrate nofullscreen nodownload"><source src="${FH.extUrl}vendor/sounds/notification6.mp3" type="audio/mpeg" /></audio> 
-					</li>
-				</ul>`;
+		let rows = Settings.SoundList.map((s) => `
+			<li>
+				<input name="nSound" value="${s}" type="radio" ${chosenSound === s ? 'checked' : ''} />
+				${Settings.SoundPreviewButton(s)}
+				<label>${FH.t('Settings.SoundEffects.' + s)}</label>
+			</li>`
+		);
 
-		$('#SettingsBoxBody')
-			.on('change.soundEffects', 'input[name="nSound"]:checked', function () {
-				FH.Storage.setItem('hammerSound', $(this).val());
-			});
+		return `<ul class="soundEffects simpleList">${rows.join('')}</ul>`;
+	},
 
-		return v;
+
+	ModuleSounds: () => {
+		let rows = Settings.SoundModules.map((module) => {
+			let key = 'hammerSound_' + module.id;
+			let chosen = FH.Storage.getItem(key) || '';
+
+			let options = [`<option value="">${FH.t('Settings.SoundEffects.default')}</option>`]
+				.concat(Settings.SoundList.map((s) =>
+					`<option value="${s}"${chosen === s ? ' selected' : ''}>${FH.t('Settings.SoundEffects.' + s)}</option>`
+				));
+
+			return `<li>
+				<select class="setting-dropdown module-sound-select" data-module="${module.id}">${options.join('')}</select>
+				${Settings.SoundPreviewButton(null, module.id)}
+				<span>${FH.t(module.label)}</span>
+			</li>`;
+		});
+
+		return `<ul class="moduleSounds simpleList">${rows.join('')}</ul>`;
+	},
+
+
+	OpenModuleSoundSettings: () => {
+		Settings.BuildBox(2, 5);
 	},
 
 

@@ -177,10 +177,16 @@
 		"sort": 7
 	},
 	{
+		"name": "ModuleSounds",
+		"callback": "ModuleSounds",
+		"group": "Extension",
+		"sort": 8
+	},
+	{
 		"name": "RivalSound",
 		"status": true,
 		"group": "Extension",
-		"sort": 8
+		"sort": 10
 	},
 	{
 		"name": "ShowBuildingsExpired",
@@ -188,26 +194,26 @@
 		"group": "Extension",
 		"button":"FH.Main.Inactives.showSettings()",
 		"cssClass": "spacer",
-		"sort": 9
+		"sort": 12
 	},
 	{
 		"name": "ShowNotifications",
 		"status": true,
 		"group": "Extension",
-		"sort": 10
+		"sort": 14
 	},
 	{
 		"name": "NotificationsPosition",
 		"callback": "NotificationView",
 		"group": "Extension",
 		"status": "bottom-right",
-		"sort": 11
+		"sort": 16
 	},
 	{
 		"name": "NotificationsStack",
 		"callback": "NotificationStack",
 		"group": "Extension",
-		"sort": 13
+		"sort": 18
 	},
 	{
 		"name": "Version",

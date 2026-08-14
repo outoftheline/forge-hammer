@@ -1952,6 +1952,10 @@ SettingsBox */
 	margin-bottom: 0;
 }
 
+.settingsbox-wrapper a {
+	color: var(--text-link);
+}
+
 .settingsbox-wrapper hr {
 	border-top: 1px solid transparent;
 	border-bottom: 1px solid var(--bg-darkest);

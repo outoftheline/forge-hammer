@@ -499,7 +499,7 @@ let mergerGame = {
 			}
 		}
 		if (mergerGame.settings.audibleTaskWarning && warn && raiseAlert) {
-			FH.helper.sounds.play("message");
+			FH.helper.sounds.play("GameEvents");
 		}
 		if (mergerGame.settings.opticalTaskWarning && warn && raiseAlert && $('#mergerGameTaskWarning').length === 0) {
 			mergerGame.allowRemoveWarning = false;

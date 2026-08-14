@@ -20,7 +20,7 @@ FH.proxy.addWsHandler('OtherPlayerService', 'newEvent', data => {
 		let NewLevel = data.responseData['level'];
 		Parts.CalcBody(NewLevel);
 		if (Parts.PlayInfoSound) {
-			FH.helper.sounds.play("message");
+			FH.helper.sounds.play("Calculator");
 		}
 	}
 });

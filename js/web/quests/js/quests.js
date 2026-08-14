@@ -25,7 +25,7 @@ FH.proxy.addCustomHandler('QuestsUpdated', data => {
 	if (!FH.Main.Quests) return; 
 	for (let Quest of FH.Main.Quests) {
 		if (Quest?.questGiver?.id.indexOf("rival") >=0 && Quest.state == 'collectReward') {
-			FH.helper.sounds.play("message");
+			FH.helper.sounds.play("BonusService");
 			break;
 		}
 	}

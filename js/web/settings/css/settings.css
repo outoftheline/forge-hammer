@@ -90,7 +90,7 @@
 	color: var(--switch-text);
 }
 
-#SettingsBoxBody .item-row .btn,
+#SettingsBoxBody .item-row .btn:not(.btn-mid),
 #SettingsBoxBody .item-row .setting-dropdown {
 	width: 172px;
 	padding: 4px 0;
