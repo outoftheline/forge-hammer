@@ -115,11 +115,14 @@ let Popout = {
 			left   = (state.x !== undefined) ? state.x : 100,
 			top    = (state.y !== undefined) ? state.y : 100;
 
-		// a real document (blob url) instead of about:blank - some browsers (Vivaldi, ...)
-		// label an about:blank window "Blank Page" and ignore its <title>
+		// `tab: true` opens a browser tab instead of a separate window
+		let asTab = (state.tab !== undefined) ? state.tab : !!hooks.tab;
+
 		let url = Popout.buildDocument(id, box),
-			win = window.open(url, `FHPopout_${FH.World}_${id}`,
-				`popup=yes,width=${width},height=${height},left=${left},top=${top}`);
+			name = `FHPopout_${FH.World}_${id}`,
+			win = asTab
+				? window.open(url, name)
+				: window.open(url, name, `popup=yes,width=${width},height=${height},left=${left},top=${top}`);
 
 		if (!win) {
 			URL.revokeObjectURL(url);
@@ -142,8 +145,7 @@ let Popout = {
 			return null;
 		}
 
-		// note: everything below has to happen AFTER the document has loaded,
-		// a navigation replaces the global object of the pop-out window
+		// note: everything below has to happen AFTER the document has loaded
 		Popout.prepareDocument(win, id, box);
 
 		// detach everything that is bound to the game window
@@ -184,11 +186,19 @@ let Popout = {
 		let titleObserver = Popout.watchTitle(win, id, box);
 
 		let timer = setInterval(() => {
-			if (win.closed) return;
-			Popout.setState(id, {open: true, x: win.screenX, y: win.screenY, w: win.outerWidth, h: win.outerHeight});
+			// 'pagehide' is not guaranteed (killed or crashed window)
+			if (win.closed) {
+				Popout.dock(id);
+				return;
+			}
+
+			if (!asTab) {
+				Popout.setState(id, {open: true, x: win.screenX, y: win.screenY, w: win.outerWidth, h: win.outerHeight});
+			}
 		}, 1000);
 
-		Popout.Windows.set(id, {win, box, placeholder, observer, titleObserver, timer, style});
+		// keep our own reference: win.document is null once the window is gone
+		Popout.Windows.set(id, {win, doc: win.document, box, placeholder, observer, titleObserver, timer, style});
 
 		if (Popout.Windows.size === 1) Popout.installShims();
 
@@ -227,7 +237,7 @@ let Popout = {
 		if (entry.timer) clearInterval(entry.timer);
 		if (Popout.Windows.size === 0) Popout.removeShims();
 
-		try { FH.Tooltips.detach(entry.win.document); } catch (e) {}
+		try { FH.Tooltips.detach(entry.doc); } catch (e) {}
 
 		let register = HTML.Boxes[id] || {},
 			args     = register.args || {},
@@ -278,7 +288,16 @@ let Popout = {
 	},
 
 
-	/** convenience for the menu: open, or focus an already open window */
+	/**
+	 * Switches a box between "separate window" and "browser tab" mode	 *
+	 * @param id
+	 * @param asTab
+	 */
+	setTabMode: (id, asTab) => {
+		Popout.setState(id, {tab: !!asTab});
+	},
+
+
 	toggle: (id) => {
 		if (Popout.Windows.has(id)) Popout.close(id);
 		else Popout.open(id);
@@ -380,7 +399,7 @@ let Popout = {
 		doc.body.classList.add('fh-popout-host');
 
 		Popout.syncCss(win);
-		Popout.mirrorGlobals(win);
+		Popout.mirrorGlobals(win, box);
 	},
 
 
@@ -420,7 +439,8 @@ let Popout = {
 	 * Inline handlers (onclick="Productions.foo()") are compiled against the global
 	 * object of the pop-out window - mirror the game window's globals into it.
 	 */
-	mirrorGlobals: (win) => {
+	mirrorGlobals: (win, box) => {
+		// 1) everything that really is a property of the game window
 		for (const key of Object.getOwnPropertyNames(window)) {
 			if (key in win) continue; // filters out all built-ins
 
@@ -431,6 +451,89 @@ let Popout = {
 					set: (value) => { window[key] = value; }
 				});
 			} catch (e) {}
+		}
+
+		// 2) the modules themselves `let CityMap = {...}` 
+		if (!box) return;
+
+		let missing = [];
+
+		for (const name of Popout.collectHandlerGlobals(box)) {
+			if (name in win) continue;
+
+			let value = Popout.resolveGlobal(name);
+
+			if (value === undefined) {
+				missing.push(name);
+				continue;
+			}
+
+			try {
+				Object.defineProperty(win, name, {configurable: true, get: () => value});
+			} catch (e) {}
+		}
+
+		if (missing.length) {
+			console.warn(`Popout: inline handlers of #${box.id} reference globals that could not be resolved: ${missing.join(', ')}. `
+				+ `Export them (window.Name = Name) or replace the inline handler with FH.HTML.on().`);
+		}
+	},
+
+	handlerAttributes: [
+		'onclick', 'ondblclick', 'onchange', 'oninput', 'onsubmit', 'onreset',
+		'onfocus', 'onblur', 'onkeydown', 'onkeyup', 'onkeypress', 'onwheel',
+		'onmousedown', 'onmouseup', 'onmouseenter', 'onmouseleave', 'onmouseover', 'onmouseout',
+		'onpointerdown', 'onpointerup', 'onpointerenter', 'onpointerleave', 'oncontextmenu', 'ontoggle'
+	],
+
+	handlerKeywords: new Set([
+		'this', 'return', 'if', 'else', 'for', 'while', 'switch', 'case', 'try', 'catch',
+		'new', 'delete', 'typeof', 'void', 'in', 'of', 'function', 'var', 'let', 'const',
+		'true', 'false', 'null', 'undefined', 'event', 'arguments'
+	]),
+
+	/**
+	 * Names of the globals that the inline handlers inside `root` call,
+	 * e.g. `onclick="CityMap.buildingGroupList('limited')"` => `CityMap`
+	 *
+	 * @param root element
+	 * @returns {Set<string>}
+	 */
+	collectHandlerGlobals: (root) => {
+		let names = new Set(),
+			selector = Popout.handlerAttributes.map(attr => `[${attr}]`).join(','),
+			nodes = [root, ...root.querySelectorAll(selector)];
+
+		for (const node of nodes) {
+			if (!node.attributes) continue;
+
+			for (const attr of node.attributes) {
+				if (!attr.name.startsWith('on') || !attr.value) continue;
+
+				for (const match of attr.value.matchAll(/(?:^|[^.\w$'"`])([A-Za-z_$][\w$]*)\s*(?=[.([])/g)) {
+					if (!Popout.handlerKeywords.has(match[1])) names.add(match[1]);
+				}
+			}
+		}
+
+		return names;
+	},
+
+	/**
+	 * Resolves a global by name, including bindings of the global lexical environment (let/const)
+	 *
+	 * @param name
+	 * @returns {*} undefined if it does not exist
+	 */
+	resolveGlobal: (name) => {
+		if (!/^[A-Za-z_$][\w$]*$/.test(name)) return undefined;
+		if (name in window) return window[name];
+		if (FH[name] !== undefined) return FH[name];
+
+		try {
+			return window.eval(name);
+		} catch (e) {
+			return undefined;
 		}
 	},
 
@@ -491,7 +594,7 @@ let Popout = {
 			}
 		});
 
-		// $('#id') uses the getElementById fast path (see above),
+		// $('#id') uses the getElementById
 		// everything else runs through jQuery.find(selector, document, results)
 		Popout.nativeFind = jQuery.find;
 
@@ -499,6 +602,7 @@ let Popout = {
 			let start = results ? results.length : 0,
 				found = Popout.nativeFind(selector, context, results, seed);
 
+			// Only fall back to the pop-outs when the game document has nothing to offer
 			if (context === document && found.length === start) {
 				for (const doc of Popout.documents()) Popout.nativeFind(selector, doc, found, seed);
 			}
