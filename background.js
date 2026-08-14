@@ -428,6 +428,21 @@ plannerDB.version(1).stores({
 		return sender.id === browser.runtime.id;
 	}
 
+
+	/**
+	 * checks whether a message's sender.origin is Forge of Empires itself
+	 * @param {browser.runtime.MessageSender} sender
+	 * @returns {boolean}
+	 */
+	function isTrustedGameOrigin(sender) {
+		try {
+			const origin = sender.origin || (sender.url ? new URL(sender.url).origin : null);
+			return typeof origin === 'string' && /^https:\/\/[^/]*\.forgeofempires\.com$/.test(origin);
+		} catch {
+			return false;
+		}
+	}
+
 	const Planner = {
 		getPlan: async (id)=>{
 			try {
@@ -758,7 +773,7 @@ plannerDB.version(1).stores({
 
 
 			case 'buildingMetaSet': { // type
-				if (!isInternalSender(sender)) return APIerror('buildingMetaSet: not permitted for external senders');
+				if (!isInternalSender(sender) && !isTrustedGameOrigin(sender)) return APIerror('buildingMetaSet: not permitted for external senders');
 				const region = typeof request.region === 'string' ? request.region : 'unknown';
 				const entries = request.entries;
 				if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
@@ -873,7 +888,7 @@ plannerDB.version(1).stores({
 			}
 
 			case 'storeData': { // type
-				if (!isInternalSender(sender)) return APIerror('storeData: not permitted for external senders');
+				if (!isInternalSender(sender) && !isTrustedGameOrigin(sender)) return APIerror('storeData: not permitted for external senders');
 				await browser.storage.local.set({ [request.key] : request.data });
 				return APIsuccess(true);
 			}
