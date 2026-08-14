@@ -805,7 +805,7 @@ plannerDB.version(1).stores({
 				} 
 			}
 			case 'Planner.getPlanList': {
-				if (!isInternalSender(sender)) return APIerror('Planner.getPlanList: not permitted for external senders');
+				if (!isInternalSender(sender) && !isTrustedGameOrigin(sender)) return APIerror('Planner.getPlanList: not permitted for external senders');
 				const plans = await Planner.getPlanList();
 				return APIsuccess(plans);
 			}
@@ -858,7 +858,7 @@ plannerDB.version(1).stores({
 				}
 			}
 			case 'Planner.getBuildingList': {
-				if (!isInternalSender(sender)) return APIerror('Planner.getBuildingList: not permitted for external senders');
+				if (!isInternalSender(sender) && !isTrustedGameOrigin(sender)) return APIerror('Planner.getBuildingList: not permitted for external senders');
 				if (!request.planId) return APIerror('Planner.getBuildingList: Parameter {planId} expected!');
 				try {
 					const buildings = await Planner.getBuildingList(request.planId);
