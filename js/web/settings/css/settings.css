@@ -174,6 +174,45 @@
 	width: 100px
 }
 
+/* label | control | preview - the custom pattern gets a second row of its own */
+#SettingsBoxBody .dateFormats .dateformat-row {
+	display: grid;
+	grid-template-columns: 110px minmax(120px, 1fr) auto;
+	align-items: center;
+	gap: 4px 8px;
+	margin-bottom: 6px;
+}
+
+#SettingsBoxBody .dateFormats label {
+	grid-column: 1;
+}
+
+#SettingsBoxBody .dateFormats .dateformat-select {
+	grid-column: 2 / span 2;
+	width: 100%;
+}
+
+#SettingsBoxBody .dateFormats .dateformat-custom,
+#SettingsBoxBody .dateFormats .dateformat-preview {
+	display: none;
+}
+
+#SettingsBoxBody .dateFormats .custom .dateformat-custom {
+	display: block;
+	grid-column: 2;
+	width: 100%;
+	min-width: 0;
+	padding: 3px 6px;
+}
+
+#SettingsBoxBody .dateFormats .custom .dateformat-preview {
+	display: block;
+	grid-column: 3;
+	min-width: 0;
+	color: var(--text-highlight);
+	font-weight: 700;
+}
+
 #SettingsBoxBody .soundEffects audio {
 	height: 22px;
 	width: 250px;

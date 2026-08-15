@@ -553,6 +553,107 @@ let Settings = {
 	},
 
 
+	/**
+	 * Default date/time formats used by the extension, see FH.DateFormat.
+	 */
+	DateTimeFormats: () => {
+		const presets = {
+			dateShort: ['DD/MMM', 'DD.MM.', 'DD/MM', 'MM/DD', 'MM.DD', 'MM-DD', 'D MMM', 'ddd DD'],
+			dateLong: ['DD/MMM/YYYY', 'DD.MM.YYYY', 'DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD', 'YYYY.MM.DD', 'D MMMM YYYY', 'ddd, DD MMM YYYY'],
+			dateTimeShort: ['DD/MMM, HH:mm', 'DD.MM. HH:mm', 'DD/MM HH:mm', 'MM/DD hh:mm a', 'MM-DD HH:mm', 'MM.DD HH:mm', 'ddd HH:mm', 'HH:mm'],
+			dateTimeLong: ['DD/MMM, hh:mm:ssa', 'DD/MMM/YYYY HH:mm:ss', 'DD.MM.YYYY HH:mm:ss', 'YYYY-MM-DD HH:mm:ss', 'YYYY.MM.DD HH:mm:ss', 'MM/DD/YYYY hh:mm:ss a', 'ddd, DD MMM YYYY HH:mm:ss']
+		};
+
+		// sample of the current time, so every option shows what it produces
+		const sample = () => moment(FH.Main.getCurrentDateTime());
+
+		const store = (type, pattern) => {
+			let key = FH.DateFormat.Types[type].storage;
+
+			pattern = (pattern || '').trim();
+
+			if (pattern === '') {
+				FH.Storage.removeItem(key);
+			} else {
+				FH.Storage.setItem(key, pattern);
+			}
+
+			FH.DateFormat.clearCache();
+		};
+
+		const showPreview = (row) => {
+			row.find('.dateformat-preview').text(sample().format(FH.DateFormat.get(row.data('type'))));
+		};
+
+		let v = ['<div class="dateFormats">'];
+
+		for (let [type, formats] of Object.entries(presets)) {
+			let d = FH.DateFormat.Types[type],
+				def = FH.DateFormat.default(type), // format of the language file, always the first option
+				current = FH.Storage.getItem(d.storage),
+				custom = current !== null && current !== def && !formats.includes(current),
+				label = FH.t('Settings.DateTimeFormat.' + type.charAt(0).toUpperCase() + type.slice(1)),
+				options = [`<option value=""${current === null ? ' selected' : ''}>${sample().format(def)} &mdash; ${FH.t('Settings.DateTimeFormat.Default')}</option>`];
+
+			for (let f of formats.filter(f => f !== def)) {
+				options.push(`<option value="${FH.HTML.escapeHtml(f)}"${current === f ? ' selected' : ''}>${sample().format(f)} &mdash; ${f}</option>`);
+			}
+
+			options.push(`<option value="custom"${custom ? ' selected' : ''}>${FH.t('Settings.DateTimeFormat.Custom')}</option>`);
+
+			let id = `dateformat-${type}`;
+
+			v.push(`<div class="dateformat-row${custom ? ' custom' : ''}" data-type="${type}">
+					<label for="${id}">${label}</label>
+					<select class="setting-dropdown dateformat-select" id="${id}" name="${id}">${options.join('')}</select>
+					<input type="text" class="dateformat-custom" id="${id}-custom" name="${id}-custom" autocomplete="off" aria-label="${label} - ${FH.t('Settings.DateTimeFormat.Custom')}" placeholder="${FH.HTML.escapeHtml(def)}" value="${custom ? FH.HTML.escapeHtml(current) : ''}" />
+					<span class="dateformat-preview">${custom ? sample().format(current) : ''}</span>
+				</div>`);
+		}
+
+		v.push('</div>');
+		v.push(`<p class="text-smaller">${FH.t('Settings.DateTimeFormat.CustomHint')} <a href="https://momentjs.com/docs/#/displaying/format/" target="_blank">momentjs.com</a></p>`);
+		v.push(`<button class="btn resetDateFormats my-5">${FH.t('Boxes.General.Reset')}</button>`);
+
+		$('#SettingsBoxBody')
+			.off('change.dateFormats input.dateFormats click.dateFormats')
+			.on('change.dateFormats', 'select.dateformat-select', function () {
+				let row = $(this).closest('.dateformat-row'),
+					type = row.data('type'),
+					value = $(this).val();
+
+				row.toggleClass('custom', value === 'custom');
+
+				if (value === 'custom') {
+					store(type, row.find('input.dateformat-custom').val());
+					showPreview(row);
+				} else {
+					store(type, value);
+				}
+			})
+			.on('input.dateFormats', 'input.dateformat-custom', function () {
+				let row = $(this).closest('.dateformat-row');
+
+				store(row.data('type'), $(this).val());
+				showPreview(row);
+			})
+			.on('click.dateFormats', '.resetDateFormats', function () {
+				for (let d of Object.values(FH.DateFormat.Types)) {
+					FH.Storage.removeItem(d.storage);
+				}
+
+				FH.DateFormat.clearCache();
+
+				let rows = $('.dateFormats .dateformat-row').removeClass('custom');
+
+				rows.find('select.dateformat-select').val('');
+				rows.find('input.dateformat-custom').val('');
+			});
+
+		return v.join('');
+	},
+
+
 	ChooseSkin: () => {
 		let dp = [];
 

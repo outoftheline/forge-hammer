@@ -134,9 +134,32 @@ let GameTime = {
 	}
 }
 
+// Language file keys holding a moment format -> storage key of the user's own choice (see FH.DateFormat).
+// Cached for performance reasons
+const DateFormatKeys = {
+	Date:          'DateFormatLong',
+	DateShort:     'DateFormatShort',
+	DateTime:      'DateTimeFormatLong',
+	DateTimeShort: 'DateTimeFormatShort'
+};
+let dateFormatCache = {};
+
 let TranslationData = null;
-let t = (key) => {
+
+/** Language file lookup without the date/time format override */
+let tRaw = (key) => {
 	return FH.Translation.tempData?.[key]?.s || FH.Translation.tempData?.[key] || TranslationData[key]?.s || TranslationData[key] || key;
+}
+
+let t = (key) => {
+	let storageKey = DateFormatKeys[key];
+
+	if (storageKey) {
+		let custom = dateFormatCache[key] ??= (FH.Storage.getItem(storageKey) || '');
+		if (custom) return custom;
+	}
+
+	return tRaw(key);
 }
 
 (async () => {
@@ -156,6 +179,35 @@ let t = (key) => {
 	}
 })();
 FH.t = t;
+
+/**
+ * User selectable date/time formats, see Settings.DateTimeFormats().
+ */
+let DateFormat = {
+	Types: {
+		dateShort:     {storage: 'DateFormatShort',     fallback: 'DateShort'},
+		dateLong:      {storage: 'DateFormatLong',      fallback: 'Date'},
+		dateTimeShort: {storage: 'DateTimeFormatShort', fallback: 'DateTimeShort'},
+		dateTimeLong:  {storage: 'DateTimeFormatLong',  fallback: 'DateTime'}
+	},
+
+	/** @returns {string} moment format string of the given type, the user's choice when there is one */
+	get: (type) => FH.t((DateFormat.Types[type] || DateFormat.Types.dateTimeLong).fallback),
+
+	/** @returns {string} the language file's format of the given type, ignoring the user's choice */
+	default: (type) => tRaw((DateFormat.Types[type] || DateFormat.Types.dateTimeLong).fallback),
+
+	/** Drops the cached user formats, so the next lookup reads them again */
+	clearCache: () => { dateFormatCache = {}; },
+
+	/**
+	 * @param value anything moment() accepts - seconds have to be converted by the caller
+	 * @param type key of DateFormat.Types
+	 * @returns {string}
+	 */
+	format: (value, type = 'dateTimeLong') => moment(value).format(DateFormat.get(type))
+};
+FH.DateFormat = DateFormat;
 
 document.addEventListener("DOMContentLoaded", function () {
 	// note current world

@@ -228,6 +228,12 @@
 		"sort": 10
 	},
 	{
+		"name": "DateTimeFormat",
+		"callback": "DateTimeFormats",
+		"group": "About",
+		"sort": 12
+	},
+	{
 		"name": "Skins",
 		"callback": "ChooseSkin",
 		"group": "About",
