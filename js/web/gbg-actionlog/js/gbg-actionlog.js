@@ -19,11 +19,9 @@ let GBGActionLog = {
     db: null, // Indexed database
 	dbLoadedFl: new Promise(resolve => window.addEventListener('foe-helper#gbgDBloaded', resolve, {capture: false, once: true, passive: true})),
 
-	// User settings (persisted in FH.Storage; formats fall back to the language file's Date/DateTime)
+	// User settings
 	settingKeys: {
 		toast:    'GBGActionLogToastSeconds',
-		date:     'GBGActionLogDateFormat',
-		dateTime: 'GBGActionLogDateTimeFormat',
 		redHours: 'GBGActionLogRedAfterHours',   // HUD badge turns red once this many hours pass since the last collection
 		collected:'GBGActionLogLastCollected',   // state: unix time of the last log collection (drives the HUD badge)
 	},
@@ -74,11 +72,11 @@ let GBGActionLog = {
         return '';
 	},
 
-	/** moment format for date columns (default: language file 'Date') */
-	dateFormat: () => FH.Storage.getItem(GBGActionLog.settingKeys.date) || FH.t('Date'),
+	// moment format for date columns
+	dateFormat: () => FH.DateFormat.get('dateLong'),
 
-	/** moment format for date+time columns (default: language file 'DateTime') */
-	dateTimeFormat: () => FH.Storage.getItem(GBGActionLog.settingKeys.dateTime) || FH.t('DateTime'),
+	// moment format for date+time columns
+	dateTimeFormat: () => FH.DateFormat.get('dateTimeLong'),
 
 	// Timezone: reuse GuildFights' server-time setting so dates match its display. serverOffset is minutes (local − server).
 	/** True when GuildFights' "show server time" toggle is on (LiveFightSettings.showServerTime === 1) */
@@ -645,12 +643,10 @@ let GBGActionLog = {
         }
     },
 
-    /** Settings popup (wrench icon): toast duration + the date / date-time formats used in the tables */
+    /** Settings popup (wrench icon): toast duration + the HUD badge threshold */
     showSettings: () => {
         let seconds = GBGActionLog.toastSeconds(),
-            redHours = GBGActionLog.redAfterHours(),
-            dateFmt = FH.Storage.getItem(GBGActionLog.settingKeys.date) || '',
-            dateTimeFmt = FH.Storage.getItem(GBGActionLog.settingKeys.dateTime) || '';
+            redHours = GBGActionLog.redAfterHours();
 
         let h = `<p><label for="gbgalToastSeconds">${FH.t('Boxes.GBGActionLog.ToastDuration')}</label>`
               +   `<input type="number" id="gbgalToastSeconds" min="0" value="${seconds}"></p>`
@@ -659,37 +655,23 @@ let GBGActionLog = {
               + `<p><label for="gbgalRedAfterHours">${FH.t('Boxes.GBGActionLog.RedAfterHours')}</label>`
               +   `<input type="number" id="gbgalRedAfterHours" min="1" value="${redHours}"></p>`
               + `<p class="gbgal-set-hint">${FH.t('Boxes.GBGActionLog.RedAfterHoursHint')}</p>`
-              + '<hr>'
-              + `<p><label for="gbgalDateFormat">${FH.t('Boxes.GBGActionLog.DateFormat')}</label>`
-              +   `<input type="text" id="gbgalDateFormat" placeholder="${FH.t('Date')}" value="${dateFmt}"></p>`
-              + `<p><label for="gbgalDateTimeFormat">${FH.t('Boxes.GBGActionLog.DateTimeFormat')}</label>`
-              +   `<input type="text" id="gbgalDateTimeFormat" placeholder="${FH.t('DateTime')}" value="${dateTimeFmt}"></p>`
-              + `<p class="gbgal-set-hint">${FH.t('Boxes.GBGActionLog.FormatHint')}</p>`
               + `<button onclick="GBGActionLog.saveSettings()" class="btn saveSettings">${FH.t('General.Save')}</button>`;
 
         $(`#${GBGActionLog.windowId}SettingsBox`).html(h);
     },
 
-    /** Persists the settings and re-renders the tables so a format change is applied at once */
+    /** Persists the settings */
     saveSettings: () => {
         let seconds = parseInt($('#gbgalToastSeconds').val(), 10),
             redHours = parseInt($('#gbgalRedAfterHours').val(), 10);
 
         FH.Storage.setItem(GBGActionLog.settingKeys.toast, isNaN(seconds) || seconds < 0 ? 12 : seconds);
         FH.Storage.setItem(GBGActionLog.settingKeys.redHours, isNaN(redHours) || redHours < 1 ? GBGActionLog.defaultRedHours : redHours);
-        FH.Storage.setItem(GBGActionLog.settingKeys.date, $('#gbgalDateFormat').val().trim());
-        FH.Storage.setItem(GBGActionLog.settingKeys.dateTime, $('#gbgalDateTimeFormat').val().trim());
 
         $(`#${GBGActionLog.windowId}SettingsBox`).remove();
 
         // Apply the new red threshold to the HUD badge at once
         GBGActionLog.refreshMenuBadge();
-
-        // Re-render the already-built tabs with the new formats (unbuilt tabs pick them up when first opened)
-        if (GBGActionLog.loadedTabs['gbgalDetails']) GBGActionLog.reload();
-        if (GBGActionLog.loadedTabs['gbgalReport']) GBGActionLog.reloadReport();
-        if (GBGActionLog.loadedTabs['gbgalBatches']) GBGActionLog.reloadBatches();
-        if (GBGActionLog.loadedTabs['gbgalActivity']) GBGActionLog.reloadActivity();
     },
 
     /**
