@@ -398,27 +398,10 @@
 
 #StatsGBGBody {
 	width: 1050px;
-	height: 547px;
 }
 
 #StatsGBGBody {
 	background-color: var(--bg-chart);
-}
-
-#GBGStatsDiffs {
-	height: 30px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 7px;
-	border-top: 1px solid var(--border-table-bottom);
-}
-
-#GBGStatsDiffs b {
-	padding: 1px 3px;
-	border-radius: 2px;
-	color: var(--black);
-	text-shadow: none;
 }
 
 #GBGPlayersLegend {

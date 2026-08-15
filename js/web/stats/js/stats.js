@@ -1795,6 +1795,7 @@ let Stats = {
 				auto_close: true,
 				dragdrop: true,
 				minimize: true,
+				settings: Stats.ShowGBGStatsSettings,
 			});
 
 			$('#StatsGBG').on('click', '#StatsGBGclose', () => {
@@ -1834,9 +1835,17 @@ let Stats = {
 			let tab = $(this).data('gbgtab');
 			$(this).addClass('active');
 
+			$('#StatsGBG-settings').toggle(tab === 'guilds');
+
 			if (tab === 'guilds') {
 				$('#StatsGBGTabGuilds').show();
+
+				if (Stats.gbgForecast.dirty) {
+					Stats.gbgForecast.dirty = false;
+					Stats.buildGBGGuildsChart();
+				}
 			} else {
+				$('#StatsGBGSettingsBox').remove();
 				$('#StatsGBGTabPlayers').show();
 				if (!Stats.gbgPlayersChart)
 					Stats.buildGBGPlayersChart();
@@ -1848,10 +1857,60 @@ let Stats = {
 
 
 	/**
+	 * Settings of GBG Stats box
+	 */
+	ShowGBGStatsSettings: () => {
+		let c = [],
+			available = Stats.gbgForecast.available,
+			columns = Stats.gbgTooltipColumns;
+
+		let column = (key, label, fixed) => `<p><input id="StatsGBGCol-${key}" name="StatsGBGCol-${key}" class="gbg-tooltip-column" data-column="${key}" value="1" type="checkbox"${fixed || columns.includes(key) ? ' checked="checked"' : ''}${fixed ? ' disabled' : ''} />
+			<label for="StatsGBGCol-${key}">${FH.t(`Boxes.GuildFights.Stats.${label}`)}</label></p>`;
+
+		c.push(`<p><input id="StatsGBGForecast" name="StatsGBGForecast" value="1" type="checkbox"${Stats.gbgForecast.enabled ? ' checked="checked"' : ''}${available ? '' : ' disabled'} />
+			<label for="StatsGBGForecast">${FH.t('Boxes.GuildFights.Stats.Forecast')}</label></p>`);
+		c.push(`<p class="text-smaller">${FH.t(available ? 'Boxes.GuildFights.Stats.ForecastDesc' : 'Boxes.GuildFights.Stats.ForecastNoData')}</p>`);
+
+		c.push('<hr>');
+		c.push(`<p>${FH.t('Boxes.GuildFights.Stats.TTColumns')}</p>`);
+		c.push(column('guild', 'TTGuild', true));
+		c.push(column('points', 'TTPoints', true));
+		c.push(column('behind', 'TTBehind', false));
+		c.push(column('ahead', 'TTAhead', false));
+		c.push(column('rate', 'TTRate', false));
+
+		c.push(`<p><button onclick="Stats.SaveGBGStatsSettings()" class="btn saveSettings">${FH.t('Boxes.GuildFights.SaveSettings')}</button></p>`);
+
+		$('#StatsGBGSettingsBox').html(c.join(''));
+	},
+
+
+	SaveGBGStatsSettings: () => {
+		let forecast = $('#StatsGBGForecast').is(':checked'),
+			rebuild = forecast !== Stats.gbgForecast.enabled;
+
+		Stats.gbgForecast.enabled = forecast;
+		FH.Storage.setItem('StatsGBGForecast', forecast ? '1' : '0');
+
+		Stats.gbgTooltipColumns = $('#StatsGBGSettingsBox .gbg-tooltip-column:checked:not(:disabled)').map((i, el) => $(el).data('column')).get();
+		FH.Storage.setItem('StatsGBGTooltipColumns', Stats.gbgTooltipColumns.join(','));
+
+		$('#StatsGBGSettingsBox').remove();
+
+		// the tooltip reads the columns on every hover, only the forecast needs new chart data
+		if (!rebuild) return;
+
+		// sizing a chart in a hidden tab goes wrong, so let the tab rebuild it instead
+		if ($('#StatsGBGTabGuilds').is(':visible')) Stats.buildGBGGuildsChart();
+		else Stats.gbgForecast.dirty = true;
+	},
+
+
+	/**
 	 * Render the guild progression chart into #StatsGBGTabGuilds
 	 */
 	buildGBGGuildsChart: async () => {
-		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).toArray();
+		let entries = await GuildFights.db.guildHistory.where('gbground').equals(GuildFights.CurrentGBGRound).sortBy('time');
 		let guildNames = [...new Set(entries.flatMap(e => e.guilds.map(g => g.name)))];
 
 		let guildColors = {};
@@ -1870,6 +1929,7 @@ let Stats = {
 
 			return {
 				label: FH.HTML.escapeHtml(name),
+				guildId: guildId,
 				borderColor: color,
 				backgroundColor: color,
 				borderWidth: 1.5,
@@ -1889,12 +1949,42 @@ let Stats = {
 		canvas.width = 1050;
 		canvas.height = 450;
 		$('#StatsGBGTabGuilds').empty().append(canvas)
+			.append($('<div id="GBGGuildsTooltip" class="chartTooltip" style="display:none;" />'))
 			.append($('<div id="GBGGuildsLegend" class="chartLegend dark-bg p5 text-center" />'))
-			.append($('<div id="GBGStatsDiffs" class="dark-bg" />'))
 			.append($(`<button class="btn btn-slim exportData" onclick="Stats.exportCSV(Stats._lastGBGGuildsSeries, &apos;gbg-guilds-${moment().format('YYYY-MM-DD')}.csv&apos;)">CSV</button>`));
 
 		if (GuildFights.Chart) GuildFights.Chart.destroy();
-		Stats._lastGBGGuildsSeries = datasets.map(ds => ({ name: ds.label, data: ds.data }));
+		// export stays factual, the projected points are appended afterwards
+		Stats._lastGBGGuildsSeries = datasets.map(ds => ({ name: ds.label, data: ds.data.slice() }));
+
+		let forecast = Stats.getGBGForecast(entries),
+			forecastFrom = 0,
+			lastX = entries.length ? entries[entries.length - 1].time : 0;
+
+		Stats.gbgForecast.available = forecast !== null;
+		// the tooltip reads the rates from here, they exist even with the forecast switched off
+		Stats._lastGBGForecast = forecast;
+		Stats._lastGBGRates = Stats.getGBGRateSeries(entries);
+
+		if (forecast && Stats.gbgForecast.enabled) {
+			forecastFrom = entries.length;
+			lastX = forecast.marks[forecast.marks.length - 1];
+
+			for (let ds of datasets) {
+				let projected = forecast.points[ds.guildId];
+
+				// keep every dataset the same length so the shared tooltip stays aligned
+				forecast.marks.forEach((time, i) => {
+					ds.data.push({ x: time * 1000, y: projected?.values[i] ?? null, forecast: true });
+				});
+
+				ds.segment = { borderDash: ctx => ctx.p1DataIndex >= forecastFrom ? [6, 4] : undefined };
+			}
+		}
+
+		// hourly labels get unreadable beyond a few days, and a full round spans eleven
+		let firstX = entries.length ? entries[0].time : lastX,
+			xUnit = lastX - firstX > 3 * 86400 ? 'day' : 'hour';
 
 		let guildsHtmlLegendPlugin = {
 			id: 'htmlLegend',
@@ -1907,6 +1997,7 @@ let Stats = {
 
 				container.innerHTML = Stats.renderToggleAllLegendItem(allHidden) + items.map(item => {
 					let hidden = item.hidden ? 'stats-legend-hidden' : '';
+
 					return `<div class="stats-legend-item ${hidden} clickable" data-index="${item.datasetIndex}">
 						<span class="stats-legend-swatch" style="background:${item.strokeStyle};border-color:${item.strokeStyle};"></span>
 						<span class="stats-legend-label">${item.text}</span>
@@ -1936,6 +2027,12 @@ let Stats = {
 			}
 		};
 
+		// default positioners sit on the hovered points, which parks the tooltip wherever the
+		// lines happen to run - this one keeps it with the cursor
+		Chart.Tooltip.positioners.cursor = function (items, eventPosition) {
+			return eventPosition ?? Chart.Tooltip.positioners.average.call(this, items);
+		};
+
 		GuildFights.Chart = new Chart(canvas, {
 			type: 'line',
 			data: { datasets: datasets },
@@ -1952,8 +2049,8 @@ let Stats = {
 					x: {
 						type: 'time',
 						time: {
-							unit: 'hour',
-							displayFormats: { hour: 'dd, HH:mm' }
+							unit: xUnit,
+							displayFormats: { hour: 'dd, HH:mm', day: 'dd, DD.MM' }
 						},
 						ticks: { maxRotation: 45 }
 					},
@@ -1963,6 +2060,11 @@ let Stats = {
 					legend: {
 						display: false,
 						labels: { }
+					},
+					tooltip: {
+						enabled: false,
+						position: 'cursor',
+						external: ({ chart, tooltip }) => Stats.showGBGGuildsTooltip(chart, tooltip),
 					},
 					zoom: {
 						pan: { enabled: true, mode: 'x' },
@@ -1974,38 +2076,183 @@ let Stats = {
 					},
 				},
 			},
-			plugins: [guildsHtmlLegendPlugin, {
-				id: 'guildDiffDisplay',
-				afterTooltipDraw(chart) {
-					let tooltip = chart.tooltip;
-					if (!tooltip || tooltip.opacity === 0 || !tooltip.dataPoints?.length) {
-						$('#GBGStatsDiffs').empty();
-						return;
-					}
-
-					let rankedGuilds = [...tooltip.dataPoints].filter(p => p.parsed.y !== null);
-					rankedGuilds.sort((a,b)=>{
-						if (a.parsed.y > b.parsed.y) return -1;
-						if (a.parsed.y < b.parsed.y) return 1;
-						return 0;
-					});
-
-					let h = [];
-					for (let i = 0; i < rankedGuilds.length; i++) {
-						let point = rankedGuilds[i];
-						let color = point.dataset.borderColor ?? '#ccc';
-						h.push(`<b style="background:${color}">${point.dataset.label.substring(0,5)}</b>`);
-
-						if (i < rankedGuilds.length - 1) {
-							let diff = point.parsed.y - rankedGuilds[i + 1].parsed.y;
-							h.push(`<span class="text-smaller">${FH.HTML.Format(diff)}</span>`);
-						}
-					}
-
-					$('#GBGStatsDiffs').html(h.join(' '));
-				}
-			}]
+			plugins: [guildsHtmlLegendPlugin]
 		});
+	},
+
+
+	/**
+	 * Tooltip of the victory points chart: one row per guild, ranked by points. Which of
+	 * the optional columns are shown is up to the player, see gbgTooltipColumns. The rate
+	 * column belongs to the hovered point, so it moves along the chart with the cursor.
+	 */
+	showGBGGuildsTooltip: (chart, tooltip) => {
+		let el = document.getElementById('GBGGuildsTooltip');
+		if (!el) return;
+
+		// ranked high to low, so a row's neighbours are the guilds above and below it
+		let rows = (tooltip.dataPoints ?? []).filter(p => p.parsed.y !== null)
+			.sort((a, b) => b.parsed.y - a.parsed.y);
+
+		if (tooltip.opacity === 0 || rows.length === 0) {
+			el.style.display = 'none';
+			return;
+		}
+
+		let local = FH.t('Local'),
+			columns = Stats.gbgTooltipColumns,
+			forecast = Stats._lastGBGForecast,
+			rates = Stats._lastGBGRates,
+			showBehind = columns.includes('behind'),
+			showAhead = columns.includes('ahead'),
+			// a rate needs a snapshot behind it, one alone gives the column nothing to show
+			showRate = columns.includes('rate') && !!rates,
+			num = (value) => value === null || value === undefined ? '&ndash;' : Math.round(value).toLocaleString(local);
+
+		// projected points carry no measurement of their own, they are built from the forecast's rate
+		let isProjected = rows.some(p => p.raw?.forecast),
+			measured = isProjected ? null : rates?.[Math.round(rows[0].parsed.x / 1000)],
+			basisHours = isProjected ? forecast?.hours : measured?.hours,
+			rateOf = (guildId) => isProjected ? forecast?.points[guildId]?.rate : measured?.rates[guildId];
+
+		let head = `<th>${FH.t('Boxes.GuildFights.Stats.TTGuild')}</th>
+				<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTPoints')}</th>`;
+
+		if (showBehind) head += `<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTBehind')}</th>`;
+		if (showAhead) head += `<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTAhead')}</th>`;
+		if (showRate) head += `<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTRate')}
+				${basisHours ? `<span class="stats-tooltip-basis">${FH.t('Boxes.GuildFights.Stats.TTRateBasis').replace('__hours__', Math.round(basisHours))}</span>` : ''}</th>`;
+
+		let body = rows.map((point, i) => {
+			let cells = `<td><span class="stats-tooltip-swatch" style="background:${point.dataset.borderColor ?? '#ccc'};"></span> ${point.dataset.label}</td>
+				<td class="text-right">${num(point.parsed.y)}</td>`;
+
+			if (showBehind) cells += `<td class="text-right">${num(i > 0 ? rows[i - 1].parsed.y - point.parsed.y : null)}</td>`;
+			if (showAhead) cells += `<td class="text-right">${num(i < rows.length - 1 ? point.parsed.y - rows[i + 1].parsed.y : null)}</td>`;
+			if (showRate) cells += `<td class="text-right">${num(rateOf(point.dataset.guildId))}</td>`;
+
+			return `<tr>${cells}</tr>`;
+		}).join('');
+
+		let projected = isProjected ? ` <em>${FH.t('Boxes.GuildFights.Stats.ForecastProjected')}</em>` : '';
+
+		el.innerHTML = `<div class="stats-tooltip-title">${FH.DateFormat.format(rows[0].parsed.x, 'dateTimeLong')}${projected}</div>
+			<table class="stats-tooltip-table">
+				<tr>${head}</tr>
+				${body}
+			</table>`;
+
+		let boxRect = document.getElementById('StatsGBG').getBoundingClientRect(),
+			canvasRect = chart.canvas.getBoundingClientRect();
+
+		el.style.display = 'block';
+
+		// offset from the cursor, flipping to its other side rather than sticking to a box edge
+		let left = canvasRect.left - boxRect.left + tooltip.caretX + 16,
+			top = canvasRect.top - boxRect.top + tooltip.caretY + 16;
+
+		if (left + el.offsetWidth > boxRect.width) left -= el.offsetWidth + 32;
+		if (top + el.offsetHeight > boxRect.height) top -= el.offsetHeight + 32;
+
+		el.style.left = Math.max(0, left) + 'px';
+		el.style.top = Math.max(0, top) + 'px';
+	},
+
+
+	// optional columns of the victory points tooltip (guild and points are always shown)
+	gbgTooltipColumns: (FH.Storage.getItem('StatsGBGTooltipColumns') ?? 'ahead,rate').split(','),
+
+
+	// victory points forecast of the running GBG round, see getGBGForecast()
+	gbgForecast: {
+		enabled: FH.Storage.getItem('StatsGBGForecast') === '1',
+		available: false,
+		dirty: false,
+		minSpan: 86400,
+		minSnapshots: 3,
+		rateWindow: 86400,
+	},
+
+
+	/**
+	 * Points per hour of every guild at every snapshot, each measured back to the snapshot
+	 * closest to rateWindow earlier. 
+	 *
+	 * @param entries guildHistory rows of the current round, oldest first
+	 * @returns {Object.<number, {hours: number, rates: Object.<number, number>}>|null}
+	 */
+	getGBGRateSeries: (entries) => {
+		if (entries.length < 2) return null;
+
+		let window = Stats.gbgForecast.rateWindow,
+			series = {};
+
+		// the oldest snapshot has nothing behind it and stays out of the series
+		for (let i = 1; i < entries.length; i++) {
+			let current = entries[i],
+				target = current.time - window,
+				// closest to a day back, which can be a lot older when data is sparse
+				reference = entries.slice(0, i).reduce((closest, e) =>
+					Math.abs(e.time - target) < Math.abs(closest.time - target) ? e : closest),
+				hours = (current.time - reference.time) / 3600;
+
+			if (hours <= 0) continue;
+
+			let rates = {};
+			for (let guild of current.guilds) {
+				let before = reference.guilds.find(g => g.id === guild.id);
+				// totals are cumulative, a drop would only ever be bad data
+				if (before !== undefined) rates[guild.id] = Math.max(0, (guild.points - before.points) / hours);
+			}
+
+			series[current.time] = { hours: hours, rates: rates };
+		}
+
+		return Object.keys(series).length ? series : null;
+	},
+
+
+	/**
+	 * Projects every guild's victory points to the end of the running round, using the
+	 * average points per hour of the last 24h.
+	 *
+	 * The projected points are placed according to hour when GBG starts/ends
+	 *
+	 * @param entries guildHistory rows of the current round, oldest first
+	 * @returns {{marks: number[], hours: number, points: Object.<number, {rate: number, values: number[]}>}|null}
+	 */
+	getGBGForecast: (entries) => {
+		let endsAt = GuildFights.CurrentGBGRound;
+
+		if (!endsAt || entries.length < Stats.gbgForecast.minSnapshots) return null;
+
+		let latest = entries[entries.length - 1];
+
+		if (endsAt <= latest.time || latest.time - entries[0].time < Stats.gbgForecast.minSpan) return null;
+
+		// the projection runs on the newest measured rate, see getGBGRateSeries()
+		let measured = Stats.getGBGRateSeries(entries)?.[latest.time];
+
+		if (!measured) return null;
+
+		// one mark per remaining day, counted back from the end of the round so they all land on the same hour of the day.
+		let marks = [];
+		for (let time = endsAt; time > latest.time && marks.length < 14; time -= 86400) {
+			marks.unshift(time);
+		}
+
+		let points = {};
+		for (let guild of latest.guilds) {
+			let rate = measured.rates[guild.id];
+			if (rate === undefined) continue;
+
+			points[guild.id] = {
+				rate: rate,
+				values: marks.map(time => Math.round(guild.points + rate * (time - latest.time) / 3600)),
+			};
+		}
+
+		return { marks: marks, hours: measured.hours, points: points };
 	},
 
 
