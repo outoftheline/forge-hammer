@@ -29,6 +29,7 @@ let Calculator = {
 	},
 	ConversationContent: null,
 	ConversationContentNew: null,
+	ConversationContentBeforeSend: null,
 
 	Show: (action = "") => {
 		$('.tooltip').remove();
@@ -698,15 +699,15 @@ let Calculator = {
 	},
 
 	showToPay: () => {
-		let entriesBefore = Calculator.ConversationContent.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
+		let entriesBefore = Calculator.ConversationContentBeforeSend.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 		let entriesAfter  = Calculator.ConversationContentNew.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 
 		let output = [];
 
 		function removeFromList(el) {
 			let line = $(el).data('line');
-			if (Calculator.ConversationContent)
-				Calculator.ConversationContent = Calculator.ConversationContent.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
+			if (Calculator.ConversationContentBeforeSend)
+				Calculator.ConversationContentBeforeSend = Calculator.ConversationContentBeforeSend.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
 			else {
 				$('#calcReminder').remove();
 				return;

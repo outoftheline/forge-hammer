@@ -852,10 +852,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		Main.OpenConversation = null;
 		Calculator.ConversationContent = null;
 		Calculator.ConversationContentNew = null;
+		Calculator.ConversationContentBeforeSend = null;
 	});
 
 	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
 		Calculator.ConversationContentNew = data.responseData.text;
+		Calculator.ConversationContentBeforeSend = Calculator.ConversationContent;
 	});
 
 })();

@@ -451,7 +451,7 @@ let Parts = {
 		if (FH.Main.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
 
 		let openPayReminder = Settings.GetSetting('CalcGBReminder');
-		if (openPayReminder && Calculator.ConversationContent && Calculator.ConversationContentNew) {
+		if (openPayReminder && Calculator.ConversationContentBeforeSend && Calculator.ConversationContentNew) {
 			Calculator.showToPay();
 		}
 			
@@ -1706,6 +1706,3 @@ let Parts = {
 		}
 	}
 };
-
-
-
