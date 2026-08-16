@@ -1146,9 +1146,6 @@ let GuildFights = {
 				return res;
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
 
-			console.log(dailyFights);
-
-
 			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(gbground).subtract(11, 'd').format(FH.t('DateShort')) + ` - ` + moment.unix(gbground).format(FH.t('Date')) + '</div>');
 			h.push('<p class="dark-bg" style="padding:5px;margin:0;">' + FH.t('Boxes.GuildFights.SnapShotLogDisclaimer') + '</p>')
 			h.push('<table id="gbgPlayerLogTable" class="foe-table gbglog"><thead class="sticky">');
