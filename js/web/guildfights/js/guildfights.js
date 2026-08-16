@@ -604,7 +604,8 @@ let GuildFights = {
 				time: data.time,
 				battles: battles,
 				negotiations: negotiations,
-				attrition: attrition
+				attrition: attrition,
+				totalAttrition: data.attrition
 			});
 		}
 
@@ -1134,15 +1135,18 @@ let GuildFights = {
 				let date = moment.unix(obj.time).format('YYYYMMDD');
 
 				if (!(date in res)) {
-					res.__array.push(res[date] = { date: date, time: obj.time, battles: obj.battles, negotiations: obj.negotiations, attrition: obj.attrition || 0 });
+					res.__array.push(res[date] = { date: date, time: obj.time, battles: obj.battles, negotiations: obj.negotiations, attrition: obj.attrition || 0, totalAttrtion: obj.totalAttrition || 0 });
 				}
 				else {
 					res[date].battles += +obj.battles;
 					res[date].negotiations += +obj.negotiations;
 					res[date].attrition += +(obj.attrition || 0);
+					res[date].totalAttrtion =  obj.totalAttrition || 0;
 				}
 				return res;
 			}, { __array: [] }).__array.sort(function (a, b) { return b.date - a.date });
+
+			console.log(dailyFights);
 
 
 			h.push('<div class="pname dark-bg text-center">' + playerName + ': ' + moment.unix(gbground).subtract(11, 'd').format(FH.t('DateShort')) + ` - ` + moment.unix(gbground).format(FH.t('Date')) + '</div>');
@@ -1165,7 +1169,7 @@ let GuildFights = {
 					<td class="is-number text-center" data-number="${day.negotiations}">${FH.HTML.Format(day.negotiations)}</td>
 					<td class="is-number text-center" data-number="${day.battles}">${FH.HTML.Format(day.battles)}</td>
 					<td class="is-number text-center" data-number="${sum}">${FH.HTML.Format(sum)}</td>
-					<td class="is-number text-center" data-number="${day.attrition}">${FH.HTML.Format(day.attrition)}</td>
+					<td class="is-number text-center" data-number="${day.totalAttrtion}">${FH.HTML.Format(day.totalAttrtion)}</td>
 				</tr>`);
 			});
 

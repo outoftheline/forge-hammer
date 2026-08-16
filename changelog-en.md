@@ -8,19 +8,22 @@
 
 ### Update
 - Added data for the next era
-- Building Efficiency: Reworked the UI and added a filter for ascended buildings
+- Pop out functionality was overhauled and added to two more windows: Daily Productions and Allies
+- Building Efficiency: Reworked the UI and added a filter for ascended buildings. The size filter was replaced: just search for building dimensions in the general filter
 - City Overview: Search now shows the amount of buildings found and can filter by entity id
 - City Overview: Added expansions for other players cities
 - City Planner: Added building info when only one is selected
 - GBG Guild Stats: A forecast can now be made based on the latest data you collected (thanks again, Arklur!)
 - BG Helper: Simplified the UI and reversed the goods rating logic
 - Stats: Added the eye icon in the legend, which let's you toggle all values
+- Reconstruction Mode Building List: Added filter
 
 ### Bug Fixes
 - GB Calculator sometimes didn't update after leveling (really fixed now!)
 - GB List: list would sometimes update and most of the time not auto-open
 - City Overview: the ascended/limited list for other players wasn't actually based on their buildings
 - Tooltips: Guild goods were calculated wrong
+- GBG Player details: Attrtion will be collected correctly from now on
 
 ---
  

@@ -330,11 +330,12 @@ let Infoboard = {
         let h = [];
         h.push(`<p><input id="autoStartInfoboard" name="autoStartInfoboard" value="1" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />
                 <label for="autoStartInfoboard">${FH.t('Boxes.Settings.Autostart')}</label></p>
+                <p><a href="#" class="change-sound-link" onclick="Settings.OpenModuleSoundSettings(); return false;">${FH.t('Settings.ModuleSounds.ChangeSoundLink')}</a></p>
                 <hr>
                 <p><label for="infoboxentry-length">${FH.t('Settings.InfoboxEntryCount.Desc')}</label>
                 <input class="setting-input" type="number" id="infoboxentry-length" step="1" min="1" max="2000" value="${(messagesAmount)}"></p>
-                <p><a href="#" class="change-sound-link" onclick="Settings.OpenModuleSoundSettings(); return false;">${FH.t('Settings.ModuleSounds.ChangeSoundLink')}</a></p>
-                <button onclick="Infoboard.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button>`);
+                <button onclick="Infoboard.SaveSettings()" id="saveInfoboardSettings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button>
+`);
 
         $('#BackgroundInfoSettingsBox').html(h.join(''));
     },
