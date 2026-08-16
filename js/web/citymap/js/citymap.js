@@ -1065,23 +1065,29 @@ let CityMap = {
 		let title = FH.t('Boxes.CityMap.limited');
 		let buildings = [];
 		let InventoryBuildings = {};
+		let buildingData = FH.Main.CityBuildingsData;
+
+		if (FH.ActiveMap === 'OtherPlayer')
+			buildingData = CityBuildings.createBuildings();
 		
 		if (type === 'limited')
-			for (let building of Object.values(FH.Main.CityBuildingsData)) {
+			for (let building of Object.values(buildingData)) {
 				if (!building.isLimited) continue;
 				buildings.push(building);
 			}
 		else if (type === 'acendable') {
 			title = FH.t('Boxes.CityMap.ShowAscendableBuildings');
-			for (let building of Object.values(FH.Main.CityBuildingsData)) {
+			for (let building of Object.values(buildingData)) {
 				if (building.type === "street") continue;
 				let canAscend = (await CityBuildings.canAscend(building.entityId) ? ' ascendable' : false);
 				if (canAscend !== false)
 					buildings.push(building);
 			}
-			let ascendingMap = await CityMap.AscendingBuildings;
-			let ascendedIds = buildings.map(b => ascendingMap[b.entityId]).filter(Boolean);
-			InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
+			if (FH.ActiveMap !== 'OtherPlayer') {
+				let ascendingMap = await CityMap.AscendingBuildings;
+				let ascendedIds = buildings.map(b => ascendingMap[b.entityId]).filter(Boolean);
+				InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
+			}
 		}
 		
 		buildings.sort((a,b)=>{
@@ -1115,7 +1121,8 @@ let CityMap = {
 					if (ascendedId && InventoryBuildings[ascendedId]) {
 						output.push(`<div class="text-right">
 							<b data-callback_tt="InventoryKits" data-id="${ascendedId}" class="helperTT inventoryAmount">${InventoryBuildings[ascendedId].amount}x</b>
-							<span class="upgrades helperTT text-right" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>
+							${(FH.ActiveMap !== 'OtherPlayer') ? 
+								`<span class="upgrades helperTT text-right" data-meta_id="${ascendedId}" data-callback_tt="building" data-era="${building.eraName==="AllAge"?"":building.eraName}"><span class="ascended"></span></span>` : ``}
 							</div>`);
 					}
 				}
