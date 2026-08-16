@@ -640,7 +640,6 @@
   "Boxes.GuildFights.Stats.TTAhead": "Ahead ▼",
   "Boxes.GuildFights.Stats.TTBehind": "Behind ▲",
   "Boxes.GuildFights.Stats.TTColumns": "Columns of the chart tooltip:",
-  "Boxes.GuildFights.Stats.TTGuild": "Guild",
   "Boxes.GuildFights.Stats.TTPoints": "VP",
   "Boxes.GuildFights.Stats.TTRate": "VP/h",
   "Boxes.GuildFights.Stats.TTRateBasis": "(__hours__ h)",

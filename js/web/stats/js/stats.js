@@ -1865,7 +1865,7 @@ let Stats = {
 			columns = Stats.gbgTooltipColumns;
 
 		let column = (key, label, fixed) => `<p><input id="StatsGBGCol-${key}" name="StatsGBGCol-${key}" class="gbg-tooltip-column" data-column="${key}" value="1" type="checkbox"${fixed || columns.includes(key) ? ' checked="checked"' : ''}${fixed ? ' disabled' : ''} />
-			<label for="StatsGBGCol-${key}">${FH.t(`Boxes.GuildFights.Stats.${label}`)}</label></p>`;
+			<label for="StatsGBGCol-${key}">${FH.t(label)}</label></p>`;
 
 		c.push(`<p><input id="StatsGBGForecast" name="StatsGBGForecast" value="1" type="checkbox"${Stats.gbgForecast.enabled ? ' checked="checked"' : ''}${available ? '' : ' disabled'} />
 			<label for="StatsGBGForecast">${FH.t('Boxes.GuildFights.Stats.Forecast')}</label></p>`);
@@ -1873,11 +1873,11 @@ let Stats = {
 
 		c.push('<hr>');
 		c.push(`<p>${FH.t('Boxes.GuildFights.Stats.TTColumns')}</p>`);
-		c.push(column('guild', 'TTGuild', true));
-		c.push(column('points', 'TTPoints', true));
-		c.push(column('behind', 'TTBehind', false));
-		c.push(column('ahead', 'TTAhead', false));
-		c.push(column('rate', 'TTRate', false));
+		c.push(column('guild', 'General.Guild', true));
+		c.push(column('points', 'Boxes.GuildFights.Stats.TTPoints', true));
+		c.push(column('behind', 'Boxes.GuildFights.Stats.TTBehind', false));
+		c.push(column('ahead', 'Boxes.GuildFights.Stats.TTAhead', false));
+		c.push(column('rate', 'Boxes.GuildFights.Stats.TTRate', false));
 
 		c.push(`<p><button onclick="Stats.SaveGBGStatsSettings()" class="btn saveSettings">${FH.t('Boxes.GuildFights.SaveSettings')}</button></p>`);
 
@@ -2115,7 +2115,7 @@ let Stats = {
 			basisHours = isProjected ? forecast?.hours : measured?.hours,
 			rateOf = (guildId) => isProjected ? forecast?.points[guildId]?.rate : measured?.rates[guildId];
 
-		let head = `<th>${FH.t('Boxes.GuildFights.Stats.TTGuild')}</th>
+		let head = `<th>${FH.t('General.Guild')}</th>
 				<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTPoints')}</th>`;
 
 		if (showBehind) head += `<th class="text-right">${FH.t('Boxes.GuildFights.Stats.TTBehind')}</th>`;
