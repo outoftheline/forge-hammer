@@ -3,6 +3,8 @@
 ## Version 1.5.0
 ### Neu
 - Neue Farbe für die Fenster: Titan
+- Einstellungen: Datum & Uhrzeit kann für die meisten Fenster in der ganzen Erweiterung angepasst werden (Danke Arklur!)
+- Einstellungen: Die Töne können nun je nach Modul eingestellt werden
 
 ### Update
 - Daten für das nächste Zeitalter hinzugefügt
@@ -10,11 +12,14 @@
 - Stadt Übersicht: Suche zeigt jetzt auch die Anzahl der gefundenen Gebäude und kann auch nach nach MetaId suchen
 - Stadtübersicht: Anzahl der Erweiterungen für andere Spieler hinzugefügt
 - Stadtplaner: kleine Gebäude-Info hinzugefügt
+- GG Gilden Statistiken: Es kann nun eine Prognose in den Einstellungen am Fenster auf Basis der bisher gesammelten Daten erstellt werden (Danke Arklur!)
 - BG Helfer: Ansicht etwas vereinfacht und die Güter-Logik umgekehrt
 - Statistiken: Mit dem Auge-Symbol kann man nun auf einen Schlag alles aus- oder einblenden
 
 ### Bug Fixes
 - LG Rechner hat manchmal nach dem leveln nicht die richtigen Daten geladen (jetzt wirklich repariert!)
+- LG Förderliste: manchmal hat die Liste sich fälschlicherweise aktualisiert, manchmal ging sie nicht von alleine auf
+- Stadtübersicht: Bei anderen Spielern wurden fälschlicherweise die eigenen Gebäude geladen
 - Tooltips: Gildengüter waren falsch berechnet
 
 ---

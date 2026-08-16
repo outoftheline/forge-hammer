@@ -3,6 +3,8 @@
 ## Version 1.5.0
 ### New
 - New window color added: Titan
+- Settings: Date & Time can now be set up for most windows in the general settings (Thank you, Arklur!)
+- Settings: Customizable sounds per module now available
 
 ### Update
 - Added data for the next era
@@ -10,11 +12,14 @@
 - City Overview: Search now shows the amount of buildings found and can filter by entity id
 - City Overview: Added expansions for other players cities
 - City Planner: Added building info when only one is selected
+- GBG Guild Stats: A forecast can now be made based on the latest data you collected (thanks again, Arklur!)
 - BG Helper: Simplified the UI and reversed the goods rating logic
 - Stats: Added the eye icon in the legend, which let's you toggle all values
 
 ### Bug Fixes
 - GB Calculator sometimes didn't update after leveling (really fixed now!)
+- GB List: list would sometimes update and most of the time not auto-open
+- City Overview: the ascended/limited list for other players wasn't actually based on their buildings
 - Tooltips: Guild goods were calculated wrong
 
 ---
