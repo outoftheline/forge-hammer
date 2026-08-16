@@ -149,6 +149,10 @@
   "Boxes.BlueGalaxy.OlderGoodsValue": "Valeur de 1 ressources d'un âge inférieur (en PF)",
   "Boxes.BlueGalaxy.Title": "Aide Galaxie Bleue",
   "Boxes.BlueGalaxy.TTGoodsValue": "Cette valeur est utilisée pour classer les bâtiments produisant des ressources. Combien de PF vaut une ressource pour vous ?",
+  "Boxes.BlueGalaxy.ValueRating": {
+    "s": "1 PF =",
+    "r": "1 FP = "
+  },
   "Boxes.BonusService.aid_goods": "Nombre d'aides restantes de la Tour de la Trêve",
   "Boxes.BonusService.diplomatic_gifts": "Nombre d'essais restants pour les cadeaux diplomatiques.",
   "Boxes.BonusService.donequests": "Affiche les quêtes terminées",
@@ -487,14 +491,6 @@
     "s": "Log des actions",
     "r": "Action Log"
   },
-  "Boxes.GBGActionLog.DateFormat": {
-    "s": "Format de date",
-    "r": "Date format"
-  },
-  "Boxes.GBGActionLog.DateTimeFormat": {
-    "s": "Format de date et heure",
-    "r": "Date & time format"
-  },
   "Boxes.GBGActionLog.Filter": {
     "s": "Filtre",
     "r": "Filter"
@@ -506,10 +502,6 @@
   "Boxes.GBGActionLog.FirstLogTime": {
     "s": "1ère entrée",
     "r": "First entry"
-  },
-  "Boxes.GBGActionLog.FormatHint": {
-    "s": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). laisser vide pour le défault",
-    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
   },
   "Boxes.GBGActionLog.From": {
     "s": "De",
@@ -1243,7 +1235,7 @@
   "Boxes.OtherGuildActivity.Title": "Membres actifs de la guilde",
   "Boxes.Outpost.DescInStock": "Disponible",
   "Boxes.Outpost.DescRequired": "Requis",
-  "Boxes.Outpost.DescStillMissing": "<span>Excès</span> / <span>Manquant</span>",
+  "Boxes.Outpost.DescStillMissing": "<span style=\"color:#29b206\">Excès</span> / <span style=\"color:#ff4040\">Manquant</span>",
   "Boxes.Outpost.ExpansionsSum": "Extensions",
   "Boxes.Outpost.including4x": "Effectif - incluant la chance x4",
   "Boxes.Outpost.infoLine": "__runNumber__ productions en cours (__chanceX4__% de chance bonus x4)",
@@ -1627,7 +1619,7 @@
   "Boxes.Stats.Title": "Aperçu des statistiques",
   "Boxes.Technologies.DescInStock": "Disponible",
   "Boxes.Technologies.DescRequired": "Requis",
-  "Boxes.Technologies.DescStillMissing": "<span>Excès</span> / <span>Manquant</span>",
+  "Boxes.Technologies.DescStillMissing": "Excès / Manquant",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignorer les technologies optionnelles des ères actuelles / futures",
   "Boxes.Technologies.IgnorePrevEra": "Ignorer les technologies optionnelles des ères précédentes",
   "Boxes.Technologies.NoTechs": "Vous avez atteint la fin de cette ère.",
@@ -1800,6 +1792,14 @@
   "Eras.22.short": "Titan",
   "Eras.23": "Ère spatiale : Hub spatial",
   "Eras.23.short": "Hub Spa",
+  "Eras.24": {
+    "s": "L'Ère stellaire - Découverte",
+    "r": "Stellar Age Discovery"
+  },
+  "Eras.24.short": {
+    "s": "SAD",
+    "r": "SAD"
+  },
   "Eras.3": "Âge du Fer",
   "Eras.3.short": "AdF",
   "Eras.4": "Haut Moyen Âge",
@@ -1827,13 +1827,25 @@
   "General.Boost": "Boost",
   "General.Cancel": "Annuler",
   "General.Choose": "Veuillez choisir",
+  "General.City": {
+    "s": "Cité",
+    "r": "City"
+  },
   "General.Date": "Date",
   "General.Disclaimer": "Clause de non-responsabilité",
   "General.Error": "Erreur",
+  "General.Everything": {
+    "s": "tout",
+    "r": "Everything"
+  },
   "General.GB": "Grand Monument",
   "General.Good": "Ressource",
   "General.Goods": "Ressources",
   "General.Guild": "Guilde",
+  "General.Inventory": {
+    "s": "Inventaire",
+    "r": "Inventory"
+  },
   "General.Items": "Objets",
   "General.Level": "Niveau",
   "General.Open": "Ouvrir",
@@ -1962,6 +1974,10 @@
   "Menu.recurringQuests.Desc": "Traque, lesquelles des quêtes récurrentes ont déjà donné des diamants",
   "Menu.recurringQuests.Title": "Quêtes récurrentes",
   "Menu.RightBar": "Droite",
+  "Menu.RightBar2": {
+    "s": "droite. étendre.",
+    "r": "Right, expanding"
+  },
   "Menu.SaveMessage.Desc": "La nouvelle disposition du menu a été enregistrée",
   "Menu.SaveMessage.Title": "Enregistré !",
   "Menu.Settings.Desc": "Personnalisation de Forge Hammer",

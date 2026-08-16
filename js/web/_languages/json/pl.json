@@ -607,14 +607,6 @@
     "s": "Dziennik działań",
     "r": "Action Log"
   },
-  "Boxes.GBGActionLog.DateFormat": {
-    "s": "Format daty",
-    "r": "Date format"
-  },
-  "Boxes.GBGActionLog.DateTimeFormat": {
-    "s": "Format daty i godziny",
-    "r": "Date & time format"
-  },
   "Boxes.GBGActionLog.Filter": {
     "s": "Filtr",
     "r": "Filter"
@@ -626,10 +618,6 @@
   "Boxes.GBGActionLog.FirstLogTime": {
     "s": "Pierwszy wpis",
     "r": "First entry"
-  },
-  "Boxes.GBGActionLog.FormatHint": {
-    "s": "Wyświetlanie daty (np. RRRR, MM, DD, GG, mm). Pozostaw puste, aby zachować ustawienie domyślne.",
-    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
   },
   "Boxes.GBGActionLog.From": {
     "s": "Od",
