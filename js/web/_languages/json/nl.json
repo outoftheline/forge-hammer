@@ -62,6 +62,10 @@
   "Boxes.Alerts.Time.5m": "5m",
   "Boxes.Alerts.Time.7d": "7d",
   "Boxes.Alerts.Time.8h": "8u",
+  "Boxes.Alerts.Title": {
+    "s": "Meldingen",
+    "r": "Notifications"
+  },
   "Boxes.AllyList.All": "Alle zeldzaamheden",
   "Boxes.AllyList.Ally": "Bondgenoot",
   "Boxes.AllyList.Boosts": "Bonussen",
@@ -159,6 +163,10 @@
   "Boxes.BoostList.guild_raids_supplies_start": "Start voorraden",
   "Boxes.BoostList.guild_raids_units_start": "Start eenheden",
   "Boxes.BoostList.open": "Boost Bronnen",
+  "Boxes.BoostList.Title": {
+    "s": "Boost Bronnen",
+    "r": "Boost Sources"
+  },
   "Boxes.Calculator.ActiveRecurringQuest": "Actieve herhalingsmissie:",
   "Boxes.Calculator.ArkBonus": "Huidige Arc Bonus",
   "Boxes.Calculator.AvailableFP": "Beschikbare FP",
@@ -168,11 +176,19 @@
   "Boxes.Calculator.ForderBonusPerConversation": "Sla donatiefactor op per Omzetting",
   "Boxes.Calculator.FP": "FP",
   "Boxes.Calculator.FriendlyInvestment": "Investeringen bij:",
+  "Boxes.Calculator.GBList": {
+    "s": "GG Lijst",
+    "r": "GB List"
+  },
   "Boxes.Calculator.LevelWarning": "OPGELET: Dit levelt het GG!",
   "Boxes.Calculator.LGNotConnected": "Het grootse gebouw is niet verbonden met een weg.",
   "Boxes.Calculator.LGNotOpen": "Het volgende niveau van dit GG is momenteel niet ontgrendeld.",
   "Boxes.Calculator.MaxLevel": "Max niveau",
   "Boxes.Calculator.Meds": "Medailles",
+  "Boxes.Calculator.PlayInfoSound": {
+    "s": "Speel een geluid af wanneer een plek veilig ingenomen kan worden",
+    "r": "Play sound when spots can be taken safely"
+  },
   "Boxes.Calculator.Profit": "Winst",
   "Boxes.Calculator.Settings.newValue": "Nieuwe Waarde",
   "Boxes.Calculator.Settings.Save": "Opslaan",
@@ -222,11 +238,47 @@
   "Boxes.Castle.VisitAntiqueDealerWarning": "Open de antiquair om de gegevens bij te werken.",
   "Boxes.Castle.VisitCastleWarning": "Open het kasteeloverzicht om de gegevens bij te werken.",
   "Boxes.Castle.VisitGexWarning": "Open het Gex-overzicht om de gegevens bij te werken.",
+  "Boxes.CityBuilder.Opacity": {
+    "s": "Opaciteit",
+    "r": "Opacity"
+  },
+  "Boxes.CityBuilder.Title": {
+    "s": "Stadsplanner",
+    "r": "City Builder"
+  },
+  "Boxes.CityBuilder.Zoom": {
+    "s": "Zoom",
+    "r": "Zoom"
+  },
   "Boxes.CityMap.Boosts": "Boosts &amp; Producties",
   "Boxes.CityMap.Building": "Gebouwen",
+  "Boxes.CityMap.buildingFromGBG": {
+    "s": "Gebouwen vanuit GSP",
+    "r": "Buildings from GBG"
+  },
+  "Boxes.CityMap.buildingFromQI": {
+    "s": "Gebouwen vanuit QI",
+    "r": "Buildings from QI"
+  },
   "Boxes.CityMap.BuildingsAmount": "Aantal Gebouwen: ",
   "Boxes.CityMap.CavalierPerspecitve": "Vogelperspectief",
+  "Boxes.CityMap.ChainBuildings": {
+    "s": "Ketting gebouwen",
+    "r": "Chain buildings"
+  },
+  "Boxes.CityMap.CityGridScore": {
+    "s": "Stadsindeling Score",
+    "r": "City Grid Score"
+  },
+  "Boxes.CityMap.CityGridScoreText": {
+    "s": "Gebied van alle gebouwen die aan de weg verbonden zijn gedeeld door alle wegen, vermenigvuldigd met 100",
+    "r": "Area of all connected buildings that need roads divided by area of all roads multiplied by 100"
+  },
   "Boxes.CityMap.clan_power_production": "Gildemacht productie",
+  "Boxes.CityMap.CollectSoon": {
+    "s": "Binnenkort te verzamelen: __hours__ hours",
+    "r": "Collectable soon: __hours__ hours"
+  },
   "Boxes.CityMap.CopyMetaInfos": "Stadsindeling data kopiëren",
   "Boxes.CityMap.culture": "Culturele",
   "Boxes.CityMap.decoration": "Decoraties",
@@ -236,7 +288,23 @@
   "Boxes.CityMap.generic_building": "Andere",
   "Boxes.CityMap.goods": "Goederen",
   "Boxes.CityMap.greatbuilding": "GBs",
+  "Boxes.CityMap.Highlight": {
+    "s": "Uitgelichte Gebouwen",
+    "r": "Highlight Buildings"
+  },
+  "Boxes.CityMap.HighlightCollectableBuildings": {
+    "s": "Gebouwen met een voltooide productie",
+    "r": "Collectable buildings"
+  },
+  "Boxes.CityMap.HighlightNotPolivatedBuildings": {
+    "s": "Niet geholpen gebouwen",
+    "r": "Not polivated buildings"
+  },
   "Boxes.CityMap.HighlightOldBuildings": "Markeer lagere tijdperk gebouwen",
+  "Boxes.CityMap.limited": {
+    "s": "Volmaakte/tijdelijke gebouwen",
+    "r": "Ascended/limited buildings"
+  },
   "Boxes.CityMap.main_building": "Gemeentehuis",
   "Boxes.CityMap.military": "Militaire",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "Missende API-token",
@@ -253,10 +321,26 @@
   "Boxes.CityMap.QIHint": "Bij Productie, Populatie en Tevredenheid waarden wordt ervan uitgegaan uit dat de constructie van je gebouwen voltooid is.",
   "Boxes.CityMap.random_production": "Willekeurige",
   "Boxes.CityMap.residential": "Woon",
+  "Boxes.CityMap.roadless": {
+    "s": "Wegeloze gebouwen",
+    "r": "Roadless buildings"
+  },
+  "Boxes.CityMap.SendToPlanner": {
+    "s": "Verstuur naar planner",
+    "r": "Send to planner"
+  },
+  "Boxes.CityMap.SetBuildings": {
+    "s": "Setgebouwen",
+    "r": "Set buildings"
+  },
   "Boxes.CityMap.ShowAscendableBuildings": "Markeer Upgradebare gebouwen",
   "Boxes.CityMap.ShowDecayedBuildings": "Markeer gedowngrade gebouwen",
   "Boxes.CityMap.ShowNoStreetBuildings": "Markeer gebouwen die geen wegen nodig hebben",
   "Boxes.CityMap.ShowSubmitBox": "Standsplanner",
+  "Boxes.CityMap.ShowWorstBuildings": {
+    "s": "Slechtst beoordeelde gebouwen",
+    "r": "Worst rated buildings"
+  },
   "Boxes.CityMap.street": "Wegen",
   "Boxes.CityMap.StreetsAmount": "Aantal Straten: ",
   "Boxes.CityMap.Submit": "Verzenden",
@@ -268,6 +352,10 @@
   "Boxes.CityMap.ToastBodyCopyData": "Jouw stad data is nu op het klembord",
   "Boxes.CityMap.ToastHeadCopyData": "Gekopieerd!",
   "Boxes.CityMap.tower": "Torens",
+  "Boxes.CityMap.TurnedPerspecitve": {
+    "s": "90° Bovenaanzicht",
+    "r": "90° Top View"
+  },
   "Boxes.CityMap.WholeArea": "Volledige oppervlakte: ",
   "Boxes.CityMap.YourCity": "Jouw stad",
   "Boxes.CloseBox.AutoHideOnBattle": "Verberg alles automatisch in gevecht",
@@ -312,14 +400,38 @@
   "Boxes.Discord.DeleteEntry": "Verwijderen",
   "Boxes.Discord.EditEntry": "Bewerken",
   "Boxes.Discord.Event": "Evenement",
+  "Boxes.Discord.GBGVariables": {
+    "s": "Attentie: Overwinningspunten, aangrenzende gilden en uitputting kunnen veranderen voordat de sector daadwerkelijk beschikbaar komt. Je kan deze plaatsaanduidingen voor GSP sectoren gebruiken in je sjabloon:",
+    "r": "Attention: Victory points, neighboring guilds and attrition can change before the province is actually available. You can use these placeholders for GBG provinces in your template:"
+  },
+  "Boxes.Discord.MarkdownLinkText": {
+    "s": "Discord tekst formattering",
+    "r": "Discord text formatting"
+  },
   "Boxes.Discord.Message": "Bericht",
   "Boxes.Discord.Name": "Naam",
   "Boxes.Discord.Save": "Opslaan",
   "Boxes.Discord.TestEntry": "Testen",
   "Boxes.Discord.Title": "Discord Webhooks",
+  "Boxes.Discord.TitleEntries": {
+    "s": "Discord berichten",
+    "r": "Discord Messages"
+  },
   "Boxes.Discord.TitleNewEntry": "Nieuwe webhook invoer",
+  "Boxes.Discord.TitleNewTemplate": {
+    "s": "Sjabloon",
+    "r": "Template"
+  },
   "Boxes.Discord.VisitGGMapBefore": "Voor gilde evenementen moet je eerst de gildestrijd kaart bezoeken",
   "Boxes.Discord.WebhookUrl": "Webhook URL",
+  "Boxes.Discord.WebhookUrlManage": {
+    "s": "Beheer Webhook URLs",
+    "r": "Manage Webhook URLs"
+  },
+  "Boxes.Discord.WebhookUrlNeeded": {
+    "s": "voeg eerst een Webhook URL toe!",
+    "r": "Add a webhook URL first!"
+  },
   "Boxes.doubleFPprevention.Text": "Preventie",
   "Boxes.doubleFPprevention.Title": "Dubbele donatie",
   "Boxes.EventChests.Chance": "Kans",
@@ -357,16 +469,32 @@
   "Boxes.FPCollector.forge_bowl_event": "Forge Bowl Evenement",
   "Boxes.FPCollector.FP": "FP's",
   "Boxes.FPCollector.grand_prize": "Hoofdprijs",
+  "Boxes.FPCollector.guild_expedition_reward_notification": {
+    "s": "Gilde Expeditie",
+    "r": "Guild Expedition"
+  },
   "Boxes.FPCollector.guild_raids": "Quantum Invasie",
   "Boxes.FPCollector.guildExpedition": "GE Reliek",
   "Boxes.FPCollector.Guildexpedition": "Gilde expeditie",
   "Boxes.FPCollector.Guildfights": "Gilde gevechten",
   "Boxes.FPCollector.halloween_event": "Halloween Evenement",
   "Boxes.FPCollector.hero_event": "Broederschapsevenement",
+  "Boxes.FPCollector.hidden_reward": {
+    "s": "Verborgen Beloning",
+    "r": "Hidden Reward"
+  },
   "Boxes.FPCollector.hiddenReward": "Verborgen Beloning",
+  "Boxes.FPCollector.item_store": {
+    "s": "Voorwerpen Winkel",
+    "r": "Item Store"
+  },
   "Boxes.FPCollector.league_reward": "Competitie Beloning",
   "Boxes.FPCollector.may_day_event": "Meiviering Evenement",
   "Boxes.FPCollector.NoEntriesFound": "Nog geen invoer gevonden…",
+  "Boxes.FPCollector.null": {
+    "s": "Onbekend",
+    "r": "Unknown"
+  },
   "Boxes.FPCollector.pickupProduction": "Stadgebouw Collectie",
   "Boxes.FPCollector.plunderReward": "Plunderbeloning",
   "Boxes.FPCollector.pvp_arena": "PVP Arena",
@@ -385,19 +513,311 @@
   "Boxes.FPCollector.Total": "Totaal Opgehaald:",
   "Boxes.FPCollector.wildlife_event": "Fauna Evenement",
   "Boxes.FPCollector.winter_event": "Winterevenement",
+  "Boxes.GBGActionLog.Action.attacked_ignored": {
+    "s": "Stopteken genegeerd",
+    "r": "Stop sign ignored"
+  },
+  "Boxes.GBGActionLog.Action.building_destroyed": {
+    "s": "Gebouw vernietigd",
+    "r": "Building destroyed"
+  },
+  "Boxes.GBGActionLog.Action.building_placed": {
+    "s": "Gebouw geplaatst",
+    "r": "Building placed"
+  },
+  "Boxes.GBGActionLog.Action.province_conquered": {
+    "s": "Sector ingenomen",
+    "r": "Sector taken"
+  },
+  "Boxes.GBGActionLog.Action.province_lost": {
+    "s": "Sector verloren",
+    "r": "Sector lost"
+  },
+  "Boxes.GBGActionLog.ActionCode": {
+    "s": "Actie",
+    "r": "Action"
+  },
+  "Boxes.GBGActionLog.ActionTime": {
+    "s": "Tijd",
+    "r": "Time"
+  },
+  "Boxes.GBGActionLog.ActivityEmpty": {
+    "s": "Geen bijpassende spelersactiviteit gevonden voor de geselecteerde data en acties.",
+    "r": "No matching player activity for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.ActorName": {
+    "s": "Naam Agent",
+    "r": "Actor name"
+  },
+  "Boxes.GBGActionLog.ActorType": {
+    "s": "Soort Agent",
+    "r": "Actor type"
+  },
+  "Boxes.GBGActionLog.ActorType.guild": {
+    "s": "Gilde",
+    "r": "Guild"
+  },
+  "Boxes.GBGActionLog.ActorType.player": {
+    "s": "Speler",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.BatchesEmpty": {
+    "s": "Nog geen data collecties opgeslagen.",
+    "r": "No data collections logged yet."
+  },
+  "Boxes.GBGActionLog.Building": {
+    "s": "Gebouw",
+    "r": "Building"
+  },
+  "Boxes.GBGActionLog.Button": {
+    "s": "Actielog",
+    "r": "Action Log"
+  },
+  "Boxes.GBGActionLog.DateFormat": {
+    "s": "Datum formule",
+    "r": "Date format"
+  },
+  "Boxes.GBGActionLog.DateTimeFormat": {
+    "s": "Datum & tijd formule",
+    "r": "Date & time format"
+  },
+  "Boxes.GBGActionLog.Filter": {
+    "s": "Filter",
+    "r": "Filter"
+  },
+  "Boxes.GBGActionLog.FilteredTimeRange": {
+    "s": "Tijdsbestek",
+    "r": "Time range"
+  },
+  "Boxes.GBGActionLog.FirstLogTime": {
+    "s": "Eerste invoer",
+    "r": "First entry"
+  },
+  "Boxes.GBGActionLog.FormatHint": {
+    "s": "moments.js tokens (bijv. YYYY, MM, DD, HH, mm). laat leeg voor de standaardinstelling",
+    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
+  },
+  "Boxes.GBGActionLog.From": {
+    "s": "Van",
+    "r": "From"
+  },
+  "Boxes.GBGActionLog.GroupIndex": {
+    "s": "Groepsnummer",
+    "r": "Group Index"
+  },
+  "Boxes.GBGActionLog.LastLogTime": {
+    "s": "Laatste invoer",
+    "r": "Last entry"
+  },
+  "Boxes.GBGActionLog.LogCount": {
+    "s": "Nieuw invoer nummer",
+    "r": "New entry count"
+  },
+  "Boxes.GBGActionLog.LogDate": {
+    "s": "Verzameld op",
+    "r": "Collected at"
+  },
+  "Boxes.GBGActionLog.Map": {
+    "s": "Kaart",
+    "r": "Map"
+  },
+  "Boxes.GBGActionLog.Map.volcano_archipelago": {
+    "s": "Vulkanische Archipel",
+    "r": "Volcano Archipelago"
+  },
+  "Boxes.GBGActionLog.Map.waterfall_archipelago": {
+    "s": "Waterval Archipel",
+    "r": "Waterfall Archipelago"
+  },
+  "Boxes.GBGActionLog.Metric": {
+    "s": "Tonen",
+    "r": "Show"
+  },
+  "Boxes.GBGActionLog.MetricCount": {
+    "s": "Actie",
+    "r": "Action count"
+  },
+  "Boxes.GBGActionLog.MetricDays": {
+    "s": "Actieve dagen",
+    "r": "Active days"
+  },
+  "Boxes.GBGActionLog.Player": {
+    "s": "Speler",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.RangeCapActivity": {
+    "s": "Het activiteitenoverzicht heeft een bereik van 1 maand. Aanpassen naar:",
+    "r": "The Activity tab is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapBatches": {
+    "s": "Het partijenoverzicht heeft een bereik van 2 weken. Aanpassen naar:",
+    "r": "The Batches tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapDetails": {
+    "s": "Het details overzicht heeft een bereik van 2 weken. Aanpassen naar:",
+    "r": "The Details tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapReport": {
+    "s": "Het Dagelijkse Overzicht heeft een bereik van 1 maand. Aanpassen naar:",
+    "r": "The Daily Report is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapTitle": {
+    "s": "Gelimiteerde data",
+    "r": "Date range limited"
+  },
+  "Boxes.GBGActionLog.RedAfterHours": {
+    "s": "Maak de menu-badge rood na (uren)",
+    "r": "Turn the menu badge red after (hours)"
+  },
+  "Boxes.GBGActionLog.RedAfterHoursHint": {
+    "s": "Het menu icoon toont de hoeveelheid uren sinds de laatste log collectie; de cirkel word rood nadat deze hoeveelheid uren vergaan zijn.",
+    "r": "The menu icon shows the hours since the last log collection; the circle turns red once this many hours pass."
+  },
+  "Boxes.GBGActionLog.ReportEmpty": {
+    "s": "Geen bijpassende spelersactiviteit gevonden voor de geselecteerde data en acties.",
+    "r": "No matching player actions for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.Reset": {
+    "s": "Filters resetten",
+    "r": "Reset filters"
+  },
+  "Boxes.GBGActionLog.RowCount": {
+    "s": "Rijen",
+    "r": "Rows"
+  },
+  "Boxes.GBGActionLog.Sector": {
+    "s": "Sector",
+    "r": "Sector"
+  },
+  "Boxes.GBGActionLog.TabActivity": {
+    "s": "Activiteit per Uur",
+    "r": "Activity by Hour"
+  },
+  "Boxes.GBGActionLog.TabBatches": {
+    "s": "Partijen",
+    "r": "Batches"
+  },
+  "Boxes.GBGActionLog.TabDetails": {
+    "s": "Details",
+    "r": "Details"
+  },
+  "Boxes.GBGActionLog.TabPlayerDailyReport": {
+    "s": "Speler Dagelijkse Overzicht",
+    "r": "Player Daily Report"
+  },
+  "Boxes.GBGActionLog.title": {
+    "s": "GSP actielog",
+    "r": "GBG Action Log"
+  },
+  "Boxes.GBGActionLog.To": {
+    "s": "Naar",
+    "r": "To"
+  },
+  "Boxes.GBGActionLog.Toast.CurrLoadTime": {
+    "s": "huidige laadtijd",
+    "r": "Current load end time"
+  },
+  "Boxes.GBGActionLog.Toast.LogsLoaded": {
+    "s": "hoeveelheid aan geladen logs",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.PrevLoadTime": {
+    "s": "hoeveelheid aan geladen logs",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.Reopen": {
+    "s": "**Vergeet niet om de GSP kaart te openen om nieuwe logs te laden!**",
+    "r": "**Do not forget to reopen the GBG map to load new logs!**"
+  },
+  "Boxes.GBGActionLog.Total": {
+    "s": "Totaal",
+    "r": "Total"
+  },
   "Boxes.GBGBuildings.absoluteCosts": "Absolute kosten",
   "Boxes.GBGBuildings.Costs": "Kosten",
   "Boxes.GBGBuildings.relativeCosts": "__amount__% van __good__ voorraad (__era__)",
   "Boxes.GBGBuildings.title": "Gebouw aanbeveling",
   "Boxes.GBGBuildings.toBuild": "Te bouwen",
   "Boxes.GBGBuildings.totalChance": "Kans",
+  "Boxes.General.AutoOpen": {
+    "s": "Open automatisch",
+    "r": "Open automatically"
+  },
+  "Boxes.General.Cancel": {
+    "s": "Annuleren",
+    "r": "Cancel"
+  },
+  "Boxes.General.ConfirmDelete": {
+    "s": "Bevestig verwijderen",
+    "r": "Confirm delete:"
+  },
+  "Boxes.General.Delete": {
+    "s": "Verwijderen",
+    "r": "Delete"
+  },
+  "Boxes.General.Edit": {
+    "s": "Bewerken",
+    "r": "Edit"
+  },
   "Boxes.General.Export": "Exporteren",
   "Boxes.General.ExportCSV": "Exporteer als CSV",
   "Boxes.General.ExportJSON": "Exporteer als jSON",
+  "Boxes.General.Favorites": {
+    "s": "Favorieten",
+    "r": "Favorites"
+  },
+  "Boxes.General.FavoritesAdd": {
+    "s": "Toevoegen aan favorieten",
+    "r": "Add to favorites"
+  },
+  "Boxes.General.FavoritesRemove": {
+    "s": "Verwijderen van favorieten",
+    "r": "Remove from favorites"
+  },
   "Boxes.General.FilterItems": "Filter Items",
   "Boxes.General.Guild_Battlegrounds": "Gildestrijdperk",
+  "Boxes.General.Guild_Battlegrounds.short": {
+    "s": "GSP",
+    "r": "GBG"
+  },
+  "Boxes.General.Guild_Expedition": {
+    "s": "Gilde Expedities",
+    "r": "Guild Expedition"
+  },
+  "Boxes.General.Guild_Expedition.short": {
+    "s": "GE",
+    "r": "GE"
+  },
+  "Boxes.General.Level": {
+    "s": "Level",
+    "r": "Level"
+  },
   "Boxes.General.Quantum_Incursion": "Quantum invasies",
+  "Boxes.General.Quantum_Incursion.short": {
+    "s": "QI",
+    "r": "QI"
+  },
+  "Boxes.General.Reset": {
+    "s": "Reset",
+    "r": "Reset"
+  },
   "Boxes.General.Save": "Opslaan",
+  "Boxes.General.Season": {
+    "s": "Seizoen",
+    "r": "Season"
+  },
+  "Boxes.General.ShowOnMap": {
+    "s": "Toon op stadskaart",
+    "r": "Show on city map"
+  },
+  "Boxes.General.Version": {
+    "s": "Versie",
+    "r": "Version"
+  },
+  "Boxes.General.Zoom": {
+    "s": "Zoom",
+    "r": "Zoom"
+  },
   "Boxes.GexStat.CompareLast": "Vergelijk vorige",
   "Boxes.GexStat.Course": "Parcours",
   "Boxes.GexStat.DeleteDataOlderThan": "verwijder data ouder dan",
@@ -405,6 +825,10 @@
   "Boxes.GexStat.ExportLast": "Exporteer vorige",
   "Boxes.GexStat.General": "Algemeen",
   "Boxes.GexStat.Gex": "GE",
+  "Boxes.GexStat.GexTrial": {
+    "s": "Uitdaging",
+    "r": "Trial"
+  },
   "Boxes.GexStat.Level": "niveau",
   "Boxes.GexStat.Member": "lid",
   "Boxes.GexStat.MemberParticipation": "Leden deelname",
@@ -456,6 +880,18 @@
   "Boxes.GreatBuildings.TTGoodCostsColumn": "Toont de FP kosten voor het kopen van de benodigde goederen (geldt enkel voor nog niet gebouwde GG's)",
   "Boxes.GreatBuildings.TTGoodsValue": "Deze waarde wordt gebruikt om een ranglijst te maken van goederen producerende gebouwen. Op hoeveel FP waardeer jij één goed?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Optioneel: Hoeveel FP beloningen krijg je per dag? Deze informatie wordt gebruikt om de winstgevendheid te berekenen voor extra Arc levels. Om een idee te krijgen ga naar Stadhuis &gt; Nieuws &gt; Gebeurtenissen overzicht en blader door de pagina's",
+  "Boxes.GreatBuildingsProgress.ContributorsSince": {
+    "s": "Contributor changes since __date__",
+    "r": "Contributor changes since __date__"
+  },
+  "Boxes.GreatBuildingsProgress.DeltaFP": {
+    "s": "FP toegevoegd",
+    "r": "FP added"
+  },
+  "Boxes.GreatBuildingsProgress.Donators": {
+    "s": "Donateuren",
+    "r": "Donators"
+  },
   "Boxes.GuildFights.Attrition": "Uitputting",
   "Boxes.GuildFights.Copy": "Kopieren",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "Aanvalstijden voor de geselecteerde provincies is gekopieerd.",
@@ -732,8 +1168,8 @@
   "Boxes.MergerGame.Keys.care": "Sleutels",
   "Boxes.MergerGame.Keys.soccer": "Badges",
   "Boxes.MergerGame.KeysLeft.anniversary": "Er zijn nog sleutels over op het bord!",
-  "Boxes.MergerGame.KeysLeft.care": "Forge Hammer: Er zijn nog sleutels op het veld!",
-  "Boxes.MergerGame.KeysLeft.soccer": "Forge Hammer: Er zijn nog badges op het veld!",
+  "Boxes.MergerGame.KeysLeft.care": "FoE-Helper: Er zijn nog sleutels op het veld!",
+  "Boxes.MergerGame.KeysLeft.soccer": "FoE-Helper: Er zijn nog badges op het veld!",
   "Boxes.MergerGame.KeyValue.anniversary": "Waarde per sleutel",
   "Boxes.MergerGame.KeyValue.care": "Voortgang per sleutel",
   "Boxes.MergerGame.KeyValue.soccer": "Voortgang per badge",
@@ -794,7 +1230,7 @@
   "Boxes.OtherGuildActivity.Title": "Actieve Gildeleden",
   "Boxes.Outpost.DescInStock": "Beschikbaar",
   "Boxes.Outpost.DescRequired": "Nodig",
-  "Boxes.Outpost.DescStillMissing": "<span>Overschot</span> / <span>Tekort</span>",
+  "Boxes.Outpost.DescStillMissing": "<span style=\"color:#29b206\">Overschot</span> / <span style=\"color:#ff4040\">Tekort</span>",
   "Boxes.Outpost.ExpansionsSum": "Uitbreidingen",
   "Boxes.Outpost.including4x": "effectief - inclusief x4 kans",
   "Boxes.Outpost.infoLine": "__runNumber__de run, Bonus x4 Kans: __chanceX4__%",
@@ -943,6 +1379,26 @@
   "Boxes.ProductionsRating.FindBuilding": "Zoek",
   "Boxes.ProductionsRating.FindSpecialBuilding": "Vind Speciaal Gebouw",
   "Boxes.ProductionsRating.HighlightsExplained": "Gebouwen markeren: Klik op een willekeurige rij om de gebouwen te selecteren die je gemakkelijker wilt vergelijken. Zoekresultaten worden automatisch gemarkeerd.",
+  "Boxes.ProductionsRating.PresetActive": {
+    "s": "Actieve instelling",
+    "r": "Active preset"
+  },
+  "Boxes.ProductionsRating.PresetConfirmReset": {
+    "s": "Wil je dit terugzetten naar standaardwaardes?",
+    "r": "Reset this preset to default values?"
+  },
+  "Boxes.ProductionsRating.PresetCopySuffix": {
+    "s": "Kopiëren",
+    "r": "Copy"
+  },
+  "Boxes.ProductionsRating.PresetDefault": {
+    "s": "Standaard",
+    "r": "Default"
+  },
+  "Boxes.ProductionsRating.PresetDelete": {
+    "s": "Verwijderen",
+    "r": "Delete"
+  },
   "Boxes.ProductionsRating.ProdPerTile": "Verwachte dagelijkse productie per tegel",
   "Boxes.ProductionsRating.Results": "Resultaat",
   "Boxes.ProductionsRating.Score": "Score",
@@ -1037,12 +1493,28 @@
   "Boxes.Stats.Title": "Statistieken Overzicht",
   "Boxes.Technologies.DescInStock": "Beschikbaar",
   "Boxes.Technologies.DescRequired": "Aantal",
-  "Boxes.Technologies.DescStillMissing": "<span>Overschot</span> / <span>Tekort</span>",
+  "Boxes.Technologies.DescStillMissing": "<span style=\"color:#29b206\">Overschot</span> / <span style=\"color:#ff4040\">Tekort</span>",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Negeer optionele technologieën van het huidige of toekomstige tijdperken",
   "Boxes.Technologies.IgnorePrevEra": "Negeer optionele technologiën van vorige tijdperken",
   "Boxes.Technologies.NoTechs": "Je hebt het einde van dit tijdperk bereikt",
   "Boxes.Technologies.Resource": "Benodigdheden",
   "Boxes.Technologies.Title": "Onderzoekskosten voor",
+  "Boxes.Translation.Reference": {
+    "s": "Referentie",
+    "r": "Reference"
+  },
+  "Boxes.Translation.Target": {
+    "s": "Tekst",
+    "r": "Text"
+  },
+  "Boxes.Translation.TempStorage": {
+    "s": "Tijdelijke opslag",
+    "r": "Temp Storage"
+  },
+  "Boxes.Translation.Title": {
+    "s": "Vertalingen",
+    "r": "Translations"
+  },
   "Boxes.Treasury.Action": "Boodschap",
   "Boxes.Treasury.Amount": "Hoeveelheid",
   "Boxes.Treasury.DateTime": "Datum/Tijd",
@@ -1089,6 +1561,10 @@
   "Date": "DD-MM-YY",
   "DateShort": "DD-MMM",
   "DateTime": "DD-MM-YY HH:mm:ss a",
+  "DBCreationWarning.CloseOverlay": {
+    "s": "Sluiten",
+    "r": "Close"
+  },
   "Eras.0": "Geen tijdperk",
   "Eras.0.short": "-",
   "Eras.1": "Steentijd",
@@ -1138,14 +1614,66 @@
   "Eras.9": "Progressieve tijdperk",
   "Eras.9.short": "Prog",
   "Eras.GvGAllAge": "Alle Tijdperken",
+  "Eras.undefined": {
+    "s": "Geen tijdperk",
+    "r": "No age"
+  },
+  "Eras.undefined.short": {
+    "s": "Geen tijdperk",
+    "r": "No age"
+  },
+  "General.Battle": {
+    "s": "Gevechten",
+    "r": "Battle"
+  },
+  "General.Boost": {
+    "s": "Boost",
+    "r": "Boost"
+  },
+  "General.Cancel": {
+    "s": "Annuleren",
+    "r": "Cancel"
+  },
+  "General.Choose": {
+    "s": "Kies alsjeblieft",
+    "r": "Please choose"
+  },
+  "General.Date": {
+    "s": "Datum",
+    "r": "Date"
+  },
+  "General.Disclaimer": {
+    "s": "Disclaimer",
+    "r": "Disclaimer"
+  },
+  "General.Error": {
+    "s": "Foutmelding",
+    "r": "Error"
+  },
   "General.GB": "Groots Gebouw",
   "General.Good": "Goed",
   "General.Goods": "Goederen",
   "General.Guild": "Gilde",
+  "General.Items": {
+    "s": "Voorwerpen",
+    "r": "Items"
+  },
   "General.Level": "Niveau",
+  "General.Open": {
+    "s": "Openen",
+    "r": "Open"
+  },
   "General.Player": "Speler",
   "General.Reset": "Reset",
   "General.Save": "Opslaan",
+  "General.Search": {
+    "s": "Zoeken",
+    "r": "Search"
+  },
+  "General.Send": {
+    "s": "Verzenden",
+    "r": "Send"
+  },
   "General.Unit": "Eenheid",
   "General.Units": "Eenheden",
   "Global.BoxTitle": "Forge Hammer",
@@ -1165,6 +1693,10 @@
   "Local": "nl-NL",
   "Menu.Alerts.Desc": "Maak en onderhoud herinneringen",
   "Menu.Alerts.Title": "Waarschuwingen",
+  "Menu.Allies.Title": {
+    "s": "Bondgenoten",
+    "r": "Allies"
+  },
   "Menu.AztecMiniGame.Desc": "<em id=\"minigame_aztecs-Btn-closed\" class=\"tooltip-error\">Opend automatisch bij het starten van een Aztec mini game<br></em>Aztec Minigame Helper",
   "Menu.AztecMiniGame.Title": "Azteken Helper",
   "Menu.Bluegalaxy.Desc": "Deze tool helpt je bij het vinden van de beste opbrengst van je Blauwe Melkweg",
@@ -1403,6 +1935,90 @@
   "Settings.Version.PlayerId": "Speler-ID:",
   "Settings.Version.Title": "Versie",
   "Settings.Version.World": "Wereld:",
-  "StrategyPoints.BuyableFP": "Forge Hammer: Aantal FP dat kan worden gekocht met munten.",
-  "StrategyPoints.FPInBar": "Forge Hammer: Aantal FP in je balk."
+  "StrategyPoints.BuyableFP": "FoE-Helper: Aantal FP dat kan worden gekocht met munten.",
+  "StrategyPoints.FPInBar": "FoE-Helper: Aantal FP in je balk.",
+  "XPlan.Plan.DefaultName": {
+    "s": "Nieuw Plan",
+    "r": "New Plan"
+  },
+  "XPlan.Plan.FallbackName": {
+    "s": "Plan",
+    "r": "Plan"
+  },
+  "XPlan.PlanList.Loading": {
+    "s": "Laden...",
+    "r": "Loading…"
+  },
+  "XPlan.PlanList.LoadPlan": {
+    "s": "Plan laden",
+    "r": "Load plan"
+  },
+  "XPlan.Save.Failed": {
+    "s": "Fout bij opslaan",
+    "r": "Failed to save"
+  },
+  "XPlan.Save.Saved": {
+    "s": "Opgeslagen",
+    "r": "Saved"
+  },
+  "XPlan.Save.Saving": {
+    "s": "Opslaan...",
+    "r": "Saving…"
+  },
+  "XPlan.Search.Placeholder": {
+    "s": "Voeg een nieuw gebouw toe...",
+    "r": "Add a new building…"
+  },
+  "XPlan.Sidebar.ClickToRestore": {
+    "s": "Klik om te herstellen",
+    "r": "Click to restore"
+  },
+  "XPlan.Sidebar.Deleted": {
+    "s": "Verwijderd",
+    "r": "Deleted"
+  },
+  "XPlan.Sidebar.Restore": {
+    "s": "Herstellen",
+    "r": "Restore"
+  },
+  "XPlan.Street.All": {
+    "s": "Wegen",
+    "r": "Streets"
+  },
+  "XPlan.Street.With": {
+    "s": "Met weg",
+    "r": "With street"
+  },
+  "XPlan.Street.Without": {
+    "s": "Geen wegen",
+    "r": "No streets"
+  },
+  "XPlan.SubmitWindow.Title": {
+    "s": "Forge Hammer - Stadsplanner",
+    "r": "Forge Hammer - City Planner"
+  },
+  "XPlan.Title": {
+    "s": "Stadsplanner",
+    "r": "City Planner"
+  },
+  "XPlan.Type.All": {
+    "s": "Types",
+    "r": "Types"
+  },
+  "XPlan.Type.GreatBuilding": {
+    "s": "GG",
+    "r": "GB"
+  },
+  "XPlan.Type.Military": {
+    "s": "Militair",
+    "r": "Military"
+  },
+  "XPlan.Type.Production": {
+    "s": "Productie",
+    "r": "Production"
+  },
+  "XPlan.Type.Residential": {
+    "s": "Residentiëel",
+    "r": "Residential"
+  }
 }
