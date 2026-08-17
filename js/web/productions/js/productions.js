@@ -13,6 +13,7 @@ let Productions = {
 	ShowDaily: false,
 	ratedBuildings:null,
 	ActiveTab: 1,
+	ProfileDataLoaded: false,
 
 	Tabs: [],
 	TabsContent: [],
@@ -354,6 +355,12 @@ let Productions = {
 	init: () => {
 		if (FH.ActiveMap === 'OtherPlayer') return
 
+		Productions.PrepareData()
+		Productions.showBox();
+	},
+
+
+	PrepareData: () => {
 		FH.Main.CityBuildingsData = CityBuildings.createBuildings(Object.values(FH.Main.CityMapData))
 		Productions.CombinedCityMapData = FH.Main.CityBuildingsData
 
@@ -361,7 +368,7 @@ let Productions = {
 			Productions.CombinedCityMapData = Object.assign({}, Productions.CombinedCityMapData, CityMap.EraOutpost.data)
 		}
 
-		// leere Arrays erzeugen
+		// create empty arrays
 		for(let i in Productions.Types) {
 			if (!Productions.Types.hasOwnProperty(i)) continue
 
@@ -370,11 +377,6 @@ let Productions = {
 			Productions.BuildingsProductsGroups[ Productions.Types[i] ] = []
 		}
 
-		Productions.ReadData()
-	},
-
-	
-	ReadData: ()=> {
 		Productions.BuildingsAll = Object.values(Productions.CombinedCityMapData)
 		Productions.setChainsAndSets(Productions.BuildingsAll)
 
@@ -400,46 +402,11 @@ let Productions = {
 		Productions.Boosts['money'] += ProdBonus
 		Productions.Boosts['supplies'] += ProdBonus
 
-		Productions.showBox();
+		Productions.CategorizeBuildings()
 	},
 
 
-	showBox: () => {
-
-		if ($('#Productions').length > 0){
-			FH.HTML.CloseOpenBox('Productions');
-
-			return;
-		}
-
-		FH.HTML.AddCssFile('productions');
-
-		FH.HTML.Box({
-			id: 'Productions',
-			title: FH.t('Boxes.Productions.Title'),
-			auto_close: true,
-			dragdrop: true,
-			minimize: true,
-			resize: true,
-			popout: {w: 1000, h: 700},
-        	settings: Productions.ShowSettings
-		});
-
-		Productions.ActiveTab = 1;
-		Productions.CalcBody();
-
-		Productions.SwitchFunction()
-	},
-
-	
-	CalcBody: () => {
-		Productions.Tabs = [];
-		Productions.TabsContent = [];
-
-		let h = [];
-
-		h.push('<div class="production-tabs tabs">');
-
+	CategorizeBuildings: () => {
 		Productions.BuildingsAll.forEach(building => {
 			let boosts = Object.keys(Boosts.Sums)
 			let saveBuilding = {id: building.id, entityId: building.entityId}
@@ -603,6 +570,70 @@ let Productions = {
 				Productions.BuildingsProducts["population"].push(saveBuilding)
 			}
 		})
+	},
+
+
+	CalculateProfileData: () => {
+		if (FH.ActiveMap === 'OtherPlayer') return;
+
+		Productions.PrepareData();
+
+		Productions.buildTableByType('strategy_points');
+		Productions.buildTableByType('units');
+		Productions.buildTableByType('goods');
+		Productions.buildTableByType('clan_goods');
+		/*let fspAmount = 0;
+		for (let building of Object.values(Productions.CombinedCityMapData)) {
+			let item = Productions.showBuildingItems(false, building);
+			if (item[2].length > 0) {
+				let fsp = item[2].find(x => x.itemId === "rush_event_buildings_instant");
+				if (fsp) {
+					if (fsp.fragment)
+						fspAmount += (fsp.amount + fsp.random);
+					else
+						fspAmount += (fsp.amount + fsp.random)*30;
+				}
+			}
+		}
+		console.log(fspAmount / 30);*/
+
+		Productions.ProfileDataLoaded = true
+	},
+
+
+	showBox: () => {
+		if ($('#Productions').length > 0){
+			FH.HTML.CloseOpenBox('Productions');
+			return;
+		}
+
+		FH.HTML.AddCssFile('productions');
+
+		FH.HTML.Box({
+			id: 'Productions',
+			title: FH.t('Boxes.Productions.Title'),
+			auto_close: true,
+			dragdrop: true,
+			minimize: true,
+			resize: true,
+			popout: {w: 1000, h: 700},
+        	settings: Productions.ShowSettings
+		});
+
+		Productions.ActiveTab = 1;
+		Productions.CalcBody();
+
+		Productions.SwitchFunction()
+	},
+
+	
+	CalcBody: () => {
+		Productions.Tabs = [];
+		Productions.TabsContent = [];
+
+		let h = [];
+
+		h.push('<div class="production-tabs tabs">');
 
 		Productions.Types.forEach(type => {
 			Productions.SetTabs(type)
@@ -1678,7 +1709,7 @@ let Productions = {
 								allUnits += "Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + `<img src='${srcLinks.get("/shared/icons/"+resource.name.replace(/next./,"").replace("random","random_production")+".png",true)}'>` + "<br>"
 							} else {
 								allItems += "<span>Ø " + amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + resource.name + "</span><br>"
-								itemArray.push({fragment:frag,name:resource.name,amount:0,random:amount})
+								itemArray.push({fragment:frag,name:resource.name,amount:0,random:amount,itemId:resource.id})
 							}
 						}
 					}
@@ -1692,7 +1723,7 @@ let Productions = {
 						itemId = (itemId === undefined) ? '' : itemId
 						let frag = production.resources.subType === "fragment"
 						allItems += `<span class="'${itemId}'">`+production.resources.amount + "x" + (frag ? `<img src="${FH.extUrl}js/web/x_img/fragment.png" class="fragIcon" /> ` : "" ) + production.resources.name.replace(/^\d+/, "") + "</span><br>"
-						itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0})
+						itemArray.push({fragment:frag,name:production.resources.name,amount:production.resources.amount,random:0,itemId:itemId});
 					}
 				}
 			}
@@ -3268,10 +3299,12 @@ let Productions = {
 
 FH.proxy.addHandler('CityMapService', 'placeBuilding', (data, postData) => {
 	Productions.UpdateEfficiencyEvent.trigger()
+	Productions.ProfileDataLoaded = false;
 });
 
 FH.proxy.addHandler('CityMapService', 'removeBuilding', (data, postData) => {
 	Productions.UpdateEfficiencyEvent.trigger()
+	Productions.ProfileDataLoaded = false;
 });
 
 FH.proxy.addCustomHandler('InventoryUpdated',()=>{

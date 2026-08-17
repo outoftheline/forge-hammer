@@ -78,6 +78,10 @@ const Profile = {
 			return;
 		}
 
+		if (!Productions.ProfileDataLoaded) {
+			Productions.CalculateProfileData();
+		}
+
 		FH.HTML.Box({
 			id: 'PlayerProfile',
 			title: FH.Player.Name,
