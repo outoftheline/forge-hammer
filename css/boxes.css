@@ -1035,10 +1035,10 @@ Potions */
 #BoostPotions .shortest {
 	width: 50px;
     height: 40px;
-    border: var(--window-border);
-    background: var(--window-bg);
+    border: 2px solid var(--game-border-middle);
+    background: var(--game-bg-dark);
 	border-radius: 5px;
-	box-shadow: inset 0 0 3px 2px #301e0f, inset 0 0 0 1px #000, 0 0 3px #000;
+	box-shadow: inset 0 0 0 1px #000a, 0 0 3px #000a;
 	text-align: center;
 }
 #BoostPotions .shortest > img:first-child {
@@ -1139,7 +1139,7 @@ hammerBar */
 	z-index: 100;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 	font-size: 0.8rem;
-	color: var(--text);
+	color: var(--game-text-light);
 	position: fixed;
 	top: 2px;
 	left: 0;
@@ -1159,9 +1159,9 @@ hammerBar */
 }
 
 #hammerBar .barItem {
-	background: rgba(0, 0, 0, 0.50);
-	border: 1px solid rgba(113, 74, 35, 1);
-	color: var(--text);
+	background: var(--game-bg-dark);
+	border: 1px solid var(--game-border-bar);
+	color: var(--game-text-light);
 	border-radius: 4px;
 	display: inline-flex;
     align-items: center;
@@ -1196,8 +1196,8 @@ hammerBar */
 
 #hammerBar .small-screen .fp-storage, 
 #hammerBar .small-screen .buyable-fp {
-	background-color: rgba(0, 0, 0, 0.75);
-	border: 1px solid rgba(243, 214, 160, 0.65);
+	background-color: var(--game-bg-dark);
+	border: 1px solid var(--game-border-bar);
 }
 
 #hammerBar.guild_raids {
@@ -1241,7 +1241,7 @@ hammerBar */
 	text-shadow: 0 0 4px #000, 0 0 1px #000, 0 0 2px #000, 0 0 3px #000;
 	font-weight: bold;
 	font-size: 90%;
-	color: var(--text-tab-active);
+	color: var(--game-text-light);
 }
 
 #hammerBar .fpbar .bars span {
@@ -2461,6 +2461,13 @@ tr.sorter-header th:not(.no-sort).descending:after {
 	--def: #3e68f7;
 	--att: #c72c2c;
 	--questcounter-bg: #c9af7f;
+
+	--game-text-dark: #361d0b;
+	--game-text-light: #d6be8d;
+	--game-border-bar: #654421;
+	--game-border-middle: #5c391b;
+	--game-bg-dark: #210f09e3;
+	--game-bg-light: #ad956c;
 
 	--menu-tooltip-inhabitant: #a4a45d;
 	--btn-bg-discord: linear-gradient(to bottom, #5662f6, #4852e4);

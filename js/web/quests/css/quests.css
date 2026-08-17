@@ -19,10 +19,10 @@
     left: 5px;
     width: 57px;
     height: 30px;
-    background: var(--questcounter-bg) url('../../x_img/quest.png') no-repeat 1px center;
+    background: var(--game-bg-light) url('../../x_img/quest.png') no-repeat 1px center;
     background-size: 39%;
     border-radius: 0 25px 25px 0;
-    border: 2px solid var(--bg-dark);
+    border: 2px solid var(--game-border-middle);
     border-left: none;
     margin: 2px 0;
     box-shadow: none;
@@ -36,7 +36,7 @@
     top: 10px;
     text-align: center;
     font-weight: bold;
-    color: var(--black);
+    color: var(--game-text-dark);
 }
 
 .quest-tooltip {
