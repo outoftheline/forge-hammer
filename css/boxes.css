@@ -2864,14 +2864,12 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 
 #GBGTargets.pos-top .signal-countdown {
 	font-size: 85%;
-	display: block;
-	margin-top: -1px;
-	border-radius: 0 0 4px 4px;
-	position: relative;
-	z-index: 1;
+	border: 1px solid #664421;
+	border-top: 0;
+	border-radius: 2px;
 }
 
-#GBGTargets.pos-top .progress {
+#GBGTargets.pos-top .progress, #GBGTargets.pos-top .signal-countdown {
 	position: absolute;
 	top: 28px;
 	left: 0;

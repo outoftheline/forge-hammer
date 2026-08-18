@@ -221,14 +221,12 @@
 	text-decoration: underline;
 }
 
-#LiveGuildFightingBody #nextup .secure .battletype {
-	border: 1px solid var(--black-65);
-	margin: -1px;
-}
-
-#LiveGuildFightingBody #nextup .focus .battletype {
+#LiveGuildFightingBody .focus .battletype {
 	border: 1px solid var(--white);
 	margin: -1px;
+}
+#LiveGuildFightingBody .ignore .province-color {
+	background-image: linear-gradient(-45deg, #0000 48%, var(--white) 48%, var(--white) 52%, #0000 52%);
 }
 
 #LiveGuildFightingBody #progress {

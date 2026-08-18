@@ -122,7 +122,6 @@ let GuildFights = {
 	GBGHistoryView: false,
 	GBGRoundGuilds: null,
 	LogDatePicker: null,
-	Signals: [],
 	curDateFilter: null,
 	curDateEndFilter: null,
 	curDetailViewFilter: null,
@@ -277,39 +276,40 @@ let GuildFights = {
 			$(this).html(GuildFights.GetAlertButton(id));
 		});
 
-		GuildFights.Signals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
-		
-		if (GuildFights.Signals?.length > 0) {
-			for (let i = GuildFights.Signals.length - 1; i >= 0; i--) {
-				let province = GuildFights.MapData.map.provinces.find(x => x.id === (GuildFights.Signals[i].provinceId || 0));
-				if (province?.ownerId === GuildFights.MapData.currentParticipantId) {
-					GuildFights.Signals.splice(i, 1);
-				}
-				if (GuildFights.Signals[i]?.signal === 'ignore') {
-					GuildFights.Signals.splice(i, 1);
-				}
-			}
+		let provinces = GuildFights.MapData.map.provinces;
+		for (let province of provinces) {
+			delete province.signal;
 		}
-		
+
+		let ownSignals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
+
+		for (let entry of ownSignals) {
+			let province = provinces.find(x => (x.id||0) === (entry.provinceId||0));
+			if (!province || province.ownerId === GuildFights.MapData.currentParticipantId) continue;
+
+			province.signal = entry.signal;
+		}
+
 		if (data) {
 			let provinceId = data.provinceId||0;
-			if (data.signal === "focus") {
-				let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
-				if (province?.ownerId === GuildFights.MapData.currentParticipantId) return;
+			let province = provinces.find(x => (x.id||0) === provinceId);
 
-				GuildFights.Signals.push({provinceId: (provinceId||0), signal: "focus"});
-			}
-			else if (data.signal === undefined || data.signal === "ignore") {
-				let signal = GuildFights.Signals.findIndex(prov => prov.provinceId === provinceId);
-            	if (signal !== -1) GuildFights.Signals.splice(signal, 1);
+			if (province) {
+				if (data.signal === "focus" || data.signal === "ignore") {
+					if (province.ownerId !== GuildFights.MapData.currentParticipantId)
+						province.signal = data.signal;
+				}
+				else {
+					delete province.signal;
+				}
 			}
 		}
 
-		GuildFights.ShowSignals();
+		GuildFights.ShowFocusSignals();
 
-		if (GuildFights.Signals?.length > 0) {
+		if (provinces.some(x => x.signal === "focus")) {
 			if (!GuildFights.SignalsIntervalID)
-				GuildFights.SignalsIntervalID = setInterval(GuildFights.ShowSignals, 1000);
+				GuildFights.SignalsIntervalID = setInterval(GuildFights.ShowFocusSignals, 1000);
 		}
 		else if (GuildFights.SignalsIntervalID) {
 			clearInterval(GuildFights.SignalsIntervalID);
@@ -318,10 +318,10 @@ let GuildFights = {
 	},
 
 
-	ShowSignals: () => {
-		let signals = GuildFights.Signals || [];
+	ShowFocusSignals: () => {
+		let signalProvinces = (GuildFights.MapData?.map?.provinces || []).filter(x => x.signal === "focus");
 
-		if (!signals.length || !GuildFights.showGbgTargets || FH.ActiveMap !== 'gg') {
+		if (!signalProvinces.length || !GuildFights.showGbgTargets || FH.ActiveMap !== 'gg') {
 			$('#GBGTargets').remove();
 			GuildFights.LastSignalOrder = null;
 			return;
@@ -344,9 +344,9 @@ let GuildFights = {
 
 		let activeSignals = new Set();
 
-		let sortedSignals = [...signals].sort((a, b) => {
-			let lockedA = GuildFights.MapData.map.provinces.find(x => x.id === (a.provinceId||0))?.lockedUntil,
-				lockedB = GuildFights.MapData.map.provinces.find(x => x.id === (b.provinceId||0))?.lockedUntil;
+		let sortedSignals = [...signalProvinces].sort((a, b) => {
+			let lockedA = a.lockedUntil,
+				lockedB = b.lockedUntil;
 
 			if (lockedA === undefined && lockedB === undefined) return 0;
 			if (lockedA === undefined) return -1;
@@ -355,18 +355,17 @@ let GuildFights = {
 			return lockedA - lockedB;
 		});
 
-		const maxSignals = 5;
+		const maxSignals = 7;
 		let visibleSignals = sortedSignals.slice(0, maxSignals);
 
-		let desiredOrder = visibleSignals.map(s => `target-${s.provinceId||0}`).join(',');
+		let desiredOrder = visibleSignals.map(p => `target-${p.id||0}`).join(',');
 		let orderChanged = desiredOrder !== GuildFights.LastSignalOrder;
 		GuildFights.LastSignalOrder = desiredOrder;
 
-		for (let signal of visibleSignals) {
-			let provinceId = signal.provinceId||0;
+		for (let province of visibleSignals) {
+			let provinceId = province.id||0;
 			activeSignals.add(`target-${provinceId}`);
 
-			let province = GuildFights.MapData.map.provinces.find(x => x.id === provinceId);
 			let countDownDate = province.lockedUntil ? moment.unix(province.lockedUntil - 2) : null;
 			let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
 			let unlocked = remaining === null || remaining <= 0;
@@ -387,6 +386,7 @@ let GuildFights = {
 			if (isNew) {
 				entry = $(`<div id="target-${provinceId}" class="gbgTarget${unlocked ? ' open':''}">
 					<div class="progress"></div>
+					<b class="signal-countdown">${title}</b>
 					<span class="title">
 					<div class="gbgTargetActions clickable">
 						<span class="battleType ${province.isAttackBattleType ? 'red' : ''}">.</span>
@@ -397,7 +397,6 @@ let GuildFights = {
 					</div>
 					<b>${province.title}</b>
 					</span>
-					<b class="signal-countdown">${title}</b>
 				</div>`);
 
 				entry.find('[data-original-title]').tooltip({container: 'body'});
@@ -1417,14 +1416,15 @@ let GuildFights = {
 
 			for (let x in gbgGuilds) {
 				if (!gbgGuilds.hasOwnProperty(x)) break;
+				let signalClass = mapdata[i].signal || '';
 
 				if (mapdata[i].ownerId !== undefined && gbgGuilds[x].participantId === mapdata[i].ownerId) {
 					if (mapdata[i]['conquestProgress'].length > 0 && (mapdata[i]['lockedUntil'] === undefined)) {
 						let pColor = ProvinceMap.getSectorColors(mapdata[i]['ownerId']);
 						let provinceProgress = mapdata[i]['conquestProgress'];
 
-						progress.push(`<tr id="province-${id}" data-id="${id}" data-tab="progress">`);
-						progress.push(`<td title="${FH.t('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['main']}"></span> ${mapdata[i]['title']}</b></td>`);
+						progress.push(`<tr class="${signalClass}" id="province-${id}" data-id="${id}" data-tab="progress">`);
+						progress.push(`<td title="${FH.t('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['base']}"></span> ${mapdata[i]['title']}</b></td>`);
 
 						if (GuildFights.showGuildColumn) 
 							progress.push(`<td>${gbgGuilds[x]['clan']['name']}</td>`);
@@ -1445,7 +1445,7 @@ let GuildFights = {
 
 			// If sectors doesnt belong to anyone
 			if (mapdata[i]['ownerId'] === undefined && mapdata[i]['conquestProgress'].length > 0) {
-				progress.push(`<tr id="province-${id}" data-id="${id}" data-tab="progress">`);
+				progress.push(`<tr class="${signalClass}" id="province-${id}" data-id="${id}" data-tab="progress">`);
 				progress.push(`<td><b><span class="province-color" style="background-color:#555"></span> ${mapdata[i]['title']}</b></td>`);
 
 				if (GuildFights.showGuildColumn)
@@ -1560,14 +1560,11 @@ let GuildFights = {
 					else if (prov[x].gainAttritionChance > 20)
 						bgColor = 'bg-yellow';
 				}
-				let signal = (GuildFights.Signals || []).find(s => s.provinceId === prov[x].id);
-				let signalClass = '';
-				if (signal)
-					signalClass = signal.signal;
+				let signalClass = prov[x].signal || '';
 
 				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''} ${signalClass}" data-tab="nextup" data-id=${prov[x].id}>
 					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
-					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span>
+					<span class="province-color" ${color['base'] ? 'style="background-color:' + color['base'] + '"' : ''}"></span>
 					<span class="battletype ${battleType}"></span>
 					<b>${prov[x].title}</b> 
 					</td>`);
@@ -2226,7 +2223,7 @@ let GuildFights = {
 			FH.Storage.removeItem('GuildFights.serverOffset');
 		FH.Storage.setItem('LiveFightSettings', JSON.stringify(value));
 
-		GuildFights.ShowSignals();
+		GuildFights.ShowFocusSignals();
 
 		$(`#LiveGuildFightingSettingsBox`).fadeToggle('fast', function () {
 			$.when($(`#LiveGuildFightingSettingsBox`).remove()).then(
