@@ -200,6 +200,7 @@
 		"name": "ShowNotifications",
 		"status": true,
 		"group": "Extension",
+		"cssClass": "spacer",
 		"sort": 14
 	},
 	{

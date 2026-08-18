@@ -2422,6 +2422,7 @@ let Main = {
 					dragdrop: true,
 					minimize: true,
 					resize: true,
+					scrollable: true,
 				});
 	
 				//FH.HTML.AddCssFile('auctions');
@@ -2431,27 +2432,28 @@ let Main = {
 
 		updateSettings:()=>{ 
 			let t=[];
-			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.Ignored')}</h2>`);
-			t.push(`<h2>${FH.t('Boxes.InactivesSettings.Toggle')}</h2>`);
+			t.push(`<h2 class="p5">${FH.t('Boxes.InactivesSettings.Toggle')}</h2><ul class="simpleList clickable">`);
 			for (let id of Main.Inactives.ignore) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.NoAlert')}">🤐${Main.CityEntities[id].name}</span></br>`);
+				if (!Main.CityEntities[id]) continue;
+				t.push(`<li class="inactivesIgnoreToggle bg-red" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.NoAlert')}">
+					<s>${Main.CityEntities[id].name}</s></li>`);
 			}
-			//t.push(`<h2>${FH.t('Boxes.InactivesSettings.ClickToIgnore')}</h2>`);
 			
 			for (let id of Main.Inactives.list) {
-				t.push(`<span class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.AlertActive')}">⚠️${Main.CityEntities[id].name}</span></br>`);
+				if (!Main.CityEntities[id]) continue;
+				t.push(`<li class="inactivesIgnoreToggle" data-id="${id}" title="${FH.t('Boxes.InactivesSettings.AlertActive')}">
+				<img src="${FH.extUrl}images/menu/alerts.png" class="smallIcon" /> ${Main.CityEntities[id].name}</li>`);
 			}
-			
+			t.push(`</ul>`);
 			
 			$('#inactivesSettingsBoxBody').html(t.join(''));
 			
 			$('.inactivesIgnoreToggle').on("click", (e) => {
-				let id = e.target.dataset.id;
+				let id = e.currentTarget.dataset.id;
 				let i = Main.Inactives.ignore.findIndex(x => x==id);
 				if (i>=0) {
 					Main.Inactives.ignore.splice(i,1);
 					Main.Inactives.list.push(id);
-
 				} else {
 					i = Main.Inactives.list.findIndex(x => x==id);
 					Main.Inactives.list.splice(i,1);

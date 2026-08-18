@@ -276,6 +276,7 @@ let HTML = {
 	 * speaker = false
 	 * minimize = true
 	 * saveCords = true
+	 * scrollable = false
 	 *
 	 * @param args
 	 */
@@ -297,6 +298,9 @@ let HTML = {
 
 		if (args['auto_close'] !== false) {
 			buttons.append(close);
+		}
+		if (args['scrollable'] !== false) {
+			body.addClass('scrollable');
 		}
 		if (args["active_maps"] && args["active_maps"].length > 0) {
 			let maps = args["active_maps"].replace(" ","").split(",").map(x => "ActiveOn"+x);

@@ -1108,6 +1108,10 @@ let CityMap = {
 		$('#citymapExtra .title').text(title);
 		
 		let output = [];
+		if (type === 'limited')
+			output.push(`<a class="link flex p5" href="#" onclick="Settings.OpenModuleDecayedBuildingSettings()">
+			<img class="smallIcon" src="${FH.extUrl}images/menu/settings.png" /> Manage Notifications</a>`);
+
 		output.push(`<ul class="foe-table text-smaller">`);
 		for (let building of buildings) {
 			output.push(`<li class="flex between" onmouseenter="CityMap.hoverHighlightBuilding(${building.id}, true)" onmouseleave="CityMap.hoverHighlightBuilding(${building.id}, false)">
@@ -1128,7 +1132,8 @@ let CityMap = {
 				}
 			output.push(`</li>`);
 		}
-		output.push(`</ul>`)
+		output.push(`</ul>`);
+
 		$('#citymapExtraBody').html(output.join(''));
 	},
 

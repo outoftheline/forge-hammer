@@ -180,6 +180,7 @@ input.hidden {
 
 #Alerts .btn-delete {
     width: 18px;
+    min-height: unset;
 }
 
 #Alerts .btn-delete:hover {

@@ -35,12 +35,12 @@ input[type=number] {
 	-moz-appearance:textfield;
 }
 
-a[target="_blank"] {
+a:not(.btn)[target="_blank"], a.link {
 	color: var(--text-link);
 	text-decoration: none;
 }
 
-a[target="_blank"]:hover {
+a[target="_blank"]:hover, a.link:hover {
 	text-decoration: underline;
 }
 
@@ -587,7 +587,7 @@ table.foe-table tr.bg-yellow td {
     border-bottom-color: var(--table-bb-bright);
 }
 
-table.foe-table tr.bg-red td {
+table.foe-table tr.bg-red td, li.bg-red {
 	background-color: var(--table-bg-error);
 	border-top-color: var(--table-bt-error);
     border-bottom-color: var(--table-bb-error);
@@ -641,8 +641,8 @@ p { margin: 0 0 10px 0; }
 .p10 { padding: 10px; }
 
 .bbd { border-bottom: 1px dotted var(--black-50); }
-
 .wsnw { white-space: nowrap; }
+img.smallIcon { height: 18px; width: auto; }
 
 .text-center { text-align: center; }
 .text-right { text-align: right; }
@@ -1442,6 +1442,10 @@ a:hover, input[type="radio"], .clickable {
 .window-body {
 	height: calc(100% - 29px);
 	overflow: hidden;
+}
+
+.window-body.scrollable {
+	overflow-y: auto;
 }
 
 .window-body input, .settingsbox-wrapper input {

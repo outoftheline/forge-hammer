@@ -237,7 +237,7 @@
 }
 
 .playerprofile h1 a {
-    color: inherit;
+    color: inherit !important;
 }
 
 .playerprofile .basicInfo img {

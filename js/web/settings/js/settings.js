@@ -434,6 +434,9 @@ let Settings = {
 	OpenModuleSoundSettings: () => {
 		Settings.BuildBox(2, 5);
 	},
+	OpenModuleDecayedBuildingSettings: () => {
+		Settings.BuildBox(2, 7);
+	},
 
 
 	/**
