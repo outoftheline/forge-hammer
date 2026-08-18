@@ -11,15 +11,21 @@
 	height: 500px;
 }
 
- #ProductionsRating {
+#ProductionsRating {
 	height: 95vh;
 	width: 95vw;
 }
-
-#ProductionsRatingBody, #Productions #ProductionsBody {
+#ProductionsRatingBody {
 	overflow-x: hidden;
 	overflow-y: auto;
 	opacity: 1;
+}
+#Productions .tabs {
+	height: 100%;
+}
+#Productions .content {
+	overflow-y: auto;
+	height: calc(100% - 39px);
 }
 #Productions strong.success, #Productions span.success {
 	color: var(--success);
