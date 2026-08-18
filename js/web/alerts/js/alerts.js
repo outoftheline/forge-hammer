@@ -1410,8 +1410,8 @@ let Alerts = function(){
 					${labels.persist.persistence}
 					<span class="btn-group">
 						<label for="alert-persistent-off" class="btn">${labels.persist.off}</label>
-						<input id="alert-persistent-off" type="radio" name="alert-persistent"${persistent_off} value="off">
-						<input id="alert-persistent-on" type="radio" name="alert-persistent"${persistent_on} value="on">
+						<input id="alert-persistent-off" type="radio" name="alert-persistent"${persistent_off} value="off" />
+						<input id="alert-persistent-on" type="radio" name="alert-persistent"${persistent_on} value="on" checked />
 						<label for="alert-persistent-on" class="btn">${labels.persist.on}</label>
 					</span>
 					<br><small>${labels.persist.description}</small>
