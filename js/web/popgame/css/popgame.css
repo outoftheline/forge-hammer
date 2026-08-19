@@ -14,7 +14,7 @@
     pointer-events: auto;
 }
 #Popgame #PopgameBody {
-    overflow: none;
+    overflow: hidden !important;
 }
 #PGwrapper {
     height: 404px;

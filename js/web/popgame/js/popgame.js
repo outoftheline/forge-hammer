@@ -100,12 +100,12 @@ $(window).mousemove( function(e){
     
     if ((y < offset.top) || (y > (offset.top + elem.clientHeight)) || (x < offset.left) || (x > (offset.left + elem.clientWidth))) {
         $('#PopgameBody .PGwrapper').hide();
-        $('#Popgame').css('background-image','none');
+        $('#Popgame').css('background','transparent');
         $('#PopgameBody .PGcell').show();
         Popgame.resetTempChest();
     } else {
         $('#PopgameBody .PGwrapper').show();
-        $('#Popgame').css('background-image','');
+        $('#Popgame').css('background','');
         let c = (x-offset.left)/47;
         let cf = Math.floor(c);
         let cr = c-cf;
@@ -143,7 +143,7 @@ let Popgame = {
                 'dragdrop': false,
 			    active_maps:"main"
             });
-            let body='<div style="background:#553815">';
+            let body='<div style="background:var(--bg-darkest)">';
             body+=`<div id="PGwarning">${FH.t("Boxes.Popgame.Warning")}</div>`;
             if (Popgame.event=="wildlife") {
                 body+=`<div id="PGhammer" class="PGtool"></div>`;
