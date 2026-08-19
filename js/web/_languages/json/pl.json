@@ -185,11 +185,19 @@
   "Boxes.BlueGalaxy.OlderGoodsValue": "Wartość 1 towaru z poprzedniej epoki (w PR)",
   "Boxes.BlueGalaxy.Title": "Pomocnik Błękitnej Galaktyki",
   "Boxes.BlueGalaxy.TTGoodsValue": "Ta wartość jest używana do oceniania budynków produkujących towary. Ile PR jest warty jeden towar dla Ciebie?",
+  "Boxes.BlueGalaxy.ValueRating": {
+    "s": "1 PR =",
+    "r": "1 FP = "
+  },
   "Boxes.BonusService.aid_goods": "Truce Tower: pozostałe towary za wsparcie",
   "Boxes.BonusService.diplomatic_gifts": "Kosmiczny transporter: pozostałe próby zdobycia darów dyplomacji.",
   "Boxes.BonusService.donequests": "Pokazuje zakończone misje",
   "Boxes.BonusService.first_strike": "Kraken: pozostałe próby pierwszego uderzenia.",
   "Boxes.BonusService.missile_launch": "Virgo Projekt: pozostałe starty rakiety.",
+  "Boxes.BonusService.quest_sound": {
+    "s": "Zakończone zadanie",
+    "r": "Finished Quest"
+  },
   "Boxes.BonusService.spoils_of_war": "Zamek Himeji: pozostałe próby zdobycia łupów wojennych.",
   "Boxes.BoostList.guild_raids_action_points_collection": "Dodatkowe punkty działań",
   "Boxes.BoostList.guild_raids_coins_production": "Zwiększony zbiór monet",
@@ -314,7 +322,10 @@
   "Boxes.CityMap.culture": "Kulturowe",
   "Boxes.CityMap.decoration": "Dekoracje",
   "Boxes.Citymap.Efficiency": "Wydajność",
-  "Boxes.CityMap.FilterBuildings": "Wyszukaj budynek",
+  "Boxes.CityMap.FilterBuildings": {
+    "s": "Szukaj budynek",
+    "r": "Search Building"
+  },
   "Boxes.CityMap.FreeArea": "Wolny obszar: ",
   "Boxes.CityMap.generic_building": "Inne",
   "Boxes.CityMap.goods": "Towarowe",
@@ -607,6 +618,14 @@
     "s": "Dziennik działań",
     "r": "Action Log"
   },
+  "Boxes.GBGActionLog.DateFormat": {
+    "s": "Format daty",
+    "r": "Date format"
+  },
+  "Boxes.GBGActionLog.DateTimeFormat": {
+    "s": "Format daty i godziny",
+    "r": "Date & time format"
+  },
   "Boxes.GBGActionLog.Filter": {
     "s": "Filtr",
     "r": "Filter"
@@ -618,6 +637,10 @@
   "Boxes.GBGActionLog.FirstLogTime": {
     "s": "Pierwszy wpis",
     "r": "First entry"
+  },
+  "Boxes.GBGActionLog.FormatHint": {
+    "s": "Wyświetlanie daty (np. RRRR, MM, DD, GG, mm). Pozostaw puste, aby zachować ustawienie domyślne.",
+    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
   },
   "Boxes.GBGActionLog.From": {
     "s": "Od",
@@ -907,7 +930,7 @@
   "Boxes.GreatBuildings.TTGoodsValue": "Ta wartość jest używana do oceniania budynków produkujących towary. Ile PR jest dla Ciebie wart jeden towar?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Opcjonalnie: ile nagród PR otrzymujesz dziennie? Informacje te są wykorzystywane do obliczania rentowności kolejnych poziomów Arki. Aby otrzymać sugestię, przejdź do Historii wydarzeń w Dzienniku wydarzeń i przewiń wszystkie strony",
   "Boxes.GreatBuildingsProgress.ContributorsSince": {
-    "s": "Zmiana wpłacających od __date__",
+    "s": "Zmiany wpłacających od __date__",
     "r": "Contributor changes since __date__"
   },
   "Boxes.GreatBuildingsProgress.DeltaFP": {
@@ -919,7 +942,7 @@
     "r": "Donators"
   },
   "Boxes.GreatBuildingsProgress.FirstVisit": {
-    "s": "otwórz perłę",
+    "s": "Pierwsze załadowanie",
     "r": "first load"
   },
   "Boxes.GreatBuildingsProgress.MyFP": {
@@ -947,7 +970,7 @@
     "r": "Show the on-screen progress icon"
   },
   "Boxes.GreatBuildingsProgress.SubTitle": {
-    "s": "Zmiany w Perłach Architektury od ostatniej wizyty",
+    "s": "Zmiany w Perłach Architektury od Twojej ostatniej wizyty",
     "r": "Great Building changes since your last visit"
   },
   "Boxes.GreatBuildingsProgress.Title": {
@@ -962,7 +985,7 @@
   "Boxes.GuildFights.Copy": "Kopiuj",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "Skopiowano czasy ataków dla wybranej prowincji.",
   "Boxes.GuildFights.CopyToClipBoard.Title": "Skopiowane!",
-  "Boxes.GuildFights.Count": "Pozostało",
+  "Boxes.GuildFights.Count": "za",
   "Boxes.GuildFights.Date": "Data",
   "Boxes.GuildFights.DeleteAlert": "Usuń powiadomienie",
   "Boxes.GuildFights.DeleteMessage.Desc": "Powiadomienie dla prowincji __provinceName__ zostało usunięte!",
@@ -1062,6 +1085,22 @@
   },
   "Boxes.GuildFights.SnapshotLog": "Dziennik",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Zastrzeżenie: Dane te są oparte na zebranych przez użytkownika danych. Przedstawione tutaj liczby prawdopodobnie nie są w 100% dokładne. Musiał(a)byś otworzyć listę o północy, aby były poprawne.",
+  "Boxes.GuildFights.Stats.Forecast": {
+    "s": "Pokaż prognozę punktów chwały",
+    "r": "Show victory points forecast"
+  },
+  "Boxes.GuildFights.Stats.ForecastDesc": {
+    "s": "Przelicza punkty zwycięstwa każdej gildii na koniec sezonu, jeden punkt dziennie o godzinie zakończenia sezonu na podstawie punktów zdobytych przez gildię w ciągu mniej więcej ostatnich 24 godzin.",
+    "r": "Projects every guild's victory points to the end of the season, one point per day at the hour the season ends, based on the points they gained over roughly the last 24 hours."
+  },
+  "Boxes.GuildFights.Stats.ForecastNoData": {
+    "s": "Nie zebrano jeszcze wystarczającej ilości danych. Prognoza wymaga danych z co najmniej 24 godzin bieżącego sezonu.",
+    "r": "Not enough data collected yet. The forecast needs snapshots spanning at least 24 hours of this season."
+  },
+  "Boxes.GuildFights.Stats.ForecastProjected": {
+    "s": "Prognozowane",
+    "r": "projected"
+  },
   "Boxes.GuildFights.Stats.Open": {
     "s": "Statystyki",
     "r": "Stats"
@@ -1078,13 +1117,34 @@
     "s": "Statystyki GPCh",
     "r": "GBG Stats"
   },
-  "Boxes.GuildFights.Switch": "Widok przełącznika",
-  "Boxes.GuildFights.Time": "Godzina",
-  "Boxes.GuildFights.TimeZoneWarning.Desc": "Od teraz czasy są kopiowane w czasie serwera. Jeśli chcesz zmienić wyświetlane czasy na czas serwera, sprawdź ustawienia.",
-  "Boxes.GuildFights.TimeZoneWarning.Title": {
-    "s": "Zmiany w zachowaniu kopiowania!",
-    "r": "Change in Copy Behavior!"
+  "Boxes.GuildFights.Stats.TTAhead": {
+    "s": "Przed ▼",
+    "r": "Ahead ▼"
   },
+  "Boxes.GuildFights.Stats.TTBehind": {
+    "s": "Za ▲",
+    "r": "Behind ▲"
+  },
+  "Boxes.GuildFights.Stats.TTColumns": {
+    "s": "Kolumny w opisie narzędzia wykresu:",
+    "r": "Columns of the chart tooltip:"
+  },
+  "Boxes.GuildFights.Stats.TTPoints": {
+    "s": "PCh",
+    "r": "VP"
+  },
+  "Boxes.GuildFights.Stats.TTRate": {
+    "s": "PCh/godz",
+    "r": "VP/h"
+  },
+  "Boxes.GuildFights.Stats.TTRateBasis": {
+    "s": "(__hours__ h)",
+    "r": "(__hours__ h)"
+  },
+  "Boxes.GuildFights.Switch": "Widok przełącznika",
+  "Boxes.GuildFights.Time": "o",
+  "Boxes.GuildFights.TimeZoneWarning.Desc": "Od teraz czasy są kopiowane w czasie serwera. Jeśli chcesz zmienić wyświetlane czasy na czas serwera, sprawdź ustawienia.",
+  "Boxes.GuildFights.TimeZoneWarning.Title": "Zmiana w zachowaniu kopiowania!",
   "Boxes.GuildFights.Title": "Przegląd aktywności graczy",
   "Boxes.GuildFights.Total": "Całkowity",
   "Boxes.GuildMemberStat.AutoStartOnUpdate": "otwórz przegląd po aktualizacji",
@@ -1318,7 +1378,7 @@
     "r": "safe"
   },
   "Boxes.Investment.Tabs.Contributions": {
-    "s": "Wkłady",
+    "s": "Wpłaty",
     "r": "Contributions"
   },
   "Boxes.Investment.Tabs.MyGBs": {
@@ -1534,7 +1594,7 @@
   "Boxes.OtherGuildActivity.Title": "Aktywni członkowie gildii",
   "Boxes.Outpost.DescInStock": "Aktualny stan magazynowy",
   "Boxes.Outpost.DescRequired": "Całkowity",
-  "Boxes.Outpost.DescStillMissing": "<span style=\"color:#29b206\">Nadmiar</span> / <span style=\"color:#ff4040\">Brak</span>",
+  "Boxes.Outpost.DescStillMissing": "<span>Nadmiar</span> / <span>Brak</span>",
   "Boxes.Outpost.ExpansionsSum": "Rozszerzenia",
   "Boxes.Outpost.including4x": "w praktyce - zwiększa szanse x4",
   "Boxes.Outpost.infoLine": "__runNumber__. osada, szansa na bonus x4 : __chanceX4__%",
@@ -1743,8 +1803,14 @@
   "Boxes.ProductionsRating.Explainer": "Wybierz, ile każdy z twoich budynków powinien produkować na kafelek. Równowaga między wszystkimi wybranymi wartościami jest ważna dla ostatecznej oceny: Użyj wyższych wartości dla rzeczy, na których nie zależy ci tak bardzo, a niższych wartości, jeśli chcesz położyć większy nacisk na określone zasoby/wzmocnienia. Jeśli posiadasz więcej niż jeden taki sam budynek, tylko budynek z najwyższą epoką zostanie oceniony.",
   "Boxes.ProductionsRating.ExplainerHead": "Pomoc",
   "Boxes.ProductionsRating.Fifth": "Najlepsze 5",
-  "Boxes.ProductionsRating.Filter": "Wyszukaj",
-  "Boxes.ProductionsRating.FindBuilding": "Wyszukaj",
+  "Boxes.ProductionsRating.Filter": {
+    "s": "Szukaj",
+    "r": "Search"
+  },
+  "Boxes.ProductionsRating.FindBuilding": {
+    "s": "Szukaj",
+    "r": "Search"
+  },
   "Boxes.ProductionsRating.FindSpecialBuilding": "Znajdź budynek specjalny",
   "Boxes.ProductionsRating.Hide": "Ukryj",
   "Boxes.ProductionsRating.HighlightsExplained": "Jak wyróżnić budynki: Kliknij dowolny wiersz, aby wybrać budynki, które chcesz łatwiej porównać. Wyniki wyszukiwania są zaznaczane automatycznie.",
@@ -2041,7 +2107,7 @@
   "Boxes.Stats.Title": "Statystyki",
   "Boxes.Technologies.DescInStock": "Dostępne",
   "Boxes.Technologies.DescRequired": "Wymagane",
-  "Boxes.Technologies.DescStillMissing": "<span style=\"color:#29b206\">Nadmiar</span> / <span style=\"color:#ff4040\">Brak</span>",
+  "Boxes.Technologies.DescStillMissing": "<span>Nadmiar</span> / <span>Brak</span>",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignoruj opcjonalne technologie obecnych/przyszłych epok",
   "Boxes.Technologies.IgnorePrevEra": "Ignoruj opcjonalne technologie z poprzednich epok",
   "Boxes.Technologies.NoTechs": "Osiągnąłeś koniec tej epoki",
@@ -2218,8 +2284,12 @@
   },
   "DateShort": "DD/MMM",
   "DateTime": {
-    "s": "DD/MMM @ GG:mm:ss",
+    "s": "DD/MMM @ HH:mm:ss",
     "r": "DD/MMM, hh:mm:ssa"
+  },
+  "DateTimeShort": {
+    "s": "DD/MMM, HH:mm",
+    "r": "DD/MMM, HH:mm"
   },
   "DBCreationWarning.CloseOverlay": {
     "s": "Zamknij",
@@ -2274,6 +2344,14 @@
     "r": "Space Age Space Hub"
   },
   "Eras.23.short": "EK:KW",
+  "Eras.24": {
+    "s": "Epoka Gwiezdna: Odkrycie",
+    "r": "Stellar Age Discovery"
+  },
+  "Eras.24.short": {
+    "s": "EG:O",
+    "r": "SAD"
+  },
   "Eras.3": "Epoka Żelaza",
   "Eras.3.short": "EPRZ",
   "Eras.4": "Wczesne Średniowiecze",
@@ -2316,16 +2394,28 @@
     "s": "Proszę wybrać",
     "r": "Please choose"
   },
+  "General.City": {
+    "s": "Miasto",
+    "r": "City"
+  },
   "General.Date": "Data",
   "General.Disclaimer": "Zastrzeżenie",
   "General.Error": {
     "s": "Błąd",
     "r": "Error"
   },
+  "General.Everything": {
+    "s": "Wszystko",
+    "r": "Everything"
+  },
   "General.GB": "Perła Architektury",
   "General.Good": "Towar",
   "General.Goods": "Towary",
   "General.Guild": "Gildia",
+  "General.Inventory": {
+    "s": "Inwentarz",
+    "r": "Inventory"
+  },
   "General.Items": "Przedmioty",
   "General.Level": "Poziom",
   "General.Open": {
@@ -2336,7 +2426,7 @@
   "General.Reset": "Zresetuj",
   "General.Save": "Zapisz",
   "General.Search": {
-    "s": "Wyszukaj",
+    "s": "Szukaj",
     "r": "Search"
   },
   "General.Send": {
@@ -2460,7 +2550,10 @@
   "Menu.PlayerProfile.Warning": "Wyłączone: Otwórz zakładkę Profil w ratuszu.",
   "Menu.Productions.Desc": "Wyświetla wszystkie aktywne produkcje w Twoim mieście.",
   "Menu.Productions.Title": "Przegląd produkcji",
-  "Menu.ProductionsRating.Desc": "Wyszukaj budynki, które produkują mniej zasobów na kratkę niż oczekujesz.",
+  "Menu.ProductionsRating.Desc": {
+    "s": "Wyszukaj budynki, które produkują mniej zasobów na kratkę niż oczekiwane",
+    "r": "Search for buildings that produce less resources per tile than expected."
+  },
   "Menu.ProductionsRating.Title": "Ocena efektywności budynku",
   "Menu.QIMap.Desc": "Pokaż wszystkie dostępne informacje o aktualnej mapie Najazdów Kwantowych.",
   "Menu.QIMap.Title": "Mapa Najazdów Kwantowych",
@@ -2532,6 +2625,42 @@
     "r": "We can only provide translations for English and German ourselves. You can help with other languages by using the translation module:"
   },
   "Settings.CountRelics": "Wyświetlaj liczbę reliktów obok ikony w menu",
+  "Settings.DateTimeFormat.Custom": {
+    "s": "Własny wzór...",
+    "r": "Custom pattern..."
+  },
+  "Settings.DateTimeFormat.CustomHint": {
+    "s": "Własny wzór wykorzystuje tokeny moment.js, takie jak DD.MM.YYYY HH:mm. Pełna lista tokenów znajduje się pod adresem",
+    "r": "A custom pattern uses moment.js tokens, for example DD.MM.YYYY HH:mm. All tokens are listed at"
+  },
+  "Settings.DateTimeFormat.DateLong": {
+    "s": "Długa data",
+    "r": "Long date"
+  },
+  "Settings.DateTimeFormat.DateShort": {
+    "s": "Krótka data",
+    "r": "Short date"
+  },
+  "Settings.DateTimeFormat.DateTimeLong": {
+    "s": "Długa data i godzina",
+    "r": "Long date & time"
+  },
+  "Settings.DateTimeFormat.DateTimeShort": {
+    "s": "Krótka data i godzina",
+    "r": "Short date & time"
+  },
+  "Settings.DateTimeFormat.Default": {
+    "s": "język domyślny",
+    "r": "language default"
+  },
+  "Settings.DateTimeFormat.Desc": {
+    "s": "Ustawia formaty daty i godziny używane przez rozszerzenie. Każdy wpis zaczyna się od formatu zawartego w pliku językowym - wybierz jeden z przykładów lub wprowadź własny wzór.",
+    "r": "Sets the date and time formats the extension uses. Every entry starts out with the format that comes with your language file - pick one of the samples or enter your own pattern."
+  },
+  "Settings.DateTimeFormat.Title": {
+    "s": "Format daty i godziny",
+    "r": "Date & Time Format"
+  },
   "Settings.doubleFPtimeout.Desc": "Pokazuje okienko, które tymczasowo zasłania pole wpisania PR w PA po wkładzie. Wartość oznacza czas, przez który okienko jest pokazane - kiedy jest równa 0, okienko się nie pokazuje",
   "Settings.doubleFPtimeout.Title": "Blokada podwójnego wkładu",
   "Settings.EnableSound.Desc": "Włącz efekty dźwiękowe w rozszerzeniu.",
@@ -2550,6 +2679,10 @@
     "r": "GB Contribution List"
   },
   "Settings.Entry.ChangeLanguage": "Język",
+  "Settings.Entry.DateTimeFormat": {
+    "s": "Data i godzina",
+    "r": "Date & Time"
+  },
   "Settings.Entry.doubleFPtimeout": "Blokada podwójnego wkładu",
   "Settings.Entry.EnableSound": "Dźwięk",
   "Settings.Entry.ExportSettings": "Import / Eksport",
@@ -2566,6 +2699,10 @@
   "Settings.Entry.LoadBeta2": "Załaduj aktualną wersję Beta",
   "Settings.Entry.MenuContent": "Zawartość menu",
   "Settings.Entry.MenuLength": "Długość menu",
+  "Settings.Entry.ModuleSounds": {
+    "s": "Dostosuj dźwięk",
+    "r": "Customize sound"
+  },
   "Settings.Entry.NotificationsPosition": "Pozycja powiadomień",
   "Settings.Entry.NotificationsStack": "Stos powiadomień",
   "Settings.Entry.RepeatSelectBuilding": "Powtarzanie wyboru budynku",
@@ -2653,6 +2790,18 @@
   "Settings.MenuContent.Title": "Zawartość menu",
   "Settings.MenuLength.Desc": "Ile elementów powinno mieścić menu rozszerzenia?<br> Puste lub \"0\" oznacza automatyczną wysokość.",
   "Settings.MenuLength.Title": "Wysokość menu",
+  "Settings.ModuleSounds.ChangeSoundLink": {
+    "s": "Zmień dźwięk powiadomienia",
+    "r": "Change notification sound"
+  },
+  "Settings.ModuleSounds.Desc": {
+    "s": "Skonfiguruj różne dźwięki dla różnych czynności",
+    "r": "Set up different sounds for different things"
+  },
+  "Settings.ModuleSounds.Title": {
+    "s": "Dostosuj dźwięki",
+    "r": "Customize sounds"
+  },
   "Settings.NotificationPosition.ToastTestBody": "To jest pozycja, którą wybrałeś.<br>Zanim przetestujesz następną pozycję, poczekaj, aż ten komunikat zniknie.",
   "Settings.NotificationPosition.ToastTestHeader": "Podgląd powiadomień",
   "Settings.NotificationsPosition.Desc": "Gdzie na ekranie mają pojawiać się powiadomienia?",
@@ -2744,6 +2893,14 @@
   "Settings.Skins.Title": {
     "s": "Zmiana wyglądu rozszerzenia",
     "r": "Change AddOn appearance"
+  },
+  "Settings.SoundEffects.default": {
+    "s": "Użyj domyślnego",
+    "r": "Use default"
+  },
+  "Settings.SoundEffects.play": {
+    "s": "Odtwórz dźwięk",
+    "r": "Play sound"
   },
   "Settings.Tab.About": "Informacje + strona internetowa",
   "Settings.Tab.Auto": "Wyskakujące okienka",
