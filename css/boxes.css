@@ -35,7 +35,7 @@ input[type=number] {
 	-moz-appearance:textfield;
 }
 
-a:not(.btn)[target="_blank"], a.link {
+a:not(.btn)[target="_blank"], a.link, a:not(.btn) {
 	color: var(--text-link);
 	text-decoration: none;
 }
@@ -520,11 +520,11 @@ table.foe-table thead tr th,
 table.foe-table th,
 .thead th {
 	background: var(--window-bg);
-	box-shadow: inset 0 0 0 2000px var(--black-50), 0 1px 0 0 var(--border-table-top), 0 2px 0 0 var(--border-table-bottom);
+	box-shadow: inset 0 0 0 2000px var(--bg-darkest), 0 1px 0 0 var(--border-table-top), 0 2px 0 0 var(--border-table-bottom);
 	vertical-align: bottom;
 }
 .dark-bg {
-	box-shadow: inset 0 0 0 2000px var(--black-50);
+	box-shadow: inset 0 0 0 2000px var(--bg-darkest);
 	background: var(--window-bg);
 }
 
@@ -538,7 +538,7 @@ table.foe-table thead th {
 }
 
 .dark-bg:hover, table.foe-table tbody tr.dark-bg:nth-child(odd) {
-	background-color: var(--black-50) !important;
+	background-color: var(--table-bg-darker) !important;
 }
 
 table.foe-table tbody tr:nth-child(odd), ul.foe-table li:nth-child(odd) {
@@ -550,7 +550,7 @@ table.foe-table:not(.no-hover) tbody tr:hover {
 }
 
 table.foe-table tbody tr.no-hover, table.foe-table tbody tr.no-hover:hover {
-	background-color: var(--black-50);
+	background-color: var(--table-bg-darker);
 }
 
 table.foe-table.vertical-top td {
@@ -640,13 +640,13 @@ p { margin: 0 0 10px 0; }
 .p5 { padding: 5px; }
 .p10 { padding: 10px; }
 
-.bbd { border-bottom: 1px dotted var(--black-50); }
+.bbd { border-bottom: 1px dotted var(--bg-darkest); }
 .wsnw { white-space: nowrap; }
 img.smallIcon { height: 18px; width: auto; }
 
 .text-center { text-align: center; }
 .text-right { text-align: right; }
-.text-light { color: var(--white); }
+.text-light { color: var(--text-highlight2); }
 .text-warning, .text-bright { color: var(--text-highlight); }
 .text-danger, .danger { color: var(--danger-red); }
 .text-info, .info { color: var(--info-blue); }
@@ -664,7 +664,7 @@ img.smallIcon { height: 18px; width: auto; }
 #playerProfile-Btn span img {
 	border-radius: 3px 3px 10px 3px;
     box-shadow: 0 2px 2px var(--black-65);
-    border: 1px solid var(--bg-dark);
+    border: 1px solid var(--black-65);
 	width: 100%;
 }
 
@@ -672,7 +672,7 @@ img.smallIcon { height: 18px; width: auto; }
 	background-image: url('../images/menu/profile.jpg');
 	border-radius: 3px 3px 10px 3px;
     box-shadow: 0 2px 2px var(--black-65);
-    border: 1px solid var(--bg-dark);
+    border: 1px solid var(--black-65);
 }
 
 [id$=market-Btn] span {
@@ -1104,7 +1104,7 @@ Potions */
 	right: 0;
 	bottom: 0;
 	z-index: 200;
-	background: radial-gradient(closest-side, #000e, #0003 75%, #0000 95%);
+	background: linear-gradient(0, transparent, var(--table-bg-darker), transparent);
 	pointer-events: none;
 	transition: 0.3s all linear;
 }
@@ -1118,13 +1118,14 @@ Potions */
 	text-align: center;
 	width: 240px;
 	font-weight: bold;
-	text-shadow: 0 0 5px #000, 0 0 2px #000, 0px 2px 2px #000;
+	text-shadow: 0 0 5px var(--bg-darkest), 0 0 2px var(--bg-darkest), 0px 2px 2px var(--bg-darkest);
 	font-size: 15px;
+	color: var(--text);
 }
 
 .window-body:hover .lg-not-possible {
-	opacity: 0.05;
-	scale: 0.75;
+	opacity: 0.01;
+	scale: 0.25;
 }
 
 .window-body:hover .lg-not-possible::after {
@@ -1985,7 +1986,7 @@ SettingsBox */
 input[type="range"] {
 	-webkit-appearance: none;
 	height: 5px;
-	background: var(--black-50);
+	background: var(--bg-dark);
 	border-radius: 5px;
 	background-repeat: no-repeat;
 	margin-top: 13px;
@@ -1999,8 +2000,8 @@ input[type="range"]::-webkit-slider-thumb {
 	height: 13px;
 	width: 13px;
 	border-radius: 50%;
-	background: var(--text);
-	box-shadow: 0 0 2px 0 var(--black-50), inset -1px -1px 3px var(--text);
+	background: var(--bg-light);
+	box-shadow: 0 0 2px 0 var(--bg-dark);
 	transition: background .3s ease-in-out;
 }
 
@@ -2296,7 +2297,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .menu-placeholder {
-	background: var(--black-50);
+	background: var(--bg-darkest);
 	border-radius: 4px;
 	width: calc(var(--menu-btn-size) - 2px);
 	height: calc(var(--menu-btn-size) - 2px);
@@ -2373,7 +2374,6 @@ span.activity {
     width: 11px;
     border-radius: 50%;
     background: var(--ash);
-    box-shadow: 0 0 2px 1px var(--black);
     position: relative;
     top: 1px;
 }
@@ -2395,7 +2395,7 @@ tr.sorter-header th:not(.no-sort):after {
 	color: var(--text-highlight);
 	position: absolute;
 	display: block;
-	opacity: .2;
+	opacity: .4;
 	right: 10px;
 	font-size: .8em;
 	font-size: .5em;
@@ -2837,7 +2837,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	max-width: calc(50% - 363px);
     overflow-x: hidden;
 	height: 66px;
-	color: var(--text);
+	color: var(--game-text-light);
 }
 
 #GBGTargets.pos-top .gbgTarget {
@@ -2857,6 +2857,10 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	padding: 1px 1px 1px 0;
 }
 
+#GBGTargets.pos-top .title {
+	background-color: var(--game-bg-dark);
+}
+
 #GBGTargets.pos-top .title b {
 	font-size: 18px;
 	font-weight: bold;
@@ -2867,6 +2871,7 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	border: 1px solid #664421;
 	border-top: 0;
 	border-radius: 2px;
+	width: max-content !important;
 }
 
 #GBGTargets.pos-top .progress, #GBGTargets.pos-top .signal-countdown {

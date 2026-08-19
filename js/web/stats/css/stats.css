@@ -20,7 +20,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	background-color: var(--black-50);
+	background-color: var(--bg-dark);
 	height: 50px;
 	border-bottom: 2px solid var(--border-tab);
 }
@@ -211,7 +211,8 @@
 }
 
 .chartTooltip {
-	background-color: var(--black-50);
+	background: var(--table-bg-darker);
+	color: var(--text);
 	backdrop-filter: blur(3px);
 	padding: 5px;
     position: absolute;
@@ -262,7 +263,8 @@
 	left: 5%;
 	margin: 0 auto;
 	width: 90%;
-	background: var(--black-50);
+	background: var(--table-bg-darker);
+	color: var(--text);
 	padding: 3px;
 	max-height: 55px;
 	overflow: auto;

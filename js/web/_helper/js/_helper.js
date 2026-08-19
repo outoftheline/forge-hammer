@@ -775,16 +775,18 @@ let HTML = {
 
 
 	ChangeSkinCssFile: (filepath) => {
-		$('#hammerskin').remove();
-
 		let cssUrl = FH.extUrl + 'css/' + filepath + '.css?v=' + FH.BaseData.extVersion;
 
-		let css = $('<link />')
-			.attr('href', cssUrl)
-			.attr('id', 'hammerskin')
-			.attr('rel', 'stylesheet');
+		let existing = $('link[rel="stylesheet"]').filter(function () {
+			return /\/css\/(themes\/[a-z]+|variables)\.css(\?|$)/i.test(this.href);
+		});
 
-		$('head').append(css);
+		if (existing.length) {
+			existing.first().attr({id: 'hammerskin', href: cssUrl});
+			existing.slice(1).remove();
+		} else {
+			$('<link />').attr({id: 'hammerskin', href: cssUrl, rel: 'stylesheet'}).appendTo('head');
+		}
 
 		HTML.Popout?.syncCssAll();
 	},

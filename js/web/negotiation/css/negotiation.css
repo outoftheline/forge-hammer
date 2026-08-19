@@ -35,7 +35,7 @@
 	width: 3em;
 	height: 3em;
 	padding: 0.25em;
-	background-color: var(--black-65);
+	background-color: var(--table-bg-darker);
 	border-radius: 50%;
 	zoom: 0.75;
 }
@@ -59,7 +59,7 @@
 }
 
 #negotiationBox #negotiationBoxBody .goods-dragable .good:hover {
-	background-color: rgba(255,255,255, 0.33);
+	background-color: var(--table-bg-hover);
 	cursor: url('../../../../images/cursor_hover.cur'), auto;
 }
 
@@ -94,7 +94,7 @@
 }
 
 #negotiationBox #negotiationBoxBody .text-danger {
-	color: #ff4040;
+	color: var(--danger-red);
 	font-weight: 700;
 }
 
@@ -107,12 +107,8 @@
 	color: var(--success);
 }
 
-#negotiationBox #negotiationBoxBody td.warning {
-	color: #FF6000;
-}
-
-#negotiationBox #negotiationBoxBody td.error {
-	color: #ff4040;
+#negotiationBox #negotiationBoxBody td.warning, #negotiationBox #negotiationBoxBody td.error {
+	color: var(--danger-red);
 }
 
 #negotiationBox #negotiationBoxBody .text-muted {
@@ -139,7 +135,7 @@
 	position: absolute;
 	white-space: nowrap;
 	text-align: left;
-	background: rgba(0,0,0, 0.7);
+	background: var(--bg-darkest);
 	padding: 5px;
 	right: 6px;
 	top: 25px;
@@ -188,7 +184,7 @@
 	position: absolute;
 	bottom: 0.3em;
 	left: calc(50% + 0.5em);
-	background-color: #281207;
+	background-color: var(--bg-darkest);
 	border: 1px solid var(--border-medium);
 	display: inline-block;
 	padding: 0 0.4em;

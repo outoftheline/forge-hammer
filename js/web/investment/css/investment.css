@@ -70,7 +70,7 @@
 #InvestmentBody table tbody td.progress {
 	border-left: 1px solid var(--border-table-top);
 	border-right: 1px solid var(--border-table-top);
-	background: none;
+	background-color: var(--black-30);
 	color: var(--white);
 	position: relative;
 }
@@ -272,10 +272,6 @@
 	font-weight: bold;
 }
 
-#invest-mygbs tr.gbprow {
-	cursor: pointer;
-}
-
 #invest-mygbs tr.gbprow td:first-child {
 	background-image: url('../../../../images/hud/chevron-left.svg');
 	background-size: 14px 14px;
@@ -284,36 +280,26 @@
 	padding-left: 18px;
 }
 
-#invest-mygbs tr.gbprow.open td:first-child {
+#invest-mygbs tr.gbprow.open td:first-child, #invest-mygbs tr.gbprow:hover td:first-child {
 	background-image: url('../../../../images/hud/chevron-down.svg');
 }
 
-/* Subtle highlight on the expanded row so it stands out from collapsed ones.
-   Use background-color (not the shorthand) so the chevron's repeat/size/position aren't reset. */
 #invest-mygbs tr.gbprow.open > td {
 	background-color: var(--table-bg-bright);
 }
 
-/* keep the progress track transparent so its bar stays visible */
 #invest-mygbs tr.gbprow.open > td.progress {
-	background-color: transparent;
+	background-color: var(--black-30);
 }
 
-/* Highlight GBs that changed since the last visit (listed first) */
 #invest-mygbs tr.gbprow.changed td:first-child {
 	color: var(--text-highlight);
 	font-weight: bold;
 }
 
 #invest-mygbs td.progress {
-	position: relative;
-	background: none;
-	color: var(--white);
 	white-space: nowrap;
 	overflow: hidden;
-	/* frame the track so the 100% mark (right edge) is visible */
-	border-left: 1px solid var(--border-table-top);
-	border-right: 1px solid var(--border-table-top);
 }
 
 #invest-mygbs td.progress .progbar {

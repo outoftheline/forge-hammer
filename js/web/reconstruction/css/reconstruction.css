@@ -32,8 +32,7 @@
 
 
 #ReconstructionMap.window-box, 
-#ReconstructionMap .window-body, 
-#ReconstructionMap .window-head {
+#ReconstructionMap .window-body {
   background: none;
   box-shadow: none;
   border: none;
@@ -48,27 +47,20 @@
 }
 #ReconstructionMap .window-body {
   text-align: right;
+  overflow-y: hidden !important;
 }
 #ReconstructionMap {
     left: calc(min(max(50vw + var(--x)),100vw - 60px)) !important;
 }
 #ReconstructionMap .window-head {
   padding: 2px;
-  border-bottom: 1px dotted var(--black-65);
   width: 300px;
   align-self: end;
-  background-color: var(--black-65);
-}
-#ReconstructionMap .window-head:hover {
-  background: var(--black-30);
 }
 #ReconstructionMap .window-grippy, 
 #ReconstructionMap .window-head, 
 #ReconstructionMap .settingsbox-wrapper {
   pointer-events: all;
-}
-#ReconstructionMap .settingsbox-wrapper {
-  filter: saturate(0.5)
 }
 #ReconstructionMap .window-grippy {
   background-color: var(--black-65);

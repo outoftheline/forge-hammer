@@ -847,7 +847,7 @@ let GuildMemberStat = {
 		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'GuildGoods' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="GuildGoods"><span>${FH.t('Boxes.GuildMemberStat.GuildGoods')}</span></a></li>`);
 
 		if (GuildMemberStat.Settings.showSearchbar) {
-			h.push(`<li style="float:right"><input type="text" name="filter" id="gms-filter-input" placeholder="${FH.t('Boxes.GuildMemberStat.Search')}" /></li>`);
+			h.push(`<li style="margin-left:auto;background:none;"><input type="text" name="filter" id="gms-filter-input" placeholder="${FH.t('Boxes.GuildMemberStat.Search')}" /></li>`);
 		}
 
 		h.push(`</ul></div>`);

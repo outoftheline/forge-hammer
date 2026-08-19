@@ -141,7 +141,7 @@
 }
 
 #GuildMemberStatBody table tr td.dark {
-    background-color: var(--black-50) !important;
+    background-color: var(--table-bg-darker) !important;
 }
 
 #GuildMemberStatBody table tr td.increased:after {
@@ -165,7 +165,7 @@
     height: 0;
     border-style: solid;
     border-width: 10px 5px 0px 5px;
-    border-color: #ff0000 transparent transparent transparent;
+    border-color: var(--danger-red) transparent transparent transparent;
 }
 
 #GuildMemberStatBody table tr.outdated {
@@ -215,7 +215,7 @@
 }
 
 #GuildMemberStatBody table tr.warning {
-    background: #ffbb004d;
+    background: var(--table-bg-bright);
 }
 
 #GuildMemberStatBody table tr.strikeout {
@@ -233,12 +233,12 @@
     position: absolute;
     top: 50%;
     left: 0;
-    border-bottom: 1px solid #b7b7b7;
+    border-bottom: 1px solid var(--text);
     width: 100%;
 }
 
 #GuildMemberStatBody table tr.error {
-    background: #f800005c;
+    background: var(--table-bg-error);
 }
 
 #GuildMemberStatBody .prev_score.green {
@@ -253,35 +253,11 @@
     text-decoration: underline;
 }
 
-#GuildMemberTable>tbody tr.hasdetail.open td,
-#GuildErasTable>tbody tr.hasdetail.open td {
-
-    border-top: 1px solid #ca8d2d;
-    border-bottom: none;
-}
-
-#GuildMemberTable>tbody tr.hasdetail.open td:first-child,
-#GuildErasTable>tbody tr.hasdetail.open td:first-child {
-    border-left: 1px solid #ca8d2d;
-}
-
-#GuildMemberTable>tbody tr.hasdetail.open td:last-child,
-#GuildErasTable>tbody tr.hasdetail.open td:last-child {
-    border-right: 1px solid #ca8d2d;
-}
-
-#GuildMemberTable>tbody tr.detailview>td:first-child,
-#GuildErasTable>tbody tr.detailview>td:first-child {
-    border-left: 1px solid #ca8d2d;
-    border-right: 1px solid #ca8d2d;
-    border-bottom: 1px solid #ca8d2d;
-}
-
 #GuildMemberStatBody .last-update-message {
     position: absolute;
     bottom: 2px;
     right: 6px;
-    background: rgba(0, 0, 0, 0.392);
+    background: var(--table-bg-darker);
     width: auto;
     height: auto;
     padding: 1px 5px;
@@ -321,7 +297,7 @@
     padding: 0 0 0 3px;
     color: var(--text-highlight);
     font-weight: bold;
-    text-shadow: 0 2px 2px black, 0 1px 0 black;
+    text-shadow: 0 2px 2px var(--bg-darkest), 0 1px 0 var(--bg-darkest);
 }
 
 #GuildMemberStatBody .copyable {

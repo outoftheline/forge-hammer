@@ -41,7 +41,7 @@ table {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: var(--black-60);
+	background: var(--bg-darkest);
 	z-index: 100;
 	opacity: 1;
 

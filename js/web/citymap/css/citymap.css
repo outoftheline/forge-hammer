@@ -39,7 +39,6 @@
 	justify-content: end;
 }
 
-/* eigene Stadt */
 #map-container {
 	overflow: hidden;
 	position: absolute;
@@ -56,7 +55,6 @@
 	right: 0;
 }
 
-/* Nachbar */
 #map-container.with-sidebar {
 	right: 0;
 }
@@ -90,7 +88,7 @@
 }
 
 #sidebar.main #area-state .highlight-map li:hover {
-	background-color: var(--black-30);
+	background-color: var(--table-bg-hover);
 	margin: 0 -2px;
 	padding: 0 2px;
 }
