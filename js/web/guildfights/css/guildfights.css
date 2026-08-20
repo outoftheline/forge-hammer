@@ -219,6 +219,7 @@
 
 #LiveGuildFightingBody #nextup .secure .prov-name b {
 	text-decoration: underline;
+	text-underline-offset: 2px;
 }
 
 #LiveGuildFightingBody .focus .battletype {
