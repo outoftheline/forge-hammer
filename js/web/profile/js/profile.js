@@ -223,10 +223,6 @@ const Profile = {
         // daily production
         cl.push('<div class="dailyProd pad">');
         cl.push('<h2 class="border"><span>'+FH.t('Boxes.PlayerProfile.DailyProduction')+'</span></h2>');
-        // no data
-        if (Profile.fpProduction === 0 || Profile.guildGoods === 0) {
-            cl.push('<p class="important" onclick="Productions.init();">'+FH.t('Boxes.PlayerProfile.OpenProduction')+'</p>');
-        }
 
         if (Profile.fpProduction > 0) {
             cl.push('<span class="removable">' +
@@ -342,8 +338,6 @@ const Profile = {
             cc.push('<div class="copyContent">');
             cc.push('<div class="dailyProd hideOnMore pad">');
             cc.push('<h2 class="text-center">'+FH.t('Boxes.PlayerProfile.DailyProduction')+'</h2> ');
-            if (Profile.fpProduction === 0 || Profile.guildGoods === 0)
-                cc.push('<span class="important clickable" onclick="Productions.init();">'+FH.t('Boxes.PlayerProfile.OpenProduction')+'</span><br>');
 
             if (Profile.fpProduction > 0) {
                 cc.push('<span class="removable">' +

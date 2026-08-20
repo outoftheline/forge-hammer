@@ -1411,15 +1411,16 @@ let Productions = {
 			rowA.push('</tr>')
 		}
 
-		Profile.guildGoods = Object.values(erasTotal).reduce((a,b)=>a+b);
+		let totalProduction = Profile.guildGoods = Object.values(erasTotal).length > 0 ? Object.values(erasTotal).reduce((a,b)=>a+b) : 0;
 		Profile.update();
+		let currentProduction = Object.values(erasCurrent).length > 0 ? Object.values(erasCurrent).reduce((a,b)=>a+b) : 0;
 
 		// single view table
 		table.push('<table id="'+type+'-list" class="foe-table sortable-table exportable TSinactive '+type+'-list active">')
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th colspan="'+(6+eras.length)+'"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">')
-		table.push(`<span style="float:right;">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</span></th>`)
+		table.push(`<span style="float:right;">${FH.HTML.Format(currentProduction)}/${FH.HTML.Format(totalProduction)}</span></th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header exportheader">')
 		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
@@ -1442,7 +1443,7 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeSingle') + '</span></th>')
-		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))}</th>`)
+		table.push(`<th colspan=${2+eras.length} class="textright">${FH.HTML.Format(currentProduction)}/${FH.HTML.Format(totalProduction)}</th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header">')
 		table.push('<th data-type="prodgroup'+type+'" class="is-number">' + FH.t('Boxes.Productions.Headings.number') + '</th>')
