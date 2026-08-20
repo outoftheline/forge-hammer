@@ -8,8 +8,9 @@
     height: 25px;
 }
 
-#mapScoutingTimesDialogBody{
+#mapScoutingTimesDialogBody {
     width: 450px;
+    max-height: 50vh;
 }
 
 #mapScoutingTimesDialogBody tr.scouted {

@@ -190,6 +190,7 @@ let scoutingTimes = {
                     auto_close: true,
                     dragdrop: true,
                     minimize: true,
+                    scrollable: true,
                     settings: scoutingTimes.ShowSettings,
                 });
             }
