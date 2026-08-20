@@ -277,20 +277,22 @@ let GuildFights = {
 		});
 
 		let provinces = GuildFights.MapData.map.provinces;
-		for (let province of provinces) {
-			delete province.signal;
+
+		if (!data) {
+			for (let province of provinces) {
+				delete province.signal;
+			}
+
+			let ownSignals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
+
+			for (let entry of ownSignals) {
+				let province = provinces.find(x => (x.id||0) === (entry.provinceId||0));
+				if (!province || province.ownerId === GuildFights.MapData.currentParticipantId) continue;
+
+				province.signal = entry.signal;
+			}
 		}
-
-		let ownSignals = GuildFights.MapData.battlegroundParticipants.find(x => x.clan.id === FH.Guild.ID)?.signals || [];
-
-		for (let entry of ownSignals) {
-			let province = provinces.find(x => (x.id||0) === (entry.provinceId||0));
-			if (!province || province.ownerId === GuildFights.MapData.currentParticipantId) continue;
-
-			province.signal = entry.signal;
-		}
-
-		if (data) {
+		else {
 			let provinceId = data.provinceId||0;
 			let province = provinces.find(x => (x.id||0) === provinceId);
 
