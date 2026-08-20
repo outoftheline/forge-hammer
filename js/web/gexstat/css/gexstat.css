@@ -170,7 +170,7 @@
 #GexStat table tbody td.progress {
 	border-left: 1px solid var(--border-table-top);
 	border-right: 1px solid var(--border-table-top);
-	background: none;
+	background: var(--black-30);
 	color: var(--white);
 	position: relative;
 	min-width: 150px;
@@ -185,8 +185,13 @@
 	background: var(--btn-bg-green-moz);
 	background: var(--btn-bg-green-webkit);
 	background: var(--btn-bg-green);
-	z-index: -1;
 	color: var(--white);
+	overflow: visible;
+}
+
+#GexStat table tbody td div.progbar span {
+	display: flex;
+	transform: translate(2px, 50%);
 }
 
 #GexStat table tbody td div.progbar.rank-1 {
@@ -323,6 +328,6 @@
 	text-decoration: underline;
 }
 
-#gexsContentWrapper {
+#gexsContentWrapper.chart {
 	background-color: var(--bg-chart);
 }

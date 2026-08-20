@@ -260,6 +260,9 @@ let Settings = {
 		}
 	},
 
+	SetSetting: (name, value) => {
+		let s = FH.Storage.setItem(name, value);
+	},
 
 	VersionInfo: () => {
 		let v = '<ul>';
@@ -666,7 +669,8 @@ let Settings = {
 			{name: "Dark", path: "themes/grey"},
 			{name: "Blues", path: "themes/blues"},
 			{name: "Quantum", path: "themes/qi"},
-			{name: "Titan", path: "themes/titan"}
+			{name: "Titan", path: "themes/titan"},
+			//{name: "Iron", path: "themes/iron"}
 		];
 
 		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";

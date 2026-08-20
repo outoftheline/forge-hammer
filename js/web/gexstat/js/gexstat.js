@@ -13,11 +13,12 @@ FH.proxy.addHandler('ChampionshipService', 'getOverview', (data, postData) => {
 
 // GEX member statistic
 FH.proxy.addHandler('GuildExpeditionService', 'getContributionList', (data, postData) => {
-	// Inno sends response data two times... so prevent double processing with ResponseBlockTime
 	if (data && data.responseData && (+FH.Main.getCurrentDate() - GexStat.ResponseBlockTime) > 2000) {
 		GexStat.ResponseBlockTime = +FH.Main.getCurrentDate();
 		GexStat.GexData = data.responseData; // Store GEX data for cost calculations
 		GexStat.UpdateData('participation', data.responseData);
+		if (Settings.GetSetting('GexStatAutoOpen'))
+			GexStat.BuildBox();
 	}
 });
 
@@ -56,7 +57,6 @@ let GexStat = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-
 		const DBName = `FoeHelperDB_GexStat_${playerID}`;
 
 		GexStat.db = new Dexie(DBName);
@@ -74,7 +74,6 @@ let GexStat = {
 
 
 	BuildBox: (event) => {
-
 		if ($('#GexStat').length === 0) {
 			FH.HTML.Box({
 				id: 'GexStat',
@@ -281,7 +280,7 @@ let GexStat = {
 				`<div class="clanflag"><img alt="" src="${srcLinks.get('/shared/clanflags/' + participant.flag + '.jpg', true)}" /></div>` +
 				`<div class="claninfo"><span class="clanname">${FH.Main.GetGuildLink(participant['guildId'], participant['name'], participant['worldId'])}</span><br /> ` +
 				`<span class="clanworld">${participant.worldName}</span></div></td>`);
-			h.push(`<td class="progress"><div class="progbar rank-${rankClass}${stripedClass}" style="width: ${progressWidth}%"></div> ${participant.points}%</td>`);
+			h.push(`<td class="progress"><div class="progbar rank-${rankClass}${stripedClass}" style="width: ${progressWidth}%"><span>${participant.points}%</span></div> </td>`);
 			h.push(`<td><div class="flex justify-content-between mbottom2"><div>${FH.t('Boxes.GexStat.Rank')}: ${participant.worldrank} </div><div>${FH.t('Boxes.GexStat.Member')}: ${participant.memberCount}</div></div>` +
 				`<div class="flex justify-content-between"><div>${FH.t('Boxes.GexStat.Level')}: ${participant.level}</div>` +
 				`<div><span class="trophie"></span> <strong>${participant.trophies.guild_championship_trophy_gold}</strong>` +
@@ -682,15 +681,17 @@ let GexStat = {
 		let deleteAfterWeeks = [5, 10, 20, 30, 52, 0];
 		let showRounds = [3, 5, 10, 15, 20, 25, 30];
 		let exportLimits = [1, 2, 3, 5, 10, 15, 20, 25, 30];
-		let Settings = GexStat.Settings;
+		let GESettings = GexStat.Settings;
 
-		c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.GexStat.General')}</span>${FH.t('Boxes.GexStat.DeleteDataOlderThan')} <select id="gexsDeleteOlderThan" name="deleteolderthan">`);
+		c.push(`<p class="text-left"><span class="settingtitle">${FH.t('Boxes.GexStat.General')}</span>
+		<input id="gexAutoOpen" name="gexAutoOpen" type="checkbox" ${Settings.GetSetting('GexStatAutoOpen') ? 'checked' : ''}/> <label for="gexAutoOpen">${FH.t('Boxes.General.AutoOpen')}</label><br />
+		${FH.t('Boxes.GexStat.DeleteDataOlderThan')} <select id="gexsDeleteOlderThan" name="deleteolderthan">`);
 		deleteAfterWeeks.forEach(weeks => {
 			let option = '';
 			if (weeks === 0) { option = FH.t('Boxes.GexStat.Never'); }
 			else { option = weeks + ' ' + FH.t('Boxes.GexStat.Weeks'); }
 
-			c.push(`<option value="${weeks}" ${Settings.deleteOlderThan === weeks ? ' selected="selected"' : ''}>${option}</option>`);
+			c.push(`<option value="${weeks}" ${GESettings.deleteOlderThan === weeks ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 
 		c.push(`</select>`);
@@ -698,7 +699,7 @@ let GexStat = {
 		c.push(`<p class="text-left">${FH.t('Boxes.GexStat.CompareLast')} <select id="gexsShowRoundLimit" name="showroundlimit">`);
 		showRounds.forEach(round => {
 			let option = round + ' ' + FH.t('Boxes.GexStat.Rounds');
-			c.push(`<option value="${round}" ${Settings.showRoundLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
+			c.push(`<option value="${round}" ${GESettings.showRoundLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 
 		c.push(`</select></p>`);
@@ -706,7 +707,7 @@ let GexStat = {
 			`${FH.t('Boxes.GexStat.ExportLast')} <select id="gexsExportLimit" name="exportlimit">`);
 		exportLimits.forEach(round => {
 			let option = round + ' ' + FH.t('Boxes.GexStat.Rounds');
-			c.push(`<option value="${round}" ${Settings.exportLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
+			c.push(`<option value="${round}" ${GESettings.exportLimit === round ? ' selected="selected"' : ''}>${option}</option>`);
 		});
 		c.push(`</select></p>`);
 
@@ -722,10 +723,10 @@ let GexStat = {
 
 
 	SettingsSaveValues: async () => {
-
 		let tmpDeleteOlder = parseInt($('#gexsDeleteOlderThan').val());
 		let showRoundLimit = parseInt($('#gexsShowRoundLimit').val());
 		let exportLimit = parseInt($('#gexsExportLimit').val());
+		let gexAutoOpen = $('#gexAutoOpen').is(':checked');
 
 		if (GexStat.Settings.deleteOlderThan !== tmpDeleteOlder && tmpDeleteOlder > 0) {
 			GexStat.showPreloader('#GexStat');
@@ -744,11 +745,11 @@ let GexStat = {
 		if (!chartSeries.length) { chartSeries.push('encounters', 'member', 'participants', 'rank') }
 
 		FH.Storage.setItem('GexStatSettings', JSON.stringify(GexStat.Settings));
+		Settings.SetSetting('GexStatAutoOpen',gexAutoOpen);
 
 		$(`#GexStatSettingsBox`).fadeToggle('fast', function () {
 			$(this).remove();
-			if (GexStat.Chart !== undefined)
-			{
+			if (GexStat.Chart !== undefined) {
 				GexStat.Chart.destroy();
 			}
 			GexStat.ShowTabContent(GexStat.CurrentStatGroup, GexStat.CurrentGexWeek);
