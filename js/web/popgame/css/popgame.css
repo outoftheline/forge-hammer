@@ -33,7 +33,6 @@
     width: 400px;
     display: inline-block;
     vertical-align: top;
-    text-shadow: 1px 1px var(--black);
     color: var(--danger-red);
 }
 .PGtool {
@@ -45,7 +44,7 @@
     pointer-events: auto;
 }
 .PGselected {
-    border: var(--white) solid 2px;
+    border: 2px solid var(--bg-light);
 }
 .PGcolumn {
     display: table-cell;

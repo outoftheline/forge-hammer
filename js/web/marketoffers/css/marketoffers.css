@@ -52,8 +52,8 @@
 
 #MarketOffers #MarketOffersBody td.goods-image {
     padding: 0;
-    background-color: var(--black-50);
-    }
+    background-color: var(--bg-dark);
+}
 
 #MarketOffers #MarketOffersBody .sprite-35 {
     width: 25px;
@@ -110,7 +110,7 @@
 
 #MarketOffersEvents #MarketOffersEventsBody td.goods-image {
     padding: 0;
-    background-color: var(--black-50);
+    background-color: var(--bg-dark);
 }
 
 #MarketOffersEvents #MarketOffersEventsBody .sprite-35 {

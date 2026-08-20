@@ -1750,14 +1750,15 @@ a:hover, input[type="radio"], .clickable {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 10px;
+	padding: 0 5px;
 	font-size: 0.8rem;
 	height: 24px;
 	line-height: 24px;
 	background-color: var(--bg-light);
 	color: var(--text-dark);
-	cursor: pointer;
 	width: 130px;
+	white-space: nowrap;
+	overflow-x: hidden;
 }
 .custom-options {
 	position: absolute;
@@ -1794,11 +1795,11 @@ a:hover, input[type="radio"], .clickable {
 }
 .custom-option:hover {
 	cursor: pointer;
-	background-color: var(--text);
+	background-color: var(--table-bg-hover);
 }
 .custom-option.selected {
 	color: var(--text-highlight);
-	background-color: var(--text-dark);
+	background-color: var(--bg-dark);
 }
 
 .custom-select .arrow {
