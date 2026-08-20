@@ -1413,10 +1413,10 @@ let GuildFights = {
 		for (let i in mapdata) {
 			if (!mapdata.hasOwnProperty(i)) break;
 			let id = mapdata[i].id || 0;
+			let signalClass = mapdata[i].signal || '';
 
 			for (let x in gbgGuilds) {
 				if (!gbgGuilds.hasOwnProperty(x)) break;
-				let signalClass = mapdata[i].signal || '';
 
 				if (mapdata[i].ownerId !== undefined && gbgGuilds[x].participantId === mapdata[i].ownerId) {
 					if (mapdata[i]['conquestProgress'].length > 0 && (mapdata[i]['lockedUntil'] === undefined)) {
