@@ -157,14 +157,8 @@
 		"sort": 1
 	},
 	{
-		"name": "SelectedMenu",
-		"callback": "MenuSelected",
-		"group": "Extension",
-		"sort": 2
-	},
-	{
-		"name": "MenuLength",
-		"callback": "MenuInputLength",
+		"name": "MenuAppearance",
+		"callback": "MenuAppearanceSettings",
 		"group": "Extension",
 		"sort": 4
 	},

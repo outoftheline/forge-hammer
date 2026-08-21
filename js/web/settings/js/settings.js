@@ -114,7 +114,7 @@ let Settings = {
 					cd = $('<div />').addClass('desc'),
 					cs = $('<div />').addClass('setting');
 
-				if ("SelectedMenu" !== d['name'] && 'NotificationsPosition' !== d['name']) {
+				if ('NotificationsPosition' !== d['name']) {
 					let s = FH.Storage.getItem(d['name']);
 
 					if (s !== null) {
@@ -368,24 +368,63 @@ let Settings = {
 	},
 
 
-	MenuSelected: () => {
-		let dp = [];
+	MenuAppearanceSettings: () => {
+		let dp = [],
+			lengthValue = FH.Storage.getItem('MenuLength'),
+			sizeValue = FH.Storage.getItem('MenuBtnSize');
 
-		dp.push('<select class="setting-dropdown" id="change-menu">');
-
+		dp.push(`<div class="p5 bbd">
+			<label for="change-menu">${FH.t('Settings.MenuAppearance.Position')}</label><br />
+			<select class="setting-dropdown" id="change-menu">`);
 		for (let index = 0; index < FH.menu.MenuOptions.length; index++) {
 			const element = FH.menu.MenuOptions[index];
 			if (element[Object.keys(element)[0]]) {
 				dp.push('<option value="' + element + '"' + (FH.Main.SelectedMenu === element ? ' selected' : '') + '>' + FH.t('Menu.' + element) + '</option>');
 			}
 		}
+		dp.push(`</select>
+		</div>`);
 
-		dp.push('</select>');
+		dp.push(`<div class="p5 bbd">
+			<label for="menu-input-length">${FH.t('Settings.MenuAppearance.Length')}</label><br />
+			<input class="setting-input" type="number" id="menu-input-length" step="1" min="2" value="${lengthValue !== null ? lengthValue : ''}" />
+		</div>`);
+
+		// menu button size input
+		dp.push(`<div class="p5">
+			<label for="menu-btn-size-input">${FH.t('Settings.MenuAppearance.Size')}</label><br />
+			<input class="setting-input" type="range" id="menu-btn-size-input" step="1" min="24" max="64" value="${sizeValue !== null ? sizeValue : ''}" />
+		</div>`);
 
 		$('#SettingsBoxBody').on('change', '#change-menu', function () {
 			let selMenu = $(this).val();
 			FH.Storage.setItem('SelectedMenu', selMenu);
 			FH.menu.SwitchMenu(selMenu);
+		});
+
+		$('#SettingsBox').on('keyup', '#menu-input-length', function () {
+			let value = $(this).val();
+
+			if (value > 0) {
+				FH.Storage.setItem('MenuLength', value);
+			} else {
+				FH.Storage.removeItem('MenuLength');
+			}
+
+			FH.menu.UpdateMenuLength();
+		});
+
+		$('#SettingsBox').on('change', '#menu-btn-size-input', function () {
+			let value = $(this).val();
+
+			if (value >= 24 && value <= 64) {
+				FH.Storage.setItem('MenuBtnSize', value);
+			} else {
+				FH.Storage.removeItem('MenuBtnSize');
+			}
+
+			FH.menu.ApplyMenuBtnSize();
+			FH.menu.UpdateMenuLength();
 		});
 
 		return dp.join('');
@@ -435,10 +474,10 @@ let Settings = {
 
 
 	OpenModuleSoundSettings: () => {
-		Settings.BuildBox(2, 5);
+		Settings.BuildBox(2, 4);
 	},
 	OpenModuleDecayedBuildingSettings: () => {
-		Settings.BuildBox(2, 7);
+		Settings.BuildBox(2, 6);
 	},
 
 
@@ -688,37 +727,6 @@ let Settings = {
 		});
 
 		return dp.join('');
-	},
-
-
-	MenuInputLength: () => {
-		let ip = $('<input />').addClass('setting-input').attr({
-			type: 'number',
-			id: 'menu-input-length',
-			step: 1,
-			min: 2
-		}),
-		value = FH.Storage.getItem('MenuLength');
-		
-		ip[0].defaultValue = ip[0].value = value;
-
-		if (null !== value) {
-			ip.val(value);
-		}
-
-		$('#SettingsBox').on('keyup', '#menu-input-length', function () {
-			let value = $(this).val();
-
-			if (value > 0) {
-				FH.Storage.setItem('MenuLength', value);
-			} else {
-				FH.Storage.removeItem('MenuLength');
-			}
-
-			FH.menu.UpdateMenuLength();
-		});
-
-		return ip;
 	},
 
 
