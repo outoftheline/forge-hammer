@@ -80,10 +80,6 @@
 	display: none;
 }
 
-#Castle #casLogWrapper tr.caption {
-	cursor: pointer;
-}
-
 #Castle #casLogWrapper tr.caption td {
 	color: var(--text);
 }

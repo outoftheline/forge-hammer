@@ -655,7 +655,6 @@ input[id*="ProdPerTile"] {
 	display: flex;
 	justify-content: space-between;
 	padding: 3px 6px;
-	cursor: pointer;
 }
 #ScoreModifiersBody .score-modifiers-add .results li:hover {
 	background: var(--bg-medium);

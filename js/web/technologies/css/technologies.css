@@ -27,7 +27,6 @@
 }
 
 #technologies table th {
-	cursor: pointer;
 	font-size: 85%;
 }
 
@@ -49,10 +48,6 @@
 #technologies .text-success {
 	color: var(--success);
 	font-weight: 700;
-}
-
-#technologies .text-muted {
-	color: var(--ash);
 }
 
 #technologies td {

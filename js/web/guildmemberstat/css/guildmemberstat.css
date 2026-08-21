@@ -129,7 +129,6 @@
 
 #GuildMemberStatBody table th {
     line-height: 23px;
-    cursor: pointer;
 }
 
 #GuildMemberStatBody .detail-item>table th {

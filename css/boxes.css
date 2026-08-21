@@ -1721,7 +1721,7 @@ a:hover, input[type="radio"], .clickable {
 .jq-toast-single ul { margin: 0; background: none; padding:0;list-style: none }
 .jq-toast-single ul li { line-height: 17px; background: none; margin: 0; padding: 0; letter-spacing: normal; }
 
-.close-jq-toast-single { position: absolute; top: 3px; right: 7px; font-size: 14px; cursor: pointer; }
+.close-jq-toast-single { position: absolute; top: 3px; right: 7px; font-size: 14px; }
 
 .jq-toast-loader { display: block; position: absolute; top: 0; height: 2px; width: 0; left: 0; border-radius: 5px; background: var(--text-highlight); }
 .jq-toast-loaded { width: 100%; }
@@ -1794,7 +1794,6 @@ a:hover, input[type="radio"], .clickable {
 	transition: all 0.5s;
 }
 .custom-option:hover {
-	cursor: pointer;
 	background-color: var(--table-bg-hover);
 }
 .custom-option.selected {

@@ -307,10 +307,6 @@
 	border-top: 1px solid var(--border-table-top);
 }
 
-#GexStat #gexsParticipationTable .sorter-header th {
-	cursor: pointer;
-}
-
 #GexStat #gexsParticipationTable tbody tr td:nth-child(1),
 #GexStat #gexsParticipationTable tbody tr td:nth-child(2) {
 	width: 23px;

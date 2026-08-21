@@ -17,7 +17,6 @@
 }
 
 #MarketOffers #MarketOffersBody table th {
-    cursor: pointer;
     font-size: 85%;
 }
 
@@ -81,7 +80,6 @@
 }
 
 #MarketOffersEvents #MarketOffersEventsBody table th {
-    cursor: pointer;
     font-size: 85%;
 }
 

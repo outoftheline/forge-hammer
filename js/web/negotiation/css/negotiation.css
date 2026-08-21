@@ -111,10 +111,6 @@
 	color: var(--danger-red);
 }
 
-#negotiationBox #negotiationBoxBody .text-muted {
-	color: var(--ash);
-}
-
 #negotiationBox #negotiationBoxBody td {
 	position: relative;
 }

@@ -33,10 +33,6 @@
 	font-weight: 700;
 }
 
-#outpostConsumables #outpostConsumablesBody .text-muted {
-	color: var(--ash);
-}
-
 #outpostConsumables #outpostConsumablesBody .diplomacy-ask {
 	font-weight: 700;
 	display: inline-block;

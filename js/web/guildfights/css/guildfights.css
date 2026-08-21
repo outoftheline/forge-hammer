@@ -136,10 +136,6 @@
 	height: 28px;
 }
 
-#GuildPlayersDetailViewBody .sorter-header th {
-	cursor: pointer;
-}
-
 #GuildPlayersDetailViewBody table.foe-table tr td:last-child,
 #GuildPlayersDetailViewBody table.foe-table tr th:last-child {
 	width: 15px;
@@ -334,7 +330,7 @@
 /*************************************************************************************************************/
 
 #ProvinceMapBody {
-	background: #222;
+	background: var(--bg-darkest);
 	position: relative;
 }
 
@@ -372,7 +368,7 @@
 }
 
 #ProvinceMap #province-map {
-	background-color: #222;
+	background-color: var(--bg-darkest);
 	position: relative;
 	height: 100%;
 	margin: 0 auto;

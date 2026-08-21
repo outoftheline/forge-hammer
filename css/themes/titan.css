@@ -145,3 +145,7 @@
 .window-head, .btn, .btn:not([disabled]):hover, .btn-active:not([disabled]), .btn-active:not([disabled]):hover, #SettingsBoxBody .item-row .check span.toogle-word {
     text-shadow: none;
 }
+
+.horizontal li {
+	font-family: monospace;
+}

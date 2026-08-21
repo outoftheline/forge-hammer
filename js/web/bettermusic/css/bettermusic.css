@@ -76,7 +76,6 @@
 #betterMusicDialogBody [type="checkbox"] + label {
   position: relative;
   display: block;
-  cursor: pointer;
   font-family: sans-serif;
   padding-left:2.8em;
   position: relative;

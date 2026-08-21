@@ -866,7 +866,7 @@ let GuildMemberStat = {
 		h.push(`<th class="is-number" data-type="gms-group">${FH.t('Boxes.GuildMemberStat.Eras')}</th>`);
 
 		if (GuildMemberStat.hasGuildMemberRights) {
-			h.push(`<th class="is-number gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.MemberActiviy'))}"><span class="activity"></span></th>`);
+			h.push(`<th class="is-number gms-tooltip tdmin" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.MemberActiviy'))}"><span class="activity"></span></th>`);
 		}
 
 		h.push(`<th style="display:none"></th>` +

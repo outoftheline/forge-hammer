@@ -47,10 +47,6 @@
 	position: relative;
 }
 
-#InvestmentBody table th {
-	cursor: pointer;
-}
-
 #InvestmentBody table tr.new td {
 	background: var(--table-bg-success);
 }
@@ -148,7 +144,6 @@
 #InvestmentBody table tbody td .hideicon {
 	width: 18px;
 	height: 18px;
-	cursor: pointer;
 	display: block;
 	background-size: contain;
 }
