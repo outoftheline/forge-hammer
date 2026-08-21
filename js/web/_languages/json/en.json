@@ -699,6 +699,7 @@
   "Boxes.GuildMemberStat.Never": "never",
   "Boxes.GuildMemberStat.Points": "Points",
   "Boxes.GuildMemberStat.ProducedTreasuryGoods": "produced by guild buildings",
+  "Boxes.GuildMemberStat.QiParticipation": "QI participation",
   "Boxes.GuildMemberStat.Rank": "Rank",
   "Boxes.GuildMemberStat.ResetMessageCounter": "reset message counter",
   "Boxes.GuildMemberStat.Search": "Search",

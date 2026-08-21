@@ -97,7 +97,7 @@
     background: url(../../x_img/gbg-gray.png) center no-repeat;
     background-size: contain;
 }
-[id*=GuildMember] .summary span.qi::before {
+#GuildMemberStatBody tr th span.qi, [id*=GuildMember] .summary span.qi::before {
 	background-image: url('../../x_img/qi.png');
 	background-size: contain;
 }

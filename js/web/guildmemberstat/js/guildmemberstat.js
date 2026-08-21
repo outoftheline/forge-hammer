@@ -831,6 +831,47 @@ let GuildMemberStat = {
 	},
 
 
+	/**
+	 * Determines the round id (= end timestamp) of the last *finished* round for GEX, GBG and QI
+	 * A round counts as finished as soon as its end timestamp lies in the past
+	 *
+	 * @returns {Promise<{gex: (number|null), gbg: (number|null), qi: (number|null)}>}
+	 */
+	GetLastFinishedRounds: async () => {
+		let now = FH.Main.round(+FH.Main.getCurrentDate() / 1000);
+		let rounds = { gex: null, gbg: null, qi: null };
+
+		// highest key which already lies in the past
+		let lastFinished = (keys) => {
+			let last = null;
+
+			for (let key of (keys || [])) {
+				let value = parseInt(key, 10);
+
+				if (isNaN(value) || value >= now) continue;
+				if (last === null || value > parseInt(last, 10)) last = key;
+			}
+
+			return last;
+		};
+
+		try {
+			rounds.gex = lastFinished(await GuildMemberStat.db.gex.orderBy('gexweek').keys());
+		} catch (e) { rounds.gex = null; }
+
+		try {
+			rounds.gbg = lastFinished(await GuildMemberStat.db.gbg.orderBy('gbgid').keys());
+		} catch (e) { rounds.gbg = null; }
+
+		try {
+			if (typeof QiProgress !== 'undefined' && QiProgress.db)
+				rounds.qi = lastFinished(await QiProgress.db.history.toCollection().primaryKeys());
+		} catch (e) { rounds.qi = null; }
+
+		return rounds;
+	},
+
+
 	Show: async () => {
 		let h = [];
 
@@ -838,6 +879,19 @@ let GuildMemberStat = {
 
 		GuildMemberStat.InitSettings();
 		GuildMemberStat.hasUpdateProgress = false;
+
+		// round ids (= end timestamps) of the last finished GEX/GBG/QI round
+		let LastRounds = await GuildMemberStat.GetLastFinishedRounds();
+
+		// " (01.01.2026 - 08.01.2026)" for the column tooltips, empty as long as there is no finished round
+		let RoundTimespan = (roundEnd, durationDays) => {
+			if (roundEnd === null || roundEnd === undefined) return '';
+
+			let end = moment.unix(roundEnd);
+			let start = moment.unix(roundEnd).subtract(durationDays, 'd');
+
+			return ` (${start.format(FH.t('Date'))} - ${end.format(FH.t('Date'))})`;
+		};
 
 		h.push('<div class="tabs dark-bg"><ul id="gmsTabs" class="horizontal">');
 		h.push(`<li${GuildMemberStat.CurrentStatGroup === 'Member' ? ' class="active"' : ''}><a class="toggle-statistic" data-value="Member"><span>${FH.t('Boxes.GuildMemberStat.GuildMembers')}</span></a></li>`);
@@ -871,15 +925,16 @@ let GuildMemberStat = {
 
 		h.push(`<th style="display:none"></th>` +
 			`<th class="is-number text-center gms-tooltip" data-type="gms-group"  title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GuildMessages'))}"><span class="messages"></span></th>` +
-			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GexParticipation'))}"><span class="gex"></span></th>` +
-			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GbgParticipation'))}"><span class="gbg"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GexParticipation') + RoundTimespan(LastRounds.gex, 7))}"><span class="gex"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.GbgParticipation') + RoundTimespan(LastRounds.gbg, 11))}"><span class="gbg"></span></th>` +
+			`<th class="is-number text-center gms-tooltip" data-type="gms-group" title="${FH.HTML.Tooltip(FH.t('Boxes.GuildMemberStat.QiParticipation') + RoundTimespan(LastRounds.qi, 11))}"><span class="qi"></span></th>` +
 			'</tr>' +
 			'</thead><tbody class="gms-group">');
 
 		let CurrentMember = await GuildMemberStat.db.player.orderBy('score').reverse().toArray();
 		let exportData = GuildMemberStat.ExportData = [];
 
-		exportData.push(['rank', 'member_id', 'member', 'points', 'eraID', 'eraName', 'guildgoods', 'activity_warnings', 'messages', 'gex_participation', 'gbg_participation', 'won_battles', 'guildmember']);
+		exportData.push(['rank', 'member_id', 'member', 'points', 'eraID', 'eraName', 'guildgoods', 'activity_warnings', 'messages', 'gex_participation', 'gbg_participation', 'qi_participation', 'won_battles', 'guildmember']);
 
 		if (CurrentMember === undefined) return;
 
@@ -903,6 +958,28 @@ let GuildMemberStat = {
 
 		let CurrentForumActivity = await GuildMemberStat.db.forum.toArray();
 
+		// results of the last finished round only, indexed by player_id
+		let GexLastRound = {},
+			GbgLastRound = {},
+			QiLastRound = {};
+
+		if (LastRounds.gex !== null) {
+			let rows = await GuildMemberStat.db.gex.where('gexweek').equals(LastRounds.gex).toArray();
+			for (let row of rows) { GexLastRound[row.player_id] = row; }
+		}
+
+		if (LastRounds.gbg !== null) {
+			let rows = await GuildMemberStat.db.gbg.where('gbgid').equals(LastRounds.gbg).toArray();
+			for (let row of rows) { GbgLastRound[row.player_id] = row; }
+		}
+
+		if (LastRounds.qi !== null) {
+			try {
+				let qiHistory = await QiProgress.db.history.get(LastRounds.qi);
+				for (let entry of (qiHistory?.participation || [])) { QiLastRound[entry.player_id] = entry; }
+			} catch (e) { }
+		}
+
 		let data = CurrentMember;
 		let deletedCount = 0;
 
@@ -921,7 +998,7 @@ let GuildMemberStat = {
 			const member = data[x];
 			let MemberID = member['player_id'];
 
-			// Get available activity warnings
+			// get available activity warnings
 			activityWarnings = CurrentActivityWarnings.filter(function (item) {
 				return item?.player_id === MemberID;
 			});
@@ -931,7 +1008,7 @@ let GuildMemberStat = {
 				hasDetail = (ActWarnCount > 0) ? true : hasDetail;
 			}
 
-			// Get GEX activities
+			// get GEX activities
 			gexActivity = CurrentGexActivity.filter(function (item) {
 				return item?.player_id === MemberID;
 			});
@@ -941,7 +1018,7 @@ let GuildMemberStat = {
 				hasDetail = (gexActivityCount > 0) ? true : hasDetail;
 			}
 
-			// Get GBG activities
+			// get GBG activities
 			gbgActivity = CurrentGbgActivity.filter(function (item) {
 				return item?.player_id === MemberID;
 			});
@@ -951,7 +1028,7 @@ let GuildMemberStat = {
 				hasDetail = (gbgActivityCount > 0) ? true : hasDetail;
 			}
 
-			// Get Message Center activity
+			// get Message Center activity
 			forumActivity = CurrentForumActivity.filter(function (item) {
 				return item?.player_id === MemberID;
 			});
@@ -960,17 +1037,37 @@ let GuildMemberStat = {
 				forumActivityCount = forumActivity[0]['message_id'].length
 			}
 
-			// Set warning, error Class for non active members
-			let stateClass = "normal";
+			// result of the last finished GE week
+			let gexRound = GexLastRound[MemberID];
+			let gexSolved = gexRound ? (gexRound.solvedEncounters || 0) : 0;
+			let gexTooltip = gexRound
+				? `${FH.t('Boxes.GuildMemberStat.Rank')}: ${gexRound.rank || '-'} | ${FH.t('Boxes.GuildMemberStat.GexTrial')}: ${FH.HTML.Format(gexRound.trial || 0)}`
+				: '';
 
-			// @Todo: set more specific criterias for warn and error level
-			if (forumActivityCount <= 5 && gbgActivityCount === 0 && gexActivityCount === 0) { stateClass = "warning"; }
+			// result of the last finished GBG round
+			let gbgRound = GbgLastRound[MemberID];
+			let gbgBattles = gbgRound ? (gbgRound.battlesWon || 0) : 0;
+			let gbgNegotiations = gbgRound ? (gbgRound.negotiationsWon || 0) : 0;
+			let gbgFights = gbgBattles + gbgNegotiations;
+			let gbgTooltip = gbgRound
+				? `${FH.t('Boxes.GuildMemberStat.Battles')}: ${FH.HTML.Format(gbgBattles)} | ${FH.t('Boxes.GuildMemberStat.Negotiations')}: ${FH.HTML.Format(gbgNegotiations)}`
+				: '';
+
+			// result of the last finished QI round
+			let qiRound = QiLastRound[MemberID];
+			let qiProgress = qiRound ? (qiRound.progress || 0) : 0;
+			let qiTooltip = qiRound
+				? `${FH.t('Boxes.GuildMemberStat.Rank')}: ${qiRound.rank || '-'} | ${FH.t('Boxes.QiProgress.Actions')}: ${FH.HTML.Format(qiRound.actions || 0)}`
+				: '';
+
+			let stateClass = "normal";
+			if (forumActivityCount <= 5 && gbgFights === 0 && gexSolved === 0 && qiProgress === 0) { stateClass = "warning"; }
 
 			if (stateClass === "warning" && ActWarnCount > 0) {
 				stateClass = "error";
 			}
 
-			// Get Guild supporting Buildings
+			// get guild supporting buildings
 			member['guildgoods'] = 0;
 			if (member['guildbuildings'] !== undefined && member['guildbuildings']['buildings'] !== undefined) {
 				guildBuildingsCount = member['guildbuildings']['buildings'].length;
@@ -1020,11 +1117,12 @@ let GuildMemberStat = {
 				h.push(`<td class="is-number" data-number="${member['activity']}"><span class="activity activity_${member['activity']}"></span> ${ActWarnCount > 0 ? '<span class="warn">(' + ActWarnCount + ')</span>' : ''}</td>`);
 
 			h.push(`<td class="is-number text-center" data-number="${forumActivityCount}">${forumActivityCount}</td>
-				<td class="is-number text-center" data-number="${gexActivityCount}">${gexActivityCount}</td>
-				<td class="is-number text-center" data-number="${gbgActivityCount}">${gbgActivityCount}</td>
+				<td class="is-number text-center${gexTooltip !== '' ? ' gms-tooltip' : ''}" data-number="${gexSolved}"${gexTooltip !== '' ? ' title="' + FH.HTML.Tooltip(gexTooltip) + '"' : ''}>${FH.HTML.Format(gexSolved)}</td>
+				<td class="is-number text-center${gbgTooltip !== '' ? ' gms-tooltip' : ''}" data-number="${gbgFights}"${gbgTooltip !== '' ? ' title="' + FH.HTML.Tooltip(gbgTooltip) + '"' : ''}>${FH.HTML.Format(gbgFights)}</td>
+				<td class="is-number text-center${qiTooltip !== '' ? ' gms-tooltip' : ''}" data-number="${qiProgress}"${qiTooltip !== '' ? ' title="' + FH.HTML.Tooltip(qiTooltip) + '"' : ''}>${FH.HTML.Format(qiProgress)}</td>
 			</tr>`);
 
-			exportData.push([(rank - deletedCount), member['player_id'], member['name'], member['score'], Technologies.Eras[member['era']], FH.t('Eras.' + Technologies.Eras[member['era']]+'.short'), member['guildgoods'], ActWarnCount, forumActivityCount, gexActivityCount, gbgActivityCount, member['won_battles'], deletedMember ? 0 : 1]);
+			exportData.push([(rank - deletedCount), member['player_id'], member['name'], member['score'], Technologies.Eras[member['era']], FH.t('Eras.' + Technologies.Eras[member['era']]+'.short'), member['guildgoods'], ActWarnCount, forumActivityCount, gexSolved, gbgFights, qiProgress, member['won_battles'], deletedMember ? 0 : 1]);
 
 		}
 
