@@ -472,7 +472,7 @@ let CityMap = {
 			if (building.type === "impediment" || building.type === "street") continue;
 			out += "<tr class='"+building.type+"'>" + 
 					"<td><div class='building' data-original-title='"+building.name+"'>" + 
-						"<img src='" + srcLinks.get("/city/buildings/"+building.entityId.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true) + "'>" +
+						"<img src='" + srcLinks.getBuilding(building.entityId) + "'>" +
 					"</div></td>" +
 					"<td>" + (building.count>1?"x"+building.count:"") + "</td>"
 			out += '<td class="textright">' + building.population + "</td>"
@@ -639,7 +639,7 @@ let CityMap = {
 			if (building.type !== "impediment" && building.type !== "street" && building.type !== "off_grid") {				
 				out += "<tr class='"+building.type+"'>" + 
 					"<td><div class='building' data-original-title='"+building.name+"'>" + 
-						"<img src='" + srcLinks.get("/city/buildings/"+building.entityId.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true) + "'>" +
+						"<img src='" + srcLinks.getBuilding(building.entityId) + "'>" +
 					"</div></td>" +
 					"<td>" + (building.count>1?"x"+building.count:"") + "</td>";
 				out += '<td class="textright">' + building.population + "</td>";

@@ -196,7 +196,7 @@ const Profile = {
         for (let gb of Profile.gbList) {
             let gbLevel = Object.values(FH.Main.CityMapData).find(x => x.cityentity_id == gb)?.level;
             if (gbLevel)
-                cl.push('<span class="removable"><img src="'+srcLinks.get(`/city/buildings/${gb.replace('X_','X_SS_')}.png`,true)+'" />' + gbLevel +'</span>');
+                cl.push('<span class="removable"><img src="'+srcLinks.getBuilding(gb)+'" />' + gbLevel +'</span>');
         }
 
         let allGBs = [];
@@ -213,7 +213,7 @@ const Profile = {
             let gb = allGBs[i];
             if (gb == undefined) continue;
             if (!Profile.gbList.find(x => x == gb.cityentity_id)) // if the GB is not already part of the default list
-                cl.push('<span class="removable"><img src="'+srcLinks.get(`/city/buildings/${gb.cityentity_id.replace('X_','X_SS_')}.png`,true)+'" />' + gb.level +'</span>');
+                cl.push('<span class="removable"><img src="'+srcLinks.getBuilding(gb.cityentity_id)+'" />' + gb.level +'</span>');
         }
         if (allGBs.length > 6)
             cl.push('<span class="total" data-original-title="'+FH.t('Boxes.GuildFights.Total')+': '+allGBs.length+'"><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_greatbuilding.png`,true)+'" />' + allGBs.length +'</span>');

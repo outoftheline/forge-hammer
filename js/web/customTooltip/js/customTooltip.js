@@ -231,7 +231,7 @@ let Tooltips = {
                 <table class="foe-table">
                     <tr>
                         <td class="imgContainer">
-                            <img class="buildingPrev" src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}">
+                            <img class="buildingPrev" src="${srcLinks.getBuilding(meta.asset_id)}">
                             ${await Tooltips.SizeTimeRoadData(meta)}
                         </td>
                         <td class="buildingTTtable">

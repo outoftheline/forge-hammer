@@ -87,7 +87,7 @@ let srcLinks = {
     getReward:(icon) => {
         let url=""
         if (icon.substring(1, 2) === "_") {
-            url = srcLinks.get(`/city/buildings/${FH.Main.CityEntities?.[icon]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
+            url = srcLinks.getBuilding(FH.Main.CityEntities?.[icon]?.asset_id);
         } else if (url==""|| url.indexOf("antiquedealer_flag") > -1) 
             url = srcLinks.get(`/shared/unit_portraits/armyuniticons_90x90/armyuniticons_90x90_${icon}.jpg`,true, true) // does not work :(
 
@@ -96,7 +96,7 @@ let srcLinks = {
         if (url.indexOf("antiquedealer_flag") > -1) 
             url = srcLinks.get(`/shared/icons/reward_icons/reward_icon_${icon}.png`,true, true)
         if (url.indexOf("antiquedealer_flag") > -1) 
-            url = srcLinks.get(`/city/buildings/${icon?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
+            url = srcLinks.getBuilding(icon);
 
         return url;
     },
@@ -113,6 +113,12 @@ let srcLinks = {
         return url1;
     },
 
+    getBuilding:(id) => {
+        let link = srcLinks.get("/city/buildings/"+id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true,true);
+        if (link.includes("antiquedealer_flag")) link = srcLinks.get("/city/buildings/"+id.replace(/^(\D_)(.*?)/,"$1SS_$2")+"a.png",true);
+        return link;
+    },
+
     icons: (x) => {
         if (!x) return ""
         let link = srcLinks.get(`/shared/icons/${x}.png`,true,true);
@@ -121,9 +127,9 @@ let srcLinks = {
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/shared/icons/goods/icon_fine_${x}.png`,true,true);
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/shared/icons/reward_icons/reward_icon_${x}.png`,true,true);
         if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/shared/icons/reward_icons/reward_icon_${x.replace(/(.*?)_[0-9]+/gm,"$1")}.png`,true,true);
-        if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${x.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true,true);
-        if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${x.replace(/(.*?)_[0-9]+/gm,"$1").replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true,true);
-        if (link.includes("antiquedealer_flag")) link = srcLinks.get(`/city/buildings/${FH.Main.CityEntities?.[x]?.asset_id?.replace(/(\D*?)_(.*)/,"$1_SS_$2")}.png`,true);
+        if (link.includes("antiquedealer_flag")) link = srcLinks.getBuilding(x);
+        if (link.includes("antiquedealer_flag")) link = srcLinks.getBuilding(x);
+        if (link.includes("antiquedealer_flag")) link = srcLinks.getBuilding(FH.Main.CityEntities?.[x]?.asset_id);
         return `<img src=${link} alt="">`;
     },
     regEx: (regEx)=>{

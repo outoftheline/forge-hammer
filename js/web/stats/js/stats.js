@@ -1477,19 +1477,14 @@ let Stats = {
 				default:
 					url = '';
 					if ((rewardInfo.iconAssetName || rewardInfo.assembledReward && rewardInfo.assembledReward.iconAssetName)) {
-						const icon = rewardInfo.assembledReward && rewardInfo.assembledReward.iconAssetName ? rewardInfo.assembledReward.iconAssetName : rewardInfo.iconAssetName;
+						const icon = rewardInfo?.assembledReward?.iconAssetName || rewardInfo?.assembledReward?.subType ||  rewardInfo.iconAssetName;
 						url = srcLinks.getReward(icon);
 						//fix for fragment missing images for buildings
 						if (rewardInfo.type == 'good' && rewardInfo.iconAssetName == 'random_goods' && rewardInfo.subType) {
 							url = srcLinks.get(`/shared/icons/reward_icons/reward_icon_random_goods.png`, true);
 						}
-						if (rewardInfo.subType == 'fragment' && rewardInfo.subType) {
-							if (rewardInfo.assembledReward.type == 'building' && rewardInfo.subType){
-								url = srcLinks.get(`/city/buildings/${rewardInfo.assembledReward.subType.replace(/^(\w)_/, '$1_SS_')}.png`, true);
-							}
-						}
 					} else if (rewardInfo.type == 'building' && rewardInfo.subType) {
-							url = srcLinks.get(`/city/buildings/${rewardInfo.subType.replace(/^(\w)_/, '$1_SS_')}.png`, true);
+							url = srcLinks.getBuilding(rewardInfo.subType);
 					}
 					if (url) {
 						pointImage = `<img src="${url}">`
