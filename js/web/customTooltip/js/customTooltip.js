@@ -149,14 +149,15 @@ let Tooltips = {
 
             if(Tooltips.containerActive && container) {
                 const win = container.ownerDocument.defaultView;
-
-                if (container.firstChild.clientHeight+7+Number(container.style.top.replace("px","")) > container.parentElement.clientHeight + win.scrollY) {
-                    let newTop = container.parentElement.clientHeight + win.scrollY - container.firstChild.clientHeight-7
+                let ch = container.firstChild.clientHeight || container.clientHeight;
+                let cw = container.firstChild.clientWidth || container.clientWidth;
+                if (ch + 7+Number(container.style.top.replace("px","")) > container.parentElement.clientHeight + win.scrollY) {
+                    let newTop = container.parentElement.clientHeight + win.scrollY - ch-7
                     if (newTop<0) newTop=0
                     container.style.top=newTop+"px"
                 }
-                if (container.firstChild.clientWidth+7+Number(container.style.left.replace("px","")) > container.parentElement.clientWidth + win.scrollX) {
-                    let newLeft = container.parentElement.clientWidth + win.scrollX - container.firstChild.clientWidth-7
+                if (cw+7+Number(container.style.left.replace("px","")) > container.parentElement.clientWidth + win.scrollX) {
+                    let newLeft = container.parentElement.clientWidth + win.scrollX - cw-7
                     if (newLeft<0) newLeft=0
                     container.style.left=newLeft+"px"
                 }
@@ -219,15 +220,26 @@ let Tooltips = {
 		}
 
 
-        let h = `<div class="buildingTT">
-                <h2><span>${meta.name}  ${eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})`:''}</span>${upgrades}</h2>
+        let h = `
+            <div class="buildingTT">
+                <h2>
+                    <span>
+                        ${meta.name}  ${eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})`:''}
+                    </span>
+                    ${upgrades}
+                </h2>
                 <table class="foe-table">
-                <tr>
-                <td class="imgContainer"><img class="buildingPrev" src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}">`;
-        h += await Tooltips.SizeTimeRoadData(meta) + `</td>`;
-        h += await Tooltips.BuildingData(meta,era,allies, eff);
-        h += `</table>`;
-        h += "</td></tr></table></div>"
+                    <tr>
+                        <td class="imgContainer">
+                            <img class="buildingPrev" src="${srcLinks.get("/city/buildings/"+meta.asset_id.replace(/^(\D_)(.*?)/,"$1SS_$2")+".png",true)}">
+                            ${await Tooltips.SizeTimeRoadData(meta)}
+                        </td>
+                        <td class="buildingTTtable">
+                            ${await Tooltips.BuildingData(meta,era,allies, eff)}
+                        </td>
+                    </tr>
+                </table>
+            </div>`
         setTimeout(()=>{
             $(".handleOverflow").each((index,e)=>{
                 let w= ((e.scrollWidth - e.parentNode.clientWidth) || 0)
@@ -270,8 +282,13 @@ let Tooltips = {
 			if (!x) return ""
 			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		};
-        let minEra = onlyEra||"BronzeAge"
-        let maxEra = onlyEra||Technologies.EraNames[Technologies.getMaxEra()]
+        let minEra = onlyEra||"BronzeAge";
+        let maxEra = onlyEra || (
+            meta.components ? 
+            Technologies.EraNames[Math.max(...Object.keys(meta.components).map(x=>Technologies.Eras[x]))] : 
+            Technologies.EraNames[Math.max(...(meta?.entity_levels?.map(x=>x.era)||[Technologies.EraNames[Technologies.getMaxEra()]]).map(x=>Technologies.Eras[x]))]
+        )
+
         let resMapper = (res,group="other") => {
             let m={
                 goods:{
@@ -322,18 +339,21 @@ let Tooltips = {
             "guild_expedition":"_gex",
             "guild_raids":"_gr"
         }
+        let ascend = "",
+            era = "",
+            set = "",
+            info = "",
+            ally = "",
+            provides = "",
+            prods = "",
+            costs = "",
+            traits = "";
 
-        let out = ``;
         if (meta.components) {
             
             let levels=meta.components
-            let era="",
-                set="",
-                ally="",
-                traits = "",
-                motMod = "",
+            let motMod = "",
                 polMod = "",
-                ascend = "",
                 ifMot = `<span class="ifMot">${srcLinks.icons("when_motivated")}</span>`;
 
             if (levels?.AllAge?.socialInteraction?.interactionType) {
@@ -429,8 +449,6 @@ let Tooltips = {
 
             }
 
-            let provides=""
-
             for ([resource,amount] of Object.entries(levels.AllAge?.staticResources?.resources?.resources||{})) {
                 provides+=`<tr><td>${srcLinks.icons(resource)+" "+ span(amount,true)}</td></tr>`
             }
@@ -459,7 +477,6 @@ let Tooltips = {
                 provides+=`<tr><td>${srcLinks.icons(b.type+feature[b.targetedFeature]) + " " + range(b.value,levels[maxEra]?.boosts?.boosts[i].value) + Boosts.percent(b.type)}</td></tr>`
             }
             
-            let prods=""
             let pCount = levels?.[minEra]?.production?.options?.length || levels.AllAge?.production?.options?.length  || 0
             
             minLookup=Object.assign(structuredClone(levels?.[minEra]?.lookup?.rewards||{}),levels?.AllAge?.lookup?.rewards)
@@ -543,7 +560,6 @@ let Tooltips = {
                 }
             }
             
-            let costs = ""
             for ([resource,amount] of Object.entries(levels.AllAge?.buildResourcesRequirement?.cost?.resources||{})) {
                 if (amount>0) costs += `<div>${srcLinks.icons(resource) + " " + span(amount)}</div>`
             }
@@ -641,20 +657,6 @@ let Tooltips = {
                     }
                 }
             }
-
-            out+=`<td class="buildingTTtable" style="width:100%;vertical-align:top;padding:0 1px;">`
-            out+='<table class="HXBuilding">';
-            
-            if (ascend != "") out += ascend
-            if (era != "") out += "<tr><td>" + era + "</td></tr>"
-            if (set != "") out += "<tr><td>" + set + "</td></tr>"
-            if (ally!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.allyRooms")}</th></tr>`+ally
-            if (provides!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
-            if (prods!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.produces")} ${pCount==1 ? "("+formatTime(levels.AllAge.production?.options?.[0].time || levels?.[minEra].production?.options?.[0].time)+")":""}</th></tr>`+prods
-            if (costs !="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
-            
-            if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
- 
         } 
         else {
             
@@ -663,13 +665,9 @@ let Tooltips = {
             if (levels?.[minEra]) {
                 maxEra = Technologies.EraNames[Math.max(...Object.keys(levels).map(x=>Technologies.Eras[x]))]
             }
-            let era="",
-                set="",
-                traits = "",
-                motMod = "",
+            let motMod = "",
                 polMod = "",
-                info = "",
-                boosts="",
+                boosts = "",
                 abilityList={},
                 ifMot = `<span class="ifMot">${srcLinks.icons("when_motivated")}</span>`
                  
@@ -731,13 +729,6 @@ let Tooltips = {
                 era = `${srcLinks.icons("era") + " " + FH.t("Eras."+(Technologies.Eras[meta.requirements.min_era]))}`
             }
             
-            out+=`</td><td style="width:100%;vertical-align:top;padding:0;">`
-            out+='<table class="HXBuilding">';   
-            if (era != "") out += "<tr><td>" + era + "</td></tr>"
-            if (set != "") out += "<tr><td>" + set + "</td></tr>"
-            if (info != "") out += '<tr><td style="text-wrap-mode:wrap;">' + info + "</td></tr>"
-            
-            let provides=""
             if (meta.provided_population || meta.required_population) {
                 provides+=`<tr><td>${srcLinks.icons("population")+" "+ span((meta.provided_population||0) - (meta.required_population||0),true)}</td></tr>`
             } else if ((levels?.[minEra]?.provided_population && levels?.[maxEra]?.provided_population)||(levels?.[minEra]?.required_population && levels?.[maxEra]?.required_population)) {
@@ -757,7 +748,6 @@ let Tooltips = {
                 if (amount>0) provides+=`<tr><td>${srcLinks.icons(resource)+" "+ span(amount)}</td></tr>`
             }
             
-            let prods=""
             if (meta.available_products) {
                 if (levels?.[minEra]?.produced_money && levels?.[maxEra]?.produced_money) {
                     prods+=`<tr><td>${srcLinks.icons("money") + range(levels?.[minEra].produced_money,levels?.[maxEra].produced_money) + motMod}</td></tr>`
@@ -896,39 +886,28 @@ let Tooltips = {
                     }
                 }
             }
-        
-            
-            let costs = ""
             for ([resource,amount] of Object.entries(meta?.requirements?.cost?.resources||{})) {
                 if (amount>0) costs += `<div>${srcLinks.icons(resource) + " " + span(amount)}</div>`
             }
             provides=provides+boosts
-            if (provides!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.provides")}</th></tr>`+provides
-            if (prods!="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.produces")} ${meta?.available_products?.length==1 ? "("+formatTime(meta.available_products[0].production_time)+")":""}</th></tr>`+prods
-            if (costs !="") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>`
-            
-            out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>`
-            out+=`<tr><td class="multiCol"><div>${srcLinks.icons("size")} ${meta.length+"x"+meta.width}</div>`
-            out+=meta.construction_time?`<div>${srcLinks.icons("icon_time")}${formatTime(meta.construction_time)}</div>`:``
-            switch (meta.requirements?.street_connection_level || 0) {
-                case 2:
-                    out+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
-                    break;
-                case 1:
-                    out+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
-                    break;
-                default:
-                    out+=`<div><img class="game-cursor" src="${srcLinks.get("/shared/gui/buffbar/buffbar_icon_buff_unconnected.png", true)}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
-            }
-            out+=`</td></tr>`
-            
-            if (traits != "") out+=`<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits
-            
         }
-        return out;
+        let pCount = meta.components?.[minEra]?.production?.options?.length || meta.components?.AllAge?.production?.options?.length  || meta.available_products?.length || 0;
+        let pTime = meta.components?.[minEra]?.production?.options?.[0]?.time || meta.components?.AllAge?.production?.options?.[0]?.time || meta.available_products?.[0]?.production_time || 0;
+        
+        return `
+            <table class="HXBuilding">
+                ${ascend != "" ? ascend : ""}
+                ${era != "" ? "<tr><td>" + era + "</td></tr>" : ""}
+                ${set != "" ? "<tr><td>" + set + "</td></tr>" : ""}
+                ${info != "" ? '<tr><td style="text-wrap-mode:wrap;">' + info + "</td></tr>" : ""}
+                ${ally!="" ? `<tr><th>${FH.t("Boxes.Tooltip.Building.allyRooms")}</th></tr>`+ally : ""}
+                ${provides!="" ? `<tr><th>${FH.t("Boxes.Tooltip.Building.provides")}</th></tr>`+provides : ""}
+                ${prods!="" ? `<tr><th>${FH.t("Boxes.Tooltip.Building.produces")} ${pCount==1 ? "("+formatTime(pTime)+")":""}</th></tr>`+prods : ""}
+                ${costs !="" ? `<tr><th>${FH.t("Boxes.Tooltip.Building.costs")}</th></tr><tr><td class="multiCol">`+costs+`</td></tr>` : ""}
+                ${traits != "" ? `<tr><th>${FH.t("Boxes.Tooltip.Building.traits")}</th></tr>`+traits:""}
+            </table>`
     },
     SizeTimeRoadData: async (meta) => {
-        if (!meta.components) return ``;
         let formatTime = (x) => {
             let min=Math.floor(x/60)
             let sec = x-min*60
@@ -942,23 +921,27 @@ let Tooltips = {
             if (day>0) time = day + (hour+sec+min>0 ? (hour>9?hour:"0"+hour) + (sec+min>0 ? ":"+(min>9?min:"0"+min)+(sec>0?":"+(sec>9?sec:"0"+sec):""):""):"")+"d"
             return time
         }
-        let levels = meta.components;
-
-        let buildTime =`<h3>${FH.t("Boxes.Tooltip.Building.size+time")}</h3>`
-            buildTime+=`<div class="sizeTimeRoad"><div>${srcLinks.icons("size")} ${levels.AllAge.placement.size.y+"x"+levels.AllAge.placement.size.x}</div>`
-            buildTime+=levels.AllAge?.constructionTime?.time ? `<div>${srcLinks.icons("icon_time")}${formatTime(levels.AllAge.constructionTime.time)}</div>`:``
-            switch (levels.AllAge.streetConnectionRequirement?.requiredLevel || 0) {
-                case 2:
-                    buildTime+=`<div>${srcLinks.icons("street_required")} ${FH.t("Boxes.Tooltip.Building.road2")}</div>`
-                    break;
-                case 1:
-                    buildTime+=`<div>${srcLinks.icons("road_required")} ${FH.t("Boxes.Tooltip.Building.road")}</div>`
-                    break;
-                default:
-                    buildTime+=`<div class="roadTT"><img class="game-cursor" src="${srcLinks.get("/shared/gui/buffbar/buffbar_icon_buff_unconnected.png", true)}"> ${FH.t("Boxes.Tooltip.Building.noroad")}</div>`
-            }
-            buildTime+=`</div>`;
-        return buildTime;
+        let data = meta.components?.AllAge;
+        let x = data?.placement?.size?.x || meta.width || 0;
+        let y = data?.placement?.size?.y || meta.length || 0;
+        let time = data?.constructionTime?.time || meta.construction_time || 0;
+        let roadLevel = (data ? 
+            data.streetConnectionRequirement?.requiredLevel || 0 :
+            meta.requirements?.street_connection_level || 0);
+        return out =`
+            <div class="sizeTimeRoad">
+                <div>
+                    ${srcLinks.icons("size")} ${y+"x"+x}
+                </div>
+                <div>
+                    ${srcLinks.icons("icon_time")} ${formatTime(time)}
+                </div>
+                <div class="roadTT">
+                    ${roadLevel == 2 ? srcLinks.icons("street_required") + " " + FH.t("Boxes.Tooltip.Building.road2") :
+                    roadLevel == 1 ? srcLinks.icons("road_required") + " " + FH.t("Boxes.Tooltip.Building.road") :
+                    `<img class="game-cursor" src="${srcLinks.get("/shared/gui/buffbar/buffbar_icon_buff_unconnected.png", true)}"> ${FH.t("Boxes.Tooltip.Building.noroad")}`}
+                </div>
+            </div>`;
     }
 }
 
