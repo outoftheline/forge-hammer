@@ -223,7 +223,7 @@ let CityMap = {
 		});
 
 		// Button for submit Box
-		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'OtherPlayer') {
+		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'reconstruction' || FH.ActiveMap === 'OtherPlayer') {
 			menu.append($('<div class="mapTopRight"><span class="mapFilterCounter"></span> <input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)"></div>'));
 			menuBottom.append(
 				$('<div class="btn-group" />')

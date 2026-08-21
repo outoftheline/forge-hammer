@@ -27,7 +27,7 @@
   left: 5px;
 }
 #ReconstructionListBody tbody.filtering .reconstructionLine:not(.matched) {
-  display: none;
+  display: none !important;
 }
 
 
@@ -150,5 +150,10 @@
 .map-building.matched {
 	background-color: #3cc719d7;
 	border-color: #032007;
+	border-width: 2px;
+}
+.map-building.highlight {
+	background-color: #daffd1d7;
+	border-color: #00e61f;
 	border-width: 2px;
 }

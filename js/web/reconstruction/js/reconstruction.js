@@ -97,6 +97,7 @@ FH.proxy.addRequestHandler('CityReconstructionService', 'saveDraft', (data) => {
             $('.reconstructionLine[data-page_id="'+id+'"]').hide();
         if (pagesUpdated) reconstruction.updateTable();
     }
+    reconstruction.filterBuildings();
 });
 
 let reconstruction = {
@@ -122,6 +123,41 @@ let reconstruction = {
     planBuildings:null,
     selectedPlanId:null,
     mapScale: 20,
+    filterValue: '',
+    sizeTermRegEx: /^\d+x\d*$/,
+
+    parseFilter:(raw)=>{
+        return (raw||'').toLowerCase().split('|').map(t => t.trim()).filter(t => t !== '');
+    },
+
+    buildingFilterMatch:(el,terms)=>{
+        if (terms.length === 0) return false;
+        let size = (el.dataset.size || '').toLowerCase();
+        let entityId = (el.dataset.meta_id || '').toLowerCase();
+        let text = (el.dataset.text || $(el).find('[data-text]').attr('data-text') || '').toLowerCase();
+
+        return terms.some(term => {
+            if (term.startsWith('_')) return entityId.includes(term.slice(1));
+            if (reconstruction.sizeTermRegEx.test(term)) return size.startsWith(term);
+            return new RegExp(term,"i").test(text);
+        });
+    },
+
+    filterBuildings:()=>{
+        let input = $('#reconstructionFilter');
+        if (input.length) reconstruction.filterValue = input.val();
+        let search = reconstruction.parseFilter(reconstruction.filterValue);
+
+        $('#ReconstructionListBody tbody').toggleClass('filtering', search.length > 0);
+
+        $('.reconstructionLine').each((x,y) => {
+            y.classList.toggle('matched', reconstruction.buildingFilterMatch(y, search));
+        });
+
+        $('.map-building').each((x,y) => {
+            y.classList.toggle('highlight', reconstruction.buildingFilterMatch(y, search));
+        });
+    },
 
     pageUpdate:(id)=>{
         let meta = FH.Main.CityEntities[id.split("#")[0]]
@@ -208,36 +244,8 @@ let reconstruction = {
 
 
         $('#ReconstructionListBody').html(h);
-        $('#reconstructionFilter').on('input', e => {
-			let filter = $('#reconstructionFilter').val().toLowerCase();
-
-			let terms = filter.split('|').map(t => t.trim()).filter(t => t !== '');
-			let sizeTermRegEx = /^\d+x\d*$/;
-
-			$('#ReconstructionListBody tbody').toggleClass('filtering', terms.length > 0);
-
-			$('.reconstructionLine').each((x,y) => {
-				let matched = false;
-
-				if (terms.length > 0) {
-					let size = (y.dataset.size || '').toLowerCase();
-					let entityId = $(y).attr('data-meta_id')?.toLowerCase() || '';
-					let text = ($(y).find('[data-text]').attr('data-text') || '').toLowerCase();
-
-					matched = terms.some(term => {
-						if (term.startsWith('_')) {
-							return entityId.includes(term.slice(1));
-						}
-						if (sizeTermRegEx.test(term)) {
-							return size.startsWith(term);
-						}
-						return new RegExp(term,"i").test(text);
-					});
-				}
-
-				y.classList.toggle('matched', matched);
-			});
-		});
+        $('#reconstructionFilter').val(reconstruction.filterValue).on('input', reconstruction.filterBuildings);
+        reconstruction.filterBuildings();
         $('#ReconstructionListBody .sortable-table').tableSorter();
         setTimeout(reconstruction.updateTable,200);
 
@@ -292,6 +300,7 @@ let reconstruction = {
         c += `</div>
         </div>`;
         $('#ReconstructionMapBody').html(c);
+        reconstruction.filterBuildings();
     },
     placeBuildingOnMap:(data)=>{
         let meta = FH.Main.CityEntities[FH.Main.CityMapData[data.entityId].cityentity_id];
@@ -305,7 +314,7 @@ let reconstruction = {
         let matched = reconstruction.isPlanMatch(data.position?.x||0, data.position?.y||0, width, height, type) ? ' matched' : '';
         let c = '';
         if (data.position !== undefined) {
-            c += `<span data-id="${data.entityId}" class="map-building ${meta.type}${street}${matched}" 
+            c += `<span data-id="${data.entityId}" data-text="${meta.name}" data-size="${height + 'x' + width}" data-meta_id="${meta.id}" class="map-building ${meta.type}${street}${matched}" 
                     style="left:${data.position?.x*reconstruction.mapScale||0}px;top:${data.position?.y*reconstruction.mapScale||0}px;
                         width:${width*reconstruction.mapScale}px;height:${height*reconstruction.mapScale}px;">
                 </span>`;
