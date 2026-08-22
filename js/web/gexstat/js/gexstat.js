@@ -18,7 +18,7 @@ FH.proxy.addHandler('GuildExpeditionService', 'getContributionList', (data, post
 		GexStat.GexData = data.responseData; // Store GEX data for cost calculations
 		GexStat.UpdateData('participation', data.responseData);
 		if (Settings.GetSetting('GexStatAutoOpen'))
-			GexStat.BuildBox();
+			GexStat.BuildBox(false, 'ShowParticipation');
 	}
 });
 
@@ -73,7 +73,7 @@ let GexStat = {
 	},
 
 
-	BuildBox: (event) => {
+	BuildBox: (event, tab) => {
 		if ($('#GexStat').length === 0) {
 			FH.HTML.Box({
 				id: 'GexStat',
@@ -106,10 +106,10 @@ let GexStat = {
 			GexStat.ShowTabContent(GexStat.CurrentStatGroup, GexStat.CurrentGexWeek);
 		});
 
-		// moment.locale(FH.t('Local'));
-		// GexStat.InitSettings();
-
-		GexStat.Show();
+		if (tab === 'ShowParticipation')
+			GexStat.ShowParticipation();
+		else
+			GexStat.Show();
 	},
 
 

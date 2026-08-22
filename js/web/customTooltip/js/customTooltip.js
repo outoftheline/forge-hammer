@@ -373,7 +373,7 @@ let Tooltips = {
             if (chain?.chainId) {
                 let ChainMeta=(FH.Main.BuildingChains?.[chain?.chainId]||FH.Main.BuildingChains?.[chain?.chainId.toLowerCase()])
                 set = srcLinks.icons(chain?.chainId) + ChainMeta.name
-                if (!ChainMeta.cityEntityIds.includes(meta.id)) set+= '</td></tr><tr><td style="text-wrap-mode:wrap;">' + chain.description
+                if (!ChainMeta.cityEntityIds.includes(meta.id)) set+= '</td></tr><tr><td style="text-wrap-mode:wrap;font-size:90%">' + chain.description
             }
             //Traits
             for (let a of meta.abilities||[]) {
