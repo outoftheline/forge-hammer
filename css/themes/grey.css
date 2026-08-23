@@ -125,7 +125,6 @@
 	--menu-shadow: 0 0 1px 1px #00000080;
 	--menu-arrow-bg: linear-gradient(to bottom, #5a2a7e, #3a1050);
 	--menu-arrow-color: #1a0a28;
-	--menu-btn-size: 45px;
 	--menu-btn-bg-green: linear-gradient(to bottom, #2e5823, #1d3816) border-box;
 	--menu-btn-bg-red: linear-gradient(to bottom, #3e2020, #261414) border-box;
 	--menu-btn-bg-grey: linear-gradient(#1c1a18, #242220) border-box;

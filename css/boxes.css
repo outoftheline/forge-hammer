@@ -2059,8 +2059,10 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .hud-btn-left-active, .hud-btn-right-active, .hud-btn-left-active::before, .hud-btn-right-active::before, .hud-btn-up-active, .hud-btn-up-active::before, .hud-btn-down-active, .hud-btn-down-active::before {
-	display: block;
+	display: inline-flex;
 	background: var(--menu-arrow-bg);
+	align-items: center;
+	justify-content: center;
 }
 
 .hud-btn-right-active {
@@ -2083,8 +2085,6 @@ input[type="range"]::-webkit-slider-thumb {
 	border-top: 12px solid transparent;
 	border-bottom: 12px solid transparent;
 	position: relative;
-	top: 25%;
-	left: 4px;
 }
 
 .hud-btn-left-active::before {
@@ -2104,8 +2104,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .hud-btn {
-	width: 40px;
-	height: 40px;
+	width: var(--menu-btn-size);
+	height: var(--menu-btn-size);
 	margin: 1px;
 	display: block;
 	position: relative;
@@ -2278,9 +2278,6 @@ input[type="range"]::-webkit-slider-thumb {
 .hud-btn-down::before {
 	content: '';
 	display: block;
-	position: absolute;
-	right: 25%;
-	top: 2px;
 	width: 0;
 	height: 0;
 	border-left: 12px solid transparent;
@@ -2455,6 +2452,7 @@ tr.sorter-header th:not(.no-sort).descending:after {
 
 :root {
 	--unit_scale: 3/5;
+	--menu-btn-size: 45px;
 	
 	--red: #930909;
 	--orange: #ff8c00;

@@ -1584,7 +1584,7 @@ let Parts = {
 			showMedals = FH.Storage.getItem('OwnPartShowMedals') || 'true',
 			showPrints = FH.Storage.getItem('OwnPartShowBP') || 'true',
 			minView = FH.Storage.getItem('OwnPartMinView') || 'false',
-			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'true',
+			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'false',
 			includeStart = FH.Storage.getItem('OwnPartIncludeStart') || 'true',
 			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
 		

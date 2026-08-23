@@ -60,10 +60,19 @@ _menu = {
 	HiddenItems: [],
 
 
-	/**
-	 * Create the div holders and put them to the DOM
-	 */
+	ApplyMenuBtnSize: () => {
+		let size = parseInt(FH.Storage.getItem('MenuBtnSize'), 10);
+
+		if (!isNaN(size) && size > 0) {
+			document.documentElement.style.setProperty('--menu-btn-size', size + 'px');
+		} else {
+			document.documentElement.style.removeProperty('--menu-btn-size');
+		}
+	},
+
 	CallSelectedMenu: (selMenu = 'RightBar') => {
+
+		_menu.ApplyMenuBtnSize();
 	
 		window.onresize = (function(event){
 			if (event.target == window) _menu.OverflowCheck()
@@ -961,13 +970,23 @@ let _menu_bottom = {
 	},
 
 
-	/**
-	 * Ermittelt die Fensterhöhe und ermittelt die passende Höhe
-	 */
+	// sizing
 	Prepare: () => {
-		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
+		let $slider = $('#forgehammer-hud-slider'),
+			$items = $slider.children(),
+			MenuItemCount = $items.length;
 
-		_menu.HudCount = Math.floor((($(window).outerWidth() - 50) - $('#forgehammer-hud').offset().left) / _menu_bottom.btnSize);
+		if (MenuItemCount === 0) {
+			$('#forgehammer-hud').remove();
+			$('.tooltip').remove();
+			window.onresize = function(){};
+			_menu.CallSelectedMenu('Box');
+			return;
+		}
+
+		let btnSize = $items.first().outerWidth(true);
+
+		_menu.HudCount = Math.floor((($(window).outerWidth() - 50) - $('#forgehammer-hud').offset().left) / btnSize);
 		_menu.HudCount = Math.min(_menu.HudCount, MenuItemCount);
 		if (_menu.HudCount <= 0) {
 			$('#forgehammer-hud').remove();
@@ -975,8 +994,7 @@ let _menu_bottom = {
 			window.onresize = function(){};
 			_menu.CallSelectedMenu('Box');
 			return;
-		} 
-			
+		}
 
 		let MenuLength = FH.Storage.getItem('MenuLength');
 
@@ -984,12 +1002,12 @@ let _menu_bottom = {
 			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
 		}
 
-		_menu.HudWidth = (_menu.HudCount * _menu_bottom.btnSize);
+		_menu.HudWidth = (_menu.HudCount * btnSize);
 		_menu.SlideParts = Math.ceil(MenuItemCount / _menu.HudCount);
 
 		$('#forgehammer-hud').width(_menu.HudWidth);
 		$('#forgehammer-hud-wrapper').width(_menu.HudWidth);
-		$('#forgehammer-hud-slider').width( ($("#forgehammer-hud-slider").children().length * _menu_bottom.btnSize));
+		$slider.width(MenuItemCount * btnSize);
 	},
 	
 
@@ -1320,9 +1338,6 @@ let _menu_box = {
 
 let _menu_right = {
 
-	/**
-	 *
-	 */
 	BuildOverlayMenu: () => {
 		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-right'}).addClass('game-cursor'),
 			hudWrapper = $('<div />').attr('id', 'forgehammer-hud-wrapper'),
@@ -1342,7 +1357,6 @@ let _menu_right = {
 		};
 
 		$('body').append(hud).ready(async function () {
-
 			_menu.ListLinks(_menu_right.InsertMenuItem);
 			await _menu_right.CheckButtons();
 
@@ -1354,21 +1368,12 @@ let _menu_right = {
 	},
 
 
-	/**
-	* Fügt ein MenüItem ein
-	*
-	* @param MenuItem
-	*/
 	InsertMenuItem: (MenuItem) => {
 		$('#forgehammer-hud-slider').append(MenuItem);
     },
 
 
-	/**
-	 * Collective function
-	 */
 	SetMenuHeight: (reset = true) => {
-		// calibrate height
 		_menu_right.Prepare();
 
 		if (reset) {
@@ -1390,29 +1395,36 @@ let _menu_right = {
 	},
 
 
-	/**
-	 * Determines the window height and determines the appropriate height
-	 *
-	 */
+	// sizing
 	Prepare: () => {
-		let MenuItemCount = $("#forgehammer-hud-slider").children().length;
+		let $slider = $('#forgehammer-hud-slider'),
+			$items = $slider.children(),
+			MenuItemCount = $items.length;
 
-		_menu.HudCount = Math.floor((($(window).outerHeight() - 20) - $('#forgehammer-hud').offset().top) / 48);
+		if (MenuItemCount === 0) {
+			$('#forgehammer-hud').remove();
+			_menu.CallSelectedMenu('Box');
+			return;
+		}
+
+		let btnHeight = $items.first().outerHeight(true);
+
+		_menu.HudCount = Math.floor((($(window).outerHeight() - 20) - $('#forgehammer-hud').offset().top) / btnHeight);
 		_menu.HudCount = Math.min(_menu.HudCount, MenuItemCount);
 
 		if (_menu.HudCount <= 0) {
 			$('#forgehammer-hud').remove();
-			_menu.CallSelectedMenu('Box')
+			_menu.CallSelectedMenu('Box');
 		}
-			
-		// has a length been set manually?
+
 		let MenuLength = FH.Storage.getItem('MenuLength');
 
 		if (MenuLength !== null && MenuLength < _menu.HudCount) {
 			_menu.HudCount = _menu.HudLength = parseInt(MenuLength);
 		}
 
-		_menu.HudHeight = (_menu.HudCount * 47);
+		let $lastVisible = $items.eq(_menu.HudCount - 1);
+		_menu.HudHeight = $lastVisible[0].offsetTop + $lastVisible.outerHeight();
 		_menu.SlideParts = Math.ceil(MenuItemCount / _menu.HudCount);
 
 		$('#forgehammer-hud').height(_menu.HudHeight + 2);
