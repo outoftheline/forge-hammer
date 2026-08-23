@@ -636,7 +636,7 @@ let GuildFights = {
 			let nextweek = GuildFights.GBGAllRounds[index - 1] || null;
 
 			h.push(`<div id="gbg_meta" class="flex between dark-bg p5">
-				<div>
+				<div class="flex gap">
 					<button class="btn btn-mid btn-set-week" data-week="${previousweek}"${previousweek === null ? ' disabled' : ''}>&lt;</button> 
 					<select id="gbg-select-gbground">`);
 

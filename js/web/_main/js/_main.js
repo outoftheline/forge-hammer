@@ -162,22 +162,32 @@ let t = (key) => {
 	return tRaw(key);
 }
 
-(async () => {
+/**
+ * (Re-)loads the translation data for the given language
+ * @param {string} lng - language code, e.g. 'en', 'de'
+ */
+let LoadLanguage = async (lng) => {
 	try {
-		let languages = [];
-
 		// load english fallback
 		let data = await fetch(FH.extUrl + 'js/web/_languages/json/en.json').then(res=>res.json()).catch(()=>({}));
-		
+
 		//overload with gui language
-		if (FH.BaseData.GuiLng !== 'en') 
-			Object.assign(data, await fetch(FH.extUrl + 'js/web/_languages/json/' + FH.BaseData.GuiLng + '.json').then(res=>res.json()).catch(()=>({})));
+		if (lng !== 'en')
+			Object.assign(data, await fetch(FH.extUrl + 'js/web/_languages/json/' + lng + '.json').then(res=>res.json()).catch(()=>({})));
 
 		TranslationData = data;
+		FH.BaseData.GuiLng = lng;
+		Main.Language = lng;
+
+		window.dispatchEvent(new CustomEvent('forgehammer#language-changed'));
 	} catch (err) {
 		console.error('translation loading error:', err);
 	}
-})();
+};
+FH.LoadLanguage = LoadLanguage;
+
+LoadLanguage(FH.BaseData.GuiLng);
+
 FH.t = t;
 
 /**

@@ -345,8 +345,8 @@ _menu = {
 	},
 
 	/*----------------------------------------------------------------------------------------------------------------*/
-	
-	ItemsData: [
+
+	BuildItemsData: () => ([
 		{ id: 'partCalc', title: FH.t('Menu.OwnpartCalculator.Title'), description: FH.t('Menu.OwnpartCalculator.Desc'), warning: '<em id="partCalc-Btn-closed" class="tooltip-error">' + FH.t('Menu.OwnpartCalculator.Warning') + '<br></em>'},
 		{ id: 'unit', title: FH.t('Menu.Unit.Title'), description: FH.t('Menu.Unit.Desc'), warning: '<em id="unit-Btn-closed" class="tooltip-error">' + FH.t('Menu.Unit.Warning') + '<br></em>'},
 		{ id: 'outpost', title: FH.t('Menu.OutP.Title'), description: FH.t('Menu.OutP.Desc'), warning: FH.t('Menu.OutP.DescWarningOutpostData') },
@@ -382,7 +382,7 @@ _menu = {
 		{ id: 'recurringQuests', title: FH.t('Menu.recurringQuests.Title'), description: FH.t('Menu.recurringQuests.Desc') },
 		{ id: 'hiddenRewards', title: FH.t('Menu.HiddenRewards.Title'), description: FH.t('Menu.HiddenRewards.Desc') },
 		{ id: 'cityMap', title: FH.t('Menu.Citymap.Title'), description: FH.t('Menu.Citymap.Desc') },
-	],
+	]),
 
 	/**
 	 * Armies
@@ -401,7 +401,7 @@ _menu = {
 	},
 
 	/**
-	 * Own contribution calculator button
+	 * GB calculator button
 	 */
 	partCalc_Btn: () => {
 		let btn = _menu.MakeButton('partCalc',true);
@@ -878,15 +878,20 @@ _menu = {
 	}
 }
 
-let _menu_bottom = {
+_menu.ItemsData = _menu.BuildItemsData();
 
-	btnSize: 42,
+window.addEventListener('forgehammer#language-changed', () => {
+	_menu.ItemsData = _menu.BuildItemsData();
+	$('#forgehammer-hud, #menu_box').remove();
+	_menu.CallSelectedMenu(FH.Main.SelectedMenu);
+});
+
+let _menu_bottom = {
 
 	/**
 	 * Create the div holders and put them to the DOM
 	 * @constructor
 	 */
-
 	BuildOverlayMenu: () => {
 
 		let hud = $('<div />').attr({'id': 'forgehammer-hud','class': 'hud-bottom'}).addClass('game-cursor'),

@@ -336,9 +336,8 @@
 	background: var(--table-bg-success);
 }
 
-
 #gb-change-bar.has-change .gb-change-total {
-	color: var(--success);
+	color: var(--menu-tooltip-inhabitant);
 }
 
 #gb-change-bar img {

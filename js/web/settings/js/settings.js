@@ -396,13 +396,13 @@ let Settings = {
 			<input class="setting-input" type="range" id="menu-btn-size-input" step="1" min="24" max="64" value="${sizeValue !== null ? sizeValue : ''}" />
 		</div>`);
 
-		$('#SettingsBoxBody').on('change', '#change-menu', function () {
+		$('#SettingsBoxBody').off('change.changeMenu').on('change.changeMenu', '#change-menu', function () {
 			let selMenu = $(this).val();
 			FH.Storage.setItem('SelectedMenu', selMenu);
 			FH.menu.SwitchMenu(selMenu);
 		});
 
-		$('#SettingsBox').on('keyup', '#menu-input-length', function () {
+		$('#SettingsBox').off('keyup.menuInputLength').on('keyup.menuInputLength', '#menu-input-length', function () {
 			let value = $(this).val();
 
 			if (value > 0) {
@@ -414,7 +414,7 @@ let Settings = {
 			FH.menu.UpdateMenuLength();
 		});
 
-		$('#SettingsBox').on('change', '#menu-btn-size-input', function () {
+		$('#SettingsBox').off('change.menuBtnSizeInput').on('change.menuBtnSizeInput', '#menu-btn-size-input', function () {
 			let value = $(this).val();
 
 			if (value >= 24 && value <= 64) {
@@ -561,7 +561,7 @@ let Settings = {
 		dp.push('<label for="scoredb"><input type="radio" value="siteScoredb" id="scoredb" name="website" '+(currentSite === "siteScoredb" ? 'checked' : "")+' /> foe.scoredb.io</label><br />');
 		dp.push('<label for="forgedb"><input type="radio" value="siteForgedb" id="forgedb" name="website" '+(currentSite === "siteForgedb" ? 'checked' : "")+' /> foestats.com</label></p>');
 
-		$('#SettingsBoxBody').on('change', 'input[name="website"]', function () {
+		$('#SettingsBoxBody').off('change.selectWebsite').on('change.selectWebsite', 'input[name="website"]', function () {
 			let site = $(this).val();
 			FH.Storage.setItem('linkSite', site);
 		});
@@ -586,12 +586,22 @@ let Settings = {
 			dp.push(`<hr />${FH.t('Settings.ChangeLanguage.TranslateDescription')} <a href="#" onClick="FH.Translation.Show()">${FH.t('Settings.ChangeLanguage.Translate')}</a>`);
 		}
 
-		$('#SettingsBoxBody').on('change', '#change-lang', function () {
+		$('#SettingsBoxBody').off('change.changeLang').on('change.changeLang', '#change-lang', async function () {
 			let uLng = $(this).val();
 
 			FH.Storage.setItem('user-language', uLng);
 
-			location.reload();
+			await FH.LoadLanguage(uLng);
+
+			let activeTab = $('.tabs.settings > ul.horizontal > li.active'),
+				activeTabIdx = activeTab.index(),
+				activeTabTarget = activeTab.find('a').attr('href'),
+				activeSubTabIdx = activeTabTarget ? $(activeTabTarget + ' .settings-sub > ul.vertical > li.active').index() : -1;
+
+			Settings.BuildBody(
+				activeTabIdx >= 0 ? activeTabIdx + 1 : null,
+				activeSubTabIdx >= 0 ? activeSubTabIdx + 1 : null
+			);
 		});
 
 		return dp.join('');
@@ -720,7 +730,7 @@ let Settings = {
 		}
 		dp.push('</select>');
 
-		$('#SettingsBoxBody').on('change', '#changeSkin', function () {
+		$('#SettingsBoxBody').off('change.changeSkin').on('change.changeSkin', '#changeSkin', function () {
 			let skin = $(this).val();
 			FH.Storage.setItem('HammerSkin', skin);
 			FH.HTML.ChangeSkinCssFile(skin);
@@ -743,7 +753,7 @@ let Settings = {
 		ip[0].defaultValue = ip[0].value = value;
 		ip.val(value);
 	
-		$('#SettingsBox').on('keyup', '#GexStockWarningInput', function () {
+		$('#SettingsBox').off('keyup.gexStockWarningInput').on('keyup.gexStockWarningInput', '#GexStockWarningInput', function () {
 			let value = $(this).val();
 
 			if (value >= 0 && value <= 100) {
@@ -772,7 +782,7 @@ let Settings = {
 			ip.val(value);
 		}
 
-		$('#SettingsBox').on('keyup', '#doubleFPtimeoutinput', function () {
+		$('#SettingsBox').off('keyup.doubleFPtimeoutInput').on('keyup.doubleFPtimeoutInput', '#doubleFPtimeoutinput', function () {
 			let value = Number($(this).val());
 			if (value > 0) {
 				FH.Storage.setItem('doubleFPtimeout', value);
@@ -843,7 +853,7 @@ let Settings = {
 
 		FH.Storage.setItem('EntryCount', value);
 
-		$('#SettingsBox').on('keyup', '#infobox-entry-length', function () {
+		$('#SettingsBox').off('keyup.infoboxEntryLength').on('keyup.infoboxEntryLength', '#infobox-entry-length', function () {
 			let value = $(this).val();
 
 			if (value > 0) {
@@ -886,7 +896,7 @@ let Settings = {
 
 		elements.push('</select>');
 
-		$('#SettingsBoxBody').on('change', '#notification-position', function () {
+		$('#SettingsBoxBody').off('change.notificationPosition').on('change.notificationPosition', '#notification-position', function () {
 			$('.jq-toast-wrap').remove();
 
 			let pos = $(this).val();
@@ -924,7 +934,7 @@ let Settings = {
 			ip.val(value);
 		}
 
-		$('#SettingsBox').on('keyup', '#toast-amount', function () {
+		$('#SettingsBox').off('keyup.toastAmount').on('keyup.toastAmount', '#toast-amount', function () {
 			let value = $(this).val();
 
 			if (value > 0) {

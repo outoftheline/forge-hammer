@@ -45,10 +45,6 @@
 	height: 22px;
 }
 
-#SettingsBoxBody .item-row a {
-	color: var(--text-link);
-}
-
 #SettingsBoxBody .item-row .desc {
 	margin: 10px 0;
 }
