@@ -1,5 +1,20 @@
 # Changelog
  
+## Version 1.6.0
+### Update
+- Die Daten für's Profil müssen nicht mehr selbst angeholt werden
+- Gildenmitglieder Übersicht: Es werden nun die Ergebnisse der zuletzt abgeschlossenen Runde für GEX, GG und QI in der Übersicht angezeigt
+- Produktionsübersicht: Die Tabs bleiben nun oben stehen, wenn man scrollt
+- Benachrichtigungen: Beim Erstellen ist "Geöffnet bleiben" nun immer auf "Ein" eingestellt
+- Gefechte: Es werden nun maximal 7 Ziele angezeigt
+- GEX Übersicht: Der Mitglieder-Fortschritt kann sich nun automatisch öffnen, wenn man es entsprechend einstellt
+- Menü: Die Größe der Buttons kann nun eingestellt werden
+
+### Bug Fixes
+- Das Erkundungs-Fenster konnte zu lang werden
+
+---
+ 
 ## Version 1.5.0
 ### Neu
 - Neue Farbe für die Fenster: Titan

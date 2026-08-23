@@ -1,5 +1,18 @@
 # Changelog
  
+## Version 1.6.0
+### Update
+- You don't have to collect profile data yourself anymore
+- Guild Member Overview: The overview will now show the results of the last finished season for GE, GBG and QI
+- Production Overview: Tabs will be fixed to the top when scrolling
+- Notifications: "Persist" is now preselected when creating a new one
+- GBG: Increased the maximum amount of targets to 7 (was 5)
+- GE Overview: You can now set the member progress to auto-open
+- Menu: You can now change the size of the buttons
+
+### Bug Fixes
+- The Scouting window could be too long
+ 
 ## Version 1.5.0
 ### New
 - New window color added: Titan
