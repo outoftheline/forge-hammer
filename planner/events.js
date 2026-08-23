@@ -1129,6 +1129,11 @@ window.PlannerApp = window.PlannerApp || {};
             openModal(document.querySelector('#information'));
         });
 
+        if (dom.compareBtn && app.openCompareModal) {
+            dom.compareBtn.addEventListener('click', () => app.openCompareModal());
+            if (app.bindCompareEvents) app.bindCompareEvents();
+        }
+
         if (dom.languageSelect) {
             dom.languageSelect.addEventListener('change', () => {
                 app.setLanguage(dom.languageSelect.value);

@@ -51,6 +51,15 @@ window.PlannerApp.dom = {
     planListClose: document.querySelector('#planListClose'),
     planListItems: document.querySelector('#planListItems'),
 
+    compareBtn: document.querySelector('#compare'),
+    compareModal: document.querySelector('#compareModal'),
+    compareChart: document.querySelector('#compareChart'),
+    compareChartWrap: document.querySelector('#compareChartWrap'),
+    compareAxisPicker: document.querySelector('#compareAxisPicker'),
+    compareAxisFilter: document.querySelector('#compareAxisFilter'),
+    compareTableFilter: document.querySelector('#compareTableFilter'),
+    compareTableWrap: document.querySelector('#compareTableWrap'),
+
     newDataModal: document.querySelector('#newDataModal'),
     newDataModalText: document.querySelector('#newDataModalText'),
     newDataPlanNameInput: document.querySelector('#newDataPlanName'),

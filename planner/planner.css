@@ -625,3 +625,156 @@ button, .btn, .content input {
 .flex.stretch select {
     width: stretch;
 }
+
+/* --- Before / after comparison --- */
+button#compare {
+    display: none;
+}
+.modal-inner.wide {
+    width: 900px;
+    max-width: 95vw;
+}
+
+#compareChartWrap {
+    position: relative;
+    height: 380px;
+    margin-bottom: 8px;
+}
+
+.axis-picker {
+    border-top: 1px dotted #555758;
+    border-bottom: 1px dotted #555758;
+    padding: 6px 0;
+    margin-bottom: 8px;
+}
+
+.filter-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.filter-title {
+    font-size: 80%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.filter-head input {
+    flex-grow: 1;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 3px 6px;
+    font-size: 85%;
+}
+
+#compareTableWrap {
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.axis-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    max-height: 90px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.axis-options .empty {
+    opacity: 0.6;
+    font-size: 85%;
+}
+
+.axis-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 85%;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.axis-option input {
+    margin: 0;
+}
+
+.axis-picker + .filter-head {
+    margin-top: 8px;
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 90%;
+}
+
+.compare-table th,
+.compare-table td {
+    padding: 3px 6px;
+    text-align: left;
+    border-bottom: 1px dotted #3a3733;
+}
+
+.compare-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #181715;
+    border-bottom: 1px solid #555758;
+    font-size: 85%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+}
+
+.compare-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.compare-table tr.group-row th {
+    padding-top: 10px;
+    font-size: 85%;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    border-bottom: 1px solid #555758;
+}
+
+.compare-table .metric {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.compare-table .delta.positive {
+    color: #66c440;
+}
+
+.compare-table .delta.negative {
+    color: var(--danger-red, #ff4d4d);
+}
+
+.compare-table .pct {
+    opacity: 0.6;
+    font-size: 85%;
+}
+
+.compare-table .empty,
+#compareTableWrap .empty {
+    opacity: 0.6;
+}
+
+/* Placeholder slot for game icons — replace with a real <img> when available. */
+.stat-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    background-color: #ffffff14;
+}

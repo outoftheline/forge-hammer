@@ -131,6 +131,13 @@
                                 <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
                             </svg></button>
                     </div>
+                    <button id="compare" class="btn" data-t-title="XPlan.Compare.Title" title=""><svg
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-chart-spline-icon lucide-chart-spline">
+                            <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+                            <path d="M7 16c.5-2 1.5-7 4-7 2 0 2 3 4 3 2.5 0 4.5-5 5-7" />
+                        </svg></button>
                     <button id="turn90" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round"
@@ -194,6 +201,27 @@
             </div>
         </div>
     </div>
+    <div id="compareModal" class="modal hidden">
+        <div class="modal-inner wide">
+            <div class="modal-header">
+                <h2 data-t="true">XPlan.Compare.Title</h2>
+                <button class="btn modal-close">✕</button>
+            </div>
+            <div id="compareChartWrap"><canvas id="compareChart"></canvas></div>
+            <div class="axis-picker">
+                <div class="filter-head">
+                    <span class="filter-title" data-t="true">XPlan.Compare.Axes</span>
+                    <input type="search" id="compareAxisFilter" data-t-placeholder="XPlan.Compare.FilterAxes" placeholder="Filter axes…">
+                </div>
+                <div id="compareAxisPicker" class="axis-options"></div>
+            </div>
+            <div class="filter-head">
+                <span class="filter-title" data-t="true">XPlan.Compare.Metrics</span>
+                <input type="search" id="compareTableFilter" data-t-placeholder="XPlan.Compare.FilterMetrics" placeholder="Filter metrics…">
+            </div>
+            <div id="compareTableWrap"></div>
+        </div>
+    </div>
     <div id="information" class="modal hidden">
         <div class="modal-inner">
             <div class="modal-header">
@@ -219,6 +247,7 @@
 
     <script src="../vendor/browser-polyfill/browser-polyfill.min.js"></script>
     <script src="../vendor/dexie/dexie.min.js"></script>
+    <script src="../vendor/chartjs/chart.umd.min.js"></script>
     <script src="i18n.js"></script>
     <script src="vars.js"></script>
     <script src="mapbuilding.js"></script>
@@ -226,6 +255,7 @@
     <script src="sidebar.js"></script>
     <script src="draw.js"></script>
     <script src="events.js"></script>
+    <script src="compare.js"></script>
     <script src="main.js"></script>
 </body>
 
