@@ -218,11 +218,43 @@
   "Boxes.Castle.VisitAntiqueDealerWarning": "Apri l'antiquario per aggiornare i dati.",
   "Boxes.Castle.VisitCastleWarning": "Apri la panoramica del castello per aggiornare i dati.",
   "Boxes.Castle.VisitGexWarning": "Apri la panoramica di Sdg per aggiornare i dati.",
+  "Boxes.CityBuilder.Opacity": {
+    "s": "Opacity",
+    "r": "Opacity"
+  },
+  "Boxes.CityBuilder.Title": {
+    "s": "Costruttore Città",
+    "r": "City Builder"
+  },
   "Boxes.CityMap.Boosts": "Potenziamenti &amp; Produzione",
   "Boxes.CityMap.Building": "Edificio",
+  "Boxes.CityMap.buildingFromGBG": {
+    "s": "Edifici per GBG",
+    "r": "Buildings from GBG"
+  },
+  "Boxes.CityMap.buildingFromQI": {
+    "s": "Edifici per QI",
+    "r": "Buildings from QI"
+  },
   "Boxes.CityMap.BuildingsAmount": "Numero di Edifici: ",
   "Boxes.CityMap.CavalierPerspecitve": "Vista laterale",
+  "Boxes.CityMap.ChainBuildings": {
+    "s": "Edifici a catena",
+    "r": "Chain buildings"
+  },
+  "Boxes.CityMap.CityGridScore": {
+    "s": "Punteggio Griglia urbana",
+    "r": "City Grid Score"
+  },
+  "Boxes.CityMap.CityGridScoreText": {
+    "s": "Area di tutti gli edifici collegati che necessitano di strade divisa per l'area di tutte le strade moltiplicata per 100",
+    "r": "Area of all connected buildings that need roads divided by area of all roads multiplied by 100"
+  },
   "Boxes.CityMap.clan_power_production": "Capacità produttiva della Gilda",
+  "Boxes.CityMap.CollectSoon": {
+    "s": "Ritirabile a breve: __ore__ ore",
+    "r": "Collectable soon: __hours__ hours"
+  },
   "Boxes.CityMap.CopyMetaInfos": "Copia i dati della citymap",
   "Boxes.CityMap.culture": "Costruzioni culturali",
   "Boxes.CityMap.decoration": "Decorazioni",
@@ -232,7 +264,23 @@
   "Boxes.CityMap.generic_building": "Altri Edifici",
   "Boxes.CityMap.goods": "Costruzioni di produzione beni",
   "Boxes.CityMap.greatbuilding": "Grandi Edifici",
+  "Boxes.CityMap.Highlight": {
+    "s": "Evidenzia Edifici",
+    "r": "Highlight Buildings"
+  },
+  "Boxes.CityMap.HighlightCollectableBuildings": {
+    "s": "Edifici da collezione",
+    "r": "Collectable buildings"
+  },
+  "Boxes.CityMap.HighlightNotPolivatedBuildings": {
+    "s": "edifici non motivabile",
+    "r": "Not polivated buildings"
+  },
   "Boxes.CityMap.HighlightOldBuildings": "Evidenzia costruzioni dell'Era più antica",
+  "Boxes.CityMap.limited": {
+    "s": "Asceso/edifici limitati",
+    "r": "Ascended/limited buildings"
+  },
   "Boxes.CityMap.main_building": "Municipio",
   "Boxes.CityMap.military": "Costruzioni militari",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "API Token mancante",
@@ -249,6 +297,18 @@
   "Boxes.CityMap.QIHint": "I valori di Produzione, Popolazione e Felicità presuppongono che la costruzione degli edifici sia terminata.",
   "Boxes.CityMap.random_production": "Produzioni casuali",
   "Boxes.CityMap.residential": "Costruzioni residenziali",
+  "Boxes.CityMap.roadless": {
+    "s": "Edifici senza strade",
+    "r": "Roadless buildings"
+  },
+  "Boxes.CityMap.SendToPlanner": {
+    "s": "Invia al pianificatore",
+    "r": "Send to planner"
+  },
+  "Boxes.CityMap.SetBuildings": {
+    "s": "Set edifici",
+    "r": "Set buildings"
+  },
   "Boxes.CityMap.ShowAscendableBuildings": "Evidenziare gli edifici accessibili",
   "Boxes.CityMap.ShowDecayedBuildings": "Evidenziare gli edifici declassato",
   "Boxes.CityMap.ShowNoStreetBuildings": "Evidenzia gli edifici che non necessitano di strade",
@@ -265,6 +325,10 @@
   "Boxes.CityMap.ToastBodyCopyData": "I dati della tua città sono nella clipboard",
   "Boxes.CityMap.ToastHeadCopyData": "Copiati!",
   "Boxes.CityMap.tower": "Torri",
+  "Boxes.CityMap.TurnedPerspecitve": {
+    "s": "90° Top View",
+    "r": "90° Top View"
+  },
   "Boxes.CityMap.WholeArea": "L'intera area: ",
   "Boxes.CityMap.YourCity": "La tua città",
   "Boxes.CloseBox.AutoHideOnBattle": "Nascondi automaticamente tutto in battaglia",
@@ -377,6 +441,142 @@
   "Boxes.FPCollector.Total": "Totale Raccolto:",
   "Boxes.FPCollector.wildlife_event": "Evento Fauna Selvatica",
   "Boxes.FPCollector.winter_event": "Evento Invernale",
+  "Boxes.GBGActionLog.Action.attacked_ignored": {
+    "s": "Segnale di stop ignorato",
+    "r": "Stop sign ignored"
+  },
+  "Boxes.GBGActionLog.Action.building_destroyed": {
+    "s": "Edificio distrutto",
+    "r": "Building destroyed"
+  },
+  "Boxes.GBGActionLog.Action.building_placed": {
+    "s": "Edifico posizionato",
+    "r": "Building placed"
+  },
+  "Boxes.GBGActionLog.Action.province_conquered": {
+    "s": "Settore preso",
+    "r": "Sector taken"
+  },
+  "Boxes.GBGActionLog.Action.province_lost": {
+    "s": "Settore perso",
+    "r": "Sector lost"
+  },
+  "Boxes.GBGActionLog.ActionCode": {
+    "s": "Azione",
+    "r": "Action"
+  },
+  "Boxes.GBGActionLog.ActionTime": {
+    "s": "Tempo",
+    "r": "Time"
+  },
+  "Boxes.GBGActionLog.ActivityEmpty": {
+    "s": "Nessuna attività del giocatore corrispondente per le date e le azioni selezionate.",
+    "r": "No matching player activity for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.ActorName": {
+    "s": "Actor name",
+    "r": "Actor name"
+  },
+  "Boxes.GBGActionLog.ActorType.guild": {
+    "s": "Gilda",
+    "r": "Guild"
+  },
+  "Boxes.GBGActionLog.ActorType.player": {
+    "s": "Giocatore",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.BatchesEmpty": {
+    "s": "Nessuna raccolta dati registrata finora.",
+    "r": "No data collections logged yet."
+  },
+  "Boxes.GBGActionLog.Building": {
+    "s": "Edificio",
+    "r": "Building"
+  },
+  "Boxes.GBGActionLog.Button": {
+    "s": "Action Log",
+    "r": "Action Log"
+  },
+  "Boxes.GBGActionLog.Filter": {
+    "s": "Filtro",
+    "r": "Filter"
+  },
+  "Boxes.GBGActionLog.FilteredTimeRange": {
+    "s": "Intervallo di tempo",
+    "r": "Time range"
+  },
+  "Boxes.GBGActionLog.FirstLogTime": {
+    "s": "First entry",
+    "r": "First entry"
+  },
+  "Boxes.GBGActionLog.From": {
+    "s": "Da",
+    "r": "From"
+  },
+  "Boxes.GBGActionLog.GroupIndex": {
+    "s": "Indice di gruppo",
+    "r": "Group Index"
+  },
+  "Boxes.GBGActionLog.LastLogTime": {
+    "s": "Last entry",
+    "r": "Last entry"
+  },
+  "Boxes.GBGActionLog.LogCount": {
+    "s": "New entry count",
+    "r": "New entry count"
+  },
+  "Boxes.GBGActionLog.LogDate": {
+    "s": "Raccolto a",
+    "r": "Collected at"
+  },
+  "Boxes.GBGActionLog.Map": {
+    "s": "Mappa",
+    "r": "Map"
+  },
+  "Boxes.GBGActionLog.Map.volcano_archipelago": {
+    "s": "Volcano Archipelago",
+    "r": "Volcano Archipelago"
+  },
+  "Boxes.GBGActionLog.MetricCount": {
+    "s": "Action count",
+    "r": "Action count"
+  },
+  "Boxes.GBGActionLog.MetricDays": {
+    "s": "Giorni di attività",
+    "r": "Active days"
+  },
+  "Boxes.GBGActionLog.Player": {
+    "s": "Giocatore",
+    "r": "Player"
+  },
+  "Boxes.GBGActionLog.RangeCapActivity": {
+    "s": "La scheda Attività è limitata a un intervallo di 1 mese. Regolato a:",
+    "r": "The Activity tab is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapBatches": {
+    "s": "The Batches tab is limited to a 2-week range. Adjusted to:",
+    "r": "The Batches tab is limited to a 2-week range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapReport": {
+    "s": "The Daily Report is limited to a 1-month range. Adjusted to:",
+    "r": "The Daily Report is limited to a 1-month range. Adjusted to:"
+  },
+  "Boxes.GBGActionLog.RangeCapTitle": {
+    "s": "Intervallo di date limitato",
+    "r": "Date range limited"
+  },
+  "Boxes.GBGActionLog.RedAfterHours": {
+    "s": "Trasforma il badge del menu in rosso dopo (ore)",
+    "r": "Turn the menu badge red after (hours)"
+  },
+  "Boxes.GBGActionLog.RedAfterHoursHint": {
+    "s": "L'icona del menu mostra le ore trascorse dall'ultima raccolta dei log; il cerchio diventa rosso una volta raggiunto questo numero di ore.",
+    "r": "The menu icon shows the hours since the last log collection; the circle turns red once this many hours pass."
+  },
+  "Boxes.GBGActionLog.ReportEmpty": {
+    "s": "Nessuna azione del giocatore corrispondente per le date e le azioni selezionate.",
+    "r": "No matching player actions for the selected dates and actions."
+  },
   "Boxes.GBGBuildings.absoluteCosts": "Costi Assoluti",
   "Boxes.GBGBuildings.Costs": "Costo",
   "Boxes.GBGBuildings.title": "Raccomandazione di costruzione",
@@ -831,15 +1031,67 @@
   "Boxes.PowerLeveling.P4": "Posizione 4",
   "Boxes.PowerLeveling.P5": "Posizione 5",
   "Boxes.PowerLeveling.Title": "Livellaggio avanzato",
+  "Boxes.Productions.AllyRarity.common": {
+    "s": "comune",
+    "r": "common"
+  },
+  "Boxes.Productions.AllyRarity.epic": {
+    "s": "epico",
+    "r": "epic"
+  },
+  "Boxes.Productions.AllyRarity.legendary": {
+    "s": "legendario",
+    "r": "legendary"
+  },
+  "Boxes.Productions.AllyRarity.rare": {
+    "s": "raro",
+    "r": "rare"
+  },
+  "Boxes.Productions.AllyRarity.uncommon": {
+    "s": "uncommon",
+    "r": "uncommon"
+  },
+  "Boxes.Productions.AMPMTime": {
+    "s": "orologio a 12 ore",
+    "r": "12 hour clock"
+  },
   "Boxes.Productions.att_boost_attacker": "Potenziamento attacco esercito d'attacco",
   "Boxes.Productions.att_boost_defender": "Potenziamento attacco esercito difensivo",
   "Boxes.Productions.DateNA": "Sconosciuto",
   "Boxes.Productions.def_boost_attacker": "Potenziamento difesa attacco esercito",
   "Boxes.Productions.def_boost_defender": "Potenziamento della difesa esercito",
   "Boxes.Productions.Done": "Fatto",
+  "Boxes.Productions.EmptyList": {
+    "s": "Non ci sono edifici in questa categoria.",
+    "r": "There are no buildings in this category."
+  },
+  "Boxes.Productions.FilterTable": {
+    "s": "Filtro Edificio",
+    "r": "Filter buildings"
+  },
   "Boxes.Productions.fragments": "Frammenti",
+  "Boxes.Productions.FSP": {
+    "s": "Frammento di produzione speciale finito",
+    "r": "Finish Special Production Fragment"
+  },
   "Boxes.Productions.GoodEraTotal": "Totale",
   "Boxes.Productions.goods": "Beni",
+  "Boxes.Productions.goods_boost": {
+    "s": "boost Beni",
+    "r": "Goods boost"
+  },
+  "Boxes.Productions.goods_current": {
+    "s": "Beni dell'era attuale",
+    "r": "Current era goods"
+  },
+  "Boxes.Productions.goods_next": {
+    "s": "Beni prossima era",
+    "r": "Next era goods"
+  },
+  "Boxes.Productions.goods_previous": {
+    "s": "Beni era precedente",
+    "r": "Previous era goods"
+  },
   "Boxes.Productions.GuildGoods": "Beni tesoreria",
   "Boxes.Productions.GuildPower": "Potere gilda",
   "Boxes.Productions.Happiness": "Felicità",
@@ -856,7 +1108,15 @@
   "Boxes.Productions.Headings.generic_building": "Altri edifici",
   "Boxes.Productions.Headings.goods": "Edifici di beni",
   "Boxes.Productions.Headings.greatbuilding": "Grandi Edifici",
+  "Boxes.Productions.Headings.item": {
+    "s": "Item",
+    "r": "Item"
+  },
   "Boxes.Productions.Headings.main_building": "Municipio",
+  "Boxes.Productions.Headings.military": {
+    "s": "Militare",
+    "r": "Military"
+  },
   "Boxes.Productions.Headings.name": "Nome",
   "Boxes.Productions.Headings.number": "Numero",
   "Boxes.Productions.Headings.off_grid": "Edifici speciali",
@@ -865,21 +1125,41 @@
   "Boxes.Productions.Headings.residential": "Edifici residenziali",
   "Boxes.Productions.Headings.size": "Dimensioni incluse strade",
   "Boxes.Productions.Headings.street": "Strade",
+  "Boxes.Productions.Headings.tower": {
+    "s": "Torri",
+    "r": "Towers"
+  },
   "Boxes.Productions.ModeCurrent": "Corrente",
   "Boxes.Productions.ModeDaily": "Produzioni giornaliere",
   "Boxes.Productions.ModeGroups": "Gruppi",
   "Boxes.Productions.ModeSingle": "Singolo",
+  "Boxes.Productions.ModeSum": {
+    "s": "Somma",
+    "r": "Sum"
+  },
   "Boxes.Productions.NoAsteroidDataWarning": "Le merci dalla fascia degli asteroidi non sono incluse. Per favore, visita il tuo avamposto della fascia degli asteroidi e apri di nuovo il pannello",
   "Boxes.Productions.NoMarsDataWarning": "Le merci provenienti da Marte non sono incluse. Per favore, visita il tuo avamposto su Marte e apri di nuovo il pannello",
   "Boxes.Productions.NoVenusDataWarning": "Le merci di Venere non sono incluse. Per favore, visita il tuo avamposto di Venere e apri di nuovo il pannello",
   "Boxes.Productions.SearchInput": "Cerca edificio... ",
   "Boxes.Productions.SizeTT": "Dimensioni compreso lo spazio medio richiesto dalle strade di __streetnettosize__ quadratini",
+  "Boxes.Productions.Time24": {
+    "s": "Orologio a 24 ore",
+    "r": "24 hour clock"
+  },
   "Boxes.Productions.Title": "Panoramica della produzione attuale (giornaliera)",
   "Boxes.Productions.Total": "Totale: ",
   "Boxes.Productions.TTGoodsEra": "Questa colonna mostra l'epoca dell'edificio, NON l'epoca dei beni prodotti",
   "Boxes.Productions.Units": "Unità",
+  "Boxes.ProductionsRating.AddBuilding": {
+    "s": "Aggiungi Edificio",
+    "r": "Add Building"
+  },
   "Boxes.ProductionsRating.BuildingName": "Costruzione",
   "Boxes.ProductionsRating.Enabled": "Abilitato",
+  "Boxes.ProductionsRating.HighlightsExplained": {
+    "s": "Come evidenziare gli edifici: fai clic su una qualsiasi riga per selezionare gli edifici che desideri confrontare più facilmente. I risultati della ricerca vengono evidenziati automaticamente.",
+    "r": "How to highlight buildings: Click any row to select the buildings you want to compare more easily. Search results are marked automatically."
+  },
   "Boxes.ProductionsRating.ProdPerTile": "Produzione/tassello giornaliera prevista",
   "Boxes.ProductionsRating.Results": "Risultato",
   "Boxes.ProductionsRating.Score": "Punteggio",

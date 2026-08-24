@@ -158,6 +158,10 @@
   "Boxes.BonusService.donequests": "Affiche les quêtes terminées",
   "Boxes.BonusService.first_strike": "Nombre d'essais restant pour la Première Frappe.",
   "Boxes.BonusService.missile_launch": "Nombre d'essais restants pour le lancement de missile.",
+  "Boxes.BonusService.quest_sound": {
+    "s": "Quête finie",
+    "r": "Finished Quest"
+  },
   "Boxes.BonusService.spoils_of_war": "Nombre d'essais restants pour les butins de guerre.",
   "Boxes.BoostList.guild_raids_action_points_collection": "Points d'action",
   "Boxes.BoostList.guild_raids_coins_production": "Boost Pièce",
@@ -491,6 +495,14 @@
     "s": "Log des actions",
     "r": "Action Log"
   },
+  "Boxes.GBGActionLog.DateFormat": {
+    "s": "Format de date",
+    "r": "Date format"
+  },
+  "Boxes.GBGActionLog.DateTimeFormat": {
+    "s": "Format de date et heure",
+    "r": "Date & time format"
+  },
   "Boxes.GBGActionLog.Filter": {
     "s": "Filtre",
     "r": "Filter"
@@ -502,6 +514,10 @@
   "Boxes.GBGActionLog.FirstLogTime": {
     "s": "1ère entrée",
     "r": "First entry"
+  },
+  "Boxes.GBGActionLog.FormatHint": {
+    "s": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). laisser vide pour le défault",
+    "r": "moment.js tokens (e.g. YYYY, MM, DD, HH, mm). Leave empty for the default."
   },
   "Boxes.GBGActionLog.From": {
     "s": "De",
@@ -868,6 +884,22 @@
   "Boxes.GuildFights.ShowTileColors": "Copier la couleur des attaques",
   "Boxes.GuildFights.SnapshotLog": "Log des aperçus instantanés",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Avis de non-responsabilité : ces données sont basées sur vos données collectées. Les chiffres présentés ici ne sont probablement pas exacts à 100 %. Il faudrait ouvrir la liste à minuit pour qu'ils soient corrects.",
+  "Boxes.GuildFights.Stats.Forecast": {
+    "s": "Affiche la prévision de point de victoire",
+    "r": "Show victory points forecast"
+  },
+  "Boxes.GuildFights.Stats.ForecastDesc": {
+    "s": "Calcule les points de victoire de chaque guilde à la fin de la saison, à raison d'un point par jour à l'heure où la saison se termine, en fonction des points qu'elle a gagnés au cours des dernières 24 heures environ.",
+    "r": "Projects every guild's victory points to the end of the season, one point per day at the hour the season ends, based on the points they gained over roughly the last 24 hours."
+  },
+  "Boxes.GuildFights.Stats.ForecastNoData": {
+    "s": "Les données collectées sont encore insuffisantes. Les prévisions nécessitent des relevés couvrant au moins 24 heures de cette saison.",
+    "r": "Not enough data collected yet. The forecast needs snapshots spanning at least 24 hours of this season."
+  },
+  "Boxes.GuildFights.Stats.ForecastProjected": {
+    "s": "prévu",
+    "r": "projected"
+  },
   "Boxes.GuildFights.Stats.Open": {
     "s": "Stats",
     "r": "Stats"
@@ -883,6 +915,30 @@
   "Boxes.GuildFights.Stats.Title": {
     "s": "Stats CbG",
     "r": "GBG Stats"
+  },
+  "Boxes.GuildFights.Stats.TTAhead": {
+    "s": "à venir ▼",
+    "r": "Ahead ▼"
+  },
+  "Boxes.GuildFights.Stats.TTBehind": {
+    "s": "en arrière ▲",
+    "r": "Behind ▲"
+  },
+  "Boxes.GuildFights.Stats.TTColumns": {
+    "s": "Colonnes de l'info-bulle du graphique :",
+    "r": "Columns of the chart tooltip:"
+  },
+  "Boxes.GuildFights.Stats.TTPoints": {
+    "s": "PV",
+    "r": "VP"
+  },
+  "Boxes.GuildFights.Stats.TTRate": {
+    "s": "PV/h",
+    "r": "VP/h"
+  },
+  "Boxes.GuildFights.Stats.TTRateBasis": {
+    "s": "(__hours__ h)",
+    "r": "(__hours__ h)"
   },
   "Boxes.GuildFights.Switch": "Changer la vue",
   "Boxes.GuildFights.Time": "à",
@@ -940,6 +996,10 @@
   "Boxes.GuildMemberStat.Never": "jamais",
   "Boxes.GuildMemberStat.Points": "Points",
   "Boxes.GuildMemberStat.ProducedTreasuryGoods": "produit par les bâtiments de guilde",
+  "Boxes.GuildMemberStat.QiParticipation": {
+    "s": "Participation IQ",
+    "r": "QI participation"
+  },
   "Boxes.GuildMemberStat.Rank": "Rang",
   "Boxes.GuildMemberStat.ResetMessageCounter": "remettre à zéro le compteur de message",
   "Boxes.GuildMemberStat.Search": "Rechercher",
@@ -1619,7 +1679,7 @@
   "Boxes.Stats.Title": "Aperçu des statistiques",
   "Boxes.Technologies.DescInStock": "Disponible",
   "Boxes.Technologies.DescRequired": "Requis",
-  "Boxes.Technologies.DescStillMissing": "Excès / Manquant",
+  "Boxes.Technologies.DescStillMissing": "<span style=\"color:#29b206\">Excès</span> / <span style=\"color:#ff4040\">Manquant</span>",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignorer les technologies optionnelles des ères actuelles / futures",
   "Boxes.Technologies.IgnorePrevEra": "Ignorer les technologies optionnelles des ères précédentes",
   "Boxes.Technologies.NoTechs": "Vous avez atteint la fin de cette ère.",
@@ -1742,6 +1802,10 @@
   "Date": "DD MMM YY",
   "DateShort": "DD MMM",
   "DateTime": "DD MMM YY @ HH:mm:ss",
+  "DateTimeShort": {
+    "s": "DD/MMM, HH:mm",
+    "r": "DD/MMM, HH:mm"
+  },
   "DBCreationWarning.CloseOverlay": {
     "s": "Fermer",
     "r": "Close"
@@ -2024,6 +2088,42 @@
   "Settings.ChangeLanguage.Translate": "Traduire",
   "Settings.ChangeLanguage.TranslateDescription": "Nous ne pouvons offrir que les traductions pour l'anglais et l'allemand. Vous pouvez aider avec les autres langues en utilisant notre module de traduction et Github :",
   "Settings.CountRelics": "Compter les reliques dans l’icône du menu",
+  "Settings.DateTimeFormat.Custom": {
+    "s": "Motif personnalisé...",
+    "r": "Custom pattern..."
+  },
+  "Settings.DateTimeFormat.CustomHint": {
+    "s": "Un format personnalisé utilise des codes « token » de moment.js, par exemple JJ.MM.AAAA HH:mm. Tous les codes « token » sont répertoriés à l'adresse",
+    "r": "A custom pattern uses moment.js tokens, for example DD.MM.YYYY HH:mm. All tokens are listed at"
+  },
+  "Settings.DateTimeFormat.DateLong": {
+    "s": "Date longue",
+    "r": "Long date"
+  },
+  "Settings.DateTimeFormat.DateShort": {
+    "s": "Date courte",
+    "r": "Short date"
+  },
+  "Settings.DateTimeFormat.DateTimeLong": {
+    "s": "Date longue &amp; heure",
+    "r": "Long date & time"
+  },
+  "Settings.DateTimeFormat.DateTimeShort": {
+    "s": "Date courte &amp; heure",
+    "r": "Short date & time"
+  },
+  "Settings.DateTimeFormat.Default": {
+    "s": "langage par défaut",
+    "r": "language default"
+  },
+  "Settings.DateTimeFormat.Desc": {
+    "s": "Définit les formats de date et d'heure utilisés par l'extension. Chaque entrée commence par le format fourni avec votre fichier de langue : choisissez l'un des exemples proposés ou saisissez votre propre format.",
+    "r": "Sets the date and time formats the extension uses. Every entry starts out with the format that comes with your language file - pick one of the samples or enter your own pattern."
+  },
+  "Settings.DateTimeFormat.Title": {
+    "s": "Format Date &amp; heure",
+    "r": "Date & Time Format"
+  },
   "Settings.doubleFPtimeout.Desc": "Affiche une case qui couvre temporairement le champ de saisie PF sur un GM après un don. La valeur détermine la durée d'affichage de la boîte en secondes - lorsque 0, la boîte ne s'affiche pas",
   "Settings.doubleFPtimeout.Title": "Bloqueur de double don",
   "Settings.EnableSound.Desc": "Activer les effets de son dans l'extension.",
@@ -2039,6 +2139,10 @@
     "r": "GB Contribution List"
   },
   "Settings.Entry.ChangeLanguage": "Langue",
+  "Settings.Entry.DateTimeFormat": {
+    "s": "Date &amp; heure",
+    "r": "Date & Time"
+  },
   "Settings.Entry.doubleFPtimeout": "Bloqueur de double don",
   "Settings.Entry.EnableSound": "Activer le son",
   "Settings.Entry.ExportSettings": "Importer / Exporter",
@@ -2047,8 +2151,16 @@
   "Settings.Entry.Help": "Aide",
   "Settings.Entry.HideHelperDuringBattle": "Visibilité de l'assistant en bataille",
   "Settings.Entry.LoadBeta2": "Charger la version Beta",
+  "Settings.Entry.MenuAppearance": {
+    "s": "Apparence du menu",
+    "r": "Menu Appearance"
+  },
   "Settings.Entry.MenuContent": "Contenu du menu",
   "Settings.Entry.MenuLength": "Menu",
+  "Settings.Entry.ModuleSounds": {
+    "s": "Personnaliser le son",
+    "r": "Customize sound"
+  },
   "Settings.Entry.NotificationsPosition": "Emplacement des notifications",
   "Settings.Entry.NotificationsStack": "Notifications multiples",
   "Settings.Entry.RepeatSelectBuilding": "Répéter le bâtiment sélectionné",
@@ -2111,10 +2223,42 @@
   "Settings.LoadBeta2.Button": "Charger la version Beta",
   "Settings.LoadBeta2.Desc": "L'extension bêta doit être installée et mise à jour manuellement. Soit cliquez régulièrement sur le bouton ci-dessous pour télécharger la version bêta actuelle, soit utilisez un Git-Manager<br><br>Décompressez le zip téléchargé et dans les paramètres de l'extension Chrome, activez le mode développeur pour « charger l'extension décompressée ».<br> <br>Une seule version du Helper doit être active à tout moment pour éviter les interférences !",
   "Settings.LoadBeta2.Title": "Charger la version Beta actuelle",
+  "Settings.MenuAppearance.Desc": {
+    "s": "Modifier la position, la taille des boutons et le nombre d'éléments affichés dans le menu",
+    "r": "Change the position, button size and amount of items shown in the menu"
+  },
+  "Settings.MenuAppearance.Length": {
+    "s": "Éléments affichés dans le menu (à l'exception de la boîtet)",
+    "r": "Entries shown in the menu (not for the box)"
+  },
+  "Settings.MenuAppearance.Position": {
+    "s": "Position du menu",
+    "r": "Position of the menu"
+  },
+  "Settings.MenuAppearance.Size": {
+    "s": "taille du bouton menu",
+    "r": "Menu button size"
+  },
+  "Settings.MenuAppearance.Title": {
+    "s": "Apparence du menu",
+    "r": "Menu Appearance"
+  },
   "Settings.MenuContent.Desc": "Quels boutons voulez-vous dans le menu ?<br>Vert : afficher le bouton. Rouge : masquer le bouton.",
   "Settings.MenuContent.Title": "Contenu du menu",
   "Settings.MenuLength.Desc": "Combien d'éléments doit afficher le menu ?<br> Vide ou \"0\" pour une hauteur automatique.",
   "Settings.MenuLength.Title": "Hauteur du menu",
+  "Settings.ModuleSounds.ChangeSoundLink": {
+    "s": "Changer le son de notification",
+    "r": "Change notification sound"
+  },
+  "Settings.ModuleSounds.Desc": {
+    "s": "Configurer des sons différents pour différentes actions",
+    "r": "Set up different sounds for different things"
+  },
+  "Settings.ModuleSounds.Title": {
+    "s": "Personnaliser les sons",
+    "r": "Customize sounds"
+  },
   "Settings.NotificationPosition.ToastTestBody": "C'est la position que vous avez choisie. <br> Avant de tester la position suivante, attendez que ce message disparaisse.",
   "Settings.NotificationPosition.ToastTestHeader": "Aperçu d'une notification",
   "Settings.NotificationsPosition.Desc": "Où souhaitez-vous que les notifications apparaissent sur votre écran ?",
@@ -2189,6 +2333,42 @@
   "Settings.ShowShopAssist.Title": "Assistant Boutique",
   "Settings.Skins.Desc": "Change la couleur de toutes les fenêtres dans un thème prédéfini. D'autres thèmes seront ajouté ultérieurement.",
   "Settings.Skins.Title": "Change l'apparence de l'extension",
+  "Settings.SoundEffects.default": {
+    "s": "Utiliser les paramètres par défaut",
+    "r": "Use default"
+  },
+  "Settings.SoundEffects.message": {
+    "s": "#1 Ding",
+    "r": "#1 Ding"
+  },
+  "Settings.SoundEffects.notification1": {
+    "s": "#2 Pling",
+    "r": "#2 Pling"
+  },
+  "Settings.SoundEffects.notification2": {
+    "s": "#3 Plong",
+    "r": "#3 Plong"
+  },
+  "Settings.SoundEffects.notification3": {
+    "s": "#4 Plop",
+    "r": "#4 Plop"
+  },
+  "Settings.SoundEffects.notification4": {
+    "s": "#5 Bleep",
+    "r": "#5 Bleep"
+  },
+  "Settings.SoundEffects.notification5": {
+    "s": "#6 Pling 2",
+    "r": "#6 Pling 2"
+  },
+  "Settings.SoundEffects.notification6": {
+    "s": "#7 Chime",
+    "r": "#7 Chime"
+  },
+  "Settings.SoundEffects.play": {
+    "s": "Jouer le son",
+    "r": "Play sound"
+  },
   "Settings.Tab.About": "Infos",
   "Settings.Tab.Auto": "Pop up",
   "Settings.Tab.Boxes": "Autres",
