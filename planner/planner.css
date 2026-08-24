@@ -13,6 +13,10 @@ body, html {
     overflow-x: hidden;
 }
 
+summary {
+    cursor: pointer;
+}
+
 .overlay {
     position: absolute;
     top: 0;
@@ -132,7 +136,7 @@ select option {
     width: 100%;
 }
 
-.sidebar .filter input, .modal input {
+.sidebar .filter input, .modal input:not([type=checkbox]) {
     width: 100%;
     display: block;
     box-sizing: border-box;
@@ -627,18 +631,37 @@ button, .btn, .content input {
 }
 
 /* --- Before / after comparison --- */
-button#compare {
-    display: none;
-}
 .modal-inner.wide {
     width: 900px;
     max-width: 95vw;
+    height: 90vh;
+}
+
+#compareChartSection {
+    display: none;
+}
+
+#compareModal details {
+    position: relative;
+    margin-bottom: 4px;
+    background-color: #0006;
+    padding: 6px 10px;
+    border-radius: 5px;
+}
+
+#compareModal summary + div {
+    margin-top: 10px;
+}
+
+#compareModal .filter-toggle {
+    width: max-content;
+    white-space: nowrap;
 }
 
 #compareChartWrap {
     position: relative;
-    height: 380px;
     margin-bottom: 8px;
+    height: 50vh;
 }
 
 .axis-picker {
@@ -777,4 +800,12 @@ button#compare {
     flex-shrink: 0;
     border-radius: 3px;
     background-color: #ffffff14;
+}
+
+.stat-icon[data-icon*=def_boost_attacker], .stat-icon[data-icon*=def_boost_defender] {
+    background-color: #2a3cdd;
+}
+
+.stat-icon[data-icon*=att_boost_attacker], .stat-icon[data-icon*=att_boost_defender] {
+    background-color: #ce2727;
 }

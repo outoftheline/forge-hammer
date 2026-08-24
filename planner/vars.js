@@ -58,6 +58,9 @@ window.PlannerApp.dom = {
     compareAxisPicker: document.querySelector('#compareAxisPicker'),
     compareAxisFilter: document.querySelector('#compareAxisFilter'),
     compareTableFilter: document.querySelector('#compareTableFilter'),
+    compareChangedOnly: document.querySelector('#compareChangedOnly'),
+    compareRemovedList: document.querySelector('#compareRemovedList'),
+    compareAddedList: document.querySelector('#compareAddedList'),
     compareTableWrap: document.querySelector('#compareTableWrap'),
 
     newDataModal: document.querySelector('#newDataModal'),

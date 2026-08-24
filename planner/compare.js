@@ -24,18 +24,18 @@ window.PlannerApp = window.PlannerApp || {};
 
     // --- metric definitions -------------------------------------------------
     const BOOST_TYPES = [
-        ['att_boost_attacker', 'XPlan.Compare.AttAttacker', 'Attack (attacking army)'],
-        ['def_boost_attacker', 'XPlan.Compare.DefAttacker', 'Defense (attacking army)'],
-        ['att_boost_defender', 'XPlan.Compare.AttDefender', 'Attack (defending army)'],
-        ['def_boost_defender', 'XPlan.Compare.DefDefender', 'Defense (defending army)']
+        ['att_boost_attacker', 'General.AttAttacker', 'Red Attack'],
+        ['def_boost_attacker', 'General.DefAttacker', 'Red Defense'],
+        ['att_boost_defender', 'General.AttDefender', 'Blue Attack'],
+        ['def_boost_defender', 'General.DefDefender', 'Blue Defense']
     ];
 
     // [short key, targetedFeature value, icon suffix, i18n key, fallback]
     const BOOST_FEATURES = [
-        ['city', 'all', '', 'XPlan.Compare.FeatureCity', 'City'],
-        ['gbg', 'battleground', '_gbg', 'XPlan.Compare.FeatureGbg', 'GbG'],
-        ['ge', 'guild_expedition', '_gex', 'XPlan.Compare.FeatureGe', 'GE'],
-        ['gr', 'guild_raids', '_gr', 'XPlan.Compare.FeatureQi', 'QI']
+        ['city', 'all', '', 'XPlan.Compare.FeatureCity', 'Base'],
+        ['gbg', 'battleground', '_gbg', 'Boxes.General.Guild_Battlegrounds.short', 'GBG'],
+        ['ge', 'guild_expedition', '_gex', 'Boxes.General.Guild_Expedition.short', 'GE'],
+        ['gr', 'guild_raids', '_gr', 'Boxes.General.Quantum_Incursion.short', 'QI']
     ];
 
     const FEATURE_BY_TARGET = {};
@@ -61,21 +61,21 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     const METRICS = [
-        { key: 'population_provided', group: 'population', icon: 'population', t: 'XPlan.Compare.PopulationProvided', fallback: 'Population provided' },
-        { key: 'population_required', group: 'population', icon: 'population', t: 'XPlan.Compare.PopulationRequired', fallback: 'Population required' },
-        { key: 'population_net', group: 'population', icon: 'population', t: 'XPlan.Compare.PopulationNet', fallback: 'Population balance' },
-        { key: 'happiness', group: 'population', icon: 'happiness', t: 'XPlan.Compare.Happiness', fallback: 'Happiness' },
+        { key: 'population_provided', group: 'population', icon: 'population', t: 'General.PopulationProvided', fallback: 'Total population' },
+        { key: 'population_required', group: 'population', icon: 'population', t: 'General.PopulationRequired', fallback: 'Required population' },
+        { key: 'population_net', group: 'population', icon: 'population', t: 'General.PopulationNet', fallback: 'Available population' },
+        { key: 'happiness', group: 'population', icon: 'happiness', t: 'Productions.Happiness', fallback: 'Happiness' },
 
-        { key: 'coins', group: 'production', icon: 'money', t: 'XPlan.Compare.Coins', fallback: 'Coins' },
-        { key: 'supplies', group: 'production', icon: 'supplies', t: 'XPlan.Compare.Supplies', fallback: 'Supplies' },
-        { key: 'forge_points', group: 'production', icon: 'strategy_points', t: 'XPlan.Compare.ForgePoints', fallback: 'Forge Points' },
-        { key: 'goods_previous', group: 'production', icon: 'random_goods_of_previous_age', t: 'XPlan.Compare.GoodsPrevious', fallback: 'Goods (previous era)' },
-        { key: 'goods_current', group: 'production', icon: 'all_goods_of_age', t: 'XPlan.Compare.GoodsCurrent', fallback: 'Goods (current era)' },
-        { key: 'goods_next', group: 'production', icon: 'next_age_random_goods', t: 'XPlan.Compare.GoodsNext', fallback: 'Goods (next era)' },
-        { key: 'guild_goods', group: 'production', icon: 'treasury_goods', t: 'XPlan.Compare.GuildGoods', fallback: 'Guild goods' },
-        { key: 'medals', group: 'production', icon: 'medals', t: 'XPlan.Compare.Medals', fallback: 'Medals' },
-        { key: 'units_current', group: 'production', icon: 'military', t: 'XPlan.Compare.UnitsCurrent', fallback: 'Units (current era)' },
-        { key: 'units_next', group: 'production', icon: 'military', t: 'XPlan.Compare.UnitsNext', fallback: 'Units (next era)' }
+        { key: 'coins', group: 'production', icon: 'money', t: 'General.Coins', fallback: 'Coins' },
+        { key: 'supplies', group: 'production', icon: 'supplies', t: 'General.Supplies', fallback: 'Supplies' },
+        { key: 'forge_points', group: 'production', icon: 'strategy_points', t: 'General.ForgePoints', fallback: 'Forge Points' },
+        { key: 'goods_previous', group: 'production', icon: 'random_goods_of_previous_age', t: 'Boxes.Productions.goods_previous', fallback: 'Goods (previous era)' },
+        { key: 'goods_current', group: 'production', icon: 'all_goods_of_age', t: 'Boxes.Productions.goods_current', fallback: 'Goods (current era)' },
+        { key: 'goods_next', group: 'production', icon: 'next_age_random_goods', t: 'Boxes.Productions.goods_next', fallback: 'Goods (next era)' },
+        { key: 'guild_goods', group: 'production', icon: 'treasury_goods', t: 'Boxes.Productions.GuildGoods', fallback: 'Guild goods' },
+        { key: 'medals', group: 'production', icon: 'medals', t: 'General.Medals', fallback: 'Medals' },
+        { key: 'units_current', group: 'production', icon: 'military', t: 'General.UnitsCurrent', fallback: 'Units (current)' },
+        { key: 'units_next', group: 'production', icon: 'military', t: 'General.UnitsNext', fallback: 'Next Age Units' }
     ]
         .concat(buildBoostMetrics())
         .concat([
@@ -92,9 +92,9 @@ window.PlannerApp = window.PlannerApp || {};
     const GROUPS = [
         ['population', 'Boxes.Tooltip.Building.provides', 'Provides'],
         ['production', 'Boxes.Tooltip.Building.produces', 'Produces (per 24h)'],
-        ['items', 'XPlan.Compare.GroupItems', 'Items & fragments (per 24h)'],
         ['battle', 'XPlan.Compare.GroupBattle', 'Battle boosts'],
         ['boosts', 'XPlan.Compare.GroupBoosts', 'Other boosts'],
+        ['items', 'XPlan.Compare.GroupItems', 'Items & fragments (per 24h)'],
         ['space', 'XPlan.Compare.GroupSpace', 'Space']
     ];
 
@@ -115,7 +115,7 @@ window.PlannerApp = window.PlannerApp || {};
     function metricLabel(metric) {
         const base = app.t(metric.t, metric.fallback);
         if (!metric.suffixT) return base;
-        return base + ' – ' + app.t(metric.suffixT, metric.suffixFallback);
+        return base + ' - ' + app.t(metric.suffixT, metric.suffixFallback);
     }
 
     // --- resource mapping ---------------------------------------------------
@@ -147,8 +147,11 @@ window.PlannerApp = window.PlannerApp || {};
     const GOODS_CURRENT = new Set(['all_goods_of_age', 'random_goods_chest', 'era_goods', 'special_goods']);
 
     const IGNORED_RESOURCES = new Set([
-        'premium', 'blueprints', 'icons', 'tavern_silver', 'guild_raids_action_points',
+        'blueprints', 'icons', 'tavern_silver', 'guild_raids_action_points',
         'clan_power', 'rank', 'ranking_points', 'total_ranking_points', 'negotiation_game_currency'
+    ]);
+    const IGNORED_BOOSTS = new Set([
+        'helping_hands', 'quest_boost', 'critical_hit_chance', 'first_strike', 'life_support'
     ]);
 
     function mapResourceToMetric(res) {
@@ -203,7 +206,9 @@ window.PlannerApp = window.PlannerApp || {};
         money_boost: ['coin_production']
     };
 
-    const BOOST_SKIP = new Set(['life_support']);
+    function isIgnoredBoost(type) {
+        return IGNORED_BOOSTS.has(type);
+    }
 
     // Ported from Boosts.percent — these are absolute values, not percentages.
     const BOOST_NOT_PERCENT = new Set([
@@ -247,12 +252,14 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function boostTargets(type, feature) {
-        if (!type || BOOST_SKIP.has(type)) return [];
+        if (!type || isIgnoredBoost(type)) return [];
 
         const mapped = BOOST_MAPPER[type] || [type];
         const targets = [];
 
         for (const mappedType of mapped) {
+            if (isIgnoredBoost(mappedType)) continue;
+
             if (mappedType === 'happiness_amount') {
                 targets.push({ flat: 'happiness' });
                 continue;
@@ -964,6 +971,56 @@ window.PlannerApp = window.PlannerApp || {};
         return acc;
     }
 
+    // --- building diff -------------------------------------------------------
+
+    function buildingCounts(entities) {
+        const counts = new Map();
+
+        for (const entity of entities) {
+            const id = String(entity.meta.id);
+            let entry = counts.get(id);
+
+            if (!entry) {
+                entry = {
+                    id: id,
+                    name: entity.meta.name || id,
+                    type: entity.meta.type || '',
+                    width: entity.w,
+                    height: entity.h,
+                    count: 0
+                };
+                counts.set(id, entry);
+            }
+
+            entry.count++;
+        }
+
+        return counts;
+    }
+
+    function diffBuildings(beforeEntities, afterEntities) {
+        const before = buildingCounts(beforeEntities);
+        const after = buildingCounts(afterEntities);
+
+        const removed = [];
+        const added = [];
+
+        for (const id of new Set([...before.keys(), ...after.keys()])) {
+            const beforeEntry = before.get(id);
+            const afterEntry = after.get(id);
+            const delta = (afterEntry ? afterEntry.count : 0) - (beforeEntry ? beforeEntry.count : 0);
+
+            if (delta < 0) removed.push(Object.assign({}, beforeEntry, { count: -delta }));
+            else if (delta > 0) added.push(Object.assign({}, afterEntry, { count: delta }));
+        }
+
+        const byAmount = (a, b) => b.count - a.count || a.name.localeCompare(b.name);
+        removed.sort(byAmount);
+        added.sort(byAmount);
+
+        return { removed: removed, added: added };
+    }
+
     function computeComparison() {
         if (!state.metaById || !state.metaById.size) return null;
 
@@ -973,10 +1030,14 @@ window.PlannerApp = window.PlannerApp || {};
         const cityEntryIndex = buildCityEntryIndex();
         const originalCityData = (state.originalData && state.originalData.cityData) || state.cityData || {};
 
-        const before = summarise(entitiesFromCityData(originalCityData, cityEntryIndex));
-        const after = summarise(entitiesFromMapBuildings(cityEntryIndex));
+        const beforeEntities = entitiesFromCityData(originalCityData, cityEntryIndex);
+        const afterEntities = entitiesFromMapBuildings(cityEntryIndex);
 
-        return { before: before, after: after };
+        return {
+            before: summarise(beforeEntities),
+            after: summarise(afterEntities),
+            buildings: diffBuildings(beforeEntities, afterEntities)
+        };
     }
 
     // --- rendering ----------------------------------------------------------
@@ -1034,13 +1095,18 @@ window.PlannerApp = window.PlannerApp || {};
 
         const rows = [];
         const text = filterText(dom.compareTableFilter);
+        const changedOnly = !!(dom.compareChangedOnly && dom.compareChangedOnly.checked);
 
         for (const [group, groupKey, groupFallback] of GROUPS) {
             const metrics = metricsInGroup(group);
-            const visible = metrics.filter(m =>
-                ((result.before[m.key] || 0) !== 0 || (result.after[m.key] || 0) !== 0) &&
-                matchesFilter(m, text)
-            );
+            const visible = metrics.filter(m => {
+                const before = result.before[m.key] || 0;
+                const after = result.after[m.key] || 0;
+
+                if (before === 0 && after === 0) return false;
+                if (changedOnly && after === before) return false;
+                return matchesFilter(m, text);
+            });
             if (!visible.length) continue;
 
             rows.push('<tr class="group-row"><th colspan="4">' + app.t(groupKey, groupFallback) + '</th></tr>');
@@ -1066,7 +1132,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         if (!rows.length) {
-            const message = text
+            const message = (text || changedOnly)
                 ? app.t('XPlan.Compare.NoMatches', 'No metrics match the filter.')
                 : app.t('XPlan.Compare.NoData', 'No comparable data available.');
             dom.compareTableWrap.innerHTML = '<p class="empty">' + message + '</p>';
@@ -1142,17 +1208,17 @@ window.PlannerApp = window.PlannerApp || {};
                         label: app.t('XPlan.Compare.Before', 'Before'),
                         data: axes.map(key => result.before[key] || 0),
                         fill: true,
-                        backgroundColor: 'rgba(230, 84, 47, 0.2)',
-                        borderColor: '#e6542f',
-                        pointBackgroundColor: '#e6542f'
+                        backgroundColor: 'rgba(230, 203, 47, 0.2)',
+                        borderColor: '#e6d42f',
+                        pointBackgroundColor: '#e6d42f'
                     },
                     {
                         label: app.t('XPlan.Compare.After', 'After'),
                         data: axes.map(key => result.after[key] || 0),
                         fill: true,
-                        backgroundColor: 'rgba(102, 196, 64, 0.2)',
-                        borderColor: '#66c440',
-                        pointBackgroundColor: '#66c440'
+                        backgroundColor: 'rgba(64, 154, 196, 0.2)',
+                        borderColor: '#40a5c4',
+                        pointBackgroundColor: '#409fc4'
                     }
                 ]
             },
@@ -1176,9 +1242,34 @@ window.PlannerApp = window.PlannerApp || {};
         });
     }
 
+    function renderBuildingList(el, entries) {
+        if (!el) return;
+
+        if (!entries.length) {
+            el.innerHTML = '<li class="empty">' +
+                app.t('XPlan.Compare.NoChanges', 'No changes') + '</li>';
+            return;
+        }
+
+        el.innerHTML = entries.map(entry =>
+            '<li class="' + entry.type + '">' +
+                '<span class="amount">' + entry.count + '</span>' +
+                '<span class="name">' + entry.name + '</span>,' +
+                ' <span>' + entry.height + 'x' + entry.width + '</span>' +
+            '</li>'
+        ).join('');
+    }
+
+    function renderBuildingLists(result) {
+        const buildings = result.buildings || { removed: [], added: [] };
+        renderBuildingList(dom.compareRemovedList, buildings.removed);
+        renderBuildingList(dom.compareAddedList, buildings.added);
+    }
+
     function renderComparison() {
         if (!lastResult) return;
         renderTable(lastResult);
+        renderBuildingLists(lastResult);
         renderAxisPicker(lastResult);
         renderChart(lastResult);
     }
@@ -1227,6 +1318,12 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (dom.compareTableFilter) {
             dom.compareTableFilter.addEventListener('input', () => {
+                if (lastResult) renderTable(lastResult);
+            });
+        }
+
+        if (dom.compareChangedOnly) {
+            dom.compareChangedOnly.addEventListener('change', () => {
                 if (lastResult) renderTable(lastResult);
             });
         }

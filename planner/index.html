@@ -89,7 +89,7 @@
                         <button id="storeAll" class="btn" data-t="true">XPlan.Buttons.Everything</button>
                     </div>
                     <div class="group">
-                        <span class="btn dupe" data-t-title="XPlan.Street.All" title=""><b id="currentStreetAmount"></b><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        <span class="btn dupe"><b id="currentStreetAmount"></b><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round"
                                 class="lucide lucide-road-icon lucide-road">
@@ -98,7 +98,7 @@
                                 <path d="M12 9v3" />
                                 <path
                                     d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z" />
-                            </svg></span>
+                            </svg><span data-t="true">XPlan.Street.All</span></span>
                         <button id="removeStreets" class="btn" data-t="true">XPlan.Buttons.RemoveAll</button>
                         <button id="placeStreet" class="btn" data-t="true">XPlan.Buttons.Place</button>
                     </div>
@@ -207,18 +207,38 @@
                 <h2 data-t="true">XPlan.Compare.Title</h2>
                 <button class="btn modal-close">✕</button>
             </div>
-            <div id="compareChartWrap"><canvas id="compareChart"></canvas></div>
-            <div class="axis-picker">
-                <div class="filter-head">
-                    <span class="filter-title" data-t="true">XPlan.Compare.Axes</span>
-                    <input type="search" id="compareAxisFilter" data-t-placeholder="XPlan.Compare.FilterAxes" placeholder="Filter axes…">
+            <details id="compareChartSection">
+                <summary data-t="true">XPlan.Compare.Chart</summary>
+                <div id="compareChartWrap"><canvas id="compareChart"></canvas></div>
+                <div class="axis-picker">
+                    <div class="filter-head">
+                        <span class="filter-title" data-t="true">XPlan.Compare.Axes</span>
+                        <input type="search" id="compareAxisFilter" data-t-placeholder="XPlan.Compare.FilterAxes" placeholder="Filter axes">
+                    </div>
+                    <div id="compareAxisPicker" class="axis-options"></div>
                 </div>
-                <div id="compareAxisPicker" class="axis-options"></div>
-            </div>
-            <div class="filter-head">
-                <span class="filter-title" data-t="true">XPlan.Compare.Metrics</span>
-                <input type="search" id="compareTableFilter" data-t-placeholder="XPlan.Compare.FilterMetrics" placeholder="Filter metrics…">
-            </div>
+            </details>
+            <details id="compareBuildingsSection">
+                <summary data-t="true">XPlan.Compare.BuildingsChanges</summary>
+                <div class="compare-lists">
+                    <div class="compare-list">
+                        <div class="filter-title" data-t="true">XPlan.Compare.BuildingsRemoved</div>
+                        <ul id="compareRemovedList"></ul>
+                    </div>
+                    <div class="compare-list">
+                        <div class="filter-title" data-t="true">XPlan.Compare.BuildingsAdded</div>
+                        <ul id="compareAddedList"></ul>
+                    </div>
+                </div>
+            </details>
+                <div class="filter-head">
+                    <span class="filter-title" data-t="true">XPlan.Compare.Metrics</span>
+                    <label class="filter-toggle">
+                        <input type="checkbox" id="compareChangedOnly">
+                        <span data-t="true">XPlan.Compare.ChangedOnly</span>
+                    </label>
+                    <input type="search" id="compareTableFilter" data-t-placeholder="XPlan.Compare.FilterMetrics" placeholder="Filter metrics">
+                </div>
             <div id="compareTableWrap"></div>
         </div>
     </div>

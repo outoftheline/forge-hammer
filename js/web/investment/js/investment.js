@@ -239,7 +239,7 @@ let Investment = {
 		
 		if(showMedals)
 		{
-			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.Medals')) + '"></span></th>');
+			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.Tooltip(FH.t('General.Medals')) + '"></span></th>');
 		}
 		
 		if(showBlueprints)
@@ -469,7 +469,7 @@ let Investment = {
 		c.push(`<p>${FH.t('Boxes.Investment.Overview.AdditionalColumns')}:</p><input id="showentrydate" name="showentrydate" value="1" type="checkbox" ${(showEntryDate === 1) ? ' checked="checked"':''} /> <label for="showentrydate">${FH.t('Boxes.Investment.Overview.SettingsEntryTime')}</label><br>`);
 		c.push(`<input id="showinvestmentincreasedate" name="showinvestmentincreasedate" value="1" type="checkbox" ${(showInvestmentIncreaseDate === 1) ? ' checked="checked"':''} /> <label for="showinvestmentincreasedate">${FH.t('Boxes.Investment.Overview.DateOfIncrease')}</label><br>`);
 		c.push(`<input id="showrestfp" name="showrestfp" value="1" type="checkbox" ${(showRestFp === 1) ? ' checked="checked"':''} /> <label for="showrestfp">${FH.t('Boxes.Investment.Overview.SettingsRestFP')}</label><br>`);
-		c.push(`<input id="showmedals" name="showmedals" value="1" type="checkbox" ${(showMedals === 1) ? ' checked="checked"':''} /> <label for="showmedals">${FH.t('Boxes.Investment.Overview.Medals')}</label><br>`);
+		c.push(`<input id="showmedals" name="showmedals" value="1" type="checkbox" ${(showMedals === 1) ? ' checked="checked"':''} /> <label for="showmedals">${FH.t('General.Medals')}</label><br>`);
 		c.push(`<input id="showblueprints" name="showblueprints" value="1" type="checkbox" ${(showBlueprints === 1) ? ' checked="checked"':''} /> <label for="showblueprints">${FH.t('Boxes.Investment.Overview.Blueprints')}</label><br>`);
 		c.push(`<hr /><input id="showhiddengb" name="showhiddengb" value="1" type="checkbox" ${(showHiddenGb === 1) ? ' checked="checked"':''} /> <label for="showhiddengb">${FH.t('Boxes.Investment.Overview.SettingsHiddenGB')}</label><br>`);
 		c.push(`<input id="removeunsafecalc" name="removeunsafecalc" value="1" type="checkbox" ${(removeUnsafeCalc === 1) ? ' checked="checked"':''} /> <label for="removeunsafecalc">${FH.t('Boxes.Investment.Overview.SettingsUnsafeCalc')}</label>`);
