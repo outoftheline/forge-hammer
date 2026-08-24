@@ -1408,8 +1408,7 @@ let GuildFights = {
 			progress.push('<th>' + FH.t('Boxes.GuildFights.Owner') + '</th>');
 		}
 
-		progress.push('<th>' + FH.t('Boxes.GuildFights.Progress') + '</th>');
-		progress.push('<th>' + FH.t('Boxes.GuildFights.RequiredProgress') + '</th>');
+		progress.push('<th colspan="2">' + FH.t('Boxes.GuildFights.Progress') + ' / ' + FH.t('Boxes.GuildFights.RequiredProgress') + '</th>');
 		progress.push('</tr></thead><tbody>');
 
 		for (let i in mapdata) {
@@ -1426,21 +1425,25 @@ let GuildFights = {
 						let provinceProgress = mapdata[i]['conquestProgress'];
 
 						progress.push(`<tr class="${signalClass}" id="province-${id}" data-id="${id}" data-tab="progress">`);
-						progress.push(`<td title="${FH.t('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['base']}"></span> ${mapdata[i]['title']}</b></td>`);
+						progress.push(`<td title="${FH.t('Boxes.GuildFights.Owner')}: ${gbgGuilds[x]['clan']['name']}"><b><span class="province-color" style="background-color:${pColor['main']};border-color:${pColor['base']}"></span> ${mapdata[i]['title']}</b></td>`);
 
 						if (GuildFights.showGuildColumn) 
 							progress.push(`<td>${gbgGuilds[x]['clan']['name']}</td>`);
 						
 						progress.push(`<td data-field="${id}-${mapdata[i]['ownerId']}" class="guild-progress">`);
 
+						let currentMaxProgress = 0;
 						for (let y in provinceProgress) {
 							if (!provinceProgress.hasOwnProperty(y)) break;
+							if (provinceProgress[y]['progress'] > currentMaxProgress)
+								currentMaxProgress = provinceProgress[y]['progress'];
 
 							let color = ProvinceMap.getSectorColors(provinceProgress[y]['participantId']);
-							progress.push(`<span class="attack attacker-${provinceProgress[y]['participantId']} gbg-${color['cid']}">${provinceProgress[y]['progress']}</span>`);
+							let progressBar = provinceProgress[y]['progress'] / mapdata[i]['conquestProgress'][0].maxProgress * 100;
+							progress.push(`<span class="attacker-${provinceProgress[y]['participantId']} progress" style="background-color:${color['main']};border-color:${color['base']};width:${progressBar}%">${provinceProgress[y]['progress']}</span>`);
 						}
 
-						progress.push('</td><td data-field="' + id + '" class="required-progress">' + mapdata[i]['conquestProgress'][0].maxProgress + '</td>');
+						progress.push(`</td><td data-field="${id}" class="tdmin wsnw text-right required-progress">${currentMaxProgress} / ` + mapdata[i]['conquestProgress'][0].maxProgress + '</td>');
 					}
 				}
 			}
@@ -1457,14 +1460,18 @@ let GuildFights = {
 
 				let provinceProgress = mapdata[i]['conquestProgress'];
 
+				let currentMaxProgress = 0;
 				for (let y in provinceProgress) {
 					if (!provinceProgress.hasOwnProperty(y)) break;
+					if (provinceProgress[y]['progress'] > currentMaxProgress)
+						currentMaxProgress = provinceProgress[y]['progress'];
 
 					let color = GuildFights.SortedColors.find(e => e['id'] === provinceProgress[y]['participantId']);
-					progress.push(`<span class="attack attacker-${provinceProgress[y]['participantId']} gbg-${color['cid']}">${provinceProgress[y]['progress']}</span>`);
+					let progressBar = provinceProgress[y]['progress'] / mapdata[i]['conquestProgress'][0].maxProgress * 100;
+					progress.push(`<span class="attacker-${provinceProgress[y]['participantId']} progress" style="background-color:${color['main']};border-color:${color['base']};width:${progressBar}%">${provinceProgress[y]['progress']}</span>`);
 				}
 
-				progress.push('</td><td data-field="' + id + '" class="required-progress">' + mapdata[i]['conquestProgress'][0].maxProgress + '</td>');
+				progress.push(`</td><td data-field="${id}" class="tdmin wsnw text-right required-progress">${currentMaxProgress} / ` + + mapdata[i]['conquestProgress'][0].maxProgress + '</td>');
 			}
 		}
 
@@ -1566,7 +1573,7 @@ let GuildFights = {
 
 				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''} ${signalClass}" data-tab="nextup" data-id=${prov[x].id}>
 					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
-					<span class="province-color" ${color['base'] ? 'style="background-color:' + color['base'] + '"' : ''}"></span>
+					<span class="province-color" ${color['base'] ? 'style="background-color:' + color['main'] + '"' : ''};border-color:${color['base']}"></span>
 					<span class="battletype ${battleType}"></span>
 					<b>${prov[x].title}</b> 
 					</td>`);
@@ -1952,14 +1959,21 @@ let GuildFights = {
 			cell.removeClass('pulse');
 
 			if (cell.find('.attacker-' + d['participantId']).length > 0) {
+				let color = GuildFights.SortedColors.find(e => e['id'] === p['participantId']);
+
 				cell.find('.attacker-' + d['participantId']).text(progess);
+				cell.find('.attacker-' + d['participantId']).css({
+					'width': (progess / data['conquestProgress'][0].maxProgress * 100) + '%',
+					'background-color': color['main'],
+					'border-color': color['base']
+				});
 			}
 			else {
 				let color = GuildFights.SortedColors.find(e => e['id'] === p['participantId']);
 
 				cell.find('.guild-progress').append(
 					$('<span />').attr({
-						class: `attack attacker-${d['participantId']} gbg-${color['cid']}`
+						class: `attacker-${d['participantId']} progress`
 					})
 				);
 			}

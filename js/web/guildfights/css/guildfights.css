@@ -132,7 +132,7 @@
 
 #GuildPlayersDetailViewBody .datetimepicker {
 	padding: 2px 0 0 2px;
-	background-color: rgba(0, 0, 0, 0.45);
+	background-color: var(--bg-darkest);
 	height: 28px;
 }
 
@@ -159,18 +159,19 @@
 	width: 13px;
 	height: 13px;
 	display: inline-block;
-	box-shadow: 0 1px 1px var(--black-65);
-	border-radius: 2px;
-	top: 2px;
+	border: 1px solid #555;
+	border-radius: 8px;
+	top: 1px;
 	position: relative;
 }
 #LiveGuildFightingBody .battletype {
 	width: 9px;
 	height: 9px;
-	box-shadow: 0 1px 1px var(--black-65);
 	border-radius: 5px;
 	display: inline-block;
 	position: relative;
+	bottom: 2px;
+	margin-left: -6px;
 }
 #LiveGuildFightingBody .battletype.BTattack {
 	background-color: rgb(209, 38, 38);
@@ -255,62 +256,28 @@
 	transition: background-color .6s;
 }
 
-#LiveGuildFightingBody .attack {
-	display: inline-block;
-	line-height: 23px;
-	margin-right: 5px;
+#LiveGuildFightingBody .progress {
+	display: block;
+	line-height: 12px;
+	border-radius: 7px;
+	border: 1px solid #333;
+	font-size: 85%;
+	font-weight: bold;
+	margin: 1px 0 0;
+	color: var(--black);
+	text-shadow: none;
 }
 
-#LiveGuildFightingBody .attack:before {
-	width: 19px;
-	height: 23px;
-	background-size: contain;
-	background-repeat: no-repeat;
+#LiveGuildFightingBody .progress::before {
+	content: ' ';
 	display: inline-block;
-	content: '';
-	vertical-align: middle;
+	padding: 0 2px;
 }
 
 #LiveGuildFightingBody .smaller {
 	font-size: 8px;
 	bottom: 2px;
 	position: relative;
-}
-
-#LiveGuildFightingBody .gbg-red:before {
-	background-image: url(../../x_img/gbg-red.png);
-}
-
-#LiveGuildFightingBody .gbg-green:before {
-	background-image: url(../../x_img/gbg-green.png);
-}
-
-#LiveGuildFightingBody .gbg-yellow:before {
-	background-image: url(../../x_img/gbg-yellow.png);
-}
-
-#LiveGuildFightingBody .gbg-teal:before {
-	background-image: url(../../x_img/gbg-teal.png);
-}
-
-#LiveGuildFightingBody .gbg-orange:before {
-	background-image: url(../../x_img/gbg-orange.png);
-}
-
-#LiveGuildFightingBody .gbg-blue:before {
-	background-image: url(../../x_img/gbg-blue.png);
-}
-
-#LiveGuildFightingBody .gbg-purple:before {
-	background-image: url(../../x_img/gbg-purple.png);
-}
-
-#LiveGuildFightingBody .gbg-pink:before {
-	background-image: url(../../x_img/gbg-pink.png);
-}
-
-#LiveGuildFightingBody .gbg-own_guild_colour:before {
-	background-image: url(../../x_img/gbg-gray.png);
 }
 
 #LiveGuildFightingBody tr .btn.discord {

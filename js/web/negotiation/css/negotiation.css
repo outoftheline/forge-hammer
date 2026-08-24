@@ -35,7 +35,7 @@
 	width: 3em;
 	height: 3em;
 	padding: 0.25em;
-	background-color: var(--table-bg-darker);
+	background-color: var(--bg-darkest);
 	border-radius: 50%;
 	zoom: 0.75;
 }
