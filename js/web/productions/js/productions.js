@@ -1293,16 +1293,16 @@ let Productions = {
 		table.push('</thead>')
 		table.push('<tbody class="prodgroup'+type+'">')
 
-		for (const building of groupedBuildings) {
+		for (const group of groupedBuildings) {
 			rowB.push('<tr>')
-			rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-			rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'"><span  data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.building.id]?"ally" : "") +'">'+ building.building.name +'</span></td>')
+			rowB.push('<td data-number="'+group.amount+'">'+group.amount+'x </td>')
+			rowB.push('<td data-text="'+group.building.name.replace(/[. -]/g,"")+'"><span data-meta_id="'+group.building.entityId+'" data-eff="'+group.building.rating?.totalScore * 100+'" data-era="'+(group.eraName==="AllAge"?"":group.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[group.building.id]?"ally" : "") +'">'+ group.building.name +'</span></td>')
 			for (const era of eras) {
-				rowB.push('<td data-number="'+building[era]+'" class="text-center">')
-				rowB.push(FH.HTML.Format(building[era]))
+				rowB.push('<td data-number="'+group[era]+'" class="text-center">')
+				rowB.push(FH.HTML.Format(group[era]))
 				rowB.push('</td>')
 			}
-			rowB.push('<td data-number="'+(building.building.size.length*building.building.size.width)+'">'+building.building.size.length+'x'+building.building.size.width+'</td>')
+			rowB.push('<td data-number="'+(group.building.size.length*group.building.size.width)+'">'+group.building.size.length+'x'+group.building.size.width+'</td>')
 			rowB.push('</tr>')
 		}
 
@@ -1458,7 +1458,7 @@ let Productions = {
 			groupedBuildings.forEach(building => {
 				rowB.push('<tr>')
 				rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
+				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
 				for (const era of eras) {
 					rowB.push('<td data-number="'+building[era]+'" class="text-center">')
 					rowB.push(FH.HTML.Format(building[era]))
@@ -1499,8 +1499,8 @@ let Productions = {
 		tableGr.push('<tbody class="prodgroup'+type+'">')
 			groupedBuildings.forEach(building => {
 				rowB.push('<tr>')
-				rowB.push('<td data-number="'+building.amount+'">'+building.amount+'x </td>')
-				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
+				rowB.push('<td data-number="'+building.amount+'" class="tdmin">'+building.amount+'x </td>')
+				rowB.push('<td data-text="'+building.building.name.replace(/[. -]/g,"")+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">'+ building.building.name +'</td>')
 				if (type.includes('att') || type.includes('def')) {
 					rowB.push('<td data-number="'+building.boosts.all*building.amount+'" class="text-center">'+ (building.boosts.all !== 0 ? FH.HTML.Format(building.boosts.all*building.amount) : '') +'</td>')
 					rowB.push('<td data-number="'+building.boosts.battleground*building.amount+'" class="text-center">'+ (building.boosts.battleground !== 0 ? FH.HTML.Format(building.boosts.battleground*building.amount) : '') +'</td>')
