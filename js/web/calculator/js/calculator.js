@@ -706,12 +706,6 @@ let Calculator = {
 
 		function removeFromList(el) {
 			let line = $(el).data('line');
-			if (Calculator.ConversationContentBeforeSend)
-				Calculator.ConversationContentBeforeSend = Calculator.ConversationContentBeforeSend.split(/\r\n|\r|\n/).filter(x => x.trim() !== line).join('\n');
-			else {
-				$('#calcReminder').remove();
-				return;
-			}
 			$(el).remove();
 			if ($('#calcReminder .gbEntry').length === 0) {
 				$('#calcReminder').remove(); 
