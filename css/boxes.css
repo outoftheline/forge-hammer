@@ -195,9 +195,6 @@ a[target="_blank"] svg {
 .btn-slim {
 	margin: 1px;
 	padding: 1px 4px;
-	max-width: 100px;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	white-space: nowrap;
 	text-align: center;
 	font-size: 9pt;
@@ -989,7 +986,7 @@ Accordion */
     box-shadow: inset 0px 0px 0px 2000px var(--table-bg-hover);
 }
 
-.fham-accordion-head::after {
+.fham-accordion-head::after, .like-accordion::after {
 	content: ' ';
 	background-image: url('../images/hud/chevron-left.svg');
 	background-size: contain;
@@ -1000,7 +997,7 @@ Accordion */
 	top: 4px;
 }
 
-.fham-accordion.open .fham-accordion-head::after {
+.fham-accordion.open .fham-accordion-head::after, .like-accordion.active::after {
 	background-image: url('../images/hud/chevron-down.svg');
 }
 
@@ -1456,7 +1453,6 @@ a:hover, input[type="radio"], .clickable {
 .window-body input:focus,
 .window-body select:focus,
 .window-body textarea:focus {
-    border: 1px solid var(--input-border);
     outline: none;
     box-shadow: 0 0 0 1pt var(--input-accent), 0 0 2pt 1pt var(--input-accent);
 }
@@ -1754,11 +1750,13 @@ a:hover, input[type="radio"], .clickable {
 	font-size: 0.8rem;
 	height: 24px;
 	line-height: 24px;
-	background-color: var(--bg-light);
+	background-color: var(--input-bg);
 	color: var(--text-dark);
 	width: 130px;
 	white-space: nowrap;
 	overflow-x: hidden;
+	border-radius: 2px;
+	text-shadow: none;
 }
 .custom-options {
 	position: absolute;
@@ -1767,7 +1765,7 @@ a:hover, input[type="radio"], .clickable {
 	left: 0;
 	right: 0;
 	border-top: 0;
-	background-color: var(--bg-light);
+	background-color: var(--input-bg);
 	transition: all 0.5s;
 	opacity: 0;
 	visibility: hidden;
@@ -2448,6 +2446,7 @@ tr.sorter-header th:not(.no-sort).descending:after {
 	display: flex;
 	justify-content: space-between;
 }
+.windowBG { background: var(--window-bg);}
 
 
 :root {

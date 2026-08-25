@@ -183,8 +183,8 @@
 	font-weight: 900;
 }
 .LShighlight {
-	background: var(--bg-medium);
-    color: var(--white);
+	background: var(--bg-light);
+    color: var(--text);
 }
 #LowStockAlarmsList img {
     height: 25px;

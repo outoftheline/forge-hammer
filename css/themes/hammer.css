@@ -8,8 +8,8 @@
 	--text: #ffe7ba;
 	--text-link: #ffB539;
 	--text-highlight: #ffB539;
-	--text-medium: #93795D;
-	--border-medium: #7b5730;
+	--text-medium: #a78a6c;
+	--border-medium: #7c6144;
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
 	--text-darker: #201a18;
@@ -25,7 +25,7 @@
 	--text-tab: #9c9c9c;
 	
 	--bg-light: #F9EBC6;
-	--bg-medium: #b3a582;
+	--bg-medium: #635b49;
 	--bg-dark: #201a18;
 	--bg-darkest: #1a1512;
 
@@ -49,8 +49,8 @@
 	--text-btn: #f3D6A0;
 	--btn-bg: linear-gradient(to bottom, #a75920, #773714);
 	--btn-bg-disabled: linear-gradient(to bottom, #444444 1%,#2c2c2c 30%,#2d2d2d 99%);
-	--btn-bg-active: linear-gradient(to bottom, #df9a34 1%,#ba6320,#924715);
-	--btn-bg-onclick: linear-gradient(to bottom, #df9a34 1%,#ba6320,#673213);
+	--btn-bg-active: linear-gradient(to bottom, #c76f2c,#924715);
+	--btn-bg-onclick: linear-gradient(to bottom, #ce7129,#813e17);
 	--btn-bg-green: linear-gradient(to bottom, #469e2b, #1f6517);
 	--btn-border: 1px solid #281207;
 	--btn-border-active-color: #281207;
