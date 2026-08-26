@@ -1005,8 +1005,13 @@ let HTML = {
 	},
 
 
-	ExportTable: (Table, Format, FileName) => {
+	ExportTable: (Table, Format, FileName, VisibleOnly = false) => {
 		if (!Table || Table.length === 0) return;
+
+		const IsHidden = (element) => {
+			let view = element.ownerDocument ? element.ownerDocument.defaultView : null;
+			return view ? view.getComputedStyle(element).display === 'none' : false;
+		};
 
 		$(Table).each(function () {
 			let ColumnNames = [];
@@ -1017,7 +1022,7 @@ let HTML = {
 			}
 			
 			$(Table).find(findBy).each(function () {
-				if($(this)[0].classList.contains("buildingvalue")){
+				if (VisibleOnly ? IsHidden(this) : $(this)[0].classList.contains("buildingvalue")){
 					index++;
 					return;
 				}
@@ -1043,6 +1048,8 @@ let HTML = {
 
 			let DataRows = [];
 			$(Table).find('tr').each(function () {
+				if (VisibleOnly && IsHidden(this)) return;
+
 				let CurrentRow = {};
 				let ColumnID = 0;
 				$(this).find('td').each(function () {

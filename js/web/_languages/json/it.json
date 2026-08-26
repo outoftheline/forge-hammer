@@ -60,7 +60,15 @@
   "Boxes.Alerts.Time.4h": "4h",
   "Boxes.Alerts.Time.5h": "5h",
   "Boxes.Alerts.Time.5m": "5m",
+  "Boxes.Alerts.Time.7d": {
+    "s": "7d ",
+    "r": "7d"
+  },
   "Boxes.Alerts.Time.8h": "8h",
+  "Boxes.Alerts.Title": {
+    "s": "Notifiche",
+    "r": "Notifications"
+  },
   "Boxes.AllyList.All": "Tutte le rarità",
   "Boxes.AllyList.Ally": "Alleato",
   "Boxes.AllyList.Boosts": "Bonus",
@@ -144,17 +152,41 @@
   "Boxes.BlueGalaxy.OlderGoodsValue": "Valore di valutazione di 1 bene da età precedenti (in FP)",
   "Boxes.BlueGalaxy.Title": "Helper Blue Galaxy",
   "Boxes.BlueGalaxy.TTGoodsValue": "Questo valore è usato per valutare la produzione di beni delle costruzioni. Quanti PF sono una buona produzione per te?",
+  "Boxes.BlueGalaxy.ValueRating": {
+    "s": "1 FP =  ",
+    "r": "1 FP = "
+  },
   "Boxes.BonusService.aid_goods": "Quantità di assisti rimasti dalla Torre della Tregua",
   "Boxes.BonusService.diplomatic_gifts": "Numero di tentativi rimasti per i regali diplomatici.",
   "Boxes.BonusService.donequests": "Mostra le missioni finite",
   "Boxes.BonusService.first_strike": "Numero di tentativi rimasti per il primo colpo.",
   "Boxes.BonusService.missile_launch": "Numero di tentativi per il lancio di missili rimasti.",
+  "Boxes.BonusService.quest_sound": {
+    "s": "Completamento missione",
+    "r": "Finished Quest"
+  },
   "Boxes.BonusService.spoils_of_war": "Numero di tentativi per Bottino di guerra rimasto.",
   "Boxes.BoostList.guild_raids_action_points_collection": "Punti d'azione",
   "Boxes.BoostList.guild_raids_coins_production": "Boost monete",
+  "Boxes.BoostList.guild_raids_coins_start": {
+    "s": "Start coins",
+    "r": "Start coins"
+  },
   "Boxes.BoostList.guild_raids_goods_start": "Inizia beni",
+  "Boxes.BoostList.guild_raids_supplies_production": {
+    "s": "Supply boosts",
+    "r": "Supply boosts"
+  },
   "Boxes.BoostList.guild_raids_supplies_start": "Inizia le forniture",
   "Boxes.BoostList.guild_raids_units_start": "Start unità",
+  "Boxes.BoostList.open": {
+    "s": "Boost Sources",
+    "r": "Boost Sources"
+  },
+  "Boxes.BoostList.Title": {
+    "s": "Boost Sources",
+    "r": "Boost Sources"
+  },
   "Boxes.Calculator.ActiveRecurringQuest": "Missione ricorrente attiva:",
   "Boxes.Calculator.ArkBonus": "Bonus Arc attuale",
   "Boxes.Calculator.AvailableFP": "PF disponibili in magazzino",
@@ -164,11 +196,19 @@
   "Boxes.Calculator.ForderBonusPerConversation": "Risparmia il fattore di donazione per conversazione",
   "Boxes.Calculator.FP": "PF",
   "Boxes.Calculator.FriendlyInvestment": "Investimento:",
+  "Boxes.Calculator.GBList": {
+    "s": "Lista GB ",
+    "r": "GB List"
+  },
   "Boxes.Calculator.LevelWarning": "ATTENZIONE! Il GE avanzerà di livello!",
   "Boxes.Calculator.LGNotConnected": "L'edificio non è collegato ad una strada.",
   "Boxes.Calculator.LGNotOpen": "Il livello successivo è attualmente BLOCCATO.",
   "Boxes.Calculator.MaxLevel": "Livello massimo",
   "Boxes.Calculator.Meds": "Medaglie",
+  "Boxes.Calculator.PlayInfoSound": {
+    "s": "Riproduci l'audio quando è possibile occupare i posti in sicurezza",
+    "r": "Play sound when spots can be taken safely"
+  },
   "Boxes.Calculator.Profit": "Profitto",
   "Boxes.Calculator.Settings.newValue": "Nuovo valore",
   "Boxes.Calculator.Settings.Save": "Salva",
@@ -346,6 +386,10 @@
   "Boxes.CombatCalculator.EfficiencyTT": "Punteggio di efficienza in base alle impostazioni nel modulo di efficienza",
   "Boxes.CombatCalculator.Name": "Nome Edificio",
   "Boxes.CombatCalculator.RoadRequired": "Necessita strada",
+  "Boxes.CombatCalculator.Size": {
+    "s": "Dimensioni",
+    "r": "Size"
+  },
   "Boxes.CombatCalculator.StreetRequired": "Necessita di una strada a due corsie",
   "Boxes.CombatCalculator.Title": "Boost Inventario",
   "Boxes.CombatCalculator.Values": "Boost Valori",
@@ -372,6 +416,10 @@
   "Boxes.Discord.DeleteEntry": "Elimina",
   "Boxes.Discord.EditEntry": "Modifica",
   "Boxes.Discord.Event": "Evento",
+  "Boxes.Discord.GBGVariables": {
+    "s": "Attenzione: i punti vittoria, le gilde vicine e l'attrito possono cambiare prima che la provincia sia effettivamente disponibile. Puoi usare questi segnaposto per le province di GBG nel tuo modello:",
+    "r": "Attention: Victory points, neighboring guilds and attrition can change before the province is actually available. You can use these placeholders for GBG provinces in your template:"
+  },
   "Boxes.Discord.Message": "Messaggio",
   "Boxes.Discord.Name": "Nome",
   "Boxes.Discord.Save": "Salva",
@@ -414,12 +462,20 @@
   "Boxes.FPCollector.forge_bowl_event": "Evento Forge Bowl",
   "Boxes.FPCollector.FP": "Punti Forge",
   "Boxes.FPCollector.grand_prize": "Gran Premio",
+  "Boxes.FPCollector.guild_expedition_reward_notification": {
+    "s": "Spedizioni Gilda",
+    "r": "Guild Expedition"
+  },
   "Boxes.FPCollector.guild_raids": "Incursione Quantistica",
   "Boxes.FPCollector.guildExpedition": "GE Reliquia",
   "Boxes.FPCollector.Guildexpedition": "Spedizione di Gilda",
   "Boxes.FPCollector.Guildfights": "Campi di Battaglia",
   "Boxes.FPCollector.halloween_event": "Evento di Halloween",
   "Boxes.FPCollector.hero_event": "Evento di amicizia",
+  "Boxes.FPCollector.hidden_reward": {
+    "s": "Ricompensa Nascosta",
+    "r": "Hidden Reward"
+  },
   "Boxes.FPCollector.hiddenReward": "Ricompensa Nascosta",
   "Boxes.FPCollector.league_reward": "Premio Lega",
   "Boxes.FPCollector.may_day_event": "Evento del Primo Maggio",
@@ -435,6 +491,10 @@
   "Boxes.FPCollector.spoilsOfWar": "Ricompense Castello Himeji",
   "Boxes.FPCollector.spring_event": "Evento Primavera",
   "Boxes.FPCollector.st_patricks_event": "Evento del giorno di San Patrizio",
+  "Boxes.FPCollector.st_patricks_event_task_reward": {
+    "s": "Evento Giornaliero San Patrizio",
+    "r": "St. Patrick's Day Event Task"
+  },
   "Boxes.FPCollector.summer_event": "Evento Estivo",
   "Boxes.FPCollector.summerEvent": "Evento estivo",
   "Boxes.FPCollector.task_reward": "Ricompensa dell'attività",
@@ -476,6 +536,10 @@
   "Boxes.GBGActionLog.ActorName": {
     "s": "Actor name",
     "r": "Actor name"
+  },
+  "Boxes.GBGActionLog.ActorType": {
+    "s": "Actor type",
+    "r": "Actor type"
   },
   "Boxes.GBGActionLog.ActorType.guild": {
     "s": "Gilda",
@@ -537,6 +601,10 @@
     "s": "Volcano Archipelago",
     "r": "Volcano Archipelago"
   },
+  "Boxes.GBGActionLog.Metric": {
+    "s": "Mostra",
+    "r": "Show"
+  },
   "Boxes.GBGActionLog.MetricCount": {
     "s": "Action count",
     "r": "Action count"
@@ -557,6 +625,10 @@
     "s": "The Batches tab is limited to a 2-week range. Adjusted to:",
     "r": "The Batches tab is limited to a 2-week range. Adjusted to:"
   },
+  "Boxes.GBGActionLog.RangeCapDetails": {
+    "s": "La scheda Dettagli è limitata a un intervallo di 2 settimane. Modificato a:",
+    "r": "The Details tab is limited to a 2-week range. Adjusted to:"
+  },
   "Boxes.GBGActionLog.RangeCapReport": {
     "s": "The Daily Report is limited to a 1-month range. Adjusted to:",
     "r": "The Daily Report is limited to a 1-month range. Adjusted to:"
@@ -576,6 +648,46 @@
   "Boxes.GBGActionLog.ReportEmpty": {
     "s": "Nessuna azione del giocatore corrispondente per le date e le azioni selezionate.",
     "r": "No matching player actions for the selected dates and actions."
+  },
+  "Boxes.GBGActionLog.Reset": {
+    "s": "Reset filtri",
+    "r": "Reset filters"
+  },
+  "Boxes.GBGActionLog.RowCount": {
+    "s": "file",
+    "r": "Rows"
+  },
+  "Boxes.GBGActionLog.Sector": {
+    "s": "Settori",
+    "r": "Sector"
+  },
+  "Boxes.GBGActionLog.TabActivity": {
+    "s": "Attività per ora",
+    "r": "Activity by Hour"
+  },
+  "Boxes.GBGActionLog.TabBatches": {
+    "s": "Batches",
+    "r": "Batches"
+  },
+  "Boxes.GBGActionLog.TabDetails": {
+    "s": "Dettagli",
+    "r": "Details"
+  },
+  "Boxes.GBGActionLog.TabPlayerDailyReport": {
+    "s": "Rapporto giornaliero Giocatore",
+    "r": "Player Daily Report"
+  },
+  "Boxes.GBGActionLog.title": {
+    "s": "Log Azioni GBG",
+    "r": "GBG Action Log"
+  },
+  "Boxes.GBGActionLog.To": {
+    "s": "To",
+    "r": "To"
+  },
+  "Boxes.GBGActionLog.Toast.CurrLoadTime": {
+    "s": "Current load end time",
+    "r": "Current load end time"
   },
   "Boxes.GBGBuildings.absoluteCosts": "Costi Assoluti",
   "Boxes.GBGBuildings.Costs": "Costo",
@@ -647,6 +759,58 @@
   "Boxes.GreatBuildings.TTGoodCostsColumn": "Elenca i costi in PF necessari a comprare i beni (Si applica solo ai grandi edifici che non hai ancora costruito)",
   "Boxes.GreatBuildings.TTGoodsValue": "Questo valore viene utilizzato per classificare gli edifici che producono beni. Quanti FP vale per te uno?",
   "Boxes.GreatBuildings.TTRewardPerDay": "Opzionale: Quanti PF raccogli al giorno? Questa informazione verrà utilizzata per calcolare la redditività di futuri livelli di Arc. Per avere un suggerimento vai su Municipio&gt; Novità&gt; Cronologia Eventi e scorri tutte le pagine",
+  "Boxes.GreatBuildingsProgress.ContributorsSince": {
+    "s": "Contributor changes since __date__",
+    "r": "Contributor changes since __date__"
+  },
+  "Boxes.GreatBuildingsProgress.DeltaFP": {
+    "s": "FP aggiunto",
+    "r": "FP added"
+  },
+  "Boxes.GreatBuildingsProgress.Donators": {
+    "s": "Donatori",
+    "r": "Donators"
+  },
+  "Boxes.GreatBuildingsProgress.FirstVisit": {
+    "s": "primo carico",
+    "r": "first load"
+  },
+  "Boxes.GreatBuildingsProgress.MyFP": {
+    "s": "Mio FP",
+    "r": "My FP"
+  },
+  "Boxes.GreatBuildingsProgress.NewFP": {
+    "s": "Attuale FP",
+    "r": "Current FP"
+  },
+  "Boxes.GreatBuildingsProgress.NoContributors": {
+    "s": "Open this GB in-game to load its contributors.",
+    "r": "Open this GB in-game to load its contributors."
+  },
+  "Boxes.GreatBuildingsProgress.PrevFP": {
+    "s": "Precedenti FP",
+    "r": "Previous FP"
+  },
+  "Boxes.GreatBuildingsProgress.Progress": {
+    "s": "Progresso",
+    "r": "Progress"
+  },
+  "Boxes.GreatBuildingsProgress.SettingsShowIcon": {
+    "s": "Mostra l'icona di avanzamento sullo schermo",
+    "r": "Show the on-screen progress icon"
+  },
+  "Boxes.GreatBuildingsProgress.SubTitle": {
+    "s": "L'edificio è cambiato molto dalla tua ultima visita.",
+    "r": "Great Building changes since your last visit"
+  },
+  "Boxes.GreatBuildingsProgress.Title": {
+    "s": "GB Progresso",
+    "r": "GB Progress"
+  },
+  "Boxes.GuildFights.AlertOffset": {
+    "s": "Mostra la notifica x secondi prima dell'apertura della provincia",
+    "r": "Show notification x amount of seconds before the province opens"
+  },
   "Boxes.GuildFights.Attrition": "Attrito",
   "Boxes.GuildFights.Copy": "Copia",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "I tempi di attacco per la provincia selezionata sono stati copiati.",
@@ -656,6 +820,18 @@
   "Boxes.GuildFights.DeleteAlert": "Elimina allarme",
   "Boxes.GuildFights.DeleteMessage.Desc": "L'allarme per la provincia __provinceName__ è stato cancellato!",
   "Boxes.GuildFights.DeleteMessage.Title": "Eliminato!",
+  "Boxes.GuildFights.DiscordSend": {
+    "s": "Invia a Discord",
+    "r": "Send to Discord"
+  },
+  "Boxes.GuildFights.DiscordSendCustom": {
+    "s": "Send to Discord with template",
+    "r": "Send to Discord with template"
+  },
+  "Boxes.GuildFights.DiscordSendSelection": {
+    "s": "Send selected provinces to Discord",
+    "r": "Send selected provinces to Discord"
+  },
   "Boxes.GuildFights.Fights": "Combattimenti",
   "Boxes.GuildFights.LastSnapshot": " - ultimo aggiornamento __time__ fa",
   "Boxes.GuildFights.Negotiations": "Negoziazioni",
@@ -681,6 +857,18 @@
   "Boxes.GuildFights.ShowRoundSelector": "mostra il selettore di turni GBG",
   "Boxes.GuildFights.SnapshotLog": "Registro delle istantanee",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Disclaimer: Questi dati si basano sui dati raccolti. I numeri mostrati qui probabilmente non sono precisi al 100%. Dovresti aprire l'elenco a mezzanotte perché siano corretti.",
+  "Boxes.GuildFights.Stats.ForecastDesc": {
+    "s": "Proietta i punti vittoria di ogni gilda fino alla fine della stagione, un punto al giorno all'ora di fine stagione, in base ai punti guadagnati nelle ultime 24 ore circa.",
+    "r": "Projects every guild's victory points to the end of the season, one point per day at the hour the season ends, based on the points they gained over roughly the last 24 hours."
+  },
+  "Boxes.GuildFights.Stats.ForecastNoData": {
+    "s": "Non sono ancora stati raccolti dati sufficienti. Per le previsioni sono necessarie osservazioni che coprano almeno le 24 ore di questa stagione.",
+    "r": "Not enough data collected yet. The forecast needs snapshots spanning at least 24 hours of this season."
+  },
+  "Boxes.GuildFights.Stats.TabGuilds": {
+    "s": "Victory Points",
+    "r": "Victory Points"
+  },
   "Boxes.GuildFights.Switch": "Cambia vista",
   "Boxes.GuildFights.Time": "Termina",
   "Boxes.GuildFights.Title": "Panoramica dei campi di battaglia",
@@ -1165,6 +1353,38 @@
   "Boxes.ProductionsRating.Score": "Punteggio",
   "Boxes.ProductionsRating.Settings": "Impostazioni",
   "Boxes.ProductionsRating.Title": "Valutazione dell'efficienza degli edifici",
+  "Boxes.PvPArena.Tabs.AllFights": {
+    "s": "TUTTO",
+    "r": "All"
+  },
+  "Boxes.PvPArena.Tabs.AttackFights": {
+    "s": "Attacchi",
+    "r": "Attack"
+  },
+  "Boxes.PvPArena.Tabs.DefenseFights": {
+    "s": "Difesa",
+    "r": "Defense"
+  },
+  "Boxes.PvPArena.Tabs.LostAttackFights": {
+    "s": "Attacchi persi",
+    "r": "lost Attacks"
+  },
+  "Boxes.PvPArena.Type": {
+    "s": "Tipo",
+    "r": "Type"
+  },
+  "Boxes.QIActions.FullAt": {
+    "s": "Bar full:",
+    "r": "Bar full:"
+  },
+  "Boxes.QIActions.Rate": {
+    "s": "Gain per hour:",
+    "r": "Gain per hour:"
+  },
+  "Boxes.QIActions.Warning": {
+    "s": "Visit the settlement to correct the value",
+    "r": "Visit the settlement to correct the value"
+  },
   "Boxes.RecurringQuests.showCounter": "Visualizza il contatore delle missioni aperte nel menu",
   "Boxes.RecurringQuests.Table.Quest": "Nome della missione",
   "Boxes.RecurringQuests.Title": "Missioni ricorrenti",
@@ -1241,6 +1461,74 @@
   "Boxes.Technologies.NoTechs": "Hai raggiunto la fine di questa era",
   "Boxes.Technologies.Resource": "Risorsa",
   "Boxes.Technologies.Title": "Costo della ricerca",
+  "Boxes.Translation.ClearStorage": {
+    "s": "Clear Storage",
+    "r": "Clear Storage"
+  },
+  "Boxes.Translation.ComparisonLanguage": {
+    "s": "Lingua di confronto (vedi tooltip)",
+    "r": "Comparison Language (see tooltip)"
+  },
+  "Boxes.Translation.EditValuePrompt": {
+    "s": "Il nuovo valore è inferiore a quello originale: vuoi davvero salvare?",
+    "r": "New value is shorter than the original - sure, you want to save?"
+  },
+  "Boxes.Translation.Reference": {
+    "s": "Reference",
+    "r": "Reference"
+  },
+  "Boxes.Translation.Reference.Always": {
+    "s": "Copiare sempre il testo di riferimento",
+    "r": "Always copy reference text"
+  },
+  "Boxes.Translation.Reference.Conditional": {
+    "s": "Copia condizionalmente il testo di riferimento",
+    "r": "Conditionally copy reference text"
+  },
+  "Boxes.Translation.Reference.No": {
+    "s": "Non copiare mai il testo di riferimento",
+    "r": "Never copy reference text"
+  },
+  "Boxes.Translation.Reference.Once": {
+    "s": "Copia il testo di riferimento una volta",
+    "r": "Copy reference text once"
+  },
+  "Boxes.Translation.ReferenceLanguage": {
+    "s": "Lingua di riferimento",
+    "r": "Reference Language"
+  },
+  "Boxes.Translation.SearchPlaceholder": {
+    "s": "Cerca...",
+    "r": "Search..."
+  },
+  "Boxes.Translation.SelectLanguage": {
+    "s": "Seleziona Lingua",
+    "r": "Select Language"
+  },
+  "Boxes.Translation.ShowOnlyMissing": {
+    "s": "Mostra elementi mancanti",
+    "r": "Show Only Missing"
+  },
+  "Boxes.Translation.ShowOnlyUpdated": {
+    "s": "Mostra gli aggiornamenti",
+    "r": "Show Only Updated"
+  },
+  "Boxes.Translation.Target": {
+    "s": "Testo",
+    "r": "Text"
+  },
+  "Boxes.Translation.TargetLanguage": {
+    "s": "Target Language",
+    "r": "Target Language"
+  },
+  "Boxes.Translation.TempStorage": {
+    "s": "Temp Storage",
+    "r": "Temp Storage"
+  },
+  "Boxes.Translation.Title": {
+    "s": "Traduzioni",
+    "r": "Translations"
+  },
   "Boxes.Treasury.Action": "Messaggio",
   "Boxes.Treasury.Amount": "Quantità",
   "Boxes.Treasury.DateTime": "Data/Ora",
@@ -1269,9 +1557,21 @@
   "Boxes.Units.NotFilled": "Non riempito",
   "Boxes.Units.PictogramScalingDesc": "Scegli un valore compreso tra 1 e 4!\nScegli un valore più piccolo per più dati\no uno più grande per una migliore visualizzazione.",
   "Boxes.Units.PictogramScalingTitle": "Dimensione dell'immagine",
+  "Boxes.Units.pool": {
+    "s": "Unit's-pool",
+    "r": "Unit's-pool"
+  },
   "Boxes.Units.Proportionally": "Proporzionalmente",
   "Boxes.Units.Quantity": "Quantità",
+  "Boxes.Units.random": {
+    "s": "random",
+    "r": "random"
+  },
   "Boxes.Units.ReadyToLoot": "Pronto a saccheggiare!",
+  "Boxes.Units.rogue": {
+    "s": "furfante",
+    "r": "Rogue"
+  },
   "Boxes.Units.short_ranged": "Unità a distanza",
   "Boxes.Units.Status": "Stato",
   "Boxes.Units.Title": "Panoramica delle unità militari",
@@ -1284,30 +1584,262 @@
   "Date": "DD-MMM-YY",
   "DateShort": "GG-MMM",
   "DateTime": "D / M / YY h: mm: ss a",
+  "DBCreationWarning.CloseOverlay": {
+    "s": "Close",
+    "r": "Close"
+  },
+  "DBCreationWarning.ExplanationLine1": {
+    "s": "Il database è stato ricostruito da zero oppure molti edifici hanno ricevuto un aggiornamento. Forge Hammer si avvierà al termine di questo processo.",
+    "r": "The database is built anew or a lot of buildings received an update. Forge Hammer will load once this process is finished."
+  },
+  "DBCreationWarning.ExplanationLine2": {
+    "s": "Questa finestra a comparsa si chiuderà automaticamente. Puoi anche chiuderla manualmente.",
+    "r": "This overlay will close automatically. You can also close it yourself."
+  },
+  "DBCreationWarning.Title": {
+    "s": "Creating entries for the building database",
+    "r": "Creating entries for the building database"
+  },
   "Eras.0": "Nessuna età",
+  "Eras.0.short": {
+    "s": "Nessuna età",
+    "r": "No age"
+  },
   "Eras.1": "Età della pietra",
+  "Eras.1.short": {
+    "s": "EP",
+    "r": "SA"
+  },
   "Eras.10": "Età Moderna",
+  "Eras.10.short": {
+    "s": "EM",
+    "r": "ME"
+  },
   "Eras.11": "Età Postmoderna",
+  "Eras.11.short": {
+    "s": "EPM",
+    "r": "PME"
+  },
   "Eras.12": "Età Contemporanea",
+  "Eras.12.short": {
+    "s": "EC",
+    "r": "CE"
+  },
   "Eras.13": "Domani",
+  "Eras.13.short": {
+    "s": "ED",
+    "r": "TE"
+  },
   "Eras.14": "Il Futuro",
+  "Eras.14.short": {
+    "s": "EF",
+    "r": "FE"
+  },
   "Eras.15": "Futuro Artico",
+  "Eras.15.short": {
+    "s": "FA",
+    "r": "AF"
+  },
   "Eras.16": "Futuro Oceanico",
+  "Eras.16.short": {
+    "s": "FO",
+    "r": "OF"
+  },
   "Eras.17": "Futuro Virtuale",
+  "Eras.17.short": {
+    "s": "FV",
+    "r": "VF"
+  },
   "Eras.18": "Era spaziale di Marte",
+  "Eras.18.short": {
+    "s": "ESM",
+    "r": "SAM"
+  },
   "Eras.19": "Era Spaziale Fascia degli Asteroidi",
+  "Eras.19.short": {
+    "s": "ESFA",
+    "r": "SAAB"
+  },
   "Eras.2": "Età del bronzo",
+  "Eras.2.short": {
+    "s": "EB",
+    "r": "BA"
+  },
   "Eras.20": "Era Spaziale Venere",
+  "Eras.20.short": {
+    "s": "ESV",
+    "r": "SAV"
+  },
   "Eras.21": "Era Spaziale Satellite di Giove",
+  "Eras.21.short": {
+    "s": "ESSG",
+    "r": "SAJM"
+  },
+  "Eras.22": {
+    "s": "Era Spaziale Titano",
+    "r": "Space Age Titan"
+  },
+  "Eras.22.short": {
+    "s": "EST",
+    "r": "SAT"
+  },
+  "Eras.23": {
+    "s": "Era Spaziale Hub",
+    "r": "Space Age Space Hub"
+  },
+  "Eras.23.short": {
+    "s": "ESH",
+    "r": "SASH"
+  },
+  "Eras.24": {
+    "s": "Stellar Age Discovery",
+    "r": "Stellar Age Discovery"
+  },
   "Eras.3": "Età del ferro",
+  "Eras.3.short": {
+    "s": "EF",
+    "r": "IA"
+  },
   "Eras.4": "Alto Medioevo",
+  "Eras.4.short": {
+    "s": "AM",
+    "r": "EMA"
+  },
   "Eras.5": "Pieno Medioevo",
+  "Eras.5.short": {
+    "s": "PM",
+    "r": "HMA"
+  },
   "Eras.6": "Basso Medioevo",
+  "Eras.6.short": {
+    "s": "BM",
+    "r": "LMA"
+  },
   "Eras.7": "Età coloniale",
+  "Eras.7.short": {
+    "s": "EC",
+    "r": "CA"
+  },
   "Eras.8": "Età Industriale",
+  "Eras.8.short": {
+    "s": "EIn",
+    "r": "InA"
+  },
   "Eras.9": "Età Progressista",
+  "Eras.9.short": {
+    "s": "EP",
+    "r": "PE"
+  },
   "Eras.GvGAllAge": "Tutte le Ere",
+  "Eras.undefined": {
+    "s": "No age",
+    "r": "No age"
+  },
+  "Eras.undefined.short": {
+    "s": "No age",
+    "r": "No age"
+  },
+  "General.AttAttacker": {
+    "s": "Attacco Rosso",
+    "r": "Red Attack"
+  },
+  "General.AttDefender": {
+    "s": "Difesa Rossa",
+    "r": "Red Defense"
+  },
+  "General.Battle": {
+    "s": "Battaglie",
+    "r": "Battle"
+  },
+  "General.Buildings": {
+    "s": "Edifici",
+    "r": "Buildings"
+  },
+  "General.Cancel": {
+    "s": "Cancel",
+    "r": "Cancel"
+  },
+  "General.Choose": {
+    "s": "Seleziona",
+    "r": "Please choose"
+  },
+  "General.City": {
+    "s": "Città",
+    "r": "City"
+  },
+  "General.Coins": {
+    "s": "Monete",
+    "r": "Coins"
+  },
+  "General.Date": {
+    "s": "Data",
+    "r": "Date"
+  },
+  "General.DefAttacker": {
+    "s": "Attacco Blu",
+    "r": "Blue Attack"
+  },
+  "General.DefDefender": {
+    "s": "Defensa Blu",
+    "r": "Blue Defense"
+  },
+  "General.Disclaimer": {
+    "s": "Disclaimer",
+    "r": "Disclaimer"
+  },
+  "General.Error": {
+    "s": "Errore",
+    "r": "Error"
+  },
+  "General.Everything": {
+    "s": "Everything",
+    "r": "Everything"
+  },
+  "General.ForgePoints": {
+    "s": "Forge Points",
+    "r": "Forge Points"
+  },
+  "General.GB": {
+    "s": "Grande edificio",
+    "r": "Great Building"
+  },
+  "General.Good": {
+    "s": "Bene",
+    "r": "Good"
+  },
+  "General.Goods": {
+    "s": "Beni",
+    "r": "Goods"
+  },
   "General.Guild": "Gilda",
+  "General.Inventory": {
+    "s": "Inventario",
+    "r": "Inventory"
+  },
+  "General.Level": {
+    "s": "Livello",
+    "r": "Level"
+  },
+  "General.Medals": {
+    "s": "Medaglie",
+    "r": "Medals"
+  },
+  "General.Open": {
+    "s": "Apri",
+    "r": "Open"
+  },
+  "General.PopulationNet": {
+    "s": "Popolazione disponibile",
+    "r": "Available population"
+  },
+  "General.PopulationProvided": {
+    "s": "Popolazione totale",
+    "r": "Total population"
+  },
+  "General.PopulationRequired": {
+    "s": "Popolazione richiesta",
+    "r": "Required population"
+  },
   "Global.BoxTitle": "Forge Hammer",
   "GvG.Independences.Tooltip": "Importo dei settori concessi dall'ultimo calcolo.",
   "GvG.Independences.Tooltip.Warning": "Può essere impreciso, se si gioca su più dispositivi desktop.",
@@ -1499,6 +2031,10 @@
   "Settings.SelectedMenu.Desc": "Scegli il tuo menu preferito dall'elenco a discesa (il gioco si ricaricherà automaticamente)",
   "Settings.SelectedMenu.Title": "Cambia Menu",
   "Settings.Show2kQuestMark.Desc": "Mostra un piccolo distintivo con un contatore di quante missioni puoi ancora rifiutare.",
+  "Settings.Show2kQuestMark.Title": {
+    "s": "2000 Quest Mark",
+    "r": "2000 Quest Mark"
+  },
   "Settings.ShowAztecHelper.Desc": "La scatola \"Aztec Helper\" dovrebbe essere aperta all'avvio di un minigioco azteco?",
   "Settings.ShowAztecHelper.Title": "Aiutante azteco",
   "Settings.ShowBlueGalaxyHelper.Desc": "Mostra uno strumento che suggerisce gli edifici da collezionare dopo aver raccolto la Galassia blu",
@@ -1535,5 +2071,149 @@
   "Settings.Version.PlayerId": "ID Giocatore:",
   "Settings.Version.Title": "Versione",
   "Settings.Version.World": "Mondo:",
-  "StrategyPoints.BuyableFP": "Numero di punti forge che possono essere acquistati con le monete."
+  "StrategyPoints.BuyableFP": "Numero di punti forge che possono essere acquistati con le monete.",
+  "XPlan.Modal.HowTo.SingleSelect": {
+    "s": "Seleziona un edificio cliccandoci sopra. Spostalo trascinandolo. Eliminalo premendo CANC, Backspace o R. Salvalo premendo la barra spaziatrice o trascinandolo nella barra laterale.",
+    "r": "Select a building by clicking it. Move it by dragging. Delete it with DEL, backspace or R. Store it with the space bar or by dragging it to the sidebar."
+  },
+  "XPlan.Modal.HowTo.Title": {
+    "s": "How to use this planner",
+    "r": "How to use this planner"
+  },
+  "XPlan.Modal.IncomingData": {
+    "s": "Dati in entrata",
+    "r": "Incoming Data"
+  },
+  "XPlan.Modal.IncomingDataText": {
+    "s": "Desideri iniziare a lavorare con i dati appena inviati? Il progetto attualmente salvato non verrà eliminato.",
+    "r": "Do you want to start working with the data you just sent? Your currently saved plan will not be deleted."
+  },
+  "XPlan.Modal.NewPlanNamePlaceholder": {
+    "s": "Nuovo nome del progetto",
+    "r": "New plan name"
+  },
+  "XPlan.Modal.SaveAsNewPlan": {
+    "s": "Salva come nuovo progetto",
+    "r": "Save as New Plan"
+  },
+  "XPlan.Modal.SavedPlans": {
+    "s": "Progetti salvati",
+    "r": "Saved Plans"
+  },
+  "XPlan.Plan.DefaultName": {
+    "s": "Nuovo Progetto",
+    "r": "New Plan"
+  },
+  "XPlan.Plan.FallbackName": {
+    "s": "Progetto",
+    "r": "Plan"
+  },
+  "XPlan.Plan.ImportedName": {
+    "s": "Importa Progetto",
+    "r": "Imported Plan"
+  },
+  "XPlan.PlanList.DeletePlan": {
+    "s": "Cancella progetto",
+    "r": "Delete plan"
+  },
+  "XPlan.PlanList.Empty": {
+    "s": "Nessun progetto salvato al momento.",
+    "r": "No saved plans yet."
+  },
+  "XPlan.PlanList.LoadFailed": {
+    "s": "Impossibile caricare i progetti salvati.",
+    "r": "Failed to load saved plans."
+  },
+  "XPlan.PlanList.LoadPlan": {
+    "s": "Load progetto",
+    "r": "Load plan"
+  },
+  "XPlan.PlanList.RenamePlan": {
+    "s": "Rinomina progetto",
+    "r": "Rename plan"
+  },
+  "XPlan.PlanList.UnnamedPlan": {
+    "s": "Progetto senza nome",
+    "r": "Unnamed plan"
+  },
+  "XPlan.Population.Label": {
+    "s": "Popolazione:",
+    "r": "Population:"
+  },
+  "XPlan.Population.NegativeWarning": {
+    "s": "Attenzione: la popolazione è negativa — questa configurazione necessita di più abitazioni.",
+    "r": "Warning: population is negative — this layout needs more residences."
+  },
+  "XPlan.Save.Failed": {
+    "s": "Salvataggio non riuscito",
+    "r": "Failed to save"
+  },
+  "XPlan.Save.Saved": {
+    "s": "Salvato",
+    "r": "Saved"
+  },
+  "XPlan.Save.Saving": {
+    "s": "Salva…",
+    "r": "Saving…"
+  },
+  "XPlan.Search.Placeholder": {
+    "s": "Aggiungi un nuovo edificio…",
+    "r": "Add a new building…"
+  },
+  "XPlan.Sidebar.ClickToRestore": {
+    "s": "Clic per ripristinare",
+    "r": "Click to restore"
+  },
+  "XPlan.Sidebar.Deleted": {
+    "s": "Cancella",
+    "r": "Deleted"
+  },
+  "XPlan.Sidebar.Restore": {
+    "s": "Ripristina",
+    "r": "Restore"
+  },
+  "XPlan.Sort.WidthDesc": {
+    "s": "y ↓",
+    "r": "y ↓"
+  },
+  "XPlan.Street.All": {
+    "s": "Strade",
+    "r": "Streets"
+  },
+  "XPlan.Street.With": {
+    "s": "Con strada",
+    "r": "With street"
+  },
+  "XPlan.Street.Without": {
+    "s": "Nessuna strada",
+    "r": "No streets"
+  },
+  "XPlan.SubmitWindow.Text": {
+    "s": "Si prega di utilizzare la funzione \"Invia al pianificatore\" nella Panoramica della città.",
+    "r": "Please use the \"Send to planner\" function in the City Overview."
+  },
+  "XPlan.SubmitWindow.Title": {
+    "s": "Forge Hammer - Urbanista",
+    "r": "Forge Hammer - City Planner"
+  },
+  "XPlan.Title": {
+    "s": "Urbanista",
+    "r": "City Planner"
+  },
+  "XPlan.Type.All": {
+    "s": "Dimensioni",
+    "r": "Types"
+  },
+  "XPlan.Type.Military": {
+    "s": "Militare",
+    "r": "Military"
+  },
+  "XPlan.Type.Production": {
+    "s": "Produzione",
+    "r": "Production"
+  },
+  "XPlan.Type.Residential": {
+    "s": "Residenziale",
+    "r": "Residential"
+  }
 }

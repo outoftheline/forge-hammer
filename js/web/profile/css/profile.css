@@ -451,7 +451,7 @@
 
 .playerprofile .aAtt::after {
     background: url(../../productions/images/productions.png) -311px -2px no-repeat;
-    margin-right: -15px;
+    margin-right: -19px;
     z-index: 1;
 }
 
@@ -461,7 +461,7 @@
 
 .playerprofile .dAtt::after {
     background: url(../../productions/images/productions.png) -338px -2px no-repeat;
-    margin-right: -15px;
+    margin-right: -19px;
     z-index: 1;
 }
 

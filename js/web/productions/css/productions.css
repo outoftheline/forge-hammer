@@ -153,7 +153,7 @@
 	border-left: 2px solid var(--bg-darkest);
 	border-right: 2px solid var(--bg-darkest);
 	padding: 0 10px;
-	background: var(--bg-dark);
+	background: var(--table-bg-darker);
 }
 
 #ProductionsRatingBody.showitems .items {
@@ -265,7 +265,6 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	background: var(--window-bg);
 	border-bottom: 2px solid var(--bg-darkest);
 }
 #ProductionsRatingBody .options .inventory {
@@ -273,6 +272,116 @@
 }
 #ProductionsRatingBody .ratingtable tr.settings .options .listmodifiers label {
 	padding: 4px 2px 2px;
+}
+
+#efficiencyAdvancedToggle:hover::after {
+	content: ' v';
+	display: inline;
+	color: var(--text-medium);
+	font-weight: normal;
+}
+#efficiencyAdvancedToggle .af-badge:not(:empty) {
+	display: inline-block;
+	margin-left: 5px;
+	padding: 0 5px;
+	border-radius: 8px;
+	background: var(--bg-darkest);
+	color: var(--text);
+	font-size: 90%;
+}
+#ProductionsRatingBody .advanced-filter {
+	display: none;
+}
+#ProductionsRatingBody .advanced-filter.open {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 5px 15px;
+	padding: 5px 10px;
+	background: var(--bg-dark);
+	border-bottom: 2px solid var(--bg-darkest);
+	font-weight: normal;
+}
+#ProductionsRatingBody .advanced-filter .af-footer {
+	margin-left: auto;
+}
+#ProductionsRatingBody .advanced-filter .af-group {
+	justify-content: start;
+	align-items: stretch;
+}
+#ProductionsRatingBody .advanced-filter .af-group-title {
+	align-self: center;
+}
+#ProductionsRatingBody .advanced-filter .af-dim {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+}
+#ProductionsRatingBody .advanced-filter .af-size-value {
+	width: 25px;
+}
+#ProductionsRatingBody .advanced-filter .af-op,
+#ProductionsRatingBody .advanced-filter .af-dim-op {
+	width: 35px;
+}
+#ProductionsRatingBody .advanced-filter .af-value {
+	width: 45px;
+}
+#ProductionsRatingBody .advanced-filter .af-criteria {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 5px;
+}
+#ProductionsRatingBody .advanced-filter .af-criterion {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 1px 3px 1px 1px;
+	border-radius: 3px;
+	background: var(--bg-darkest);
+	border: 1px solid var(--border-medium);
+}
+#ProductionsRatingBody .advanced-filter .af-criterion.af-stale {
+	opacity: 0.5;
+}
+#ProductionsRatingBody .advanced-filter .af-criterion .resicon,
+#ProductionsRatingBody .advanced-filter .custom-option .resicon {
+	flex: none;
+	zoom: 0.8;
+	margin: -2px 0;
+}
+#ProductionsRatingBody .advanced-filter .af-remove {
+	padding: 0 2px;
+	color: var(--text-medium);
+	font-weight: bold;
+}
+#ProductionsRatingBody .advanced-filter .af-remove:hover {
+	color: var(--danger-red);
+}
+#ProductionsRatingBody .advanced-filter .af-type-select {
+	display: inline-flex;
+	position: relative;
+	background: var(--input-bg);
+	border-radius: 2px;
+	justify-content: center;
+	text-shadow: none;
+}
+#ProductionsRatingBody .advanced-filter .af-type-select .custom-select__trigger {
+	gap: 4px;
+	width: auto;
+	min-width: 70px;
+	height: inherit;
+}
+#ProductionsRatingBody .advanced-filter .af-type-menu {
+	max-height: 260px;
+	width: 200px;
+	z-index: 2200;
+}
+#ProductionsRatingBody .advanced-filter .af-type-menu .custom-option {
+	display: flex;
+	align-items: center;
+	gap: 5px;
 }
 #ProductionsRatingBody #inventorybuildingscore {
 	width: 52px;
@@ -343,11 +452,13 @@
 	filter: none;
 }
 
+/* the :not(.hidden) guards keep rows filtered out by the advanced filter hidden -
+   these selectors are more specific than "tr.hidden" and would otherwise re-show them */
 #ProductionsRatingBody tfoot tr, 
 #ProductionsRatingBody.showhighlighted tbody tr.highlighted-explained, 
-#ProductionsRatingBody.showhighlighted tbody tr.highlighted, 
+#ProductionsRatingBody.showhighlighted tbody tr:not(.hidden).highlighted, 
 #ProductionsRatingBody.showhighlighted tbody tr:not(.hidden).highlighted2, 
-#ProductionsRatingBody.showhighlighted tbody tr.additional{
+#ProductionsRatingBody.showhighlighted tbody tr:not(.hidden).additional{
 	display: table-row;
 }
 #ProductionsRatingBody:not(.gBs) tbody tr.gb,
@@ -378,7 +489,7 @@
 	background-position: -366px 0px;
 }
 #Productions th.boost.def_boost_defender span, #ProductionsRatingBody span.resicon.def_boost_defender-all {
-	background-position: -390px 0px;
+	background-position: -391px 0px;
 }
 #Productions th.boost.qiactions span, #BoostList table .boost.guild_raids_action_points_collection {
 	background-position: -498px 2px;
@@ -657,7 +768,7 @@ input[id*="ProdPerTile"] {
 	padding: 3px 6px;
 }
 #ScoreModifiersBody .score-modifiers-add .results li:hover {
-	background: var(--bg-medium);
+	background: var(--table-bg-highlight);
 }
 #ScoreModifiersBody .score-modifiers-add .results li .id {
 	opacity: 0.6;
@@ -694,7 +805,7 @@ input[id*="ProdPerTile"] {
 #ProductionsRatingBody strong.error {
 	color: var(--danger-red);
 }
-#ProductionsRatingBody span.resicon:first-child:not(:only-child) {
+#ProductionsRatingBody .sorter-header span.resicon:first-child:not(:only-child) {
 	position: relative;
 	z-index: 2;
 	margin-bottom: -26px;

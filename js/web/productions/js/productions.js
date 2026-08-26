@@ -351,11 +351,344 @@ let Productions = {
 		}
 	},
 
+	RatingRows: [],
+
+	AdvancedFilter: {
+		StorageKey: 'Productions.RatingAdvancedFilter',
+		State: null,
+		Ops: ['gt','lt','eq'], 
+		OpSymbols: {gt:'>', lt:'<', eq:'='},
+		Sizes: ['length','width'],
+
+		getDefaultState: () => ({
+			open: false,
+			match: 'all',
+			size: {
+				length: {op:'', value:''},
+				width:  {op:'', value:''}
+			},
+			criteria: []
+		}),
+
+		getState: (stored) => {
+			const AF = Productions.AdvancedFilter;
+			let state = AF.getDefaultState();
+			if (!stored || typeof stored !== 'object') return state;
+
+			state.open = !!stored.open;
+			state.match = (stored.match === 'any') ? 'any' : 'all';
+
+			for (let dim of AF.Sizes) {
+				let size = stored.size?.[dim];
+				if (!size) continue;
+				state.size[dim].op = AF.Ops.includes(size.op) ? size.op : '';
+				state.size[dim].value = (size.value === null || size.value === undefined) ? '' : String(size.value);
+			}
+
+			if (Array.isArray(stored.criteria)) {
+				for (let criterion of stored.criteria) {
+					if (!criterion?.type) continue;
+					state.criteria.push({
+						type: String(criterion.type),
+						op: AF.Ops.includes(criterion.op) ? criterion.op : 'gt',
+						value: (criterion.value === null || criterion.value === undefined) ? '' : String(criterion.value)
+					});
+				}
+			}
+			return state;
+		},
+
+		load: () => {
+			const AF = Productions.AdvancedFilter;
+			if (AF.State) return AF.State;
+			let stored = null;
+			try {
+				stored = JSON.parse(FH.Storage.getItem(AF.StorageKey) || 'null');
+			} catch (e) {
+				stored = null;
+			}
+			AF.State = AF.getState(stored);
+			return AF.State;
+		},
+
+
+		save: () => {
+			const AF = Productions.AdvancedFilter;
+			FH.Storage.setItem(AF.StorageKey, JSON.stringify(AF.State || AF.getDefaultState()));
+		},
+
+		getTypes: () => (Productions.Rating.Types || []).filter(type => Productions.Rating.Data?.[type]?.active),
+
+
+		getSelectedFilters: () => {
+			const AF = Productions.AdvancedFilter;
+			return AF.load().criteria
+				.map(criterion => ({type: criterion.type, op: criterion.op, target: parseFloat(criterion.value)}))
+				.filter(criterion => criterion.op && !isNaN(criterion.target));
+		},
+
+		getSelectedSizes: () => {
+			const AF = Productions.AdvancedFilter;
+			let state = AF.load();
+			let active = [];
+			for (let dim of AF.Sizes) {
+				let target = parseFloat(state.size[dim].value);
+				if (state.size[dim].op && !isNaN(target))
+					active.push({dim: dim, op: state.size[dim].op, target: target});
+			}
+			return active;
+		},
+
+
+		value: (row, type) => {
+			let rating = row?.rating;
+			if (!rating) return 0;
+
+			if (Productions.efficiencySettings.tilevalues) {
+				let tileValue = parseFloat(rating[type+'-tile']);
+				if (isNaN(tileValue)) return 0;
+				let roundingFactor = (tileValue > 100 || tileValue < -100) ? 1 : 100;
+				return Math.round(tileValue * roundingFactor) / roundingFactor;
+			}
+
+			let value = parseFloat(rating[type]);
+			return isNaN(value) ? 0 : value;
+		},
+
+
+		test: (value, op, target) => {
+			if (op === 'gt') return value > target;
+			if (op === 'lt') return value < target;
+			if (op === 'eq') return Math.abs(value - target) < 0.005;
+			return true;
+		},
+
+
+		opSelect: (cssClass, selected, extraAttributes = '', allowEmpty = false) => {
+			const AF = Productions.AdvancedFilter;
+			let h = `<select class="${cssClass}" ${extraAttributes}>`;
+			if (allowEmpty)
+				h += `<option value=""${selected === '' ? ' selected' : ''}>-</option>`;
+			for (let op of AF.Ops)
+				h += `<option value="${op}"${selected === op ? ' selected' : ''}>${AF.OpSymbols[op]}</option>`;
+			return h + `</select>`;
+		},
+
+
+		buildTypeMenu: () => {
+			const AF = Productions.AdvancedFilter;
+			let types = AF.getTypes();
+			if (types.length === 0)
+				return `<span class="custom-option af-empty">${FH.t('Boxes.ProductionsRating.AdvancedNoTypes')}</span>`;
+
+			let h = '';
+			for (let type of types)
+				h += `<span class="custom-option" data-type="${type}"><span class="resicon ${type}"></span><span class="af-type-name">${Productions.GetTypeName(type)}</span></span>`;
+			return h;
+		},
+
+
+		buildCriteria: () => {
+			const AF = Productions.AdvancedFilter;
+			let state = AF.load();
+			if (state.criteria.length === 0)
+				return ``;
+
+			let h = '';
+			state.criteria.forEach((criterion, index) => {
+				// type was switched off in the settings after the criterion was created
+				let stale = !Productions.Rating.Data?.[criterion.type]?.active;
+				h += `<span class="af-criterion${stale ? ' af-stale' : ''}" data-index="${index}"`+
+					(stale ? ` data-original-title="${FH.t('Boxes.ProductionsRating.AdvancedStale')}"` : '')+'>';
+				h += `<span class="resicon ${criterion.type}" data-original-title="${Productions.GetTypeName(criterion.type)}"></span>`;
+				h += AF.opSelect('af-op', criterion.op, `data-index="${index}"`);
+				h += `<input type="number" class="af-value" data-index="${index}" step="any" value="${criterion.value}">`;
+				h += `<a class="af-remove game-cursor" data-index="${index}">✕</a>`;
+				h += '</span>';
+			});
+			return h;
+		},
+
+
+		show: () => {
+			const AF = Productions.AdvancedFilter;
+			let state = AF.load();
+			let h = [];
+
+			h.push(`<div id="efficiencyAdvancedFilter" class="advanced-filter${state.open ? ' open' : ''}">
+				<div class="af-group flex gap">
+					<span class="af-group-title">${FH.t('Boxes.ProductionsRating.AdvancedSizes')}</span>
+					<span>
+						${AF.opSelect('af-dim-op', state.size.length.op, `data-dim="length"`, true)}
+						<input type="number" class="af-size-value" data-dim="length" min="1" step="1" value="${state.size.length.value}">
+					</span> <span class="af-group-title">x</span> 
+					<span>
+						${AF.opSelect('af-dim-op', state.size.width.op, `data-dim="width"`, true)}
+						<input type="number" class="af-size-value" data-dim="width" min="1" step="1" value="${state.size.width.value}">
+					</span>
+				</div>
+				<div class="af-group af-values flex gap">
+					<span class="af-group-title">${FH.t('Boxes.ProductionsRating.AdvancedValues')}</span>
+					<span class="custom-select af-type-select">
+						<span class="custom-select__trigger"><span>${FH.t('Boxes.ProductionsRating.AdvancedAddValue')}</span><i class="arrow"></i></span>
+						<span class="custom-options af-type-menu">${AF.buildTypeMenu()}</span>
+					</span>
+					<select class="af-match">
+						<option value="all"${state.match === 'all' ? ' selected' : ''}>${FH.t('Boxes.ProductionsRating.AdvancedMatchAll')}</option>
+						<option value="any"${state.match === 'any' ? ' selected' : ''}>${FH.t('Boxes.ProductionsRating.AdvancedMatchAny')}</option>
+					</select>
+					<span class="af-criteria">${AF.buildCriteria()}</span>
+				</div>
+				<div class="af-group flex gap af-footer">
+					<a class="btn btn-mid af-reset">${FH.t('General.Reset')}</a>
+				</div>
+			</div>`);
+			return h.join('');
+		},
+
+
+		refresh: () => {
+			const AF = Productions.AdvancedFilter;
+			let $panel = $('#efficiencyAdvancedFilter');
+			if ($panel.length === 0) return;
+
+			let state = AF.load();
+			$panel.find('.af-criteria').html(AF.buildCriteria());
+			$panel.find('.af-type-menu').html(AF.buildTypeMenu());
+			$panel.find('.af-match').val(state.match);
+			$panel.find('.af-dim-op').each(function () { $(this).val(state.size[$(this).data('dim')].op); });
+			$panel.find('.af-size-value').each(function () { $(this).val(state.size[$(this).data('dim')].value); });
+			$panel.toggleClass('open', !!state.open);
+
+			let $tooltips = $panel.find('[data-original-title]');
+			if ($tooltips.length) $tooltips.tooltip({container: FH.HTML.tooltipHost($tooltips), html: true});
+
+			AF.apply();
+		},
+
+
+		apply: () => {
+			const AF = Productions.AdvancedFilter;
+			let rows = Productions.RatingRows || [];
+			let sizes = AF.getSelectedSizes();
+			let criteria = AF.getSelectedFilters();
+			let matchAny = AF.load().match === 'any';
+			let isActive = (sizes.length + criteria.length) > 0;
+
+			$('#ProductionsRatingBody .ratinglist tr').each(function () {
+				let row = rows[parseInt(this.dataset.ridx, 10)];
+				let matched = true;
+
+				if (isActive && row) {
+					for (let dimension of sizes) {
+						if (AF.test(row[dimension.dim], dimension.op, dimension.target)) continue;
+						matched = false;
+						break;
+					}
+					if (matched && criteria.length > 0) {
+						matched = matchAny
+							? criteria.some(criterion => AF.test(AF.value(row, criterion.type), criterion.op, criterion.target))
+							: criteria.every(criterion => AF.test(AF.value(row, criterion.type), criterion.op, criterion.target));
+					}
+				}
+
+				this.classList.toggle('hidden', !matched);
+			});
+
+			$('#efficiencyAdvancedToggle').toggleClass('active', isActive)
+				.find('.af-badge').text(isActive ? (sizes.length + criteria.length) : '');
+		},
+
+
+		bind: () => {
+			const AF = Productions.AdvancedFilter;
+			let $body = $('#ProductionsRatingBody');
+			$body.off('.advfilter');
+
+			$body.on('click.advfilter', '#efficiencyAdvancedToggle', function (e) {
+				e.preventDefault();
+				let state = AF.load();
+				state.open = !state.open;
+				AF.save();
+				$('#efficiencyAdvancedFilter').toggleClass('open', state.open);
+			});
+
+			$body.on('click.advfilter', '.af-type-select .custom-select__trigger', function (e) {
+				e.stopPropagation();
+				$(this).closest('.custom-select').toggleClass('dd-open');
+			});
+
+			$body.on('click.advfilter', '.af-type-menu .custom-option[data-type]', function () {
+				let state = AF.load();
+				state.criteria.push({type: $(this).data('type'), op: 'gt', value: ''});
+				AF.save();
+				$body.find('.af-type-select').removeClass('dd-open');
+				AF.refresh();
+			});
+
+			$body.on('click.advfilter', '.af-remove', function () {
+				let state = AF.load();
+				state.criteria.splice(parseInt($(this).data('index'), 10), 1);
+				AF.save();
+				AF.refresh();
+			});
+
+			$body.on('change.advfilter', '.af-op', function () {
+				let criterion = AF.load().criteria[parseInt($(this).data('index'), 10)];
+				if (!criterion) return;
+				criterion.op = $(this).val();
+				AF.save();
+				AF.apply();
+			});
+
+			$body.on('input.advfilter', '.af-value', function () {
+				let criterion = AF.load().criteria[parseInt($(this).data('index'), 10)];
+				if (!criterion) return;
+				criterion.value = $(this).val();
+				AF.save();
+				AF.apply();
+			});
+
+			$body.on('change.advfilter', '.af-match', function () {
+				AF.load().match = ($(this).val() === 'any') ? 'any' : 'all';
+				AF.save();
+				AF.apply();
+			});
+
+			$body.on('change.advfilter', '.af-dim-op', function () {
+				AF.load().size[$(this).data('dim')].op = $(this).val();
+				AF.save();
+				AF.apply();
+			});
+
+			$body.on('input.advfilter', '.af-size-value', function () {
+				AF.load().size[$(this).data('dim')].value = $(this).val();
+				AF.save();
+				AF.apply();
+			});
+
+			$body.on('click.advfilter', '.af-reset', function () {
+				let wasOpen = AF.load().open;
+				AF.State = AF.getDefaultState();
+				AF.State.open = wasOpen;
+				AF.save();
+				AF.refresh();
+			});
+
+			let ratingDoc = $body[0] ? $body[0].ownerDocument : document;
+			$(ratingDoc).off('click.advfiltermenu').on('click.advfiltermenu', (e) => {
+				if ($('#ProductionsRatingBody').length === 0) { $(ratingDoc).off('click.advfiltermenu'); return; }
+				if ($(e.target).closest('.af-type-select').length) return;
+				$('#ProductionsRatingBody .af-type-select').removeClass('dd-open');
+			});
+		}
+	},
+
 
 	init: () => {
-		if (FH.ActiveMap === 'OtherPlayer') return
+		if (FH.ActiveMap === 'OtherPlayer') return;
 
-		Productions.PrepareData()
+		Productions.PrepareData();
 		Productions.showBox();
 	},
 
@@ -2007,6 +2340,8 @@ let Productions = {
 		$('#ProductionsRatingBody .overlay .results').off('click', 'li');
 		$('#ProductionsRatingBody .overlay .selectMetaBuildings').off('click');
 
+		Productions.AdvancedFilter.bind();
+
 		$('.TSinactive').removeClass('TSinactive');
 		const refreshPresetSelect = () => {
 			Productions.Rating.ensurePresets();
@@ -2055,7 +2390,8 @@ let Productions = {
 		});
 
 		$('#tilevalues, label[tilevalues]').on('click', function () {
-			SaveSettings("tilevalues")
+			SaveSettings("tilevalues");
+			Productions.AdvancedFilter.apply();
 		});
 
 		$('#showitems, label[showitems]').on('click', function () {
@@ -2320,6 +2656,9 @@ let Productions = {
 			$(this).css({opacity: applicable ? '' : '0.4', pointerEvents: applicable ? '' : 'none'});
 			$(this).find('input').prop('disabled', !applicable);
 		});
+
+		// hides via a class, the tab filter above hides via inline display - they never overwrite each other
+		Productions.AdvancedFilter.apply();
 	},
 
 	CalcRatingSettingsOnly: (era = '') => {
@@ -2461,7 +2800,7 @@ let Productions = {
 						<input type="text" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')}: neo|_gbg|4x4" />
 						<label for="showhighlighted" data-original-title="${FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')}"><input type="checkbox" id="showhighlighted" />${FH.t('Boxes.ProductionsRating.ShowHighlighted')}</label>
 						</div>
-						<div class="listmodifiers">
+						<div class="listmodifiers windowBG">
 						<label for="tilevalues"><input type="checkbox" id="tilevalues" />${FH.t('Boxes.ProductionsRating.ShowValuesPerTile')}</label>
 						<label for="showitems" data-original-title="${FH.t('Boxes.ProductionsRating.ShowItems')}"><input type="checkbox" id="showitems" /><span class="filter showitems"></span></label>
 						<label for="showallies" data-original-title="${FH.t('Boxes.ProductionsRating.ShowAllies')}" data-tabs="everything city ascended"><input type="checkbox" id="showallies" ${(Productions.efficiencySettings.showallies? 'checked' : '')} /><span class="filter showallies"></span></label>
@@ -2472,8 +2811,10 @@ let Productions = {
 							<label for="showLimited" data-original-title="${FH.t('Boxes.ProductionsRating.NoLimitedExplanation')}" data-tabs="everything inventory ascended"><input type="checkbox" id="showLimited" /><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" /></label>
 							</div>`);
 					}
+				h.push(`<a id="efficiencyAdvancedToggle">${FH.t('Boxes.ProductionsRating.AdvancedFilter')}<span class="af-badge"></span></a>
+				</div>`);
+				h.push(Productions.AdvancedFilter.show());
 				h.push(`</div>
-				</div>
 				</th>
 				</tr>
 				<tr class="sorter-header exportheader sort2">
@@ -2512,9 +2853,11 @@ let Productions = {
 			h.push('</thead>');
 			h.push('<tbody class="ratinglist">');
 
+			// the advanced filter looks rows up by their index in here
+			Productions.RatingRows = [];
+
 			for (const building of ratedBuildings) {
-				// figure out which tabs this row belongs to, ONCE, so switching tabs afterward is a pure
-				// client-side visibility toggle (no recompute, no preloader flash)
+				// determine which tabs this row belongs to once so switching tabs afterward is a client-side visibility toggle
 				let alreadyInCity = building.isInInventory && (buildingCount[building.entityId+"C"] !== undefined || buildingCount[building.entityId+"C"] >= 1);
 				let belowThreshold = building.isInInventory && building.rating.totalScore < Productions.efficiencySettings.inventorybuildingscore;
 
@@ -2523,18 +2866,25 @@ let Productions = {
 				if (!building.isInInventory || (!alreadyInCity && !belowThreshold)) tabClasses.push('tab-everything');
 				// city only: no inventory buildings at all
 				if (!building.isInInventory) tabClasses.push('tab-city');
-				// inventory only: no city buildings, still respect the score threshold (dupes with city are fine here)
+				// inventory only: no city buildings
 				if (building.isInInventory && !belowThreshold) tabClasses.push('tab-inventory');
-				// ascended only: limited buildings from both city and inventory, respect the threshold/already-owned rule
+				// ascended only: limited buildings from both city and inventory
 				if (building.isLimited && (!building.isInInventory || (!alreadyInCity && !belowThreshold))) tabClasses.push('tab-ascended');
 
-				// not eligible for any tab at all -> skip the row entirely
 				if (tabClasses.length === 0) continue;
 
 				let buildingSize = `${building.size.length}x${building.size.width}`;
 
+				// snapshot the rating once + remember the footprint for the advanced filter
+				let rowIndex = Productions.RatingRows.length;
+				Productions.RatingRows.push({
+					rating: building.rating,
+					length: building.size.length,
+					width: building.size.width
+				});
+
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
-				h.push(`<tr class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}">`)
+				h.push(`<tr data-ridx="${rowIndex}" class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}">`)
 				let scoreModifier = Math.round(building.rating.scoreModifier || 0);
 				let score = Math.round(building.rating.totalScore * 100); // totalScore already includes the modifier!
 				let baseScore = score - scoreModifier;
@@ -2914,10 +3264,15 @@ let Productions = {
 
 	RSettings: () => {
 		let c = [];
-		c.push(`<p class="text-left">${FH.t('Boxes.General.Export')}: <span class="btn-group"><button class="btn" onclick="FH.HTML.ExportTable($('.ratingtable table'),'csv','EfficiencyRating')">CSV</button>`);
-		c.push(`<button class="btn" onclick="FH.HTML.ExportTable($('.ratingtable table'),'json','EfficiencyRating')">JSON</button></span></p>`);
-
+		c.push(`<p class="text-left">${FH.t('Boxes.General.Export')}: <span class="btn-group">
+		<button class="btn" onclick="Productions.ExportRating('csv')">CSV</button>
+		<button class="btn" onclick="Productions.ExportRating('json')">JSON</button></span></p>`);
 		$('#ProductionsRatingSettingsBox').html(c.join(''));
+	},
+
+
+	ExportRating: (format) => {
+		FH.HTML.ExportTable($('.ratingtable table'), format, 'EfficiencyRating', true);
 	},
 
 
