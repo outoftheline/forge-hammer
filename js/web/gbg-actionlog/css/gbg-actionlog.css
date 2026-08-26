@@ -93,7 +93,7 @@
 }
 
 #GBGActionLogBody .gbg-log-popup[data-match="multiselect"] label:hover {
-	background-color: var(--bg-medium);
+	background-color: var(--bg-light);
 	color: var(--text-dark);
 }
 
