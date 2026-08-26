@@ -141,3 +141,9 @@
 #shopAssist .currencyFiltered {
 	display: none;
 }
+
+.ShopAssistTT{
+	width:100%; 
+	vertical-align:top;
+	padding:0 1px;
+}

@@ -522,12 +522,29 @@ let shopAssist = {
 
 		for (let b of buildingIds) {		
 			if (buildingIds.length<=limit) {
-				head +=`<td style="width:100%; vertical-align:top;padding:0 1px;" colspan=2><h2><span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>${upgrades[b]}</h2></td>`
-				body += `<td style="width:100%; vertical-align:top;padding:0;">`;
-				body += await FH.Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff);
-				body += `</table>`
-        		body += await FH.Tooltips.SizeTimeRoadData(meta[b]) + `</td>`;
-				body += `</td>`
+				head +=`
+					<td class="ShopAssistTT">
+						<h2>
+							<span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>
+							${upgrades[b]}
+						</h2>
+					</td>`
+				body += `
+					<td class="ShopAssistTT">
+						${await FH.Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff)}
+        				<table class="HXBuilding">
+							<tr>
+								<th>
+										${FH.t("Boxes.Tooltip.Building.size+time")}
+								</th>
+							</tr>
+							<tr>
+								<td>
+									${await FH.Tooltips.SizeTimeRoadData(meta[b])}
+								</td>
+							</tr>
+						</table>
+					</td>`
 			} else {
 				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`
 			}
