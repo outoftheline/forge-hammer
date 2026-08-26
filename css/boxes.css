@@ -364,7 +364,7 @@ span.resicon.att_boost_defender-guild_expedition {
 	background-position: 13px 13px, -339px 0px;
 }
 span.resicon.def_boost_defender-guild_expedition {
-	background-position: 13px 13px, -391px 0px;
+	background-position: 13px 13px, -392px 0px;
 }
 span.resicon.fsp {
 	background-position: -762px 0px;
@@ -385,7 +385,7 @@ span.resicon.att_boost_defender-guild_raids {
 	background-position: 8px 8px, -340px 0px;
 }
 span.resicon.def_boost_defender-guild_raids {
-	background-position: 8px 8px, -391px 0px;
+	background-position: 8px 8px, -392px 0px;
 }
 span.resicon.att_boost_attacker-battleground, span.resicon.def_boost_attacker-battleground, span.resicon.att_boost_defender-battleground, span.resicon.def_boost_defender-battleground, span.filter.showitems {
 	background-image: url('../../js/web/x_img/gbg-green.png'), url('../../js/web/productions/images/productions.png');
@@ -400,7 +400,7 @@ span.resicon.att_boost_defender-battleground {
 	background-position: 8px 8px, -340px 0px;
 }
 span.resicon.def_boost_defender-battleground {
-	background-position: 8px 8px, -391px 0px;
+	background-position: 8px 8px, -392px 0px;
 }
 
 .ml-auto {
@@ -986,7 +986,7 @@ Accordion */
     box-shadow: inset 0px 0px 0px 2000px var(--table-bg-hover);
 }
 
-.fham-accordion-head::after, .like-accordion::after {
+.fham-accordion-head::after {
 	content: ' ';
 	background-image: url('../images/hud/chevron-left.svg');
 	background-size: contain;
@@ -997,7 +997,7 @@ Accordion */
 	top: 4px;
 }
 
-.fham-accordion.open .fham-accordion-head::after, .like-accordion.active::after {
+.fham-accordion.open .fham-accordion-head::after {
 	background-image: url('../images/hud/chevron-down.svg');
 }
 
@@ -1808,27 +1808,27 @@ a:hover, input[type="radio"], .clickable {
 	content: "";
 	position: absolute;
 	bottom: 3px;
-	width: 1px;
+	width: 2px;
 	height: 50%;
 	transition: all 0.5s;
 }
 .custom-select .arrow::before {
 	left: 0;
-	transform: rotate(45deg);
+	transform: rotate(-45deg);
 	background-color: var(--text-dark);
 }
 .custom-select .arrow::after {
 	left: 5px;
-	transform: rotate(-45deg);
+	transform: rotate(45deg);
 	background-color: var(--text-dark);
 }
 .custom-select.dd-open .arrow::before {
 	left: 0;
-	transform: rotate(-45deg);
+	transform: rotate(45deg);
 }
 .custom-select.dd-open .arrow::after {
 	left: 5px;
-	transform: rotate(45deg);
+	transform: rotate(-45deg);
 }
 
 /*--------------------------------------------------------------------------------------------------------------------*/
