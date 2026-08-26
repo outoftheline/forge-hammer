@@ -497,19 +497,7 @@ let shopAssist = {
 		let meta = Object.assign({},...buildingIds.map(x=>({[x]:FH.Main.CityEntities[x]})))
 
 		let upgrades = Object.assign({},...buildingIds.map(x=>{
-			let u = ""
-			let upgradeCount = Kits.allBuildingsUpgradeCounts[x]||{}
-			if (Object.keys(upgradeCount).length>0) {
-				u = '<span class="upgrades"><span class="base">1</span>';
-				for (let i in upgradeCount) {
-					if (!upgradeCount[i]) continue;
-					if (upgradeCount[i]) {
-						u += `<span class="${i}">${upgradeCount[i]}</span>`;
-					}
-				}
-				u += '</span>';
-			}
-			return{[x]:u}
+			return{[x]:Kits.UpgradeSpan(x)}
 		}))
         
         let h = `<div class="buildingTT">

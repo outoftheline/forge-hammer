@@ -1127,6 +1127,21 @@ let Kits = {
 		return output;
 	},
 
+	UpgradeSpan: (id) => {
+		let u = '<span class="upgrades"><span class="base">1</span>';
+		let upgradeCount = Kits.allBuildingsUpgradeCounts[id]||{}
+		if (Object.keys(upgradeCount).length>0) {
+			for (let i in upgradeCount) {
+				if (!upgradeCount[i]) continue;
+				if (upgradeCount[i]) {
+					u += `<span class="${i}">${upgradeCount[i]}</span>`;
+				}
+			}
+		}
+		u += '</span>';
+		return u;
+	},
+
 	InventoryTooltip: (e) => {
         const id = e?.currentTarget?.dataset?.id || e?.currentTarget?.parentElement?.dataset?.id;
 		let lng = FH.World.substring(0, 2);
@@ -1144,21 +1159,15 @@ let Kits = {
 		if (!inventoryBuilding) return '';
 
 		const upgradeCount = inventoryBuilding.upgradeCount;
-		let upgrades = "";
+		let upgrades = Kits.UpgradeSpan(id);
 		let upgradesMax = '<span class="upgrades">';
 
 		if (upgradeCount) {
-			upgrades = '<span class="upgrades"><span class="base">1</span>';
 			for (let i in upgradeCount) {
-				if (!upgradeCount[i]) continue;
-				if (upgradeCount[i].is) {
-					upgrades += `<span class="${i}">${upgradeCount[i].is}</span>`;
-				}
 				if (upgradeCount[i].max - upgradeCount[i].is) {
 					upgradesMax += `<span class="${i}">+${upgradeCount[i].max - upgradeCount[i].is}</span>`;
 				}
 			}
-			upgrades += '</span>';
 		}
 		upgradesMax += '</span>';
 
