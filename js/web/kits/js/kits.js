@@ -763,31 +763,37 @@ let Kits = {
 			}			
 		}
 
-		let endBuildings = {}
-		let startBuildings = {}
+		let endBuildings = {};
+		let startBuildings = {};
+		let potentialForks = {};
 
 		for (let upgrade of Object.values(FH.Main.BuildingUpgrades)) {
 			if (["silver_upgrade_kit_BOWL22A"].includes(upgrade.upgradeItem.id)) continue; // faulty game data
+
 			Kits.Names[upgrade.upgradeItem.id] = upgrade.upgradeItem.name;
 			let upgradeId= upgrade.upgradeItem.id;
-			let buildingList = upgrade.upgradeSteps.map(x => x.buildingIds)
-			let finalBuildings = buildingList.pop()
+			let buildingList = upgrade.upgradeSteps.map(x => x.buildingIds);
+			let finalBuildings = buildingList.pop();
 			buildingList = buildingList.flat().map(x => ({buildingId: x, upgradeId: upgradeId}));
-
-			if (endBuildings[buildingList[0].buildingId]) {
-				let buffer=buildingList[0].buildingId
+			
+			let buffer=buildingList[0].buildingId;
+			if (endBuildings[buffer]) {
+				
 				buildingList.unshift(...endBuildings[buffer]);
+				potentialForks[buffer] = structuredClone(endBuildings[buffer]);
 				delete endBuildings[buffer];
-				delete startBuildings[buildingList[0].buildingId];
+				delete startBuildings[buffer];
+			} else if (potentialForks[buffer]) {
+				buildingList.unshift(...potentialForks[buffer]);
 			}
 			for (let endBuilding of finalBuildings) {
 				if (startBuildings[endBuilding]) {
-					endBuildings[startBuildings[endBuilding]].unshift(...buildingList)
-					startBuildings[buildingList[0].buildingId] = startBuildings[endBuilding];
+					endBuildings[startBuildings[endBuilding]].unshift(...buildingList);
+					startBuildings[buffer] = startBuildings[endBuilding];
 					delete startBuildings[endBuilding];
 				}
 				else {
-					startBuildings[buildingList[0].buildingId] = endBuilding;
+					startBuildings[buffer] = endBuilding;
 					endBuildings[endBuilding] = buildingList;
 				} 
 			}
