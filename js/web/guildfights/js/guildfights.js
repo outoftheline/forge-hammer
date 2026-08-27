@@ -1573,7 +1573,7 @@ let GuildFights = {
 
 				nextup.push(`<tr id="timer-${prov[x].id}" class="timer ${connectionSecured ? 'secure' : ''} ${bgColor ? bgColor : ''} ${signalClass}" data-tab="nextup" data-id=${prov[x].id}>
 					<td class="prov-name" data-original-title="${FH.t('Boxes.GuildFights.Owner')}: ${prov[x].owner}">
-					<span class="province-color" ${color['base'] ? 'style="background-color:' + color['main'] + '"' : ''};border-color:${color['base']}"></span>
+					<span class="province-color" ${color['base'] ? `style="background-color:${color['main']};border-color:${color['base']}` : ''}"></span>
 					<span class="battletype ${battleType}"></span>
 					<b>${prov[x].title}</b> 
 					</td>`);
