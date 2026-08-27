@@ -48,6 +48,10 @@ let CityMap = {
 		gbgArea: 0,
 		geBuildings: 0,
 		geArea: 0,
+		renovatableBuildings: 0,
+		renovatableBuildingsArea: 0,
+		fspDisabledBuildings: 0,
+		fspDisabledBuildingsArea: 0,
 		roadlessBuildings: 0,
 		roadlessBuildingsArea: 0,
 		connectedBuildings: 0,
@@ -708,6 +712,10 @@ let CityMap = {
 			ascendableBuildingsArea: 0,
 			decayedBuildings: 0,
 			decayedBuildingsArea: 0,
+			eraBehindBuildings: 0,
+			erasBehindBuildings: 0,
+			fspDisabledBuildings: 0,
+			fspDisabledBuildingsArea: 0,
 			roadlessBuildings: 0,
 			roadlessBuildingsArea: 0,
 			connectedBuildings: 0,
@@ -768,6 +776,7 @@ let CityMap = {
 			let canAscend = (await CityBuildings.canAscend(building.entityId) ? ' ascendable' : '');
 			let isDecayed = (building.state.isDecayed ? ' decayed' : '');
 			let isNotPolivated = (building.state.isPolivated === false ? ' notPolivated' : '');
+			let isFspDisabled = (building.isInstantFinishDisabled ? ' fspDisabled' : '');
 
 			let isCollectable = '';
 			if (building.state.name == "collectable") {
@@ -778,7 +787,7 @@ let CityMap = {
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
 						(building.rating?.totalScore*100 <= (rating30) ? ' rating30' : '')));
 			
-			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + rating + isLimited + fromQI + fromGBG).css({
+			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + rating + isLimited + fromQI + fromGBG).css({
 				width: xsize + 'em',
 				height: ysize + 'em',
 				left: x + 'em',
@@ -811,6 +820,10 @@ let CityMap = {
 					CityMap.metrics.ascendableBuildings++;
 					CityMap.metrics.ascendableBuildingsArea += building.size.width * building.size.length;
 				}
+				if (building.isInstantFinishDisabled) {
+					CityMap.metrics.fspDisabledBuildings++;
+					CityMap.metrics.fspDisabledBuildingsArea += building.size.width * building.size.length;
+				}
 				if (building.state.isDecayed) {
 					CityMap.metrics.decayedBuildings++;
 					CityMap.metrics.decayedBuildingsArea += building.size.width * building.size.length;
@@ -819,7 +832,6 @@ let CityMap = {
 					CityMap.metrics.limitedBuildings++;
 					CityMap.metrics.limitedBuildingsArea += building.size.width * building.size.length;
 				}
-
 				if (building.entityId.includes("_GR")) {
 					CityMap.metrics.qiBuildings++;
 					CityMap.metrics.qiArea += building.size.width * building.size.length;
@@ -847,30 +859,43 @@ let CityMap = {
 
 			// highlights for older buildings
 			if (building.eraName) {
-				let era = Technologies.Eras[building.eraName]
-
-				if (era < FH.CurrentEraID && building.type !== "greatbuilding" && era !== 0) {
-					f.addClass('oldBuildings')
-					let eraDiff = FH.CurrentEraID - era
+				let era = Technologies.Eras[building.eraName];
+				let currentEraID = FH.ActiveMap === 'OtherPlayer'
+					? Technologies.Eras[CityMap.OtherPlayer.eraName] : FH.CurrentEraID;
+				let currentEraName = FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.eraName : FH.CurrentEra;
+			
+				if (building.type !== "greatbuilding" && era !== 0) {
+					f.addClass('oldBuildings');
+					let eraDiff = currentEraID - era;
 					
-					switch(eraDiff){
-						case 1:
+					switch(eraDiff) {
+						case 0: {
+							if (!building.autoUpgrade && !building.entityId.includes(currentEraName))
+							CityMap.metrics.eraBehindBuildings++;
+							break;
+						}
+						case 1: {
 							f.addClass('older-1');
+							if (!building.entityId.includes(Technologies.EraNames[currentEraID-1])) CityMap.metrics.erasBehindBuildings++;
 							break;
-
-						case 2:
+						}
+						case 2:{
 							f.addClass('older-2');
+							if (!building.entityId.includes(Technologies.EraNames[currentEraID-2])) CityMap.metrics.erasBehindBuildings++;
 							break;
-
-						case 3:
+						}
+						case 3:{
 							f.addClass('older-3');
+							if (!building.entityId.includes(Technologies.EraNames[currentEraID-3])) CityMap.metrics.erasBehindBuildings++;
 							break;
-
-						default: 
+						}
+						default: {
 							f.addClass('too-old');
+							if (building.type !== "street") CityMap.metrics.erasBehindBuildings++;
 							break;
+						}
 					}
-                }
+				}
 			}
 
 			// size changed, activate again
@@ -972,7 +997,13 @@ let CityMap = {
 			<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
 			</span> 
 			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` +
-			'<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="'+FH.t('Boxes.CityMap.ShowDecayedBuildings')+', '+parseFloat(100*CityMap.metrics.decayedBuildings/CityMap.metrics.buildings).toFixed(1)+'%"><span><img style="filter:saturate(0.5)" src="'+srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)+'" />' + CityMap.metrics.decayedBuildings + '</span> <span><img src="'+srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)+'" />' + CityMap.metrics.decayedBuildingsArea + '</span></li>');
+			
+			`<li onClick="CityMap.highlightFspDisabledBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+			<span>
+			<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
+			<span class="openList" onclick="CityMap.buildingGroupList('fspDisabled')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+			</span>
+			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.fspDisabledBuildingsArea}</span></li>`);
 
 		areaStats.push('<li class="ratings clickable">')
 			areaStats.push(`<label for="show-worst-buildings"><input type="checkbox" id="show-worst-buildings" onclick="CityMap.highlightWorstBuildings()" /> ${FH.t('Boxes.CityMap.ShowWorstBuildings')}</label>`)
@@ -981,12 +1012,15 @@ let CityMap = {
 		areaStats.push('</li>')
 
 		if (FH.ActiveMap !== 'OtherPlayer') {
-			areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
 			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${FH.t('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
+
 			if (CityMap.metrics.hasCollectableBuildings)
 				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${FH.t('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
 		}
-		areaStats.push('</ul>')
+
+		areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
+
+		areaStats.push('</ul>');
 
 		// let cityEfficiency = parseFloat(CityMap.metrics.connectedBuildingsArea / CityMap.metrics.roadsArea * 100).toFixed(0);
 		// areaStats.push('<p data-original-title="'+FH.t('Boxes.CityMap.CityGridScoreText')+'" class="text-center"><b>'+FH.t('Boxes.CityMap.CityGridScore')+':</b> '+cityEfficiency+'</p>');
@@ -999,10 +1033,17 @@ let CityMap = {
 		
 		let legends = [];
 		
-		legends.push(`<span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>`);
+		legends.push(`<p><span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>`);
 		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${FH.t('Boxes.CityMap.OlderThan2Era')}<br>`);
 		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${FH.t('Boxes.CityMap.OlderThan3Era')}<br>`);
-		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}<br>`);
+		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}</p>`);
+
+		legends.push(`<b>${FH.t('Boxes.CityMap.NextEraRenovation')}</b><br>
+			<img src="${srcLinks.get(`/shared/icons/one_up_kit.png`,true)}" /> 
+			${CityMap.metrics.eraBehindBuildings}<br>
+			<img src="${srcLinks.get(`/shared/icons/renovation_kit.png`,true)}" /> 
+			${CityMap.metrics.erasBehindBuildings}`
+		);
 
 		$('.too-old-legends').html(legends.join(''));
 	},
@@ -1041,6 +1082,10 @@ let CityMap = {
 
 	highlightDecayedBuildings: ()=> {
 		$('.decayed').toggleClass('highlight3');
+	},
+
+	highlightFspDisabledBuildings: ()=> {
+		$('.fspDisabled').toggleClass('highlight5');
 	},
 
 	highlightLimitedBuildings: ()=> {
@@ -1087,6 +1132,13 @@ let CityMap = {
 				let ascendingMap = await CityMap.AscendingBuildings;
 				let ascendedIds = buildings.map(b => ascendingMap[b.entityId]).filter(Boolean);
 				InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory(ascendedIds);
+			}
+		}
+		else if (type === 'fspDisabled') {
+			title = FH.t('Boxes.CityMap.ShowFspDisabledBuildings');
+			for (let building of Object.values(buildingData)) {
+				if (!building.isInstantFinishDisabled) continue;
+				buildings.push(building);
 			}
 		}
 		
@@ -2824,6 +2876,8 @@ let CityBuildings = {
 			isLimited: this.isLimitedBuilding(metaData),
 			isInInventory: false,
 			isBoostable: this.isBoostableBuilding(metaData),
+			isInstantFinishDisabled: (((metaData.components?.AllAge?.flags?.flags | 0) & 32) !== 0),
+			autoUpgrade: (((metaData.components?.AllAge?.flags?.flags | 0) & 4) !== 0),
 			chainBuilding: this.setChainBuilding(metaData),
 			setBuilding: this.setSetBuilding(metaData),
 			size: this.setSize(metaData),
