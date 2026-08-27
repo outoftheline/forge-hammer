@@ -410,16 +410,16 @@
 
 /* mark old buildings*/
 #grid-outer span.older-1.diagonal, span.older-1.diagonal {
-	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgb(128, 152, 93) 2px, rgb(128, 152, 93) 7px)
+	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #80985d 2px, #80985d 7px)
 }
 #grid-outer span.older-2.diagonal, span.older-2.diagonal {
-	background-image: repeating-linear-gradient(317deg, transparent, transparent 5px, rgb(133, 95, 14) 2px, rgb(133, 95, 14) 7px)
+	background-image: repeating-linear-gradient(317deg, transparent, transparent 5px, #855f0e 2px, #855f0e 7px)
 }
 #grid-outer span.older-3.diagonal, span.older-3.diagonal {
-	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgb(165, 74, 62) 2px, rgb(165, 74, 62) 7px);
+	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #a54a3e 2px, #a54a3e 9px);
 }
 #grid-outer span.too-old.diagonal, span.too-old.diagonal {
-	background-image: repeating-linear-gradient(202deg, transparent, transparent 5px, rgb(171, 26, 13) 2px, rgb(171, 26, 13) 7px)
+	background-image: repeating-linear-gradient(202deg, transparent, transparent 5px, #ab1a0d 2px, #ab1a0d 9px)
 }
 #grid-outer span.noStreet.highlight {
 	background-color: var(--background-color-noStreet);
@@ -447,6 +447,10 @@
 	background-image: linear-gradient(45deg, transparent 50%, var(--background-color-ascendable) 50%);
 	background-color: var(--background-color-decayed);
 	border-color: var(--border-color-decayed);
+}
+#grid-outer span:not(.street).fspDisabled.highlight5 {
+	background-color: #b10808;
+	border-color: #880202;
 }
 #grid-outer span.collectSoon {
 	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #fff1 2px, #fff1 7px);
