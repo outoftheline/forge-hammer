@@ -190,15 +190,24 @@
     "r": "1 FP = "
   },
   "Boxes.BonusService.aid_goods": "Truce Tower: pozostałe towary za wsparcie",
-  "Boxes.BonusService.diplomatic_gifts": "Kosmiczny transporter: pozostałe próby zdobycia darów dyplomacji.",
+  "Boxes.BonusService.diplomatic_gifts": {
+    "s": "Kosmiczny transporter: Pozostałe próby zdobycia darów dyplomacji.",
+    "r": "Number of Diplomatic Gifts attempts remaining."
+  },
   "Boxes.BonusService.donequests": "Pokazuje zakończone misje",
-  "Boxes.BonusService.first_strike": "Kraken: pozostałe próby pierwszego uderzenia.",
+  "Boxes.BonusService.first_strike": {
+    "s": "Kraken: Pozostałe próby pierwszego uderzenia.",
+    "r": "Number of First Strikes remaining."
+  },
   "Boxes.BonusService.missile_launch": "Virgo Projekt: pozostałe starty rakiety.",
   "Boxes.BonusService.quest_sound": {
     "s": "Zakończone zadanie",
     "r": "Finished Quest"
   },
-  "Boxes.BonusService.spoils_of_war": "Zamek Himeji: pozostałe próby zdobycia łupów wojennych.",
+  "Boxes.BonusService.spoils_of_war": {
+    "s": "Zamek Himeji: Pozostałe próby zdobycia łupów wojennych.",
+    "r": "Number of Spoils of War attempts remaining."
+  },
   "Boxes.BoostList.guild_raids_action_points_collection": "Dodatkowe punkty działań",
   "Boxes.BoostList.guild_raids_coins_production": "Zwiększony zbiór monet",
   "Boxes.BoostList.guild_raids_coins_start": "Dodatkowe monety startowe",
@@ -242,18 +251,27 @@
   "Boxes.Calculator.Settings.Save": "Zapisz",
   "Boxes.Calculator.Step": "Poziom ",
   "Boxes.Calculator.Title": "Kalkulator budowy PA",
-  "Boxes.Calculator.TTForderCosts": "Koszty = __nettoreward__<small>(Nagroda netto)</small> X __forderfactor__%<small>(Twoja inwestycja)</small> = __costs__",
+  "Boxes.Calculator.TTForderCosts": {
+    "s": "__nettoreward__ x __forderfactor__% = __costs__",
+    "r": "__nettoreward__ x __forderfactor__% = __costs__"
+  },
   "Boxes.Calculator.TTForderFPStockLow": {
     "s": "UWAGA: posiadasz za mało PR!<br>masz __fpstock__ z __costs__ PR<br>To jest o __tooless__ PR za mało",
     "r": "WARNING: Not enough FP in stock!<br>You only have __fpstock__ of __costs__FP<br>That is __tooless__FPs too few"
   },
   "Boxes.Calculator.TTForderNegativeProfit": "Miejsce nie jest zabezpieczone. Należy wpłacić __fpcount__ dodatkowych PR w celu zabezpieczenia.<br>Całkowita wpłata: __totalfp__ PR",
   "Boxes.Calculator.TTLevelWarning": "Dodanie__fpcount__ PR nie mieści się!<br>Maksymalna możliwa wpłata: __totalfp__ PR",
-  "Boxes.Calculator.TTLoss": "Nagroda = __nettoreward__ <small>(Nagroda netto)</small> X __arcfactor__% <small>(Bonus Arc)</small> = __bruttoreward__<br>Cost: __costs__ - Miejsce zablokowane: __safe__<br>Loss = __costs__ <small>(Koszt)</small> - __bruttoreward__ <small>(Nagroda)</small> = __loss__",
+  "Boxes.Calculator.TTLoss": {
+    "s": "__nettoreward__ x __arcfactor__% = __bruttoreward__<br>Koszt: __costs__ - Miejsce zablokowane na: __safe__<br>Strata = __costs__  - __bruttoreward__ = __loss__",
+    "r": "__nettoreward__ x __arcfactor__%  = __bruttoreward__<br>Costs: __costs__ - Place locked at: __safe__<br>Loss = __costs__ - __bruttoreward__  = __loss__"
+  },
   "Boxes.Calculator.TTLossSelf": "Zwrot = __nettoreward__<small>(bazowy zwrot)</small> X __arcfactor__%<small>(bonus Arki)</small> = __bruttoreward__<br>Wpłata: __paid__<br>Strata = __paid__<small>(wpłata)</small> - __bruttoreward__<small>(zwrot)</small> = __loss__",
   "Boxes.Calculator.TTPaidTooLess": "Wpłaciłeś __paid__ PR zamiast __topay__ PR. To jest __tooless__ PR za mało.",
   "Boxes.Calculator.TTPaidTooMuch": "Wpłaciłeś __paid__ PR zamiast __topay__ PR. To jest __toomuch__ PR za dużo.",
-  "Boxes.Calculator.TTProfit": "Nagroda = __nettoreward__ <small>(Nagroda netto)</small> X __arcfactor__% <small>(Bonus Arc)</small> = __bruttoreward__<br>Cost: __costs__ - Miejsce zablokowane: __safe__<br>Zysk = __bruttoreward__ <small>(Nagroda)</small> - __costs__ <small>(Koszt)</small> = __profit__",
+  "Boxes.Calculator.TTProfit": {
+    "s": "__nettoreward__ x __arcfactor__% = __bruttoreward__<br>Koszt: __costs__ - Miejsce zablokowane na: __safe__<br>Zysk: __bruttoreward__  - __costs__ = __profit__",
+    "r": "__nettoreward__ x __arcfactor__%  = __bruttoreward__<br>Costs: __costs__ - Place locked at: __safe__<br>Profit: __bruttoreward__  - __costs__ = __profit__"
+  },
   "Boxes.Calculator.TTProfitSelf": "Zwrot = __nettoreward__<small>(Bazowy zwrot)</small> X __arcfactor__%<small>(Bonus Arki)</small> = __bruttoreward__<br>Wpłata: __paid__<br>Zysk = __bruttoreward__<small>(Zwrot)</small> - __paid__<small>(Wpłata)</small> = __profit__",
   "Boxes.Calculator.Up2LevelUp": "PR do zamknięcia",
   "Boxes.cardGame.Attack": "Atak",
@@ -281,7 +299,10 @@
   "Boxes.Castle.Progress": "Postęp",
   "Boxes.Castle.SevenDayChallenge": "Wyzwanie 7-dniowe",
   "Boxes.Castle.ShopAntiqueDealer": "Sklep handlarza antykami",
-  "Boxes.Castle.ShowGroupNames": "pokaż nagłówki grup",
+  "Boxes.Castle.ShowGroupNames": {
+    "s": "Pokaż nagłówki grup",
+    "r": "show group names"
+  },
   "Boxes.Castle.Time": "Czas",
   "Boxes.Castle.Title": "System zamkowy",
   "Boxes.Castle.Type": "Typ",
@@ -832,12 +853,18 @@
     "r": "Remove from favorites"
   },
   "Boxes.General.FilterItems": "Filtruj Elementy",
-  "Boxes.General.Guild_Battlegrounds": "Pola Bitewne Gildii",
+  "Boxes.General.Guild_Battlegrounds": {
+    "s": "Gildyjne Pola Chwały",
+    "r": "Guild Battlegrounds"
+  },
   "Boxes.General.Guild_Battlegrounds.short": {
     "s": "GPCh",
     "r": "GBG"
   },
-  "Boxes.General.Guild_Expedition": "Wyprawy Gildyjne",
+  "Boxes.General.Guild_Expedition": {
+    "s": "Wyprawy Gildyjne",
+    "r": "Guild Expedition"
+  },
   "Boxes.General.Guild_Expedition.short": "WG",
   "Boxes.General.Level": {
     "s": "Poziom",
@@ -1147,7 +1174,10 @@
   "Boxes.GuildFights.TimeZoneWarning.Title": "Zmiana w zachowaniu kopiowania!",
   "Boxes.GuildFights.Title": "Przegląd aktywności graczy",
   "Boxes.GuildFights.Total": "Całkowity",
-  "Boxes.GuildMemberStat.AutoStartOnUpdate": "otwórz przegląd po aktualizacji",
+  "Boxes.GuildMemberStat.AutoStartOnUpdate": {
+    "s": "Otwórz przegląd po aktualizacji",
+    "r": "open overview after update"
+  },
   "Boxes.GuildMemberStat.Available": {
     "s": "Ilość",
     "r": "available"
@@ -1226,6 +1256,10 @@
   "Boxes.GuildMemberStat.ProducedTreasuryGoods": {
     "s": "Produkowane przez budynki gildii",
     "r": "produced by guild buildings"
+  },
+  "Boxes.GuildMemberStat.QiParticipation": {
+    "s": "Uczestnictwo w NK",
+    "r": "QI participation"
   },
   "Boxes.GuildMemberStat.Rank": "Ranga",
   "Boxes.GuildMemberStat.ResetMessageCounter": {
@@ -1366,7 +1400,10 @@
     "s": "Pokaż ukryte budynki gildyjne",
     "r": "show hidden GB"
   },
-  "Boxes.Investment.Overview.SettingsRestFP": "pozostałe PR",
+  "Boxes.Investment.Overview.SettingsRestFP": {
+    "s": "Pozostałe PR",
+    "r": "rest FP"
+  },
   "Boxes.Investment.Overview.SettingsSave": "Zapisz",
   "Boxes.Investment.Overview.SettingsUnsafeCalc": "Oblicz tylko bezpieczny zysk/stratę",
   "Boxes.Investment.PlayerFound": "Znaleziono nowe wydarzenia!",
@@ -1750,7 +1787,10 @@
   "Boxes.Productions.Headings.Done": "Do zebrania",
   "Boxes.Productions.Headings.earning": "Zbiór",
   "Boxes.Productions.Headings.efficiency": "Wydajność",
-  "Boxes.Productions.Headings.era": "Era",
+  "Boxes.Productions.Headings.era": {
+    "s": "Epoka",
+    "r": "Era"
+  },
   "Boxes.Productions.Headings.generic_building": "Inne",
   "Boxes.Productions.Headings.goods": "Towarowe",
   "Boxes.Productions.Headings.greatbuilding": "Perły architektury (PA )",
@@ -1758,7 +1798,10 @@
   "Boxes.Productions.Headings.main_building": "Ratusz",
   "Boxes.Productions.Headings.military": "Wojskowe",
   "Boxes.Productions.Headings.name": "Nazwa",
-  "Boxes.Productions.Headings.number": "Liczba",
+  "Boxes.Productions.Headings.number": {
+    "s": "Ilość",
+    "r": "Qty"
+  },
   "Boxes.Productions.Headings.off_grid": "Specjalne",
   "Boxes.Productions.Headings.production": "Produkcyjne",
   "Boxes.Productions.Headings.random_production": "Losowe",
@@ -1787,6 +1830,30 @@
   "Boxes.Productions.Units": "Jednostki",
   "Boxes.ProductionsRating.AddBuilding": "Dodaj budynek",
   "Boxes.ProductionsRating.AddBuildings": "Dodaj wybrane budynki",
+  "Boxes.ProductionsRating.AdvancedAddValue": {
+    "s": "Dodaj",
+    "r": "Add"
+  },
+  "Boxes.ProductionsRating.AdvancedFilter": {
+    "s": "Zaawansowane filtry",
+    "r": "Advanced filters"
+  },
+  "Boxes.ProductionsRating.AdvancedMatchAll": {
+    "s": "Tryb: ORAZ",
+    "r": "Mode: AND"
+  },
+  "Boxes.ProductionsRating.AdvancedMatchAny": {
+    "s": "Tryb: ALBO",
+    "r": "Mode: OR"
+  },
+  "Boxes.ProductionsRating.AdvancedSizes": {
+    "s": "Filtr rozmiaru",
+    "r": "Size Filter"
+  },
+  "Boxes.ProductionsRating.AdvancedValues": {
+    "s": "Filtruj według",
+    "r": "Filter by"
+  },
   "Boxes.ProductionsRating.Best": "Najlepszy",
   "Boxes.ProductionsRating.BuildingName": "Budynki",
   "Boxes.ProductionsRating.ColumnFilter": {
@@ -1800,7 +1867,10 @@
   "Boxes.ProductionsRating.CountTooltip": "Aktualna ilość postawiona w twoim mieście. Uwaga: Nie wszystkie budynki mogą należeć do epoki, która jest wyświetlana obok nazwy. Sprawdź na mapie aby się upewnić!",
   "Boxes.ProductionsRating.Disclaimer": "W przypadku budynków łańcuchowych cały łańcuch jest traktowany jako jeden budynek. W przypadku zestawów zakładamy, że wszystkie części są w pełni połączone.",
   "Boxes.ProductionsRating.Enabled": "Włączone",
-  "Boxes.ProductionsRating.Explainer": "Wybierz, ile każdy z twoich budynków powinien produkować na kafelek. Równowaga między wszystkimi wybranymi wartościami jest ważna dla ostatecznej oceny: Użyj wyższych wartości dla rzeczy, na których nie zależy ci tak bardzo, a niższych wartości, jeśli chcesz położyć większy nacisk na określone zasoby/wzmocnienia. Jeśli posiadasz więcej niż jeden taki sam budynek, tylko budynek z najwyższą epoką zostanie oceniony.",
+  "Boxes.ProductionsRating.Explainer": {
+    "s": "Wybierz, ile każdy z twoich budynków powinien produkować na kratkę. Równowaga między wszystkimi wybranymi wartościami jest ważna dla ostatecznej oceny: Użyj wyższych wartości dla rzeczy, na których nie zależy ci tak bardzo, a niższych wartości, jeśli chcesz położyć większy nacisk na określone zasoby/wzmocnienia. Jeśli posiadasz więcej niż jeden taki sam budynek, tylko budynek z najwyższą epoką zostanie oceniony.",
+    "r": "Select how much each of your buildings should ideally produce per tile. The balance between all selected values is important for the final rating: Use higher ones for things you do not care about as much and lower values if you want to put higher emphasis on particular resources/boosts. If you have more than one of the same building, only the highest era will be evaluated."
+  },
   "Boxes.ProductionsRating.ExplainerHead": "Pomoc",
   "Boxes.ProductionsRating.Fifth": "Najlepsze 5",
   "Boxes.ProductionsRating.Filter": {
@@ -2259,7 +2329,10 @@
   "Boxes.Units.NextUnitsIn": "Następne __count__ jednostki przybędą za <span class=\"alca-countdown\"></span> o godzinie __harvest__",
   "Boxes.Units.NotFilled": "Nie ustawiono",
   "Boxes.Units.PictogramScalingDesc": "Wybierz wartość między 1 a 4 !\nMniejsza wyświetla więcej danych,\nwiększa zwiększa czytelność.",
-  "Boxes.Units.PictogramScalingTitle": "Rozmiar obrazu",
+  "Boxes.Units.PictogramScalingTitle": {
+    "s": "Rozmiar ikon",
+    "r": "Image size"
+  },
   "Boxes.Units.pool": "Wszystkie jednostki",
   "Boxes.Units.Proportionally": "Udział",
   "Boxes.Units.Quantity": "Ilość",
@@ -2381,11 +2454,23 @@
     "s": "Brak epoki",
     "r": "No age"
   },
+  "General.AttAttacker": {
+    "s": "Czerwony atak",
+    "r": "Red Attack"
+  },
+  "General.AttDefender": {
+    "s": "Czerwona obrona",
+    "r": "Red Defense"
+  },
   "General.Battle": {
     "s": "Bitwa",
     "r": "Battle"
   },
   "General.Boost": "Bonus",
+  "General.Buildings": {
+    "s": "Budynki",
+    "r": "Buildings"
+  },
   "General.Cancel": {
     "s": "Anuluj",
     "r": "Cancel"
@@ -2398,7 +2483,19 @@
     "s": "Miasto",
     "r": "City"
   },
+  "General.Coins": {
+    "s": "Monety",
+    "r": "Coins"
+  },
   "General.Date": "Data",
+  "General.DefAttacker": {
+    "s": "Niebieski atak",
+    "r": "Blue Attack"
+  },
+  "General.DefDefender": {
+    "s": "Niebieska obrona",
+    "r": "Blue Defense"
+  },
   "General.Disclaimer": "Zastrzeżenie",
   "General.Error": {
     "s": "Błąd",
@@ -2407,6 +2504,10 @@
   "General.Everything": {
     "s": "Wszystko",
     "r": "Everything"
+  },
+  "General.ForgePoints": {
+    "s": "Punkty Rozwoju",
+    "r": "Forge Points"
   },
   "General.GB": "Perła Architektury",
   "General.Good": "Towar",
@@ -2418,11 +2519,27 @@
   },
   "General.Items": "Przedmioty",
   "General.Level": "Poziom",
+  "General.Medals": {
+    "s": "Medale",
+    "r": "Medals"
+  },
   "General.Open": {
     "s": "Otwórz",
     "r": "Open"
   },
   "General.Player": "Gracz",
+  "General.PopulationNet": {
+    "s": "Dostępna populacja",
+    "r": "Available population"
+  },
+  "General.PopulationProvided": {
+    "s": "Łączna populacja",
+    "r": "Total population"
+  },
+  "General.PopulationRequired": {
+    "s": "Wymagana populacja",
+    "r": "Required population"
+  },
   "General.Reset": "Zresetuj",
   "General.Save": "Zapisz",
   "General.Search": {
@@ -2437,11 +2554,23 @@
     "s": "Sukces",
     "r": "Success"
   },
+  "General.Supplies": {
+    "s": "Zaopatrzenie",
+    "r": "Supplies"
+  },
   "General.Unit": {
     "s": "Jednostka",
     "r": "Unit"
   },
   "General.Units": "Jednostki",
+  "General.UnitsCurrent": {
+    "s": "Jednostki, aktualna epoka",
+    "r": "Units, current age"
+  },
+  "General.UnitsNext": {
+    "s": "Jednostki, następna epoka",
+    "r": "Units, next age"
+  },
   "Global.BoxTitle": {
     "s": "Forge Hammer",
     "r": "Forge Hammer"
@@ -2480,9 +2609,15 @@
   "Menu.Castle.Title": "System zamkowy",
   "Menu.Citymap.Desc": "Pokazuje miasto w rzucie z góry",
   "Menu.Citymap.Title": "Przegląd miasta",
-  "Menu.CompareFriendsThreads.Desc": "Aby znaleźć tych samych przyjaciół w różnych konwersacjach",
+  "Menu.CompareFriendsThreads.Desc": {
+    "s": "Aby znaleźć tych samych przyjaciół w różnych wątkach",
+    "r": "To find same friends in different chats"
+  },
   "Menu.CompareFriendsThreads.Title": "Porównaj przyjaciół z wątkami",
-  "Menu.Discord.Desc": "Spowoduj wiadomości w Twoim Discordzie wydarzeniami",
+  "Menu.Discord.Desc": {
+    "s": "Ustaw wiadomości na Twoim serwerze Discord",
+    "r": "Set up messages for your Discord server"
+  },
   "Menu.Discord.Title": "Discord Webhooki",
   "Menu.Dropdown": "W menu rozwijanym",
   "Menu.findGB.Desc": {
@@ -2498,7 +2633,10 @@
   "Menu.Gildfight.Warning": "<em id=\"selectorCalc-Btn-closed\" class=\"tooltip-error\">Wyłączone: Najpierw odwiedź mapę GPCh!</em> ",
   "Menu.greatbuildings.Desc": "Którą Perłę Architektury produkującą PR warto rozbudować jako następną?",
   "Menu.greatbuildings.Title": "Budowa Pereł Architektury",
-  "Menu.GuildMemberStat.Desc": "Statystyka członków gildii",
+  "Menu.GuildMemberStat.Desc": {
+    "s": "Lista wszystkich członków gildii, ich budynków i aktywności oraz dane dotyczące skarbca",
+    "r": "A list of all guild members, their buildings and activity, and some treasury data"
+  },
   "Menu.GuildMemberStat.Title": "Przegląd członków gildii",
   "Menu.GuildMemberStat.Warning": "Wczytaj przegląd członków gildii w grze, aby aktywować statystyki",
   "Menu.HiddenRewards.Desc": "Przegląd zdarzeń losowych",
@@ -2510,7 +2648,10 @@
     "r": "List of your latest investments"
   },
   "Menu.Investment.Title": "Inwestycje PR",
-  "Menu.Kits.Desc": "Wyświetla wszystkie dostępne w inwentarzu budynki, ulepszenia i zestawy wyboru z zestawów i łańcuchów.",
+  "Menu.Kits.Desc": {
+    "s": "Wyświetla wszystkie dostępne w inwentarzu budynki, ulepszenia i zestawy wyboru z zestawów i łańcuchów",
+    "r": "Displays all your in-stock buildings, upgrades, and selection kits from Sets and Chains."
+  },
   "Menu.Kits.Title": "Zestawy i Łańcuchy",
   "Menu.Market.Desc": "Wyświetla i filtruje wszystkie oferty z rynku",
   "Menu.Market.Title": "Filtr rynku",
@@ -2522,14 +2663,20 @@
   "Menu.Moppelhelper.Title": "Asystent motywacji/wsparcia",
   "Menu.Music.Desc": "Wybierz własną ścieżkę dźwiękową!",
   "Menu.Music.Title": "Muzyka w tle",
-  "Menu.MusicControl.Desc": "Odtwarzanie/pauza",
+  "Menu.MusicControl.Desc": {
+    "s": "Odtwarzaj/Zatrzymaj muzykę",
+    "r": "Play/Stop Music"
+  },
   "Menu.MusicControl.Title": "Sterowanie muzyką",
   "Menu.Negotiation.Desc": "Pomaga dobrać surowce w negocjacjach.",
   "Menu.Negotiation.Title": "Asystent negocjacji",
   "Menu.Negotiation.Warning": "Niedostępne: Rozpocznij negocjację!",
   "Menu.NewVersion.Desc": "Kliknij tutaj, aby zobaczyć zmiany:",
   "Menu.NewVersion.Title": "Zainstalowano nową wersję Forge Hammer",
-  "Menu.Notes.Desc": "Rób notatki o wszystkim, o czym nie chcesz zapomnieć.",
+  "Menu.Notes.Desc": {
+    "s": "Rób notatki o wszystkim, o czym nie chcesz zapomnieć",
+    "r": "Write down anything you do not want to forget or create short To Do lists."
+  },
   "Menu.Notes.Title": "Notes",
   "Menu.Notification.Position.bottom-center": "Na dole na środku",
   "Menu.Notification.Position.bottom-left": "Na dole po lewej",
@@ -2542,13 +2689,22 @@
   "Menu.OutP.DescWarningBuildings": "<em id=\"outPW\" class=\"tooltip-error\">Niedostępne: Odwiedź osadę!<br></em>Przegląd potrzebnych surowców.",
   "Menu.OutP.DescWarningOutpostData": "<em id=\"outPW\" class=\"tooltip-error\">Niedostępne: Rozpocznij osadę i przeładuj grę (F5)</em>",
   "Menu.OutP.Title": "Przegląd osady",
-  "Menu.OwnpartCalculator.Desc": "Tworzy plan budowy własnej perły, pomaga obliczyć miejsca z wymian i pozwala generować wiadomości ogłaszające",
+  "Menu.OwnpartCalculator.Desc": {
+    "s": "Utwórz plan budowy własnej perły, oblicz pozycje zewnętrzne i skopiuj wartości dla swoich PA",
+    "r": "Create payment plan, calculate external spots and copy values for your GBs"
+  },
   "Menu.OwnpartCalculator.Title": "Kalkulator budowy (PA)",
   "Menu.OwnpartCalculator.Warning": "Niedostępne: Otwórz swoją perłę architektury!",
-  "Menu.PlayerProfile.Desc": "Przegląd większości wzmocnień, osiągnięć, przedmiotów i innych statystyk miasta.",
+  "Menu.PlayerProfile.Desc": {
+    "s": "Przegląd większości wzmocnień, osiągnięć, przedmiotów i innych statystyk miasta",
+    "r": "Overview of most boosts, achievements, items and other city stats."
+  },
   "Menu.PlayerProfile.Title": "Profil Gracza",
   "Menu.PlayerProfile.Warning": "Wyłączone: Otwórz zakładkę Profil w ratuszu.",
-  "Menu.Productions.Desc": "Wyświetla wszystkie aktywne produkcje w Twoim mieście.",
+  "Menu.Productions.Desc": {
+    "s": "Wyświetla wszystkie aktywne produkcje w Twoim mieście",
+    "r": "Displays your current daily productions categorized by types."
+  },
   "Menu.Productions.Title": "Przegląd produkcji",
   "Menu.ProductionsRating.Desc": {
     "s": "Wyszukaj budynki, które produkują mniej zasobów na kratkę niż oczekiwane",
@@ -2574,7 +2730,10 @@
   "Menu.ShopAssist.Desc": "Lista wszystkich przedmiotów w sklepie",
   "Menu.ShopAssist.DescWarning": "Proszę najpierw otworzyć sklep",
   "Menu.ShopAssist.Title": "Asystent sklepu",
-  "Menu.Stats.Desc": "Towary, jednostki, nagrody, GPC",
+  "Menu.Stats.Desc": {
+    "s": "Wyświetla statystyki dotyczące towarów, jednostek, nagród i GPCh",
+    "r": "Displays game stats on goods, units, rewards, GBG"
+  },
   "Menu.Stats.Title": "Statystyki",
   "Menu.Technologies.Desc": "Oblicza koszt badań",
   "Menu.Technologies.Title": "Badania",
@@ -2697,6 +2856,10 @@
     "r": "Battle visibility"
   },
   "Settings.Entry.LoadBeta2": "Załaduj aktualną wersję Beta",
+  "Settings.Entry.MenuAppearance": {
+    "s": "Wygląd menu",
+    "r": "Menu Appearance"
+  },
   "Settings.Entry.MenuContent": "Zawartość menu",
   "Settings.Entry.MenuLength": "Długość menu",
   "Settings.Entry.ModuleSounds": {
@@ -2783,8 +2946,28 @@
     "r": "The Beta-Extension musst be installed and updated manually. Either regularly click the button below to download the current beta or use a Git-Manager<br><br>Unpack the downloaded zip and activate developer mode in the Chrome extension settings to 'load unpacked extension'.<br><br>Only one Version of the Forge Hammer should be active at any time to prevent interference!"
   },
   "Settings.LoadBeta2.Title": "Załaduj aktualną wersję Beta",
+  "Settings.MenuAppearance.Desc": {
+    "s": "Zmień położenie, rozmiar przycisków oraz liczbę pozycji wyświetlanych w menu",
+    "r": "Change the position, button size and amount of items shown in the menu"
+  },
+  "Settings.MenuAppearance.Length": {
+    "s": "Pozycje wyświetlane w menu (oprócz rozwijanego)",
+    "r": "Entries shown in the menu (not for the box)"
+  },
+  "Settings.MenuAppearance.Position": {
+    "s": "Pozycja menu",
+    "r": "Position of the menu"
+  },
+  "Settings.MenuAppearance.Size": {
+    "s": "Rozmiar przycisków w menu",
+    "r": "Menu button size"
+  },
+  "Settings.MenuAppearance.Title": {
+    "s": "Wygląd menu",
+    "r": "Menu Appearance"
+  },
   "Settings.MenuContent.Desc": {
-    "s": "Które przyciski wyświetlać w menu?<br>Zielony: pokaż przycisk. Szary: nie pokazuj przycisku.",
+    "s": "Które przyciski chcesz wyświetlać w menu?<br>Zielona ramka: Pokazuje przycisk. Szara: Nie pokazuje przycisku.",
     "r": "Which buttons do you want in the menu?<br>Green: show button. Grey: don't show button."
   },
   "Settings.MenuContent.Title": "Zawartość menu",
@@ -2898,11 +3081,42 @@
     "s": "Użyj domyślnego",
     "r": "Use default"
   },
+  "Settings.SoundEffects.message": {
+    "s": "#1 Ding",
+    "r": "#1 Ding"
+  },
+  "Settings.SoundEffects.notification1": {
+    "s": "#2 Pling",
+    "r": "#2 Pling"
+  },
+  "Settings.SoundEffects.notification2": {
+    "s": "#3 Plong",
+    "r": "#3 Plong"
+  },
+  "Settings.SoundEffects.notification3": {
+    "s": "#4 Plop",
+    "r": "#4 Plop"
+  },
+  "Settings.SoundEffects.notification4": {
+    "s": "#5 Bleep",
+    "r": "#5 Bleep"
+  },
+  "Settings.SoundEffects.notification5": {
+    "s": "#6 Pling 2",
+    "r": "#6 Pling 2"
+  },
+  "Settings.SoundEffects.notification6": {
+    "s": "#7 Chime",
+    "r": "#7 Chime"
+  },
   "Settings.SoundEffects.play": {
     "s": "Odtwórz dźwięk",
     "r": "Play sound"
   },
-  "Settings.Tab.About": "Informacje + strona internetowa",
+  "Settings.Tab.About": {
+    "s": "Ogólne",
+    "r": "General"
+  },
   "Settings.Tab.Auto": "Wyskakujące okienka",
   "Settings.Tab.Boxes": "Inne",
   "Settings.Tab.Extension": "Pasek + Powiadomienia",
@@ -2999,6 +3213,42 @@
   "XPlan.Buttons.StoreBuildings": {
     "s": "Przechowaj budynki",
     "r": "Store buildings"
+  },
+  "XPlan.Compare.Axes": {
+    "s": "Zmień osie",
+    "r": "Change Axes"
+  },
+  "XPlan.Compare.BuildingsAdded": {
+    "s": "Nowe budynki",
+    "r": "New buildings"
+  },
+  "XPlan.Compare.BuildingsChanges": {
+    "s": "Usunięte i dodane budynki",
+    "r": "Removed and added buildings"
+  },
+  "XPlan.Compare.BuildingsRemoved": {
+    "s": "Usunięte budynki",
+    "r": "Removed buildings"
+  },
+  "XPlan.Compare.ChangedOnly": {
+    "s": "Pokaż tylko zmiany",
+    "r": "Only show changes"
+  },
+  "XPlan.Compare.Chart": {
+    "s": "Pokaż wykres",
+    "r": "Show Chart"
+  },
+  "XPlan.Compare.FeatureCity": {
+    "s": "Podstawa",
+    "r": "Base"
+  },
+  "XPlan.Compare.Metrics": {
+    "s": "Wszystkie wskaźniki",
+    "r": "All Metrics"
+  },
+  "XPlan.Compare.Title": {
+    "s": "Statystyki przed i po",
+    "r": "Before and After Stats"
   },
   "XPlan.Confirms.DeletePlan": {
     "s": "Usunąć ten plan miasta? Nie można tego cofnąć.",
