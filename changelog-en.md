@@ -1,6 +1,10 @@
 # Changelog
  
 ## Version 1.6.0
+### New
+- Efficiency: Added advanced filters
+- City Planner: Added stats comparision
+
 ### Update
 - You don't have to collect profile data yourself anymore
 - Guild Member Overview: The overview will now show the results of the last finished season for GE, GBG and QI
@@ -9,10 +13,17 @@
 - GBG: Increased the maximum amount of targets to 7 (was 5)
 - GE Overview: You can now set the member progress to auto-open
 - Menu: You can now change the size of the buttons
+- Tooltips: Upgrade list was slightly changed
+- City Overview: Added highlighting for buildings that cannot be instantly finished aswell as an estimate of kits you might need when you move to the next era
+- Translations: Italian added thx to enricomg and some Dutch added thx to Jurm!
 
 ### Bug Fixes
 - The Scouting window could be too long
+- Fixed the export for the efficiency: Only what is visible will be exported from now on
+- Fixed an issue with the event helper for fall
  
+---
+
 ## Version 1.5.0
 ### New
 - New window color added: Titan

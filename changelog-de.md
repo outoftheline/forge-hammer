@@ -1,6 +1,10 @@
 # Changelog
  
 ## Version 1.6.0
+### Neu
+- Gebäude Effizienz: Erweiterte Filter hinzugefügt
+- Stadtplaner: Vorher-Nachher-Übersicht hinzugefügt
+
 ### Update
 - Die Daten für's Profil müssen nicht mehr selbst angeholt werden
 - Gildenmitglieder Übersicht: Es werden nun die Ergebnisse der zuletzt abgeschlossenen Runde für GEX, GG und QI in der Übersicht angezeigt
@@ -9,9 +13,12 @@
 - Gefechte: Es werden nun maximal 7 Ziele angezeigt
 - GEX Übersicht: Der Mitglieder-Fortschritt kann sich nun automatisch öffnen, wenn man es entsprechend einstellt
 - Menü: Die Größe der Buttons kann nun eingestellt werden
+- Stadtübersicht: Anzeige für Gebäude, die nicht mit SPA abgeschlossen werden können, hinzugefügt
+- Italienische Übersetzungen dank enricomg und niederländische Übersetzungen dank Jurm
 
 ### Bug Fixes
 - Das Erkundungs-Fenster konnte zu lang werden
+- Gebäude Effizienz: Die Export-Funktion sollte nun nur noch das exportieren, was aktuell in der Tabelle angezeigt wird
 
 ---
  
