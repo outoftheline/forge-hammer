@@ -22,7 +22,9 @@ let Productions = {
 		'strategy_points',			// Forge Points
 		'forge_points_production', 	// FP Boost
 		'goods',					// Regular goods
+		'goods_production',			// goods boost
 		'special_goods', 			// *special* goods
+		'special_goods_production', // *special* goods boost
 		'items',					// Fragments, blueprints, boosts etc
 		'money',					// Coins
 		'coin_production', 			// Coin Boost
@@ -38,6 +40,7 @@ let Productions = {
 		'att_boost_defender',
 		'def_boost_defender',
 		'clan_goods',
+		'guild_goods_production', // *special* goods boost
 		'guild_raids'
 	],
 	FSPqualifiedResources: ["strategy_points","clan_goods","goods-previous","goods-current","goods-next"],
@@ -1397,6 +1400,9 @@ let Productions = {
 					else if (type === 'supplies') {
 						table.push(' <button class="typeBoost btn btn-slim"><a href="#supply_production" class="game-cursor">'+FH.t('General.Boost')+': '+Boosts.Sums.supply_production+'%</a></button>')
 					}
+					else if (type === 'special_goods') {
+						table.push(' <button class="typeBoost btn btn-slim"><a href="#special_goods_production" class="game-cursor">'+FH.t('General.Boost')+': '+Boosts.Sums.special_goods_production+'%</a></button>')
+					}
 					if (type === 'units') {
 						Profile.units = typeSum;
 						Profile.update();
@@ -1588,7 +1594,7 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th colspan="5"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
-		table.push(`<th colspan=${eras.length+1} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))} 	<button class="typeBoost btn btn-slim"><a href="#special_goods" class="game-cursor">★</a></button> </th>`)
+		table.push(`<th colspan=${eras.length+1} class="textright">${FH.HTML.Format(Object.values(erasCurrent).reduce((a,b)=>a+b))}/${FH.HTML.Format(Object.values(erasTotal).reduce((a,b)=>a+b))} 	<button class="typeBoost btn btn-slim"><a href="#goods_production" class="game-cursor">${FH.t('General.Boost')}: ${Boosts.Sums.goods_production}%</a></button> </th>`)
 		table.push('</tr>')
 
 		table.push('<tr class="sorter-header exportheader">')
@@ -1753,7 +1759,7 @@ let Productions = {
 		table.push('<thead class="sticky">')
 		table.push('<tr>')
 		table.push('<th colspan="'+(6+eras.length)+'"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">')
-		table.push(`<span style="float:right;">${FH.HTML.Format(currentProduction)}/${FH.HTML.Format(totalProduction)}</span></th>`)
+		table.push(`<span style="float:right;">${FH.HTML.Format(currentProduction)}/${FH.HTML.Format(totalProduction)} <button class="typeBoost btn btn-slim"><a href="#guild_goods_production" class="game-cursor">${FH.t('General.Boost')}: ${Boosts.Sums.guild_goods_production}%</a></button></span> </th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header exportheader">')
 		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
@@ -2006,7 +2012,7 @@ let Productions = {
 		if (category === "goods") {
 			return CityBuildings.getBuildingGoodsByEra(current, building, true);
 		}
-		if (category === "forge_points_production" || category === "coin_production" || category === "supply_production") {
+		if (category === "forge_points_production" || category === "coin_production" || category === "supply_production" || category === "goods_production" || category === "medals_production" || category === "special_goods_production" || category === "guild_goods_production") {
 			prod.amount = building.boosts.filter(x => x.type[0] === category)[0].value // not really rock solid like this
 		}
 		return prod
