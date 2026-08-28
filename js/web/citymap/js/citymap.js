@@ -891,7 +891,7 @@ let CityMap = {
 						}
 						default: {
 							f.addClass('too-old');
-							if (building.type !== "street" && !building.entityId.includes("MultiAge")) CityMap.metrics.erasBehindBuildings++;
+							if (building.type !== "street" && building.entityId.includes("MultiAge")) CityMap.metrics.erasBehindBuildings++;
 							break;
 						}
 					}
