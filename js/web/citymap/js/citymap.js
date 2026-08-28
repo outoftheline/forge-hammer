@@ -891,7 +891,7 @@ let CityMap = {
 						}
 						default: {
 							f.addClass('too-old');
-							if (building.type !== "street") CityMap.metrics.erasBehindBuildings++;
+							if (building.type !== "street" && !building.isSpecial) CityMap.metrics.erasBehindBuildings++;
 							break;
 						}
 					}
