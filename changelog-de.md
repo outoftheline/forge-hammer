@@ -1,5 +1,11 @@
 # Changelog
  
+## Version 1.7.0
+### Update
+- Produktionsübersicht:Listen für Güter-Boosts, Gildengüter-Boosts und Spezialgüter-Boosts hinzugefügt
+
+---
+ 
 ## Version 1.6.0
 ### Neu
 - Gebäude Effizienz: Erweiterte Filter hinzugefügt

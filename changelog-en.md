@@ -1,5 +1,11 @@
 # Changelog
  
+## Version 1.7.0
+### Update
+- Productions: Added lists for goods boosts, special goods boosts and guild goods boosts
+ 
+---
+ 
 ## Version 1.6.0
 ### New
 - Efficiency: Added advanced filters
