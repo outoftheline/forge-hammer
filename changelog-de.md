@@ -1,6 +1,9 @@
 # Changelog
  
 ## Version 1.7.0
+### Neu
+- Neue Farbe für die Fenster: Oceanic
+
 ### Update
 - Produktionsübersicht:Listen für Güter-Boosts, Gildengüter-Boosts und Spezialgüter-Boosts hinzugefügt
 

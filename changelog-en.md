@@ -1,6 +1,9 @@
 # Changelog
  
 ## Version 1.7.0
+### New
+- New window color added: Oceanic
+
 ### Update
 - Productions: Added lists for goods boosts, special goods boosts and guild goods boosts
  
