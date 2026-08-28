@@ -5,51 +5,51 @@
 
 :root {
 	--white: #fff;
-	--text: #e6e1d9;
-	--text-link: #48a18c;
+	--text: #d4d0c3;
+	--text-link: #84d5dc;
 	--text-medium: #93795D;
 	--text-dark: #4c2f1e;
 	--text-dark2: #3f2a1b;
 	--text-darker: #201a18;
 	--ash: #8a8a8a;
-	--text-highlight: #eca741;
-	--text-highlight2: #ffbf7d;
+	--text-highlight: #dad612;
+	--text-highlight2: #e2af7d;
 
-	--success: #7acb37;
-	--limegreen: #19bd19;
+	--success: #3fcb37;
+	--limegreen: #19bd50;
 	--info-blue: #77b6e9;
 	--danger-red: #e46363;
 
-	--border-medium: #a74917;
-	--bg-light: #ffe5a5;
-	--bg-medium: #134432;
-	--bg-dark: #0f1c1f;
-	--bg-darkest: #0b0f0f;
+	--border-medium: #1d2e84;
+	--bg-light: #c3bfb5;
+	--bg-medium: #18204d;
+	--bg-dark: #0e1215;
+	--bg-darkest: #070b0e;
 
-	--window-border: 2px solid #a74d1a;
+	--window-border: 2px solid #a671ab;
 	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
-	--window-bg: #171f20;
+	--window-bg: #0c1c22;
 
-	--window-body-scroll-bg: #1a2223;
-	--window-body-scroll-border: #1a2223;
-	--window-body-scroll-color: #ffefa0;
+	--window-body-scroll-bg: #0c1c22;
+	--window-body-scroll-border: #0c1c22;
+	--window-body-scroll-color: #e3dfc6;
 
 	--window-settings-bg: #0d2427;
 
-	--window-head-bg: radial-gradient(circle,#ff7b27, #a74d1a);
+	--window-head-bg: radial-gradient(circle,#a19bc6, #5f5ca1);
 	--window-head-text: #f5e9af;
-	--window-head-shadow: inset 0 -1px 0 0 #db6d2e;
-	--window-head-btn-bg: url(../images/hud/box-sprite-dark.png), linear-gradient(to bottom, #ffefa0, #ffefa0);
-	--window-head-btn-shadow: 0 0 0 1px #db6d2e;
+	--window-head-shadow: inset 0 -1px 0 0 #e3df15;
+	--window-head-btn-bg: url(../images/hud/box-sprite-dark.png), linear-gradient(to bottom, #e3dfc6, #e3dfc6);
+	--window-head-btn-shadow: inset 0 0 0 1px #e3df15;
 
-	--menu-boxed-head-bg: radial-gradient(circle,#ff7b27, #a74d1a);
+	--menu-boxed-head-bg: radial-gradient(circle,#a19bc6, #625ea7);
 	--menu-boxed-head-shadow: none;
 	--menu-boxed-head-color: #eee;
 
-	--btn-bg: linear-gradient(to bottom, #72b2a3, #518273);
+	--btn-bg: linear-gradient(to bottom, #d87b24, #d15d1e);
 	--btn-bg-disabled: linear-gradient(to bottom, #444444 #2d2d2d);
-	--btn-bg-active: linear-gradient(to bottom, #6bd4cf, #367a75);
-	--btn-bg-onclick: linear-gradient(to bottom, #5fc4bf, #2b5a56);
+	--btn-bg-active: linear-gradient(to bottom, #e6a631, #d15d1e);
+	--btn-bg-onclick: linear-gradient(to bottom, #eeb141, #cc5413);
 	--btn-bg-green: linear-gradient(to bottom, #359e2b, #176517);
     --btn-border: 1px solid #0a232c;
     --btn-border-active-color: #133853;
@@ -69,13 +69,13 @@
 	--btn-bg-red-active: linear-gradient(to bottom, #a71f1f,#590d0d);
 	--btn-bg-red-onclick: linear-gradient(to bottom, #610a16,#2e0505);
 
-	--tabs-bg: linear-gradient(#553a24, #553a24);
-	--tabs-bg-active: linear-gradient(135deg, #9c4515, #b74b0f);
+	--tabs-bg: linear-gradient(to top, #5a5a5a, #2c2e33);
+	--tabs-bg-active: linear-gradient(#3a60c2, #25337c);
 	--tabs-bg-shadow: inset 0 2px 0 #5a5155;
-	--tabs-bg-shadow-active: inset 1px 1px 0 0 #c44c00, inset -1px 1px 0 0 #c44c00;
-	--tabs-border: 2px solid #805d2e;
-	--border-tab: #c3c2ab;
-	--border-tab-vertical: linear-gradient(-90deg, #b74b0f 10.5%, #fff394 11%, #fff394 15%, #b74b0f 15.5%, #b74b0f 18.5%, #fff394 19%, #fff394 29%, #b74b0f 29.5%) 10;
+	--tabs-bg-shadow-active: none;
+	--tabs-border: 2px solid #25337c;
+	--border-tab: #25337c;
+	--border-tab-vertical: linear-gradient(-90deg, #25337c, #25337c) 10;
 	--text-tab-active: #f5e9af;
 	--text-tab: #eee;
 
@@ -83,15 +83,15 @@
 	--border-table-bottom: #0e0f0fa8;
 	--border-table-bottom-darker: #0f0f0e;
 	--table-bg-hover: #57cfff33;
-	--table-bg-odd: #4a9dc417;
+	--table-bg-odd: #4a89c417;
 	--table-bg-darker: #05182080;
 	--table-bg-info: #06416363;
 	--table-bt-info: transparent;
 	--table-bb-info: #132038;
-	--table-bg-success: #277d094d;
-	--table-bt-success: #367f34;
-	--table-bb-success: #0b350b;
-	--table-bg-error: #7908084d;
+	--table-bg-success: #36751f4d;
+	--table-bt-success: #3a7438;
+	--table-bb-success: #0d300d;
+	--table-bg-error: #7908083f;
 	--table-bt-error: #7a2f2f;
 	--table-bb-error: #4f0e0e;
 	--table-bg-bright: #dd85002e;
@@ -102,13 +102,13 @@
 	--hud-border-error: #9c4218;
 	--hud-border-success: #74c554;
 
-	--menu-tooltip-border: 2px solid #162224;
-	--menu-tooltip-bg: #162224;
+	--menu-tooltip-border: 2px solid #232529;
+	--menu-tooltip-bg: #232529;
 	--menu-tooltip-disabled: #e08e8e;
 	--menu-tooltip-text: #ddd6c6;
-	--menu-tooltip-head-bg: #1b556699;
+	--menu-tooltip-head-bg: #0903182c;
 
-    --tooltip-bg: #0e1213;
+    --tooltip-bg: #15191a;
     --tooltip-text: #ddddc6;
 
 	--hud-counter-color: #1692a8;
@@ -118,17 +118,17 @@
 
 	--menu-bg: #00000080;
 	--menu-shadow: none;
-	--menu-arrow-bg: linear-gradient(to bottom, #a74d1a, #a74d1a);
+	--menu-arrow-bg: linear-gradient(to bottom, #d15d1e, #d15d1e);
 	--menu-arrow-color: #e5e1cf;
-	--menu-btn-bg-green: linear-gradient(#5e8b58 20%, #386c53 60%) border-box;
+	--menu-btn-bg-green: linear-gradient(#c795df 20%, #9971ab 60%) border-box;
 	--menu-btn-bg-red: linear-gradient(to bottom, #6b4e4e, #4b2b2b) border-box;
-	--menu-btn-bg-grey: linear-gradient(#151f22, #141b20) border-box;
-	--menu-btn-bg: linear-gradient(#1d3d3b, #213037) padding-box, var(--menu-btn-bg-green);
-	--menu-btn-bg-color: #213037;
+	--menu-btn-bg-grey: linear-gradient(#2a2d33, #2a2d33) border-box;
+	--menu-btn-bg: linear-gradient(#55544f, #757570) padding-box, var(--menu-btn-bg-green);
+	--menu-btn-bg-color: #55544f;
 	--menu-btn-shadow: none;
-	--menu-btn-shadow-disabled: inset 0 0 1px 1px #3d0e0838;
+	--menu-btn-shadow-disabled: inset 0 0 1px 1px #a0000038;
 	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
-	--menu-btn-bg-settings: linear-gradient(#2e2e2e,#2e2e2e) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
+	--menu-btn-bg-settings: linear-gradient(#55544f,#55544f) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
 
 	--bg-chart: #2227;
 
@@ -146,11 +146,14 @@
     text-shadow: none;
 }
 .window-head  {
-    border-radius: 3px 11px 0 0;
+    border-radius: 11px 11px 0 0;
 }
 .window-head .box-buttons span {
     border-radius: 12px;
 }
 .window-box {
-    border-radius: 5px 14px 5px 5px;
+    border-radius: 14px 14px 5px 5px;
+}
+.hud-btn {
+    border-radius: 8px;
 }
