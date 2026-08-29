@@ -274,7 +274,8 @@ let BattleAssist = {
             'dragdrop': false,
             'minimize': false
         });
-        $('#battleAssistAddAdviceBody').html(`<div onclick="BattleAssist.ShowArmyAdviceConfig()">${FH.t('Boxes.BattleAssistAddAdvice')}</div>`);
+        $('#battleAssistAddAdviceBody').html(`<div>${FH.t('Boxes.BattleAssistAddAdvice')}</div>`);
+        $('#battleAssistAddAdviceBody div').on('click', BattleAssist.ShowArmyAdviceConfig)
     },
 
 
