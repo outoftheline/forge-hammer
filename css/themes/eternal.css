@@ -15,7 +15,7 @@
 	--text-highlight: #dad612;
 	--text-highlight2: #e2af7d;
 
-	--success: #3fcb37;
+	--success: #5dc957;
 	--limegreen: #19bd50;
 	--info-blue: #77b6e9;
 	--danger-red: #e46363;
@@ -26,7 +26,7 @@
 	--bg-dark: #0e1215;
 	--bg-darkest: #070b0e;
 
-	--window-border: 2px solid #a671ab;
+	--window-border: 2px solid #706aac;
 	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
 	--window-bg: #0c1c22;
 
@@ -36,11 +36,11 @@
 
 	--window-settings-bg: #0d2427;
 
-	--window-head-bg: radial-gradient(circle,#a19bc6, #5f5ca1);
+	--window-head-bg: linear-gradient(-45deg, #e3dfc6, #aca590 84px, #e3df15 84px, #e3df15 86px, transparent 86px), radial-gradient(circle, #a19bc6, #5f5ca1);
 	--window-head-text: #f5e9af;
-	--window-head-shadow: inset 0 -1px 0 0 #e3df15;
+	--window-head-shadow: inset 0 -1px 0 0 #e7e542;
 	--window-head-btn-bg: url(../images/hud/box-sprite-dark.png), linear-gradient(to bottom, #e3dfc6, #e3dfc6);
-	--window-head-btn-shadow: inset 0 0 0 1px #e3df15;
+	--window-head-btn-shadow: 0 0 0 1px #e3df15;
 
 	--menu-boxed-head-bg: radial-gradient(circle,#a19bc6, #625ea7);
 	--menu-boxed-head-shadow: none;

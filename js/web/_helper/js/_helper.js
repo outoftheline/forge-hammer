@@ -677,8 +677,8 @@ let HTML = {
 		// Except the "menu Box"
 		if(id === 'menu_box')
 		{
-			options['minWidth'] = 101;
-			options['minHeight'] = 87;
+			options['minWidth'] = 55;
+			options['minHeight'] = 77;
 		}
 
 		// keep aspect ratio

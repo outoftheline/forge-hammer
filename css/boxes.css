@@ -1500,6 +1500,7 @@ a:hover, input[type="radio"], .clickable {
 	cursor: nwse-resize;
 	background: url('../images/hud/wingrip.png') no-repeat;
 	z-index: 5005;
+	pointer-events: all;
 }
 
 .window-grippy:active {
@@ -2299,17 +2300,32 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #menu_box.window-box {
+	background: none;
+	box-shadow: none;
+	border: none;
     top: 30%;
     right: 15%;
     width: 120px;
     height: 60px;
 	border-width: 2px;
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+	pointer-events: none;
 }
 
 #menu_boxHeader {
 	background: var(--menu-boxed-head-bg);
     box-shadow: var(--menu-boxed-head-shadow);
+	border: var(--window-border);
 	padding: 0.2rem;
+	max-width: 120px;
+	min-width: 50px;
+	pointer-events: all;
+}
+
+.open #menu_boxHeader {
+	border-bottom: none;
 }
 
 #menu_box.closed #menu_boxHeader {
@@ -2338,7 +2354,12 @@ input[type="range"]::-webkit-slider-thumb {
 #menu_box #menu_boxBody {
 	overflow: auto;
 	padding: 2px;
-	height: calc(100% - 42px);
+	height: 100%;
+	background: var(--window-bg);
+	border: var(--window-border);
+	box-shadow: var(--window-shadow);
+	border-radius: 3px 0 3px 3px;
+	pointer-events: all;
 }
 
 #menu_box .hud-btn {

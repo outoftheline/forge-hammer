@@ -719,7 +719,8 @@ let Settings = {
 			{name: "Blues", path: "themes/blues"},
 			{name: "Quantum", path: "themes/qi"},
 			{name: "Titan", path: "themes/titan"},
-			//{name: "Iron", path: "themes/iron"}
+			{name: "Oceanic", path: "themes/oceanic"},
+			{name: "Eternal", path: "themes/eternal"}
 		];
 
 		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";
