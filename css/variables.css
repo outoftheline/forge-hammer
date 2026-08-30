@@ -26,18 +26,18 @@
 
 	--bg-light: #F9EBC6;
 	--bg-medium: #b3a582;
-	--bg-dark: #211008;
+	--bg-dark: #21130c;
 	--bg-darkest: #180d07;
 
 	--window-border: 2px solid #9f7553;
 	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
 	--window-bg: url('../images/hud/box-bg.png') center center repeat;
 
-	--window-head-bg: linear-gradient(90deg, #67100a, #57281e);
-	--window-head-text: #ffe7ba;
-	--window-head-shadow: none;
-	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #7a4e38, #724532);
-	--window-head-btn-shadow:  none;
+	--window-head-bg: linear-gradient(#662518, #44150a);
+	--window-head-text: #f3d6a0;
+	--window-head-shadow: inset 0 -1px 0 0 #9f7553;
+	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #535c71, #353f53);
+	--window-head-btn-shadow: 0 0 0 1px #0006;
 
 	--window-body-scroll-bg: #57250c;
 	--window-body-scroll-border: #281207;

@@ -23,13 +23,7 @@
 	font-weight: 700;
 }
 
-#outpostConsumables #outpostConsumablesBody .text-danger {
-	color: #ff4040;
-	font-weight: 700;
-}
-
-#outpostConsumables #outpostConsumablesBody .text-success {
-	color: var(--success);
+#outpostConsumables #outpostConsumablesBody .text-danger, #outpostConsumables #outpostConsumablesBody .text-success {
 	font-weight: 700;
 }
 

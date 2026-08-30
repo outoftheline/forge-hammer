@@ -23,7 +23,7 @@
 	--border-medium: #1d2e84;
 	--bg-light: #c3bfb5;
 	--bg-medium: #18204d;
-	--bg-dark: #0e1215;
+	--bg-dark: #12171a;
 	--bg-darkest: #070b0e;
 
 	--window-border: 2px solid #706aac;
@@ -116,16 +116,16 @@
 	--hud-counter-bg: 1px 0 0 1px #0000003e;
 	--hud-counter-size: 16px;
 
-	--menu-bg: #00000080;
+	--menu-bg: none;
 	--menu-shadow: none;
 	--menu-arrow-bg: linear-gradient(to bottom, #d15d1e, #d15d1e);
 	--menu-arrow-color: #e5e1cf;
-	--menu-btn-bg-green: linear-gradient(#c795df 20%, #9971ab 60%) border-box;
+	--menu-btn-bg-green: linear-gradient(#b995df 20%, #9971ab 60%) border-box;
 	--menu-btn-bg-red: linear-gradient(to bottom, #6b4e4e, #4b2b2b) border-box;
 	--menu-btn-bg-grey: linear-gradient(#2a2d33, #2a2d33) border-box;
 	--menu-btn-bg: linear-gradient(#55544f, #757570) padding-box, var(--menu-btn-bg-green);
 	--menu-btn-bg-color: #55544f;
-	--menu-btn-shadow: none;
+	--menu-btn-shadow: 0 0 3px 1px #0009;
 	--menu-btn-shadow-disabled: inset 0 0 1px 1px #a0000038;
 	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
 	--menu-btn-bg-settings: linear-gradient(#55544f,#55544f) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
@@ -154,6 +154,8 @@
 .window-box {
     border-radius: 14px 14px 5px 5px;
 }
-.hud-btn {
-    border-radius: 8px;
+.hud-right .hud-btn {
+    border-radius: 15px 0 0 15px;
+	border-right: none;
+	left: 2px;
 }
