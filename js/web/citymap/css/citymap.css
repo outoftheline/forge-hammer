@@ -614,7 +614,7 @@
 #area-state .building-count-area .ratings span::after {
     content: "➔";
     display: inline-block;
-    background: var(--menu-arrow-bg);
+    background: var(--btn-bg);
     padding: 0 2px;
     border-radius: 3px;
     color: var(--text-btn);
