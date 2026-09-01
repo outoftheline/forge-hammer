@@ -63,7 +63,7 @@
 
 #gbCalc .text-grey,
 #gbCalc .text-grey strong {
-	color: var(--text-tab);
+	color: var(--ash);
 	opacity: 0.9;
 }
 
