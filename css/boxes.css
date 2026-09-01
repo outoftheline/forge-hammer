@@ -2170,7 +2170,9 @@ input[type="range"]::-webkit-slider-thumb {
 .hud-btn #gex-attempt-count[data-number^="9"], 
 .hud-btn #gex-attempt-count[data-number^="10"], 
 .hud-btn #gex-attempt-count[data-number^="11"], 
-.hud-btn #gex-attempt-count[data-number^="12"] {
+.hud-btn #gex-attempt-count[data-number^="12"], 
+.hud-btn #gex-attempt-count[data-number^="13"], 
+.hud-btn #gex-attempt-count[data-number^="14"] {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
@@ -2183,7 +2185,6 @@ input[type="range"]::-webkit-slider-thumb {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
-
 
 #forgehammer-hud.hud-right {
 	right: 0;
