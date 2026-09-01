@@ -433,24 +433,21 @@ let GuildFights = {
 
 				return lockedA - lockedB;
 			});
-			if (sortedSignals.length > 0 && $('#gildFight-Btn').length > 0) {
-				let timeDiff = moment.unix(sortedSignals[0].lockedUntil).diff(moment());
-				$('#gildFight-Btn .hud-counter').text(moment.utc(timeDiff).format('H:mm'));
-				if (timeDiff / 60000 < 2.9) {
-					 $('#gildFight-Btn .hud-counter').addClass('hud-counter-red');
-				} else
-					 $('#gildFight-Btn .hud-counter').removeClass('hud-counter-red');
-
-				if (timeDiff < 1) {
+			let timeDiff = moment.unix(sortedSignals[0].lockedUntil).diff(moment());
+			$('#gildFight-Btn .hud-counter').text(moment.utc(timeDiff).format('H:mm'));
+			if (timeDiff / 60000 < 2.4) {
+					$('#gildFight-Btn .hud-counter').addClass('hud-counter-red');
+			} else
 					$('#gildFight-Btn .hud-counter').removeClass('hud-counter-red');
-					GuildFights.MapData.map.provinces[sortedSignals[0].id].signal = undefined;
-					GuildFights.MapData.map.provinces[sortedSignals[0].id].lockedUntil = undefined;
-				}
-			}
-			else if ($('#gildFight-Btn').length > 0) {
+
+			if (timeDiff < 0) {
 				$('#gildFight-Btn .hud-counter').text('').removeClass('hud-counter-red');
+				GuildFights.MapData.map.provinces[sortedSignals[0].id].signal = undefined;
+				GuildFights.MapData.map.provinces[sortedSignals[0].id].lockedUntil = undefined;
 			}
 		}
+		else if ($('#gildFight-Btn').length > 0 && menuSignals.length === 0)
+			$('#gildFight-Btn .hud-counter').text('').removeClass('hud-counter-red');
 	},
 
 

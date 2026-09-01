@@ -777,9 +777,6 @@ _menu = {
 	gildFight_Btn: () => {
 		let btn = _menu.MakeButton('gildFight',true);
 
-		let signals = GuildFights.MapData?.map?.provinces?.filter(x => x.signal === "focus") || 0;
-		console.log(signals);
-
 		let btn_sp = $('<span />').on('click', function (){
 			if(GuildFights.MapData) {
 				GuildFights.ShowGuildBox();
