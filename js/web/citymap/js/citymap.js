@@ -998,6 +998,12 @@ let CityMap = {
 			</span> 
 			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` +
 			
+			`<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowDecayedBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+			<span>
+			<img src="${srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)}" />${CityMap.metrics.decayedBuildings}
+			</span>
+			<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.decayedBuildingsArea}</span></li>` +
+
 			`<li onClick="CityMap.highlightFspDisabledBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
 			<span>
 			<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
