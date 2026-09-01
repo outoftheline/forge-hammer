@@ -798,8 +798,14 @@ img.smallIcon { height: 18px; width: auto; }
 	background-image: url('../images/menu/gex.png');
 }
 
-[id$=gildFight-Btn] span {
+[id$=gildFight-Btn] span:first-child {
 	background-image: url('../images/menu/gbg.png');
+}
+#gildFight-Btn.hud-btn span.hud-counter {
+	font-size: 0.9em;
+	left: -4px;
+	height: auto;
+	padding: 0 2px;
 }
 
 [id$=investment-Btn] span {
@@ -2136,11 +2142,11 @@ input[type="range"]::-webkit-slider-thumb {
 	margin-top: 10%;
 }
 
-.hud-btn span.hud-counter, .hammer-counter {
-	width: 15px;
-	height: 15px;
+.hud-btn span.hud-counter:not(:empty), .hammer-counter {
+	min-width: 15px;
+	max-height: 15px;
 	padding: 1px;
-	border-radius: 50%;
+	border-radius: 50px;
 	line-height: 13px;
 	text-align: center;
 	pointer-events: none;
@@ -2150,13 +2156,14 @@ input[type="range"]::-webkit-slider-thumb {
 	background-image: none;
 	background-color: var(--hud-counter-color);
     box-shadow: var(--hud-counter-bg);
+	white-space: nowrap;
 }
 
 .hud-btn span.hud-counter {
 	position: absolute;
-	bottom: 4px;
 	top: unset;
-	left: 4px;
+	bottom: 1px;
+	left: 2px;
 }
 
 .hud-btn #gex-attempt-count[data-number^="8"], 
@@ -2168,13 +2175,10 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
 
-/* Red state for JS-toggled HUD counters (e.g. GBG Action Log collection age) */
 .hud-btn span.hud-counter.hud-counter-red {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
-
-/* Red state for JS-toggled HUD counters (e.g. GBG Action Log collection age) */
 .hud-btn span.hud-counter.hud-counter-red {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
@@ -2227,15 +2231,6 @@ input[type="range"]::-webkit-slider-thumb {
 .hud-right .menu-placeholder {
 	width: calc(var(--menu-btn-size) + 4px);
 	height: calc(var(--menu-btn-size) + 4px);
-}
-
-.hud-right .hud-btn span.hud-counter {
-	padding: 2px;
-	width: var(--hud-counter-size);
-	height: var(--hud-counter-size);
-	bottom: 2px;
-	left: 2px;
-	line-height: var(--hud-counter-size);
 }
 
 .hud-right .hud-btn-up,

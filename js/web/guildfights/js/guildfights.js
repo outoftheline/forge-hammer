@@ -308,6 +308,7 @@ let GuildFights = {
 		}
 
 		GuildFights.ShowFocusSignals();
+		GuildFights.UpdateMenuSignalTimer();
 
 		if (provinces.some(x => x.signal === "focus")) {
 			if (!GuildFights.SignalsIntervalID)
@@ -420,6 +421,33 @@ let GuildFights = {
 		container.children().each(function () {
 			if (!activeSignals.has($(this).attr('id'))) $(this).remove();
 		});
+	},
+
+
+	UpdateMenuSignalTimer: () => {
+		let menuSignals = GuildFights.MapData?.map?.provinces?.filter(x => x.signal === 'focus' && x.lockedUntil !== undefined && x.ownerId !== GuildFights.MapData.currentParticipantId) || [];
+		if ($('#gildFight-Btn').length > 0 && menuSignals.length > 0) {
+			let sortedSignals = [...menuSignals].sort((a, b) => {
+				let lockedA = a.lockedUntil,
+					lockedB = b.lockedUntil;
+
+				return lockedA - lockedB;
+			});
+			if (sortedSignals.length > 0 && $('#gildFight-Btn').length > 0) {
+				let timeDiff = moment.unix(sortedSignals[0].lockedUntil).diff(moment());
+				$('#gildFight-Btn .hud-counter').text(moment.utc(timeDiff).format('H:mm'));
+				if (timeDiff / 60000 < 2.9)
+					 $('#gildFight-Btn .hud-counter').addClass('hud-counter-red');
+				if (timeDiff < 0) {
+					let province = GuildFights.MapData?.map?.provinces?.find(x => x.id === sortedSignals[0].id);
+					$('#gildFight-Btn .hud-counter').removeClass('hud-counter-red');
+					province.signal = undefined;
+				}
+			}
+			else if ($('#gildFight-Btn').length > 0) {
+				$('#gildFight-Btn .hud-counter').text('').removeClass('hud-counter-red');
+			}
+		}
 	},
 
 
@@ -2248,6 +2276,8 @@ let GuildFights = {
 		});
 	},	
 };
+
+setInterval(GuildFights.UpdateMenuSignalTimer, 60000);
 
 let ProvinceMap = {
 	Map: {},

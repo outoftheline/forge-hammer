@@ -111,7 +111,7 @@
     --tooltip-bg: #15191a;
     --tooltip-text: #ddddc6;
 
-	--hud-counter-color: #1692a8;
+	--hud-counter-color: #1644a8;
 	--hud-counter-success: #508015;
 	--hud-counter-bg: 1px 0 0 1px #0000003e;
 	--hud-counter-size: 16px;
@@ -120,10 +120,10 @@
 	--menu-shadow: none;
 	--menu-arrow-bg: linear-gradient(to bottom, #d15d1e, #d15d1e);
 	--menu-arrow-color: #e5e1cf;
-	--menu-btn-bg-green: linear-gradient(#b995df 20%, #9971ab 60%) border-box;
+	--menu-btn-bg-green: linear-gradient(#af95df 20%, #9971ab 60%) border-box;
 	--menu-btn-bg-red: linear-gradient(to bottom, #6b4e4e, #4b2b2b) border-box;
 	--menu-btn-bg-grey: linear-gradient(#2a2d33, #2a2d33) border-box;
-	--menu-btn-bg: linear-gradient(#55544f, #757570) padding-box, var(--menu-btn-bg-green);
+	--menu-btn-bg: linear-gradient(#4b4a45, #757570) padding-box, var(--menu-btn-bg-green);
 	--menu-btn-bg-color: #55544f;
 	--menu-btn-shadow: 0 0 3px 1px #0009;
 	--menu-btn-shadow-disabled: inset 0 0 1px 1px #a0000038;
