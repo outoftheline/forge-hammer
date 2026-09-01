@@ -436,8 +436,10 @@ plannerDB.version(1).stores({
 	 */
 	function isTrustedGameOrigin(sender) {
 		try {
-			const origin = sender.origin || (sender.url ? new URL(sender.url).origin : null);
-			return typeof origin === 'string' && /^https:\/\/[^/]*\.forgeofempires\.com$/.test(origin);
+			const raw = sender.origin || sender.url;
+			if (typeof raw !== 'string') return false;
+			const origin = new URL(raw).origin;
+			return /^https:\/\/[^/]*\.forgeofempires\.com$/.test(origin);
 		} catch {
 			return false;
 		}
@@ -781,16 +783,48 @@ plannerDB.version(1).stores({
 				}
 				try {
 					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
-					const dbEntries = Object.entries(entries).map(([id, data]) => ({
-						region,
-						id,
-						hash: data.hash || null,
-						json: data.json || JSON.stringify(data)
-					}));
-					await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
-					return APIsuccess(true);
+
+					const dbEntries = [];
+					const skipped = [];
+
+					// skip bad entries and send them in the response
+					for (const [id, data] of Object.entries(entries)) {
+						if (!data || typeof data !== 'object') {
+							skipped.push(id);
+							continue;
+						}
+
+						let json = typeof data.json === 'string' && data.json !== '' ? data.json : null;
+						if (json === null) {
+							try {
+								json = JSON.stringify(data);
+							} catch (e) {
+								skipped.push(id);
+								continue;
+							}
+						}
+
+						dbEntries.push({ region, id, hash: data.hash || null, json });
+					}
+
+					if (dbEntries.length) await buildingMetaDB.table('buildingMeta').bulkPut(dbEntries);
+					return APIsuccess({ stored: dbEntries.length, skipped: skipped.length, skippedIds: skipped });
 				} catch (e) {
 					return APIerror('buildingMetaSet failed: ' + (e && e.message ? e.message : e));
+				}
+			}
+
+			// confirm sent data, so failed batches can be detected and resent
+			case 'buildingMetaIds': { // type
+				if (!isInternalSender(sender) && !isTrustedGameOrigin(sender)) return APIerror('buildingMetaIds: not permitted for external senders');
+				const region = typeof request.region === 'string' ? request.region : 'unknown';
+				try {
+					if (!buildingMetaDB.isOpen()) await buildingMetaDB.open();
+					const keys = await buildingMetaDB.table('buildingMeta').where('region').equals(region).primaryKeys();
+					// primary key is [region+id]
+					return APIsuccess(keys.map(key => Array.isArray(key) ? key[1] : key));
+				} catch (e) {
+					return APIerror('buildingMetaIds failed: ' + (e && e.message ? e.message : e));
 				}
 			}
 
@@ -878,10 +912,9 @@ plannerDB.version(1).stores({
 					iconUrl: "images/app48.png"
 				};
 
-				// Compose desktop message
-				// @ts-ignore
+				// desktop message
 				await browser.notifications.create(null, opt).then(id => {
-					// Remove automatically after a defined timeout
+					// remove automatically after a defined timeout
 					setTimeout(()=> {browser.notifications.clear(id)}, t);
 				});
 				return APIsuccess(true);
@@ -917,7 +950,7 @@ plannerDB.version(1).stores({
 				return APIsuccess(true);
 			}
 
-		} // end of switch type
+		}
 
 		return APIerror(`unknown request type: ${type}`);
 	}

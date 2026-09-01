@@ -151,11 +151,18 @@ window.PlannerApp = window.PlannerApp || {};
 
     function drawMap() {
         const city = Object.values(state.cityData);
+        const unknown = [];
         state.mapBuildings = [];
 
         for (const building of city) {
-            const buildingData = state.metaById.get(building.cityentity_id);
-            if (!buildingData) continue;
+            const buildingData = app.getMeta(building.cityentity_id);
+
+            if (!buildingData) {
+                // Nothing could resolve this entity (see prepareMeta in main.js).
+                // Collect it so the user is told instead of quietly losing it.
+                unknown.push(String(building.cityentity_id));
+                continue;
+            }
 
             if (
                 buildingData.type !== 'off_grid' &&
@@ -166,6 +173,16 @@ window.PlannerApp = window.PlannerApp || {};
                 const newBuilding = app.createRotatedBuilding({ ...building }, buildingData);
                 state.mapBuildings.push(newBuilding);
             }
+        }
+
+        if (unknown.length && app.reportDataIssue) {
+            app.reportDataIssue({
+                code: 'city-meta-missing',
+                level: 'warn',
+                title: app.t('XPlan.Issues.MissingBuildingsTitle', 'Buildings could not be shown'),
+                message: app.t('XPlan.Issues.MissingBuildingsText', 'No data is stored for these buildings, so they were left out of the plan. Open your city in the game to refresh the building data, then reload the planner.'),
+                items: unknown
+            });
         }
 
         app.rebuildOccupiedTiles();

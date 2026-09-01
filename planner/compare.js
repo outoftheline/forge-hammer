@@ -79,12 +79,10 @@ window.PlannerApp = window.PlannerApp || {};
     ]
         .concat(buildBoostMetrics())
         .concat([
-            { key: 'tiles_total', group: 'space', icon: 'size', t: 'XPlan.Compare.TilesTotal', fallback: 'Unlocked tiles' },
-            { key: 'tiles_buildings', group: 'space', icon: 'size', t: 'XPlan.Compare.TilesBuildings', fallback: 'Tiles used by buildings' },
-            { key: 'tiles_streets', group: 'space', icon: 'street_required', t: 'XPlan.Compare.TilesStreets', fallback: 'Tiles used by streets' },
-            { key: 'tiles_free', group: 'space', icon: 'size', t: 'XPlan.Compare.TilesFree', fallback: 'Free tiles' },
-            { key: 'street_count', group: 'space', icon: 'street_required', t: 'XPlan.Compare.StreetCount', fallback: 'Street segments' },
-            { key: 'building_count', group: 'space', icon: 'size', t: 'XPlan.Compare.BuildingCount', fallback: 'Buildings' }
+            { key: 'tiles_total', group: 'space', icon: 'size', t: 'Boxes.CityMap.WholeArea', fallback: 'Unlocked tiles' },
+            { key: 'tiles_streets', group: 'space', icon: 'street_required', t: 'XPlan.Street.All', fallback: 'Tiles used by streets' },
+            { key: 'tiles_free', group: 'space', icon: 'size', t: 'Boxes.CityMap.FreeArea', fallback: 'Free tiles' },
+            { key: 'building_count', group: 'space', icon: 'size', t: 'Boxes.CityMap.Building', fallback: 'Buildings' }
         ]);
 
     const METRIC_BY_KEY = new Map(METRICS.map(m => [m.key, m]));
@@ -92,10 +90,10 @@ window.PlannerApp = window.PlannerApp || {};
     const GROUPS = [
         ['population', 'Boxes.Tooltip.Building.provides', 'Provides'],
         ['production', 'Boxes.Tooltip.Building.produces', 'Produces (per 24h)'],
-        ['battle', 'XPlan.Compare.GroupBattle', 'Battle boosts'],
+        ['battle', 'Boxes.PlayerProfile.BattleBoosts', 'Battle boosts'],
         ['boosts', 'XPlan.Compare.GroupBoosts', 'Other boosts'],
         ['items', 'XPlan.Compare.GroupItems', 'Items & fragments (per 24h)'],
-        ['space', 'XPlan.Compare.GroupSpace', 'Space']
+        ['space', 'General.Space', 'Space']
     ];
 
     const DEFAULT_AXES = [
@@ -376,9 +374,9 @@ window.PlannerApp = window.PlannerApp || {};
             requiredAmount: requiredAmount || 1,
             t: 'XPlan.Compare.Item.' + key,
             fallback: name || key,
-            suffixT: requiredAmount ? 'XPlan.Compare.Fragments' : null,
+            suffixT: requiredAmount ? 'General.Fragments' : null,
             suffixFallback: requiredAmount
-                ? app.t('XPlan.Compare.Fragments', 'Fragments') + ' (' + requiredAmount + ')'
+                ? app.t('General.Fragments', 'Fragments') + ' (' + requiredAmount + ')'
                 : null,
             percent: false
         });
@@ -1142,10 +1140,10 @@ window.PlannerApp = window.PlannerApp || {};
         dom.compareTableWrap.innerHTML =
             '<table class="compare-table">' +
                 '<thead><tr>' +
-                    '<th>' + app.t('XPlan.Compare.Metric', 'Metric') + '</th>' +
-                    '<th class="num">' + app.t('XPlan.Compare.Before', 'Before') + '</th>' +
-                    '<th class="num">' + app.t('XPlan.Compare.After', 'After') + '</th>' +
-                    '<th class="num">' + app.t('XPlan.Compare.Change', 'Change') + '</th>' +
+                    '<th></th>' +
+                    '<th class="num">' + app.t('General.Before', 'Before') + '</th>' +
+                    '<th class="num">' + app.t('General.After', 'After') + '</th>' +
+                    '<th class="num">' + app.t('General.Change', 'Change') + '</th>' +
                 '</tr></thead>' +
                 '<tbody>' + rows.join('') + '</tbody>' +
             '</table>';
@@ -1281,8 +1279,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         if (!lastResult) {
             if (dom.compareTableWrap) {
-                dom.compareTableWrap.innerHTML = '<p class="empty">' +
-                    app.t('XPlan.Compare.NoData', 'No comparable data available.') + '</p>';
+                dom.compareTableWrap.innerHTML = '-';
             }
             dom.compareModal.classList.remove('hidden');
             return;

@@ -872,6 +872,7 @@ Tabs */
 	position: relative;
 	border-radius: 5px 5px 0 0;
 	background: var(--tabs-bg);
+	color: var(--text-tab);
 }
 
 .window-body .tabs ul.horizontal li:hover {
@@ -889,7 +890,7 @@ Tabs */
 	display: block;
 	position: relative;
 	padding: 0 6px;
-	color: var(--text-tab);
+	color: inherit;
 }
 
 .window-body .tabs ul.horizontal li.active a,

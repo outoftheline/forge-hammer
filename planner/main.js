@@ -8,35 +8,319 @@ window.PlannerApp = window.PlannerApp || {};
     const VIEW_KEY = 'foe_planner_view';
     const HISTORY_KEY = 'foe_planner_history';
     const PLAN_ID_KEY = 'foe_planner_plan_id';
+    const META_DB_NAME = 'FoEBuildingMeta';
+    const META_TABLE = 'buildingMeta';
 
-    // make sure types are the same as in the game map
-    function correctBuildingType(metaById) {
-        for (const entity of metaById.values()) {
-            if (!entity.type) {
-                entity.type = entity?.components?.AllAge?.tags?.tags
-                    ?.find(v => v.hasOwnProperty('buildingType'))?.buildingType;
-            }
+    // Resolution order for an unknown id:
+    // 1. metadata stored for a different world
+    // 2. metadata from the game tab together with the city payload
+    // 3. lookup through the background script
+    // Whatever is still unresolved after that is reported to the user
+
+    let metaDbPromise = null;
+
+    function openMetaDb() {
+        if (!metaDbPromise) {
+            metaDbPromise = (async () => {
+                const db = new Dexie(META_DB_NAME);
+                await db.open();
+                return db;
+            })().catch(e => {
+                metaDbPromise = null;
+                throw e;
+            });
         }
-        return metaById;
+        return metaDbPromise;
     }
 
-    // grab metadata from the DB, keyed by id (this is the single source of truth — see state.metaById)
-    async function getCityEntityMetaData(region) {
-        const buildingMetaDB = new Dexie("FoEBuildingMeta");
-        await buildingMetaDB.open();
-        const table = buildingMetaDB.table('buildingMeta');
-        const entries = await table.where('region').equals(region).toArray();
+    // make sure types are the same as in the game map
+    function correctBuildingType(entity) {
+        if (entity && !entity.type) {
+            entity.type = entity?.components?.AllAge?.tags?.tags
+                ?.find(v => v.hasOwnProperty('buildingType'))?.buildingType;
+        }
+        return entity;
+    }
 
-        const metaById = new Map();
-        for (const entry of entries) {
+    // Ids arrive as numbers in some payloads and as strings in others
+    function getMeta(id) {
+        if (id === undefined || id === null || !state.metaById) return undefined;
+
+        const direct = state.metaById.get(id);
+        if (direct) return direct;
+
+        const byString = state.metaById.get(String(id));
+        if (byString) return byString;
+
+        // keys stored as numbers, looked up as text
+        const asNumber = Number(id);
+        if (Number.isFinite(asNumber) && String(asNumber) === String(id)) {
+            return state.metaById.get(asNumber);
+        }
+
+        return undefined;
+    }
+
+    function parseMetaRow(row) {
+        if (!row || typeof row.json !== 'string') return null;
+        try {
+            const parsed = JSON.parse(row.json);
+            if (!parsed || typeof parsed !== 'object') return null;
+            if (parsed.id === undefined || parsed.id === null) parsed.id = row.id;
+            return correctBuildingType(parsed);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function addMetaRows(metaById, rows, stats) {
+        for (const row of rows) {
+            const meta = parseMetaRow(row);
+            if (!meta) {
+                if (stats) stats.parseErrors.push(String(row && row.id));
+                continue;
+            }
+            metaById.set(meta.id, meta);
+        }
+    }
+
+    async function loadMetaForRegion(region) {
+        const result = {
+            metaById: new Map(),
+            region: region || null,
+            regionsAvailable: [],
+            usedRegions: [],
+            parseErrors: [],
+            rowCount: 0,
+            error: null
+        };
+
+        let table;
+        try {
+            const db = await openMetaDb();
+            table = db.table(META_TABLE);
+        } catch (e) {
+            result.error = e;
+            return result;
+        }
+
+        let rows = [];
+
+        if (region) {
             try {
-                const parsed = JSON.parse(entry.json);
-                metaById.set(parsed.id ?? entry.id, parsed);
+                rows = await table.where('region').equals(region).toArray();
             } catch (e) {
-                console.warn('Could not parse meta for', entry.id, e);
+                console.warn('Planner: region index unavailable, scanning table instead', e);
+                rows = await table.filter(r => r.region === region).toArray().catch(() => []);
             }
         }
-        return correctBuildingType(metaById);
+
+        // Either no world is known or nothing was ever synced for it 
+        // fall back to whatever the database does contain
+        if (!rows.length) {
+            const all = await table.toArray().catch(() => []);
+            result.regionsAvailable = Array.from(new Set(all.map(r => r.region).filter(Boolean)));
+            if (all.length) {
+                result.usedRegions = result.regionsAvailable.slice();
+                rows = all;
+            }
+        } else {
+            result.usedRegions = [region];
+        }
+
+        result.rowCount = rows.length;
+        addMetaRows(result.metaById, rows, result);
+        return result;
+    }
+
+    async function findMetaByIds(ids) {
+        const wanted = new Set(ids.map(String));
+        const found = new Map();
+        if (!wanted.size) return found;
+
+        let table;
+        try {
+            const db = await openMetaDb();
+            table = db.table(META_TABLE);
+        } catch (e) {
+            return found;
+        }
+
+        // Fast path — the row key is normally the cityentity id.
+        let rows = [];
+        try {
+            rows = await table.where('id').anyOf(Array.from(wanted)).toArray();
+        } catch (e) {
+            rows = await table.filter(r => wanted.has(String(r.id))).toArray().catch(() => []);
+        }
+
+        for (const row of rows) {
+            const meta = parseMetaRow(row);
+            if (meta) found.set(String(meta.id), meta);
+        }
+
+        if (found.size >= wanted.size) return found;
+
+        // Slow path — the row key is not the entity id, so look inside the stored JSON
+        try {
+            await table.each(row => {
+                if (found.size >= wanted.size) return;
+                if (found.has(String(row.id))) return;
+                const meta = parseMetaRow(row);
+                if (meta && wanted.has(String(meta.id))) found.set(String(meta.id), meta);
+            });
+        } catch (e) {
+            console.warn('Planner: deep metadata scan failed', e);
+        }
+
+        return found;
+    }
+
+    // background script may be able to read the metadata straight out of a running game tab
+    async function fetchMetaFromGame(ids) {
+        const found = new Map();
+        if (!ids.length) return found;
+
+        try {
+            const data = await callBackground({
+                type: 'Planner.getCityEntities',
+                region: state.region || null,
+                ids: ids.map(String)
+            });
+
+            const entities = Array.isArray(data) ? data : Object.values(data || {});
+            for (const entity of entities) {
+                if (!entity || entity.id === undefined || entity.id === null) continue;
+                found.set(String(entity.id), correctBuildingType(entity));
+            }
+        } catch (e) {
+            console.log('Planner: live metadata lookup unavailable:', e && e.message);
+        }
+
+        return found;
+    }
+
+    function normalizeEntityList(source) {
+        if (!source) return [];
+        return Array.isArray(source) ? source : Object.values(source);
+    }
+
+    // Fills the gaps in state.metaById and returns the ids nothing could resolve
+    async function ensureMetaForIds(ids, options) {
+        const opts = options || {};
+
+        const missing = Array.from(new Set(
+            (ids || [])
+                .filter(id => id !== undefined && id !== null && !getMeta(id))
+                .map(String)
+        ));
+
+        if (!missing.length) return { unresolved: [], repaired: [] };
+
+        const repaired = [];
+        const stillMissing = () => missing.filter(id => !getMeta(id));
+
+        const adopt = (map, source) => {
+            for (const [id, meta] of map) {
+                if (getMeta(id)) continue;
+                meta.__source__ = source;
+                state.metaById.set(String(id), meta);
+                repaired.push(id);
+            }
+        };
+
+        if (app.loading) {
+            app.loading.step(app.t('XPlan.Loading.RepairMeta', 'Looking up missing building data…'));
+        }
+
+        adopt(await findMetaByIds(missing), 'other-world');
+        if (!stillMissing().length) return { unresolved: [], repaired };
+
+        if (opts.cityEntities) {
+            const supplied = new Map();
+            const pending = new Set(stillMissing());
+            for (const entity of normalizeEntityList(opts.cityEntities)) {
+                if (!entity || entity.id === undefined) continue;
+                if (pending.has(String(entity.id))) supplied.set(String(entity.id), correctBuildingType(entity));
+            }
+            adopt(supplied, 'payload');
+            if (!stillMissing().length) return { unresolved: [], repaired };
+        }
+
+        adopt(await fetchMetaFromGame(stillMissing()), 'game');
+
+        return { unresolved: stillMissing(), repaired };
+    }
+
+    function reportMetaLoadIssues(result) {
+        if (result.error) {
+            app.reportDataIssue({
+                code: 'meta-db',
+                level: 'error',
+                title: app.t('XPlan.Issues.MetaDbTitle', 'Building database unavailable'),
+                message: app.t('XPlan.Issues.MetaDbText', 'The planner could not open the building database. Open your city in the game once so the extension can sync it, then reload the planner.'),
+                items: [String((result.error && result.error.message) || result.error)]
+            });
+            return;
+        }
+
+        if (!result.rowCount) {
+            app.reportDataIssue({
+                code: 'meta-empty',
+                level: 'error',
+                title: app.t('XPlan.Issues.MetaEmptyTitle', 'No building data stored'),
+                message: app.t('XPlan.Issues.MetaEmptyText', 'The extension has not stored any building data yet. Open your city in the game once, then reload the planner.')
+            });
+            return;
+        }
+
+        if (result.region && !result.usedRegions.includes(result.region)) {
+            app.reportDataIssue({
+                code: 'meta-region',
+                level: 'warn',
+                title: app.t('XPlan.Issues.MetaRegionTitle', 'Building data from another world'),
+                message: app.t('XPlan.Issues.MetaRegionText', 'No building data is stored for this world, so data from other worlds is being used. Sizes are correct, but era specific values may not be.'),
+                items: [
+                    app.t('XPlan.Issues.MetaRegionWanted', 'This plan: {0}').replace('{0}', result.region),
+                    app.t('XPlan.Issues.MetaRegionUsed', 'Using: {0}').replace('{0}', result.usedRegions.join(', ') || '-')
+                ]
+            });
+        } else if (!result.region) {
+            app.reportDataIssue({
+                code: 'meta-noregion',
+                level: 'warn',
+                title: app.t('XPlan.Issues.MetaNoRegionTitle', 'World unknown'),
+                message: app.t('XPlan.Issues.MetaNoRegionText', 'This plan does not record which world it came from, so all stored building data is being used.')
+            });
+        }
+
+        if (result.parseErrors.length) {
+            app.reportDataIssue({
+                code: 'meta-parse',
+                level: 'warn',
+                title: app.t('XPlan.Issues.MetaParseTitle', 'Damaged building data'),
+                message: app.t('XPlan.Issues.MetaParseText', 'Some stored building entries could not be read and were skipped.'),
+                items: result.parseErrors
+            });
+        }
+    }
+
+    // Loads the metadata for a world and immediately repairs whatever the supplied ids still need
+    async function prepareMeta(region, requiredIds, options) {
+        if (app.loading) {
+            app.loading.step(app.t('XPlan.Loading.Metadata', 'Loading building data…'));
+        }
+
+        const result = await loadMetaForRegion(region);
+        state.metaById = result.metaById;
+        reportMetaLoadIssues(result);
+
+        const { unresolved, repaired } = await ensureMetaForIds(requiredIds || [], options);
+        if (repaired.length) {
+            console.log('Planner: recovered metadata for ' + repaired.length + ' building(s):', repaired);
+        }
+
+        return { result, unresolved, repaired };
     }
 
     // key used by CityMap.openPlanner() via background.js
@@ -85,6 +369,19 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     async function applyCityData(data) {
+        app.loading.show(app.t('XPlan.Loading.City', 'Loading your city…'));
+        try {
+            await applyCityDataInner(data);
+        } catch (e) {
+            console.error('Planner: failed to apply city data:', e);
+            app.loading.fail((e && e.message) || String(e));
+            throw e;
+        } finally {
+            app.loading.hide();
+        }
+    }
+
+    async function applyCityDataInner(data) {
         state.region = data.region;
         const { cityData, playerId } = sanitizeCityData(data.CityMapData || {});
         state.cityData = cityData;
@@ -100,7 +397,10 @@ window.PlannerApp = window.PlannerApp || {};
         state.playerName = data.playerName || state.playerName || 'unknown';
         state.playerId = (playerId !== undefined) ? playerId : (state.playerId || 'unknown');
 
-        state.metaById = await getCityEntityMetaData(state.region);
+        // drawMap() reports whatever is still unknown after this.
+        const cityIds = Object.values(state.cityData).map(b => b && b.cityentity_id);
+        await prepareMeta(state.region, cityIds, { cityEntities: data.cityEntities });
+
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         state.rotated = false;
@@ -318,6 +618,15 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     async function loadPlanFromDatabase(planId) {
+        app.loading.show(app.t('XPlan.Loading.Plan', 'Loading saved plan…'));
+        try {
+            return await loadPlanFromDatabaseInner(planId);
+        } finally {
+            app.loading.hide();
+        }
+    }
+
+    async function loadPlanFromDatabaseInner(planId) {
         const plan = await callBackground({ type: 'Planner.getPlan', planId });
         if (!plan) throw new Error('Plan not found');
 
@@ -332,10 +641,13 @@ window.PlannerApp = window.PlannerApp || {};
         state.currentEra = (originalData && originalData.currentEra) || null;
         state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
 
-        state.metaById = await getCityEntityMetaData(state.region);
+        const entries = buildingRowsToEntries(rows);
+        // buildingsFromEntries() reports whatever is still unknown after this.
+        await prepareMeta(state.region, entries.map(e => e.metaId));
+
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
-        const entries = buildingRowsToEntries(rows);
+        if (app.loading) app.loading.step(app.t('XPlan.Loading.Buildings', 'Placing buildings…'));
         state.mapBuildings = buildingsFromEntries(dedupeMapEntriesByPosition(entries.filter(e => !e.stored && !e.deleted)));
         state.storedBuildings = buildingsFromEntries(entries.filter(e => e.stored && !e.deleted));
         state.deletedBuildings = buildingsFromEntries(entries.filter(e => e.deleted));
@@ -427,6 +739,15 @@ window.PlannerApp = window.PlannerApp || {};
 
     // import
     async function deserializeState(saved) {
+        app.loading.show(app.t('XPlan.Loading.Import', 'Importing plan…'));
+        try {
+            await deserializeStateInner(saved);
+        } finally {
+            app.loading.hide();
+        }
+    }
+
+    async function deserializeStateInner(saved) {
         if (saved.player) {
             state.playerId = saved.player.id;
             state.playerName = saved.player.name;
@@ -442,8 +763,11 @@ window.PlannerApp = window.PlannerApp || {};
             currentEra: state.currentEra
         };
 
-        // check region
-        state.metaById = await getCityEntityMetaData(state.region);
+        const importedIds = []
+            .concat(saved.mapBuildings || [], saved.storedBuildings || [], saved.deletedBuildings || [])
+            .map(e => e && e.metaId);
+        await prepareMeta(state.region, importedIds);
+
         if (app.renderStreetSizeOptions) app.renderStreetSizeOptions();
 
         applyLayout(saved);
@@ -592,9 +916,18 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function buildingsFromEntries(entries) {
-        return (entries || []).map(entry => {
-            const meta = state.metaById.get(entry.metaId);
-            if (!meta) return null;
+        const dropped = [];
+
+        const buildings = (entries || []).map(entry => {
+            const meta = getMeta(entry.metaId);
+
+            if (!meta) {
+                if (entry.metaId !== undefined && entry.metaId !== null) {
+                    dropped.push(String(entry.metaId));
+                }
+                return null;
+            }
+
             const data = {
                 id: entry.id ?? (entry.data ? entry.data.id : undefined),
                 cityentity_id: entry.metaId,
@@ -605,6 +938,18 @@ window.PlannerApp = window.PlannerApp || {};
             };
             return createRotatedBuilding(data, meta);
         }).filter(Boolean);
+
+        if (dropped.length) {
+            app.reportDataIssue({
+                code: 'entry-dropped',
+                level: 'warn',
+                title: app.t('XPlan.Issues.DroppedTitle', 'Buildings left out'),
+                message: app.t('XPlan.Issues.DroppedText', 'No data is stored for these buildings, so they could not be restored. Open your city in the game to refresh the building data, then reload the planner.'),
+                items: dropped
+            });
+        }
+
+        return buildings;
     }
 
     function applyLayout(layout) {
@@ -758,6 +1103,9 @@ window.PlannerApp = window.PlannerApp || {};
     // TODO: autosave to the DB after 2mins
     function autoSave() {}
 
+    app.getMeta = getMeta;
+    app.prepareMeta = prepareMeta;
+    app.ensureMetaForIds = ensureMetaForIds;
     app.sanitizeCityData = sanitizeCityData;
     app.applyCityData = applyCityData;
     app.init = init;
@@ -787,13 +1135,24 @@ window.PlannerApp = window.PlannerApp || {};
     app.importStateFromFile = importStateFromFile;
 
     (async () => {
-        const loadedFromDb = await loadLastSavedPlan();
-        if (loadedFromDb) app.dom.submitWindow.classList.add('hidden');
+        app.bindStatusEvents();
+        app.loading.show(app.t('XPlan.Loading.Startup', 'Starting the planner…'));
 
-        const hasPending = await loadGameCityData();
-        if (hasPending) app.dom.submitWindow.classList.add('hidden');
+        try {
+            app.loading.step(app.t('XPlan.Loading.LastPlan', 'Looking for a saved plan…'));
+            const loadedFromDb = await loadLastSavedPlan();
+            if (loadedFromDb) app.dom.submitWindow.classList.add('hidden');
+
+            app.loading.step(app.t('XPlan.Loading.GameData', 'Waiting for city data from the game…'));
+            const hasPending = await loadGameCityData();
+            if (hasPending) app.dom.submitWindow.classList.add('hidden');
+        } catch (e) {
+            console.error('Planner: startup failed:', e);
+            app.loading.fail((e && e.message) || String(e));
+        }
 
         app.updateUndoRedoButtons();
         app.bindEvents(init);
+        app.loading.hide();
     })();
 })(window.PlannerApp);

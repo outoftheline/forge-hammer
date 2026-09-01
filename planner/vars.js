@@ -63,6 +63,12 @@ window.PlannerApp.dom = {
     compareAddedList: document.querySelector('#compareAddedList'),
     compareTableWrap: document.querySelector('#compareTableWrap'),
 
+    loadingOverlay: document.querySelector('#loadingOverlay'),
+    loadingTitle: document.querySelector('#loadingTitle'),
+    loadingStep: document.querySelector('#loadingStep'),
+    loadingDismiss: document.querySelector('#loadingDismiss'),
+    notifications: document.querySelector('#notifications'),
+
     newDataModal: document.querySelector('#newDataModal'),
     newDataModalText: document.querySelector('#newDataModalText'),
     newDataPlanNameInput: document.querySelector('#newDataPlanName'),
