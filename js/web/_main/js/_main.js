@@ -1012,6 +1012,9 @@ let Main = {
 				if ($('#bluegalaxy').length > 0) {
 					FH.BlueGalaxy.CalcBody(Buildings);
 				}
+				if ($('#Productions').length > 0) {
+					Productions.CalcBody();
+				}
 			}
 			if (!Main.CityMapUpdateEvent.timeout) {
 				f();
@@ -2276,11 +2279,13 @@ let Main = {
 			}
 			else if (FH.ActiveMap === "guild_raids") {
 				CityMap.QI.data[b.id] = b;
-			} else {
+			} 
+			else {
 				Main.CityMapData[b.id] = b;
+				CityBuildings.updateBuildingState(b.id, b);
 				if (b?.bonus?.type === "contribution_boost") Main.SetArkBonus2();
 			}
-		}		
+		}
 		FPCollector.CityMapDataNew = Buildings;
 		Main.CityMapUpdateEvent.trigger();
 	},

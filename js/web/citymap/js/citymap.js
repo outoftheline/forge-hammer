@@ -1506,6 +1506,10 @@ let CityBuildings = {
 	setPolivation(data, metaData) {
 		let isPolivationable = false;
 		let isPolishable = false;
+
+		if (typeof metaData === "string")
+			metaData = FH.Main.CityEntities[metaData];
+
 		metaData.abilities.forEach(ability => {
 			if (ability.__class__ === "MotivatableAbility")
 				isPolivationable = true
@@ -1848,6 +1852,9 @@ let CityBuildings = {
 
 	
 	setConnection(metaData, data) {	
+		if (typeof metaData === "string")
+			metaData = FH.Main.CityEntities[metaData];
+
 		let connected = (this.needsStreet(metaData, data) === 0)
 		if (!connected) 
 			connected = (data?.connected === 1)
@@ -2231,6 +2238,10 @@ let CityBuildings = {
 	setCurrentProductions(data, metaData, era) {
 		let productions = [];
 		let state = CityBuildings.setState(data);
+
+		if (typeof metaData === "string")
+			metaData = FH.Main.CityEntities[metaData];
+
 		if (state !== "idle") {
 			if (metaData.__class__ !== "GenericCityEntity") {
 				if (data.state.current_product) {
@@ -2841,6 +2852,21 @@ let CityBuildings = {
 
 	async canAscend(buildingEntityId) {	
 		return (await CityMap.AscendingBuildings).hasOwnProperty(buildingEntityId);
+	},
+
+
+	updateBuildingState(id, data) {
+		let building = FH.Main.CityBuildingsData[id];
+		building.state.name = this.setState(data);
+		building.state.times = this.setStateTimes(data);
+		building.state.isExpired = this.isExpiredBuilding(data);
+		building.state.decayTime = this.setDecayTime(data);
+		building.state.isDecayed = this.setDecayed(data);
+		building.state.level = (data.type === "greatbuilding" ? data.level : null);
+		building.state.max_level = (data.type === "greatbuilding" ? data.max_level : null);
+		building.state.isPolivated = this.setPolivation(data, building.entityId);
+		building.state.connected = this.setConnection(building.entityId, data);
+		building.state.production = this.setCurrentProductions(data, building.entityId, building.eraName);
 	},
 
 

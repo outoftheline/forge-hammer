@@ -983,13 +983,14 @@ let Productions = {
 
 		$('#Productions').find('#ProductionsBody').html(h.join('')).promise().done(function () {
 			// fill first table
-			let type = Productions.Types[0]
-			let firstTabContent = Productions.buildTableByType(type)
-			$("#Productions #"+type).html(firstTabContent)
+			let type = Productions.Types[Productions.ActiveTab-1];
+			let firstTabContent = Productions.buildTableByType(type);
+			$("#Productions #"+type).html(firstTabContent);
 
 			// fill other tables on demand
 			$('.production-tabs li, #Productions .typeBoost').click(function() {
-				let type = $("a", this).attr("href").replace("#","")
+				let type = $("a", this).attr("href").replace("#","");
+				Productions.ActiveTab = Productions.Types.findIndex(x => x === type)+1;
 
 				if ($("#Productions #"+type).html().length === 0) {
 					let content = Productions.buildTableByType(type)
@@ -997,7 +998,8 @@ let Productions = {
 
 						$('#Productions .typeBoost').click(function(e) {
 							e.preventDefault()
-							let type = $("a", this).attr("href").replace("#","")
+							let type = $("a", this).attr("href").replace("#","");
+							Productions.ActiveTab = Productions.Types.findIndex(x => x === type)+1;
 
 							if ($("#Productions #"+type).html().length === 0) {
 								let content = Productions.buildTableByType(type)
