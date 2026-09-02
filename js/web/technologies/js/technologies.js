@@ -219,7 +219,13 @@ let Technologies = {
         return era
     },
 
-
+    showOnlyMissing:() => {
+        if (Technologies.OnlyMissing) {
+            $('#technologiesBody tr').not(':has(.text-danger)').hide();
+        } else {
+            $('#technologiesBody tr').show();
+        }
+    },
 
     Show: ()=> {
 		if ($('#technologies').length === 0) {
@@ -276,6 +282,14 @@ let Technologies = {
             $(this).addClass('btn-active');
         });
 
+        $('#technologies').on('click', '.onlymissing', function () {
+            let $this = $(this),
+                v = $this.prop('checked');
+
+            Technologies.OnlyMissing = v;
+			Technologies.showOnlyMissing();
+        });
+
 		Technologies.BuildBox();
     },
 
@@ -285,6 +299,7 @@ let Technologies = {
         Technologies.IgnoreCurrentEraOptional = (FH.Storage.getItem('TechnologiesIgnoreCurrentEraOptional') !== 'false' ? 'true' : 'false')
 
         Technologies.CalcBody();
+        
     },
 
 
@@ -302,21 +317,49 @@ let Technologies = {
             inProgress = Object.assign({}, ...Technologies.UnlockedTechnologies.inProgressTechnologies.map(x => ({[x.tech_id]: x.researchCostPaid})));
 
         let processTech = (Tech, ressourceObject) => {
-            let EraID = Technologies.Eras[Tech['era']];
+            let EraID = Technologies.Eras[Tech.era];
 
-            if (EraID < FH.CurrentEraID && Technologies.IgnorePrevEra) return; // Vorherige ZA ausblenden
-            if (EraID >= FH.CurrentEraID && Tech.childTechnologies?.length === 0 && Technologies.IgnoreCurrentEraOptional) return; // Aktuelles/zukünfiges ZA und optionale Technologie ausblenden
+            if (EraID > Technologies.SelectedEraID) return;
 
-            if (EraID >= FH.CurrentEraID && EraID <= Technologies.SelectedEraID) { // Alle Technologien voriger ZA und optionale Technologien ausblenden
-
-                let res = Object.assign({}, Tech.researchCost?.resources || Tech.cost?.resources || {}, Tech.requirements?.resources || Tech.cost?.resources || {});
-                for (let [ResourceName,amount] of Object.entries(res)) {
-                    amount = amount - (inProgress?.[Tech.id]?.[ResourceName] || 0);
-                    ressourceObject[ResourceName] = (ressourceObject[ResourceName] || 0) + amount;
-                }
-                TechCount++;
+            let res = Object.assign({}, Tech.researchCost?.resources || Tech.cost?.resources || {}, Tech.requirements?.resources || Tech.cost?.resources || {});
+            for (let [ResourceName,amount] of Object.entries(res)) {
+                amount = amount - (inProgress?.[Tech.id]?.[ResourceName] || 0);
+                ressourceObject[ResourceName] = (ressourceObject[ResourceName] || 0) + amount;
             }
+            TechCount++;
         };
+
+        //add lost children to parents if missing
+        for (let Tech of Object.values(Techs)) {
+            for (let parent of Tech.parents) {
+                if (!Techs[parent].children) Techs[parent].children = [];
+                if (!Techs[parent].children.includes(Tech.id)) Techs[parent].children.push(Tech.id);
+            }
+        }
+
+        if (Technologies.IgnoreCurrentEraOptional || Technologies.IgnorePrevEra) { //prune tech tree to remove optional techs in current era
+            
+            let removed = 0;
+            do {
+                removed = 0;
+                let deadends = Object.values(Techs).filter(x => x.children?.length == 0).map(x => x.id);
+                for (let deadend of deadends) {
+                    if (deadend == "the_unknown_teaser") continue;
+                    if ((Technologies.Eras[Techs[deadend].era] >= FH.CurrentEraID || !Technologies.IgnorePrevEra) &&
+                        (Technologies.Eras[Techs[deadend].era] < FH.CurrentEraID || !Technologies.IgnoreCurrentEraOptional)) continue;
+
+                    delete Techs[deadend];
+                    removed++;
+                    let parents = Object.values(Techs).filter(x => x.children?.includes(deadend)).map(x => x.id);
+                    for (let parent of parents) {
+                        let index = Techs[parent].children.indexOf(deadend);
+                        if (index > -1) {
+                            Techs[parent].children.splice(index, 1);
+                        }
+                    }
+                }
+            } while (removed > 0);
+        }
         
         while (i < children.length) {
             let techId = children[i];
@@ -397,6 +440,7 @@ let Technologies = {
                     <div class="text-small">
                         <label for="IgnorePrevEra"><input id="IgnorePrevEra" class="ignoreprevera game-cursor"${(Technologies.IgnorePrevEra ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnorePrevEra')}</label><br/>
                         <label for="IgnoreCurrentEraOptional"><input id="IgnoreCurrentEraOptional" class="ignorecurrenteraoptional game-cursor" ${(Technologies.IgnoreCurrentEraOptional ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.IgnoreCurrentEraOptional')}</label><br/>
+                        <label for="OnlyMissing"><input id="OnlyMissing" class="onlymissing game-cursor" ${(Technologies.OnlyMissing ? 'checked' : '')} type="checkbox">${FH.t('Boxes.Technologies.OnlyMissing')}</label><br/>
                     </div>
                 </div>
             
@@ -407,7 +451,7 @@ let Technologies = {
             '<th colspan="2" data-export2="resource">' + FH.t('Boxes.Technologies.Resource') + '</th>' +
             '<th data-export="required">' + FH.t('Boxes.Technologies.DescRequired') + '</th>' +
             '<th data-export="instock">' + FH.t('Boxes.Technologies.DescInStock') + '</th>' +
-            '<th data-export="remaining" class="text-right">' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
+            '<th data-export="remaining" class="text-right"><span class="text-danger"></span>' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
             '</tr>' +
             '</thead>');
 
@@ -488,6 +532,8 @@ let Technologies = {
         h.push('</table');
 
         $('#technologiesBody').html(h.join(''));
+
+        Technologies.showOnlyMissing();
     },
 
 

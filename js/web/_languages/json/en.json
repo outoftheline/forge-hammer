@@ -1323,6 +1323,7 @@
   "Boxes.Technologies.DescStillMissing": "<span>Remaining</span> / <span>Needed</span>",
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignore optional technologies of current/higher eras",
   "Boxes.Technologies.IgnorePrevEra": "Ignore optional technologies of previous eras",
+  "Boxes.Technologies.OnlyMissing": "Show Only Missing",
   "Boxes.Technologies.NoTechs": "You have reached the end of this era",
   "Boxes.Technologies.Resource": "Resource",
   "Boxes.Technologies.Title": "Tech Tree Research Costs",
