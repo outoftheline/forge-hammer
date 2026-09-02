@@ -450,8 +450,8 @@ let Technologies = {
             '<tr>' +
             '<th colspan="2" data-export2="resource">' + FH.t('Boxes.Technologies.Resource') + '</th>' +
             '<th data-export="required">' + FH.t('Boxes.Technologies.DescRequired') + '</th>' +
-            '<th data-export="instock">' + FH.t('Boxes.Technologies.DescInStock') + '</th>' +
-            '<th data-export="remaining" class="text-right"><span class="text-danger"></span>' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
+            '<th data-export="instock"><span class="text-danger"></span>' + FH.t('Boxes.Technologies.DescInStock') + '</th>' +
+            '<th data-export="remaining" class="text-right">' + FH.t('Boxes.Technologies.DescStillMissing') + '</th>' +
             '</tr>' +
             '</thead>');
 
