@@ -2857,6 +2857,7 @@ let CityBuildings = {
 
 	updateBuildingState(id, data) {
 		let building = FH.Main.CityBuildingsData[id];
+		if (!building) return;
 		building.state.name = this.setState(data);
 		building.state.times = this.setStateTimes(data);
 		building.state.isExpired = this.isExpiredBuilding(data);
