@@ -23,13 +23,7 @@
 	font-weight: 700;
 }
 
-#outpostConsumables #outpostConsumablesBody .text-danger {
-	color: #ff4040;
-	font-weight: 700;
-}
-
-#outpostConsumables #outpostConsumablesBody .text-success {
-	color: var(--success);
+#outpostConsumables #outpostConsumablesBody .text-danger, #outpostConsumables #outpostConsumablesBody .text-success {
 	font-weight: 700;
 }
 
@@ -37,7 +31,8 @@
 	font-weight: 700;
 	display: inline-block;
 	margin-left: 6px;
-	background: var(--info-blue);
+	color: var(--info-blue);
+	background: var(--table-info-bg);
 	padding: 0 4px;
 	border-radius: 50%;
 	width: 10px;
@@ -49,7 +44,8 @@
 	position: absolute;
 	white-space: nowrap;
 	text-align: left;
-	background: rgba(0,0,0, 0.7);
+	background: var(--tooltip-bg);
+	color: var(--tooltip-text);
 	padding: 5px;
 	right: 6px;
 	bottom: 6px;

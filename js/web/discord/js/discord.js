@@ -374,7 +374,8 @@ let Discord = {
 
 		let e = {
 				url: url,
-				message: msg + " \n-# " + FH.Player.Name
+				message: msg,
+				user: FH.Player.Name
 			};
 
 		Discord.PrepareMessageForSend(e);
@@ -440,27 +441,10 @@ let Discord = {
 	},
 
 
-	CheckForEvent: (event, id = 0)=> {
-		if(Discord.WebHooks.length === 0 || Discord.WebHookDone[id]){
-			return;
-		}
-
-		let entries = Discord.WebHooks.filter((e)=> e.event === event);
-
-		for(let i in entries)
-		{
-			let e = entries[i];
-			Discord.PrepareMessageForSend(e);
-			Discord.WebHookDone[id] = event;
-		}
-	},
-
-
 	PrepareMessageForSend: (e)=> {
 		Discord.SendMessage(
-			e.url,
-			{
-				username: 'Forge Hammer',
+			e.url, {
+				username: (e.user + ' // Forge Hammer') || 'Forge Hammer',
 				content: e.message
 			}
 		)
@@ -542,7 +526,8 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + " \n-# " + FH.Player.Name
+			message: msg,
+			user: FH.Player.Name
 		});
 	},
 
@@ -554,7 +539,8 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + "-# " + FH.Player.Name
+			message: msg,
+			user: FH.Player.Name
 		});
 	},
 
@@ -564,7 +550,8 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + " \n-# " + FH.Player.Name
+			message: msg,
+			user: FH.Player.Name
 		});
 	},
 
@@ -576,7 +563,8 @@ let Discord = {
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
-			message: msg + "-# " + FH.Player.Name
+			message: msg,
+			user: FH.Player.Name
 		});
 	}
 };

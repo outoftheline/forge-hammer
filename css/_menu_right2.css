@@ -39,15 +39,6 @@
 	direction: ltr;
 }
 
-.hud-right2 .hud-btn span.hud-counter {
-	padding: 2px;
-	width: var(--hud-counter-size);
-	height: var(--hud-counter-size);
-	bottom: 2px;
-	left: 2px;
-	line-height: var(--hud-counter-size);
-}
-
 .hud-right2 .menu-placeholder {
 	width: calc(var(--menu-btn-size) - 2px);
 	height: calc(var(--menu-btn-size) - 2px);

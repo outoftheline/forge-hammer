@@ -308,6 +308,7 @@ let GuildFights = {
 		}
 
 		GuildFights.ShowFocusSignals();
+		GuildFights.UpdateMenuSignalTimer();
 
 		if (provinces.some(x => x.signal === "focus")) {
 			if (!GuildFights.SignalsIntervalID)
@@ -420,6 +421,33 @@ let GuildFights = {
 		container.children().each(function () {
 			if (!activeSignals.has($(this).attr('id'))) $(this).remove();
 		});
+	},
+
+
+	UpdateMenuSignalTimer: () => {
+		let menuSignals = GuildFights.MapData?.map?.provinces?.filter(x => x.signal === 'focus' && x.lockedUntil !== undefined && x.ownerId !== GuildFights.MapData.currentParticipantId) || [];
+		if ($('#gildFight-Btn').length > 0 && menuSignals.length > 0) {
+			let sortedSignals = [...menuSignals].sort((a, b) => {
+				let lockedA = a.lockedUntil,
+					lockedB = b.lockedUntil;
+
+				return lockedA - lockedB;
+			});
+			let timeDiff = moment.unix(sortedSignals[0].lockedUntil).diff(moment());
+			$('#gildFight-Btn .hud-counter').text(moment.utc(timeDiff).format('H:mm'));
+			if (timeDiff / 60000 < 2.4) {
+					$('#gildFight-Btn .hud-counter').addClass('hud-counter-red');
+			} else
+					$('#gildFight-Btn .hud-counter').removeClass('hud-counter-red');
+
+			if (timeDiff < 0) {
+				$('#gildFight-Btn .hud-counter').text('').removeClass('hud-counter-red');
+				GuildFights.MapData.map.provinces[sortedSignals[0].id].signal = undefined;
+				GuildFights.MapData.map.provinces[sortedSignals[0].id].lockedUntil = undefined;
+			}
+		}
+		else if ($('#gildFight-Btn').length > 0 && menuSignals.length === 0)
+			$('#gildFight-Btn .hud-counter').text('').removeClass('hud-counter-red');
 	},
 
 
@@ -1391,6 +1419,7 @@ let GuildFights = {
 				ProvinceMap.selectedProvince = null;
 			});
 			$('[data-original-title]').tooltip({container: 'body'});
+			$('#LiveGuildFighting #gbgowned table').tableSorter();
 		});
 	},
 
@@ -1623,12 +1652,12 @@ let GuildFights = {
 			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 		content.push('<div id="gbgowned"><table class="foe-table">');
-		content.push('<thead><tr>');
-		content.push('<th class="prov-name" style="user-select:text">' + FH.t('Boxes.GuildFights.Province') + '</th>');
-		content.push('<th class="time-dynamic">' + FH.t('Boxes.GuildFights.Count') + '</th>');
-		content.push('<th>Slots</th>');
-		content.push('<th>VP</th>');
-		content.push('</tr></thead><tbody>');
+		content.push('<thead><tr class="sorter-header">');
+		content.push('<th class="is-text prov-name" data-type="gbg-owned-group" style="user-select:text">' + FH.t('Boxes.GuildFights.Province') + '</th>');
+		content.push('<th class="is-number" data-type="gbg-owned-group" class="time-dynamic">' + FH.t('Boxes.GuildFights.Count') + '</th>');
+		content.push('<th class="is-number" data-type="gbg-owned-group">Slots</th>');
+		content.push('<th class="is-number" data-type="gbg-owned-group">VP</th>');
+		content.push('</tr></thead><tbody class="gbg-owned-group">');
 
 		for (let province of provinces) {
 			if (province.ownerId !== GuildFights.MapData.currentParticipantId) continue;
@@ -1643,7 +1672,7 @@ let GuildFights = {
 			let slotWarning = (province.usedBuildingSlots||0) < province.totalBuildingSlots && province.totalBuildingSlots === 2 ? 'bg-red': ((province.usedBuildingSlots||0) < province.totalBuildingSlots ? 'bg-yellow' : '')
 
 			content.push(`<tr id="time-${province.id}" class="time ${slotWarning}" data-tab="gbgowned" data-id=${province.id}>
-				<td class="prov-name" title="${FH.t('Boxes.GuildFights.Owner')}: ${province.owner}">
+				<td class="prov-name is-text" data-text="${province.title}" title="${FH.t('Boxes.GuildFights.Owner')}: ${province.owner}">
 					<span class="province-color" ${color['main'] ? 'style="background-color:' + color['main'] + '"' : ''}"></span> 
 					<b>${province.title}</b> 
 				</td>`);
@@ -1651,9 +1680,9 @@ let GuildFights = {
 			GuildFights.UpdateCounter(countDownDate, intervalID, province.id);
 
 			let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
-			content.push(`<td class="time-dynamic"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}">${countDownDate.format('HH:mm:ss')}</span></span></td>`);
-			content.push(`<td>${province.usedBuildingSlots||0}/${province.totalBuildingSlots}</td>`);
-			content.push(`<td>${province.victoryPoints}</td>`);
+			content.push(`<td class="time-dynamic is-number" data-number="${timeAt.format('HHmmss')}"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}">${countDownDate.format('HH:mm:ss')}</span></span></td>`);
+			content.push(`<td class="is-number" data-number="${province.usedBuildingSlots||0}">${province.usedBuildingSlots||0}/${province.totalBuildingSlots}</td>`);
+			content.push(`<td class="is-number" data-number="${province.victoryPoints}">${province.victoryPoints}</td>`);
 			content.push('</tr>');
 		}
 		
@@ -2248,6 +2277,8 @@ let GuildFights = {
 		});
 	},	
 };
+
+setInterval(GuildFights.UpdateMenuSignalTimer, 60000);
 
 let ProvinceMap = {
 	Map: {},

@@ -752,18 +752,6 @@ _menu = {
 		return btn.append(btn_sp);
 	},
 
-	gildFight_Btn: () => {
-		let btn = _menu.MakeButton('gildFight',true);
-
-		let btn_sp = $('<span />').on('click', function (){
-			if(GuildFights.MapData) {
-				GuildFights.ShowGuildBox();
-			}
-		});
-
-		return btn.append(btn_sp);
-	},
-
 	investment_Btn: () => {
 		let btn = _menu.MakeButton('investment');
 
@@ -784,6 +772,18 @@ _menu = {
 		});
 
 		return btn.append(btn_sp);
+	},
+
+	gildFight_Btn: () => {
+		let btn = _menu.MakeButton('gildFight',true);
+
+		let btn_sp = $('<span />').on('click', function (){
+			if(GuildFights.MapData) {
+				GuildFights.ShowGuildBox();
+			}
+		});
+
+		return btn.append(btn_sp).append(`<span class="hud-counter" />`);
 	},
 
 	gexStat_Btn: () => {

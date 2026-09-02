@@ -13,6 +13,7 @@ let Productions = {
 	ShowDaily: false,
 	ratedBuildings:null,
 	ActiveTab: 1,
+	Filter: null,
 	ProfileDataLoaded: false,
 
 	Tabs: [],
@@ -964,6 +965,9 @@ let Productions = {
 
 	
 	CalcBody: () => {
+		let activeType = Productions.Types[Productions.ActiveTab - 1];
+		let savedState = Productions.GetTabState(activeType); // for when the window is open and building state changes
+
 		Productions.Tabs = [];
 		Productions.TabsContent = [];
 
@@ -982,56 +986,87 @@ let Productions = {
 		h.push('</div>');
 
 		$('#Productions').find('#ProductionsBody').html(h.join('')).promise().done(function () {
-			// fill first table
-			let type = Productions.Types[0]
-			let firstTabContent = Productions.buildTableByType(type)
-			$("#Productions #"+type).html(firstTabContent)
+			// show the previously active tab with filter&sorting
+			Productions.ShowTab(activeType, savedState);
 
-			// fill other tables on demand
-			$('.production-tabs li, #Productions .typeBoost').click(function() {
-				let type = $("a", this).attr("href").replace("#","")
+			$('.production-tabs li').on('click.prodTabs', function (e) {
+				e.preventDefault();
+				let type = $('a', this).attr('href').replace('#', '');
+				Productions.ShowTab(type);
+			});
 
-				if ($("#Productions #"+type).html().length === 0) {
-					let content = Productions.buildTableByType(type)
-					$("#Productions #"+type).html(content).promise().done(() => {
-
-						$('#Productions .typeBoost').click(function(e) {
-							e.preventDefault()
-							let type = $("a", this).attr("href").replace("#","")
-
-							if ($("#Productions #"+type).html().length === 0) {
-								let content = Productions.buildTableByType(type)
-								$("#Productions #"+type).html(content)
-								$('.TSinactive').tableSorter()
-								$('.TSinactive').removeClass('TSinactive')
-								FH.HTML.FilterTable('#Productions .filterCurrentList')
-							}
-							$("#Productions .content").css('display','none')
-							$("#Productions #"+type).css('display','block')
-						});
-
-					})
-					$('.TSinactive').tableSorter()
-					$('.TSinactive').removeClass('TSinactive')
-					FH.HTML.FilterTable('#Productions .filterCurrentList')
-
-					//$('#Productions [data-original-title]').tooltip({container: "#Productions", html:true});
-				}
-				$("#Productions .content").css('display','none')
-				$("#Productions #"+type).css('display','block')
+			$('#Productions').off('click.prodTypeBoost').on('click.prodTypeBoost', '.typeBoost', function (e) {
+				e.preventDefault();
+				let type = $('a', this).attr('href').replace('#', '');
+				Productions.ShowTab(type);
 			});
 
 			// extra functionality
 			$('.production-tabs').tabslet({ active: Productions.ActiveTab })
-			$('.TSinactive').tableSorter()					
-			$('.TSinactive').removeClass('TSinactive')					
-			FH.HTML.FilterTable('#Productions .filterCurrentList')
 
 			// show a building on the map
-			$('#Productions').on('click', '.foe-table .show-entity', function () {
+			$('#Productions').off('click.prodShowEntity').on('click.prodShowEntity', '.foe-table .show-entity', function () {
 				Productions.ShowOnMap($(this).data('id'));
 			});
 		});
+	},
+
+
+	ShowTab: (type, state) => {
+		Productions.ActiveTab = Productions.Types.findIndex(x => x === type)+1;
+		let content = $(`#Productions #${type}`);
+
+		if (content.html().length === 0) {
+			let html = Productions.buildTableByType(type);
+			content.html(html).promise().done(() => {
+				$('.TSinactive').tableSorter();
+				$('.TSinactive').removeClass('TSinactive');
+				FH.HTML.FilterTable(`#Productions #${type} .filterCurrentList`);
+				Productions.ApplyTabState(type, state);
+			});
+		}
+
+		$('#Productions .content').css('display', 'none');
+		content.css('display', 'block');
+	},
+
+
+	GetTabState: (type) => {
+		if (!type) return null;
+		let content = $(`#Productions #${type}`);
+		if (content.length === 0 || content.html().length === 0) return null;
+
+		let state = { filter: '', sort: null };
+
+		let filterVal = $content.find('.filterCurrentList').val();
+		if (filterVal) state.filter = filterVal;
+
+		let sortedTh = $content.find('.sorter-header th.ascending, .sorter-header th.descending');
+		if (sortedTh.length) {
+			state.sort = {
+				index: sortedTh.index(),
+				direction: sortedTh.hasClass('ascending') ? 'ascending' : 'descending'
+			};
+		}
+
+		return state;
+	},
+
+
+	ApplyTabState: (type, state) => {
+		if (!state) return;
+		let content = $(`#Productions #${type}`);
+
+		if (state.filter) 
+			content.find('.filterCurrentList').val(state.filter).trigger('keyup');
+
+		if (state.sort) {
+			let th = content.find('.sorter-header th').eq(state.sort.index);
+			if (th.length && !th.hasClass('no-sort') && !th.hasClass(state.sort.direction)) {
+				th.trigger('click');
+				if (!th.hasClass(state.sort.direction)) th.trigger('click');
+			}
+		}
 	},
 
 

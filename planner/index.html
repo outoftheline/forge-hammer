@@ -14,12 +14,16 @@
 </head>
 
 <body>
-    <section id="submitWindow" class="modal">
-        <div class="modal-inner">
-            <h1 data-t="true">XPlan.SubmitWindow.Title</h1>
-            <p data-t="true">XPlan.SubmitWindow.Text</p>
+    <div id="loadingOverlay" class="overlay hidden">
+        <div class="loading-inner">
+            <div class="loading-spinner"></div>
+            <div id="loadingTitle" class="loading-title"></div>
+            <div id="loadingStep" class="loading-step"></div>
+            <button id="loadingDismiss" class="btn btn-mid hidden" data-t="true">XPlan.Loading.Continue</button>
         </div>
-    </section>
+    </div>
+
+    <div id="notifications" class="notifications"></div>
 
 
     <div class="wrapper">
@@ -172,6 +176,10 @@
                 </div>
                 <div class="info"></div>
                 <div id="canvasWrapper">
+                    <section id="submitWindow" style="margin: 20vh auto 0; text-align: center;">
+                        <h1 data-t="true" style="display: block;">XPlan.SubmitWindow.Title</h1>
+                        <p data-t="true">XPlan.SubmitWindow.Text</p>
+                    </section>
                     <div class="shadow"></div><canvas id="planner" width="2500" height="2500"></canvas>
                 </div>
             </section>
@@ -237,7 +245,7 @@
                         <input type="checkbox" id="compareChangedOnly">
                         <span data-t="true">XPlan.Compare.ChangedOnly</span>
                     </label>
-                    <input type="search" id="compareTableFilter" data-t-placeholder="XPlan.Compare.FilterMetrics" placeholder="Filter metrics">
+                    <input type="search" id="compareTableFilter" data-t-placeholder="Boxes.Infobox.Filter" placeholder="Filter metrics">
                 </div>
             <div id="compareTableWrap"></div>
         </div>
@@ -270,6 +278,7 @@
     <script src="../vendor/chartjs/chart.umd.min.js"></script>
     <script src="i18n.js"></script>
     <script src="vars.js"></script>
+    <script src="status.js"></script>
     <script src="mapbuilding.js"></script>
     <script src="placement.js"></script>
     <script src="sidebar.js"></script>

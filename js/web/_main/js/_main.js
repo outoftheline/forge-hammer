@@ -1012,6 +1012,9 @@ let Main = {
 				if ($('#bluegalaxy').length > 0) {
 					FH.BlueGalaxy.CalcBody(Buildings);
 				}
+				if ($('#Productions').length > 0) {
+					Productions.CalcBody();
+				}
 			}
 			if (!Main.CityMapUpdateEvent.timeout) {
 				f();
@@ -1097,20 +1100,43 @@ let Main = {
 		await IndexDB.getDB();
 		let buildingsOld = await IndexDB.db.buildingMeta.toArray();
 		buildingsOld = Object.assign({}, ...buildingsOld.map(x => ({ [x.id]: x })));
-		let Metadata = {};
-		let updated = [];
+
+		const region = String(FH.World).replace(/\d+$/, '') || 'unknown';
+
+		let Metadata = {};   // parsed metadata, used in the game
+		const rawMeta = {};  // { hash, json } per id, to fill the extension DB for the planner
+		const failed = [];   // ids that could not be loaded
+
 		const urlIds = Object.keys(buildingUrls);
 		const maxConcurrent = 10; // z.B. 10 gleichzeitige Requests
 		let active = 0;
 		let index = 0;
 
+		function accept(id, hash, json) {
+			if (typeof json !== 'string' || json === '') return false;
+
+			let parsed;
+			try {
+				parsed = JSON.parse(json);
+			} catch (e) {
+				return false;
+			}
+			if (!parsed || typeof parsed !== 'object') return false;
+
+			Metadata[id] = parsed;
+			rawMeta[id] = { hash: hash || null, json: json };
+			return true;
+		}
+
 		const toFetch = [];
 		for (const id of urlIds) {
 			const urlInfo = buildingUrls[id];
-			if (!buildingsOld[id] || buildingsOld[id].hash !== urlInfo.hash) {
+			const cached = buildingsOld[id];
+
+			// Unreadable cache entries are re-downloaded
+			if (!cached || cached.hash !== urlInfo.hash || !accept(id, cached.hash, cached.json)) {
 				toFetch.push(id);
-			} else 
-				try { Metadata[id] = JSON.parse(buildingsOld[id].json); } catch (e) { Metadata[id] = null; }
+			}
 		}
 
 		const missingCount = toFetch.length;
@@ -1137,35 +1163,54 @@ let Main = {
 				const xhr = new XMLHttpRequest();
 				xhr.open("GET", meta.url, true);
 
+				let settled = false;
+				const finish = () => {
+					if (settled) return true;
+					settled = true;
+					return false;
+				};
+
 				let timeout = setTimeout(() => {
 					xhr.abort();
 				}, 10000); // 10 Sekunden Timeout
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === XMLHttpRequest.DONE) {
-						clearTimeout(timeout);
-						if (xhr.status === 200) {
-							try {
-								Metadata[id] = JSON.parse(xhr.responseText);
-								IndexDB.db.buildingMeta.put({ id: id, hash: meta.hash, json: xhr.responseText })
-							} catch (e) { Metadata[id] = null; }
-							resolve();
-						} else if (retries > 0) {
-							// Bei Fehler: Retry mit Delay
-							setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
-						} else {
-							console.warn('Failed to load', meta.url, xhr.status);
-							resolve();
-						}
-					}
-				};
-				xhr.onerror = () => {
-					clearTimeout(timeout);
+
+				const retry = () => {
+					if (finish()) return;
 					if (retries > 0) {
 						setTimeout(() => fetchMeta(id, meta, retries - 1).then(resolve), 1000);
 					} else {
+						failed.push(id);
 						resolve();
 					}
 				};
+
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState !== XMLHttpRequest.DONE) return;
+					clearTimeout(timeout);
+
+					if (xhr.status === 200) {
+						if (accept(id, meta.hash, xhr.responseText)) {
+							if (finish()) return;
+							// only cache what parsed, so the cache cannot go stale-and-broken
+							Promise.resolve(IndexDB.db.buildingMeta.put({ id: id, hash: meta.hash, json: xhr.responseText }))
+								.catch(e => console.warn('Forge Hammer [meta]: could not cache', id, e));
+							resolve();
+						} else {
+							console.warn('Forge Hammer [meta]: unreadable response for', id, meta.url);
+							retry();
+						}
+						return;
+					}
+
+					if (retries === 0) console.warn('Failed to load', meta.url, xhr.status);
+					retry();
+				};
+
+				xhr.onerror = () => {
+					clearTimeout(timeout);
+					retry();
+				};
+
 				xhr.send();
 			});
 		}
@@ -1196,29 +1241,90 @@ let Main = {
 		Main.correctBuildingType();
 		Main.Inactives.check();
 
-		async function updateBackgroundDB(Metadata) {
-			const metaChunks = [];
-			let metaArray=Object.entries(Metadata)
-			let chunksize = 400;
-			for (let i = 0; i < metaArray.length; i += chunksize) {
-				metaChunks.push(metaArray.slice(i, i + chunksize));
+		if (failed.length) {
+			console.warn(`Forge Hammer [meta]: ${failed.length} building(s) could not be downloaded`, failed);
+		}
+
+		async function sendBatch(ids) {
+			if (!ids.length) return [];
+
+			const entries = {};
+			for (const id of ids) entries[id] = rawMeta[id];
+
+			let response;
+			try {
+				response = await Main.sendExtMessage({
+					type: 'buildingMetaSet',
+					region: region,
+					entries: entries,
+					timeout: 15000,
+				});
+			} catch (error) {
+				console.warn('Forge Hammer [meta]: failed to persist a batch', error);
+				response = undefined;
 			}
 
-			for (const chunk of metaChunks) {
-				let chunkObj = Object.assign({},...chunk.map(x=>({[x[0]]:x[1]})));
-				try {
-					await Main.sendExtMessage({
-						type: 'buildingMetaSet',
-						region: String(FH.World).replace(/\d+$/, '') || 'unknown',
-						entries: chunkObj,
-						timeout: 15000,
-					});
-				} catch (error) {
-					console.warn('Forge Hammer [meta]: failed to persist a chunk', error);
+			if (response) {
+				return Array.isArray(response.skippedIds) ? response.skippedIds : [];
+			}
+
+			// Halve the batch so one bad or oversized entry cannot take the other 399 with it
+			if (ids.length === 1) {
+				console.warn('Forge Hammer [meta]: could not persist', ids[0]);
+				return ids.slice();
+			}
+
+			const mid = Math.ceil(ids.length / 2);
+			const left = await sendBatch(ids.slice(0, mid));
+			const right = await sendBatch(ids.slice(mid));
+			return left.concat(right);
+		}
+
+		async function sendAll(ids) {
+			const chunkSize = 400;
+			let unsent = [];
+			for (let i = 0; i < ids.length; i += chunkSize) {
+				unsent = unsent.concat(await sendBatch(ids.slice(i, i + chunkSize)));
+			}
+			return unsent;
+		}
+
+		async function updateBackgroundDB() {
+			const ids = Object.keys(rawMeta);
+			let unsent = await sendAll(ids);
+
+			// local cache marks an entry as done as soon as its hash matches
+			let stored = null;
+			try {
+				stored = await Main.sendExtMessage({
+					type: 'buildingMetaIds',
+					region: region,
+					timeout: 15000,
+				});
+			} catch (error) {
+				stored = null;
+			}
+
+			if (Array.isArray(stored)) {
+				const have = new Set(stored);
+				const missing = ids.filter(id => !have.has(id));
+
+				if (missing.length) {
+					console.warn(`Forge Hammer [meta]: ${missing.length} entr(ies) missing after sync, resending`);
+					unsent = await sendAll(missing);
+				} else {
+					unsent = [];
 				}
 			}
+
+			if (unsent.length) {
+				console.error(`Forge Hammer [meta]: ${unsent.length} building(s) could not be stored for the planner`, unsent);
+			} else {
+				console.debug(`Forge Hammer [meta]: ${ids.length} building(s) available to the planner for region "${region}"`);
+			}
 		}
-		updateBackgroundDB(Metadata);
+
+		await updateBackgroundDB();
 	},
 
 
@@ -2173,11 +2279,13 @@ let Main = {
 			}
 			else if (FH.ActiveMap === "guild_raids") {
 				CityMap.QI.data[b.id] = b;
-			} else {
+			} 
+			else {
 				Main.CityMapData[b.id] = b;
+				CityBuildings.updateBuildingState(b.id, b);
 				if (b?.bonus?.type === "contribution_boost") Main.SetArkBonus2();
 			}
-		}		
+		}
 		FPCollector.CityMapDataNew = Buildings;
 		Main.CityMapUpdateEvent.trigger();
 	},
