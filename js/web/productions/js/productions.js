@@ -1115,7 +1115,7 @@ let Productions = {
 
 		buildingIds.forEach(b => {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id === FH.Player.ID) {
+			if (building.player_id === FH.Player.ID && building.state.connected) {
 			rowA.push('<tr>')
 			rowA.push('<td class="text-center">')
 				rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
@@ -1220,8 +1220,8 @@ let Productions = {
 
 			if (type !== 'goods' && type !== 'clan_goods' && type !== 'guild_raids') {
 				for (const b of buildingIds) {
-					let building = CityBuildings.getBuildingById(b.id)
-					if (building?.player_id !== FH.Player.ID) continue;
+					let building = CityBuildings.getBuildingById(b.id);
+					if (building?.player_id !== FH.Player.ID || !building.state.connected) continue;
 					// makes random productions with resources and others disappear from the item list
 					if (type === 'items' && Productions.showBuildingItems(true, building)[0] === "" || building.chainBuilding?.type === "linked") continue;
 
@@ -1549,7 +1549,7 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id);
-			if (building.player_id !== FH.Player.ID) continue;
+			if (building.player_id !== FH.Player.ID || !building.state.connected) continue;
 
 			rowA.push('<tr>')
 			rowA.push('<td class="text-center">')
@@ -1713,7 +1713,7 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id !== FH.Player.ID) continue; 
+			if (building.player_id !== FH.Player.ID || !building.state.connected) continue; 
 
 			rowA.push('<tr>')
 			rowA.push('<td class="text-center">')
