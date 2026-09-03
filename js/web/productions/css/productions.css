@@ -981,7 +981,7 @@ input[id*="ProdPerTile"] {
 	width: 50px;
 }
 
-#ProductionsRatingBody:not(.showLimited) .limited span[data-callback_tt="InventoryKits"], #items-list th:nth-child(3)::before, #items-list th:nth-child(3)::after {
+#ProductionsRatingBody:not(.showLimited) .limited span[data-callback_tt="InventoryKits"] {
 	display: none;
 }
 
