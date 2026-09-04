@@ -689,9 +689,11 @@ let Productions = {
 	},
 
 
-	init: () => {
+	init: (ActiveTab = 1) => {
 		if (FH.ActiveMap === 'OtherPlayer') return;
 
+		Productions.ActiveTab = ActiveTab;
+		console.log(ActiveTab);
 		Productions.PrepareData();
 		Productions.showBox();
 	},
@@ -957,10 +959,8 @@ let Productions = {
         	settings: Productions.ShowSettings
 		});
 
-		Productions.ActiveTab = 1;
 		Productions.CalcBody();
-
-		Productions.SwitchFunction()
+		Productions.SwitchFunction();
 	},
 
 	

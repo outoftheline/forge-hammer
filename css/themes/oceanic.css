@@ -75,7 +75,7 @@
 	--tabs-bg-shadow-active: inset 1px 1px 0 0 #c44c00, inset -1px 1px 0 0 #c44c00;
 	--tabs-border: 2px solid #805d2e;
 	--border-tab: #c3c2ab;
-	--border-tab-vertical: linear-gradient(-90deg, #b74b0f 10.5%, #fff394 11%, #fff394 15%, #b74b0f 15.5%, #b74b0f 18.5%, #fff394 19%, #fff394 29%, #b74b0f 29.5%) 10;
+	--border-tab-vertical: linear-gradient(90deg, #b74b0f 50%, #fff394) 10;
 	--text-tab-active: #f5e9af;
 	--text-tab: #eee;
 
@@ -88,11 +88,11 @@
 	--table-bg-info: #06416363;
 	--table-bt-info: transparent;
 	--table-bb-info: #132038;
-	--table-bg-success: #277d094d;
-	--table-bt-success: #367f34;
+	--table-bg-success: #277d093b;
+	--table-bt-success: transparent;
 	--table-bb-success: #0b350b;
 	--table-bg-error: #7908084d;
-	--table-bt-error: #7a2f2f;
+	--table-bt-error: transparent;
 	--table-bb-error: #4f0e0e;
 	--table-bg-bright: #dd85002e;
 	--table-bt-bright: #dd8e1866;
