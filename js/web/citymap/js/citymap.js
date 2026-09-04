@@ -304,6 +304,23 @@ let CityMap = {
 	},
 
 
+	SetGridBoundaries: (pos) => {
+		let container = $('#map-container'),
+			grid = $('#grid-outer'),
+			visibleArea = 80;
+
+		let minLeft = visibleArea - grid.outerWidth(),
+			maxLeft = container.width() - visibleArea,
+			minTop = visibleArea - grid.outerHeight(),
+			maxTop = container.height() - visibleArea;
+
+		return {
+			left: Math.min(maxLeft, Math.max(minLeft, pos.left)),
+			top: Math.min(maxTop, Math.max(minTop, pos.top))
+		};
+	},
+
+
 	SetOutpostBuildings: () => {
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
@@ -374,6 +391,9 @@ let CityMap = {
 		});
 
 		$('#grid-outer').draggable({
+			drag: function(event, ui) {
+				Object.assign(ui.position, CityMap.SetGridBoundaries(ui.position));
+			},
 			stop: function( event, ui ) {
 				let mapOffsets = {
 					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
@@ -910,6 +930,9 @@ let CityMap = {
 		CityMap.EfficiencyFactor = StreetsNeeded / StreetsUsed;
 
 		$('#grid-outer').draggable({
+			drag: function(event, ui) {
+				Object.assign(ui.position, CityMap.SetGridBoundaries(ui.position));
+			},
 			stop: function( event, ui ) {
 				let mapOffsets = {
 					[FH.ActiveMap+'_'+CityMap.map.view]: ui.position
