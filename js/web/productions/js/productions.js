@@ -77,7 +77,7 @@ let Productions = {
 			"tilevalues":false,
 			"showitems":true,
 			"showhighlighted":false,
-			"inventorybuildingscore":50,
+			"inventorybuildingscore":0.5,
 			"gBs":true,
 			"showLimited":true,
 			"showallies":true
