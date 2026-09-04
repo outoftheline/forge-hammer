@@ -3,10 +3,19 @@
 ## Version 1.7.0
 ### New
 - New window color added: Oceanic
+- Menu: The GBG entry now shows a countdown for the next province
 
 ### Update
-- Productions: Added lists for goods boosts, special goods boosts and guild goods boosts
+- Productions: Added lists for goods boosts, special goods boosts and guild goods boosts, removed disconnected buildings; also: the list now updates when buildings change (motivation, FSP etc.)
+- Research: Added a checkbox to hide resources that aren't needed
+- GBG List: Owned provinces can now be sorted
  
+### Bug Fixes
+- City Overview: You could move the city out of sight
+- Efficiency: Default Inventory Minimum Score was way too high
+- Research: The checkboxes didn't work anymore, because the game data changed
+- The City Planner could sometimes have too little data and not display anything - should work better now
+
 ---
  
 ## Version 1.6.0
