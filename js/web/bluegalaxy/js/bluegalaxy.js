@@ -221,7 +221,9 @@ let BlueGalaxy = {
                 <input type="number" id="goodsValue" step="1" min="0" max="100" size="3" value="${GoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon goods"></span> 
                 &middot; 
                 ${FH.t('Boxes.BlueGalaxy.ValueRating')}
-                <input type="number" id="OlderGoodsValue" step="1" min="0" max="100" size="3" value="${OlderGoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon old_goods"></span></div>`);       
+                <input type="number" id="OlderGoodsValue" step="1" min="0" max="100" size="3" value="${OlderGoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon old_goods"></span>
+                <a href="#" onclick="Productions.init(7)">${FH.t('Boxes.BlueGalaxy.FragmentsHint')}</a>
+            </div>`);       
 
         let table = [];
 

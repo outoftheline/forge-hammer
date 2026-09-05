@@ -77,7 +77,7 @@ let Productions = {
 			"tilevalues":false,
 			"showitems":true,
 			"showhighlighted":false,
-			"inventorybuildingscore":50,
+			"inventorybuildingscore":0.5,
 			"gBs":true,
 			"showLimited":true,
 			"showallies":true
@@ -689,9 +689,11 @@ let Productions = {
 	},
 
 
-	init: () => {
+	init: (ActiveTab = 1) => {
 		if (FH.ActiveMap === 'OtherPlayer') return;
 
+		Productions.ActiveTab = ActiveTab;
+		console.log(ActiveTab);
 		Productions.PrepareData();
 		Productions.showBox();
 	},
@@ -957,10 +959,8 @@ let Productions = {
         	settings: Productions.ShowSettings
 		});
 
-		Productions.ActiveTab = 1;
 		Productions.CalcBody();
-
-		Productions.SwitchFunction()
+		Productions.SwitchFunction();
 	},
 
 	
@@ -1038,10 +1038,10 @@ let Productions = {
 
 		let state = { filter: '', sort: null };
 
-		let filterVal = $content.find('.filterCurrentList').val();
+		let filterVal = content.find('.filterCurrentList').val();
 		if (filterVal) state.filter = filterVal;
 
-		let sortedTh = $content.find('.sorter-header th.ascending, .sorter-header th.descending');
+		let sortedTh = content.find('.sorter-header th.ascending, .sorter-header th.descending');
 		if (sortedTh.length) {
 			state.sort = {
 				index: sortedTh.index(),
@@ -1115,10 +1115,10 @@ let Productions = {
 
 		buildingIds.forEach(b => {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id === FH.Player.ID) {
+			if (building.player_id === FH.Player.ID && building.state.connected) {
 			rowA.push('<tr>')
-			rowA.push('<td>')
-				rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
+			rowA.push('<td class="text-center">')
+				rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 				if (building.setBuilding !== undefined)
 					rowA.push('<img src="' + srcLinks.get('/shared/icons/' + building.setBuilding.name + '.png', true) + '" class="chain-set-ico">')
 				if (building.chainBuilding !== undefined)
@@ -1168,7 +1168,7 @@ let Productions = {
 			table.push('</tr>')
 
 			table.push('<tr class="sorter-header exportheader">')
-			table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
+			table.push('<th class="no-sort tdmin" data-type="prodlist'+type+'"> </th>')
 			table.push('<th class="ascending" data-type="prodlist'+type+'" data-export="' + FH.t('Boxes.BlueGalaxy.Building') + '">' + FH.t('Boxes.BlueGalaxy.Building') + '</th>')
 			table.push('<th class="boost qiactions is-number text-center" data-type="prodlist'+type+'"><span></span>'+(boostCounter.guild_raids_action_points_collection || 0)+'</th>')
 			table.push('<th class="boost qicapacity is-number text-center" data-type="prodlist'+type+'"><span></span>'+(boostCounter.guild_raids_action_points_capacity || 0)+'</th>')
@@ -1220,14 +1220,14 @@ let Productions = {
 
 			if (type !== 'goods' && type !== 'clan_goods' && type !== 'guild_raids') {
 				for (const b of buildingIds) {
-					let building = CityBuildings.getBuildingById(b.id)
-					if (building?.player_id !== FH.Player.ID) continue;
+					let building = CityBuildings.getBuildingById(b.id);
+					if (building?.player_id !== FH.Player.ID || !building.state.connected) continue;
 					// makes random productions with resources and others disappear from the item list
 					if (type === 'items' && Productions.showBuildingItems(true, building)[0] === "" || building.chainBuilding?.type === "linked") continue;
 
 					rowA.push('<tr>')
-					rowA.push('<td>')
-						rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
+					rowA.push('<td class="text-center">')
+						rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 						if (building.setBuilding !== undefined)
 						rowA.push('<img src="' + srcLinks.get('/shared/icons/' + building.setBuilding.name + '.png', true) + '" class="chain-set-ico">')
 						if (building.chainBuilding !== undefined)
@@ -1322,6 +1322,7 @@ let Productions = {
 						}
 						else {
 							let items=Productions.showBuildingItems(true, building);
+							let amount = 0;
 							for (let i of items[2]) {
 								let n = (i.fragment ? "Fragment" : "") + i.name.replace(/\s/g,"")
 								if (Sum[n]) {
@@ -1330,10 +1331,11 @@ let Productions = {
 								} else {
 									Sum[n] = i
 								}
+								amount += i.random + i.amount;
 							}
 							let itemsText = items[0];
 
-							rowA.push('<td data-number="1" exportvalue="'+jQuery(itemsText).text()+'"><span>' + itemsText + '</span></td>')
+							rowA.push(`<td data-number="${amount}" exportvalue="${jQuery(itemsText).text()}"><span>${itemsText}</span></td>`);
 						}
 					}
 					else {
@@ -1547,11 +1549,11 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id);
-			if (building.player_id !== FH.Player.ID) continue;
+			if (building.player_id !== FH.Player.ID || !building.state.connected) continue;
 
 			rowA.push('<tr>')
-			rowA.push('<td>')
-			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
+			rowA.push('<td class="text-center">')
+			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 			rowA.push('</td>')
 			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><span data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
@@ -1633,7 +1635,7 @@ let Productions = {
 		table.push('</tr>')
 
 		table.push('<tr class="sorter-header exportheader">')
-		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
+		table.push('<th class="no-sort tdmin" data-type="prodlist'+type+'"> </th>')
 		table.push('<th class="ascending" data-type="prodlist'+type+'">' + FH.t('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
 			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+FH.t('Eras.'+(parseInt(era)+1))+'">' + FH.t('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')
@@ -1711,11 +1713,11 @@ let Productions = {
 		// single view table content
 		for (const b of buildingIds) {
 			let building = CityBuildings.getBuildingById(b.id)
-			if (building.player_id !== FH.Player.ID) continue; 
+			if (building.player_id !== FH.Player.ID || !building.state.connected) continue; 
 
 			rowA.push('<tr>')
-			rowA.push('<td>')
-			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? '<span class="text-bright">★</span>' : '☆') : ''))
+			rowA.push('<td class="text-center">')
+			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 			rowA.push('</td>')
 			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><spandata-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
@@ -1797,7 +1799,7 @@ let Productions = {
 		table.push(`<span style="float:right;">${FH.HTML.Format(currentProduction)}/${FH.HTML.Format(totalProduction)} <button class="typeBoost btn btn-slim"><a href="#guild_goods_production" class="game-cursor">${FH.t('General.Boost')}: ${Boosts.Sums.guild_goods_production}%</a></button></span> </th>`)
 		table.push('</tr>')
 		table.push('<tr class="sorter-header exportheader">')
-		table.push('<th class="no-sort" data-type="prodlist'+type+'"> </th>')
+		table.push('<th class="no-sort tdmin" data-type="prodlist'+type+'"> </th>')
 		table.push('<th class="ascending" data-type="prodlist'+type+'">' + FH.t('Boxes.BlueGalaxy.Building') + '</th>')
 		for (const era of eras) {
 			table.push('<th data-type="prodlist'+type+'" class="is-number text-center"><span data-original-title="'+FH.t('Eras.'+(parseInt(era)+1))+'">' + FH.t('Eras.'+(parseInt(era)+1)+'.short') + '<br><small>'+FH.HTML.Format(erasCurrent[era])+'/'+FH.HTML.Format(erasTotal[era])+'</small></span></th>')

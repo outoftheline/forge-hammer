@@ -222,7 +222,7 @@
 	height: 20px;
 }
 
-#citymap-mainBody .prod.happiness::before { background-position: -122px 2px; }
+#citymap-mainBody .prod.happiness::before { background-position: -117px 2px; }
 #citymap-mainBody .prod.guild_raids_money::before { background-position: -20px 2px; }
 #citymap-mainBody .prod.guild_raids_supplies::before { background-position: -40px 2px; }
 #citymap-mainBody .prod.att_def_boost_attacker::before { background-position: -340px 1px; }
@@ -237,8 +237,8 @@
 	width: 23px;
 	height: 23px;
 }
-#citymap-mainBody .population::before { background-position: -162px 0; }
-#citymap-mainBody th.happiness::before { background-position: -140px 0; }
+#citymap-mainBody .population::before { background-position: -157px 0; }
+#citymap-mainBody th.happiness::before { background-position: -135px 0; }
 #citymap-mainBody .diplomacy::before { zoom: 0.45; }
 #citymap-mainBody th .diplomacy { height: 24px; }
 

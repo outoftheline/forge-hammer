@@ -325,6 +325,10 @@
   "Boxes.CityMap.military": "Costruzioni militari",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "API Token mancante",
   "Boxes.CityMap.MissingApiKeySubmitError": "Senza un token API per questo mondo, che puoi ottenere gratuitamente dal sito web, non puoi trasferire città o note.<br>Clicca qui per le istruzioni:",
+  "Boxes.CityMap.NextEraRenovation": {
+    "s": "Kit per la prossima era",
+    "r": "Kits for next era"
+  },
   "Boxes.CityMap.NormalPerspecitve": "Vista dall'alto",
   "Boxes.CityMap.OlderThan1Era": " è 1 era indietro",
   "Boxes.CityMap.OlderThan2Era": " sono 2 ere indietro",
@@ -351,6 +355,10 @@
   },
   "Boxes.CityMap.ShowAscendableBuildings": "Evidenziare gli edifici accessibili",
   "Boxes.CityMap.ShowDecayedBuildings": "Evidenziare gli edifici declassato",
+  "Boxes.CityMap.ShowFspDisabledBuildings": {
+    "s": "FSP disabled buildings",
+    "r": "FSP disabled buildings"
+  },
   "Boxes.CityMap.ShowNoStreetBuildings": "Evidenzia gli edifici che non necessitano di strade",
   "Boxes.CityMap.ShowSubmitBox": "Mostra casella di invio dati",
   "Boxes.CityMap.ShowWorstBuildings": "Evidenzia gli edifici con le valutazioni peggiori",
@@ -420,12 +428,40 @@
     "s": "Attenzione: i punti vittoria, le gilde vicine e l'attrito possono cambiare prima che la provincia sia effettivamente disponibile. Puoi usare questi segnaposto per le province di GBG nel tuo modello:",
     "r": "Attention: Victory points, neighboring guilds and attrition can change before the province is actually available. You can use these placeholders for GBG provinces in your template:"
   },
+  "Boxes.Discord.MarkdownLinkText": {
+    "s": "Discord text formatting",
+    "r": "Discord text formatting"
+  },
   "Boxes.Discord.Message": "Messaggio",
   "Boxes.Discord.Name": "Nome",
   "Boxes.Discord.Save": "Salva",
   "Boxes.Discord.TestEntry": "Test",
+  "Boxes.Discord.Title": {
+    "s": "Discord Webhooks",
+    "r": "Discord Webhooks"
+  },
+  "Boxes.Discord.TitleEntries": {
+    "s": "Discord Messaggi",
+    "r": "Discord Messages"
+  },
   "Boxes.Discord.TitleNewEntry": "Nuova voce webhook",
+  "Boxes.Discord.TitleNewTemplate": {
+    "s": "Template",
+    "r": "Template"
+  },
   "Boxes.Discord.VisitGGMapBefore": "Per gli eventi di gilda devi prima visitare la mappa di Guildfight",
+  "Boxes.Discord.WebhookUrl": {
+    "s": "Webhook URL",
+    "r": "Webhook URL"
+  },
+  "Boxes.Discord.WebhookUrlManage": {
+    "s": "Manage Webhook URLs",
+    "r": "Manage Webhook URLs"
+  },
+  "Boxes.Discord.WebhookUrlNeeded": {
+    "s": "Add a webhook URL first!",
+    "r": "Add a webhook URL first!"
+  },
   "Boxes.doubleFPprevention.Text": "Prevenzione",
   "Boxes.doubleFPprevention.Title": "Doppia donazione",
   "Boxes.EventChests.Chance": "Chance",
@@ -437,6 +473,10 @@
   "Boxes.EventChests.Steps": "Livelli",
   "Boxes.EventChests.Title": "Aiuto scelte degli eventi",
   "Boxes.EventPresents.Title": "Ricompense sul tabellone",
+  "Boxes.findGB.hasProgress": {
+    "s": "Ha fatto progressi",
+    "r": "has Progress"
+  },
   "Boxes.findGB.maxLvl": "livello massimo",
   "Boxes.findGB.minLvl": "Livello Minimo",
   "Boxes.findGB.selectGB": "Seleziona GE",
@@ -477,6 +517,10 @@
     "r": "Hidden Reward"
   },
   "Boxes.FPCollector.hiddenReward": "Ricompensa Nascosta",
+  "Boxes.FPCollector.item_store": {
+    "s": "Negozio di oggetti",
+    "r": "Item Store"
+  },
   "Boxes.FPCollector.league_reward": "Premio Lega",
   "Boxes.FPCollector.may_day_event": "Evento del Primo Maggio",
   "Boxes.FPCollector.NoEntriesFound": "Nessun elemento trovato…",
@@ -601,6 +645,10 @@
     "s": "Volcano Archipelago",
     "r": "Volcano Archipelago"
   },
+  "Boxes.GBGActionLog.Map.waterfall_archipelago": {
+    "s": "Arcipelago delle cascate",
+    "r": "Waterfall Archipelago"
+  },
   "Boxes.GBGActionLog.Metric": {
     "s": "Mostra",
     "r": "Show"
@@ -689,17 +737,97 @@
     "s": "Current load end time",
     "r": "Current load end time"
   },
+  "Boxes.GBGActionLog.Toast.LogsLoaded": {
+    "s": "Numero di log caricati",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.PrevLoadTime": {
+    "s": "Numero di log caricati",
+    "r": "Number of logs loaded"
+  },
+  "Boxes.GBGActionLog.Toast.Reopen": {
+    "s": "**Non dimenticare di riaprire la mappa GBG per caricare i nuovi log!**",
+    "r": "**Do not forget to reopen the GBG map to load new logs!**"
+  },
+  "Boxes.GBGActionLog.ToastDuration": {
+    "s": "New-entry popup duration (seconds)",
+    "r": "New-entry popup duration (seconds)"
+  },
+  "Boxes.GBGActionLog.ToastDurationHint": {
+    "s": "Imposta il valore a 0 per disabilitare il popup.",
+    "r": "Set to 0 to disable the popup."
+  },
+  "Boxes.GBGActionLog.Total": {
+    "s": "Totale",
+    "r": "Total"
+  },
+  "Boxes.GBGActionLog.TotalReturned": {
+    "s": "All entry count",
+    "r": "All entry count"
+  },
   "Boxes.GBGBuildings.absoluteCosts": "Costi Assoluti",
   "Boxes.GBGBuildings.Costs": "Costo",
   "Boxes.GBGBuildings.title": "Raccomandazione di costruzione",
   "Boxes.GBGBuildings.toBuild": "Per costruire",
+  "Boxes.GBGBuildings.totalChance": {
+    "s": "Chance",
+    "r": "Chance"
+  },
+  "Boxes.General.AutoOpen": {
+    "s": "Apertura automatica",
+    "r": "Open automatically"
+  },
+  "Boxes.General.Cancel": {
+    "s": "Cancella",
+    "r": "Cancel"
+  },
+  "Boxes.General.ConfirmDelete": {
+    "s": "Conferma l'eliminazione:",
+    "r": "Confirm delete:"
+  },
+  "Boxes.General.Delete": {
+    "s": "Eliminare",
+    "r": "Delete"
+  },
+  "Boxes.General.Edit": {
+    "s": "Edita",
+    "r": "Edit"
+  },
   "Boxes.General.Export": "Esporta",
   "Boxes.General.ExportCSV": "Esporta in CSV",
   "Boxes.General.ExportJSON": "Esporta in jSON",
+  "Boxes.General.Favorites": {
+    "s": "Preferiti",
+    "r": "Favorites"
+  },
+  "Boxes.General.FavoritesAdd": {
+    "s": "Aggiungi ai preferiti",
+    "r": "Add to favorites"
+  },
+  "Boxes.General.FavoritesRemove": {
+    "s": "Rimuovi dai preferiti",
+    "r": "Remove from favorites"
+  },
   "Boxes.General.FilterItems": "Filtro Elementi",
   "Boxes.General.Guild_Battlegrounds": "Campi di battaglia della gilda",
+  "Boxes.General.Guild_Battlegrounds.short": {
+    "s": "GBG",
+    "r": "GBG"
+  },
+  "Boxes.General.Guild_Expedition": {
+    "s": "Spedizione Gilda",
+    "r": "Guild Expedition"
+  },
+  "Boxes.General.Level": {
+    "s": "Livello",
+    "r": "Level"
+  },
   "Boxes.General.Quantum_Incursion": "Incursioni Quantistiche",
   "Boxes.General.Save": "Salva",
+  "Boxes.General.Season": {
+    "s": "Season",
+    "r": "Season"
+  },
   "Boxes.General.ShowOnMap": "Mostra sulla mappa della città",
   "Boxes.GexStat.CompareLast": "confronta ultimo",
   "Boxes.GexStat.Course": "Corso",
@@ -723,6 +851,10 @@
   "Boxes.GexStat.Save": "Salva",
   "Boxes.GexStat.ShowAxisLabel": "Mostra l'etichetta dell'asse",
   "Boxes.GexStat.Title": "Statistica GE",
+  "Boxes.GexStat.UnlockingCosts": {
+    "s": "Costi di attivazione previsti",
+    "r": "Expected activation costs"
+  },
   "Boxes.GexStat.Week": "settimana",
   "Boxes.GexStat.Weeks": "settimane",
   "Boxes.GreatBuildings.ArcBonus": "Investimento amichevole",
@@ -832,7 +964,31 @@
     "s": "Send selected provinces to Discord",
     "r": "Send selected provinces to Discord"
   },
+  "Boxes.GuildFights.DiscordSendSelectionCustom": {
+    "s": "Send selected provinces to Discord with selected template",
+    "r": "Send selected provinces to Discord with selected template"
+  },
+  "Boxes.GuildFights.DiscordSetup": {
+    "s": "No Webhooks available. Create one first",
+    "r": "No Webhooks available. Create one first"
+  },
+  "Boxes.GuildFights.DiscordTemplateBulk": {
+    "s": "Template for multiple provinces",
+    "r": "Template for multiple provinces"
+  },
   "Boxes.GuildFights.Fights": "Combattimenti",
+  "Boxes.GuildFights.GBGTargetsMore": {
+    "s": "more",
+    "r": "more"
+  },
+  "Boxes.GuildFights.GBGTargetsPosition": {
+    "s": "Posizione per gli obiettivi",
+    "r": "Position for targets"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionBottom": {
+    "s": "bottom",
+    "r": "bottom"
+  },
   "Boxes.GuildFights.LastSnapshot": " - ultimo aggiornamento __time__ fa",
   "Boxes.GuildFights.Negotiations": "Negoziazioni",
   "Boxes.GuildFights.NoOwner": "Nessun proprietario ancora",
@@ -1343,7 +1499,23 @@
     "r": "Add Building"
   },
   "Boxes.ProductionsRating.BuildingName": "Costruzione",
+  "Boxes.ProductionsRating.CountTooltip": {
+    "s": "Numero attuale di edifici presenti nella tua città. Nota bene: non tutti gli edifici potrebbero risalire all'epoca indicata accanto al nome. Controlla la mappa per sicurezza!",
+    "r": "Current amount placed in your city. Please note: Not all buildings might be in the era that is shown next to the name. Check the map to be sure!"
+  },
+  "Boxes.ProductionsRating.Disclaimer": {
+    "s": "Nel caso di edifici a catena, l'intera catena viene trattata come un unico edificio. Per gli insiemi, si presume che tutte le parti siano completamente connesse.",
+    "r": "For chain buildings the whole chain is treated as one single building. For sets we assume that all parts are fully connected."
+  },
   "Boxes.ProductionsRating.Enabled": "Abilitato",
+  "Boxes.ProductionsRating.Explainer": {
+    "s": "Seleziona la quantità ideale di risorse che ogni edificio dovrebbe produrre per casella. L'equilibrio tra tutti i valori selezionati è importante per la valutazione finale: usa valori più alti per gli elementi che non ti interessano particolarmente e valori più bassi se vuoi dare maggiore importanza a determinate risorse/potenziamenti. Se possiedi più di un edificio identico, verrà valutata solo l'era con il valore più alto.",
+    "r": "Select how much each of your buildings should ideally produce per tile. The balance between all selected values is important for the final rating: Use higher ones for things you do not care about as much and lower values if you want to put higher emphasis on particular resources/boosts. If you have more than one of the same building, only the highest era will be evaluated."
+  },
+  "Boxes.ProductionsRating.ExplainerHead": {
+    "s": "Help",
+    "r": "Help"
+  },
   "Boxes.ProductionsRating.HighlightsExplained": {
     "s": "Come evidenziare gli edifici: fai clic su una qualsiasi riga per selezionare gli edifici che desideri confrontare più facilmente. I risultati della ricerca vengono evidenziati automaticamente.",
     "r": "How to highlight buildings: Click any row to select the buildings you want to compare more easily. Search results are marked automatically."
@@ -1632,32 +1804,32 @@
   },
   "Eras.14": "Il Futuro",
   "Eras.14.short": {
-    "s": "EF",
+    "s": "FUT",
     "r": "FE"
   },
   "Eras.15": "Futuro Artico",
   "Eras.15.short": {
-    "s": "FA",
+    "s": "ART",
     "r": "AF"
   },
   "Eras.16": "Futuro Oceanico",
   "Eras.16.short": {
-    "s": "FO",
+    "s": "OC",
     "r": "OF"
   },
   "Eras.17": "Futuro Virtuale",
   "Eras.17.short": {
-    "s": "FV",
+    "s": "VIR",
     "r": "VF"
   },
   "Eras.18": "Era spaziale di Marte",
   "Eras.18.short": {
-    "s": "ESM",
+    "s": "MAR",
     "r": "SAM"
   },
   "Eras.19": "Era Spaziale Fascia degli Asteroidi",
   "Eras.19.short": {
-    "s": "ESFA",
+    "s": "AST",
     "r": "SAAB"
   },
   "Eras.2": "Età del bronzo",
@@ -1667,12 +1839,12 @@
   },
   "Eras.20": "Era Spaziale Venere",
   "Eras.20.short": {
-    "s": "ESV",
+    "s": "VEN",
     "r": "SAV"
   },
   "Eras.21": "Era Spaziale Satellite di Giove",
   "Eras.21.short": {
-    "s": "ESSG",
+    "s": "GIO",
     "r": "SAJM"
   },
   "Eras.22": {
@@ -1680,7 +1852,7 @@
     "r": "Space Age Titan"
   },
   "Eras.22.short": {
-    "s": "EST",
+    "s": "TIT",
     "r": "SAT"
   },
   "Eras.23": {
@@ -1688,12 +1860,16 @@
     "r": "Space Age Space Hub"
   },
   "Eras.23.short": {
-    "s": "ESH",
+    "s": "HUB",
     "r": "SASH"
   },
   "Eras.24": {
-    "s": "Stellar Age Discovery",
+    "s": "Scoperta dell'Era Stellare",
     "r": "Stellar Age Discovery"
+  },
+  "Eras.24.short": {
+    "s": "STE",
+    "r": "SAD"
   },
   "Eras.3": "Età del ferro",
   "Eras.3.short": {

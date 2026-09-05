@@ -2181,10 +2181,6 @@ input[type="range"]::-webkit-slider-thumb {
 	background-color: var(--red);
     box-shadow: 0 0 1px 1px var(--danger-red);
 }
-.hud-btn span.hud-counter.hud-counter-red {
-	background-color: var(--red);
-    box-shadow: 0 0 1px 1px var(--danger-red);
-}
 
 #forgehammer-hud.hud-right {
 	right: 0;

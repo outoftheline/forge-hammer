@@ -10,7 +10,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    background-image: none;
+    background: none;
 }
 
 #aztecsHelper #aztecsHelperHeader, #aztecsHelper #aztecsHelperSettingsBox {

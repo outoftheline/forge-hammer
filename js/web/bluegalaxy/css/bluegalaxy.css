@@ -32,7 +32,15 @@
 
 #bluegalaxy .header {
     margin-bottom: 2px;
-    padding: 1em 0;
+    padding: 0.5em 0;
+}
+
+#bluegalaxy .header a {
+    display: block;
+    padding: 2px;
+}
+#bluegalaxy .header a:hover {
+    text-decoration: underline;
 }
 
 #bluegalaxy table th.icon span {

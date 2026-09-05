@@ -3,9 +3,18 @@
 ## Version 1.7.0
 ### Neu
 - Neue Farbe für die Fenster: Oceanic
+- Menü: Der GG-Eintrag zeigt nun einen Countdown für das nächste Ziel an
 
 ### Update
-- Produktionsübersicht:Listen für Güter-Boosts, Gildengüter-Boosts und Spezialgüter-Boosts hinzugefügt
+- Produktionsübersicht: Listen für Güter-Boosts, Gildengüter-Boosts und Spezialgüter-Boosts hinzugefügt, sowie nicht verbundene Gebäude entfernt; außerdem aktualisiert sich die Liste jetzt live
+- Forschung: Häkchen zum Ausblenden von Ressourcen, von denen man genug hat, hinzugefügt
+- GG Liste: Eigene Sektoren können nun sortiert werden
+
+### Bug Fixes
+- Effizienzrechner: Der Minimal-Score fürs Inventar war zu hoch
+- Stadtübersicht: Man konnte die ganze Karte außerhalb des Sichtfelds verschieben
+- Forschung: Die Häkchen haben nicht mehr funktioniert, weil die Spieldaten verändert wurden
+- Der Stadtplaner hatte manchmal nicht genug Daten. Das sollte nun besser funktionieren
 
 ---
  
