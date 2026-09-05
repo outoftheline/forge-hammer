@@ -75,13 +75,14 @@ let CityMap = {
 	 */
 	AscendingBuildings: new Promise((resolve) => {
 		let timer = () => {
-			if (!FH.Main.BuildingUpgrades) {
-				setTimeout(timer,500)
-			} else {
+			if (FH.Main.BuildingUpgrades) { //OLD!!!
 				resolve (Object.assign({},...Object.values(FH.Main.BuildingUpgrades).filter(x => x.upgradeItem.id.includes("ascended")).map(x=>x.upgradeSteps[0].buildingIds.map((Id,i)=>({[Id]:x.upgradeSteps[1].buildingIds[i]}))).flat())) 
+			} else if (Kits.ascendableBuildings) { //NEW!!!
+				resolve (Kits.ascendableBuildings)
+			} else {
+				setTimeout(timer,500)
 			}
 		}
-
 		timer();
 	}),
 

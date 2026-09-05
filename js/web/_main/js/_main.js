@@ -262,11 +262,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		},500);
 	});
 
-	// Building-Upgrades
+	// Building-Upgrades - OLD!!!
 	FH.proxy.addMetaHandler('building_upgrades', (xhr, postData) => {
 		let BuildingUpgradesArray = JSON.parse(xhr.responseText);
 		Main.BuildingUpgrades = Object.assign({}, ...BuildingUpgradesArray.map((x) => ({ [x.upgradeItem.id]: x })));
-		if (Main.SelectionKits != null) Kits.CreateUpgradeSchemes();
+		Kits.CreateUpgradeSchemes();
+	});
+
+	// Building-Upgrade-Paths - NEW!!!
+	FH.proxy.addMetaHandler('building_upgrade_paths', (xhr, postData) => {
+		let data = JSON.parse(xhr.responseText);
+		Main.BuildingUpgradePaths = Object.assign({}, ...data.map((x) => ({ [x.baseBuildingId]: x })));
+		Kits.CreateUpgradeSchemes();
 	});
 
 	// Building-Sets
@@ -285,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	FH.proxy.addMetaHandler('selection_kits', (xhr, postData) => {
 		let SelectKitsArray = JSON.parse(xhr.responseText);
 		Main.SelectionKits = Object.assign({}, ...SelectKitsArray.map((x) => ({ [x.selectionKitId]: x })));
-		if (Main.BuildingUpgrades != null) Kits.CreateUpgradeSchemes();
+		Kits.CreateUpgradeSchemes();
 	});
 	FH.proxy.addMetaHandler("building_families", (xhr,postData) => {
 		Main.BuildingFamilyLimits = JSON.parse(xhr.responseText)?.families;
@@ -998,6 +1005,7 @@ let Main = {
 
 	// all buildings additional data
 	BuildingUpgrades: null,
+	BuildingUpgradePaths: null,
 	BuildingSets: null,
 	BuildingChains: null,
 	SelectionKits: null,
@@ -1240,7 +1248,7 @@ let Main = {
 		Main.CityEntities = Metadata;
 		Main.correctBuildingType();
 		Main.Inactives.check();
-
+		Kits.CreateUpgradeSchemes();
 		if (failed.length) {
 			console.warn(`Forge Hammer [meta]: ${failed.length} building(s) could not be downloaded`, failed);
 		}

@@ -466,8 +466,8 @@ let shopAssist = {
 	getBuildingIds: (reward) => {
 		let Ids = [];
 		getFromUpgrade = (id)=>{
-			let steps = FH.Main.BuildingUpgrades[id].upgradeSteps
-			return steps[steps.length-1].buildingIds
+			let steps = (FH.Main.BuildingUpgrades || Kits.upgradeItems)[id].upgradeSteps;
+			return steps[steps.length-1]?.buildingIds;
 		}
 		if (reward.type == "building") {
 			Ids.push(reward.subType);
