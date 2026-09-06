@@ -1019,7 +1019,7 @@
   "HiddenRewards.Table.expires": "Исчезнет через",
   "HiddenRewards.Table.position": "Расположение",
   "HiddenRewards.Table.type": "Тип",
-  "InactiveBuildingsAlert.title": "Срок действия постройки стек:",
+  "InactiveBuildingsAlert.title": "Срок действия постройки истек:",
   "Local": "ru-RU",
   "Menu.Alerts.Desc": "Создание и управление напоминаниями",
   "Menu.Alerts.Title": "Напоминания",

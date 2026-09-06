@@ -12,6 +12,7 @@
  
 ### Bug Fixes
 - City Overview: You could move the city out of sight
+- Fixed Upgrade logic: Fridays beta update broke a lot of modules - fixed
 - Efficiency: Default Inventory Minimum Score was way too high
 - Research: The checkboxes didn't work anymore, because the game data changed
 - The City Planner could sometimes have too little data and not display anything - should work better now

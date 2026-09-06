@@ -13,6 +13,7 @@
 ### Bug Fixes
 - Effizienzrechner: Der Minimal-Score fürs Inventar war zu hoch
 - Stadtübersicht: Man konnte die ganze Karte außerhalb des Sichtfelds verschieben
+- Upgrade-Logik angepasst: Das Beta-Update am Freitag hat einige Module kaputt gemacht - wieder heile
 - Forschung: Die Häkchen haben nicht mehr funktioniert, weil die Spieldaten verändert wurden
 - Der Stadtplaner hatte manchmal nicht genug Daten. Das sollte nun besser funktionieren
 

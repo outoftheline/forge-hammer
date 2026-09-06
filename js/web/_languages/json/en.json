@@ -137,7 +137,7 @@
   "Boxes.BlueGalaxy.EstimatedBonus": "Estimated bonus: __FP__ FPs and __Goods__ goods",
   "Boxes.BlueGalaxy.FP": "FPs",
   "Boxes.BlueGalaxy.Fragments": "Fragments",
-  "Boxes.BlueGalaxy.FragmentsHint": "Try using this instead when looking for special fragments",
+  "Boxes.BlueGalaxy.FragmentsHint": "Try using this instead when looking for specific fragments",
   "Boxes.BlueGalaxy.Goods": "Goods",
   "Boxes.BlueGalaxy.GoodsPerFP": "1 FP equals __goods__ goods",
   "Boxes.BlueGalaxy.GoodsValue": "Rating value of 1 current-age good (in FP)",
