@@ -1,4 +1,4 @@
-﻿{
+{
   "_Language": "Nederlands",
   "Boxes.Alerts.Form.Antiques.Auction": "Veiling",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Veiling wachttijd",
@@ -149,11 +149,19 @@
   "Boxes.BlueGalaxy.OlderGoodsValue": "Beoordelingswaarde van 1 grondstof uit een vroeger tijdperk (in FP)",
   "Boxes.BlueGalaxy.Title": "Blauwe Melkweg hulp",
   "Boxes.BlueGalaxy.TTGoodsValue": "Deze waarde wordt gebruikt voor het rangschikken van gebouwen die grondstoffen produceren. Hoeveel FP is een grondstof waard voor jou?",
+  "Boxes.BlueGalaxy.ValueRating": {
+    "s": "1 FP =",
+    "r": "1 FP = "
+  },
   "Boxes.BonusService.aid_goods": "Aantal keer Helpen over uit Truce Tower",
   "Boxes.BonusService.diplomatic_gifts": "Aantal pogingen voor Diplomatieke geschenken over.",
   "Boxes.BonusService.donequests": "Toont afgeronde missies",
   "Boxes.BonusService.first_strike": "Aantal pogingen voor Eerste Slag over.",
   "Boxes.BonusService.missile_launch": "Aantal pogingen voor Raketlancering over.",
+  "Boxes.BonusService.quest_sound": {
+    "s": "Voltooide Missie",
+    "r": "Finished Quest"
+  },
   "Boxes.BonusService.spoils_of_war": "Aantal pogingen voor Oorlogsbuit over.",
   "Boxes.BoostList.guild_raids_action_points_collection": "Actie Punten",
   "Boxes.BoostList.guild_raids_coins_production": "Munten Boosts",
@@ -185,6 +193,10 @@
   "Boxes.Calculator.LGNotOpen": "Het volgende niveau van dit GG is momenteel niet ontgrendeld.",
   "Boxes.Calculator.MaxLevel": "Max niveau",
   "Boxes.Calculator.Meds": "Medailles",
+  "Boxes.Calculator.OwnPartClose": {
+    "s": "-",
+    "r": "-"
+  },
   "Boxes.Calculator.PlayInfoSound": {
     "s": "Speel een geluid af wanneer een plek veilig ingenomen kan worden",
     "r": "Play sound when spots can be taken safely"
@@ -309,6 +321,10 @@
   "Boxes.CityMap.military": "Militaire",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "Missende API-token",
   "Boxes.CityMap.MissingApiKeySubmitError": "Zonder een API-token voor deze wereld (gratis verkrijgbaar via de website) kun je geen steden of notities overdragen.<br>Klik hier voor instructies:",
+  "Boxes.CityMap.NextEraRenovation": {
+    "s": "Kits voor het volgende tijdperk",
+    "r": "Kits for next era"
+  },
   "Boxes.CityMap.NormalPerspecitve": "Standaard",
   "Boxes.CityMap.OlderThan1Era": " lopen 1 tijdperk achter",
   "Boxes.CityMap.OlderThan2Era": " lopen 2 tijdperken achter",
@@ -335,6 +351,10 @@
   },
   "Boxes.CityMap.ShowAscendableBuildings": "Markeer Upgradebare gebouwen",
   "Boxes.CityMap.ShowDecayedBuildings": "Markeer gedowngrade gebouwen",
+  "Boxes.CityMap.ShowFspDisabledBuildings": {
+    "s": "VSP uitgeschakelde gebouwen",
+    "r": "FSP disabled buildings"
+  },
   "Boxes.CityMap.ShowNoStreetBuildings": "Markeer gebouwen die geen wegen nodig hebben",
   "Boxes.CityMap.ShowSubmitBox": "Standsplanner",
   "Boxes.CityMap.ShowWorstBuildings": {
@@ -892,6 +912,26 @@
     "s": "Donateuren",
     "r": "Donators"
   },
+  "Boxes.GreatBuildingsProgress.MyFP": {
+    "s": "Mijn FP",
+    "r": "My FP"
+  },
+  "Boxes.GreatBuildingsProgress.NewFP": {
+    "s": "Huidige FP",
+    "r": "Current FP"
+  },
+  "Boxes.GreatBuildingsProgress.PrevFP": {
+    "s": "Vorige FP",
+    "r": "Previous FP"
+  },
+  "Boxes.GreatBuildingsProgress.Progress": {
+    "s": "Voortgang",
+    "r": "Progress"
+  },
+  "Boxes.GreatBuildingsProgress.Title": {
+    "s": "GG Voortgang",
+    "r": "GB Progress"
+  },
   "Boxes.GuildFights.Attrition": "Uitputting",
   "Boxes.GuildFights.Copy": "Kopieren",
   "Boxes.GuildFights.CopyToClipBoard.Desc": "Aanvalstijden voor de geselecteerde provincies is gekopieerd.",
@@ -901,7 +941,35 @@
   "Boxes.GuildFights.DeleteAlert": "Verwijder waarschuwing",
   "Boxes.GuildFights.DeleteMessage.Desc": "De melding voor provincie __provinceName__ is verwijderd!",
   "Boxes.GuildFights.DeleteMessage.Title": "Verwijderd!",
+  "Boxes.GuildFights.DiscordSend": {
+    "s": "Verstuur naar Discord",
+    "r": "Send to Discord"
+  },
+  "Boxes.GuildFights.DiscordSendCustom": {
+    "s": "Verstuur naar Discord met sjabloon",
+    "r": "Send to Discord with template"
+  },
   "Boxes.GuildFights.Fights": "Gevechten",
+  "Boxes.GuildFights.GBGTargetsMore": {
+    "s": "meer",
+    "r": "more"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionBottom": {
+    "s": "onder",
+    "r": "bottom"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionLeft": {
+    "s": "links",
+    "r": "left"
+  },
+  "Boxes.GuildFights.GBGTargetsPositionTop": {
+    "s": "boven",
+    "r": "top"
+  },
+  "Boxes.GuildFights.GuildResults": {
+    "s": "Gilderesultaten",
+    "r": "Guild Results"
+  },
   "Boxes.GuildFights.LastSnapshot": " - Laatste snapshot: __time__ geleden",
   "Boxes.GuildFights.Negotiations": "Onderhandelingen",
   "Boxes.GuildFights.NoOwner": "Nog geen eigenaar",
@@ -926,6 +994,22 @@
   "Boxes.GuildFights.ShowRoundSelector": "Toon GSP selectie",
   "Boxes.GuildFights.SnapshotLog": "Snapshot Log",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Disclaimer: Deze gegevens zijn gebaseerd op jouw verzamelde data. De hier getoonde cijfers zijn waarschijnlijk niet 100% nauwkeurig. Je zou de lijst om middernacht moeten openen om ze correct te krijgen.",
+  "Boxes.GuildFights.Stats.Open": {
+    "s": "Statistieken",
+    "r": "Stats"
+  },
+  "Boxes.GuildFights.Stats.TabGuilds": {
+    "s": "Overwinningspunten",
+    "r": "Victory Points"
+  },
+  "Boxes.GuildFights.Stats.TTPoints": {
+    "s": "OP",
+    "r": "VP"
+  },
+  "Boxes.GuildFights.Stats.TTRate": {
+    "s": "OP/uur",
+    "r": "VP/h"
+  },
   "Boxes.GuildFights.Switch": "Wissel weergave",
   "Boxes.GuildFights.Time": "om",
   "Boxes.GuildFights.Title": "Spelersoverzicht",
@@ -952,6 +1036,10 @@
   "Boxes.GuildMemberStat.GbgParticipation": "Gilde Strijdperken deelname",
   "Boxes.GuildMemberStat.GexGbgDateFormat": "GE/GSP datum formaat",
   "Boxes.GuildMemberStat.GexParticipation": "Gilde Expeditie deelname",
+  "Boxes.GuildMemberStat.GexTrial": {
+    "s": "Uitdaging",
+    "r": "Trial"
+  },
   "Boxes.GuildMemberStat.GEXWeek": "GE Week",
   "Boxes.GuildMemberStat.GotIt": "Ik snap het!",
   "Boxes.GuildMemberStat.GreatBuildings": "Grootse Gebouwen",
@@ -977,6 +1065,10 @@
   "Boxes.GuildMemberStat.Never": "nooit",
   "Boxes.GuildMemberStat.Points": "Punten",
   "Boxes.GuildMemberStat.ProducedTreasuryGoods": "geproduceerd door gilde gebouwen",
+  "Boxes.GuildMemberStat.QiParticipation": {
+    "s": "QI deelname",
+    "r": "QI participation"
+  },
   "Boxes.GuildMemberStat.Rank": "Rang",
   "Boxes.GuildMemberStat.ResetMessageCounter": "reset berichten teller",
   "Boxes.GuildMemberStat.Search": "Zoek",
@@ -1077,6 +1169,14 @@
   "Boxes.Investment.PlayerFoundCounter": "__count__ nieuwe speler gebeurtenissen gevonden.",
   "Boxes.Investment.Rank": "Rang",
   "Boxes.Investment.Safe": "veilig",
+  "Boxes.Investment.Tabs.Contributions": {
+    "s": "Bijdragen",
+    "r": "Contributions"
+  },
+  "Boxes.Investment.Tabs.MyGBs": {
+    "s": "Mijn GG's",
+    "r": "My GBs"
+  },
   "Boxes.Investment.Title": "Je FP investerings overzicht",
   "Boxes.Investment.TotalFP": "Voorraad + in omloop + winst: ",
   "Boxes.Investment.UpdateRequired": "De GG investeringslijst is ouder dan 30 minuten. Update uw GG investeringslijst aub via het Stadhuis.",
@@ -1093,6 +1193,10 @@
   "Boxes.Kits.Kits": "Kits",
   "Boxes.Kits.Name": "Gebouw",
   "Boxes.Kits.SelectionKit": "Selectiekit",
+  "Boxes.Kits.Sets": {
+    "s": "Sets",
+    "r": "Sets"
+  },
   "Boxes.Kits.ShowFavourites": "Toon alleen Favorieten",
   "Boxes.Kits.TripleStateButton0": "Laat missende onderdelen zien",
   "Boxes.Kits.TripleStateButton1": "Laat alle onderdelen zien",
@@ -1370,15 +1474,39 @@
   "Boxes.Productions.Units": "Eenheden",
   "Boxes.ProductionsRating.AddBuilding": "Voeg Speciaal Gebouw toe",
   "Boxes.ProductionsRating.AddBuildings": "Voeg geselecteerde gebouwen toe",
+  "Boxes.ProductionsRating.Best": {
+    "s": "Beste",
+    "r": "Best"
+  },
   "Boxes.ProductionsRating.BuildingName": "Gebouw",
+  "Boxes.ProductionsRating.ColumnFilter": {
+    "s": "Filter",
+    "r": "Filter"
+  },
   "Boxes.ProductionsRating.CountTooltip": "Let op: Niet alle gebouwen zijn mogelijk in het tijdperk dat naast de naam staat. controleer de kaart om zeker te zijn!",
   "Boxes.ProductionsRating.Disclaimer": "Voor ketengebouwen wordt de keten behandeld als één enkel gebouw. Bij sets nemen we aan dat alle delen volledig zijn verbonden.",
   "Boxes.ProductionsRating.Enabled": "Zet aan",
   "Boxes.ProductionsRating.Explainer": "Hoe werkt het? Selecteer hoeveel elk van je gebouwen idealiter per tegel zou moeten produceren. De balans tussen alle geselecteerde waarden is belangrijk voor de uiteindelijke beoordeling. Als je meer dan één gebouw van hetzelfde type hebt, wordt alleen het gebouw met het hoogste tijdperk geëvalueerd.",
+  "Boxes.ProductionsRating.ExplainerHead": {
+    "s": "Help",
+    "r": "Help"
+  },
+  "Boxes.ProductionsRating.Fifth": {
+    "s": "Top 5",
+    "r": "Top 5"
+  },
   "Boxes.ProductionsRating.Filter": "Zoek",
   "Boxes.ProductionsRating.FindBuilding": "Zoek",
   "Boxes.ProductionsRating.FindSpecialBuilding": "Vind Speciaal Gebouw",
   "Boxes.ProductionsRating.HighlightsExplained": "Gebouwen markeren: Klik op een willekeurige rij om de gebouwen te selecteren die je gemakkelijker wilt vergelijken. Zoekresultaten worden automatisch gemarkeerd.",
+  "Boxes.ProductionsRating.ModifierAddBuilding": {
+    "s": "Gebouw toevoegen",
+    "r": "Add building"
+  },
+  "Boxes.ProductionsRating.ModifierValue": {
+    "s": "Vermenigvuldiger",
+    "r": "Modifier"
+  },
   "Boxes.ProductionsRating.PresetActive": {
     "s": "Actieve instelling",
     "r": "Active preset"
@@ -1399,11 +1527,39 @@
     "s": "Verwijderen",
     "r": "Delete"
   },
+  "Boxes.ProductionsRating.PresetReset": {
+    "s": "Resetten",
+    "r": "Reset"
+  },
+  "Boxes.ProductionsRating.PresetSave": {
+    "s": "Opslaan",
+    "r": "Save"
+  },
+  "Boxes.ProductionsRating.PresetSaveAs": {
+    "s": "Opslaan als",
+    "r": "Save as"
+  },
   "Boxes.ProductionsRating.ProdPerTile": "Verwachte dagelijkse productie per tegel",
+  "Boxes.ProductionsRating.Reset": {
+    "s": "Resetten naar standaard",
+    "r": "Reset to default"
+  },
   "Boxes.ProductionsRating.Results": "Resultaat",
   "Boxes.ProductionsRating.Score": "Score",
   "Boxes.ProductionsRating.Settings": "Instellingen",
+  "Boxes.ProductionsRating.ShowFSPCalculator": {
+    "s": "Open VSP rekenmachine",
+    "r": "Show FSP Calculator"
+  },
   "Boxes.ProductionsRating.ShowHighlighted": "Alleen gemarkeerde gebouwen",
+  "Boxes.ProductionsRating.ShowInventoryBuildings": {
+    "s": "Inventaris",
+    "r": "Inventory"
+  },
+  "Boxes.ProductionsRating.ShowInventoryBuildingsExplanation": {
+    "s": "Voeg gebouwen uit je inventaris toe aan de lijst.",
+    "r": "Add buildings from your inventory to the list"
+  },
   "Boxes.ProductionsRating.ShowItems": "Verberg items",
   "Boxes.ProductionsRating.ShowValuesPerTile": "Waarde/tegel",
   "Boxes.ProductionsRating.Title": "Gebouw efficiency waardering",
@@ -1416,6 +1572,10 @@
   "Boxes.PvPArena.Title": "PvP-Arena",
   "Boxes.PvPArena.Type": "Type",
   "Boxes.QIMap.Title": "Quantum Invasie Kaart",
+  "Boxes.ReconstructionMap.Title": {
+    "s": "Kaart",
+    "r": "Map"
+  },
   "Boxes.RecurringQuests.AND": "EN",
   "Boxes.RecurringQuests.OR": "OF",
   "Boxes.RecurringQuests.showCounter": "Laat teller voor open queestes in menu zien",
@@ -1431,10 +1591,58 @@
   "Boxes.Settings.Autostart": "Open scherm automatisch",
   "Boxes.Settings.DeletedBoxCoordsBody": "Alle coördinaten uit de boxen zijn verwijderd.",
   "Boxes.Settings.DeletedBoxCoordsHead": "Verwijderd!",
+  "Boxes.Settings.GameFilters.Brightness": {
+    "s": "Helderheid",
+    "r": "Brightness"
+  },
+  "Boxes.Settings.GameFilters.Contrast": {
+    "s": "Contrast",
+    "r": "Contrast"
+  },
+  "Boxes.Settings.GameFilters.Hue": {
+    "s": "Tint",
+    "r": "Hue"
+  },
+  "Boxes.Settings.GameFilters.Saturation": {
+    "s": "Verzadiging",
+    "r": "Saturation"
+  },
   "Boxes.Settings.Inactive": "Gedeactiveerd",
   "Boxes.Settings.Save": "Instellingen opslaan",
   "Boxes.Settings.showBGFragments": "Toon fragmenten",
   "Boxes.Settings.Title": "Instellingen",
+  "Boxes.ShopAssist.All": {
+    "s": "Alles",
+    "r": "All"
+  },
+  "Boxes.ShopAssist.canBeBought": {
+    "s": "Kan gekocht worden",
+    "r": "Can be bought"
+  },
+  "Boxes.ShopAssist.Costs": {
+    "s": "Kosten",
+    "r": "Costs"
+  },
+  "Boxes.ShopAssist.Inventory": {
+    "s": "Inventaris",
+    "r": "Inventory"
+  },
+  "Boxes.ShopAssist.Item": {
+    "s": "Aanbieding",
+    "r": "Offer"
+  },
+  "Boxes.ShopAssist.Max": {
+    "s": "Max",
+    "r": "Max"
+  },
+  "Boxes.ShopAssist.Missing": {
+    "s": "Missend",
+    "r": "Missing"
+  },
+  "Boxes.ShopAssist.onlyFavourites": {
+    "s": "Alleen favorieten",
+    "r": "Only Favorites"
+  },
   "Boxes.Stats.BtnAll": "Alle",
   "Boxes.Stats.BtnAllPlayableEras": "Alle tijdperken",
   "Boxes.Stats.BtnAllPlayableErasTitle": "Selecteer alle speelbare tijdperken (zonder: geen tijdperk, speciaal)",
@@ -1499,6 +1707,26 @@
   "Boxes.Technologies.NoTechs": "Je hebt het einde van dit tijdperk bereikt",
   "Boxes.Technologies.Resource": "Benodigdheden",
   "Boxes.Technologies.Title": "Onderzoekskosten voor",
+  "Boxes.Tooltip.Building.costs": {
+    "s": "Kosten",
+    "r": "Costs"
+  },
+  "Boxes.Tooltip.Building.isUnique": {
+    "s": "Uniek Gebouw",
+    "r": "Unique Building"
+  },
+  "Boxes.Tooltip.Building.produces": {
+    "s": "Produceert",
+    "r": "Produces"
+  },
+  "Boxes.Tooltip.Building.road": {
+    "s": "Weg vereist",
+    "r": "road required"
+  },
+  "Boxes.Tooltip.Building.road2": {
+    "s": "Tweebaansweg vereist",
+    "r": "2-lane road required"
+  },
   "Boxes.Translation.Reference": {
     "s": "Referentie",
     "r": "Reference"
