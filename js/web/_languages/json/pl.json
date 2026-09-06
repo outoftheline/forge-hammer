@@ -176,6 +176,10 @@
   "Boxes.BlueGalaxy.EstimatedBonus": "Szacowany bonus: __FP__ PR i __Goods__ towarów",
   "Boxes.BlueGalaxy.FP": "PR",
   "Boxes.BlueGalaxy.Fragments": "Fragmenty",
+  "Boxes.BlueGalaxy.FragmentsHint": {
+    "s": "Spróbuj skorzystać z tej opcji, gdy szukasz konkretnych fragmentów",
+    "r": "Try using this instead when looking for special fragments"
+  },
   "Boxes.BlueGalaxy.Goods": "Towary",
   "Boxes.BlueGalaxy.GoodsPerFP": "1 PR jest wart __goods__ towarów",
   "Boxes.BlueGalaxy.GoodsValue": "Wartość 1 towaru z aktualnej epoki (w PR)",
@@ -366,6 +370,10 @@
   "Boxes.CityMap.military": "Wojskowe",
   "Boxes.CityMap.MissingApiKeyErrorHeader": "Brakuje Tokena API",
   "Boxes.CityMap.MissingApiKeySubmitError": "Bez tokenu API dla tego świata (dostępny bezpłatnie na stronie internetowej) nie możesz przenieść danych. <br>Kliknij tutaj by uzyskać instrukcje:",
+  "Boxes.CityMap.NextEraRenovation": {
+    "s": "Zestawy do kolejnej epoki",
+    "r": "Kits for next era"
+  },
   "Boxes.CityMap.NormalPerspecitve": "Standardowy",
   "Boxes.CityMap.OlderThan1Era": " o 1 epokę do tyłu",
   "Boxes.CityMap.OlderThan2Era": " o 2 epoki do tyłu",
@@ -389,6 +397,10 @@
   },
   "Boxes.CityMap.ShowAscendableBuildings": "Budynki do wzniesienia",
   "Boxes.CityMap.ShowDecayedBuildings": "Podupadłe budynki",
+  "Boxes.CityMap.ShowFspDisabledBuildings": {
+    "s": "Budynki wykluczone z ZPS",
+    "r": "FSP disabled buildings"
+  },
   "Boxes.CityMap.ShowNoStreetBuildings": "Budynki bez dróg",
   "Boxes.CityMap.ShowSubmitBox": "Planowanie miasta",
   "Boxes.CityMap.ShowWorstBuildings": "Najgorzej oceniane budynki",
@@ -2181,6 +2193,10 @@
   "Boxes.Technologies.IgnoreCurrentEraOptional": "Ignoruj opcjonalne technologie obecnych/przyszłych epok",
   "Boxes.Technologies.IgnorePrevEra": "Ignoruj opcjonalne technologie z poprzednich epok",
   "Boxes.Technologies.NoTechs": "Osiągnąłeś koniec tej epoki",
+  "Boxes.Technologies.OnlyMissing": {
+    "s": "Pokaż tylko brakujące",
+    "r": "Show Only Missing"
+  },
   "Boxes.Technologies.Resource": "Zasób",
   "Boxes.Technologies.Title": "Koszt badań",
   "Boxes.Tooltip.Building.addInhabitant": "Dodaj unikalnego mieszkańca",
@@ -2454,6 +2470,10 @@
     "s": "Brak epoki",
     "r": "No age"
   },
+  "General.After": {
+    "s": "Po",
+    "r": "After"
+  },
   "General.AttAttacker": {
     "s": "Czerwony atak",
     "r": "Red Attack"
@@ -2466,6 +2486,10 @@
     "s": "Bitwa",
     "r": "Battle"
   },
+  "General.Before": {
+    "s": "Przed",
+    "r": "Before"
+  },
   "General.Boost": "Bonus",
   "General.Buildings": {
     "s": "Budynki",
@@ -2474,6 +2498,10 @@
   "General.Cancel": {
     "s": "Anuluj",
     "r": "Cancel"
+  },
+  "General.Change": {
+    "s": "Zmiana",
+    "r": "Change"
   },
   "General.Choose": {
     "s": "Proszę wybrać",
@@ -2496,6 +2524,10 @@
     "s": "Niebieska obrona",
     "r": "Blue Defense"
   },
+  "General.Details": {
+    "s": "Szczegóły",
+    "r": "Details"
+  },
   "General.Disclaimer": "Zastrzeżenie",
   "General.Error": {
     "s": "Błąd",
@@ -2508,6 +2540,10 @@
   "General.ForgePoints": {
     "s": "Punkty Rozwoju",
     "r": "Forge Points"
+  },
+  "General.Fragments": {
+    "s": "Fragmenty",
+    "r": "Fragments"
   },
   "General.GB": "Perła Architektury",
   "General.Good": "Towar",
@@ -2549,6 +2585,10 @@
   "General.Send": {
     "s": "Wyślij",
     "r": "Send"
+  },
+  "General.Space": {
+    "s": "Powierzchnia",
+    "r": "Space"
   },
   "General.Success": {
     "s": "Sukces",
@@ -2598,7 +2638,10 @@
   "Menu.Bluegalaxy.Desc": "To narzędzie pomaga znaleźć najlepsze budynki do zebrania z bonusem Błękitnej Galaktyki",
   "Menu.Bluegalaxy.Title": "Pomocnik Błękitnej Galaktyki",
   "Menu.BottomBar": "Na dole",
-  "Menu.Box": "Pływające okno",
+  "Menu.Box": {
+    "s": "Jako okno",
+    "r": "As Box"
+  },
   "Menu.Calculator.Desc": "Oblicza koszty zajęcia miejsc w PA",
   "Menu.Calculator.Title": "Kalkulator kosztów",
   "Menu.Calculator.Warning": "Niedostępne: Otwórz perłę architektury innego gracza!",
@@ -2951,7 +2994,7 @@
     "r": "Change the position, button size and amount of items shown in the menu"
   },
   "Settings.MenuAppearance.Length": {
-    "s": "Pozycje wyświetlane w menu (oprócz rozwijanego)",
+    "s": "Pozycje wyświetlane w menu (oprócz okna)",
     "r": "Entries shown in the menu (not for the box)"
   },
   "Settings.MenuAppearance.Position": {
@@ -3242,6 +3285,10 @@
     "s": "Podstawa",
     "r": "Base"
   },
+  "XPlan.Compare.GroupItems": {
+    "s": "Przedmioty i fragmenty (co 24g)",
+    "r": "Items & fragments (per 24h)"
+  },
   "XPlan.Compare.Metrics": {
     "s": "Wszystkie wskaźniki",
     "r": "All Metrics"
@@ -3277,6 +3324,10 @@
   "XPlan.Language.SystemDefault": {
     "s": "Język",
     "r": "Language"
+  },
+  "XPlan.Loading.Failed": {
+    "s": "Nie udało się załadować danych",
+    "r": "Could not load data"
   },
   "XPlan.Modal.DiscardAndContinue": {
     "s": "Odrzuć i kontynuuj",
