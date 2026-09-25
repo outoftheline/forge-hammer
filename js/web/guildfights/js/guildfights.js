@@ -391,7 +391,7 @@ let GuildFights = {
 			activeSignals.add(`target-${provinceId}`);
 
 			let countDownDate = province.lockedUntil;
-			let remaining = countDownDate ? FH.GameTime.diff(countDownDate) : null;
+			let remaining = FH.GameTime.diff(countDownDate);
 			let unlocked = remaining === null || remaining <= 0;
 			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
@@ -1619,7 +1619,7 @@ let GuildFights = {
 				}
 				
 				
-				let remaining = countDownDate ? FH.GameTime.diff(countDownDate) : null;
+				let remaining = FH.GameTime.diff(countDownDate);
 				let bgColor = false;
 				if (remaining < 600 * 1000) {
 					if (prov[x].gainAttritionChance === 100)
@@ -2608,7 +2608,7 @@ let ProvinceMap = {
 			ProvinceMap.MapCTX.fillStyle = '#000';
 			if (ProvinceMap.hoverAdjacentProvincesIds.includes(this.id) || this.isSelected) ProvinceMap.MapCTX.fillStyle = '#fff';
 
-			let provinceUnlockTime = (moment.unix(this.lockedUntil).format('HH:mm') != 'Invalid date') ? moment.unix(this.lockedUntil).format('HH:mm') : '';
+			let provinceUnlockTime = this.lockedUntil ? FH.GameTime.moment(this.lockedUntil).format('HH:mm') : '';
 			ProvinceMap.MapCTX.fillText(provinceUnlockTime,mapStuff.x,mapStuff.y+5);
 		}
 
