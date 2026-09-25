@@ -129,9 +129,9 @@ let GameTime = {
 	set:(time)=>{
 		GameTime.Offset = time-moment().unix();
 	},	
-	get:()=>{
-		return moment().unix()+GameTime.Offset;
-	}
+	get:()=> moment().unix() + GameTime.Offset,
+	moment:(t) => moment.unix(t - GameTime.Offset),
+	diff: (time) => moment.unix(time).diff(moment.unix(GameTime.get()))
 }
 
 // Language file keys holding a moment format -> storage key of the user's own choice (see FH.DateFormat).

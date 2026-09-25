@@ -390,15 +390,15 @@ let GuildFights = {
 			let provinceId = province.id||0;
 			activeSignals.add(`target-${provinceId}`);
 
-			let countDownDate = province.lockedUntil ? moment.unix(province.lockedUntil - 2) : null;
-			let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
+			let countDownDate = province.lockedUntil;
+			let remaining = countDownDate ? FH.GameTime.diff(countDownDate) : null;
 			let unlocked = remaining === null || remaining <= 0;
 			LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 
 			let title = "!!!";
 			
 			if (remaining > 1800 * 1000) {
-				title = FH.t('Boxes.GuildFights.Time') +" "+ countDownDate.add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds").format('HH:mm');
+				title = FH.t('Boxes.GuildFights.Time') +" "+ FH.GameTime.moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds").format('HH:mm');
 			}
 			else if (!unlocked) {
 				title = FH.t('Boxes.GuildFights.Count') +" "+ moment.utc(remaining).format('mm:ss');
@@ -1556,7 +1556,7 @@ let GuildFights = {
 			nextup.push('<th>' + FH.t('Boxes.GuildFights.Owner') + '</th>');
 		
 		nextup.push(`<th class="time-static w-small">${FH.t('Boxes.GuildFights.Time')}</th>
-				<th class="time-dynamic w-small">${FH.t('Boxes.GuildFights.Count')}</th>
+				<th class="w-small">${FH.t('Boxes.GuildFights.Count')}</th>
 				<th></th>
 				<th></th>
 			</tr></thead>`);
@@ -1589,7 +1589,7 @@ let GuildFights = {
 			}
 
 			if (showCountdowns) {
-				let countDownDate = moment.unix(prov[x].lockedUntil - 2),
+				let countDownDate = prov[x].lockedUntil,
 					color = GuildFights.SortedColors.find(e => e.id === prov[x].ownerId),
 					battleType = prov[x].isAttackBattleType ? 'BTattack' : 'BTdefence',
 					intervalID = setInterval(() => {
@@ -1619,7 +1619,7 @@ let GuildFights = {
 				}
 				
 				
-				let remaining = countDownDate?.isValid() ? countDownDate.diff(moment()) : null;
+				let remaining = countDownDate ? FH.GameTime.diff(countDownDate) : null;
 				let bgColor = false;
 				if (remaining < 600 * 1000) {
 					if (prov[x].gainAttritionChance === 100)
@@ -1641,9 +1641,9 @@ let GuildFights = {
 				if (GuildFights.showGuildColumn) 
 					nextup.push(`<td>${prov[x].owner}</td>`);
 
-				let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
+				let timeAt = FH.GameTime.moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
 				nextup.push(`<td class="time-static" style="user-select:text"><span data-original-title="${FH.t('Boxes.GuildFights.Attrition')}: ${prov[x].gainAttritionChance}%">${timeAt.format('HH:mm:ss')}</span></td>
-							<td class="time-dynamic" id="counter-${prov[x].id}">${countDownDate.format('HH:mm:ss')}</td>`);
+							<td id="counter-${prov[x].id}"></td>`);
 
 				let discordButtons = '';
 				if (prov[x].owner !== own.clan.name && GuildFights.discordWebhook.url != '') {
@@ -1683,7 +1683,7 @@ let GuildFights = {
 		content.push('<div id="gbgowned"><table class="foe-table">');
 		content.push('<thead><tr class="sorter-header">');
 		content.push('<th class="is-text prov-name" data-type="gbg-owned-group" style="user-select:text">' + FH.t('Boxes.GuildFights.Province') + '</th>');
-		content.push('<th class="is-number" data-type="gbg-owned-group" class="time-dynamic">' + FH.t('Boxes.GuildFights.Count') + '</th>');
+		content.push('<th class="is-number" data-type="gbg-owned-group">' + FH.t('Boxes.GuildFights.Count') + '</th>');
 		content.push('<th class="is-number" data-type="gbg-owned-group">Slots</th>');
 		content.push('<th class="is-number" data-type="gbg-owned-group">VP</th>');
 		content.push('</tr></thead><tbody class="gbg-owned-group">');
@@ -1692,7 +1692,7 @@ let GuildFights = {
 			if (province.ownerId !== GuildFights.MapData.currentParticipantId) continue;
 			if (province.lockedUntil === undefined) continue;
 
-			let countDownDate = moment.unix(province.lockedUntil - 2),
+			let countDownDate = province.lockedUntil,
 				color = GuildFights.SortedColors.find(x => x.id === province.ownerId),
 				intervalID = setInterval(() => {
 					GuildFights.UpdateCounter(countDownDate, intervalID, province.id);
@@ -1710,8 +1710,8 @@ let GuildFights = {
 
 			GuildFights.UpdateCounter(countDownDate, intervalID, province.id);
 
-			let timeAt = moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
-			content.push(`<td class="time-dynamic is-number" data-number="${timeAt.format('HHmmss')}"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}">${countDownDate.format('HH:mm:ss')}</span></span></td>`);
+			let timeAt = FH.GameTime.moment(countDownDate).add(LiveFightSettings?.showServerTime ? - 60 * (GuildFights.serverOffset ?? 0) : 0 , "seconds");
+			content.push(`<td class="is-number" data-number="${timeAt.format('HHmmss')}"><span data-original-title="${timeAt.format('HH:mm:ss')}"><span id="counter-${province.id}"></span></span></td>`);
 			content.push(`<td class="is-number" data-number="${province.usedBuildingSlots||0}">${province.usedBuildingSlots||0}/${province.totalBuildingSlots}</td>`);
 			content.push(`<td class="is-number" data-number="${province.victoryPoints}">${province.victoryPoints}</td>`);
 			content.push('</tr>');
@@ -1874,11 +1874,12 @@ let GuildFights = {
 	},
 
 
-	UpdateCounter: (countDownDate, intervalID, id) => {		let idSpan = $(`#counter-${id}`),
+	UpdateCounter: (countDownDate, intervalID, id) => {
+		let idSpan = $(`#counter-${id}`),
 			removeIt = false;
 
-		if (countDownDate.isValid()) {
-			let diff = countDownDate.diff(moment());
+		if (countDownDate) {
+			let diff = FH.GameTime.diff(countDownDate);
 
 			if (diff <= 0) {
 				removeIt = true;
