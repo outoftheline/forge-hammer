@@ -454,7 +454,7 @@ let GuildFights = {
 
 				return lockedA - lockedB;
 			});
-			let timeDiff = moment.unix(sortedSignals[0].lockedUntil).diff(moment());
+			let timeDiff = FH.GameTime.diff(sortedSignals[0].lockedUntil);
 			$('#gildFight-Btn .hud-counter').text(moment.utc(timeDiff).format('H:mm'));
 			if (timeDiff / 60000 < 2.4) {
 					$('#gildFight-Btn .hud-counter').addClass('hud-counter-red');
@@ -1818,7 +1818,7 @@ let GuildFights = {
 			let battleType = mapElem.isAttackBattleType ? '🔴' : '🔵';
 			let LiveFightSettings = JSON.parse(FH.Storage.getItem('LiveFightSettings'));
 			let showTileColors = (LiveFightSettings && LiveFightSettings.showTileColors !== undefined) ? LiveFightSettings.showTileColors : 1;
-			copy += `${moment.unix(mapElem.lockedUntil - 2 - 60 * (GuildFights.serverOffset || 0)).format('HH:mm')} ${showTileColors === 1 ? battleType : ''} ${mapElem.title} \n`;
+			copy += `${FH.GameTime.moment(mapElem.lockedUntil - 60 * (GuildFights.serverOffset || 0)).format('HH:mm')} ${showTileColors === 1 ? battleType : ''} ${mapElem.title} \n`;
 		});
 
 		if (copy !== '') {
@@ -2608,7 +2608,7 @@ let ProvinceMap = {
 			ProvinceMap.MapCTX.fillStyle = '#000';
 			if (ProvinceMap.hoverAdjacentProvincesIds.includes(this.id) || this.isSelected) ProvinceMap.MapCTX.fillStyle = '#fff';
 
-			let provinceUnlockTime = this.lockedUntil ? FH.GameTime.moment(this.lockedUntil).format('HH:mm') : '';
+			let provinceUnlockTime = this.lockedUntil && this.lockedUntil > FH.GameTime.get()? FH.GameTime.moment(this.lockedUntil).format('HH:mm') : '';
 			ProvinceMap.MapCTX.fillText(provinceUnlockTime,mapStuff.x,mapStuff.y+5);
 		}
 
