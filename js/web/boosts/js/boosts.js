@@ -264,9 +264,9 @@ let Boosts = {
     TimeOut:{
         list:[],
         add:(boost)=>{
-            if (!Boosts.TimeOut.id || !Boosts.Timer.next || boost.expireTime < Boosts.TimeOut.next) {
+            if (!Boosts.Timer.id || !Boosts.Timer.next || boost.expireTime < Boosts.Timer.next) {
                 clearTimeout(Boosts.Timer.id)
-                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (boost.expireTime - FH.GameTime.get() + 2)*1000)
+                Boosts.Timer.id = setTimeout(Boosts.Timer.execute, Math.max(0, (boost.expireTime - FH.GameTime.get() + 2)*1000))
                 Boosts.Timer.next = boost.expireTime
             }
             Boosts.TimeOut.list.push(boost)
@@ -285,11 +285,12 @@ let Boosts = {
             let toAdd = Boosts.TimeIn.list.filter(x=>x.startTime<=refTime)
             Boosts.TimeIn.list = Boosts.TimeIn.list.filter(x=>x.startTime>refTime)
             Boosts.Add(toAdd)
-            let list=[...Boosts.TimeOut.list,...Boosts.TimeIn.list].map(x=>x.startTime||x.expireTime)
-            let next=Math.min(...list)
+            let list=[...Boosts.TimeOut.list.map(x=>x.expireTime),...Boosts.TimeIn.list.map(x=>x.startTime)].filter(x=>Number.isFinite(x))
+            let next=list.length>0 ? Math.min(...list) : null
             clearTimeout(Boosts.Timer.id)
             Boosts.Timer.id=null
-            if (list.length>0) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, (next - FH.GameTime.get() + 2)*1000)
+            Boosts.Timer.next=next
+            if (next!==null) Boosts.Timer.id = setTimeout(Boosts.Timer.execute, Math.max(0, (next - FH.GameTime.get() + 2)*1000))
         },
     },
     Remove: (boosts) => {
