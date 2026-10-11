@@ -113,6 +113,7 @@ let Productions = {
 			'happiness': {order:19,perTile:null,active:false,group:1},
 			'clan_goods': {order:21,perTile:30,active:true,group:1},
 			'units': {order:22,perTile:6,active:true,group:2},
+			'units-next': {order:22.5,perTile:6,active:true,group:2},
 			'att_boost_attacker-all': {order:23,perTile:8,active:true,group:2} ,
 			'att_boost_attacker-guild_expedition': {order:24,perTile:11,active:true,group:2},
 			'att_boost_attacker-battleground': {order:25,perTile:10,active:true,group:2} ,
@@ -1975,7 +1976,7 @@ let Productions = {
 							let Uera = Technologies.Eras[building.eraName]
 							Uera = Uera + (resource.name.includes("next") && Uera<Technologies.getMaxEra() ? 1 : 0)
 							let Utype=resource.name
-							prod.units.push({type:Utype.replace(/next./,""),amount:0,random:resource.amount * resource.dropChance,era:Utype=="rogue"?0:Uera})
+							prod.units.push({type:Utype.replace(/next./,""),amount:0,random:resource.amount * resource.dropChance,era:Utype=="rogue"?0:Uera,next:Productions.isNextEraUnit(building, Utype)})
 						}
 						if (resource.type === "guild_goods" && category === "clan_goods" 
 							|| resource.subType === "strategy_points" && category === "strategy_points"
@@ -2018,7 +2019,7 @@ let Productions = {
 							prod.units.push({type:Rtype.replace(/next./,""),amount:0,random:RAmount,era:Rtype=="rogue"?0:Rera})
 						})
 					} else {
-						prod.units.push({type:Utype.replace(/next./,""),amount:UAmount,random:0,era:building.type === "greatbuilding" || Utype=="rogue" ?0:Uera})
+						prod.units.push({type:Utype.replace(/next./,""),amount:UAmount,random:0,era:building.type === "greatbuilding" || Utype=="rogue" ?0:Uera,next:Productions.isNextEraUnit(building, Utype)})
 					}
 					if (current === true && building.type !== "main_building" && building.type !== "greatbuilding")
 						prod.type = Utype
@@ -2246,6 +2247,9 @@ let Productions = {
 		else if (GoodType === 'clan_goods') {
 			return FH.t('Boxes.Productions.GuildGoods');
         }
+		else if (GoodType === 'units-next') {
+			return FH.t('General.UnitsNext');
+		}
 		else if (GoodType.includes('units')) {
 			return FH.t('General.Units');
 		}
@@ -3167,8 +3171,27 @@ let Productions = {
 	},
 
 
+	isNextEraUnit: (building, unitName) => {
+		if (!String(unitName).includes('next')) return false;
+		let eraName = (building.eraName === 'AllAge' || !building.eraName) ? FH.CurrentEra : building.eraName;
+		return Technologies.Eras[eraName] < Technologies.getMaxEra();
+	},
+
+
+	getRatingUnits: (building, next = false) => {
+		let units = Productions.getBuildingProductionByCategory(false, building, 'units').units;
+		let sum = 0;
+		for (const u of units) {
+			if (!!u.next === next) sum += (u.amount || 0) + (u.random || 0);
+		}
+		return sum;
+	},
+
+
 	getRatingValueForType: (building, type) => {
-		if (type === "happiness")
+		if (type === "units" || type === "units-next")
+			return Productions.getRatingUnits(building, type === "units-next");
+		else if (type === "happiness")
 			return building.happiness;
 		else if (type === "population")
 			return building.population;
@@ -3206,7 +3229,7 @@ let Productions = {
 				}
 			}
 		}
-		else if (type === "strategy_points" || type === "medals" || type === "premium" || type === "money" || type === "supplies" || type === "units" || type === "clan_goods")
+		else if (type === "strategy_points" || type === "medals" || type === "premium" || type === "money" || type === "supplies" || type === "clan_goods")
 			return Productions.getBuildingProductionByCategory(false, building, type).amount
 
 		else if (type.includes("goods") && !type.includes("guild_raids_")) {

@@ -846,8 +846,11 @@ input[id*="ProdPerTile"] {
 #ProductionsRatingBody span.resicon.clan_power {
 	background-position: -262px 2px;
 }
-#ProductionsRatingBody span.resicon.units {
+#ProductionsRatingBody span.resicon.units, #ProductionsRatingBody span.resicon.units-next {
 	background-position: -287px 2px;
+}
+#ProductionsRatingBody span.resicon.units-next {
+	filter: hue-rotate(-240deg);
 }
 #ProductionsRatingBody span.resicon.goods-next {
 	background-position: -550px 2px;
