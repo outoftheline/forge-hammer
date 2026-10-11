@@ -51,9 +51,11 @@
 	box-sizing: border-box;
 }
 
-#map-container.with-sidebar, .outpost #map-container, .outpost.stellar_city #map-container {
+#map-container.with-sidebar, .outpost #map-container {
 	right: 0;
 }
+
+.outpost.stellar_city .goods-sprite.diplomacy::before { display: none; }
 
 #sidebar {
 	position: absolute;
@@ -107,7 +109,7 @@
 	color: var(--text-highlight);
 }
 
-.outpost #BuildingsFilter, .outpost #city-map-menu .btn-group, .outpost #map-filters, .outpost.stellar_city #sidebar {
+.outpost #BuildingsFilter, .outpost #city-map-menu .btn-group, .outpost #map-filters {
 	display: none;
 }
 
@@ -365,7 +367,7 @@
 	background-color: var(--background-color-street);
 	border-color: var(--border-color-street);
 }
-#grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before {
+#grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before, tr.stellar_capacity td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarCapacityBoost1, tr.W_StellarAgeDiscovery_StellarCapacityBoost1 td:first-child::before {
 	background-color: var(--background-color-goods);
 	border-color: var(--border-color-goods);
 }
@@ -377,7 +379,7 @@
 	background-color: var(--background-color-main_building);
 	border-color: var(--border-color-main_building);
 }
-#grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before {
+#grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before, tr.stellar_points td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarPointsBoost1, tr.W_StellarAgeDiscovery_StellarPointsBoost1 td:first-child::before {
 	background-color: var(--background-color-production);
 	border-color: var(--border-color-production);
 }
@@ -550,7 +552,7 @@
 	margin-right: 5px;
 }
 
-#area-state .building-count-area span.square.military, tr.military td:first-child::before, tr.static_provider td:first-child::before {
+#area-state .building-count-area span.square.military, tr.military td:first-child::before, tr.static_provider td:first-child::before, tr.mission_item td:first-child::before {
 	background-color: var(--background-color-military);
 	border-color:  var(--border-color-military);
 }

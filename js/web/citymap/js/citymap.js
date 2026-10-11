@@ -332,7 +332,7 @@ let CityMap = {
 
 		wrapper.append(menu).append(menuBottom);
 
-		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost") 
+		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "stellar_city") 
 			$("#sidebar").append(CityMap.showOutpostBuildings());
 		
 		if (FH.ActiveMap === "cultural_outpost")
@@ -489,7 +489,7 @@ let CityMap = {
 					collectSoon = " collectSoon collect" + (hours < 100 ? "" : hours);
 				}
 				let collectionString = FH.helper.str.Replacer(FH.t('Boxes.CityMap.CollectSoon'), {hours: hours/100})
-				let f = $('<span />').addClass('entity ' + d['type'] + collectSoon).css({
+				let f = $('<span />').addClass('entity ' + (d.type ? d.type : d.asset_id) + collectSoon).css({
 					width: xsize + 'em',
 					height: ysize + 'em',
 					left: xx + 'em',
@@ -684,7 +684,8 @@ let CityMap = {
 		else if (production !== undefined && production.length > 1) 
 			production = data.components?.AllAge?.production?.options[3]?.products[0]?.requirements?.resources;
 		if (data.type === "main_building" || data.type === "residential") {
-			production = data.available_products[0]?.product?.resources;
+			if (data.available_products)
+				production = data.available_products[0]?.product?.resources;
 		}
 
 		// grab the name of the population from the building id
@@ -692,14 +693,24 @@ let CityMap = {
 		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia, pirates
 		/// era settlements
 		if (FH.ActiveMap === "era_outpost") populationName = "colonists";
+		if (FH.ActiveMap === "stellar_city") populationName = "stel_crew";
 
 		// for buildings adding pop
-		let population = Object.keys(data.staticResources?.resources).find(x => x.includes(populationName))
-		population = data.staticResources?.resources[population];
+		let population = 0;
+		if (FH.ActiveMap !== "stellar_city") {
+			population = Object.keys(data.staticResources?.resources).find(x => x.includes(populationName))
+			population = data.staticResources?.resources[population];
+		}
+		else {
+			population = data.components?.AllAge?.staticResources?.resources?.resources[populationName];
+		}
+
 		// for buildings requiring pop
 		if (population === undefined) {
-			population = Object.keys(data.requirements?.cost?.resources).find(x => x.includes(populationName))
-			population = data.requirements.cost?.resources[populationName]*-1;
+			if (FH.ActiveMap !== "stellar_city") {
+				population = Object.keys(data.requirements?.cost?.resources).find(x => x.includes(populationName))
+				population = data.requirements.cost?.resources[populationName]*-1;
+			}
 		}
 		let diplomacy = data.staticResources?.resources?.diplomacy || 0;
 
@@ -720,6 +731,15 @@ let CityMap = {
 				production: production || null,
 				diplomacy: null,
 				type: data.type,
+				entityId: data.asset_id,
+			};
+		else if (FH.ActiveMap === "stellar_city")
+			building = {
+				name: data.name,
+				population: population || 0,
+				production: production || null,
+				diplomacy: null,
+				type: data.type || data.asset_id,
 				entityId: data.asset_id,
 			};
 
@@ -766,10 +786,10 @@ let CityMap = {
 		for (let building of uniqueBuildings) {
 			if (building.type !== "impediment" && building.type !== "street" && building.type !== "off_grid") {				
 				out += "<tr class='"+building.type+"'>" + 
-					"<td><div class='building' data-original-title='"+building.name+"'>" + 
+					"<td class='tdmin'><div class='building' data-original-title='"+building.name+"'>" + 
 						"<img src='" + srcLinks.getBuilding(building.entityId) + "'>" +
 					"</div></td>" +
-					"<td>" + (building.count>1?"x"+building.count:"") + "</td>";
+					"<td class='tdmin'>" + (building.count>1?"x"+building.count:"") + "</td>";
 				out += '<td class="textright">' + building.population + "</td>";
 				out += '<td class="textright">' + (building.diplomacy>0?building.diplomacy:'') + "</td>";
 				out += "<td>";
