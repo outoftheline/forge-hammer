@@ -4,7 +4,6 @@
 
 #Notes .simpleList, .note-view {
     margin: 0.25em auto;
-    max-width: 400px;
 }
 
 #Notes .simpleList li:hover {
