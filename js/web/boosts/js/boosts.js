@@ -72,8 +72,12 @@ let Boosts = {
         'att_def_boost_attacker_defender': ['att_boost_attacker', 'def_boost_attacker', 'att_boost_defender', 'def_boost_defender'],
         'advanced_tactics': ['att_boost_attacker', 'def_boost_attacker', 'att_boost_defender', 'def_boost_defender'],
         'money_boost': ['coin_production'],
+        'defender_attack_boost': ['att_boost_defender'],
+        'attacker_defense_boost': ['def_boost_attacker'],
+        'attack_boost': ['att_boost_attacker'],
     },
     Sums: {
+        'contribution_boost': 0, // todo?
         'att_boost_attacker': 0,
         'def_boost_attacker': 0,
         'att_boost_defender': 0,
@@ -107,6 +111,7 @@ let Boosts = {
         'guild_raids_goods_start': 0,
         'guild_raids_units_start': 0,
     },
+    multipliers: {},
     noSettlement: {
         'guild_raids_action_points_collection': 0,
         'guild_raids_action_points_capacity': 0,
@@ -124,7 +129,7 @@ let Boosts = {
     },
 
     InitLB: async (LBs) => {
-        
+        // before GB update
         let boosts=LBs.filter(x=>x.bonus?.type && x.player_id == FH.Player.ID).map(x=>
             ({
                 entityId: x.entityId||x.id,
@@ -135,6 +140,25 @@ let Boosts = {
         )
         Boosts.Remove(boosts)
         Boosts.Add(boosts)
+
+        // GB update
+        /*let */ boosts = [];
+        let GBs = LBs.filter(x=>x.bonuses?.length > 0 && x.player_id == FH.Player.ID);
+        for (let gb of GBs) {
+            for (let boost of gb.bonuses) {
+                let boostToAdd = {
+                    entityId: gb.entityId||gb.id,
+                    origin: "greatBuilding",
+                    type: boost.type,
+                    multiplier: boost.isBonusMultiplier,
+                    value: boost.value || 0,
+                    targetedFeature: boost.targetedFeature
+                };
+                boosts.push(boostToAdd);
+            }
+            Boosts.Remove(boosts)
+            Boosts.Add(boosts)
+        }
     },
     InitQIAP: async () => {
         await FH.ExistenceConfirmed('FH.Goods.Data.guild_raids_action_points');
@@ -151,10 +175,8 @@ let Boosts = {
     },
 
     /**
-         * Collects active boosts from the city
-         *
-         * @param d
-         */
+     * Collects active boosts from the city
+     */
     Add: (AllBoosts) => {
         if (!AllBoosts || AllBoosts.length==0) return
 
@@ -177,7 +199,7 @@ let Boosts = {
                     a.type = x
                     return a
                 }) || [structuredClone(b)]
-            for (let m of mapped) {        
+            for (let m of mapped) {
                 m.type = Boosts.getFeatureType(m);
                 Boosts.ListByType[m.type]?.push(m);
             }
@@ -188,12 +210,18 @@ let Boosts = {
         for (let boost of Object.keys(Boosts.Sums)) {
             Boosts.Sums[boost] = 0;
             Boosts.noSettlement[boost] = 0;
+            Boosts.multipliers[boost] = 0;
             for (let b of Boosts.ListByType[boost]) {
-                Boosts.Sums[boost] += b.value;
+                if (b.multiplier !== true)
+                    Boosts.Sums[boost] += b.value;
+                else
+                    Boosts.multipliers[boost] += b.value;
+
                 if ((!b.entityId || FH.Main.CityMapData[b.entityId])) {
                     Boosts.noSettlement[boost] += b.value;
                 }
             }
+            // todo: use multipliers here
         }
         FH.proxy.triggerCustomHandler("BoostsUpdated");
     },
