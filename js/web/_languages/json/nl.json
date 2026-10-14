@@ -1090,7 +1090,7 @@
   "Boxes.HiddenRewards.Title": "Incidenten overzicht",
   "Boxes.HiddenRewards.twolaneWarning": "Als een incident op een 2-baans weg wordt aangegeven moet er wel een 2-baans weg gebouwd zijn om deze te kunnen inzamelen!",
   "Boxes.idleGame.ActiveTasks": "Actieve Collectie Taken",
-  "Boxes.idleGame.AlertSetText": "Timer ingesteld op __uren__ uren en __minuten__ minuten",
+  "Boxes.idleGame.AlertSetText": "Timer ingesteld op __hours__ uren en __minutes__ minuten",
   "Boxes.idleGame.AlertText": "Timer is afgelopen",
   "Boxes.idleGame.B": "Miljard (B)",
   "Boxes.idleGame.BuildingUpgrades": "Gebouw upgrade kosten",
