@@ -168,7 +168,7 @@ let Boosts = {
     getFeatureType: (bonus) => {
         let Type = bonus.type;
         if (Type.includes("attacker")||Type.includes("defender")) {
-            feature = bonus.feature || bonus.targetedFeature || "all";
+            let feature = bonus.feature || bonus.targetedFeature || "all";
             return (feature != "all" ? feature + "-" : "") + Type;
         }
         return Type;
@@ -221,9 +221,20 @@ let Boosts = {
                     Boosts.noSettlement[boost] += b.value;
                 }
             }
-            // todo: use multipliers here
         }
-        FH.proxy.triggerCustomHandler("BoostsUpdated");
+    },
+    applyMultipliers: () => {
+        let newBoosts = {};
+        for (let boost of Object.keys(Boosts.Sums)) {
+            if (boost.includes("battleground") || boost.includes("guild_expedition")) {
+                let baseBoost = boost.replace("battleground-","").replace("guild_expedition-","");
+                let multiplier = (Boosts.Sums[boost]+Boosts.Sums[baseBoost]) * (Boosts.multipliers[boost]+Boosts.multipliers[baseBoost]) / 100;
+                newBoosts[boost] = Boosts.Sums[boost]+Boosts.Sums[baseBoost] + multiplier;
+            }
+            else
+                newBoosts[boost] = Boosts.Sums[boost] + (Boosts.multipliers[boost] * Boosts.Sums[boost] / 100);
+        }
+        return newBoosts;
     },
     TimeIn: {
         list:[],
@@ -233,8 +244,8 @@ let Boosts = {
             await FH.StartUpDone
             let addToList = (boost)=>{
                 if (!Array.isArray(boost.type)) boost.type=[boost.type]
-                for (type of boost.type||[boost.type]) {
-                    b=structuredClone(boost)
+                for (let type of boost.type||[boost.type]) {
+                    let b=structuredClone(boost)
                     b.type = type
                     Boosts.TimeIn.list.push(b)
                 }
@@ -323,7 +334,7 @@ let Boosts = {
     },
     Remove: (boosts) => {
         if (!boosts || boosts.length==0) return
-        for (b of boosts||[]) {
+        for (let b of boosts||[]) {
             for (let type of Object.keys(Boosts.ListByType)) {
                 if (b.boostId) {
                     Boosts.ListByType[type] = Boosts.ListByType[type].filter(x=>x.id!=b.boostId);
