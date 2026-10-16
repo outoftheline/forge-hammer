@@ -77,7 +77,8 @@ let Boosts = {
         'attack_boost': ['att_boost_attacker'],
     },
     Sums: {
-        'contribution_boost': 0, // todo?
+        'contribution_boost': 0,
+        'contribution_boost_gold': 0,
         'att_boost_attacker': 0,
         'def_boost_attacker': 0,
         'att_boost_defender': 0,
