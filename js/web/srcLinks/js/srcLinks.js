@@ -87,7 +87,7 @@ let srcLinks = {
     getReward:(icon) => {
         let url=""
         if (icon.substring(1, 2) === "_") {
-            url = srcLinks.getBuilding(FH.Main.CityEntities?.[icon]?.asset_id);
+            url = srcLinks.getBuilding(FH.Main.CityEntities?.[icon]?.asset_id || icon);
         } else if (url==""|| url.indexOf("antiquedealer_flag") > -1) 
             url = srcLinks.get(`/shared/unit_portraits/armyuniticons_90x90/armyuniticons_90x90_${icon}.jpg`,true, true) // does not work :(
 
