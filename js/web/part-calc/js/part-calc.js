@@ -246,7 +246,7 @@ let Parts = {
 				Parts.CalcBody(Level);
 			});
 
-			$('#OwnPartBox').on('click', '.button-powerleveling', function () {
+			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
 				Parts.PowerLevelingStartLevel = Parts.Level;
 				Parts.PowerLevelingEndLevel = 999999;
@@ -1034,8 +1034,9 @@ let Parts = {
 			}
 			h.push('</div></div>');
 
+			let haslevelingData = FH.Main.CurrentGB.Entity.bonuses.length === 0 ? '' : 'disabled';
 			h.push(`<div class="btn-group">
-				<span class="btn btn-slim button-powerleveling">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
+				<span class="btn btn-slim button-powerleveling ${haslevelingData}">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
 				</div>`);
 			h.push('</div>');
 			h.push('</div>');

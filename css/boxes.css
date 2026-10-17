@@ -200,8 +200,8 @@ a[target="_blank"] svg {
 	text-decoration: inherit;
 }
 
-.btn[disabled], .btn[disabled]:hover {
-	filter: saturate(10%) brightness(80%);
+.btn[disabled], .btn.disabled, .btn[disabled]:hover, .btn.disabled:hover {
+	filter: saturate(10%) brightness(80%) !important;
 }
 
 .btn:not([disabled]):hover,
