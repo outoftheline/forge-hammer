@@ -1,7 +1,7 @@
 {
 
     let GBList = {};
-    const goldenGBs = ['X_SS_AllAge_EasterBonus4','X_SS_BronzeAge_Landmark2','X_SS_IronAge_Landmark1','X_SS_EarlyMiddleAge_Landmark2','X_HighMiddleAge_Landmark1','X_SS_LateMiddleAge_Landmark3','X_SS_ColonialAge_Landmark2','X_IndustrialAge_Landmark1','X_ProgressiveEra_Landmark1','X_ProgressiveEra_Landmark2','X_ContemporaryEra_Landmark1','X_FutureEra_Landmark1','X_ArcticFuture_Landmark2','X_ArcticFuture_Landmark3','X_SS_OceanicFuture_Landmark2','X_SS_OceanicFuture_Landmark3','X_VirtualFuture_Landmark1','X_VirtualFuture_Landmark2','X_SpaceAgeMars_Landmark2','X_SpaceAgeAsteroidBelt_Landmark1','X_StellarAgeDiscovery_Landmark1'];
+    const goldenGBs = ['X_AllAge_EasterBonus4','X_BronzeAge_Landmark2','X_IronAge_Landmark1','X_EarlyMiddleAge_Landmark2','X_HighMiddleAge_Landmark1','X_LateMiddleAge_Landmark3','X_ColonialAge_Landmark2','X_IndustrialAge_Landmark1','X_ProgressiveEra_Landmark1','X_ProgressiveEra_Landmark2','X_ContemporaryEra_Landmark1','X_FutureEra_Landmark1','X_ArcticFuture_Landmark2','X_ArcticFuture_Landmark3','X_OceanicFuture_Landmark2','X_OceanicFuture_Landmark3','X_VirtualFuture_Landmark1','X_VirtualFuture_Landmark2','X_SpaceAgeMars_Landmark2','X_SpaceAgeAsteroidBelt_Landmark1','X_StellarAgeDiscovery_Landmark1'];
 
     // other player's city loaded
     FH.proxy.addHandler('OtherPlayerService', 'visitPlayer', (data, postData) => {
@@ -30,7 +30,9 @@
     FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
 		let x = data.responseData;
         if (x.type!="greatbuilding") return;
+        let isGolden = goldenGBs.indexOf(x.cityentity_id) >= 0 && x.level > 100 && x.bonuses.length > 0;
         GBList[x.player_id+ '_' + x.id] = x;
+        GBList[x.player_id+ '_' + x.id].tier = isGolden ? 'gold' : 'copper';
 	});
     // any player GB list loaded
     FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
