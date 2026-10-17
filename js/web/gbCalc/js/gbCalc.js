@@ -54,6 +54,9 @@
     function setGBtier(gb) {
         let isGolden = goldenGBs.indexOf(gb.cityentity_id) >= 0 && gb.level > 100 && gb.bonuses.length > 0;
         gb.tier = isGolden ? 'gold' : 'copper';
+        FH.Main.ArkBonus = Boosts.Sums.contribution_boost;
+        if (isGolden)
+            FH.Main.ArkBonus = Boosts.Sums.contribution_boost_gold;
     };
 
     function getGB(player_id, entity_id) {

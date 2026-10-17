@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		// Alle Gebäude sichern
 		FH.LastMapPlayerID = FH.Player.ID;
 		Main.CityMapData = Object.assign({}, ...data.responseData.city_map.entities.map((x) => ({ [x.id]: x })));
-		Main.SetArkBonus2();
+		// Main.SetArkBonus2();
 		// Güterliste
 		FH.Goods.List = data.responseData.goodsList
 
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	// Limited Bonus (Archenbonus, Kraken etc.)
 	FH.proxy.addHandler('BonusService', 'getLimitedBonuses', (data, postData) => {
-		Main.SetArkBonus(data.responseData);
+		//Main.SetArkBonus(data.responseData);
 	});
 
 	// --------------------------------------------------------------------------------------------------
@@ -481,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		Main.CityMapData = Object.assign({}, ...data.responseData.map((x) => ({ [x.id]: x })));
 		Main.CityMapUpdateEvent.trigger();
-		Main.SetArkBonus2();
+		//Main.SetArkBonus2();
 
 		CityMap.OtherPlayer = { mapData: {}, unlockedAreas: null, name: '', eraName: null};
 		CityMap.checkOutpostBuildings();
@@ -2082,7 +2082,6 @@ let Main = {
 
 	},
 
-
 	/**
 	 * Determine ark bonus globally
 	 *
@@ -2140,7 +2139,6 @@ let Main = {
 			Main.ArkBonus = ArkBonus;
 		}
 	},
-
 
 	/**
 	 * Player information Updating message list & Website data
@@ -2305,7 +2303,7 @@ let Main = {
 			else {
 				Main.CityMapData[b.id] = b;
 				CityBuildings.updateBuildingState(b.id, b);
-				if (b?.bonus?.type === "contribution_boost") Main.SetArkBonus2();
+				// if (b?.bonus?.type === "contribution_boost") Main.SetArkBonus2();
 			}
 		}
 		FPCollector.CityMapDataNew = Buildings;
