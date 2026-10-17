@@ -30,9 +30,7 @@
     FH.proxy.addHandler('OtherPlayerService', 'getOtherPlayerCityMapEntity', (data, postData) => {
 		let x = data.responseData;
         if (x.type!="greatbuilding") return;
-        let isGolden = goldenGBs.indexOf(x.cityentity_id) >= 0 && x.level > 100 && x.bonuses.length > 0;
         GBList[x.player_id+ '_' + x.id] = x;
-        GBList[x.player_id+ '_' + x.id].tier = isGolden ? 'gold' : 'copper';
 	});
     // any player GB list loaded
     FH.proxy.addHandler('GreatBuildingsService', 'getOtherPlayerOverview', (data, postData) => {
@@ -43,7 +41,6 @@
                 GBList[id].state.forge_points_for_level_up = x.max_progress;
                 GBList[id].level = x.level;
                 GBList[id].max_level = x.maxLevel || GBList[id].max_level;
-                GBList[id].tier = x.currentTier?.value || 'copper';
             }
         })
 	});
@@ -54,8 +51,14 @@
         GBList[x.player_id+ '_' + x.id] = x;
 	});
 
+    function setGBtier(gb) {
+        let isGolden = goldenGBs.indexOf(gb.cityentity_id) >= 0 && gb.level > 100 && gb.bonuses.length > 0;
+        gb.tier = isGolden ? 'gold' : 'copper';
+    };
+
     function getGB(player_id, entity_id) {
         let id = player_id + '_' + entity_id;
+        setGBtier(GBList[id]);
         return GBList[id];
     };
 
