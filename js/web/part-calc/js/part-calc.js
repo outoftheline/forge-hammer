@@ -216,6 +216,10 @@ let Parts = {
 				Parts.CalcBody(Parts.Level);
 			});
 
+			$(`<span>${srcLinks.icons('message')}</span>`).
+				on('click', ()=>{Calculator.showToPay(true)}).
+				prependTo("#OwnPartBoxButtons");
+
 			// Exts
 			for (let i = 0; i < GreatBuildings.GreatBuildingsData.length; i++) {
 				$('#OwnPartBox').on('blur', '.ext-part-input' + i, function () {
@@ -817,13 +821,7 @@ let Parts = {
 				}
 				h.push(`</span>`);
 			}
-		h.push(`</div>`)
-		if (PlayerID !== FH.Player.ID)
-			 h.push(`
-				<span class="btn btn-mid">
-					${srcLinks.icons('message')}
-				</span>`)
-		h.push(`</div>`)
+		h.push(`</div></div>`)
 
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
