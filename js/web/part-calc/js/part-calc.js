@@ -817,8 +817,13 @@ let Parts = {
 				}
 				h.push(`</span>`);
 			}
-		h.push(`</div>
-			</div>`);
+		h.push(`</div>`)
+		if (PlayerID !== FH.Player.ID)
+			 h.push(`
+				<span class="btn btn-mid">
+					${srcLinks.icons('message')}
+				</span>`)
+		h.push(`</div>`)
 
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
