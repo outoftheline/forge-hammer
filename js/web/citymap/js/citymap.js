@@ -1168,6 +1168,7 @@ let CityMap = {
 			CityMap.find('.building-count-area ul.highlight-map li').click(function(){
 				$(this).toggleClass('active');
 			})
+			$('.building-count-area [data-original-title]').tooltip();
 		});
 		
 		let legends = [];
