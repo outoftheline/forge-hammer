@@ -30,6 +30,7 @@ let Calculator = {
 	ConversationContent: null,
 	ConversationContentNew: null,
 	ConversationContentBeforeSend: null,
+	ReadyToOpen: false,
 
 	Show: (action = "") => {
 		$('.tooltip').remove();
@@ -706,7 +707,12 @@ let Calculator = {
 		});
 	},
 
-	showToPay: () => {
+	showToPay: (ReadyToOpen = Calculator.ReadyToOpen) => {
+		
+		if (!Settings.GetSetting('CalcGBReminder')) return;
+		if (!Calculator.ConversationContentBeforeSend || !Calculator.ConversationContentNew) return;
+		if (!ReadyToOpen) return;
+		
 		let entriesBefore = Calculator.ConversationContentBeforeSend.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 		let entriesAfter  = Calculator.ConversationContentNew.split(/\r\n|\r|\n/).map(l => l.trim()).filter(l => l);
 

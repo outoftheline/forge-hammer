@@ -895,14 +895,13 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Messages: Thread closed
 	FH.proxy.addHandler('ConversationService', 'markMessageRead', (data, postData) => {
 		Main.OpenConversation = null;
-		Calculator.ConversationContent = null;
-		Calculator.ConversationContentNew = null;
-		Calculator.ConversationContentBeforeSend = null;
+		Calculator.ReadyToOpen = false;
 	});
 
 	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
 		Calculator.ConversationContentNew = data.responseData.text;
 		Calculator.ConversationContentBeforeSend = Calculator.ConversationContent;
+		Calculator.ReadyToOpen = true;
 	});
 
 })();

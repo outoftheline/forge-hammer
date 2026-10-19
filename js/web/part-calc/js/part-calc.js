@@ -450,10 +450,7 @@ let Parts = {
 		await FH.StartUpDone;
 		if (FH.Main.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
 
-		let openPayReminder = Settings.GetSetting('CalcGBReminder');
-		if (openPayReminder && Calculator.ConversationContentBeforeSend && Calculator.ConversationContentNew) {
-			Calculator.showToPay();
-		}
+		Calculator.showToPay();
 			
 		if (FH.Main.CurrentGB.Entity.player_id !== FH.Player.ID)  // cannot use the other view
 			$('#OwnPartBox .window-viewswitch').removeClass('inactive');
