@@ -82,6 +82,7 @@ let Parts = {
 	LeveltLG: undefined,
 	Maezens: [],
 	LockedMaezens: [],
+	MaezenSlots: 5,
 
 	CurrentMaezens: [],
 	RemainingOwnPart: null,
@@ -229,7 +230,7 @@ let Parts = {
 				let ArkBonus = parseFloat($(this).data('value'));
 				if (ArkBonus !== ArkBonus) ArkBonus = 0; //NaN => 0
 
-				for (let i = 0; i < 5; i++) {
+				for (let i = 0; i < Parts.MaezenSlots; i++) {
 					Parts.ArcPercents[i] = ArkBonus;
 					$('.arc-percent-input').eq(i).val(ArkBonus);
 				}
@@ -246,7 +247,7 @@ let Parts = {
 				Parts.CalcBody(Level);
 			});
 
-			$('#OwnPartBox').on('click', '.button-powerleveling', function () {
+			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
 				Parts.PowerLevelingStartLevel = Parts.Level;
 				Parts.PowerLevelingEndLevel = 999999;
@@ -448,7 +449,12 @@ let Parts = {
 
 	CalcBody: async (NextLevel) => {
 		await FH.StartUpDone;
-		if (FH.Main.CurrentGB.Entity['level'] === NextLevel) NextLevel = 0;
+		if (FH.Main.CurrentGB.Entity.level === NextLevel) NextLevel = 0;
+
+		// check for gold tier
+		Parts.MaezenSlots = FH.Main.CurrentGB.Entity.tier === 'gold' ? 7 : 5;
+		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
+  		while (Parts.Exts.length < Parts.MaezenSlots) Parts.Exts.push(0);
 
 		Calculator.showToPay();
 			
@@ -489,6 +495,7 @@ let Parts = {
 		if (Parts.FirstCycle) {
 			let SavedArcPercents = FH.Storage.getItem(Parts.GetStorageKey('ArcPercents', null));
 			if (SavedArcPercents !== null) Parts.ArcPercents = JSON.parse(SavedArcPercents);
+			while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
 
 			let SavedCopyOwnPlayerName = FH.Storage.getItem(Parts.GetStorageKey('CopyOwnPlayerName', null));
 			if (SavedCopyOwnPlayerName !== null) {
@@ -541,7 +548,7 @@ let Parts = {
 		if (PlayerID !== Parts.LastPlayerID || EntityID !== Parts.LastEntityID || Parts.Level !== Parts.LastLevel) {
 			Parts.LockExistingPlaces = true;
 			Parts.TrustExistingPlaces = false;
-			for (let i = 0; i < 5; i++) Parts.Exts[i] = 0;
+			for (let i = 0; i < Parts.MaezenSlots; i++) Parts.Exts[i] = 0;
 			Parts.CopySettings.includeLevelString = false;
 		}
 
@@ -566,9 +573,9 @@ let Parts = {
 			AlreadyPaid = 0, // paid FP (other players GBs)
 			SelfPlace = -1; // own position, -1 if not in the top 5
 
-		Parts.PlaceAvailables = [false, false, false, false, false]; // Wird auf true gesetz, wenn auf einem Platz noch eine (nicht externe) Zahlung einzuzahlen ist (wird in Spalte Einzahlen angezeigt)
-		Parts.DangerPlaces = [0, 0, 0, 0, 0]; // Feld mit Dangerinformationen. Wenn > 0, dann die gefährdeten FP
-		Parts.LeveltLG = [false, false, false, false, false];
+		Parts.PlaceAvailables = Array(Parts.MaezenSlots).fill(false); // Wird auf true gesetz, wenn auf einem Platz noch eine (nicht externe) Zahlung einzuzahlen ist (wird in Spalte Einzahlen angezeigt)
+		Parts.DangerPlaces = Array(Parts.MaezenSlots).fill(0);; // Feld mit Dangerinformationen. Wenn > 0, dann die gefährdeten FP
+		Parts.LeveltLG = Array(Parts.MaezenSlots).fill(false);
 		Parts.Maezens = [];
 
 		if (Parts.IsPreviousLevel) {
@@ -584,7 +591,7 @@ let Parts = {
 			Parts.Level = 0;
 		}
 
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			arcs[i] = ((parseFloat(Parts.ArcPercents[i]) + 100) / 100);
 		}
 
@@ -618,7 +625,7 @@ let Parts = {
 				Parts.Maezens[Place] = CurrentMaezen;
 				if (Parts.Maezens[Place] === undefined) Parts.Maezens[Place] = 0;
 
-				if (Place < 5) {
+				if (Place < Parts.MaezenSlots) {
 					if (FH.Main.CurrentGB.Rankings[i]['reward'] !== undefined) {
 						let FPCount = (FH.Main.CurrentGB.Rankings[i]['reward']['strategy_point_amount'] !== undefined ? parseInt(FH.Main.CurrentGB.Rankings[i]['reward']['strategy_point_amount']) : 0);
 						if (FPCount > 0) {
@@ -652,7 +659,7 @@ let Parts = {
 			}
 
 			// Previous level and spot not taken? => Fill with zero
-			for (let i = Parts.Maezens.length; i < 5; i++) {
+			for (let i = Parts.Maezens.length; i < Parts.MaezenSlots; i++) {
 				Parts.Maezens[i] = 0;
 				FPRewards[i] = 0;
 				MedalRewards[i] = 0;
@@ -662,10 +669,10 @@ let Parts = {
 		else {
 			let P1 = GreatBuildings.Rewards[Era][Parts.Level];
 
-			Parts.Maezens = [0, 0, 0, 0, 0];
+			Parts.Maezens = Array(Parts.MaezenSlots).fill(0);
 			FPRewards = GreatBuildings.GetMaezen(P1, Parts.ArcPercents)
-			MedalRewards = [0, 0, 0, 0, 0];
-			BPRewards = [0, 0, 0, 0, 0];
+			MedalRewards = Array(Parts.MaezenSlots).fill(0);
+			BPRewards = Array(Parts.MaezenSlots).fill(0);
 		}
 
 		for (let i = 0; i < Parts.Exts.length; i++) {
@@ -678,7 +685,7 @@ let Parts = {
 
 		for (let i = 0; i < Parts.Maezens.length; i++) {
 			if(Parts.Maezens[i] === 0) {
-				Parts.Maezens.length = Math.max(i, 5);
+				Parts.Maezens.length = Math.max(i, Parts.MaezenSlots);
 				break;
 			}
 
@@ -687,7 +694,7 @@ let Parts = {
 
 		Rest -= ExtTotal;
 
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			if (FPRewards[i] <= Parts.Maezens[i] || Rest <= Parts.Maezens[i]) {
 				if (Parts.LockExistingPlaces) { // Bestehende Einzahlung absichern
 					let NextMaezen = Parts.Maezens[i + 1] !== undefined ? Parts.Maezens[i + 1] : 0;
@@ -728,7 +735,7 @@ let Parts = {
 			Rest -= Eigens[i] + Parts.Maezens[i];
 		}
 
-		if(Rest>0) Eigens[5] = Rest;
+		if(Rest>0) Eigens[Parts.MaezenSlots] = Rest;
 
 		EigenTotal = EigenStart;
 		for (let i = 0; i < Eigens.length; i++) {
@@ -752,13 +759,13 @@ let Parts = {
 			PlayerName = FH.Players.Dict[PlayerID]['PlayerName'];
 		}
 		
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			Parts.CurrentMaezens[i] = Parts.Maezens[i] | 0;
 		}
 		Parts.RemainingOwnPart = EigenTotal - EigenStart;
 
 		Parts.SafePlaces = [];
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			if (Eigens[i] > 0) break;
 				
 			if (Parts.PlaceAvailables[i]) 
@@ -867,7 +874,7 @@ let Parts = {
 			return ret;
 		}
 
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			EigenCounter += Eigens[i];
 
 			// owner contributions
@@ -915,7 +922,7 @@ let Parts = {
 				if (Parts.LeveltLG[i]) {
 					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.levelt")}</strong></td>`);
 				}
-				else if (Parts.DangerPlaces[i] > 5) {
+				else if (Parts.DangerPlaces[i] > Parts.MaezenSlots) {
 					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.danger")} (${FH.HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
 				}
 				else {
@@ -948,11 +955,11 @@ let Parts = {
 		}
 
 		let MaezenRest = 0;
-		for (let i = 5; i < Parts.Maezens.length; i++) {
+		for (let i = Parts.MaezenSlots; i < Parts.Maezens.length; i++) {
 			MaezenRest += Parts.Maezens[i];
 		}
 
-		// any contribution over 5th place
+		// any contribution over last place
 		if (MaezenRest > 0) {
 			h.push('<tr>');
 			h.push('<td class="text-smaller">#6' + (Parts.Maezens.length > 6 ? ('-' + Parts.Maezens.length) : '') + '</td>');
@@ -963,10 +970,10 @@ let Parts = {
 		}
 
 		// rest to pay for the owner
-		if (Eigens[5] > 0) {
-			EigenCounter += Eigens[5];
+		if (Eigens[Parts.MaezenSlots] > 0) {
+			EigenCounter += Eigens[Parts.MaezenSlots];
 			h.push('<tr>');
-			let OwnPartRestText = opt(Eigens[5], EigenCounter);
+			let OwnPartRestText = opt(Eigens[Parts.MaezenSlots], EigenCounter);
 			h.push('<td class="text-smaller">' + FH.t('Boxes.OwnpartCalculator.OwnPart') + '</td>');
 			h.push('<td class="text-center ' + (PlayerID === FH.Player.ID ? 'success' : 'highlighted-text') + '">' + OwnPartRestText + '</td>');
 			let restColspan = 1 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
@@ -1031,8 +1038,9 @@ let Parts = {
 			}
 			h.push('</div></div>');
 
+			let haslevelingData = FH.Main.CurrentGB.Entity.bonuses.length === 0 ? '' : 'disabled';
 			h.push(`<div class="btn-group">
-				<span class="btn btn-slim button-powerleveling">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
+				<span class="btn btn-slim button-powerleveling ${haslevelingData}">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
 				</div>`);
 			h.push('</div>');
 			h.push('</div>');
@@ -1118,17 +1126,17 @@ let Parts = {
 		}
 
 		if (Parts.CopyModeAll) {
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < Parts.MaezenSlots; i++) {
 				Parts.CopyPlaces[i] = true;
 			}
 		}
 		else if (Parts.CopyModeAuto) {
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < Parts.MaezenSlots; i++) {
 				Parts.CopyPlaces[i] = (Parts.SafePlaces.includes(i));
 			}
 		}
 		else if (Parts.CopyModeAutoUnsafe) {
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < Parts.MaezenSlots; i++) {
 				Parts.CopyPlaces[i] = (Parts.PlaceAvailables[i]);
 			}
 		}
@@ -1181,12 +1189,10 @@ let Parts = {
 		h.push('</section><section class="p2">');
 		h.push('<strong>' + FH.t('Boxes.OwnpartCalculator.Places') + '</strong>');
 
-		let cb = '<div class="checkboxes">' +
-			'<label class="form-check-label game-cursor" for="chain-p1"><input type="checkbox" class="form-check-input" id="chain-p1" data-place="1" ' + (Parts.CopyPlaces[0] ? 'checked' : '') + '> <span>1</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-p2"><input type="checkbox" class="form-check-input" id="chain-p2" data-place="2" ' + (Parts.CopyPlaces[1] ? 'checked' : '') + '> <span>2</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-p3"><input type="checkbox" class="form-check-input" id="chain-p3" data-place="3" ' + (Parts.CopyPlaces[2] ? 'checked' : '') + '> <span>3</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-p4"><input type="checkbox" class="form-check-input" id="chain-p4" data-place="4" ' + (Parts.CopyPlaces[3] ? 'checked' : '') + '> <span>4</span></label>' +
-			'<label class="form-check-label game-cursor" for="chain-p5"><input type="checkbox" class="form-check-input" id="chain-p5" data-place="5" ' + (Parts.CopyPlaces[4] ? 'checked' : '') + '> <span>5</span></label>' +
+		let cb = '<div class="checkboxes">';
+			for (let p = 1; p <= Parts.MaezenSlots; p++) {
+				cb += `<label class="form-check-label game-cursor" for="chain-p${p}"><input type="checkbox" class="form-check-input" id="chain-p${p}" data-place="${p}" ${Parts.CopyPlaces[p-1] ? 'checked' : ''}> <span>${p}</span></label>`;
+			}
 			'<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto"><input type="checkbox" class="form-check-input" id="chain-auto" data-place="auto" ' + (Parts.CopyModeAuto ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.Auto') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto-unsafe"><input type="checkbox" class="form-check-input" id="chain-auto-unsafe" data-place="auto-unsafe" ' + (Parts.CopyModeAutoUnsafe ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.AutoWithUnsafe') + '</span></label>' +
@@ -1224,7 +1230,7 @@ let Parts = {
 	GetCopyStringEx: (Places, Maezens, Level, OwnPart, PlaceAll, PlaceAuto, PlaceAutoUnsafe, DangerPlaces, LeveltLG) => {	
 		let Ret = [];
 
-		if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerPrefix !== '' && (DangerPlaces.find(e => e > 5) || LeveltLG.find(e => e))) Ret.push(Parts.CopySettings.dangerPrefix);
+		if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerPrefix !== '' && (DangerPlaces.find(e => e > Parts.MaezenSlots) || LeveltLG.find(e => e))) Ret.push(Parts.CopySettings.dangerPrefix);
 
 		if (Parts.CopySettings.includePlayer) Ret.push(Parts.CopyPlayerName);
 
@@ -1235,13 +1241,13 @@ let Parts = {
 		if (Parts.CopySettings.includeLevel) Ret.push(Level + '→' + (Level + 1));
 
 		let NoPlacesSelected = true;
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < Parts.MaezenSlots; i++) {
 			if (Places[i]) NoPlacesSelected = false;
 		}
 
 		if (!NoPlacesSelected) {
-			for (let i = 0; i < 5; i++) {
-				let Place = (Parts.CopySettings.descending ? 5 - i - 1 : i);
+			for (let i = 0; i < Parts.MaezenSlots; i++) {
+				let Place = (Parts.CopySettings.descending ? Parts.MaezenSlots - i - 1 : i);
 
 				if (!Places[Place]) continue;
 				if (PlaceAll && Maezens[Place] === 0) continue;
@@ -1253,7 +1259,7 @@ let Parts = {
 					Ret.push((Parts.CopyPreP ? 'P' : '') + (Place + 1));
 				}
 
-				if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerSuffix !== '' && (DangerPlaces[Place] > 5 || LeveltLG[Place])) Ret.push(Parts.CopySettings.dangerSuffix);
+				if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerSuffix !== '' && (DangerPlaces[Place] > Parts.MaezenSlots || LeveltLG[Place])) Ret.push(Parts.CopySettings.dangerSuffix);
 			}
 		}
 		else if (PlaceAuto) {

@@ -160,6 +160,7 @@ let Boosts = {
             Boosts.Remove(boosts)
             Boosts.Add(boosts)
         }
+        FH.Main.ArkBonus = Boosts.Sums.contribution_boost;
     },
     InitQIAP: async () => {
         await FH.ExistenceConfirmed('FH.Goods.Data.guild_raids_action_points');
