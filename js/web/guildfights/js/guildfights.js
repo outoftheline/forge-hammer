@@ -38,7 +38,7 @@ FH.proxy.addWsHandler('GuildBattlegroundSignalsService', 'updateSignal', data =>
 });
 
 FH.proxy.addHandler('GuildBattlegroundStateService', 'getState', (data, postData) => {
-	if (data.responseData.stateId === 'unsubscribed' || data.responseData.stateId === 'subscribed') return;
+	if (data.responseData.stateId === 'unsubscribed') return;
 	GuildFights.GlobalRankingTimeout = setTimeout(()=>{
 		if (data.responseData['stateId'] !== 'participating')	{
 			GuildFights.CurrentGBGRound = parseInt(data.responseData['startsAt']) - 259200;
