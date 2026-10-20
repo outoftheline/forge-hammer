@@ -5,7 +5,8 @@
 - Effizienz: Einheiten des nächsten Zeitalters hinzugefügt
 - Boost Multiplikatoren werden jetzt im eigenen Profil mitberechnet
 - LG Rechner für das Update vorbereitet: Power-Leveln wird erstmal nicht verfügbar sein, Plätze 6+7 für Goldstufen hinzugefügt und Gold-Boosts berechnet
-- LG Liste: kann jetzt nach Bedarf direkt am LG Rechner geöffnet werden.
+- LG Liste: kann jetzt nach Bedarf direkt am LG Rechner geöffnet werden
+- Powerleveln: RAH Stufen hinzugefügt (Danke Filanush)
 
 ### Bug Fixes
 - Die Tooltips in der Stadtübersicht waren verschwunden

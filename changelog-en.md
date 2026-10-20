@@ -6,6 +6,7 @@
 - Boosts multipliers will be calculated in your profile now
 - Prepared the GB Calculator for the update: powerleveling will be disabled after the update until we have enough data, applied Arc gold boost and added places 6 and 7 in gold levels
 - GB List: can now be opened on demand at the GB Calculator
+- Power leveling: RAH levels added (thx Filanush)
 
 ### Bug Fixes
 - City Overview: tooltips at the sidebar are back
