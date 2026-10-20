@@ -1,5 +1,18 @@
 # Changelog
  
+## Version 1.9.0
+### Update
+- Effizienz: Einheiten des nächsten Zeitalters hinzugefügt
+- Boost Multiplikatoren werden jetzt im eigenen Profil mitberechnet
+- LG Rechner für das Update vorbereitet: Power-Leveln wird erstmal nicht verfügbar sein, Plätze 6+7 für Goldstufen hinzugefügt und Gold-Boosts berechnet
+- LG Liste: kann jetzt nach Bedarf direkt am LG Rechner geöffnet werden.
+
+### Bug Fixes
+- Die Tooltips in der Stadtübersicht waren verschwunden
+- Die GG Übersicht ging nach Ende einer Saison nicht mehr auf
+ 
+---
+ 
 ## Version 1.8.2
 ### Update
 - LG Rechner: Auf dem Beta-Server werden jetzt nur noch Gold-BP angezeigt statt die Summe aller BP, außerdem ein paar weitere Level für das Siphon hinzugefügt

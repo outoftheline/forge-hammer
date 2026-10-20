@@ -1,5 +1,18 @@
 # Changelog
+
+## Version 1.9.0
+### Update
+- Efficiency: Added next age units
+- Boosts multipliers will be calculated in your profile now
+- Prepared the GB Calculator for the update: powerleveling will be disabled after the update until we have enough data, applied Arc gold boost and added places 6 and 7 in gold levels
+- GB List: can now be opened on demand at the GB Calculator
+
+### Bug Fixes
+- City Overview: tooltips at the sidebar are back
+- GBG Overview didnt open after the season ended
  
+---
+
 ## Version 1.8.2
 ### Update
 - GB Calculatior: Only shows the amount of the highest tier blueprints on beta now; also added more Siphon levels
