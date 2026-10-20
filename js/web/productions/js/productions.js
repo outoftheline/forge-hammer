@@ -1164,7 +1164,7 @@ let Productions = {
 			table.push('<table id="'+type+'-list" class="foe-table sortable-table TSinactive '+type+'-list active exportable">')
 			table.push('<thead class="sticky">')
 			table.push('<tr>')
-			table.push('<th colspan="12"><input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">' +
+			table.push('<th colspan="12"><input id="'+type+'-listfilter" type="search" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList">' +
 				'<span class="btn" onclick="Productions.createBuildingBoostList([\'guild_raids_action_points_collection\',\'guild_raids_coins_production\',\'guild_raids_coins_start\',\'guild_raids_supplies_production\',\'guild_raids_supplies_start\',\'guild_raids_goods_start\',\'guild_raids_units_start\'])">'+FH.t("Boxes.BoostList.open")+'</span></th>')
 			table.push('</tr>')
 
@@ -1423,7 +1423,7 @@ let Productions = {
 				table.push('<table id="'+type+'-list" class="foe-table sortable-table TSinactive '+type+'-list active exportable">')
 				table.push('<thead class="sticky">')
 				table.push('<tr>')
-				table.push('<th colspan="3"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input type="text" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
+				table.push('<th colspan="3"><span class="btn btn-mid change-view game-cursor" data-type="' + type + '">' + FH.t('Boxes.Productions.ModeGroups') + '</span> <input id="'+type+'-listfilter" type="search" placeholder="' + FH.t('Boxes.Productions.FilterTable') + '" class="filterCurrentList"></th>')
 				if (!type.includes('att') && !type.includes('def') && type!='items') {
 					table.push('<th colspan="3" class="textright">')
 					table.push((typeCurrentSum >= 10000 ? FH.HTML.FormatNumberShort(typeCurrentSum) : FH.HTML.Format(typeCurrentSum))+ "/" + (typeSum >= 10000 ? FH.HTML.FormatNumberShort(typeSum) : FH.HTML.Format(typeSum)))
@@ -2844,7 +2844,7 @@ let Productions = {
 						h.push(`<li data-value="inventory" class="${tab==='inventory'?'active':''}"><img src="${FH.extUrl}js/web/x_img/inventory.png"> ${FH.t('General.Inventory')}</li>`);
 					}
 				h.push(`<li data-value="ascended" class="${tab==='ascended'?'active':''}"><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" /> ${FH.t('Boxes.CityMap.limited')}</li></ul>
-						<input type="text" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')}: neo|_gbg|4x4" />
+						<input type="search" id="efficiencyBuildingFilter" size=20 value="${Productions.RatingSearchTerm}" placeholder="${FH.t('Boxes.ProductionsRating.Filter')}: neo|_gbg|4x4" />
 						<label for="showhighlighted" data-original-title="${FH.t('Boxes.ProductionsRating.ShowHighlightedExplanation')}"><input type="checkbox" id="showhighlighted" />${FH.t('Boxes.ProductionsRating.ShowHighlighted')}</label>
 						</div>
 						<div class="listmodifiers windowBG">

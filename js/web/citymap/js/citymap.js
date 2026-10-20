@@ -315,7 +315,7 @@ let CityMap = {
 
 		// Button for submit Box
 		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'reconstruction' || FH.ActiveMap === 'OtherPlayer') {
-			menu.append($('<div class="mapTopRight"><span class="mapFilterCounter"></span> <input type="text" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)"></div>'));
+			menu.append($('<div class="mapTopRight"><span class="mapFilterCounter"></span> <input type="search" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)"></div>'));
 			menuBottom.append(
 				$('<div class="btn-group" />')
 					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(FH.t('Boxes.CityMap.CopyMetaInfos')))
