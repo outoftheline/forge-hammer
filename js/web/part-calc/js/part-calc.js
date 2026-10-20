@@ -216,7 +216,7 @@ let Parts = {
 				Parts.CalcBody(Parts.Level);
 			});
 
-			$(`<span>${srcLinks.icons('message')}</span>`).
+			$(`<span class="window-showToPay${Calculator.ReadyToOpen ? '' : ' inactive'}"></span>`).
 				on('click', ()=>{Calculator.showToPay(true)}).
 				prependTo("#OwnPartBoxButtons");
 

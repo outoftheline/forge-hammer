@@ -723,7 +723,7 @@ let Settings = {
 			{name: "Galactic Horizon", path: "themes/eternal"}
 		];
 
-		let currentSkin = FH.Storage.getItem('HammerSkin')||"variables";
+		let currentSkin = FH.Storage.getItem('HammerSkin')||"themes/hammer";
 
 		dp.push('<select class="setting-dropdown" id="changeSkin">');
 		for (let skin of Object.values(skins)) {
