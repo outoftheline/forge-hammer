@@ -691,11 +691,14 @@ window.PlannerApp = window.PlannerApp || {};
             if (state.placingBuilding) return;
             if (state.streetPlacement.active && !e.altKey) return;
 
+            state._suppressCanvasClick = false; // reset a stale flag from a drag that ended outside the canvas
+
             let mode = null;
             let grabbed = null;
 
             if (e.altKey) mode = 'pan';
             else if (e.ctrlKey) mode = 'select';
+            else if (state.eraMode) mode = 'pan'; // no moving in era mode
             else {
                 const p = app.getCanvasPointElem(e);
 
@@ -845,6 +848,9 @@ window.PlannerApp = window.PlannerApp || {};
             e.preventDefault();
 
             if (drag.mode === 'pan') {
+                const moved = Math.abs(e.clientX - drag.startClientX) + Math.abs(e.clientY - drag.startClientY) > 3;
+                if (moved) state._suppressCanvasClick = true;
+
                 if (app.saveViewState) app.saveViewState();
             }
 
@@ -1124,6 +1130,7 @@ window.PlannerApp = window.PlannerApp || {};
     function bindEvents(init) {
 
         bindModalCloseHandlers();
+        if (app.bindEraEvents) app.bindEraEvents();
 
         dom.informationBtn.addEventListener('click', () => {
             openModal(document.querySelector('#information'));

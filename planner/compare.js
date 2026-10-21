@@ -1034,7 +1034,8 @@ window.PlannerApp = window.PlannerApp || {};
         return {
             before: summarise(beforeEntities),
             after: summarise(afterEntities),
-            buildings: diffBuildings(beforeEntities, afterEntities)
+            buildings: diffBuildings(beforeEntities, afterEntities),
+            eras: diffEras(beforeEntities, afterEntities)
         };
     }
 
@@ -1262,6 +1263,7 @@ window.PlannerApp = window.PlannerApp || {};
         const buildings = result.buildings || { removed: [], added: [] };
         renderBuildingList(dom.compareRemovedList, buildings.removed);
         renderBuildingList(dom.compareAddedList, buildings.added);
+        renderEraList(dom.compareEraList, result.eras);
     }
 
     function renderComparison() {
@@ -1325,6 +1327,95 @@ window.PlannerApp = window.PlannerApp || {};
             });
         }
     }
+
+    function entityEra(entity) {
+        return (entity.data && entity.data.era) || state.currentEra || null;
+    }
+
+    function diffEras(beforeEntities, afterEntities) {
+        const eraIndex = era => app.InnoEras[era] ?? -1;
+
+        // metaId -> { meta, before: Map(era -> count), after: Map(era -> count) }
+        const byMeta = new Map();
+        const collect = (entities, side) => {
+            for (const entity of entities) {
+                if (entity.meta.type === 'street') continue;
+                const era = entityEra(entity);
+                if (!era) continue;
+
+                const id = String(entity.meta.id);
+                let entry = byMeta.get(id);
+                if (!entry) {
+                    entry = { meta: entity.meta, before: new Map(), after: new Map() };
+                    byMeta.set(id, entry);
+                }
+                entry[side].set(era, (entry[side].get(era) || 0) + 1);
+            }
+        };
+        collect(beforeEntities, 'before');
+        collect(afterEntities, 'after');
+
+        const groups = new Map();
+
+        for (const [id, entry] of byMeta) {
+            // eras that lost buildings and eras that gained buildings
+            const lost = [];
+            const gained = [];
+            for (const era of new Set([...entry.before.keys(), ...entry.after.keys()])) {
+                const delta = (entry.after.get(era) || 0) - (entry.before.get(era) || 0);
+                for (let i = 0; i < -delta; i++) lost.push(era);
+                for (let i = 0; i < delta; i++) gained.push(era);
+            }
+            if (!lost.length || !gained.length) continue;
+
+            lost.sort((a, b) => eraIndex(a) - eraIndex(b));
+            gained.sort((a, b) => eraIndex(a) - eraIndex(b));
+
+            // only the overlap is an era change; the rest are real additions/removals
+            const pairs = Math.min(lost.length, gained.length);
+            for (let i = 0; i < pairs; i++) {
+                const from = lost[i];
+                const to = gained[i];
+                const key = id + '|' + from + '|' + to;
+
+                let group = groups.get(key);
+                if (!group) {
+                    group = {
+                        id,
+                        name: entry.meta.name || id,
+                        type: entry.meta.type || '',
+                        from, to,
+                        direction: eraIndex(to) > eraIndex(from) ? 'up' : 'down',
+                        count: 0
+                    };
+                    groups.set(key, group);
+                }
+                group.count++;
+            }
+        }
+
+        return Array.from(groups.values()).sort((a, b) =>
+            (a.direction === b.direction ? 0 : (a.direction === 'up' ? -1 : 1)) ||
+            b.count - a.count || a.name.localeCompare(b.name));
+    }
+
+    // rendering (after renderBuildingList)
+    function renderEraList(el, entries) {
+        if (!el) return;
+        if (!entries || !entries.length) {
+            el.innerHTML = '<li class="empty">' + app.t('XPlan.Compare.NoChanges', 'No changes') + '</li>';
+            return;
+        }
+        const label = era => app.getEraLabel ? app.getEraLabel(era) : era;
+        el.innerHTML = entries.map(e =>
+            '<li class="' + e.type + ' era-' + e.direction + '">' +
+                '<span class="amount">' + e.count + '</span>' +
+                '<span class="name">' + e.name + '</span> ' +
+                '<span class="era-change">' + (e.direction === 'up' ? '▲ ' : '▼ ') +
+                    label(e.from) + ' → ' + label(e.to) + '</span>' +
+            '</li>'
+        ).join('');
+    }    
 
     app.computeComparison = computeComparison;
     app.openCompareModal = openCompareModal;

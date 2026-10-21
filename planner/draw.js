@@ -277,6 +277,7 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function updateSelectionInfo() {
+        if (app.updateEraPicker) app.updateEraPicker();
         if (!dom.infoEl) return;
 
         if (state.selectedBuildings.length !== 1) {
@@ -480,4 +481,5 @@ window.PlannerApp = window.PlannerApp || {};
     app.drawSelectionRect = drawSelectionRect;
     app.drawStreetPreview = drawStreetPreview;
     app.renderFullMapCanvas = renderFullMapCanvas;
+    app.getEraLabel = getEraLabel;
 })(window.PlannerApp);

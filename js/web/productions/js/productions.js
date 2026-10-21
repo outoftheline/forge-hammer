@@ -694,7 +694,6 @@ let Productions = {
 		if (FH.ActiveMap === 'OtherPlayer') return;
 
 		Productions.ActiveTab = ActiveTab;
-		console.log(ActiveTab);
 		Productions.PrepareData();
 		Productions.showBox();
 	},

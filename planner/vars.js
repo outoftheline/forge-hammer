@@ -74,6 +74,9 @@ window.PlannerApp.dom = {
     newDataPlanNameInput: document.querySelector('#newDataPlanName'),
     newDataSaveBtn: document.querySelector('#newDataSaveBtn'),
     newDataDiscardBtn: document.querySelector('#newDataDiscardBtn'),
+
+    eraChangerBtn: document.querySelector('#eraChanger'),
+    compareEraList: document.querySelector('#compareEraList'),
 };
 
 window.PlannerApp.state = {
@@ -92,6 +95,7 @@ window.PlannerApp.state = {
     deletedBuildings: [],
     selectedBuildings: [],
     selectedStoredMetaId: null,
+    eraMode: false,
 
     placingBuilding: null,
     placementAnchor: null,

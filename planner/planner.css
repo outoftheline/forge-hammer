@@ -77,6 +77,7 @@ select {
 select option {
     padding: 4px 0;
     color: #000;
+    background-color: #ccc;
 }
 
 .btn {
@@ -961,3 +962,53 @@ button, .btn, .content input {
     opacity: 0.6;
     font-style: italic;
 }
+
+/* era mode colors */
+.era1 { background-color: #8f3904; }
+.era2 { background-color: #a44408; }
+.era3 { background-color: #b44f10; }
+.era4 { background-color: #c26023; }
+.era5 { background-color: #d26e30; }
+.era6 { background-color: #e17e40; }
+.era7 { background-color: #ef8d4f; }
+.era8 { background-color: #fb9a5c; }
+.era9 { background-color: #ffb07e; }
+.era10 { background-color: #ffc6a2; }
+.era11 { background-color: #ecc7af; }
+.era12 { background-color: #e3d2c7; }
+.era13 { background-color: #e7e7e7; }
+.era14 { background-color: #e6d6e9; }
+.era15 { background-color: #e3d5ff; }
+.era16 { background-color: #ceb5ff; }
+.era17 { background-color: #b48fff; }
+.era18 { background-color: #9d6efd; }
+.era19 { background-color: #8a55f5; }
+.era20 { background-color: #783fec; }
+.era21 { background-color: #6b31e1; }
+.era22 { background-color: #5e25d3; }
+.era23 { background-color: #4e17bf; }
+.era24 { background-color: #400da8; }
+.era25 { background-color: #360895; }
+.era26 { background-color: #2c0380; }
+.era27 { background-color: #23006b; }
+
+#eraChanger.active {
+    background-color: #1d6b2a;
+    border-color: #66c440;
+    color: #fff;
+    box-shadow: 0 0 6px #66c44088;
+}
+#eraPicker {
+    position: fixed;
+    z-index: 1300;
+    box-shadow: 0 2px 10px #000a;
+    border-radius: 5px;
+}
+#eraPicker .btn {
+    background-color: #181715;
+    backdrop-filter: none;
+}
+#eraPicker.hidden { display: none; }
+.compare-list .era-change { opacity: 0.85; white-space: nowrap; }
+.compare-list .era-up .era-change { color: #66c440; }
+.compare-list .era-down .era-change { color: var(--danger-red, #ff4d4d); }

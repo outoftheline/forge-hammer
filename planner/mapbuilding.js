@@ -167,23 +167,28 @@ window.PlannerApp = window.PlannerApp || {};
 
         draw(context) {
             const outOfBounds = app.isBuildingOutOfBounds(this);
+            const era = (state.eraMode && app.getEraColors) ? app.getEraColors(this) : null;
 
             context.save();
             if (outOfBounds) context.globalAlpha = 0.75;
 
-            context.fillStyle = this.isSelected ? '#66c440' : this.fill;
-            context.strokeStyle = this.isSelected ? '#1d6b2a' : this.stroke;
+            if (era) {
+                context.fillStyle = era.fill;
+                context.strokeStyle = this.isSelected ? '#66c440' : era.stroke;
+            } else {
+                context.fillStyle = this.isSelected ? '#66c440' : this.fill;
+                context.strokeStyle = this.isSelected ? '#1d6b2a' : this.stroke;
+            }
 
             context.fillRect(this.x, this.y, this.width, this.height);
-            context.lineWidth = 2;
+            context.lineWidth = (era && this.isSelected) ? 4 : 2;
             context.strokeRect(this.x, this.y, this.width, this.height);
 
-            this.drawName(context);
-
+            this.drawName(context, era ? era.text : null);
             context.restore();
         }
 
-        drawName(context) {
+        drawName(context, textColor) {
             if (!this.hasLabel) return;
 
             context.save();
@@ -196,7 +201,7 @@ window.PlannerApp = window.PlannerApp || {};
                 context.translate(-cx, -cy);
             }
 
-            context.fillStyle = this.isSelected ? '#fff' : '#000';
+            context.fillStyle = textColor || (this.isSelected ? '#fff' : '#000');
             context.font = this.isSelected ? ('bold ' + state.font) : state.font;
 
             const boxWidth = state.rotated ? this.height : this.width;
