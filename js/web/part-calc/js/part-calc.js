@@ -1196,7 +1196,7 @@ let Parts = {
 			for (let p = 1; p <= Parts.MaezenSlots; p++) {
 				cb += `<label class="form-check-label game-cursor" for="chain-p${p}"><input type="checkbox" class="form-check-input" id="chain-p${p}" data-place="${p}" ${Parts.CopyPlaces[p-1] ? 'checked' : ''}> <span>${p}</span></label>`;
 			}
-			'<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
+			cb += '<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto"><input type="checkbox" class="form-check-input" id="chain-auto" data-place="auto" ' + (Parts.CopyModeAuto ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.Auto') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto-unsafe"><input type="checkbox" class="form-check-input" id="chain-auto-unsafe" data-place="auto-unsafe" ' + (Parts.CopyModeAutoUnsafe ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.AutoWithUnsafe') + '</span></label>' +
 		'</div>';
