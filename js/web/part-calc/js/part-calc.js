@@ -245,7 +245,7 @@ let Parts = {
 			});
 
 			// Next/Previous level
-			$('#OwnPartBox').off('click', '.btn-set-level').on('click', '.btn-set-level', function () {
+			$('#OwnPartBox').off('click', '.btn-set-level:not(.disabled)').on('click', '.btn-set-level:not(.disabled)', function () {
 				let Level = parseFloat($(this).data('value'));
 				if (isNaN(Level)) Level = 0;
 				Parts.CalcBody(Level);
@@ -782,6 +782,7 @@ let Parts = {
 		}
 
 		let Tier = FH.Main.CurrentGB.Entity.tier;
+		let haslevelingData = FH.Main.CurrentGB.Entity.bonuses.length === 0 ? '' : 'disabled'; // disables some buttons
 
 		h.push(`<div id="gbCosts" class="gbTier-${Tier}">`);
 
@@ -808,7 +809,7 @@ let Parts = {
 				h.push(Parts.Level + ' &rarr; ' + (parseInt(Parts.Level) + 1));
 
 				if (GreatBuildings.Rewards[Era] && GreatBuildings.Rewards[Era][Parts.Level + 1]) 
-					h.push(' <button class="btn btn-set-level" data-value="' + (Parts.Level + 1) + '">&#9205;</button>');
+					h.push(` <button class="btn btn-set-level ${(haslevelingData)}" data-value="${(Parts.Level + 1)}">&#9205;</button>`);
 			}
 			h.push('</div>');
 
@@ -1041,7 +1042,6 @@ let Parts = {
 			}
 			h.push('</div></div>');
 
-			let haslevelingData = FH.Main.CurrentGB.Entity.bonuses.length === 0 ? '' : 'disabled';
 			h.push(`<div class="btn-group">
 				<span class="btn btn-slim button-powerleveling ${haslevelingData}">${FH.t('Boxes.OwnpartCalculator.PowerLeveling')}</span>
 				</div>`);
@@ -1196,7 +1196,7 @@ let Parts = {
 			for (let p = 1; p <= Parts.MaezenSlots; p++) {
 				cb += `<label class="form-check-label game-cursor" for="chain-p${p}"><input type="checkbox" class="form-check-input" id="chain-p${p}" data-place="${p}" ${Parts.CopyPlaces[p-1] ? 'checked' : ''}> <span>${p}</span></label>`;
 			}
-			cb += '<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
+		cb += '<label class="form-check-label game-cursor" for="chain-all"><input type="checkbox" class="form-check-input" id="chain-all" data-place="all" ' + (Parts.CopyModeAll ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.All') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto"><input type="checkbox" class="form-check-input" id="chain-auto" data-place="auto" ' + (Parts.CopyModeAuto ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.Auto') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="chain-auto-unsafe"><input type="checkbox" class="form-check-input" id="chain-auto-unsafe" data-place="auto-unsafe" ' + (Parts.CopyModeAutoUnsafe ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.AutoWithUnsafe') + '</span></label>' +
 		'</div>';

@@ -1,6 +1,6 @@
 # Changelog
  
-## Version 1.9.0
+## Version 1.9.1
 ### Update
 - Effizienz: Einheiten des nächsten Zeitalters hinzugefügt
 - Boost Multiplikatoren werden jetzt im eigenen Profil mitberechnet

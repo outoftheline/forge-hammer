@@ -3697,8 +3697,8 @@ let Productions = {
 			$(itemId).html('')
 			return
 		}
-		h=`<ul class="foe-table">`
-		for (b of item.buildings) {
+		let h=`<ul class="foe-table">`
+		for (let b of item.buildings) {
 			h+=`<li class="helperTT" data-era=${FH.CurrentEra} data-callback_tt="building" data-meta_id="${b}">${FH.Main.CityEntities[b].name}</li>`
 		}
 		h+=`</ul>`

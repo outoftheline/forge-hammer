@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 1.9.0
+## Version 1.9.1
 ### Update
 - Efficiency: Added next age units
 - Boosts multipliers will be calculated in your profile now
