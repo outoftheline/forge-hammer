@@ -1256,6 +1256,10 @@ let Productions = {
 								amount = Math.round(amount + (amount *((Boosts.Sums.forge_points_production) / 100)))
 								currentAmount = Math.round(currentAmount + (currentAmount *((Boosts.Sums.forge_points_production) / 100)))
 							}
+							else if (type === 'medals' && building.isBoostable) {
+								amount = Math.round(amount + (amount *((Boosts.Sums.medal_production) / 100)))
+								currentAmount = Math.round(currentAmount + (currentAmount *((Boosts.Sums.medal_production) / 100)))
+							}
 
 							rowA.push('<td data-number="'+amount+'" exportvalue="'+amount+'" class="textright">')
 							let parsedCurrentAmount = (currentAmount >= 10000 ? FH.HTML.FormatNumberShort(currentAmount) : FH.HTML.Format(currentAmount)) 

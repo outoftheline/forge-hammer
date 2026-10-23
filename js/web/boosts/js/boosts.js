@@ -101,6 +101,7 @@ let Boosts = {
         'critical_hit_chance': 0,
         'coin_production': 0,
         'supply_production': 0,
+        'medal_production': 0,
         'forge_points_production':0,
         'guild_goods_production':0,
         'guild_raids_action_points_collection': 0,
