@@ -32,6 +32,7 @@ let Productions = {
 		'supplies',
 		'supply_production', 		// Supply Boost
 		'medals',
+		'medal_production',
 		'premium',					// Diamonds
 		'population',
 		'happiness',
@@ -1443,6 +1444,9 @@ let Productions = {
 					}
 					else if (type === 'special_goods') {
 						table.push(' <button class="typeBoost btn btn-slim"><a href="#special_goods_production" class="game-cursor">'+FH.t('General.Boost')+': '+Boosts.Sums.special_goods_production+'%</a></button>')
+					}
+					else if (type === 'medals') {
+						table.push(' <button class="typeBoost btn btn-slim"><a href="#medal_production" class="game-cursor">'+FH.t('General.Boost')+': '+Boosts.Sums.medal_production+'%</a></button>')
 					}
 					if (type === 'units') {
 						Profile.units = typeSum;
