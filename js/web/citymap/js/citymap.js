@@ -71,6 +71,7 @@ let CityMap = {
 		buildingTypes: [],
 		hasCollectableBuildings: false
 	},
+	mode: 'normal',
 
 
 	/**
@@ -821,6 +822,22 @@ let CityMap = {
 	},
 
 
+	setHeatMapData(buildings, ratingValue) {
+		CityMap.mode = 'efficiency';
+		let heatMapData = new Map();
+		for (const building of Object.values(buildings)) {
+			if (building.type === "street") continue;
+
+			heatMapData.set(building.id, building.rating[ratingValue]); 
+		}
+		let maxValue = Math.max(...heatMapData.values());
+		for (const [id, rating] of heatMapData) {
+			heatMapData.set(id, (rating / maxValue)); 
+		}
+		return heatMapData;
+	},
+
+
 	SetMapBuildings: async (Data = null)=> {
 		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "guild_raids" || FH.ActiveMap === "stellar_city") {
 			CityMap.SetOutpostBuildings();
@@ -904,9 +921,11 @@ let CityMap = {
 
 		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 
+		// let heatMap = CityMap.setHeatMapData(buildingData, 'strategy_points');
+
 		// create building elements
 		for (const building of Object.values(buildingData)) {
-			if (building.coords.x < MinX || building.coords.x > MaxX || building.coords.y < MinY || building.coords.y > MaxY) continue
+			if (building.coords.x < MinX || building.coords.x > MaxX || building.coords.y < MinY || building.coords.y > MaxY) continue;
 
 			let x = (building.coords.x === undefined ? 0 : parseInt((building.coords.x * CityMap.map.gridSize))),
 			y = (building.coords.y === undefined ? 0 : parseInt((building.coords.y * CityMap.map.gridSize))),
@@ -931,18 +950,32 @@ let CityMap = {
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
 						(building.rating?.totalScore*100 <= (rating30) ? ' rating30' : '')));
 			
-			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>').addClass('entity helperTT ' + building.type + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + rating + isLimited + fromQI + fromGBG).css({
-				width: xsize + 'em',
-				height: ysize + 'em',
-				left: x + 'em',
-				top: y + 'em'
-			})
+			let f = $('<span '+ FH.Main.Allies.tooltip(building.id) + '/>')
+				.css({
+					width: xsize + 'em',
+					height: ysize + 'em',
+					left: x + 'em',
+					top: y + 'em'
+				})
+				.addClass('entity helperTT ' + building.type)
 				.attr('data-callback_tt','building')
 				.attr('data-era', building.eraName)
 				.attr('data-size', building.size.length + 'x' + building.size.width)
 				.attr('data-id', building.id)
 				.attr('data-title', building.name)
-				.attr('data-meta_id',building.entityId)
+				.attr('data-meta_id',building.entityId);
+
+			if (CityMap.mode === 'normal')
+				f.addClass(noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + rating + isLimited + fromQI + fromGBG);
+			else {
+				f.css({
+					width: xsize + 'em',
+					height: ysize + 'em',
+					left: x + 'em',
+					top: y + 'em',
+					'--intensity': heatMap.get(building.id)
+				}).addClass('heatmap')
+			}
 
 			// collect metrics for sidebar
 			if (building.type === "street") {

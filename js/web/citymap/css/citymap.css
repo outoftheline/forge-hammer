@@ -330,9 +330,20 @@
 	background-color: var(--background-color-military);
 	position: absolute;
 	z-index: 10;
-	border: 1px solid var(--border-color-military);
-
+	box-shadow: inset 0 0 0 1px #0004;
 	transition: all 0.3s ease-in-out;
+}
+
+#grid-outer span.entity.heatmap {
+	--r: 0;
+	--g: 25;
+	--b: 250;
+
+	background: rgb(
+		calc(255 - ((255 - var(--r)) * var(--intensity))),
+		calc(255 - ((255 - var(--g)) * var(--intensity))),
+		calc(255 - ((255 - var(--b)) * var(--intensity)))
+	);
 }
 
 #grid-outer span.map-bg {
@@ -353,43 +364,33 @@
 
 #grid-outer span.residential, tr.residential td:first-child::before {
 	background-color: var(--background-color-residential);
-	border-color: var(--border-color-residential);
 }
 #grid-outer span.tower, #grid-outer span.impediment {
 	background-color: var(--background-color-tower);
-	border-color: var(--border-color-tower);
 }
 #grid-outer span.decoration, tr.decoration td:first-child::before, #grid-outer span.diplomacy, tr.diplomacy td:first-child::before {
 	background-color: var(--background-color-decoration);
-	border-color: var(--border-color-decoration);
 }
 #grid-outer span.street {
-	background-color: var(--background-color-street);
-	border-color: var(--border-color-street);
+	background-color: var(--background-color-street) !important;
 }
 #grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before, tr.stellar_capacity td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarCapacityBoost1, tr.W_StellarAgeDiscovery_StellarCapacityBoost1 td:first-child::before {
 	background-color: var(--background-color-goods);
-	border-color: var(--border-color-goods);
 }
 #grid-outer span.culture, tr.culture td:first-child::before {
 	background-color: var(--background-color-culture);
-	border-color: var(--border-color-culture);
 }
 #grid-outer span.main_building, tr.main_building td:first-child::before {
 	background-color: var(--background-color-main_building);
-	border-color: var(--border-color-main_building);
 }
 #grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before, tr.stellar_points td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarPointsBoost1, tr.W_StellarAgeDiscovery_StellarPointsBoost1 td:first-child::before {
 	background-color: var(--background-color-production);
-	border-color: var(--border-color-production);
 }
 #grid-outer span.greatbuilding {
 	background-color: var(--background-color-greatbuilding);
-	border-color: var(--border-color-greatbuilding);
 }
 #grid-outer span.random_production {
 	background-color: var(--background-color-random_production);
-	border-color: var(--border-color-random_production);
 }
 
 #grid-outer span span {
@@ -421,34 +422,27 @@
 }
 #grid-outer span.noStreet.highlight {
 	background-color: var(--background-color-noStreet);
-	border-color: var(--border-color-noStreet);
 }
 #grid-outer span:not(.street).rating10.highlight4 {
 	background-color: #f00;
-	border-color: #c00;
 }
 #grid-outer span:not(.street).rating20.highlight4 {
 	background-color: rgb(255, 102, 0);
-	border-color: #c00;
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, #c00 2px, #c00 7px);
 }
 #grid-outer span:not(.street).rating30.highlight4 {
 	background-color: rgb(255, 208, 0);
-	border-color: #c00;
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, #c00 2px, #c00 7px);
 }
 #grid-outer span.ascendable.highlight2 {
 	background-color: var(--background-color-ascendable);
-	border-color: var(--border-color-ascendable);
 }
 #grid-outer span.decayed.highlight3 {
 	background-image: linear-gradient(45deg, transparent 50%, var(--background-color-ascendable) 50%);
 	background-color: var(--background-color-decayed);
-	border-color: var(--border-color-decayed);
 }
 #grid-outer span:not(.street).fspDisabled.highlight5 {
 	background-color: #b10808;
-	border-color: #880202;
 }
 #grid-outer span.collectSoon {
 	background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #fff1 2px, #fff1 7px);
@@ -477,11 +471,9 @@
 }
 #grid-outer.showGBG .fromGBG {
 	background-color: var(--background-color-gbg);
-	border-color: var(--border-color-gbg);
 }
 #grid-outer.showQI .fromQI {
 	background-color: var(--background-color-qi);
-	border-color: var(--border-color-qi);
 }
 #map-buildings.transparent span:not(.notPolivated) {
 	opacity: 0.35;
@@ -544,7 +536,7 @@
 
 #area-state .building-count-area span.square {
 	background-color: var(--background-color-military);
-	border-color:  var(--border-color-military);
+	box-shadow: 0 0 0 1px #0004;
 	border-radius: 3px;
 	width: 10px;
 	height: 10px;
@@ -554,48 +546,37 @@
 
 #area-state .building-count-area span.square.military, tr.military td:first-child::before, tr.static_provider td:first-child::before, tr.mission_item td:first-child::before {
 	background-color: var(--background-color-military);
-	border-color:  var(--border-color-military);
 }
 
 #area-state .building-count-area span.square.residential {
 	background-color: var(--background-color-residential);
-	border-color: var(--border-color-residential);
 }
 #area-state .building-count-area span.square.decoration {
 	background-color: var(--background-color-decoration);
-	border-color: var(--border-color-decoration);
 }
 #area-state .building-count-area span.square.street {
 	background-color: var(--background-color-street);
-	border-color: var(--border-color-street);
 }
 #area-state .building-count-area span.square.goods, tr.goods td:first-child::before {
 	background-color: var(--background-color-goods);
-	border-color: var(--border-color-goods);
 }
 #area-state .building-count-area span.square.culture {
 	background-color: var(--background-color-culture);
-	border-color: var(--border-color-culture);
 }
 #area-state .building-count-area span.square.main_building {
 	background-color: var(--background-color-main_building);
-	border-color: var(--border-color-main_building);
 }
 #area-state .building-count-area span.square.production {
 	background-color: var(--background-color-production);
-	border-color: var(--border-color-production);
 }
 #area-state .building-count-area span.square.greatbuilding {
 	background-color: var(--background-color-greatbuilding);
-	border-color: var(--border-color-greatbuilding);
 }
 #area-state .building-count-area span.square.random_production {
 	background-color: var(--background-color-random_production);
-	border-color: var(--border-color-random_production);
 }
 #area-state .building-count-area span.square.tower {
 	background-color: var(--background-color-tower);
-	border-color: var(--border-color-tower);
 }
 
 #area-state .building-count-area label {

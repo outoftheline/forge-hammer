@@ -2538,39 +2538,22 @@ tr.sorter-header th:not(.no-sort).descending:after {
 	/* city map buildings*/
 
 	--background-color-ascendable: #f37317;
-	--border-color-ascendable: #ce5900;
 	--background-color-decayed: #2b2b2b;
-	--border-color-decayed: #161616;
 	--background-color-military: #fff;
-	--border-color-military: #bbb;
 	--background-color-residential: #7abaff;
-	--border-color-residential: #219eff;
 	--background-color-qi: #51ffd9;
-	--border-color-qi: #13cfcf;
 	--background-color-noStreet: #793bc9;
-	--border-color-noStreet: #3d2783;
 	--background-color-chain: #bb23ae;
-	--border-color-chain: #86127d;
 	--background-color-decoration: #497445;
-	--border-color-decoration: #1c7430;
 	--background-color-street: #666666;
-	--border-color-street: #636363;
 	--background-color-goods: #7d2a4d;
-	--border-color-goods: #6a2a3a;
 	--background-color-culture: #7d4900;
-	--border-color-culture: #582c00;
 	--background-color-main_building: #ffb300;
-	--border-color-main_building: #ffb300;
 	--background-color-production: #416dff;
-	--border-color-production: #2732ff;
 	--background-color-greatbuilding: #e6542f;
-	--border-color-greatbuilding: #af3d2b;
 	--background-color-random_production: #a8ff18;
-	--border-color-random_production: #4cff11;
 	--background-color-tower: #cdcdcd;
-	--border-color-tower: #787a7a;
 	--background-color-gbg: #ffeac2;
-	--border-color-gbg: #dac195;
 }
 
 .upgrades span {

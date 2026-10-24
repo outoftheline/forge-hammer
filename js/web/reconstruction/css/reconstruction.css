@@ -109,7 +109,7 @@
   position: absolute;
   box-sizing: border-box;
 	background-color: var(--background-color-residential);
-	border: 1px solid var(--border-color-residential);
+	box-shadow: inset 0 0 0 1px #0004;
 }
 .map-grid-wrapper .map-building-ghost {
   position: absolute;
@@ -122,26 +122,21 @@
 }
 .map-building.production {
 	background-color: var(--background-color-production);
-	border-color: var(--border-color-production);
 }
 .map-building.greatbuilding {
 	background-color: var(--background-color-greatbuilding);
-	border-color: var(--border-color-greatbuilding);
 }
 .map-building.main_building {
 	background-color: var(--background-color-main_building);
-	border-color: var(--border-color-main_building);
 }
 .map-building.main_building.matched {
 	background-color: #97e968;
 }
 .map-building.roadless {
 	background-color: var(--background-color-noStreet);
-	border-color: var(--border-color-noStreet);
 }
 .map-building.street {
 	background-color: var(--background-color-street);
-	border-color: var(--border-color-street);
 }
 .map-building.street.matched {
 	border-color: #096941;
