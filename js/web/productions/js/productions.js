@@ -143,9 +143,7 @@ let Productions = {
 
 		cloneData: (data) => JSON.parse(JSON.stringify(data || {})),
 
-
 		normalizeData: (data) => Object.assign(Productions.Rating.getDefaultData(), Productions.Rating.cloneData(data || {})),
-
 
 		getActivePreset: () => {
 			const presets = Productions.Rating.Presets;
@@ -2223,92 +2221,96 @@ let Productions = {
 	 * @param {string} GoodType - The good type identifier.
 	 * @returns {string} The localized name of the good type.
 	 */
-	GetTypeName: (GoodType) => {
-		if (GoodType.includes('happiness')) {
-			return FH.t('Boxes.Productions.Happiness');
+	GetTypeName: (resourceType) => {
+		let name = '';
+		if (resourceType.includes('guild_raids')) {
+			name += FH.t('Boxes.General.Quantum_Incursion.short') + ' ';
+
+			if (resourceType === 'guild_raids_action_points_collection') {
+				name += FH.t('Boxes.BoostList.guild_raids_action_points_collection');
+			} 
+			else if (resourceType === 'guild_raids_units_start') {
+				name += FH.t('Boxes.BoostList.guild_raids_units_start');
+			}
+			else if (resourceType === 'guild_raids_goods_start') {
+				name += FH.t('Boxes.BoostList.guild_raids_goods_start');
+			}
+			else if (resourceType === 'guild_raids_coins_start') {
+				name += FH.t('Boxes.BoostList.guild_raids_coins_start');
+			}
+			else if (resourceType === 'guild_raids_coins_production') {
+				name += FH.t('Boxes.BoostList.guild_raids_coins_production');
+			}
+			else if (resourceType === 'guild_raids_supplies_start') {
+				name += FH.t('Boxes.BoostList.guild_raids_supplies_start');
+			}
+			else if (resourceType === 'guild_raids_supplies_production') {
+				name += FH.t('Boxes.BoostList.guild_raids_supplies_production');
+			}
+        }
+		else if (resourceType.includes('happiness')) {
+			name += FH.t('Boxes.Productions.Happiness');
 		}
-		else if (GoodType === 'guild_raids_action_points_collection') {
-			return FH.t('Boxes.BoostList.guild_raids_action_points_collection');
-        }
-		else if (GoodType === 'guild_raids_units_start') {
-			return FH.t('Boxes.BoostList.guild_raids_units_start');
-        }
-		else if (GoodType === 'guild_raids_goods_start') {
-			return FH.t('Boxes.BoostList.guild_raids_goods_start');
-        }
-		else if (GoodType === 'guild_raids_coins_start') {
-			return FH.t('Boxes.BoostList.guild_raids_coins_start');
-        }
-		else if (GoodType === 'guild_raids_coins_production') {
-			return FH.t('Boxes.BoostList.guild_raids_coins_production');
-        }
-		else if (GoodType === 'guild_raids_supplies_start') {
-			return FH.t('Boxes.BoostList.guild_raids_supplies_start');
-        }
-		else if (GoodType === 'guild_raids_supplies_production') {
-			return FH.t('Boxes.BoostList.guild_raids_supplies_production');
-        }
-		else if (GoodType === 'clan_power') {
-			return FH.t('Boxes.Productions.GuildPower');
+		else if (resourceType === 'clan_power') {
+			name += FH.t('Boxes.Productions.GuildPower');
 		}
-		else if (GoodType === 'clan_goods') {
-			return FH.t('Boxes.Productions.GuildGoods');
+		else if (resourceType === 'clan_goods') {
+			name += FH.t('Boxes.Productions.GuildGoods');
         }
-		else if (GoodType === 'units-next') {
-			return FH.t('General.UnitsNext');
+		else if (resourceType === 'units-next') {
+			name += FH.t('General.UnitsNext');
 		}
-		else if (GoodType.includes('units')) {
-			return FH.t('General.Units');
+		else if (resourceType.includes('units')) {
+			name += FH.t('General.Units');
 		}
-		else if (GoodType.includes('battleground')) {
-			return FH.t('Boxes.General.Guild_Battlegrounds');
+		else if (resourceType.includes('battleground')) {
+			name += FH.t('Boxes.General.Guild_Battlegrounds.short') + ' ';
 		}
-		else if (GoodType.includes('guild_expedition')) {
-			return FH.t('Boxes.General.Guild_Expedition');
+		else if (resourceType.includes('guild_expedition')) {
+			name += FH.t('Boxes.General.Guild_Expedition.short') + ' ';
 		}
-		/*else if (GoodType.includes('guild_raids')) {
-			return FH.t('Boxes.General.Quantum_Incursion');
-		}*/
-		else if (GoodType.includes('att_boost_attacker') || GoodType.includes('att_boost_attacker-all')) {
-			return FH.t('Boxes.Productions.att_boost_attacker');
-		}
-		else if (GoodType.includes('att_boost_defender') || GoodType.includes('att_boost_defender-all')) {
-			return FH.t('Boxes.Productions.att_boost_defender');
-		}
-		else if (GoodType.includes('def_boost_attacker') || GoodType.includes('def_boost_attacker-all')) {
-			return FH.t('Boxes.Productions.def_boost_attacker');
-		}
-		else if (GoodType.includes('def_boost_defender') || GoodType.includes('def_boost_defender-all')) {
-			return FH.t('Boxes.Productions.def_boost_defender');
-		}
-		else if (GoodType.includes('goods-next')) {
-			return FH.t('Boxes.Productions.goods_next');
+		else if (resourceType.includes('goods-next')) {
+			name += FH.t('Boxes.Productions.goods_next');
         }
-		else if (GoodType === 'goods-current') {
-			return FH.t('Boxes.Productions.goods_current');
+		else if (resourceType === 'goods-current') {
+			name += FH.t('Boxes.Productions.goods_current');
         }
-		else if (GoodType === 'goods-previous') {
-			return FH.t('Boxes.Productions.goods_previous');
+		else if (resourceType === 'goods-previous') {
+			name += FH.t('Boxes.Productions.goods_previous');
         }
-		else if (GoodType === 'items') {
-			return FH.t('Boxes.Productions.fragments');
+		else if (resourceType === 'items') {
+			name += FH.t('Boxes.Productions.fragments');
         }
-		else if (GoodType === 'fsp') {
-			return FH.t('Boxes.Productions.FSP');
+		else if (resourceType === 'fsp') {
+			name += FH.t('Boxes.Productions.FSP');
         }
-		else if (GoodType === 'forge_points_production') {
-			return FH.t('Boxes.Productions.fp_boost');
+		else if (resourceType === 'forge_points_production') {
+			name += FH.t('Boxes.Productions.fp_boost');
         }
-		else if (GoodType === 'goods_production') {
-			return FH.t('Boxes.Productions.goods_boost');
+		else if (resourceType === 'goods_production') {
+			name += FH.t('Boxes.Productions.goods_boost');
         }
 		else {
-			if(GoodType && FH.Goods.Data[GoodType]){
-				return FH.Goods.Data[GoodType]['name'];
-			} else {
-				return GoodType;
-			}
+			if (resourceType && FH.Goods.Data[resourceType]){
+				name += FH.Goods.Data[resourceType]['name'];
+			} /*else {
+				name += resourceType;
+			}*/
 		}
+
+		if (resourceType.includes('att_boost_attacker')) {
+			name += FH.t('Boxes.Productions.att_boost_attacker');
+		}
+		else if (resourceType.includes('att_boost_defender')) {
+			name += FH.t('Boxes.Productions.att_boost_defender');
+		}
+		else if (resourceType.includes('def_boost_attacker')) {
+			name += FH.t('Boxes.Productions.def_boost_attacker');
+		}
+		else if (resourceType.includes('def_boost_defender')) {
+			name += FH.t('Boxes.Productions.def_boost_defender');
+		}
+		return name;
 	},
 
 
@@ -2886,14 +2888,14 @@ let Productions = {
 					secondType = type.replace('att_','');
 					divider = 2;
 				}
-				h.push('<th data-type="ratinglist" style="width:1%" data-export="'+ firstType +'" class="is-number text-center buildingvalue"'+
+				h.push('<th data-type="ratinglist" style="width:1%" data-export="'+ Productions.GetTypeName(firstType) +'" class="is-number text-center buildingvalue"'+
 					(secondType !== null ? ` data-original-title="${Productions.Rating.Data[firstType].perTile} + ${Productions.Rating.Data[secondType]?.perTile} / 2"` : '')+
 					'><span class="resicon ' + firstType + '"' + (secondType === null ? ' style="margin-bottom:0"' : '') + '></span>'+ (secondType === null ? '<br>' : '') +
 					(secondType !== null ? '<span class="resicon ' + secondType + '"></span><i>': '')+
 					((Productions.Rating.Data[firstType].perTile + (Productions.Rating.Data[secondType]?.perTile || 0) || 0) /divider)+
 					'</i></th>');
 
-				h.push('<th data-type="ratinglist" style="width:1%" data-export="' + firstType + '" class="is-number text-center tilevalue"'+
+				h.push('<th data-type="ratinglist" style="width:1%" data-export="' + Productions.GetTypeName(firstType) + '" class="is-number text-center tilevalue"'+
 					(secondType !== null ? ` data-original-title="${Productions.Rating.Data[firstType].perTile} + ${Productions.Rating.Data[secondType]?.perTile} / 2"` : '')+
 					'><span class="resicon ' + firstType + '"></span>'+
 					(secondType !== null ? '<span class="resicon ' + secondType + '"></span><i>': '')+
