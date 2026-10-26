@@ -269,8 +269,8 @@
 #map-grid {
 	display: flex;
 	flex-wrap: wrap;
-	width: 60.1em;
-	height: 64em;
+	width: 68.1em;
+	height: 72em;
 }
 
 #map-grid span[data-grid] {
@@ -280,12 +280,12 @@
 }
 
 #map-grid .map-bg {
-	background: transparent url('../images/map-bg.png') center / cover no-repeat;
+	background: transparent url('../images/map-bg.png') top left repeat;
+	background-size: 4em;
 	width: 4em;
 	height: 4em;
 }
 #map-grid .map-bg.startmap {
-	background: transparent url('../images/start-map-bg.png') center / cover no-repeat;
 	width: 16em;
 	height: 16em;
 }
