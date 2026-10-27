@@ -329,7 +329,7 @@ let Popout = {
 
 		let text = (clone.textContent || '').replace(/\s+/g, ' ').trim();
 
-		return (text || id)+` - Forge Hammer`;
+		return (text || id)+` - Forge Hammer - `+ FH.World;
 	},
 
 
