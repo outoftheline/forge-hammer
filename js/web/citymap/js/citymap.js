@@ -72,6 +72,12 @@ let CityMap = {
 		hasCollectableBuildings: false
 	},
 	mode: 'normal',
+	ratingValues: [],
+	ratingPerTile: true,
+	ratingWeighted: false, // false: relative to city average, true: weighted like the efficiency rating
+	ratingModifiers: true, // include score modifiers (weighted + per tile only)
+	buildingData: null,
+	heatData: null,
 
 
 	/**
@@ -110,6 +116,27 @@ let CityMap = {
 			CityMap.map.view = view;
 		if (null !== outpostScale)
 			CityMap.map.outpostScale = parseInt(outpostScale);
+
+		// view mode + heat map settings
+		let mode = FH.Storage.getItem('CityMapMode'),
+			ratingValues = FH.Storage.getItem('CityMapRatingValues'),
+			ratingPerTile = FH.Storage.getItem('CityMapRatingPerTile'),
+			ratingWeighted = FH.Storage.getItem('CityMapRatingWeighted'),
+			ratingModifiers = FH.Storage.getItem('CityMapRatingModifiers');
+		if (mode === 'normal' || mode === 'efficiency')
+			CityMap.mode = mode;
+		if (null !== ratingValues) {
+			try {
+				let parsed = JSON.parse(ratingValues);
+				if (Array.isArray(parsed)) CityMap.ratingValues = parsed;
+			} catch (e) {}
+		}
+		if (null !== ratingPerTile)
+			CityMap.ratingPerTile = (ratingPerTile === 'true' || ratingPerTile === true);
+		if (null !== ratingWeighted)
+			CityMap.ratingWeighted = (ratingWeighted === 'true' || ratingWeighted === true);
+		if (null !== ratingModifiers)
+			CityMap.ratingModifiers = (ratingModifiers === 'true' || ratingModifiers === true);
 
 		let Data = FH.Main.CityMapData;
 		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "stellar_city")
@@ -265,8 +292,7 @@ let CityMap = {
 				.append($(`<div id="grid-outer" data-unit="${scaleUnit}" data-view="${CityMap.map.view}" />`)
 					.append($('<div id="map-grid" />'))
 					.append($('<div id="map-buildings" />'))))
-			.append($('<div id="sidebar" />')
-				.append($('<div id="map-filters" />')));
+			.append($('<div id="sidebar" />'));
 
 		$('#'+elemId+'Header > .title').attr('id', 'map' + CityMap.hashCode(Title));
 
@@ -279,6 +305,24 @@ let CityMap = {
 			.append($('<option class="game-cursor" data-view="normal" />').prop('selected', CityMap.map.view === 'normal').text(FH.t('Boxes.CityMap.NormalPerspecitve')) )
 			.append($('<option class="game-cursor" data-view="turned" />').prop('selected', CityMap.map.view === 'turned').text(FH.t('Boxes.CityMap.TurnedPerspecitve')) )
 			.append($('<option class="game-cursor" data-view="skew" />').prop('selected', CityMap.map.view === 'skew').text(FH.t('Boxes.CityMap.CavalierPerspecitve')) );
+
+		$('#'+elemId).on('click', '.viewmode-switcher .btn', function(){
+			CityMap.setMode(CityMap.mode === 'normal' ? 'efficiency' : 'normal');
+		});
+
+		$('#'+elemId).on('change', '.map-rating input', function(){
+			let wrap = CityMap.find('.map-rating');
+			CityMap.ratingValues = wrap.find('input[data-rating]:checked').map((i, el) => el.value).get();
+			CityMap.ratingPerTile = wrap.find('#maprating-pertile').is(':checked');
+			CityMap.ratingWeighted = wrap.find('#maprating-weighted').is(':checked');
+			CityMap.ratingModifiers = wrap.find('#maprating-modifiers').is(':checked');
+			FH.Storage.setItem('CityMapRatingValues', JSON.stringify(CityMap.ratingValues));
+			FH.Storage.setItem('CityMapRatingPerTile', CityMap.ratingPerTile);
+			FH.Storage.setItem('CityMapRatingWeighted', CityMap.ratingWeighted);
+			FH.Storage.setItem('CityMapRatingModifiers', CityMap.ratingModifiers);
+			CityMap.updateRatingControls();
+			CityMap.applyHeatMap();
+		});
 
 		$('#'+elemId).on('change', '#menu-view', function(){
 			let view = $('#menu-view option:selected').data('view');
@@ -317,11 +361,12 @@ let CityMap = {
 		// Button for submit Box
 		if (FH.ActiveMap === 'main' || FH.ActiveMap === 'reconstruction' || FH.ActiveMap === 'OtherPlayer') {
 			menu.append($('<div class="mapTopRight"><span class="mapFilterCounter"></span> <input type="search" id="BuildingsFilter" placeholder="'+ FH.t('Boxes.CityMap.FilterBuildings') +'" oninput="CityMap.filterBuildings(this.value)"></div>'));
-			menuBottom.append(
-				$('<div class="btn-group" />')
+			menuBottom
+				.append($(`<div class="viewmode-switcher flex gap itemscenter"><span class="btn btn-mid">${FH.t('Boxes.CityMap.ViewModeChange')}</span><b class="viewmode-name"></b></div>`))
+				.append($('<div class="btn-group" />')
 					.append($('<button class="btn btn-mid ml-auto" />').attr({ id: 'copy-meta-infos', onclick: 'CityMap.copyMetaInfos()' }).text(FH.t('Boxes.CityMap.CopyMetaInfos')))
 					.append($(`<a id="open-planner" class="btn btn-mid ml-auto" href="${FH.extUrl}planner/index.html" target="_blank" onclick="CityMap.openPlanner()" />`).text(FH.t('Boxes.CityMap.SendToPlanner')))
-			);
+				);
 		}
 		oB.append(wrapper);
 
@@ -822,19 +867,114 @@ let CityMap = {
 	},
 
 
-	setHeatMapData(buildings, ratingValue) {
-		CityMap.mode = 'efficiency';
-		let heatMapData = new Map();
-		for (const building of Object.values(buildings)) {
-			if (building.type === "street") continue;
+	setHeatMapData(buildings) {
+		let rawData = new Map(), scaledData = new Map();
+		let weighted = CityMap.ratingWeighted;
+		// weighted mode needs a perTile target for each type
+		let types = CityMap.ratingValues.filter(t => Productions.Rating.Data?.[t]?.active && (!weighted || Productions.Rating.Data[t].perTile > 0));
+		let list = Object.values(buildings).filter(b => b.type !== 'street' && b.rating);
+		if (!types.length || !list.length) return {rawData, scaledData};
 
-			heatMapData.set(building.id, building.rating[ratingValue]); 
+		let key = (type => CityMap.ratingPerTile ? type + '-tile' : type);
+		let val = (bldg, type) => parseFloat(bldg.rating[key(type)]) || 0;
+
+		if (weighted) {
+			for (let bldg of list) {
+				let sum = 0;
+				for (let type of types)
+					sum += val(bldg, type) / Productions.Rating.Data[type].perTile;
+				if (CityMap.ratingPerTile && CityMap.ratingModifiers)
+					sum += (bldg.rating.scoreModifier || 0) / 100;
+				rawData.set(bldg.id, sum);
+			}
 		}
-		let maxValue = Math.max(...heatMapData.values());
-		for (const [id, rating] of heatMapData) {
-			heatMapData.set(id, (rating / maxValue)); 
+		else {
+			let average = {};
+			for (let type of types) {
+				let producers = list.map(bldg => val(bldg, type)).filter(v => v > 0);
+				average[type] = producers.length ? producers.reduce((s, v) => s + v, 0) / producers.length : 0;
+			}
+			for (let bldg of list) {
+				let sum = 0;
+				for (let type of types)
+					if (average[type] > 0) 
+						sum += val(bldg, type) / average[type];
+				rawData.set(bldg.id, sum / types.length);
+			}
 		}
-		return heatMapData;
+
+		let max = Math.max(0, ...rawData.values()) || 1;
+		let mid = weighted ? max / 2 : Math.min(1, max); // average mode: 1 = gray
+		for (let [id, val] of rawData) {
+			val = Math.max(0, val);
+			scaledData.set(id, val <= mid ? 0.5 * val / mid : 0.5 + 0.5 * (val - mid) / ((max - mid) || 1));
+		}
+
+		return {rawData, scaledData};
+	},
+
+
+	applyHeatMap: () => {
+		if (!CityMap.buildingData) return;
+
+		CityMap.heatData = CityMap.setHeatMapData(CityMap.buildingData);
+		let {rawData, scaledData} = CityMap.heatData;
+
+		CityMap.find('#map-buildings .entity.heatmap').each(function () {
+			let id = +this.dataset.id;
+			let raw = rawData.get(id) || 0;
+			this.style.setProperty('--intensity', scaledData.get(id) ?? 0);
+			this.classList.toggle('heat-zero', raw === 0);
+			this.dataset.heat = raw ? (CityMap.ratingWeighted ? Math.round(raw * 100) : raw.toFixed(2)) : '';
+		});
+	},
+
+	// mode: 'normal' or 'efficiency'
+	setMode: (mode) => {
+		if (mode !== 'normal' && mode !== 'efficiency') mode = 'normal';
+		CityMap.mode = mode;
+		FH.Storage.setItem('CityMapMode', mode);
+
+		let isEfficiency = (mode === 'efficiency');
+		CityMap.find('#grid-outer').toggleClass('mode-efficiency', isEfficiency);
+		CityMap.find('#sidebar')
+			.toggleClass('viewmode-efficiency', isEfficiency)
+			.toggleClass('viewmode-normal', !isEfficiency);
+
+		CityMap.find('.viewmode-switcher .viewmode-name').text(isEfficiency
+			? FH.t('Boxes.CityMap.ViewModeEfficiency')
+			: FH.t('Boxes.CityMap.ViewModeNormal'));
+
+		if (isEfficiency) CityMap.applyHeatMap();
+	},
+
+
+	// score modifiers only apply in weighted + per tile mode
+	updateRatingControls: () => {
+		let applicable = CityMap.ratingWeighted && CityMap.ratingPerTile;
+		CityMap.find('#maprating-modifiers').prop('disabled', !applicable)
+			.closest('label').css('opacity', applicable ? '' : '0.4');
+	},
+
+
+	ratingModeSidebar() {
+		let o = `<div class="map-rating">
+			<div class="bbd py5">
+			<label for="maprating-pertile" class="pertile"><input type="checkbox" id="maprating-pertile"${CityMap.ratingPerTile ? ' checked' : ''} /> ${FH.t('Boxes.ProductionsRating.ShowValuesPerTile')}</label>
+			<label for="maprating-weighted" class="weighted"><input type="checkbox" id="maprating-weighted"${CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingWeighted')}</label>
+			<label for="maprating-modifiers" class="modifiers"><input type="checkbox" id="maprating-modifiers"${CityMap.ratingModifiers ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingModifiers')}</label>
+			</div>
+			<div class="bbd">`;
+			
+		if (!Productions.Rating.Data) Productions.Rating.load();
+
+		for (let [rating, data] of Object.entries(Productions.Rating.Data)) {
+			if (!data.active) continue;
+			let checked = CityMap.ratingValues.includes(rating) ? ' checked' : '';
+			o += `<label for="maprating-${rating}"><input type="checkbox" data-rating value="${rating}" id="maprating-${rating}"${checked} /> <span class="resicon ${rating}"></span> ${Productions.GetTypeName(rating)}</label>`;
+		}
+		o += `</div><em class="py5">${FH.t('Boxes.CityMap.ViewModeEfficiencyExplainer')}</em></div>`;
+		return o;
 	},
 
 
@@ -857,9 +997,15 @@ let CityMap = {
 
 		let ActiveId = $('#grid-outer').find('.highlighted').data('entityid') || null;
 
-		// einmal komplett leer machen, wenn gewünscht
 		$('#grid-outer').find('.map-bg').remove();
 		$('#grid-outer').find('.entity').remove();
+
+		CityMap.BuildGrid();
+
+		let MinX = 0,
+			MinY = 0,
+			MaxX = 71,
+			MaxY = 71;
 
 		CityMap.metrics = {
 			buildings: 0,
@@ -894,13 +1040,6 @@ let CityMap = {
 		}
 		let StreetsNeeded = 0;
 
-		CityMap.BuildGrid();
-
-		let MinX = 0,
-			MinY = 0,
-			MaxX = 71,
-			MaxY = 71;
-
 		let buildingData;
 		if (FH.ActiveMap === 'OtherPlayer')
 			buildingData = CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData))
@@ -921,7 +1060,7 @@ let CityMap = {
 
 		let unlockedAreas = (FH.ActiveMap === 'OtherPlayer' ? CityMap.OtherPlayer.unlockedAreas : CityMap.Main.unlockedAreas);
 
-		// let heatMap = CityMap.setHeatMapData(buildingData, 'strategy_points');
+		CityMap.buildingData = buildingData;
 
 		// create building elements
 		for (const building of Object.values(buildingData)) {
@@ -957,25 +1096,17 @@ let CityMap = {
 					left: x + 'em',
 					top: y + 'em'
 				})
-				.addClass('entity helperTT ' + building.type)
+				.addClass('entity helperTT ' + building.type + rating)
 				.attr('data-callback_tt','building')
 				.attr('data-era', building.eraName)
 				.attr('data-size', building.size.length + 'x' + building.size.width)
 				.attr('data-id', building.id)
 				.attr('data-title', building.name)
-				.attr('data-meta_id',building.entityId);
+				.attr('data-meta_id',building.entityId)
+				.addClass(noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + isLimited + fromQI + fromGBG);
 
-			if (CityMap.mode === 'normal')
-				f.addClass(noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + rating + isLimited + fromQI + fromGBG);
-			else {
-				f.css({
-					width: xsize + 'em',
-					height: ysize + 'em',
-					left: x + 'em',
-					top: y + 'em',
-					'--intensity': heatMap.get(building.id)
-				}).addClass('heatmap')
-			}
+			if (building.type !== 'street')
+				f.addClass('heatmap');
 
 			// collect metrics for sidebar
 			if (building.type === "street") {
@@ -1088,7 +1219,8 @@ let CityMap = {
 
 		CityMap.initGridDrag();
 		CityMap.getAreas();
-		
+		CityMap.setMode(CityMap.mode);
+
 		$('#grid-outer [data-original-title]').tooltip({
 			container: 'body',
 			html: true,
@@ -1106,13 +1238,18 @@ let CityMap = {
 			let aW = $('<div id="area-state" />');
 			let aS = $('<div id="map-stats" />');
 
-			aW.append( $('<div class="building-count-area" />') );
-			aW.append( $('<p class="too-old-legends" />').hide() );
+			aW.append( $('<div class="building-count-area" />'))
+				.append( $('<p class="too-old-legends" />').hide() );
 			aS.append( $('<div class="building-stats" />') );
 
 			aW.prepend(aS)
-			$('#sidebar').append(aW);
-			$('#sidebar').addClass('main');
+			// switcher label + viewmode-* classes are set by CityMap.setMode()
+			CityMap.find('#sidebar')
+				.append(aW)
+				.append(CityMap.ratingModeSidebar())
+				.addClass(FH.ActiveMap);
+			CityMap.find('.map-rating [data-original-title]').tooltip({container: 'body', html: true});
+			CityMap.updateRatingControls();
 		}
 
 
@@ -1206,10 +1343,10 @@ let CityMap = {
 		
 		let legends = [];
 		
-		legends.push(`<p><span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>`);
-		legends.push(`<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${FH.t('Boxes.CityMap.OlderThan2Era')}<br>`);
-		legends.push(`<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${FH.t('Boxes.CityMap.OlderThan3Era')}<br>`);
-		legends.push(`<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}</p>`);
+		legends.push(`<p><span class="older-1 diagonal"></span> ${$('#map-container .older-1').length} ${FH.t('Boxes.CityMap.OlderThan1Era')}<br>
+					<span class="older-2 diagonal"></span> ${$('#map-container .older-2').length} ${FH.t('Boxes.CityMap.OlderThan2Era')}<br>
+					<span class="older-3 diagonal"></span> ${$('#map-container .older-3').length} ${FH.t('Boxes.CityMap.OlderThan3Era')}<br>
+					<span class="too-old diagonal"></span> ${$('#map-container .too-old').length} ${FH.t('Boxes.CityMap.OlderThan4Era')}</p>`);
 
 		legends.push(`<b>${FH.t('Boxes.CityMap.NextEraRenovation')}</b><br>
 			<img src="${srcLinks.get(`/shared/icons/one_up_kit.png`,true)}" /> 
@@ -3044,7 +3181,7 @@ let CityBuildings = {
 	},
 
 
-	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=true) {	
+	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=false) {	
 		if (FH.ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
@@ -3053,7 +3190,7 @@ let CityBuildings = {
 			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
 			let metaData = FH.Main.CityEntities[building.cityentity_id];
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
-			let newCityEntity = CityBuildings.createBuilding(metaData, era, building,withAllies);
+			let newCityEntity = CityBuildings.createBuilding(metaData, era, building, withAllies);
 
 			if (FH.ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
@@ -3065,7 +3202,7 @@ let CityBuildings = {
 	},
 
 
-	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=true) {	
+	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=false) {	
 		if (typeof(metaData)=="string") {
 			metaData=FH.Main.CityEntities[metaData];
 		}

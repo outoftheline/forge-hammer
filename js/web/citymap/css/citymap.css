@@ -26,7 +26,7 @@
 	display: flex;
 	flex-direction: row;
 	top: 0;
-	right: 240px;
+	right: 260px;
 	left: 0;
 	z-index: 5000;
 	padding: 2px;
@@ -43,7 +43,7 @@
 	overflow: hidden;
 	position: absolute;
 	top: 0;
-	right: 240px;
+	right: 260px;
 	bottom: 0;
 	left: 0;
 	border-right: 2px solid var(--bg-dark);
@@ -59,7 +59,7 @@
 
 #sidebar {
 	position: absolute;
-	width: 240px;
+	width: 260px;
 	padding: 12px;
 	right: 0;
 	top: 0;
@@ -69,15 +69,15 @@
 	box-sizing: border-box;
 }
 
-#sidebar.main #area-state img {
+#sidebar #area-state img {
 	width: 22px;
 }
-#sidebar.main #area-state ul, #sidebar.main #area-state li {
+#sidebar #area-state ul, #sidebar #area-state li {
 	margin: 0;
 	padding: 0;
 }
 
-#sidebar.main #area-state ul + b {
+#sidebar #area-state ul + b {
 	border-top: 1px dotted var(--bg-dark);
 	padding: 5px 0;
 	margin: 5px 0 2px;
@@ -85,23 +85,23 @@
 	display: block;
 }
 
-#sidebar.main #area-state .highlight-map li:hover {
+#sidebar #area-state .highlight-map li:hover {
 	background-color: var(--table-bg-hover);
 	margin: 0 -2px;
 	padding: 0 2px;
 }
 
-#sidebar.main .highlight-map li.active span:first-child {
+#sidebar .highlight-map li.active span:first-child {
 	font-weight: bold;
 }
 
-#sidebar.main #area-state li {
+#sidebar #area-state li {
 	display: inline-flex;
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
 }
-#sidebar.main #area-state li span:last-child {
+#sidebar #area-state li span:last-child {
 	text-align: right;
 }
 #sidebar #area-state li.clickable:hover span:first-child {
@@ -334,16 +334,44 @@
 	transition: all 0.3s ease-in-out;
 }
 
-#grid-outer span.entity.heatmap {
-	--r: 0;
-	--g: 25;
-	--b: 250;
+#grid-outer.mode-efficiency span.entity.heatmap:not(.street) {
+	--heat-low: #d86d02;
+	--heat-mid: #eee;
+	--heat-high: #0012b1;
 
-	background: rgb(
-		calc(255 - ((255 - var(--r)) * var(--intensity))),
-		calc(255 - ((255 - var(--g)) * var(--intensity))),
-		calc(255 - ((255 - var(--b)) * var(--intensity)))
+	--t-low: clamp(0, (0.5 - var(--intensity, 0)) * 2, 1);
+	--t-high: clamp(0, (var(--intensity, 0) - 0.5) * 2, 1);
+
+	background: color-mix(in oklab,
+		color-mix(in oklab, var(--heat-mid), var(--heat-low) calc(var(--t-low) * 100%)),
+		var(--heat-high) calc(var(--t-high) * 100%)
 	);
+	background-image: none !important;
+	color: color-mix(in srgb, #eee calc(clamp(0, (var(--intensity, 0) - 0.75) * 1000, 1) * 100%), rgb(14, 14, 37));
+	text-shadow: none;
+}
+
+#grid-outer.mode-efficiency span.entity.heatmap.heat-zero:not(.street) {
+	background: #717171 repeating-linear-gradient(45deg, transparent 0 4px, #818181 4px 6px) !important;
+}
+
+#grid-outer.mode-efficiency span.entity[data-heat]:not([data-heat=""])::after {
+	content: attr(data-heat);
+	font-size: 0.6em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	opacity: 0;
+}
+
+#grid-outer.mode-efficiency span.entity:not(.street) {
+	box-shadow: inset 0 0 0 1px #0004 !important;
+}
+#grid-outer.mode-efficiency.desaturated span.entity,
+#grid-outer.mode-efficiency #map-buildings.transparent span.entity {
+	filter: none;
+	opacity: 1;
 }
 
 #grid-outer span.map-bg {
@@ -516,9 +544,9 @@
 	padding: 0.3rem;
 }
 
-#citymap-wrapper .mapTopRight {
+#citymap-wrapper .mapTopRight, #city-map-menu-bottom .btn-group {
 	margin-left: auto;
-	width: 170px;
+	width: max-content;
 	text-align: right;
 }
 
@@ -528,6 +556,23 @@
 
 #citymap-wrapper .mapTopRight span {
 	display: inline-block;
+}
+
+.viewmode-efficiency #area-state { display: none; }
+.viewmode-normal .map-rating { display: none; }
+
+#sidebar .viewmode-switcher {
+	display: block;
+	text-align: center;
+	margin-bottom: 8px;
+}
+
+#sidebar .map-rating label {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	font-size: 90%;
+	margin-bottom: 2px;
 }
 
 #area-state p {
@@ -590,7 +635,7 @@
 	justify-content: space-between;
 }
 
-#area-state .building-count-area .ratings span::after {
+#sidebar .ratings span::after {
     content: "➔";
     display: inline-block;
     background: var(--btn-bg);
@@ -601,7 +646,7 @@
     font-weight: normal;
 }
 
-#area-state .building-count-area .ratings span:hover::after {
+#sidebar .ratings span:hover::after {
     filter: contrast(1.2);
 }
 

@@ -81,7 +81,7 @@ let Productions = {
 			"inventorybuildingscore":0.5,
 			"gBs":true,
 			"showLimited":true,
-			"showallies":true
+			"showallies":false
 			}`
 		),
 		{showhighlighted: false}
@@ -2733,7 +2733,6 @@ let Productions = {
 			return;
 		}
 
-		// inventory/ascended tabs make no sense without inventory data (e.g. other players' cities)
 		if (FH.ActiveMap === 'OtherPlayer' && ['inventory','ascended'].includes(Productions.RatingBuildingTab))
 			Productions.RatingBuildingTab = 'everything';
 
@@ -2743,7 +2742,7 @@ let Productions = {
 		let uniqueBuildings = [];
 		let ratedBuildings = [];
 		let h = [];
-		// computed once regardless of tab, so switching tabs afterward is a pure client-side visibility toggle
+		
 		let withAllies = Productions.efficiencySettings.showallies;
 		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData),withAllies));
 		Productions.setChainsAndSets(Productions.BuildingsAll);
