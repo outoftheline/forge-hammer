@@ -2492,7 +2492,8 @@ let ProvinceMap = {
 				dragdrop: true,
 				minimize: true,
 				resize: true,
-			    active_maps:"gg"
+			    active_maps: 'gg',
+				popout: true
 			});
 
 			// add css to the dom
