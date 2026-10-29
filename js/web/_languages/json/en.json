@@ -300,7 +300,7 @@
   "Boxes.CityMap.ViewModeEfficiency": "Efficiency map",
   "Boxes.CityMap.ViewModeEfficiencyExplainer": "The available options are based on your Building Efficiency Rating settings. Change them if you want to compare more / other data.",
   "Boxes.CityMap.ViewModeNormal": "Regular map",
-  "Boxes.CityMap.ViewRatingModifiers": "Include Score modifiers",
+  "Boxes.CityMap.ViewRatingEfficiency": "Use efficiency rating",
   "Boxes.CityMap.ViewRatingWeighted": "Use weighted rating",
   "Boxes.CityMap.WholeArea": "Total Squares",
   "Boxes.CityMap.YourCity": "Your City",

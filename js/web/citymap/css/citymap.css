@@ -87,7 +87,7 @@
 
 #sidebar #area-state .highlight-map li:hover {
 	background-color: var(--table-bg-hover);
-	margin: 0 -2px;
+	margin: 0 -2px 2px;
 	padding: 0 2px;
 }
 
@@ -100,11 +100,18 @@
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
+	margin-bottom: 2px;
+}
+#sidebar #area-state li label {
+	flex-grow: 2;
+	align-items: center;
+	display: inline-flex;
+	gap: 2px;
 }
 #sidebar #area-state li span:last-child {
 	text-align: right;
 }
-#sidebar #area-state li.clickable:hover span:first-child {
+#sidebar #area-state li:hover label {
 	font-weight: bold;
 	color: var(--text-highlight);
 }
@@ -402,7 +409,7 @@
 #grid-outer span.street {
 	background-color: var(--background-color-street) !important;
 }
-#grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before, tr.stellar_capacity td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarCapacityBoost1, tr.W_StellarAgeDiscovery_StellarCapacityBoost1 td:first-child::before {
+#grid-outer span.goods, #grid-outer span.cultural_goods_production, #grid-outer span.stellar_capacity, tr.cultural_goods_production td:first-child::before, tr.stellar_capacity td:first-child::before, #grid-outer span[class*=W_StellarAgeDiscovery_StellarCapacityBoost], tr[class*=W_StellarAgeDiscovery_StellarCapacityBoost] td:first-child::before {
 	background-color: var(--background-color-goods);
 }
 #grid-outer span.culture, tr.culture td:first-child::before {
@@ -411,7 +418,7 @@
 #grid-outer span.main_building, tr.main_building td:first-child::before {
 	background-color: var(--background-color-main_building);
 }
-#grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before, tr.stellar_points td:first-child::before, #grid-outer span.W_StellarAgeDiscovery_StellarPointsBoost1, tr.W_StellarAgeDiscovery_StellarPointsBoost1 td:first-child::before {
+#grid-outer span.production, #grid-outer span.stellar_points, tr.production td:first-child::before, tr.stellar_points td:first-child::before, #grid-outer span[class*=W_StellarAgeDiscovery_StellarPointsBoost], tr[class*=W_StellarAgeDiscovery_StellarPointsBoost] td:first-child::before {
 	background-color: var(--background-color-production);
 }
 #grid-outer span.greatbuilding {
@@ -572,7 +579,6 @@
 	align-items: center;
 	gap: 3px;
 	font-size: 90%;
-	margin-bottom: 2px;
 }
 
 #area-state p {
@@ -627,7 +633,6 @@
 #area-state .building-count-area label {
 	display: block;
 	font-size: 90%;
-	margin-bottom: 5px;
 }
 
 #area-state .building-count-area .ratings {

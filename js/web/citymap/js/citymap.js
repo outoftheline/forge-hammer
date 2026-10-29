@@ -314,7 +314,7 @@ let CityMap = {
 			let wrap = CityMap.find('.map-rating');
 			CityMap.ratingValues = wrap.find('input[data-rating]:checked').map((i, el) => el.value).get();
 			CityMap.ratingPerTile = wrap.find('#maprating-pertile').is(':checked');
-			CityMap.ratingWeighted = wrap.find('#maprating-weighted').is(':checked');
+			CityMap.ratingWeighted = wrap.find('input[name="maprating-mode"]:checked').val() === 'weighted';
 			CityMap.ratingModifiers = wrap.find('#maprating-modifiers').is(':checked');
 			FH.Storage.setItem('CityMapRatingValues', JSON.stringify(CityMap.ratingValues));
 			FH.Storage.setItem('CityMapRatingPerTile', CityMap.ratingPerTile);
@@ -960,9 +960,9 @@ let CityMap = {
 	ratingModeSidebar() {
 		let o = `<div class="map-rating">
 			<div class="bbd py5">
+			<label for="maprating-mode-efficiency"><input type="radio" name="maprating-mode" value="efficiency" id="maprating-mode-efficiency"${!CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingEfficiency')}</label>
+			<label for="maprating-mode-weighted"><input type="radio" name="maprating-mode" value="weighted" id="maprating-mode-weighted"${CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingWeighted')}</label>
 			<label for="maprating-pertile" class="pertile"><input type="checkbox" id="maprating-pertile"${CityMap.ratingPerTile ? ' checked' : ''} /> ${FH.t('Boxes.ProductionsRating.ShowValuesPerTile')}</label>
-			<label for="maprating-weighted" class="weighted"><input type="checkbox" id="maprating-weighted"${CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingWeighted')}</label>
-			<label for="maprating-modifiers" class="modifiers"><input type="checkbox" id="maprating-modifiers"${CityMap.ratingModifiers ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingModifiers')}</label>
 			</div>
 			<div class="bbd">`;
 			
@@ -1288,29 +1288,60 @@ let CityMap = {
 		areaStats.push(`<b>${FH.t('Boxes.CityMap.Highlight')}</b>`)
 		areaStats.push('<ul class="highlight-map">' +
 			((CityMap.metrics.roadlessBuildings > 0) ? 
-				`<li onClick="CityMap.highlightNoStreetBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.roadless')}, ${parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)}" />${CityMap.metrics.roadlessBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.roadlessBuildingsArea}</span></li>` : ``) +
+				`<li data-original-title="${FH.t('Boxes.CityMap.roadless')}, ${parseFloat(100*CityMap.metrics.roadlessBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightNoStreetBuildings">
+					<input type="checkbox" id="highlightNoStreetBuildings" onclick="CityMap.highlightNoStreetBuildings()" />
+					<img src="${srcLinks.get(`/shared/gui/buffbar/buffbar_icon_buff_unconnected.png`,true)}" />${CityMap.metrics.roadlessBuildings}
+				</label>
+				<img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.roadlessBuildingsArea}</li>` : ``) +
 			((CityMap.metrics.gbgBuildings > 0) ? 
-				`<li onClick="CityMap.highlightGBGBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.buildingFromGBG')}, ${parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)}" />${CityMap.metrics.gbgBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.gbgArea}</span></li>` : ``) +
+				`<li data-original-title="${FH.t('Boxes.CityMap.buildingFromGBG')}, ${parseFloat(100*CityMap.metrics.gbgBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightGBGBuildings">
+					<input type="checkbox" id="highlightGBGBuildings" onclick="CityMap.highlightGBGBuildings()" />
+					<img src="${srcLinks.get(`/cash_shop/gui/cash_shop_icon_navi_gbg_selected.png`,true)}" />${CityMap.metrics.gbgBuildings} 
+				</label>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.gbgArea}</span></li>` : ``) +
 			((CityMap.metrics.qiBuildings > 0) ? 
-				`<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.buildingFromQI')}, ${parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)}" />${CityMap.metrics.qiBuildings}</span> <span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.qiArea}</span></li>` : ``) + 
+				`<li onClick="CityMap.highlightQIBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.buildingFromQI')}, ${parseFloat(100*CityMap.metrics.qiBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightQIBuildings">
+					<input type="checkbox" id="highlightQIBuildings" onclick="CityMap.highlightQIBuildings()" />
+					<img src="${srcLinks.get(`/guild_raids/windows/guild_raids_guild_raid_emblem.png`,true)}" />${CityMap.metrics.qiBuildings} 
+				</label>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.qiArea}</span></li>` : ``) + 
 			
 			((CityMap.metrics.limitedBuildings > 0) ? 
-				`<li onClick="CityMap.highlightLimitedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.limited')}, ${parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" />${CityMap.metrics.limitedBuildings}<span class="openList" onclick="CityMap.buildingGroupList('limited')"><img src="${FH.extUrl}images/hud/open-eye.png"></span></span><span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.limitedBuildingsArea}</span></li>` : ``) +
+				`<li data-original-title="${FH.t('Boxes.CityMap.limited')}, ${parseFloat(100*CityMap.metrics.limitedBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightLimitedBuildings">
+					<input type="checkbox" id="highlightLimitedBuildings" onclick="CityMap.highlightLimitedBuildings()" />
+					<img src="${srcLinks.get(`/shared/gui/upgrade/upgrade_icon_limited_building.png`,true)}" />${CityMap.metrics.limitedBuildings}
+					<span class="openList" onclick="CityMap.buildingGroupList('limited')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+				</label>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.limitedBuildingsArea}</span></li>` : ``) +
 				
 			((CityMap.metrics.ascendableBuildings > 0) ? 
-				`<li onClick="CityMap.highlightAscendableBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowAscendableBuildings')}, ${parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)}%"><span><img src="${srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)}" />${CityMap.metrics.ascendableBuildings}<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span></span><span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` : ``) +
+				`<li data-original-title="${FH.t('Boxes.CityMap.ShowAscendableBuildings')}, ${parseFloat(100*CityMap.metrics.ascendableBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightAscendableBuildings">
+					<input type="checkbox" id="highlightAscendableBuildings" onclick="CityMap.highlightAscendableBuildings()" />
+					<img src="${srcLinks.get(`/shared/icons/limited_building_upgrade.png`,true)}" />${CityMap.metrics.ascendableBuildings}
+					<span class="openList" onclick="CityMap.buildingGroupList('acendable')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+				</label>
+				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.ascendableBuildingsArea }</span></li>` : ``) +
 			
 			((CityMap.metrics.fspDisabledBuildings > 0) ? 
-				`<li onClick="CityMap.highlightDecayedBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowDecayedBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-				<span><img src="${srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)}" />${CityMap.metrics.decayedBuildings}</span>
+				`<li data-original-title="${FH.t('Boxes.CityMap.ShowDecayedBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightDecayedBuildings">
+					<input type="checkbox" id="highlightDecayedBuildings" onclick="CityMap.highlightDecayedBuildings()" />
+					<img src="${srcLinks.get(`/shared/icons/limited_building_downgrade.png`,true)}" />${CityMap.metrics.decayedBuildings}
+				</label>
 				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.decayedBuildingsArea}</span></li>` : ``) +
 			
 			((CityMap.metrics.fspDisabledBuildings > 0) ? 
-				`<li onClick="CityMap.highlightFspDisabledBuildings()" class="clickable" data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
-				<span>
-				<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
-				<span class="openList" onclick="CityMap.buildingGroupList('fspDisabled')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
-				</span>
+				`<li data-original-title="${FH.t('Boxes.CityMap.ShowFspDisabledBuildings')}, ${parseFloat(100*CityMap.metrics.fspDisabledBuildings/CityMap.metrics.buildings).toFixed(1)}%">
+				<label class="clickable" for="highlightFspDisabledBuildings">
+					<input type="checkbox" id="highlightFspDisabledBuildings" onclick="CityMap.highlightFspDisabledBuildings()" />
+					<img src="${srcLinks.get(`/shared/icons/icon_fsp_disabled.png`,true)}" />${CityMap.metrics.fspDisabledBuildings}
+					<span class="openList" onclick="CityMap.buildingGroupList('fspDisabled')"><img src="${FH.extUrl}images/hud/open-eye.png"></span>
+				</label>
 				<span><img src="${srcLinks.get(`/shared/gui/constructionmenu/icon_expansion.png`,true)}" />${CityMap.metrics.fspDisabledBuildingsArea}</span></li>` : ``)
 		);
 

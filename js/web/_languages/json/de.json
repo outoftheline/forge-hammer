@@ -299,7 +299,7 @@
   "Boxes.CityMap.ViewModeEfficiency": "Effizienz-Karte",
   "Boxes.CityMap.ViewModeEfficiencyExplainer": "Die verfügbaren Optionen werden aus den Einstellungen aus der Gebäude-Effizienz-Bewertung genommen. Ändere dort die Einstellungen, wenn du mehr Werte vergleichen möchtest.",
   "Boxes.CityMap.ViewModeNormal": "Normale Karte",
-  "Boxes.CityMap.ViewRatingModifiers": "Score-Modifikatoren einberechnen",
+  "Boxes.CityMap.ViewRatingEfficiency": "Effizienz-Bewertung",
   "Boxes.CityMap.ViewRatingWeighted": "Gewichtete Bewertung",
   "Boxes.CityMap.WholeArea": "Gesamte Fläche",
   "Boxes.CityMap.YourCity": "Deine Stadt",
