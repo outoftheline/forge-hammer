@@ -301,6 +301,7 @@
   "Boxes.CityMap.ViewModeNormal": "Normale Karte",
   "Boxes.CityMap.ViewRatingEfficiency": "Effizienz-Bewertung",
   "Boxes.CityMap.ViewRatingWeighted": "Gewichtete Bewertung",
+  "Boxes.CityMap.ViewRatingWeightedExplainer": "Diese Bewertung erstellt einen Durchschnitt anhand der Gebäude in deiner Stadt und markiert alles bessere in blau, alles schlechtere in orange",
   "Boxes.CityMap.WholeArea": "Gesamte Fläche",
   "Boxes.CityMap.YourCity": "Deine Stadt",
   "Boxes.CloseBox.AutoHideOnBattle": "Alles Ausblenden beim Kampf",

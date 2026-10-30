@@ -75,7 +75,6 @@ let CityMap = {
 	ratingValues: [],
 	ratingPerTile: true,
 	ratingWeighted: false, // false: relative to city average, true: weighted like the efficiency rating
-	ratingModifiers: true, // include score modifiers (weighted + per tile only)
 	buildingData: null,
 	heatData: null,
 
@@ -121,8 +120,7 @@ let CityMap = {
 		let mode = FH.Storage.getItem('CityMapMode'),
 			ratingValues = FH.Storage.getItem('CityMapRatingValues'),
 			ratingPerTile = FH.Storage.getItem('CityMapRatingPerTile'),
-			ratingWeighted = FH.Storage.getItem('CityMapRatingWeighted'),
-			ratingModifiers = FH.Storage.getItem('CityMapRatingModifiers');
+			ratingWeighted = FH.Storage.getItem('CityMapRatingWeighted');
 		if (mode === 'normal' || mode === 'efficiency')
 			CityMap.mode = mode;
 		if (null !== ratingValues) {
@@ -135,8 +133,6 @@ let CityMap = {
 			CityMap.ratingPerTile = (ratingPerTile === 'true' || ratingPerTile === true);
 		if (null !== ratingWeighted)
 			CityMap.ratingWeighted = (ratingWeighted === 'true' || ratingWeighted === true);
-		if (null !== ratingModifiers)
-			CityMap.ratingModifiers = (ratingModifiers === 'true' || ratingModifiers === true);
 
 		let Data = FH.Main.CityMapData;
 		if (FH.ActiveMap === "cultural_outpost" || FH.ActiveMap === "era_outpost" || FH.ActiveMap === "stellar_city")
@@ -315,11 +311,9 @@ let CityMap = {
 			CityMap.ratingValues = wrap.find('input[data-rating]:checked').map((i, el) => el.value).get();
 			CityMap.ratingPerTile = wrap.find('#maprating-pertile').is(':checked');
 			CityMap.ratingWeighted = wrap.find('input[name="maprating-mode"]:checked').val() === 'weighted';
-			CityMap.ratingModifiers = wrap.find('#maprating-modifiers').is(':checked');
 			FH.Storage.setItem('CityMapRatingValues', JSON.stringify(CityMap.ratingValues));
 			FH.Storage.setItem('CityMapRatingPerTile', CityMap.ratingPerTile);
 			FH.Storage.setItem('CityMapRatingWeighted', CityMap.ratingWeighted);
-			FH.Storage.setItem('CityMapRatingModifiers', CityMap.ratingModifiers);
 			CityMap.updateRatingControls();
 			CityMap.applyHeatMap();
 		});
@@ -724,6 +718,8 @@ let CityMap = {
 
 
 	setOutpostBuilding: (data) => {
+		if (FH.ActiveMap === "stellar_city") return CityMap.setStellarBuilding(data);
+
 		let production = data.components?.AllAge?.production?.options;
 		if (production !== undefined && production.length === 1) // goods and units have multiple production options, rest has one
 			production = data.components?.AllAge?.production?.options[0]?.products[0]?.playerResources?.resources;
@@ -739,24 +735,15 @@ let CityMap = {
 		let populationName = data.id.split("_")[1].toLowerCase(); // id parts: vikings, japanese, egyptians, aztecs, muhgals, polynesia, pirates
 		/// era settlements
 		if (FH.ActiveMap === "era_outpost") populationName = "colonists";
-		if (FH.ActiveMap === "stellar_city") populationName = "stel_crew";
 
 		// for buildings adding pop
-		let population = 0;
-		if (FH.ActiveMap !== "stellar_city") {
-			population = Object.keys(data.staticResources?.resources).find(x => x.includes(populationName))
-			population = data.staticResources?.resources[population];
-		}
-		else {
-			population = data.components?.AllAge?.staticResources?.resources?.resources[populationName];
-		}
+		let population = Object.keys(data.staticResources?.resources||{}).find(x => x.includes(populationName))
+		population = data.staticResources?.resources[population];
 
 		// for buildings requiring pop
 		if (population === undefined) {
-			if (FH.ActiveMap !== "stellar_city") {
-				population = Object.keys(data.requirements?.cost?.resources).find(x => x.includes(populationName))
-				population = data.requirements.cost?.resources[populationName]*-1;
-			}
+			population = Object.keys(data.requirements?.cost?.resources||{}).find(x => x.includes(populationName))
+			population = data.requirements?.cost?.resources[populationName]*-1;
 		}
 		let diplomacy = data.staticResources?.resources?.diplomacy || 0;
 
@@ -764,30 +751,52 @@ let CityMap = {
 		if (FH.ActiveMap === "cultural_outpost")
 			building = {
 				name: data.name,
-				population: population || 0,
-				production: production || null,
-				diplomacy: diplomacy,
 				type: data.type,
 				entityId: data.asset_id,
+				attributes: {
+					population: population || 0,
+					production: production || null,
+					diplomacy: diplomacy
+				}
 			};
-		else if (FH.ActiveMap === "era_outpost")
+		else if (FH.ActiveMap === "era_outpost") {
 			building = {
 				name: data.name,
-				population: population || 0,
-				production: production || null,
-				diplomacy: null,
 				type: data.type,
 				entityId: data.asset_id,
+				attributes: {
+					population: population || 0,
+					production: production || null
+				}
 			};
-		else if (FH.ActiveMap === "stellar_city")
-			building = {
-				name: data.name,
+			console.log(building);
+		}
+
+		return building;
+	},
+
+	setStellarBuilding: (data) => {
+		let production = data.components?.AllAge?.production?.options[0].products[0].playerResources.resources;
+		if (data.available_products)
+			production = data.available_products[0]?.product?.resources;
+
+		let boosts = null;
+		if (data.components?.AllAge?.boosts?.boosts[0].type)
+			boosts = {[data.components?.AllAge?.boosts?.boosts[0].type]: data.components?.AllAge?.boosts?.boosts[0].value};
+
+		let populationName = "stel_crew";
+		let population = data.components?.AllAge?.staticResources?.resources?.resources[populationName];
+
+		let building = {
+			name: data.name,
+			type: data.type || data.asset_id,
+			entityId: data.asset_id,
+			attributes: {
+				boosts,
 				population: population || 0,
-				production: production || null,
-				diplomacy: null,
-				type: data.type || data.asset_id,
-				entityId: data.asset_id,
-			};
+				production: production || null
+			}
+		};
 
 		return building;
 	},
@@ -831,38 +840,43 @@ let CityMap = {
 		};
 		for (let building of uniqueBuildings) {
 			if (building.type !== "impediment" && building.type !== "street" && building.type !== "off_grid") {				
-				out += "<tr class='"+building.type+"'>" + 
-					"<td class='tdmin'><div class='building' data-original-title='"+building.name+"'>" + 
-						"<img src='" + srcLinks.getBuilding(building.entityId) + "'>" +
-					"</div></td>" +
-					"<td class='tdmin'>" + (building.count>1?"x"+building.count:"") + "</td>";
-				out += '<td class="textright">' + building.population + "</td>";
-				out += '<td class="textright">' + (building.diplomacy>0?building.diplomacy:'') + "</td>";
-				out += "<td>";
-				if (building.production !== null) {
-					for (let [prod, value] of Object.entries(building.production)) {
-						out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+" ";
+				out += `<tr class="${building.type}"> 
+					<td class="tdmin"><div class="building" data-original-title="${building.name}"> 
+						<img src="${srcLinks.getBuilding(building.entityId)}">
+					</div></td>
+					<td class="tdmin">${(building.count>1?"x"+building.count:"")}</td>
+					<td class="textright">${building.attributes.population}</td>
+					<td class="textright">${(building.attributes.diplomacy && building.attributes.diplomacy>0?building.attributes.diplomacy:'')}</td>
+					<td>`;
+					if (building.attributes.production !== null) {
+						for (let [prod, value] of Object.entries(building.attributes.production)) {
+							out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+" ";
+						}
 					}
-				}
-				out += "</td></tr>";
+					if (building.attributes.boosts) {
+						for (let [prod, value] of Object.entries(building.attributes.boosts)) {
+							out += srcLinks.icons(prod)+FH.HTML.Format(Math.round(value))+"% ";
+						}
+					}
+				out += `</td></tr>`;
 
 				if (building.diplomacy>0) {
-					totals.diplomacy += building.diplomacy*building.count;
+					totals.diplomacy += building.attributes.diplomacy*building.count;
 				}
-				totals.population += building.population*building.count;
+				totals.population += building.attributes.population*building.count;
 			}
 		}
 
 		let meta = "";
 		if (totals.diplomacy > 0) {
 			meta += `<div class="metaSums p5 text-center">
-						<i>${FH.t('Boxes.CityMap.QIHint')}</i><br/> 
-						<span class="population"></span>${totals.population}
-						<span class="goods-sprite diplomacy"></span>${totals.diplomacy}
-					</div>`;
+				<i>${FH.t('Boxes.CityMap.QIHint')}</i><br/> 
+				<span class="population"></span>${totals.population}
+				<span class="goods-sprite diplomacy"></span>${totals.diplomacy}
+			</div>`;
 		}
 
-		out += "</tbody></table>";
+		out += `</tbody></table>`;
 		return meta + out;
 	},
 
@@ -961,7 +975,7 @@ let CityMap = {
 		let o = `<div class="map-rating">
 			<div class="bbd py5">
 			<label for="maprating-mode-efficiency"><input type="radio" name="maprating-mode" value="efficiency" id="maprating-mode-efficiency"${!CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingEfficiency')}</label>
-			<label for="maprating-mode-weighted"><input type="radio" name="maprating-mode" value="weighted" id="maprating-mode-weighted"${CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingWeighted')}</label>
+			<label for="maprating-mode-weighted"><input type="radio" name="maprating-mode" value="weighted" id="maprating-mode-weighted"${CityMap.ratingWeighted ? ' checked' : ''} /> ${FH.t('Boxes.CityMap.ViewRatingWeighted')} <i class="info-tip" data-original-title="${FH.t('Boxes.CityMap.ViewRatingWeightedExplainer')}">i</i></label>
 			<label for="maprating-pertile" class="pertile"><input type="checkbox" id="maprating-pertile"${CityMap.ratingPerTile ? ' checked' : ''} /> ${FH.t('Boxes.ProductionsRating.ShowValuesPerTile')}</label>
 			</div>
 			<div class="bbd">`;
@@ -1071,14 +1085,14 @@ let CityMap = {
 			xsize = (building.size.width * CityMap.map.gridSize),
 			ysize = (building.size.length * CityMap.map.gridSize)
 
-			let noStreet = (building.needsStreet === 0 ? ' noStreet' : '');
-			let isLimited = (building.isLimited ? ' isLimited' : '');
-			let fromQI = (building.entityId.includes("_GR") ? ' fromQI' : '');
-			let fromGBG = (building.entityId.includes("_GBG") ? ' fromGBG' : '');
-			let canAscend = (await CityBuildings.canAscend(building.entityId) ? ' ascendable' : '');
-			let isDecayed = (building.state.isDecayed ? ' decayed' : '');
-			let isNotPolivated = (building.state.isPolivated === false ? ' notPolivated' : '');
-			let isFspDisabled = (building.isInstantFinishDisabled ? ' fspDisabled' : '');
+			let noStreet = (building.needsStreet === 0 ? ' noStreet' : ''),
+				isLimited = (building.isLimited ? ' isLimited' : ''),
+				fromQI = (building.entityId.includes("_GR") ? ' fromQI' : ''),
+				fromGBG = (building.entityId.includes("_GBG") ? ' fromGBG' : ''),
+				canAscend = (await CityBuildings.canAscend(building.entityId) ? ' ascendable' : ''),
+				isDecayed = (building.state.isDecayed ? ' decayed' : ''),
+				isNotPolivated = (building.state.isPolivated === false ? ' notPolivated' : ''),
+				isFspDisabled = (building.isInstantFinishDisabled ? ' fspDisabled' : '');
 
 			let isCollectable = '';
 			if (building.state.name == "collectable") {
@@ -1096,14 +1110,15 @@ let CityMap = {
 					left: x + 'em',
 					top: y + 'em'
 				})
-				.addClass('entity helperTT ' + building.type + rating)
-				.attr('data-callback_tt','building')
-				.attr('data-era', building.eraName)
-				.attr('data-size', building.size.length + 'x' + building.size.width)
-				.attr('data-id', building.id)
-				.attr('data-title', building.name)
-				.attr('data-meta_id',building.entityId)
-				.addClass(noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + isLimited + fromQI + fromGBG);
+				.attr({
+					'data-id': building.id,
+					'data-callback_tt':'building',
+					'data-era': building.eraName,
+					'data-size': building.size.length + 'x' + building.size.width,
+					'data-title': building.name,
+					'data-meta_id': building.entityId
+				})
+				.addClass('entity helperTT ' + building.type + rating + noStreet + isNotPolivated + isCollectable + canAscend + isDecayed + isFspDisabled + isLimited + fromQI + fromGBG);
 
 			if (building.type !== 'street')
 				f.addClass('heatmap');

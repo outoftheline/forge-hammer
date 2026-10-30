@@ -302,6 +302,7 @@
   "Boxes.CityMap.ViewModeNormal": "Regular map",
   "Boxes.CityMap.ViewRatingEfficiency": "Use efficiency rating",
   "Boxes.CityMap.ViewRatingWeighted": "Use weighted rating",
+  "Boxes.CityMap.ViewRatingWeightedExplainer": "This calculates an average from your city buildings and highlights everything better than average in blue and everything worse than average in orange",
   "Boxes.CityMap.WholeArea": "Total Squares",
   "Boxes.CityMap.YourCity": "Your City",
   "Boxes.CloseBox.AutoHideOnBattle": "Auto hide all on battle",
