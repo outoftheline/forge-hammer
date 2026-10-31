@@ -292,6 +292,10 @@
     "r": "Collectable soon: __hours__ hours"
   },
   "Boxes.CityMap.CopyMetaInfos": "Stadsindeling data kopiëren",
+  "Boxes.CityMap.cultural_goods_production": {
+    "s": "Culturele Goederen",
+    "r": "Cultural Goods"
+  },
   "Boxes.CityMap.culture": "Culturele",
   "Boxes.CityMap.decoration": "Decoraties",
   "Boxes.Citymap.Efficiency": "Efficiëntie",
@@ -954,6 +958,10 @@
     "s": "meer",
     "r": "more"
   },
+  "Boxes.GuildFights.GBGTargetsPosition": {
+    "s": "Positie voor doelen",
+    "r": "Position for targets"
+  },
   "Boxes.GuildFights.GBGTargetsPositionBottom": {
     "s": "onder",
     "r": "bottom"
@@ -965,6 +973,10 @@
   "Boxes.GuildFights.GBGTargetsPositionTop": {
     "s": "boven",
     "r": "top"
+  },
+  "Boxes.GuildFights.GBGTargetsShow": {
+    "s": "Doelen weergeven",
+    "r": "Show targets"
   },
   "Boxes.GuildFights.GuildResults": {
     "s": "Gilderesultaten",
@@ -985,6 +997,10 @@
   "Boxes.GuildFights.SaveMessage.Title": "Opgeslagen!",
   "Boxes.GuildFights.SaveSettings": "Opslaan",
   "Boxes.GuildFights.SelectAll": "Alles selecteren",
+  "Boxes.GuildFights.serverOffset": {
+    "s": "Compensatie voor servertijd (minuten)",
+    "r": "Offset to servertime (minutes)"
+  },
   "Boxes.GuildFights.SetAlert": "Zet alarm",
   "Boxes.GuildFights.ShowAdjacentSectors": "Laat alleen de aftelling van aanliggende sectoren zien",
   "Boxes.GuildFights.ShowLogButton": "Toon snapshot log knop",
@@ -992,8 +1008,20 @@
   "Boxes.GuildFights.ShowOwnSectors": "Laat de aftelling van eigen sectoren zien",
   "Boxes.GuildFights.ShowProgressFilter": "Toon voortgang filter",
   "Boxes.GuildFights.ShowRoundSelector": "Toon GSP selectie",
+  "Boxes.GuildFights.ShowServerTime": {
+    "s": "Geef tijd weer in server time",
+    "r": "Display times in server time"
+  },
+  "Boxes.GuildFights.ShowTileColors": {
+    "s": "Kopieer aanvalskleuren",
+    "r": "Copy attack colors"
+  },
   "Boxes.GuildFights.SnapshotLog": "Snapshot Log",
   "Boxes.GuildFights.SnapShotLogDisclaimer": "Disclaimer: Deze gegevens zijn gebaseerd op jouw verzamelde data. De hier getoonde cijfers zijn waarschijnlijk niet 100% nauwkeurig. Je zou de lijst om middernacht moeten openen om ze correct te krijgen.",
+  "Boxes.GuildFights.Stats.ForecastProjected": {
+    "s": "geprojecteerd",
+    "r": "projected"
+  },
   "Boxes.GuildFights.Stats.Open": {
     "s": "Statistieken",
     "r": "Stats"
@@ -1002,6 +1030,14 @@
     "s": "Overwinningspunten",
     "r": "Victory Points"
   },
+  "Boxes.GuildFights.Stats.TabPlayers": {
+    "s": "Spelersvoortgang",
+    "r": "Player progress"
+  },
+  "Boxes.GuildFights.Stats.Title": {
+    "s": "GSP statistieken",
+    "r": "GBG Stats"
+  },
   "Boxes.GuildFights.Stats.TTPoints": {
     "s": "OP",
     "r": "VP"
@@ -1009,6 +1045,10 @@
   "Boxes.GuildFights.Stats.TTRate": {
     "s": "OP/uur",
     "r": "VP/h"
+  },
+  "Boxes.GuildFights.Stats.TTRateBasis": {
+    "s": "(__hours__ h)",
+    "r": "(__hours__ h)"
   },
   "Boxes.GuildFights.Switch": "Wissel weergave",
   "Boxes.GuildFights.Time": "om",
@@ -1058,6 +1098,10 @@
   "Boxes.GuildMemberStat.MaxLevel": "Maximum level",
   "Boxes.GuildMemberStat.Member": "Lid",
   "Boxes.GuildMemberStat.MemberActiviy": "Leden activiteit",
+  "Boxes.GuildMemberStat.MemberDetail.Average": {
+    "s": "Gemiddelde in __seasons__ seizoenen",
+    "r": "Average in __seasons__ seasons"
+  },
   "Boxes.GuildMemberStat.MemberLeavedGuild": "Speler is geen lid meer van de gilde.",
   "Boxes.GuildMemberStat.MemberWithoutGB": "Leden zonder __greatbuilding__",
   "Boxes.GuildMemberStat.MinLevel": "Minimum niveau",
@@ -1090,7 +1134,7 @@
   "Boxes.HiddenRewards.Title": "Incidenten overzicht",
   "Boxes.HiddenRewards.twolaneWarning": "Als een incident op een 2-baans weg wordt aangegeven moet er wel een 2-baans weg gebouwd zijn om deze te kunnen inzamelen!",
   "Boxes.idleGame.ActiveTasks": "Actieve Collectie Taken",
-  "Boxes.idleGame.AlertSetText": "Timer ingesteld op __hours__ uren en __minutes__ minuten",
+  "Boxes.idleGame.AlertSetText": "Timer ingesteld op __uren__ uren en __minuten__ minuten",
   "Boxes.idleGame.AlertText": "Timer is afgelopen",
   "Boxes.idleGame.B": "Miljard (B)",
   "Boxes.idleGame.BuildingUpgrades": "Gebouw upgrade kosten",
@@ -1127,6 +1171,14 @@
   "Boxes.Infobox.Messages.GildFightOccupied": "Provincie <span style=\"color:#ffb539\">__provinceName__</span> is veroverd door <span style=\"color:__attackerColor__;text-shadow: 0 1px 1px __attackerShadow__\">__attackerName__</span> en is vergrendeld tot __untilOccupied__.",
   "Boxes.Infobox.Messages.LevelUp": "__player__'s __building__ heeft niveau __level__ bereikt.<br>Je hebt plaats <strong>__rank__</strong> behaald en ontving <strong>__fps__</strong> FP terug.",
   "Boxes.Infobox.Messages.MsgBuilding": "__building__ - Niveau __level__",
+  "Boxes.Infobox.Messages.QINodeFinished": {
+    "s": "<strong>__id__</strong> was voltooid door __player__.",
+    "r": "<strong>__id__</strong> was completed by __player__."
+  },
+  "Boxes.Infobox.Messages.QINodeProgress": {
+    "s": "<strong>__id__</strong> heeft __points__ progressie bereikt.",
+    "r": "<strong>__id__</strong> has reached __points__ progress."
+  },
   "Boxes.Infobox.Messages.Trade": "<strong>__player__</strong> heeft jouw aanbieding __offerValue__ __offer__ for __needValue__ __need__ geaccepteerd.",
   "Boxes.Infobox.Messages.Welcome": "Welkom in de <strong>Infobox</strong>! Terwijl dit venster openstaat zal het opvullen met achtergrondinformatie (zoals chat berichten, aanvallen in GSP en biedingen in de veiling)",
   "Boxes.Infobox.ResetBox": "Venster opschonen",
@@ -1287,7 +1339,19 @@
   "Boxes.MergerGame.Status": "Status",
   "Boxes.MergerGame.Status.Title": "De huidige status van het spel",
   "Boxes.MergerGame.targetProgress": "Doel vooruitgang",
+  "Boxes.MergerGame.TaskReady": {
+    "s": "Verzamel Taak!",
+    "r": "Collect Task!"
+  },
   "Boxes.MergerGame.useAverage": "Gebruik deze waarde in plaats van de werkelijke resetkosten (0 betekent uitgeschakeld)",
+  "Boxes.MoppelHelper.ActivateButton": {
+    "s": "Activeer hier",
+    "r": "Activate here"
+  },
+  "Boxes.MoppelHelper.ActivateDesc": {
+    "s": "Inactief, start eerst met het volgen van de progressie! Sluit en heropen hierna dit menu.",
+    "r": "Inactive, please activate tracking first! Then close and open this window again"
+  },
   "Boxes.MoppelHelper.Attacks": "Aanvallen",
   "Boxes.MoppelHelper.CityProtected": "Deze speler's stad kan niet worden aangevallen",
   "Boxes.MoppelHelper.Columns": "Kolommen",
@@ -1331,6 +1395,22 @@
   "Boxes.Negotiation.TryContinue": "Onderhandel zelf verder",
   "Boxes.Negotiation.TryEnd": "Geen beurten meer",
   "Boxes.Negotiation.WrongGoods": "Verkeerde goederen geselecteerd, maak de onderhandeling handmatig af",
+  "Boxes.Notes.Add": {
+    "s": "Notitie toevoegen",
+    "r": "Add note"
+  },
+  "Boxes.Notes.NewHeadline": {
+    "s": "Voeg een titel toe",
+    "r": "Add a title"
+  },
+  "Boxes.Notes.NewText": {
+    "s": "Type je notitie hier\n\nStart een regel met [] voor een selectievakje, [*] voor gevinkte versie.",
+    "r": "Type your note here.&#10;&#10;Start a line with [] for a checkbox, [*] for a checked one."
+  },
+  "Boxes.Notes.Title": {
+    "s": "Notities en To Do's",
+    "r": "Notes and To Dos"
+  },
   "Boxes.OtherGuildActivity.Title": "Actieve Gildeleden",
   "Boxes.Outpost.DescInStock": "Beschikbaar",
   "Boxes.Outpost.DescRequired": "Nodig",
@@ -1396,6 +1476,10 @@
   "Boxes.PlayerProfile.DaysPlayed": "__number__ dagen geleden begonnen met spelen",
   "Boxes.PlayerProfile.NoSettlementsFinished": "Nog geen Nederzettingen afgerond.",
   "Boxes.PlayerProfile.QIBoosts": "QI Boosts",
+  "Boxes.PlayerProfile.Tooltip": {
+    "s": "Open Profieloverzicht",
+    "r": "Open Profile Summary"
+  },
   "Boxes.Popgame.Warning": "Als er geen tool is geselecteerd, is het gebied eronder doorklikbaar - klikken heeft interactie met het spel!",
   "Boxes.PowerLeveling.CopyValues": "Kopieer waardes",
   "Boxes.PowerLeveling.DoubleCollection": "Dubbele verzameling",
@@ -1424,9 +1508,17 @@
   "Boxes.Productions.Done": "Klaar",
   "Boxes.Productions.EmptyList": "Er zijn geen gebouwen in deze categorie.",
   "Boxes.Productions.FilterTable": "Filter gebouwen",
+  "Boxes.Productions.fp_boost": {
+    "s": "FP boost",
+    "r": "FP boost"
+  },
   "Boxes.Productions.fragments": "Fragmenten",
   "Boxes.Productions.GoodEraTotal": "Totaal",
   "Boxes.Productions.goods": "Goederen",
+  "Boxes.Productions.goods_boost": {
+    "s": "Goederenboost",
+    "r": "Goods boost"
+  },
   "Boxes.Productions.goods_current": "Huidig tijdperk goederen",
   "Boxes.Productions.goods_next": "Volgend tijdperk goederen",
   "Boxes.Productions.goods_previous": "Vorig tijdperk goederen",
@@ -1474,6 +1566,10 @@
   "Boxes.Productions.Units": "Eenheden",
   "Boxes.ProductionsRating.AddBuilding": "Voeg Speciaal Gebouw toe",
   "Boxes.ProductionsRating.AddBuildings": "Voeg geselecteerde gebouwen toe",
+  "Boxes.ProductionsRating.AdvancedAddValue": {
+    "s": "Toevoegen",
+    "r": "Add"
+  },
   "Boxes.ProductionsRating.Best": {
     "s": "Beste",
     "r": "Best"
@@ -1498,6 +1594,10 @@
   "Boxes.ProductionsRating.Filter": "Zoek",
   "Boxes.ProductionsRating.FindBuilding": "Zoek",
   "Boxes.ProductionsRating.FindSpecialBuilding": "Vind Speciaal Gebouw",
+  "Boxes.ProductionsRating.Hide": {
+    "s": "Verbergen",
+    "r": "Hide"
+  },
   "Boxes.ProductionsRating.HighlightsExplained": "Gebouwen markeren: Klik op een willekeurige rij om de gebouwen te selecteren die je gemakkelijker wilt vergelijken. Zoekresultaten worden automatisch gemarkeerd.",
   "Boxes.ProductionsRating.ModifierAddBuilding": {
     "s": "Gebouw toevoegen",
@@ -1623,6 +1723,10 @@
     "s": "Kosten",
     "r": "Costs"
   },
+  "Boxes.ShopAssist.Full": {
+    "s": "Vol",
+    "r": "Full"
+  },
   "Boxes.ShopAssist.Inventory": {
     "s": "Inventaris",
     "r": "Inventory"
@@ -1642,6 +1746,14 @@
   "Boxes.ShopAssist.onlyFavourites": {
     "s": "Alleen favorieten",
     "r": "Only Favorites"
+  },
+  "Boxes.ShopAssist.onlyUnlocked": {
+    "s": "Enkel Ontgrendeld",
+    "r": "Only Unlocked"
+  },
+  "Boxes.ShopAssist.Shop": {
+    "s": "Item winkel",
+    "r": "Item Shop"
   },
   "Boxes.Stats.BtnAll": "Alle",
   "Boxes.Stats.BtnAllPlayableEras": "Alle tijdperken",
@@ -1707,6 +1819,18 @@
   "Boxes.Technologies.NoTechs": "Je hebt het einde van dit tijdperk bereikt",
   "Boxes.Technologies.Resource": "Benodigdheden",
   "Boxes.Technologies.Title": "Onderzoekskosten voor",
+  "Boxes.Tooltip.Building.allyRooms": {
+    "s": "Historische Bondgenotenkamers",
+    "r": "Historical Ally Rooms"
+  },
+  "Boxes.Tooltip.Building.canMotivate": {
+    "s": "kan worden gemotiveerd",
+    "r": "can be motivated"
+  },
+  "Boxes.Tooltip.Building.canPolish": {
+    "s": "kan worden opgeknapt",
+    "r": "can be polished"
+  },
   "Boxes.Tooltip.Building.costs": {
     "s": "Kosten",
     "r": "Costs"
@@ -1715,9 +1839,21 @@
     "s": "Uniek Gebouw",
     "r": "Unique Building"
   },
+  "Boxes.Tooltip.Building.noPlunder": {
+    "s": "kan niet worden geplunderd",
+    "r": "can not be plundered"
+  },
+  "Boxes.Tooltip.Building.perEra": {
+    "s": "per Tijdperk",
+    "r": "per Era"
+  },
   "Boxes.Tooltip.Building.produces": {
     "s": "Produceert",
     "r": "Produces"
+  },
+  "Boxes.Tooltip.Building.provides": {
+    "s": "Biedt",
+    "r": "Provides"
   },
   "Boxes.Tooltip.Building.road": {
     "s": "Weg vereist",
@@ -1727,9 +1863,37 @@
     "s": "Tweebaansweg vereist",
     "r": "2-lane road required"
   },
+  "Boxes.Tooltip.Building.traits": {
+    "s": "Vaardigheden",
+    "r": "Traits"
+  },
+  "Boxes.Tooltip.Building.when": {
+    "s": "Wanneer",
+    "r": "when"
+  },
+  "Boxes.Translation.CopyJSON": {
+    "s": "Kopieer JSON",
+    "r": "Copy JSON"
+  },
+  "Boxes.Translation.Key": {
+    "s": "Key",
+    "r": "Key"
+  },
   "Boxes.Translation.Reference": {
     "s": "Referentie",
     "r": "Reference"
+  },
+  "Boxes.Translation.Reference.Once": {
+    "s": "Kopieer referentie tekst eenmaal",
+    "r": "Copy reference text once"
+  },
+  "Boxes.Translation.ReferenceLanguage": {
+    "s": "Referentie taal",
+    "r": "Reference Language"
+  },
+  "Boxes.Translation.SearchPlaceholder": {
+    "s": "Zoeken...",
+    "r": "Search..."
   },
   "Boxes.Translation.Target": {
     "s": "Tekst",
@@ -1789,6 +1953,10 @@
   "Date": "DD-MM-YY",
   "DateShort": "DD-MMM",
   "DateTime": "DD-MM-YY HH:mm:ss a",
+  "DateTimeShort": {
+    "s": "DD/MMM, HH:mm",
+    "r": "DD/MMM, HH:mm"
+  },
   "DBCreationWarning.CloseOverlay": {
     "s": "Sluiten",
     "r": "Close"
@@ -1827,6 +1995,14 @@
   "Eras.22.short": "RTT",
   "Eras.23": "Ruimtetijdperk Ruimte Hub",
   "Eras.23.short": "RTRH",
+  "Eras.24": {
+    "s": "Stellair Tijdperk Ontdekking",
+    "r": "Stellar Age Discovery"
+  },
+  "Eras.24.short": {
+    "s": "STO",
+    "r": "SAD"
+  },
   "Eras.3": "IJzertijd",
   "Eras.3.short": "IJT",
   "Eras.4": "Vroege middeleeuwen",
@@ -1850,21 +2026,53 @@
     "s": "Geen tijdperk",
     "r": "No age"
   },
+  "General.After": {
+    "s": "Na",
+    "r": "After"
+  },
+  "General.AttAttacker": {
+    "s": "Rode Aanval",
+    "r": "Red Attack"
+  },
+  "General.AttDefender": {
+    "s": "Rode Verdediging",
+    "r": "Red Defense"
+  },
   "General.Battle": {
     "s": "Gevechten",
     "r": "Battle"
+  },
+  "General.Before": {
+    "s": "Voor",
+    "r": "Before"
   },
   "General.Boost": {
     "s": "Boost",
     "r": "Boost"
   },
+  "General.Buildings": {
+    "s": "Gebouwen",
+    "r": "Buildings"
+  },
   "General.Cancel": {
     "s": "Annuleren",
     "r": "Cancel"
   },
+  "General.Change": {
+    "s": "Aanpassen",
+    "r": "Change"
+  },
   "General.Choose": {
     "s": "Kies alsjeblieft",
     "r": "Please choose"
+  },
+  "General.City": {
+    "s": "Stad",
+    "r": "City"
+  },
+  "General.Coins": {
+    "s": "Munten",
+    "r": "Coins"
   },
   "General.Date": {
     "s": "Datum",
@@ -1882,16 +2090,36 @@
   "General.Good": "Goed",
   "General.Goods": "Goederen",
   "General.Guild": "Gilde",
+  "General.Inventory": {
+    "s": "Inventaris",
+    "r": "Inventory"
+  },
   "General.Items": {
     "s": "Voorwerpen",
     "r": "Items"
   },
   "General.Level": "Niveau",
+  "General.Medals": {
+    "s": "Medailles",
+    "r": "Medals"
+  },
   "General.Open": {
     "s": "Openen",
     "r": "Open"
   },
   "General.Player": "Speler",
+  "General.PopulationNet": {
+    "s": "Beschikbare bevolking",
+    "r": "Available population"
+  },
+  "General.PopulationProvided": {
+    "s": "Totaal aan bevolking",
+    "r": "Total population"
+  },
+  "General.PopulationRequired": {
+    "s": "Benodigde bevolking",
+    "r": "Required population"
+  },
   "General.Reset": "Reset",
   "General.Save": "Opslaan",
   "General.Search": {
@@ -1902,8 +2130,32 @@
     "s": "Verzenden",
     "r": "Send"
   },
+  "General.Space": {
+    "s": "Ruimte",
+    "r": "Space"
+  },
+  "General.stellar_city": {
+    "s": "Stellaire stad",
+    "r": "Stellar City"
+  },
+  "General.Success": {
+    "s": "Succes",
+    "r": "Success"
+  },
+  "General.Supplies": {
+    "s": "Voorraden",
+    "r": "Supplies"
+  },
+  "General.Total": {
+    "s": "Totaal",
+    "r": "Total"
+  },
   "General.Unit": "Eenheid",
   "General.Units": "Eenheden",
+  "General.UnitsNext": {
+    "s": "Eenheden, volgend tijdperk",
+    "r": "Units, next age"
+  },
   "Global.BoxTitle": "Forge Hammer",
   "GvG.Independences.Tooltip": "Aantal onafhankelijkheden verleend sinds de laatste berekening.",
   "GvG.Independences.Tooltip.Warning": "Kan onnauwkeurig zijn als je op meerdere PCs speelt.",
@@ -1982,6 +2234,22 @@
   "Menu.Negotiation.Desc": "Doet goederenvoorstellen voor succesvolle onderhandelingen.",
   "Menu.Negotiation.Title": "Onderhandelingshulp",
   "Menu.Negotiation.Warning": "Gedeactiveerd: Start eerst een onderhandeling!",
+  "Menu.NewVersion.Desc": {
+    "s": "Klik hier om de updates te zien:",
+    "r": "Click here to see the changes:"
+  },
+  "Menu.NewVersion.Title": {
+    "s": "Nieuwe Versie geïnstalleerd",
+    "r": "New Version installed"
+  },
+  "Menu.Notes.Desc": {
+    "s": "Schrijf iets op wat je niet wil vergeten of maak To Do lijstjes.",
+    "r": "Write down anything you do not want to forget or create short To Do lists."
+  },
+  "Menu.Notes.Title": {
+    "s": "Notities en To Do's",
+    "r": "Notes and To Dos"
+  },
   "Menu.Notification.Position.bottom-center": "ondermidden",
   "Menu.Notification.Position.bottom-left": "linksonder",
   "Menu.Notification.Position.bottom-right": "rechtsonder",
@@ -1996,6 +2264,10 @@
   "Menu.OwnpartCalculator.Desc": "Stel een FP-betaalplan op, bereken de kosten en kopieer de waarden",
   "Menu.OwnpartCalculator.Title": "Eigen GG FP-calculator",
   "Menu.OwnpartCalculator.Warning": "Gedeactiveerd: open eerst een van je GG's!",
+  "Menu.PlayerProfile.Title": {
+    "s": "Spelerprofiel",
+    "r": "Player Profile"
+  },
   "Menu.Productions.Desc": "Toont het huidige aantal dagelijkse producties.",
   "Menu.Productions.Title": "Productieoverzicht",
   "Menu.ProductionsRating.Desc": "Zoek naar gebouwen die minder produceren per tegel dan verwacht.",
@@ -2009,6 +2281,18 @@
   "Menu.SaveMessage.Title": "Opgeslagen!",
   "Menu.Settings.Desc": "Instellingen voor Forge Hammer",
   "Menu.Settings.Title": "Instellingen",
+  "Menu.ShopAssist.Desc": {
+    "s": "Lijst van alle items in de winkel",
+    "r": "List of all items in a store"
+  },
+  "Menu.ShopAssist.DescWarning": {
+    "s": "Gelieve eerst een winkel te openen",
+    "r": "Please open a shop first"
+  },
+  "Menu.ShopAssist.Title": {
+    "s": "Winkel assistent",
+    "r": "Shop Assistant"
+  },
   "Menu.Stats.Desc": "Toont spelstatistieken van goederen, eenheden, beloningen, GvG",
   "Menu.Stats.Title": "Statistieken",
   "Menu.Technologies.Desc": "Bereken je onderzoekskosten",
@@ -2045,12 +2329,32 @@
   "Settings.Entry.AutomaticNegotiation": "Handels assistent",
   "Settings.Entry.AutoOpenCloseBox": "Sluit alle boxen",
   "Settings.Entry.AutoOpenInfoBox": "Infobox",
+  "Settings.Entry.CalcGBReminder": {
+    "s": "GG contributielijst",
+    "r": "GB Contribution List"
+  },
   "Settings.Entry.ChangeLanguage": "Taal",
+  "Settings.Entry.DateTimeFormat": {
+    "s": "Datum & Tijd",
+    "r": "Date & Time"
+  },
   "Settings.Entry.doubleFPtimeout": "Dubbele donatie blokkeren",
   "Settings.Entry.EnableSound": "Geluid aanzetten",
   "Settings.Entry.ExportSettings": "Importeer/Exporteer",
+  "Settings.Entry.Filters": {
+    "s": "Spelkleuren",
+    "r": "Game Colors"
+  },
+  "Settings.Entry.GexStockWarning": {
+    "s": "GE goederengebruik",
+    "r": "GE Goods Use"
+  },
   "Settings.Entry.Help": "Help",
   "Settings.Entry.HideHelperDuringBattle": "Gevechten helper zichtbaar",
+  "Settings.Entry.LoadBeta2": {
+    "s": "Installeer Beta Versie",
+    "r": "Install Beta Version"
+  },
   "Settings.Entry.MenuContent": "Menu Inhoud",
   "Settings.Entry.MenuLength": "Menu Lengte",
   "Settings.Entry.NotificationsPosition": "Notificatie Positie",
@@ -2065,6 +2369,10 @@
   "Settings.Entry.ShowBuildingsExpired": "Verlopen Gebouwen waarschuwing",
   "Settings.Entry.ShowEventChest": "Evenementen assistenten",
   "Settings.Entry.ShowGBGBuildings": "GSP Gebouw aanbeveling",
+  "Settings.Entry.ShowGBGPlayerInfo": {
+    "s": "GSP Spelerlijst",
+    "r": "GBG Player list"
+  },
   "Settings.Entry.ShowGuildTreasuryLogExport": "Gildekas export log",
   "Settings.Entry.ShowInvestments": "Toon FP investeringstotaal",
   "Settings.Entry.ShowLinks": "Links",
@@ -2075,6 +2383,10 @@
   "Settings.Entry.ShowPlayersMotivation": "Motivatie Activiteit",
   "Settings.Entry.ShowPotions": "Gevechtsdranken",
   "Settings.Entry.ShowPvPArena": "PvP Arena Protocol",
+  "Settings.Entry.ShowQIPlayerInfo": {
+    "s": "QI Spelerlijst",
+    "r": "QI Player list"
+  },
   "Settings.Entry.ShowRougeUnitWarning": "Schurken Waarschuwing",
   "Settings.Entry.ShowScoutingTimes": "Scouting Info",
   "Settings.Entry.Version": "Versie",
@@ -2083,6 +2395,10 @@
   "Settings.ExportSettings.Desc": "Opslaan / herstellen van instellingen",
   "Settings.ExportSettings.OpenImportExportTool": "Open de Importeer/Exporteer tool",
   "Settings.ExportSettings.Title": "Opslaan en terugzetten",
+  "Settings.GexStockWarning.Title": {
+    "s": "GE goederengebruik",
+    "r": "GE Goods Use"
+  },
   "Settings.Help.Desc": "Er zijn verschillende manieren om hulp te krijgen:",
   "Settings.Help.Discord": "Bij onenigheid: Treedt toe bij verschillende discussies over de extensie, chats en hulp.",
   "Settings.Help.Forums": "Fora: Ga hier naartoe voor hulp, om ideeën in te dienen en om fouten te rapporteren.",
@@ -2093,6 +2409,10 @@
   "Settings.HideHelperDuringBattle.Title": "Verberg Helper tijdens gevechten",
   "Settings.InfoboxEntryCount.Desc": "Hoeveel elementen moet de Infobox tonen en opslaan?<br>Leeg of \"0\" betekent geen limiet.",
   "Settings.InfoboxEntryCount.Title": "Infobox aantal regels",
+  "Settings.LoadBeta2.Desc": {
+    "s": "De Beta-Extensie moet handmatig bijgewerkt en geïnstalleerd worden. Klik ofwel regelmatig op de knop hieronder om de laatste beta-versie te downloaden, of gebruik een Git-Manager <br><br>Pak de gedownloade zipfile uit en activeer ontwikkelaarsmodus in de Chrome extensie instellingen om de uitgepakte extensie in te laden. <br><br>Enkel een versie van Forge Hammer kan op een moment actief zijn om fouten te voorkomen!",
+    "r": "The Beta-Extension musst be installed and updated manually. Either regularly click the button below to download the current beta or use a Git-Manager<br><br>Unpack the downloaded zip and activate developer mode in the Chrome extension settings to 'load unpacked extension'.<br><br>Only one Version of the Forge Hammer should be active at any time to prevent interference!"
+  },
   "Settings.MenuContent.Desc": "Welke knoppen moeten zichtbaar zijn in het menu?<br>Groen: toon knop. Rood: Verberg knop.",
   "Settings.MenuContent.Title": "Menu samenstelling",
   "Settings.MenuLength.Desc": "Hoeveel pictogrammen mag het menu weergeven?<br> Leeg of \"0\" betekent maximaal aantal.",
@@ -2112,6 +2432,10 @@
   "Settings.SelectedMenu.Title": "Verander Menu",
   "Settings.Show2kQuestMark.Desc": "Toont een klein icoon met een teller van het aantal quests dat je nog kunt afbreken.",
   "Settings.Show2kQuestMark.Title": "2k opdracht markering",
+  "Settings.ShowAllyList.Title": {
+    "s": "Open Bondgenotenoverzicht",
+    "r": "Open Ally Overview"
+  },
   "Settings.ShowArmyAdvice.Button": "Adviesinstellingen",
   "Settings.ShowArmyAdvice.Desc": "Toont advies (toegevoegd door de speler) voor specifieke vijandige legers.",
   "Settings.ShowArmyAdvice.Title": "Legeradvies tonen",
@@ -2126,6 +2450,14 @@
   "Settings.ShowEventChest.Title": "Toon de Event Assistent",
   "Settings.ShowGBGBuildings.Desc": "Wanneer je het gebouwmenu in een GSP-provincie opent, wordt een tabel weergegeven die de mogelijke gebouwcombinaties toont die beter zouden zijn dan de huidige, gesorteerd op hun relatieve impact op de Gilde schatkist.",
   "Settings.ShowGBGBuildings.Title": "Toon GSP Gebouw aanbevelingen",
+  "Settings.ShowGBGPlayerInfo.Desc": {
+    "s": "Wil je dat de GSP spelerslijst automatisch opent wanneer je de GSP ranglijst opent?",
+    "r": "Do you want the GBG Player list to automatically open when clicking on the GBG ranking?"
+  },
+  "Settings.ShowGBGPlayerInfo.Title": {
+    "s": "GSP Speler Pop-up",
+    "r": "GBG Player Pop Up"
+  },
   "Settings.ShowGuildTreasuryLogExport.Desc": "Toont de Gildechat export log tool wanneer het Gildeschat Log venster wordt geopend",
   "Settings.ShowGuildTreasuryLogExport.Title": "Toont de Gildeschat log exporteer applicatie",
   "Settings.ShowInvestments.Desc": "Toont een GG FP investeringsvenster wanneer je Stadhuis &gt; Nieuws &gt; Grootse Gebouwen Tab opent.",
@@ -2152,6 +2484,42 @@
   "Settings.ShowRougeUnitWarning.Title": "Schurken Waarschuwing",
   "Settings.ShowScoutingTimes.Desc": "Toont een venster bij het openen van de kaart met de verkenningstijden van de momenteel beschikbare provincies en de huidige verkenningsvoortgang",
   "Settings.ShowScoutingTimes.Title": "Verkenning Info",
+  "Settings.SoundEffects.default": {
+    "s": "Gebruik standaard",
+    "r": "Use default"
+  },
+  "Settings.SoundEffects.message": {
+    "s": "#1 Ding",
+    "r": "#1 Ding"
+  },
+  "Settings.SoundEffects.notification1": {
+    "s": "#2 Pling",
+    "r": "#2 Pling"
+  },
+  "Settings.SoundEffects.notification2": {
+    "s": "#3 Plong",
+    "r": "#3 Plong"
+  },
+  "Settings.SoundEffects.notification3": {
+    "s": "#4 Plop",
+    "r": "#4 Plop"
+  },
+  "Settings.SoundEffects.notification4": {
+    "s": "#5 Bliep",
+    "r": "#5 Bleep"
+  },
+  "Settings.SoundEffects.notification5": {
+    "s": "#6 Pling 2",
+    "r": "#6 Pling 2"
+  },
+  "Settings.SoundEffects.notification6": {
+    "s": "#7 Chime",
+    "r": "#7 Chime"
+  },
+  "Settings.SoundEffects.play": {
+    "s": "Speel geluid",
+    "r": "Play sound"
+  },
   "Settings.Tab.About": "Info + Website",
   "Settings.Tab.Auto": "Vensters",
   "Settings.Tab.Boxes": "Overige",
@@ -2165,6 +2533,55 @@
   "Settings.Version.World": "Wereld:",
   "StrategyPoints.BuyableFP": "FoE-Helper: Aantal FP dat kan worden gekocht met munten.",
   "StrategyPoints.FPInBar": "FoE-Helper: Aantal FP in je balk.",
+  "undefined": {},
+  "XPlan.Buttons.Everything": {
+    "s": "Alles",
+    "r": "Everything"
+  },
+  "XPlan.Buttons.RemoveAll": {
+    "s": "Alles Verwijderen",
+    "r": "Remove All"
+  },
+  "XPlan.Buttons.Save": {
+    "s": "Opslaan",
+    "r": "Save"
+  },
+  "XPlan.Buttons.Selection": {
+    "s": "Selectie",
+    "r": "Selection"
+  },
+  "XPlan.Compare.Chart": {
+    "s": "Toon Grafiek",
+    "r": "Show Chart"
+  },
+  "XPlan.KoFi.Title": {
+    "s": "Support ons op Ko-Fi",
+    "r": "Support us on Ko-Fi"
+  },
+  "XPlan.Language.SystemDefault": {
+    "s": "Taal",
+    "r": "Language"
+  },
+  "XPlan.Modal.HowTo.Cancel": {
+    "s": "Annuleer elke actie met een <b>rechter muisklik</b>",
+    "r": "Cancel any action with <b>right click</b>"
+  },
+  "XPlan.Modal.HowTo.DeleteFromSidebar": {
+    "s": "Verwijder gebouwen van het menu of van de kaart met de backspace, R of DEL toets.",
+    "r": "Delete buildings from the sidebar or map by using the backspace, R or DEL key."
+  },
+  "XPlan.Modal.IncomingData": {
+    "s": "Binnenkomende Data",
+    "r": "Incoming Data"
+  },
+  "XPlan.Modal.SaveAsNewPlan": {
+    "s": "Opslaan als een Nieuw Plan",
+    "r": "Save as New Plan"
+  },
+  "XPlan.Modal.SavedPlans": {
+    "s": "Opgeslagen Plan",
+    "r": "Saved Plans"
+  },
   "XPlan.Plan.DefaultName": {
     "s": "Nieuw Plan",
     "r": "New Plan"
@@ -2173,6 +2590,14 @@
     "s": "Plan",
     "r": "Plan"
   },
+  "XPlan.Plan.ImportedName": {
+    "s": "Geïmporteerd Plan",
+    "r": "Imported Plan"
+  },
+  "XPlan.PlanList.DeletePlan": {
+    "s": "Verwijder Plan",
+    "r": "Delete plan"
+  },
   "XPlan.PlanList.Loading": {
     "s": "Laden...",
     "r": "Loading…"
@@ -2180,6 +2605,14 @@
   "XPlan.PlanList.LoadPlan": {
     "s": "Plan laden",
     "r": "Load plan"
+  },
+  "XPlan.PlanList.RenamePlan": {
+    "s": "Hernoem plan",
+    "r": "Rename plan"
+  },
+  "XPlan.Population.NegativeWarning": {
+    "s": "Waarschuwing: populatie is negatief - deze layout heeft meer inwoners nodig.",
+    "r": "Warning: population is negative — this layout needs more residences."
   },
   "XPlan.Save.Failed": {
     "s": "Fout bij opslaan",
@@ -2208,6 +2641,14 @@
   "XPlan.Sidebar.Restore": {
     "s": "Herstellen",
     "r": "Restore"
+  },
+  "XPlan.Sort.NameAsc": {
+    "s": "A-Z",
+    "r": "A–Z"
+  },
+  "XPlan.Sort.NameDesc": {
+    "s": "Z-A",
+    "r": "Z–A"
   },
   "XPlan.Street.All": {
     "s": "Wegen",
