@@ -1,4 +1,17 @@
 # Changelog
+
+## Version 1.10.0
+### Neu
+- Halloween Farben
+- Stadtplaner: Modus zum Ändern der Zeitalter
+- Stadtübersicht: Effizienz-Ansicht
+
+### Update
+- BG Helfer: Güter des nächsten Zeitalters hinzugefügt
+- Tägliche Produktion: Medaillen-Boosts hinzugefügt
+- LG Rechner: Kann sich jetzt auch den einstellten Bonus in der anderen Ansicht merken
+ 
+---
  
 ## Version 1.9.1
 ### Update

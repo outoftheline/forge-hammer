@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 1.10.0
+### New
+- Halloween color theme
+- Planner: You can set your buildings to other eras now
+- City Overview: Efficiency highlighting
+
+### Update
+- BG Helper: Added next age goods
+- Productions: Added medal boosts
+- GB Calculator: Both views can now remember the bonus per conversation
+ 
+---
+
 ## Version 1.9.1
 ### Update
 - Efficiency: Added next age units
