@@ -35,6 +35,7 @@ FH.proxy.addCustomHandler('BonusUpdated', data => {
 
 let BlueGalaxy = {
 
+    NextGoodsValue : 0.2,
     GoodsValue : 0.2,
     OlderGoodsValue : 0.1,
     DoubleCollections : 0,
@@ -52,6 +53,11 @@ let BlueGalaxy = {
         //moment.locale(18n('Local'));
 
         if ($('#bluegalaxy').length === 0) {
+
+            let NextGoodsValue = FH.Storage.getItem('BlueGalaxyNextGoodsValue');
+            if (NextGoodsValue != null) {
+                BlueGalaxy.NextGoodsValue = parseFloat(NextGoodsValue);
+            }
 
             let GoodsValue = FH.Storage.getItem('BlueGalaxyGoodsValue');
             if (GoodsValue != null) {
@@ -76,6 +82,14 @@ let BlueGalaxy = {
             });
 
             FH.HTML.AddCssFile('bluegalaxy');
+
+            $('#bluegalaxy').on('blur', '#nextGoodsValue', function () {
+                let GoodsPerFP = parseFloat($('#nextGoodsValue').val());
+                BlueGalaxy.NextGoodsValue = (isNaN(GoodsPerFP) || GoodsPerFP <= 0) ? 0 : 1 / GoodsPerFP;
+                FH.Storage.setItem('BlueGalaxyNextGoodsValue', BlueGalaxy.NextGoodsValue);
+
+                BlueGalaxy.CalcBody();
+            });
 
             $('#bluegalaxy').on('blur', '#goodsValue', function () {
                 let GoodsPerFP = parseFloat($('#goodsValue').val());
@@ -137,6 +151,7 @@ let BlueGalaxy = {
             
             if (CityEntity.state.production) {
                 let FP = 0;
+                let NextGoodsSum = 0;
                 let GoodsSum = 0;
                 let OlderGoodsSum = 0;
                 let GuildGoodsSum = 0;
@@ -160,13 +175,15 @@ let BlueGalaxy = {
                             let GoodID = FH.Goods.List[j]['id'];
                             let GoodEra = FH.Goods.List[j]['era'];
                             if (product.resources[GoodID]) {
-                                if (product.type == "resources")
+                                if (product.type == "resources") {
                                     if(GoodEra == FH.CurrentEra) {
                                         GoodsSum += product.resources[GoodID]
-                                    } else {
+                                    } else if (GoodEra == Technologies.getNextEraIdByCurrentEraName(FH.CurrentEra)){
+                                        NextGoodsSum += product.resources[GoodID]
+                                    } else if (GoodEra == Technologies.getPreviousEraIdByCurrentEraName(FH.CurrentEra)){
                                         OlderGoodsSum += product.resources[GoodID]
                                     }
-                                else   
+                                } else 
                                     GuildGoodsSum += product.resources[GoodID];
                             }
                         }
@@ -179,7 +196,7 @@ let BlueGalaxy = {
                    
                 });
 
-                if (GoodsSum > 0 || FP > 0 || FragmentAmount > 0 || OlderGoodsSum > 0) {  
+                if (NextGoodsSum > 0 || GoodsSum > 0 || FP > 0 || FragmentAmount > 0 || OlderGoodsSum > 0) {  
                     
                     Buildings.push({
                         building: CityEntity,
@@ -189,12 +206,13 @@ let BlueGalaxy = {
                         Fragments: Fragments, 
                         FragmentAmount: FragmentAmount,
                         FP: FP, 
+                        NextGoods: NextGoodsSum,
                         Goods: GoodsSum,
                         OlderGoods: OlderGoodsSum,
                         GuildGoods: GuildGoodsSum, 
                         In: CityEntity.state.times.in, 
                         At: CityEntity.state.times.at, 
-                        CombinedValue: FP + BlueGalaxy.GoodsValue*GoodsSum + BlueGalaxy.OlderGoodsValue*OlderGoodsSum,
+                        CombinedValue: FP + BlueGalaxy.GoodsValue*GoodsSum + BlueGalaxy.NextGoodsValue*NextGoodsSum + BlueGalaxy.OlderGoodsValue*OlderGoodsSum,
                     });
                 }
             }
@@ -212,12 +230,16 @@ let BlueGalaxy = {
         });
 
         let h = [];
+        let NextGoodsPerFP = BlueGalaxy.NextGoodsValue > 0 ? Math.round(1/BlueGalaxy.NextGoodsValue*100)/100 : 0;
         let GoodsPerFP = BlueGalaxy.GoodsValue > 0 ? Math.round(1/BlueGalaxy.GoodsValue*100)/100 : 0;
         let OlderGoodsPerFP = BlueGalaxy.OlderGoodsValue > 0 ? Math.round(1/BlueGalaxy.OlderGoodsValue*100)/100 : 0;
         if (BlueGalaxy.DoubleCollections > 0)
             $('#bluegalaxy .title').html(`${FH.t('Boxes.BlueGalaxy.Title')} - <small title="${FH.t('Boxes.BlueGalaxy.AvailableCollections')}${BlueGalaxy.DoubleCollections}">${BlueGalaxy.DoubleCollections}</small>`);
         
         h.push(`<div class="text-center dark-bg header">
+                ${FH.t('Boxes.BlueGalaxy.ValueRating')} 
+                <input type="number" id="nextGoodsValue" step="1" min="0" max="100" size="3" value="${NextGoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon next_goods"></span> 
+                &middot; 
                 ${FH.t('Boxes.BlueGalaxy.ValueRating')} 
                 <input type="number" id="goodsValue" step="1" min="0" max="100" size="3" value="${GoodsPerFP}" title="${FH.HTML.Tooltip(FH.t('Boxes.BlueGalaxy.TTGoodsValue'))}"> <span class="icon goods"></span> 
                 &middot; 
@@ -238,6 +260,7 @@ let BlueGalaxy = {
             '<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="FP" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.FP') + '" data-type="bg-group" data-colname="FP"><span></span></th>' +
             '<th class="is-number icon old_goods ' + (BlueGalaxy.sort.col=="OlderGoods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.OlderGoods') + '" data-type="bg-group" data-colname="OlderGoods"><span></span></th>' +
             '<th class="is-number icon goods ' + (BlueGalaxy.sort.col=="Goods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.Goods') + '" data-type="bg-group" data-colname="Goods"><span></span></th>' +
+            '<th class="is-number icon next_goods ' + (BlueGalaxy.sort.col=="NextAgeGoods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.BlueGalaxy.NextGoods') + '" data-type="bg-group" data-colname="NextAgeGoods"><span></span></th>' +
             '<th class="is-number icon guildgoods ' + (BlueGalaxy.sort.col=="GuildGoods" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="GuildGoods"><span></span></th>' +
             //'<th class="is-number icon fp ' + (BlueGalaxy.sort.col=="CombinedValue" ? BlueGalaxy.sort.order : "") + '" title="' + FH.t('Boxes.GuildMemberStat.GuildGoods') + '" data-type="bg-group" data-colname="CombinedValue"><span></span></th>' +
             '<th colspan="2" class="case-sensitive no-sort" data-type="bg-group">' + FH.t('Boxes.BlueGalaxy.DoneIn') + '</th>' +
@@ -258,6 +281,7 @@ let BlueGalaxy = {
             table.push('<td class="text-center" data-number="'+Buildings[i].FP+'">' + FH.HTML.Format(Buildings[i]['FP']) + '</td>');
             table.push('<td class="text-center" data-number="'+Buildings[i].OlderGoods+'">' + FH.HTML.Format(Buildings[i]['OlderGoods']) + '</td>');
             table.push('<td class="text-center" data-number="'+Buildings[i].Goods+'">' + FH.HTML.Format(Buildings[i]['Goods']) + '</td>');
+            table.push('<td class="text-center" data-number="'+Buildings[i].NextGoods+'">' + FH.HTML.Format(Buildings[i]['NextGoods']) + '</td>');
             table.push('<td class="text-center" data-number="'+Buildings[i].GuildGoods+'">' + FH.HTML.Format(Buildings[i]['GuildGoods']) + '</td>');
             //table.push('<td class="text-center" data-number="'+Buildings[i].CombinedValue+'">' + FH.HTML.Format(Buildings[i]['CombinedValue']) + '</td>');
 
