@@ -109,6 +109,9 @@ let Parts = {
 
 	PlayInfoSound: null,
 
+	ArcPerConversation: false,
+	LastArcConversationID: undefined,
+
 	LockExistingPlaces: true,
 	TrustExistingPlaces: false,
 
@@ -211,7 +214,7 @@ let Parts = {
 				});
 
 				Parts.ArcPercents = ArcPercents;
-				FH.Storage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(ArcPercents));
+				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(ArcPercents));
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -239,7 +242,7 @@ let Parts = {
 					$('.arc-percent-input').eq(i).val(ArkBonus);
 				}
 
-				FH.Storage.setItem(Parts.GetStorageKey('ArcPercents', null), JSON.stringify(Parts.ArcPercents));
+				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -495,11 +498,13 @@ let Parts = {
 			Total = parseInt(FH.Main.CurrentGB.Entity['state']['forge_points_for_level_up']);
 		}
 
+		Parts.ArcPerConversation = (FH.Storage.getItem('OwnPartArcPerConversation') === 'true');
+		if (Parts.FirstCycle || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
+			Parts.GetConversationBonus();
+		}
+
 		// Restore Default settings
 		if (Parts.FirstCycle) {
-			let SavedArcPercents = FH.Storage.getItem(Parts.GetStorageKey('ArcPercents', null));
-			if (SavedArcPercents !== null) Parts.ArcPercents = JSON.parse(SavedArcPercents);
-			while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
 
 			let SavedCopyOwnPlayerName = FH.Storage.getItem(Parts.GetStorageKey('CopyOwnPlayerName', null));
 			if (SavedCopyOwnPlayerName !== null) {
@@ -1225,6 +1230,24 @@ let Parts = {
 	},
 
 
+	GetConversationStorageKey: () => {
+		let Key = Parts.GetStorageKey('ArcPercents', null);
+		if (Parts.ArcPerConversation && FH.Main.OpenConversation) Key += '_' + FH.Main.OpenConversation.id;
+		return Key;
+	},
+
+
+	GetConversationBonus: () => {
+		let Saved = null;
+		if (Parts.ArcPerConversation && FH.Main.OpenConversation) Saved = FH.Storage.getItem(Parts.GetConversationStorageKey());
+		if (Saved === null) Saved = FH.Storage.getItem(Parts.GetStorageKey('ArcPercents', null));
+		if (Saved !== null) Parts.ArcPercents = JSON.parse(Saved);
+		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
+
+		Parts.LastArcConversationID = FH.Main.OpenConversation?.id ?? null;
+	},
+
+
 	GetCopyString: () => {
 		return Parts.GetCopyStringEx(Places=Parts.CopyPlaces, Maezens=Parts.Maezens, Level=Parts.Level, OwnPart=Parts.RemainingOwnPart, PlaceAll=Parts.CopyModeAll, PlaceAuto=Parts.CopyModeAuto, PlaceAutoUnsafe=Parts.CopyModeAutoUnsafe, DangerPlaces=Parts.DangerPlaces, LeveltLG=Parts.LeveltLG)
 	},
@@ -1599,6 +1622,7 @@ let Parts = {
 			minView = FH.Storage.getItem('OwnPartMinView') || 'false',
 			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'false',
 			includeStart = FH.Storage.getItem('OwnPartIncludeStart') || 'true',
+			arcPerConversation = FH.Storage.getItem('OwnPartArcPerConversation') || 'false',
 			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
 		
 		if(sB) {
@@ -1631,7 +1655,8 @@ let Parts = {
 				<input type="checkbox" id="showprints" class="showprints game-cursor" ${((showPrints == 'true') ? 'checked' : '')}> <label for="showprints">${FH.t('Settings.ShowOwnPartBP.Desc')}</label><br>
 				<input type="checkbox" id="minview" class="minview game-cursor" ${((minView == 'true') ? 'checked' : '')}> <label for="minview">${FH.t('Settings.ShowOwnPartMinView.Desc')}</label><br>
 				<input id="copyformatpergb" class="copyformatpergb game-cursor" ${(Parts.CopyFormatPerGB ? 'checked' : '')} type="checkbox"> <label for="copyformatpergb">${FH.t('Boxes.OwnpartCalculator.CopyFormatPerGB')}</label><br>
-				<input type="checkbox" id="includeStart" class="includeStart game-cursor" ${((includeStart == 'true') ? 'checked' : '')}> <label for="includeStart">${FH.t('Settings.ShowOwnPartIncludeStart.Desc')}</label>
+				<input type="checkbox" id="includeStart" class="includeStart game-cursor" ${((includeStart == 'true') ? 'checked' : '')}> <label for="includeStart">${FH.t('Settings.ShowOwnPartIncludeStart.Desc')}</label><br>
+				<input type="checkbox" id="arcPerConversation" class="arcPerConversation game-cursor" ${((arcPerConversation == 'true') ? 'checked' : '')}> <label for="arcPerConversation">${FH.t('Boxes.Calculator.ForderBonusPerConversation')}</label>
 			</p>
 			<button id="save-calculator-settings" class="btn saveSettings" onclick="Parts.SettingsSaveValues()">${FH.t('Boxes.Calculator.Settings.Save')}</button>`);
 
@@ -1701,6 +1726,13 @@ let Parts = {
 		if ($("#includeStart").is(':not(:checked)'))
 			includeStart = false;
 		FH.Storage.setItem('OwnPartIncludeStart',includeStart);
+
+		let arcPerConversation = $("#arcPerConversation").is(':checked');
+		FH.Storage.setItem('OwnPartArcPerConversation', arcPerConversation);
+		if (arcPerConversation !== Parts.ArcPerConversation) {
+			Parts.ArcPerConversation = arcPerConversation;
+			Parts.GetConversationBonus();
+		}
 
 		$(`#OwnPartBoxSettingsBox`).fadeToggle('fast', function(){
 			$(this).remove();
