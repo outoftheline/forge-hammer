@@ -173,10 +173,10 @@ let BlueGalaxy = {
                     if (product.type == "resources" || product.type == "guildResources")
                         for (let j = 0; j < FH.Goods.List.length; j++) {
                             let GoodID = FH.Goods.List[j]['id'];
-                            let GoodEra = FH.Goods.List[j]['era'];
+                            let GoodEra = Technologies.InnoEras[FH.Goods.List[j]['era']];
                             if (product.resources[GoodID]) {
                                 if (product.type == "resources") {
-                                    if(GoodEra == FH.CurrentEra) {
+                                    if(GoodEra == Technologies.getEraIdByCurrentEraName(FH.CurrentEra)) {
                                         GoodsSum += product.resources[GoodID]
                                     } else if (GoodEra == Technologies.getNextEraIdByCurrentEraName(FH.CurrentEra)){
                                         NextGoodsSum += product.resources[GoodID]
