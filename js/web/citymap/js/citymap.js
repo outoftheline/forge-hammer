@@ -884,7 +884,6 @@ let CityMap = {
 	setHeatMapData(buildings) {
 		let rawData = new Map(), scaledData = new Map();
 		let weighted = CityMap.ratingWeighted;
-		// weighted mode needs a perTile target for each type
 		let types = CityMap.ratingValues.filter(t => Productions.Rating.Data?.[t]?.active && (!weighted || Productions.Rating.Data[t].perTile > 0));
 		let list = Object.values(buildings).filter(b => b.type !== 'street' && b.rating);
 		if (!types.length || !list.length) return {rawData, scaledData};

@@ -1,0 +1,164 @@
+/*
+ * Copyright (C) 2026 Forge Hammer
+ * Licensed under AGPL - see LICENSE.md for details.
+ */
+
+:root {
+	--white: #fff;
+	--text: #14120f;
+	--text-link: #0a2549;
+	--text-medium: #93795D;
+	--text-dark: #4c2f1e;
+	--text-dark2: #3f2a1b;
+	--text-darker: #201a18;
+	--ash: #8a8a8a;
+	--text-highlight: #863e03;
+	--text-highlight2: #5f2203;
+
+	--success: #165c00;
+	--limegreen: #215f04;
+	--info-blue: #02335c;
+	--danger-red: #660303;
+
+	--border-medium: #7b4b30;
+	--bg-light: #f1dfb6;
+	--bg-medium: #c4ae86;
+	--bg-dark: #bda37a;
+	--bg-darkest: #af9470;
+
+	--window-border: 2px solid #fdb962;
+	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
+	--window-bg: #e2cca8;
+
+	--window-body-scroll-bg: #dbc6a5;
+	--window-body-scroll-border: #dbc6a5;
+	--window-body-scroll-color: #fef4b8;
+
+	--window-settings-bg: #c2af8c;
+
+	--window-head-bg: linear-gradient(-45deg, transparent, #cd532c), repeating-linear-gradient(22.5deg, transparent, transparent 5px, #f68045ab 5px, #f68045ab 6px), 
+    repeating-linear-gradient(-45deg, #cd532c, #ef773f 5px, #f68045 5px, #f68045 6px);
+	--window-head-text: #222;
+	--window-head-shadow: inset 0 -1px 0 0 #fdb962;
+	--window-head-btn-bg: url(../images/hud/box-sprite-dark.png), linear-gradient(to bottom, #cd532c, #cd532c);
+	--window-head-btn-shadow: inset -1px -1px 0 0 #be4c26;
+
+	--btn-bg-red: linear-gradient(to bottom, #8f0c0c, #520606);
+	--btn-bg-red-active: linear-gradient(to bottom, #bb1d1d,#700d0d);
+	--btn-bg-red-onclick: linear-gradient(to bottom, #bb1d1d,#8f0c0c);
+
+	--btn-bg: linear-gradient(to bottom, #57836f, #2f5c5f);
+	--btn-bg-disabled: linear-gradient(to bottom, #444444 #2d2d2d);
+	--btn-bg-active: linear-gradient(to bottom, #489ea1, #226569);
+	--btn-bg-onclick: linear-gradient(to bottom, #1193aa, #094b77);
+	--btn-bg-green: linear-gradient(to bottom, #849636, #176517);
+    --btn-border: 1px solid #0e2a44cc;
+    --btn-border-active-color: #133853;
+	--btn-green-color: #dde9ca;
+	--text-btn-disabled: #999;
+	--text-btn: #dcd6d6;
+
+    --switch-text: #2c3636;
+    --switch-text-active: #f5ede8;
+
+    --input-accent: #cc481f;
+    --input-bg: #ebe7d9;
+    --input-color: #3f2a1b;
+    --input-border: 1px solid #3f2a1b;
+
+	--tabs-bg: linear-gradient(#f0e7d2, #f0e7d2);
+	--tabs-bg-active: linear-gradient(180deg, #79a8b0, #467a7e);
+	--tabs-bg-shadow: inset 0 2px 0 #5a5155;
+	--tabs-bg-shadow-active: inset 1px 1px 0 0 #79a8b0, inset -1px 1px 0 0 #79a8b0, inset 0 2px 1px 0 #ffffff1a;
+	--tabs-border: 2px solid #467a7e;
+	--border-tab: #467a7e;
+	--border-tab-vertical: linear-gradient(-90deg, #c3c2ab, #467a7e) 10;
+	--text-tab-active: #1b1a1a;
+	--text-tab: #3b3838;
+
+	--border-table-top: transparent;
+	--border-table-bottom: #bf9e72cb;
+	--border-table-bottom-darker: #997a50cb;
+	--table-bg-hover: #ffeace65;
+	--table-bg-odd: #6f4c1917;
+	--table-bg-darker: #bda789cb;
+	--table-bg-info: #5ca7e463;
+	--table-bt-info: transparent;
+	--table-bb-info: #367ebf;
+	--table-bg-success: #7cd65b4d;
+	--table-bt-success: transparent;
+	--table-bb-success: #4fa14f;
+	--table-bg-error: #df49494d;
+	--table-bt-error: transparent;
+	--table-bb-error: #941919;
+	--table-bg-bright: #dd85002e;
+	--table-bt-bright: transparent;
+	--table-bb-bright: #492e0566;
+	--table-bg-highlight: #e6b55bbd;
+
+	--hud-border-error: #9c2d18;
+	--hud-border-success: #93c554;
+
+	--menu-tooltip-border: 2px solid #b8a07a;
+	--menu-tooltip-bg: #c2af8c;
+	--menu-tooltip-disabled: #6d0e0e;
+	--menu-tooltip-text: #252522;
+	--menu-tooltip-head-bg: #af9470;
+
+    --tooltip-bg: #f1dfb6;
+    --tooltip-text: #2b2a27;
+
+	--hud-counter-color: #128ebe;
+	--hud-counter-success: #5c8d20;
+	--hud-counter-bg: 1px 0 0 1px #0000003e;
+	--hud-counter-size: 16px;
+
+	--menu-bg: #00000080;
+	--menu-shadow: none;
+	--menu-arrow-bg: linear-gradient(to bottom, #db5e2e, #db532e);
+	--menu-arrow-color: #e5e1cf;
+	--menu-btn-bg-green: linear-gradient(-66deg, #789337 20%, #9aa641 60%) border-box;
+	--menu-btn-bg-red: linear-gradient(to bottom, #bbaf88, #bbaf88) border-box;
+	--menu-btn-bg-grey: linear-gradient(#253012, #363818) padding-box, linear-gradient(-66deg, #2e351e 20%, #3a3d26 60%) border-box;
+	--menu-btn-bg: linear-gradient(#44512e, #4e5123) padding-box, var(--menu-btn-bg-green);
+	--menu-btn-bg-color: #44512e;
+	--menu-btn-shadow: none;
+	--menu-btn-shadow-disabled: inset 0 0 1px 1px #1d18018e;
+	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
+	--menu-btn-bg-settings: linear-gradient(#4d4e4a, #4c4d3e) padding-box, linear-gradient(to bottom, #8b9396, #536377) border-box;
+	--menu-boxed-head-bg: linear-gradient(-45deg, #f68045 61px, #f68045);
+	--menu-boxed-head-shadow: none;
+	--menu-boxed-head-color: #201e1e;
+
+	--bg-chart: #eee7;
+
+	/* static */
+
+	--grey: #444;
+	--black: #000;
+	--black-30: #00000048;
+	--black-50: #00000080;
+	--black-65: #000000a6;
+	--white-65: #ffffffa6;
+}
+
+.window-box {
+    text-shadow: none !important;
+}
+
+.window-head .box-buttons span {
+    border-radius: 12px;
+}
+.window-body .tabs ul.horizontal li {
+    border-radius: 10px 10px 0 0;
+	border: 1px solid transparent;
+	border-bottom: none;
+}
+.window-body .tabs ul.horizontal li.active {
+	border: var(--btn-border);
+	border-bottom: none;
+}
+
+.show-all img, .openList img, .show-entity img, img.show-entity {
+    filter: invert(1);
+}

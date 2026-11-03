@@ -13,9 +13,7 @@ let Calculator = {
 	ForderBonusPerConversation: true,
 	AutoOpen: FH.Storage.getItem('CalcAutoOpen') || false,
 	OwnPartClose: false,
-	DefaultButtons: [
-		80, 90, 100, 'ark'
-	],
+	DefaultButtons: { copper: [80, 90, 100, 'contribution_boost'], gold: [10, 20, 'contribution_boost_gold']},
 	ClanId: null,
 	ClanName: null,
 	RankState: {
@@ -114,20 +112,18 @@ let Calculator = {
 			}
 
 		// different arc bonus-buttons
-		let investmentSteps = [80, 90, 100, FH.Main.ArkBonus],
-			customButtons = FH.Storage.getItem('CustomCalculatorButtons');
+		let investmentSteps = Tier === 'gold' ? [10, 20, Boosts.Sums.contribution_boost_gold] : [80, 90, 100, Boosts.Sums.contribution_boost],
+			customButtons =  Tier === 'gold' ? FH.Storage.getItem('CustomCalculatorGoldButtons') : FH.Storage.getItem('CustomCalculatorButtons');
 
 		if(customButtons) {
 			investmentSteps = [];
 			let bonuses = JSON.parse(customButtons);
 
 			bonuses.forEach(bonus => {
-				if (bonus === 'ark') {
+				if (bonus === 'ark' || bonus === 'contribution_boost' || bonus === 'contribution_boost_gold') 
 					investmentSteps.push(FH.Main.ArkBonus);
-				}
-				else {
+				else 
 					investmentSteps.push(bonus);
-				}
 			})
 		}
 
@@ -611,38 +607,59 @@ let Calculator = {
 
 	ShowCalculatorSettings: ()=> {
 		let c = [],
-			buttons,
+			buttons, goldButtons,
 			defaults = Calculator.DefaultButtons,
 			sB = FH.Storage.getItem('CustomCalculatorButtons'),
-			allGB = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs')),
-			nV = `<p class="new-row text-center bbd p5 flex gap">
-				${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> 
-				<span class="btn btn-green btn-slim" onclick="Calculator.SettingsInsertNewRow()">+</span>
-				</p>`;
+			sBG = FH.Storage.getItem('CustomCalculatorGoldButtons'),
+			allGB = JSON.parse(FH.Storage.getItem('ShowOwnPartOnAllGBs'));
+
+		function nV(tier = '') {
+			return `<p class="new-row"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Calculator.SettingsInsertNewRow('${tier}')">+</span></p>`
+		}
 
 		if(sB) {
-			// buttons = [...new Set([...defaults,...JSON.parse(sB)])];
 			buttons = JSON.parse(sB);
 
 			buttons = buttons.filter((item, index) => buttons.indexOf(item) === index); // remove duplicates
 			buttons.sort((a, b) => a - b); // order
 		}
 		else {
-			buttons = defaults;
+			buttons = defaults.copper;
+		}
+		if(sBG) {
+			goldButtons = JSON.parse(sBG);
+
+			goldButtons = goldButtons.filter((item, index) => goldButtons.indexOf(item) === index); 
+			goldButtons.sort((a, b) => a - b);
+		}
+		else {
+			goldButtons = defaults.gold;
 		}
 
-		c.push('<section class="flex gap p2">');
+		c.push('<section id="copperTierValues" class="flex gap p2">');
 		buttons.forEach(bonus => {
-			if(bonus === 'ark') {
-				c.push(`<span class="btn-group"><input type="hidden" class="settings-values" value="ark"> <button class="btn btn-slim br">${FH.Main.ArkBonus}%</button></span>`);
+			if(bonus === 'ark' || bonus === 'contribution_boost') {
+				c.push(`<span class="btn-group"><input type="hidden" class="settings-values" value="contribution_boost"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost}%</button></span>`);
 			}
 			else {
 				c.push(`<span class="btn-group flex"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Calculator.SettingsRemoveRow(this)">x</span> </span>`);
 			}
 		});
+		c.push(nV());
 		c.push('</section>');
 
-		c.push(nV);
+		c.push('<section id="goldTierValues" class="flex gap p2">');
+		goldButtons.forEach(bonus => {
+			if(bonus === 'contribution_boost_gold') {
+				c.push(`<span class="btn-group"><input type="hidden" class="settings-values gold" value="contribution_boost_gold"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost_gold}%</button></span>`);
+			}
+			else {
+				c.push(`<span class="btn-group flex"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values gold" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Calculator.SettingsRemoveRow(this)">x</span> </span>`);
+			}
+		});
+		c.push(nV('gold'));
+		c.push('</section>');
+
 
 		c.push(`<p class="bbd p5">
 			<label for="CalcAutoOpen"><input id="CalcAutoOpen" class="CalcAutoOpen game-cursor" ${(Calculator.AutoOpen ? 'checked' : '')} type="checkbox"> ${FH.t('Settings.ShowOwnPartAutoOpen.Desc')}</label><br/>
@@ -658,10 +675,10 @@ let Calculator = {
 	},
 
 
-	SettingsInsertNewRow: ()=> {
-    	let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Calculator.SettingsInsertNewRow()">+</span></p>`;
+	SettingsInsertNewRow: (tier = '')=> {
+		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim br" onclick="Parts.SettingsInsertNewRow('${tier}')">+</span></p>`;
 
-		$(nV).insertAfter( $('.new-row:eq(-1)') );
+		$(nV).insertAfter( $((tier==='gold'? '#goldTierValues' : '#copperTierValues') + ' .new-row:eq(-1)') );
 	},
 
 
@@ -673,19 +690,22 @@ let Calculator = {
 
 
 	SettingsSaveValues: ()=> {
-    	let values = [];
-		$('.settings-values').each(function(){
+		let values = [], goldValues = [];
+
+		$('.settings-values').each(function() {
 			let v = $(this).val().trim();
 
-			if(v){
-				if(v !== 'ark'){
-					values.push( parseFloat(v) );
-				} else {
-					values.push(v);
-				}
+			if ($(this).hasClass('gold') && v) {
+				if (v !== 'ark' && !v.includes('contribution_boost')) goldValues.push( parseFloat(v) );
+				else goldValues.push(v);
+			}
+			else if (v) {
+				if (v !== 'ark' && !v.includes('contribution_boost')) values.push( parseFloat(v) );
+				else values.push(v);
 			}
 		});
 		FH.Storage.setItem('CustomCalculatorButtons', JSON.stringify(values));
+		FH.Storage.setItem('CustomCalculatorGoldButtons', JSON.stringify(goldValues));
 
 		Calculator.AutoOpen = $('.CalcAutoOpen').prop('checked');
 		FH.Storage.setItem('CalcAutoOpen', Calculator.AutoOpen);
@@ -706,6 +726,9 @@ let Calculator = {
 			Parts.CalcBody();
 		});
 	},
+
+
+	/** GB List */
 
 	showToPay: (ReadyToOpen = Calculator.ReadyToOpen) => {
 		

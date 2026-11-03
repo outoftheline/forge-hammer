@@ -64,7 +64,7 @@
     --input-color: #3f1b3a;
     --input-border: 1px solid #3f1b34;
 
-	--tabs-bg: linear-gradient(#572a59, #33102e);
+	--tabs-bg: linear-gradient(#532c3a, #592e41);
 	--tabs-bg-active: linear-gradient(#9dbda6, #998e83);
 	--tabs-bg-shadow: inset 0 2px 0 #5a5155;
 	--tabs-bg-shadow-active: inset 1px 1px 0 0 #8fefb2, inset -1px 1px 0 0 #8decb0;
@@ -75,11 +75,11 @@
 	--text-tab: #b3ac9b;
 
 	--border-table-top: transparent;
-	--border-table-bottom: #1115;
+	--border-table-bottom: #11111167;
 	--border-table-bottom-darker: #170602;
 	--table-bg-hover: #ff845733;
 	--table-bg-odd: #cf6c9212;
-	--table-bg-darker: #2e233080;
+	--table-bg-darker: #1b0f1d80;
 	--table-bg-info: #001d6d4d;
 	--table-bt-info: transparent;
 	--table-bb-info: #252a43;
@@ -92,7 +92,7 @@
 	--table-bg-bright: #dd85002e;
 	--table-bt-bright: transparent;
 	--table-bb-bright: #492e0566;
-	--table-bg-highlight: #281207cc;
+	--table-bg-highlight: #1d030fcc;
 
 	--hud-border-error: #9c2d18;
 	--hud-border-success: #93c554;

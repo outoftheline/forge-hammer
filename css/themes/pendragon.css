@@ -1,0 +1,150 @@
+/*
+ * Copyright (C) 2026 Forge Hammer
+ * Licensed under AGPL - see LICENSE.md for details.
+ */
+
+:root {
+	--white: #fff;
+	--text: #14120f;
+	--text-link: #0a2549;
+	--text-medium: #51483f;
+	--text-dark: #2b1d15;
+	--text-dark2: #302117;
+	--text-darker: #201a18;
+	--ash: #4b4848;
+	--text-highlight: #ffe9bf;
+	--text-highlight2: #5f2203;
+
+	--success: #1a6e00;
+	--limegreen: #09691e;
+	--info-blue: #043e6e;
+	--danger-red: #720505;
+
+	--border-medium: #7b6130;
+	--bg-light: #e9e0cc;
+	--bg-medium: #b3aa9a;
+	--bg-dark: #91887e;
+	--bg-darkest: #857d75;
+
+	--window-border: 2px solid #b08446;
+	--window-shadow: 0 0 9px 2px #000000aa, 0 0 0px 1px #000000aa;
+	--window-bg: #9b9288;
+
+	--window-body-scroll-bg: #a59b90;
+	--window-body-scroll-border: #9b8f82;
+	--window-body-scroll-color: #e2c49a;
+
+	--window-settings-bg: #bdb098;
+
+	--window-head-bg: linear-gradient(-45deg, transparent, #243173de), repeating-linear-gradient(4deg, transparent, transparent 5px, #1f3645ed 5px, #213441d6 6px), repeating-linear-gradient(-45deg, #2e6083, #314d83 5px, #324e85 5px, #1f3645 6px);
+	--window-head-text: #f0e7d2;
+	--window-head-shadow: inset 0 -1px 0 0 #fdb962;
+	--window-head-btn-bg: url(../images/hud/box-sprite.png), linear-gradient(to bottom, #304b8c, #304b8c);
+	--window-head-btn-shadow: inset -1px -1px 0 0 #304b8c;
+
+	--btn-bg-red: linear-gradient(to bottom, #8f0c0c, #520606);
+	--btn-bg-red-active: linear-gradient(to bottom, #bb1d1d,#700d0d);
+	--btn-bg-red-onclick: linear-gradient(to bottom, #bb1d1d,#8f0c0c);
+
+	--btn-bg: linear-gradient(to bottom, #ae8448, #a2723a);
+	--btn-bg-disabled: linear-gradient(to bottom, #444444 #2d2d2d);
+	--btn-bg-active: linear-gradient(to bottom, #489ea1, #226569);
+	--btn-bg-onclick: linear-gradient(to bottom, #1193aa, #094b77);
+	--btn-bg-green: linear-gradient(to bottom, #849636, #176517);
+    --btn-border: 1px solid #563e21;
+    --btn-border-active-color: #563e21;
+	--btn-green-color: #dde9ca;
+	--text-btn-disabled: #999;
+	--text-btn: #111;
+
+    --switch-text: #2c3636;
+    --switch-text-active: #f5ede8;
+
+    --input-accent: #a03628;
+    --input-bg: #ebe7d9;
+    --input-color: #312720;
+    --input-border: 1px solid #2c211a;
+
+	--tabs-bg: linear-gradient(#464646, #5d5352);
+	--tabs-bg-active: linear-gradient(180deg, #0a4b88, #1a2a50);
+	--tabs-bg-shadow: none;
+	--tabs-bg-shadow-active: none;
+	--tabs-border: 2px solid #1a2a50;
+	--border-tab: #1a2a50;
+	--border-tab-vertical: linear-gradient(-70deg, #a2723a, #d1c693, #a2723a) 10;
+	--text-tab-active: #eee;
+	--text-tab: #eee;
+
+	--border-table-top: transparent;
+	--border-table-bottom: #726b61cb;
+	--border-table-bottom-darker: #776f63cb;
+	--table-bg-hover: #30445d49;
+	--table-bg-odd: #4f4b462a;
+	--table-bg-darker: #b3a593cb;
+	--table-bg-info: #5b81a163;
+	--table-bt-info: transparent;
+	--table-bb-info: #396c99;
+	--table-bg-success: #7cd65b4d;
+	--table-bt-success: transparent;
+	--table-bb-success: #4fa14f;
+	--table-bg-error: #e377774d;
+	--table-bt-error: transparent;
+	--table-bb-error: #a75b5b;
+	--table-bg-bright: #dd85002e;
+	--table-bt-bright: transparent;
+	--table-bb-bright: #492e0566;
+	--table-bg-highlight: #ab8c537a;
+
+	--hud-border-error: #9c2d18;
+	--hud-border-success: #93c554;
+
+	--menu-tooltip-border: 2px solid #b8a07a;
+	--menu-tooltip-bg: #b3a58c;
+	--menu-tooltip-disabled: #6d0e0e;
+	--menu-tooltip-text: #252522;
+	--menu-tooltip-head-bg: #af9470;
+
+    --tooltip-bg: #f1dfb6;
+    --tooltip-text: #2b2a27;
+
+	--hud-counter-color: #128ebe;
+	--hud-counter-success: #5c8d20;
+	--hud-counter-bg: 1px 0 0 1px #0000003e;
+	--hud-counter-size: 16px;
+
+	--menu-bg: #00000080;
+	--menu-shadow: none;
+	--menu-arrow-bg: linear-gradient(to bottom, #1a2a50, #1a2a50);
+	--menu-arrow-color: #e5e1cf;
+	--menu-btn-bg-green: linear-gradient(#d1c693, #a2723a) border-box;
+	--menu-btn-bg-red: linear-gradient(to bottom, #bbaf88, #bbaf88) border-box;
+	--menu-btn-bg-grey: linear-gradient(#310f0c, #3f1719) padding-box, linear-gradient(-66deg, #673327 20%, #5f2924 60%) border-box;
+	--menu-btn-bg: linear-gradient(#35486d, #2f3750) padding-box, var(--menu-btn-bg-green);
+	--menu-btn-bg-color: #2f3750;
+	--menu-btn-shadow: inset 0 3px 6px 3px #0201515e;
+	--menu-btn-shadow-disabled: inset 0 0 1px 1px #1d18018e;
+	--menu-btn-disabled-bg: var(--menu-btn-bg-grey);
+	--menu-btn-bg-settings: linear-gradient(#4e4d4a, #4c4d3e) padding-box, linear-gradient(to bottom, #959899, #536377) border-box;
+	--menu-boxed-head-bg: linear-gradient(-45deg, #1a2a50 61px, #1a2a50);
+	--menu-boxed-head-shadow: none;
+	--menu-boxed-head-color: #201e1e;
+
+	--bg-chart: #0c0b0b77;
+
+	/* static */
+
+	--grey: #444;
+	--black: #000;
+	--black-30: #00000048;
+	--black-50: #00000080;
+	--black-65: #000000a6;
+	--white-65: #ffffffa6;
+}
+
+.window-box, .btn {
+    text-shadow: none !important;
+}
+
+.show-all img, .openList img, .show-entity img, img.show-entity {
+    filter: invert(1);
+}

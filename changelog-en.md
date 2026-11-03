@@ -9,7 +9,7 @@
 ### Update
 - BG Helper: Added next age goods
 - Productions: Added medal boosts
-- GB Calculator: Both views can now remember the bonus per conversation
+- GB Calculator: Both views can now remember the bonus per conversation, activate it in the settings
  
 ---
 

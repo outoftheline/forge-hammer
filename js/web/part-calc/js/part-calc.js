@@ -95,9 +95,7 @@ let Parts = {
 	CopyString: null,
 	CopyStrings: {},
 
-	DefaultButtons: [
-		80, 90, 100, 'ark'
-	],
+	DefaultButtons: { copper: [80, 90, 100, 'contribution_boost'], gold: [10, 20, 'contribution_boost_gold']},
 
 	// Settings
 	CopyFormatPerGB: false,
@@ -505,7 +503,6 @@ let Parts = {
 
 		// Restore Default settings
 		if (Parts.FirstCycle) {
-
 			let SavedCopyOwnPlayerName = FH.Storage.getItem(Parts.GetStorageKey('CopyOwnPlayerName', null));
 			if (SavedCopyOwnPlayerName !== null) {
 				Parts.CopyOwnPlayerName = SavedCopyOwnPlayerName
@@ -831,8 +828,8 @@ let Parts = {
 
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
-		let investmentSteps = [80, 90, 100, FH.Main.ArkBonus],
-			customButtons = FH.Storage.getItem('CustomPartCalcButtons');
+		let investmentSteps = Tier === 'gold' ? [10, 20, Boosts.Sums.contribution_boost_gold] : [80, 90, 100, Boosts.Sums.contribution_boost],
+			customButtons = Tier === 'gold' ? FH.Storage.getItem('CustomPartCalcGoldButtons') : FH.Storage.getItem('CustomPartCalcButtons');
 
 		// custom buttons available
 		if(customButtons) {
@@ -840,8 +837,8 @@ let Parts = {
 			let bonuses = JSON.parse(customButtons);
 
 			bonuses.forEach(bonus => {
-				if(bonus === 'ark') 
-					investmentSteps.push(FH.Main.ArkBonus);
+				if(bonus === 'contribution_boost_gold' || bonus === 'contribution_boost' || bonus === 'ark') 
+					investmentSteps.push(Boosts.Sums.contribution_boost);
 				else 
 					investmentSteps.push(bonus);
 			});
@@ -1613,17 +1610,21 @@ let Parts = {
 		}
 
 		let c = [],
-			buttons,
+			buttons, goldButtons,
 			defaults = Parts.DefaultButtons,
 			sB = FH.Storage.getItem('CustomPartCalcButtons'),
+			sBG = FH.Storage.getItem('CustomPartCalcGoldButtons'),
 			allGB = FH.Storage.getItem('ShowOwnPartOnAllGBs') || 'false',
 			showMedals = FH.Storage.getItem('OwnPartShowMedals') || 'true',
 			showPrints = FH.Storage.getItem('OwnPartShowBP') || 'true',
 			minView = FH.Storage.getItem('OwnPartMinView') || 'false',
 			autoOpen = FH.Storage.getItem('OwnPartAutoOpen') || 'false',
 			includeStart = FH.Storage.getItem('OwnPartIncludeStart') || 'true',
-			arcPerConversation = FH.Storage.getItem('OwnPartArcPerConversation') || 'false',
-			nV = `<p class="new-row text-center bbd p5 flex gap"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
+			arcPerConversation = FH.Storage.getItem('OwnPartArcPerConversation') || 'false';
+		
+		function nV(tier = '') {
+			return `<p class="new-row"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow('${tier}')">+</span></p>`
+		}
 		
 		if(sB) {
 			buttons = JSON.parse(sB);
@@ -1632,21 +1633,43 @@ let Parts = {
 			buttons.sort((a, b) => a - b); // order
 		}
 		else {
-			buttons = defaults;
+			buttons = defaults.copper;
+		}
+		if(sBG) {
+			goldButtons = JSON.parse(sBG);
+
+			goldButtons = goldButtons.filter((item, index) => goldButtons.indexOf(item) === index); 
+			goldButtons.sort((a, b) => a - b);
+		}
+		else {
+			goldButtons = defaults.gold;
 		}
 
-		c.push('<section class="flex gap p2">');
+		c.push('<section id="copperTierValues" class="flex gap p2">');
 		buttons.forEach(bonus => {
-			if(bonus === 'ark') 
-				c.push(`<span class="btn-group"><input type="hidden" class="settings-values" value="ark"> <button class="btn btn-slim br">${FH.Main.ArkBonus}%</button></span>`);
+			if(bonus === 'contribution_boost' || bonus === 'ark') 
+				c.push(`<span class="btn-group"><input type="hidden" class="settings-values" value="contribution_boost"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost}%</button></span>`);
 			
 			else 
 				c.push(`<span class="btn-group"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Parts.SettingsRemoveRow(this)">x</span></span>`);
 			
 		});
+		c.push(nV());
 		c.push('</section>');
 
-		c.push(nV);
+		if (FH.Main.CurrentGB.Entity.bonuses.length > 0) {
+			c.push('<section id="goldTierValues" class="flex gap p2">');
+			goldButtons.forEach(bonus => {
+				if(bonus === 'contribution_boost_gold') 
+					c.push(`<span class="btn-group"><input type="hidden" class="settings-values gold" value="contribution_boost_gold"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost_gold}%</button></span>`);
+				
+				else 
+					c.push(`<span class="btn-group"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values gold" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Parts.SettingsRemoveRow(this)">x</span></span>`);
+				
+			});
+			c.push(nV('gold'));
+			c.push('</section>');
+		}
 
 		c.push(`<p class="bbd p5">
 				<input type="checkbox" id="autoOpen" class="autoOpen game-cursor" ${((autoOpen == 'true') ? 'checked' : '')}> <label for="autoOpen">${FH.t('Settings.ShowOwnPartAutoOpen.Desc')}</label><br>
@@ -1664,10 +1687,10 @@ let Parts = {
 	},
 
 
-	SettingsInsertNewRow: ()=> {
-		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values" style="width:30px"> <span class="btn btn-green" onclick="Parts.SettingsInsertNewRow()">+</span></p>`;
+	SettingsInsertNewRow: (tier = '')=> {
+		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim br" onclick="Parts.SettingsInsertNewRow('${tier}')">+</span></p>`;
 
-		$(nV).insertAfter( $('.new-row:eq(-1)') );
+		$(nV).insertAfter( $((tier==='gold'? '#goldTierValues' : '#copperTierValues') + ' .new-row:eq(-1)') );
 	},
 
 
@@ -1679,20 +1702,23 @@ let Parts = {
 
 
 	SettingsSaveValues: ()=> {
-		let values = [];
+		let values = [], goldValues = [];
 
 		$('.settings-values').each(function() {
 			let v = $(this).val().trim();
 
-			if(v) {
-				if(v !== 'ark')
-					values.push( parseFloat(v) );
-				else 
-					values.push(v);
+			if ($(this).hasClass('gold') && v) {
+				if (v !== 'ark' && !v.includes('contribution_boost')) goldValues.push( parseFloat(v) );
+				else goldValues.push(v);
+			}
+			else if (v) {
+				if (v !== 'ark' && !v.includes('contribution_boost')) values.push( parseFloat(v) );
+				else values.push(v);
 			}
 		});
 
 		FH.Storage.setItem('CustomPartCalcButtons', JSON.stringify(values));
+		FH.Storage.setItem('CustomPartCalcGoldButtons', JSON.stringify(goldValues));
 
 		let OldCopyFormatPerGB = Parts.CopyFormatPerGB;
 		Parts.CopyFormatPerGB = $('.copyformatpergb').prop('checked');

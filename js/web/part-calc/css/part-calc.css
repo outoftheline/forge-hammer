@@ -217,8 +217,18 @@
 #OwnPartBox .gbTier-silver table.foe-table {
 	border-top: 2px solid var(--silver);
 }
-#OwnPartBox .gbTier-gold table.foe-table {
+#OwnPartBox .gbTier-gold table.foe-table, #goldTierValues {
 	border-top: 2px solid var(--golden);
+}
+#goldTierValues {
+	border-bottom: 2px solid var(--golden);
+}
+#OwnPartBox .new-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	width: 100%;
 }
 
 #gbCosts tr th span {

@@ -1116,7 +1116,7 @@ let GuildFights = {
 		t.push('<th colspan="3" data-export3="Player">' + FH.t('Boxes.GuildFights.Player') + '</th>');
 		t.push('<th class="text-center" data-export="Negotiations"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tN) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Fights"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span> <strong class="text-warning">(' + FH.HTML.Format(tF) + ')</strong></th>');
-		t.push('<th class="text-center" data-export="Total"> <img class="game-cursor" alt="'+FH.t('Boxes.GuildFights.Total')+'" src="' + FH.extUrl + 'js/web/x_img/gbg-sum.png"> <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
+		t.push('<th class="text-center" data-export="Total"> <img class="game-cursor" alt="'+FH.t('General.Total')+'" src="' + FH.extUrl + 'js/web/x_img/gbg-sum.png"> <strong class="text-warning">(' + FH.HTML.Format(tNF) + ')</strong></th>');
 		t.push('<th class="text-center" data-export="Attrition"> <img class="game-cursor" alt="'+FH.t('Boxes.GuildFights.Attrition')+'" src="' + FH.extUrl + 'js/web/x_img/attrition.png"> <strong class="text-warning">(' + FH.HTML.Format(tA) + ')</strong></th>');
 
 		t.push('<th></th>');
@@ -1238,7 +1238,7 @@ let GuildFights = {
 			h.push('<th class="is-number" data-type="gbg-playerlog-group">' + FH.t('Boxes.GuildFights.Date') + '</th>');
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
 			h.push('<th class="is-number text-center" data-type="gbg-playerlog-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
-			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group"><img class="game-cursor" title="${FH.t('Boxes.GuildFights.Total')}" src="${FH.extUrl}js/web/x_img/gbg-sum.png"></th>
+			h.push(`<th class="is-number text-center" data-type="gbg-playerlog-group"><img class="game-cursor" title="${FH.t('General.Total')}" src="${FH.extUrl}js/web/x_img/gbg-sum.png"></th>
 				<th class="is-number text-center" data-type="gbg-playerlog-group"><img class="game-cursor" title="${FH.t('Boxes.GuildFights.Attrition')}" src="${FH.extUrl}js/web/x_img/attrition.png"></th>
 			</tr>
 			</thead><tbody class="gbg-playerlog-group">`);
@@ -1271,7 +1271,7 @@ let GuildFights = {
 			h.push('<th class="case-sensitive" data-type="gbg-log-group">' + FH.t('Boxes.GuildFights.Player') + '</th>');
 			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="negotiation" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Negotiations')) + '"></span></th>');
 			h.push('<th class="is-number text-center" data-type="gbg-log-group"><span class="fight" title="' + FH.HTML.Tooltip(FH.t('Boxes.GuildFights.Fights')) + '"></span></th>');
-			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Total')}</th>`);
+			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('General.Total')}</th>`);
 			h.push(`<th class="is-number text-center" data-type="gbg-log-group">${FH.t('Boxes.GuildFights.Attrition')}</th>`);
 			h.push('</tr>');
 			h.push('</thead><tbody class="gbg-log-group">');
