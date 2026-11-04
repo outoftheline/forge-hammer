@@ -838,7 +838,7 @@ let Parts = {
 
 			bonuses.forEach(bonus => {
 				if(bonus === 'contribution_boost_gold' || bonus === 'contribution_boost' || bonus === 'ark') 
-					investmentSteps.push(Boosts.Sums.contribution_boost);
+					investmentSteps.push(FH.Main.ArkBonus);
 				else 
 					investmentSteps.push(bonus);
 			});
