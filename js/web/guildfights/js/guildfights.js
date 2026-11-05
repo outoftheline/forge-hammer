@@ -533,6 +533,7 @@ let GuildFights = {
 
 	HandlePlayerLeaderboard: async (d) => {
 		// always have two for reference
+		if (d === undefined) return;
 		if (FH.Storage.getItem('GuildFights.NewAction') !== null) {
 			GuildFights.PrevAction = JSON.parse(FH.Storage.getItem('GuildFights.NewAction'));
 			GuildFights.PrevActionTimestamp = parseInt(FH.Storage.getItem('GuildFights.NewActionTimestamp'));
