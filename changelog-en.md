@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.10.2
+### Bugfix
+- GB Calculator calculated gold boosts one level too early
+
+---
+
+## Version 1.10.1
+### Bugfix
+- GB Calculator could show copper instead of gold boost
+
+---
+
 ## Version 1.10.0
 ### New
 - Halloween color theme

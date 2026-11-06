@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.10.2
+### Bugfix
+- LG Rechner eine Stufe zu früh Gold-Bonus berechnet
+
+---
+
+## Version 1.10.1
+### Bugfix
+- LG Rechner hat den Kupfer- statt Gold-Bonus angezeigt
+
+---
+
 ## Version 1.10.0
 ### Neu
 - Halloween Farben

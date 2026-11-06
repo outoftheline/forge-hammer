@@ -1657,19 +1657,17 @@ let Parts = {
 		c.push(nV());
 		c.push('</section>');
 
-		if (FH.Main.CurrentGB.Entity.bonuses.length > 0) {
-			c.push('<section id="goldTierValues" class="flex gap p2">');
-			goldButtons.forEach(bonus => {
-				if(bonus === 'contribution_boost_gold') 
-					c.push(`<span class="btn-group"><input type="hidden" class="settings-values gold" value="contribution_boost_gold"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost_gold}%</button></span>`);
-				
-				else 
-					c.push(`<span class="btn-group"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values gold" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Parts.SettingsRemoveRow(this)">x</span></span>`);
-				
-			});
-			c.push(nV('gold'));
-			c.push('</section>');
-		}
+		c.push('<section id="goldTierValues" class="flex gap p2">');
+		goldButtons.forEach(bonus => {
+			if(bonus === 'contribution_boost_gold') 
+				c.push(`<span class="btn-group"><input type="hidden" class="settings-values gold" value="contribution_boost_gold"> <button class="btn btn-slim br">${Boosts.Sums.contribution_boost_gold}%</button></span>`);
+			
+			else 
+				c.push(`<span class="btn-group"><button class="btn btn-slim">${bonus}%</button> <input type="hidden" class="settings-values gold" value="${bonus}"> <span class="btn btn-delete btn-slim" onclick="Parts.SettingsRemoveRow(this)">x</span></span>`);
+			
+		});
+		c.push(nV('gold'));
+		c.push('</section>');
 
 		c.push(`<p class="bbd p5">
 				<input type="checkbox" id="autoOpen" class="autoOpen game-cursor" ${((autoOpen == 'true') ? 'checked' : '')}> <label for="autoOpen">${FH.t('Settings.ShowOwnPartAutoOpen.Desc')}</label><br>
