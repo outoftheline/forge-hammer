@@ -380,12 +380,14 @@ let GuildMemberStat = {
 				}
 
 				if (entity[i].state && entity[i]['state']['current_product']) {
-					if (entity[i]['state']['current_product']['name'] !== 'clan_goods')
+					let currentProducts = entity[i]['state']['current_product']['products'] || [entity[i]['state']['current_product']];
+					let clanGoods = currentProducts.find(product => product['name'] === 'clan_goods' && product['goods']);
+					if (!clanGoods)
 						continue;
 
-					let totalgoods = entity[i]['state']['current_product']['goods'].map(good => good.value).reduce((sum, good) => good + sum);
+					let totalgoods = clanGoods['goods'].map(good => good.value).reduce((sum, good) => good + sum, 0);
 
-					GuildGoodsBuildings.push({ gbid: GBTempID, entity_id: EntityID, name: CityEntity['name'], resources: { totalgoods: totalgoods, goods: entity[i]['state']['current_product']['goods'].sort(function (a, b) { return a.good_id.localeCompare(b.good_id) }) }, level: entity[i]['level'], era: Member.era });
+					GuildGoodsBuildings.push({ gbid: GBTempID, entity_id: EntityID, name: CityEntity['name'], resources: { totalgoods: totalgoods, goods: clanGoods['goods'].sort(function (a, b) { return a.good_id.localeCompare(b.good_id) }) }, level: entity[i]['level'], era: Member.era });
 				}
 			}
 		}

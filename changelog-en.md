@@ -1,8 +1,15 @@
 # Changelog
 
-## Version 1.10.2
+## Version 1.10.3
+### Update
+- Profile: Added contribution boosts
+
 ### Bugfix
-- GB Calculator calculated gold boosts one level too early
+- GB Calculator started the gold boost one level too early
+- GB Calculator didnt switch to the correct contribution boost when switching tiers
+- Productions: Fixed some boosts, tbc
+
+---
 
 ---
 

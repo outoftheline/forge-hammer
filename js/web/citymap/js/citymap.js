@@ -3162,7 +3162,7 @@ let CityBuildings = {
 				if (production.type !== 'guildResources' || production.resources === undefined) continue;
 
 				for (let resourceName of Object.keys(production?.resources)) {
-					let good = FH.Goods.List.find(x => x.id === resourceName);
+					let good = FH.Goods.List.find(x => x.id === resourceName) || (FH.Goods.Data?.[resourceName]?.era && Technologies.InnoEras[FH.Goods.Data[resourceName].era] !== undefined ? FH.Goods.Data[resourceName] : undefined);
 					let goodEra = Technologies.InnoEras[building.eraName];
 					let isGood = false;
 
