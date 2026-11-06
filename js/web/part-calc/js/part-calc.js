@@ -213,6 +213,7 @@ let Parts = {
 
 				Parts.ArcPercents = ArcPercents;
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(ArcPercents));
+				FH.Storage.setItem('GBOwnBoost', ArcPercents.every(x => x === Parts.GetArcBoost()));
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -241,6 +242,7 @@ let Parts = {
 				}
 
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
+				FH.Storage.setItem('GBOwnBoost', ArkBonus === Parts.GetArcBoost());
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -499,6 +501,12 @@ let Parts = {
 		Parts.ArcPerConversation = (FH.Storage.getItem('OwnPartArcPerConversation') === 'true');
 		if (Parts.FirstCycle || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
 			Parts.GetConversationBonus();
+		}
+
+		let PersonalBoost = Parts.GetArcBoost();
+		if (FH.Storage.getItem('GBOwnBoost') === 'true' && Parts.ArcPercents.some(x => x !== PersonalBoost)) {
+			Parts.ArcPercents = Parts.ArcPercents.map(() => PersonalBoost);
+			FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
 		}
 
 		// Restore Default settings
@@ -1231,6 +1239,11 @@ let Parts = {
 		let Key = Parts.GetStorageKey('ArcPercents', null);
 		if (Parts.ArcPerConversation && FH.Main.OpenConversation) Key += '_' + FH.Main.OpenConversation.id;
 		return Key;
+	},
+
+
+	GetArcBoost: () => {
+		return FH.Main.CurrentGB.Entity?.tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
 	},
 
 

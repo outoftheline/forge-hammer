@@ -70,6 +70,9 @@ let Calculator = {
 				Calculator.ForderBonus = parseFloat(ab);
 		}
 
+		if (FH.Storage.getItem('CalculatorUsePersonalBoost') === 'true')
+			Calculator.ForderBonus = Parts.GetArcBoost();
+
 		let PlayerID = FH.Main.CurrentGB.Entity.player_id,
             h = [];
 
@@ -676,7 +679,7 @@ let Calculator = {
 
 
 	SettingsInsertNewRow: (tier = '')=> {
-		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim br" onclick="Parts.SettingsInsertNewRow('${tier}')">+</span></p>`;
+		let nV = `<p class="new-row">${FH.t('Boxes.Calculator.Settings.newValue')}: <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim br" onclick="Calculator.SettingsInsertNewRow('${tier}')">+</span></p>`;
 
 		$(nV).insertAfter( $((tier==='gold'? '#goldTierValues' : '#copperTierValues') + ' .new-row:eq(-1)') );
 	},
