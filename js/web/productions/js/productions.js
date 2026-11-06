@@ -1350,6 +1350,7 @@ let Productions = {
 								guild_raids: 0
 							}
 							building.boosts.forEach(boost => {
+								if (boost.isMultiplier) return // percentage of the total (e.g. GB bonus), not a flat value
 								if (boost.type.find(x => x === type) === type) {
 									if (boost.feature === "all") {
 										boosts.all += boost.value
@@ -2000,9 +2001,10 @@ let Productions = {
 					}
 				}
 				if (production.type === "special_goods" && category === "special_goods") {
-					let combinedValues = Object.entries(production.resources).length === 1 ? Math.round(prod.amount * Boosts.Sums.special_goods_production/100) : 0;
+					let specialGoodsBoost = (building.type === "greatbuilding" ? 0 : Boosts.Sums.special_goods_production) // GB productions can not be boosted
+					let combinedValues = Object.entries(production.resources).length === 1 ? Math.round(prod.amount * specialGoodsBoost/100) : 0;
 					for (let [type,value] of Object.entries(production.resources)) {
-						let boostedValue = Math.round(value * Boosts.Sums.special_goods_production/100);
+						let boostedValue = Math.round(value * specialGoodsBoost/100);
 						combinedValues += value+boostedValue;
 					}
 					prod.amount = combinedValues;
@@ -3208,6 +3210,7 @@ let Productions = {
 
 			let bsum = 0;
 			for (const boost of building.boosts) {
+				if (boost.isMultiplier) continue;
 
 				let feature = type.split('-')[1];
 				if (feature !== boost.feature) continue;
@@ -3310,7 +3313,7 @@ let Productions = {
 			let type = boost.type.find(x => x === boostName)
 			if (!boostName.includes('-')) {
 				if (type !== undefined) {
-					const value = { feature: boost.feature, value: boost.value }
+					const value = { feature: boost.feature, value: boost.value, isMultiplier: boost.isMultiplier === true }
 					callback(value)
 				}
 			}

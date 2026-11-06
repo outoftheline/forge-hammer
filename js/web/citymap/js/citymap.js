@@ -1785,11 +1785,12 @@ let CityBuildings = {
 				if (metaData.requirements.cost) {
 					if (metaData.type === "decoration")
 						return 0
-					else if (metaData.type === "greatbuilding") 
-						if (data.bonus)
-							if (data.bonus.type === "population")
-								return data.bonus.value
-					
+					else if (metaData.type === "greatbuilding") {
+						let gbPopulation = (data.bonuses || []).filter(b => b.type === "population").reduce((sum, b) => sum + (b.value || 0), 0)
+						if (gbPopulation)
+							return gbPopulation
+					}
+
 					return metaData.requirements.cost.resources.population * -1
 				}
 			}
@@ -1812,18 +1813,15 @@ let CityBuildings = {
 		let eraId = Technologies.InnoEras[era]
 		let isPolivated = CityBuildings.setPolivation(data, metaData)
 
-		let bgHappiness = data.bonus
 		if (metaData.__class__ !== "GenericCityEntity") {
 			if (metaData.entity_levels.length > 0) { // special building
-				if (metaData.entity_levels[eraId].provided_happiness) 
+				if (metaData.entity_levels[eraId].provided_happiness)
 					return (data?.state?.__class__ === "PolishedState" ? metaData.entity_levels[eraId].provided_happiness*2 : metaData.entity_levels[eraId].provided_happiness)
 				return happiness
 			}
-			else if (bgHappiness) { // great building, e.g. Alcatraz
-				if (bgHappiness.type === "happiness") 
-					return bgHappiness.value
-				return 0
-			} 
+			else if (metaData.type === "greatbuilding") { // great building, e.g. Alcatraz
+				return (data.bonuses || []).filter(b => b.type === "happiness").reduce((sum, b) => sum + (b.value || 0), 0)
+			}
 			else if (metaData.provided_happiness) { // decorations etc.
 				return (isPolivated ? metaData.provided_happiness*2 : metaData.provided_happiness)
 			}
@@ -2042,15 +2040,16 @@ let CityBuildings = {
 					}
 				}
 			})
-			if (metaData.type === "greatbuilding") { 
-				if (data.bonus?.type) {
-					let boost = {
-						feature: "all",
-						type: Boosts.Mapper[data.bonus.type] || [data.bonus.type],
-						value: data.bonus.value
-					}
-					if (data.bonus.type !== "happiness_amount" && data.bonus.type !== "population")
-						boosts.push(boost)
+			if (metaData.type === "greatbuilding") {
+				for (const bonus of (data.bonuses || [])) {
+					if (bonus.bonusCategory?.value === "productionBonus") continue;
+					if (bonus.type === "happiness" || bonus.type === "population") continue;
+					boosts.push({
+						feature: bonus.targetedFeature || "all",
+						type: Boosts.Mapper[bonus.type] || [bonus.type],
+						value: bonus.value || 0,
+						isMultiplier: bonus.isBonusMultiplier === true
+					})
 				}
 			}
 			else if (metaData.id.includes("CastleSystem")) {
@@ -2594,55 +2593,58 @@ let CityBuildings = {
 		if (state !== "idle") {
 			if (metaData.__class__ !== "GenericCityEntity") {
 				if (data.state.current_product) {
-					if (data.state.current_product.guildProduct) {
-						let production = {
-							resources: data.state.current_product.guildProduct.resources,
-							type: "guildResources",
-						}
-						productions.push(production)
-					}
-					if (data.state.current_product.clan_power) { // HoF
-						let production = {
-							resources: { clan_power: data.state.current_product.clan_power },
-							type: "guildResources",
-						}
-						productions.push(production)
-					}
-					if (data.state.current_product.product) {
-						if (data.state.current_product.product.resources) {
+					const currentProducts = data.state.current_product.products || [data.state.current_product];
+					for (const currentProduct of currentProducts) {
+						if (currentProduct.guildProduct) {
 							let production = {
-								resources: data.state.current_product.product.resources,
-								type: "resources",
-							}
-							if (data.state.current_product.name === 'special_goods') { // space carrier
-								production.type = "special_goods"
+								resources: currentProduct.guildProduct.resources,
+								type: "guildResources",
 							}
 							productions.push(production)
 						}
-					}
-					if (data.state.current_product.goods) { // great buildings
-						if (data.type === "greatbuilding") {
-							if (data.state.current_product.name === "clan_goods") {
-								let resources = {}
-								data.state.current_product.goods.forEach(good => {
-									resources[good.good_id] = good.value
-								})
+						if (currentProduct.clan_power) { // HoF
+							let production = {
+								resources: { clan_power: currentProduct.clan_power },
+								type: "guildResources",
+							}
+							productions.push(production)
+						}
+						if (currentProduct.product) {
+							if (currentProduct.product.resources) {
 								let production = {
-									resources: resources,
-									type: "guildResources",
+									resources: currentProduct.product.resources,
+									type: "resources",
+								}
+								if (currentProduct.name === 'special_goods') { // space carrier
+									production.type = "special_goods"
 								}
 								productions.push(production)
 							}
 						}
-					}
-					if (data.state.current_product.name === 'penal_unit') { // alcatraz
-						let production = {
-							resources: {'random': parseFloat(data.state.current_product.amount)},
-							type: "unit",
+						if (currentProduct.goods) { // great buildings
+							if (data.type === "greatbuilding") {
+								if (currentProduct.name === "clan_goods") {
+									let resources = {}
+									currentProduct.goods.forEach(good => {
+										resources[good.good_id] = good.value
+									})
+									let production = {
+										resources: resources,
+										type: "guildResources",
+									}
+									productions.push(production)
+								}
+							}
 						}
-						productions.push(production)
+						if (currentProduct.name === 'penal_unit') { // alcatraz
+							let production = {
+								resources: {'random': parseFloat(currentProduct.amount)},
+								type: "unit",
+							}
+							productions.push(production)
+						}
 					}
-					if (data.state.is_motivated) { 
+					if (data.state.is_motivated) {
 						metaData.abilities.forEach(ability => { // random units are not in the data, they are in the metaData for some reason
 							if (ability.__class__ === "RandomUnitOfAgeWhenMotivatedAbility") {
 								let production = {
@@ -3055,7 +3057,7 @@ let CityBuildings = {
 
 		if (productions) {
 			let goodsBoost = 0;
-			if (boosted)
+			if (boosted && building.type !== "greatbuilding") // GB productions can not be boosted
 				goodsBoost = Boosts.Sums.goods_production || 1;
 			
 			// only evaluate 1 day production for production buildings
