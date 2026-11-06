@@ -70,7 +70,7 @@ let Calculator = {
 				Calculator.ForderBonus = parseFloat(ab);
 		}
 
-		if (FH.Storage.getItem('CalculatorUsePersonalBoost') === 'true')
+		if (FH.Storage.getItem('GBOwnBoost') === 'true')
 			Calculator.ForderBonus = Parts.GetArcBoost();
 
 		let PlayerID = FH.Main.CurrentGB.Entity.player_id,
