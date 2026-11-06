@@ -42,7 +42,7 @@ let Productions = {
 		'att_boost_defender',
 		'def_boost_defender',
 		'clan_goods',
-		'guild_goods_production', // *special* goods boost
+		'guild_goods_production', // guild goods boost
 		'guild_raids'
 	],
 	FSPqualifiedResources: ["strategy_points","clan_goods","goods-previous","goods-current","goods-next"],
@@ -1726,7 +1726,7 @@ let Productions = {
 			rowA.push('<td class="text-center">')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><spandata-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><span data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
