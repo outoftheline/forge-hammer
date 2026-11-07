@@ -52,7 +52,7 @@
 	});
 
     function setGBtier(gb) {
-        let isGolden = goldenGBs.indexOf(gb.cityentity_id) >= 0 && gb.level > 101 && gb.bonuses.length > 0;
+        let isGolden = goldenGBs.indexOf(gb.cityentity_id) >= 0 && gb.level > 100 && gb.bonuses.length > 0;
         gb.tier = isGolden ? 'gold' : 'copper';
         FH.Main.ArkBonus = Boosts.Sums.contribution_boost;
         if (isGolden)
