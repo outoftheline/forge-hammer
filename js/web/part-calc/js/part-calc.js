@@ -140,6 +140,7 @@ let Parts = {
 	CopyModeAutoUnsafe: false,
 	CopyPlaces: [false, false, false, false, false],
 	allowCopyPlace: false,
+	UseOwnBoost: false,
 	allowCopyPlaceSetting: true,
 
 	Show: (view = '') => {
@@ -213,7 +214,8 @@ let Parts = {
 
 				Parts.ArcPercents = ArcPercents;
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(ArcPercents));
-				FH.Storage.setItem('GBOwnBoost', ArcPercents.every(x => x === Parts.GetArcBoost()));
+				Parts.UseOwnBoost = ArcPercents.every(x => x === Parts.GetArcBoost());
+				FH.Storage.setItem(Parts.GetConversationStorageKey() + '_OwnBoost', Parts.UseOwnBoost);
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -242,7 +244,8 @@ let Parts = {
 				}
 
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
-				FH.Storage.setItem('GBOwnBoost', ArkBonus === Parts.GetArcBoost());
+				Parts.UseOwnBoost = (ArkBonus === Parts.GetArcBoost());
+				FH.Storage.setItem(Parts.GetConversationStorageKey() + '_OwnBoost', Parts.UseOwnBoost);
 
 				Parts.CalcBody(Parts.Level);
 			});
@@ -430,6 +433,7 @@ let Parts = {
 				$('#costFactor').val(Calculator.ForderBonus);
 				let StorageKey = (Calculator.ForderBonusPerConversation && FH.Main.OpenConversation ? 'CalculatorForderBonus_' + FH.Main.OpenConversation.id : 'CalculatorForderBonus');
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
+				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
 				Calculator.Show();
 			});
 
@@ -437,6 +441,7 @@ let Parts = {
 				Calculator.ForderBonus = parseFloat($('#costFactor').val());
 				let StorageKey = (Calculator.ForderBonusPerConversation && FH.Main.OpenConversation ? 'CalculatorForderBonus_' + FH.Main.OpenConversation.id : 'CalculatorForderBonus');
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
+				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
 				Calculator.Show();
 			});
 
@@ -504,7 +509,7 @@ let Parts = {
 		}
 
 		let PersonalBoost = Parts.GetArcBoost();
-		if (FH.Storage.getItem('GBOwnBoost') === 'true' && Parts.ArcPercents.some(x => x !== PersonalBoost)) {
+		if (Parts.UseOwnBoost && Parts.ArcPercents.some(x => x !== PersonalBoost)) {
 			Parts.ArcPercents = Parts.ArcPercents.map(() => PersonalBoost);
 			FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
 		}
@@ -846,7 +851,7 @@ let Parts = {
 
 			bonuses.forEach(bonus => {
 				if(bonus === 'contribution_boost_gold' || bonus === 'contribution_boost' || bonus === 'ark') 
-					investmentSteps.push(FH.Main.ArkBonus);
+					investmentSteps.push(Parts.GetArcBoost());
 				else 
 					investmentSteps.push(bonus);
 			});
@@ -1248,10 +1253,18 @@ let Parts = {
 
 
 	GetConversationBonus: () => {
-		let Saved = null;
-		if (Parts.ArcPerConversation && FH.Main.OpenConversation) Saved = FH.Storage.getItem(Parts.GetConversationStorageKey());
-		if (Saved === null) Saved = FH.Storage.getItem(Parts.GetStorageKey('ArcPercents', null));
+		let Saved = null,
+			SavedKey = null;
+		if (Parts.ArcPerConversation && FH.Main.OpenConversation) {
+			SavedKey = Parts.GetConversationStorageKey();
+			Saved = FH.Storage.getItem(SavedKey);
+		}
+		if (Saved === null) {
+			SavedKey = Parts.GetStorageKey('ArcPercents', null);
+			Saved = FH.Storage.getItem(SavedKey);
+		}
 		if (Saved !== null) Parts.ArcPercents = JSON.parse(Saved);
+		Parts.UseOwnBoost = (FH.Storage.getItem(SavedKey + '_OwnBoost') === 'true');
 		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
 
 		Parts.LastArcConversationID = FH.Main.OpenConversation?.id ?? null;
