@@ -260,6 +260,10 @@
   "Boxes.CityMap.clan_power_production": "Puissance de guilde",
   "Boxes.CityMap.CollectSoon": "A récolter bientôt : __hours__ hours",
   "Boxes.CityMap.CopyMetaInfos": "Copier les données",
+  "Boxes.CityMap.cultural_goods_production": {
+    "s": "ressources culturelles",
+    "r": "Cultural Goods"
+  },
   "Boxes.CityMap.culture": "Culturel",
   "Boxes.CityMap.decoration": "Décorations",
   "Boxes.Citymap.Efficiency": "Efficacité",
@@ -320,6 +324,34 @@
   "Boxes.CityMap.ToastHeadCopyData": "Copié !",
   "Boxes.CityMap.tower": "Tours",
   "Boxes.CityMap.TurnedPerspecitve": "Vue du dessus à 90°",
+  "Boxes.CityMap.ViewModeChange": {
+    "s": "Changer la vue",
+    "r": "Change view"
+  },
+  "Boxes.CityMap.ViewModeEfficiency": {
+    "s": "Carte de l'efficience",
+    "r": "Efficiency map"
+  },
+  "Boxes.CityMap.ViewModeEfficiencyExplainer": {
+    "s": "Les options disponibles reposent sur vos paramètres d’indice d’efficacité du bâtiment (Building Efficiency Rating). Modifiez-les si vous souhaitez comparer davantage de données ou d’autres données.",
+    "r": "The available options are based on your Building Efficiency Rating settings. Change them if you want to compare more / other data."
+  },
+  "Boxes.CityMap.ViewModeNormal": {
+    "s": "Carte normale",
+    "r": "Regular map"
+  },
+  "Boxes.CityMap.ViewRatingEfficiency": {
+    "s": "utiliser l'indice d'efficience",
+    "r": "Use efficiency rating"
+  },
+  "Boxes.CityMap.ViewRatingWeighted": {
+    "s": "utiliser l'indice pondéré",
+    "r": "Use weighted rating"
+  },
+  "Boxes.CityMap.ViewRatingWeightedExplainer": {
+    "s": "Ce calcul permet d'établir une moyenne à partir des bâtiments de votre ville et de mettre en évidence en bleu tout ce qui est supérieur à la moyenne et en orange tout ce qui est inférieur à la moyenne.",
+    "r": "This calculates an average from your city buildings and highlights everything better than average in blue and everything worse than average in orange"
+  },
   "Boxes.CityMap.WholeArea": "Surface totale : ",
   "Boxes.CityMap.YourCity": "Votre cité",
   "Boxes.CloseBox.AutoHideOnBattle": "Tout cacher automatiquement lors de bataille",
@@ -685,6 +717,14 @@
   "Boxes.GBGBuildings.title": "Bâtiments recommandés",
   "Boxes.GBGBuildings.toBuild": "A construire",
   "Boxes.GBGBuildings.totalChance": "Chance",
+  "Boxes.GBGSeasonOverflow.Text": {
+    "s": "Dépensez au moins :",
+    "r": "Spend at least:"
+  },
+  "Boxes.GBGSeasonOverflow.Title": {
+    "s": "Les récompenses de saison dépasseront votre capacité maximale",
+    "r": "Season Reward will overflow your capacity"
+  },
   "Boxes.General.AutoOpen": {
     "s": "Ouvrir automatiquement",
     "r": "Open automatically"
@@ -1619,6 +1659,10 @@
     "r": "Map"
   },
   "Boxes.RecurringQuests.AND": "ET",
+  "Boxes.RecurringQuests.NoQuests": {
+    "s": "Aucune quête n'a encore été trouvée. Veuillez d'abord consulter les quêtes récurrentes de cette époque !",
+    "r": "No quests found yet. Please reach the recurring quests of this era first!"
+  },
   "Boxes.RecurringQuests.OR": "OU",
   "Boxes.RecurringQuests.showCounter": "Afficher le compteur des quêtes ouvertes dans le menu",
   "Boxes.RecurringQuests.Table.Quest": "Nom de la quête",
@@ -1963,6 +2007,18 @@
     "s": "Pièces",
     "r": "Coins"
   },
+  "General.Collection": {
+    "s": "Récolte",
+    "r": "Collection"
+  },
+  "General.Construction": {
+    "s": "Construction",
+    "r": "Construction"
+  },
+  "General.cultural_outpost": {
+    "s": "Colonie culturelle",
+    "r": "Cultural Settlement"
+  },
   "General.Date": "Date",
   "General.DefAttacker": {
     "s": "Attaque Bleue",
@@ -1977,6 +2033,10 @@
     "r": "Details"
   },
   "General.Disclaimer": "Clause de non-responsabilité",
+  "General.Efficiency": {
+    "s": "Efficience",
+    "r": "Efficiency"
+  },
   "General.Error": "Erreur",
   "General.Everything": {
     "s": "tout",
@@ -1994,6 +2054,10 @@
   "General.Good": "Ressource",
   "General.Goods": "Ressources",
   "General.Guild": "Guilde",
+  "General.guild_raids": {
+    "s": "Incursions Quantiques",
+    "r": "Quantum Incursions"
+  },
   "General.Inventory": {
     "s": "Inventaire",
     "r": "Inventory"
@@ -2029,10 +2093,18 @@
     "s": "Place",
     "r": "Space"
   },
+  "General.stellar_city": {
+    "s": "Cité Stellaire",
+    "r": "Stellar City"
+  },
   "General.Success": "Réussi",
   "General.Supplies": {
     "s": "Marchandises",
     "r": "Supplies"
+  },
+  "General.Total": {
+    "s": "Total",
+    "r": "Total"
   },
   "General.Unit": "Unité",
   "General.Units": "Unités",
@@ -2595,6 +2667,10 @@
     "s": "Afficher le diagramme",
     "r": "Show Chart"
   },
+  "XPlan.Compare.EraChanges": {
+    "s": "Changements d'ère",
+    "r": "Era changes"
+  },
   "XPlan.Compare.FeatureCity": {
     "s": "Base",
     "r": "Base"
@@ -2626,6 +2702,22 @@
   "XPlan.DocumentTitle": {
     "s": "Planificateur de cité - Forge Hammer",
     "r": "City Planner - Forge Hammer"
+  },
+  "XPlan.EraMode.Mixed": {
+    "s": "Ère mélangée",
+    "r": "Mixed eras"
+  },
+  "XPlan.EraMode.Next": {
+    "s": "prochaine ère",
+    "r": "Next era"
+  },
+  "XPlan.EraMode.Previous": {
+    "s": "ère précédente",
+    "r": "Previous era"
+  },
+  "XPlan.EraMode.Title": {
+    "s": "Mode ère",
+    "r": "Era mode"
   },
   "XPlan.Filter.Placeholder": {
     "s": "Trouvez les batiments",
