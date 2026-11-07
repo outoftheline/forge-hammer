@@ -423,6 +423,34 @@
     "s": "90° widok z góry",
     "r": "90° Top View"
   },
+  "Boxes.CityMap.ViewModeChange": {
+    "s": "Zmień widok",
+    "r": "Change view"
+  },
+  "Boxes.CityMap.ViewModeEfficiency": {
+    "s": "Mapa wydajności",
+    "r": "Efficiency map"
+  },
+  "Boxes.CityMap.ViewModeEfficiencyExplainer": {
+    "s": "Dostępne opcje zależą od ustawień w \"Ocenie efektywności budynków. Zmień je, jeśli chcesz porównać więcej danych lub inne dane.",
+    "r": "The available options are based on your Building Efficiency Rating settings. Change them if you want to compare more / other data."
+  },
+  "Boxes.CityMap.ViewModeNormal": {
+    "s": "Normalna mapa",
+    "r": "Regular map"
+  },
+  "Boxes.CityMap.ViewRatingEfficiency": {
+    "s": "Użyj wskaźnika efektywności",
+    "r": "Use efficiency rating"
+  },
+  "Boxes.CityMap.ViewRatingWeighted": {
+    "s": "Użyj oceny ważonej",
+    "r": "Use weighted rating"
+  },
+  "Boxes.CityMap.ViewRatingWeightedExplainer": {
+    "s": "Funkcja ta oblicza średnią na podstawie budynków w Twoim mieście i zaznacza na niebiesko wszystkie obiekty lepsze od średniej, a na pomarańczowo - te gorsze od średniej.",
+    "r": "This calculates an average from your city buildings and highlights everything better than average in blue and everything worse than average in orange"
+  },
   "Boxes.CityMap.WholeArea": "Całkowita powierzchnia: ",
   "Boxes.CityMap.YourCity": "Twoje miasto",
   "Boxes.CloseBox.AutoHideOnBattle": "Automatycznie ukryj wszystko podczas walki",
@@ -833,6 +861,14 @@
   "Boxes.GBGBuildings.title": "Rekomendowany budynek",
   "Boxes.GBGBuildings.toBuild": "Do budowy",
   "Boxes.GBGBuildings.totalChance": "Szansa",
+  "Boxes.GBGSeasonOverflow.Text": {
+    "s": "Wydano co najmniej:",
+    "r": "Spend at least:"
+  },
+  "Boxes.GBGSeasonOverflow.Title": {
+    "s": "Nagroda sezonowa przekroczy Twoją pojemność",
+    "r": "Season Reward will overflow your capacity"
+  },
   "Boxes.General.AutoOpen": {
     "s": "Otwórz automatycznie",
     "r": "Open automatically"
@@ -2630,6 +2666,10 @@
     "s": "Zaopatrzenie",
     "r": "Supplies"
   },
+  "General.Total": {
+    "s": "Łącznie",
+    "r": "Total"
+  },
   "General.Unit": {
     "s": "Jednostka",
     "r": "Unit"
@@ -3313,6 +3353,10 @@
     "s": "Pokaż wykres",
     "r": "Show Chart"
   },
+  "XPlan.Compare.EraChanges": {
+    "s": "Zmiany epok",
+    "r": "Era changes"
+  },
   "XPlan.Compare.FeatureCity": {
     "s": "Podstawa",
     "r": "Base"
@@ -3344,6 +3388,22 @@
   "XPlan.DocumentTitle": {
     "s": "Planer miasta - Forge Hammer",
     "r": "City Planner - Forge Hammer"
+  },
+  "XPlan.EraMode.Mixed": {
+    "s": "Różne epoki",
+    "r": "Mixed eras"
+  },
+  "XPlan.EraMode.Next": {
+    "s": "Następna epoka",
+    "r": "Next era"
+  },
+  "XPlan.EraMode.Previous": {
+    "s": "Poprzednia epoka",
+    "r": "Previous era"
+  },
+  "XPlan.EraMode.Title": {
+    "s": "Tryb epoki",
+    "r": "Era mode"
   },
   "XPlan.Filter.Placeholder": {
     "s": "Znajdź budynki",
