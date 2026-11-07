@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.10.4
+### Bugfix
+- LG Rechner: Boost-Buttons Zuordnung verbessert
+
+---
+
 ## Version 1.10.3
 ### Update
 - Profil: Mäzen-Boni hinzugefügt
