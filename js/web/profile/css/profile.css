@@ -1,4 +1,4 @@
-.playerprofile {
+.playerprofile, #OtherPlayerProfile {
     --main-background: linear-gradient(196deg, #00041c 0%, rgba(3,18,51,1) 100%);
     --main-border: 3px solid #0a173d;
     --main-color: var(--white);
@@ -7,6 +7,7 @@
     --important-color: var(--danger-red);
     --important-underline: #f005;
     --crit-background: linear-gradient(132deg, #752f09, #61270755);
+    --arc-background: linear-gradient(132deg, #2275099c, #07611a38);
     --header-background: linear-gradient(#061327 50%, #00031311 50%, #0000);
     --secondary-background: linear-gradient(196deg, #000313 0%, rgb(3, 13, 36) 100%);
     --secondary-color: #acc4e3;
@@ -391,17 +392,27 @@
     top: -4px;
 }
 
-.playerprofile .crit {
+.playerprofile .crit, .playerprofile .arc {
     background: var(--crit-background);
     padding: 1px 5px 2px 0;
-    border-radius: 19px 7px 7px 7px;
+    border-radius: 10px 7px 7px 7px;
     color: #f3f3f3;
 }
 
-.playerprofile .crit img {
-    max-height: 30px;
-    margin: -3px 0 0 -8px;
+.playerprofile .arc {
+    background: var(--arc-background);
+    color: inherit;
+    padding: 1px 6px 2px 0;
+    margin-right: 6px;
 }
+
+.playerprofile .crit img, .playerprofile .arc img {
+    max-height: 30px;
+    width: auto;
+    margin: -3px 0 0 -8px;
+    box-shadow: none;
+}
+.playerprofile .arc img { max-height: 26px; margin: -1px 0 0 -4px; }
 
 .playerprofile .qiactions::before {
     background: url(../../productions/images/productions.png) -498px 5px no-repeat;
@@ -715,12 +726,9 @@
     --main-border: 3px solid #1b1b1f;
     --daysPlayed-background: radial-gradient(circle, #3f3f3f00 0%, #000000 100%);
     --daysPlayed-color: #ccc;
-    --crit-background: linear-gradient(132deg, #ec5f009c, #a7000055);
     --header-background: linear-gradient(#13131378 50%, #1b1b1f 50%, #0000);
     --secondary-background: #1b1b1f;
     --secondary-color: #e2e2e2;
-    --h2-background: linear-gradient(to bottom, #1b1b1faa, transparent 75%);
-    --item-border-color: #0e0e0e;
     --item-img-background: radial-gradient(circle, #1b1b1f66 53%, transparent 55%);
     --item-background: inset -1px -1px 20px #1b1b1f55;
     --qi-background: linear-gradient(298deg, #172c2975 0%, #12837a15 100%);

@@ -1,5 +1,24 @@
 # Changelog
 
+## Version 1.10.3
+### Update
+- Profile: Added contribution boosts
+
+### Bugfix
+- GB Calculator started the gold boost one level too early
+- GB Calculator didnt switch to the correct contribution boost when switching tiers
+- Productions: Fixed some boosts, tbc
+
+---
+
+---
+
+## Version 1.10.1
+### Bugfix
+- GB Calculator could show copper instead of gold boost
+
+---
+
 ## Version 1.10.0
 ### New
 - Halloween color theme

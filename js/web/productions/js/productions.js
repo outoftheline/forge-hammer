@@ -42,7 +42,7 @@ let Productions = {
 		'att_boost_defender',
 		'def_boost_defender',
 		'clan_goods',
-		'guild_goods_production', // *special* goods boost
+		'guild_goods_production', // guild goods boost
 		'guild_raids'
 	],
 	FSPqualifiedResources: ["strategy_points","clan_goods","goods-previous","goods-current","goods-next"],
@@ -1350,6 +1350,7 @@ let Productions = {
 								guild_raids: 0
 							}
 							building.boosts.forEach(boost => {
+								if (boost.isMultiplier) return // percentage of the total (e.g. GB bonus), not a flat value
 								if (boost.type.find(x => x === type) === type) {
 									if (boost.feature === "all") {
 										boosts.all += boost.value
@@ -1725,7 +1726,7 @@ let Productions = {
 			rowA.push('<td class="text-center">')
 			rowA.push((building.state.isPolivated !== undefined ? (building.state.isPolivated ? srcLinks.icons('when_motivated') : '☆') : ''))
 			rowA.push('</td>')
-			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><spandata-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
+			rowA.push('<td data-text="'+FH.helper.str.cleanup(building.name)+'"><span data-meta_id="'+building.entityId+'" data-eff="'+building.rating?.totalScore * 100+'" data-era="'+(building.eraName==="AllAge"?"":building.eraName)+'" data-callback_tt="building" class="helperTT ' + (FH.Main.Allies.buildingList?.[building.id]?"ally" : "") +'">' + building.name + '</span></td>')
 
 			// prepare grouped buildings
 			let updateGroup = groupedBuildings.find(x => x.building.name === building.name)
@@ -2000,9 +2001,10 @@ let Productions = {
 					}
 				}
 				if (production.type === "special_goods" && category === "special_goods") {
-					let combinedValues = Object.entries(production.resources).length === 1 ? Math.round(prod.amount * Boosts.Sums.special_goods_production/100) : 0;
+					let specialGoodsBoost = (building.type === "greatbuilding" ? 0 : Boosts.Sums.special_goods_production) // GB productions can not be boosted
+					let combinedValues = Object.entries(production.resources).length === 1 ? Math.round(prod.amount * specialGoodsBoost/100) : 0;
 					for (let [type,value] of Object.entries(production.resources)) {
-						let boostedValue = Math.round(value * Boosts.Sums.special_goods_production/100);
+						let boostedValue = Math.round(value * specialGoodsBoost/100);
 						combinedValues += value+boostedValue;
 					}
 					prod.amount = combinedValues;
@@ -3208,6 +3210,7 @@ let Productions = {
 
 			let bsum = 0;
 			for (const boost of building.boosts) {
+				if (boost.isMultiplier) continue;
 
 				let feature = type.split('-')[1];
 				if (feature !== boost.feature) continue;
@@ -3310,7 +3313,7 @@ let Productions = {
 			let type = boost.type.find(x => x === boostName)
 			if (!boostName.includes('-')) {
 				if (type !== undefined) {
-					const value = { feature: boost.feature, value: boost.value }
+					const value = { feature: boost.feature, value: boost.value, isMultiplier: boost.isMultiplier === true }
 					callback(value)
 				}
 			}

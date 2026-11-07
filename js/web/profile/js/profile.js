@@ -317,7 +317,14 @@ const Profile = {
                 cc.push('<h1><a href="'+FH.Main.GetPlayerLinkURL(player.PlayerID)+'" target="_blank">'+player.PlayerName+'</a></h1>');
                 cc.push('<span>'+FH.t('Eras.'+FH.CurrentEraID)+'</span><br>');
                 cc.push('<span class="ranking">'+FH.HTML.Format(parseInt(player.Score))+'</span><span class="hidden-text">&numsp;</span>');
-                cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span>');
+                cc.push('<span>⚔'+FH.HTML.Format(parseInt(player.WonBattles || 0))+'</span><br />');
+                
+                cc.push('<div style="margin-top:7px">');
+                if (Boosts.Sums.contribution_boost > 0)
+                    cc.push('<span class="hidden-text">&nbsp;&middot;&nbsp;🟤️</span><span class="arc"><img src="'+srcLinks.get('/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost.png',true)+'" /> '+Boosts.Sums.contribution_boost+'%</span>');
+                if (Boosts.Sums.contribution_boost_gold > 0)
+                    cc.push('<span class="hidden-text">&nbsp;&middot;&nbsp;🟡</span><span class="arc gold"><img src="'+srcLinks.get('/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost_gold.png',true)+'" /> '+Boosts.Sums.contribution_boost_gold+'%</span>'); 
+                cc.push('</div>');
                 cc.push('</div>');
             cc.push('</div>');
 
@@ -424,6 +431,7 @@ const Profile = {
             
             if (Boosts.Sums.critical_hit_chance > 0)
                 cc.push('<span class="hidden-text">&numsp;&middot;&nbsp;💥</span><span class="crit"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_critical_hit_chance.png`,true)+'" /> '+Math.round(Boosts.Sums.critical_hit_chance*100)/100+'%</span>');
+
             cc.push('</div>');
             cc.push('</div>');
 

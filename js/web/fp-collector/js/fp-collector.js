@@ -273,7 +273,7 @@ FH.proxy.addHandler('CityMapService', 'showAppliedBonus', (data, postData) => {
 
 		let building = CityBuildings.createBuilding(metaData, era, buildingData)
 		let FPproduction = parseFloat(Productions.getBuildingProductionByCategory(true, building, 'strategy_points').amount) 
-		let FP = FPproduction + Math.round(FPproduction * ((Boosts.Sums.forge_points_production) / 100))
+		let FP = FPproduction + (building.type === "greatbuilding" ? 0 : Math.round(FPproduction * ((Boosts.Sums.forge_points_production) / 100))) // GB productions can not be boosted
 
 		if (!FP) continue;
 
