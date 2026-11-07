@@ -51,29 +51,35 @@ let Calculator = {
         Calculator.ShowBody();
 	},
 
+	GetForderBonusStorageKey: (PerConversation = true) => {
+		let Key = 'CalculatorForderBonus' + (FH.Main.CurrentGB.Entity?.tier === 'gold' ? '_gold' : '');
+		if (PerConversation && Calculator.ForderBonusPerConversation && FH.Main.OpenConversation) Key += '_' + FH.Main.OpenConversation.id;
+		return Key;
+	},
+
 	ShowBody: () => {
-		let ForderBonusKey = null;
+		let ForderBonusKey = null,
+			UseOwnBoost = false;
 
-		if(Calculator.ForderBonusPerConversation && FH.Main.OpenConversation){
-			let StorageKey = 'CalculatorForderBonus_' + FH.Main.OpenConversation.id,
-				StorageValue = FH.Storage.getItem(StorageKey);
-
-			if(StorageValue !== null){
+		for (let StorageKey of [Calculator.GetForderBonusStorageKey(true), Calculator.GetForderBonusStorageKey(false)]) {
+			let StorageValue = FH.Storage.getItem(StorageKey);
+			if (StorageValue !== null) {
 				Calculator.ForderBonus = parseFloat(StorageValue);
 				ForderBonusKey = StorageKey;
+				break;
 			}
 		}
 
-		if(ForderBonusKey === null){
-			let ab = FH.Storage.getItem('CalculatorForderBonus');
-			if (ab !== null)
-				Calculator.ForderBonus = parseFloat(ab);
-			ForderBonusKey = 'CalculatorForderBonus';
+		if (ForderBonusKey !== null) {
+			UseOwnBoost = (FH.Storage.getItem(ForderBonusKey + '_OwnBoost') === 'true');
+		}
+		else {
+			// use defaults
+			UseOwnBoost = (FH.Main.CurrentGB.Entity?.tier === 'gold');
+			Calculator.ForderBonus = 85;
 		}
 
-		// "own boost" was selected for this conversation (or globally): follow the current personal boost
-		if (FH.Storage.getItem(ForderBonusKey + '_OwnBoost') === 'true')
-			Calculator.ForderBonus = Parts.GetArcBoost();
+		if (UseOwnBoost) Calculator.ForderBonus = Parts.GetArcBoost();
 
 		let PlayerID = FH.Main.CurrentGB.Entity.player_id,
             h = [];

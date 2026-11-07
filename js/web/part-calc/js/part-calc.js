@@ -109,6 +109,7 @@ let Parts = {
 
 	ArcPerConversation: false,
 	LastArcConversationID: undefined,
+	LastArcTier: undefined,
 
 	LockExistingPlaces: true,
 	TrustExistingPlaces: false,
@@ -431,7 +432,7 @@ let Parts = {
 			$('#OwnPartBox').on('click', '.btn-toggle-arc', function () {
 				Calculator.ForderBonus = parseFloat($(this).data('value'));
 				$('#costFactor').val(Calculator.ForderBonus);
-				let StorageKey = (Calculator.ForderBonusPerConversation && FH.Main.OpenConversation ? 'CalculatorForderBonus_' + FH.Main.OpenConversation.id : 'CalculatorForderBonus');
+				let StorageKey = Calculator.GetForderBonusStorageKey();
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
 				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
 				Calculator.Show();
@@ -439,7 +440,7 @@ let Parts = {
 
 			$('#OwnPartBox').on('blur', '#costFactor', function () {
 				Calculator.ForderBonus = parseFloat($('#costFactor').val());
-				let StorageKey = (Calculator.ForderBonusPerConversation && FH.Main.OpenConversation ? 'CalculatorForderBonus_' + FH.Main.OpenConversation.id : 'CalculatorForderBonus');
+				let StorageKey = Calculator.GetForderBonusStorageKey();
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
 				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
 				Calculator.Show();
@@ -504,7 +505,7 @@ let Parts = {
 		}
 
 		Parts.ArcPerConversation = (FH.Storage.getItem('OwnPartArcPerConversation') === 'true');
-		if (Parts.FirstCycle || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
+		if (Parts.FirstCycle || FH.Main.CurrentGB.Entity.tier !== Parts.LastArcTier || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
 			Parts.GetConversationBonus();
 		}
 
@@ -1240,8 +1241,13 @@ let Parts = {
 	},
 
 
+	GetArcStorageKey: () => {
+		return Parts.GetStorageKey('ArcPercents', null) + (FH.Main.CurrentGB.Entity?.tier === 'gold' ? '_gold' : '');
+	},
+
+
 	GetConversationStorageKey: () => {
-		let Key = Parts.GetStorageKey('ArcPercents', null);
+		let Key = Parts.GetArcStorageKey();
 		if (Parts.ArcPerConversation && FH.Main.OpenConversation) Key += '_' + FH.Main.OpenConversation.id;
 		return Key;
 	},
@@ -1260,14 +1266,22 @@ let Parts = {
 			Saved = FH.Storage.getItem(SavedKey);
 		}
 		if (Saved === null) {
-			SavedKey = Parts.GetStorageKey('ArcPercents', null);
+			SavedKey = Parts.GetArcStorageKey();
 			Saved = FH.Storage.getItem(SavedKey);
 		}
-		if (Saved !== null) Parts.ArcPercents = JSON.parse(Saved);
-		Parts.UseOwnBoost = (FH.Storage.getItem(SavedKey + '_OwnBoost') === 'true');
+		if (Saved !== null) {
+			Parts.ArcPercents = JSON.parse(Saved);
+			Parts.UseOwnBoost = (FH.Storage.getItem(SavedKey + '_OwnBoost') === 'true');
+		}
+		else {
+			// nothing saved for this tier yet: copper defaults to 90%, gold to the own gold boost
+			Parts.UseOwnBoost = (FH.Main.CurrentGB.Entity?.tier === 'gold');
+			Parts.ArcPercents = [];
+		}
 		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
 
 		Parts.LastArcConversationID = FH.Main.OpenConversation?.id ?? null;
+		Parts.LastArcTier = FH.Main.CurrentGB.Entity?.tier;
 	},
 
 
