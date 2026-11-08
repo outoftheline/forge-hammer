@@ -848,7 +848,7 @@ let Parts = {
 		// custom buttons available
 		if(customButtons) {
 			investmentSteps = [];
-			let bonuses = JSON.parse(customButtons);
+			let bonuses = Parts.GetButtonValues(customButtons, Tier === 'gold' ? 'gold' : 'copper');
 
 			bonuses.forEach(bonus => {
 				if(bonus === 'contribution_boost_gold' || bonus === 'contribution_boost' || bonus === 'ark') 
@@ -1666,24 +1666,8 @@ let Parts = {
 			return `<p class="new-row"><label>${FH.t('Boxes.Calculator.Settings.newValue')}:</label> <input type="number" class="settings-values ${tier}" style="width:30px"> <span class="btn btn-green btn-slim" onclick="Parts.SettingsInsertNewRow('${tier}')">+</span></p>`
 		}
 		
-		if(sB) {
-			buttons = JSON.parse(sB);
-
-			buttons = buttons.filter((item, index) => buttons.indexOf(item) === index); // remove duplicates
-			buttons.sort((a, b) => a - b); // order
-		}
-		else {
-			buttons = defaults.copper;
-		}
-		if(sBG) {
-			goldButtons = JSON.parse(sBG);
-
-			goldButtons = goldButtons.filter((item, index) => goldButtons.indexOf(item) === index); 
-			goldButtons.sort((a, b) => a - b);
-		}
-		else {
-			goldButtons = defaults.gold;
-		}
+		buttons = Parts.GetButtonValues(sB, 'copper');
+		goldButtons = Parts.GetButtonValues(sBG, 'gold');
 
 		c.push('<section id="copperTierValues" class="flex gap p2">');
 		buttons.forEach(bonus => {
@@ -1722,6 +1706,24 @@ let Parts = {
 			<button id="save-calculator-settings" class="btn saveSettings" onclick="Parts.SettingsSaveValues()">${FH.t('Boxes.Calculator.Settings.Save')}</button>`);
 
 		$('#OwnPartBoxSettingsBox').html(c.join(''));
+	},
+
+
+	GetButtonValues: (stored, tier)=> {
+		let arcKey = tier === 'gold' ? 'contribution_boost_gold' : 'contribution_boost';
+		let buttons = stored ? JSON.parse(stored) : null;
+
+		if (!Array.isArray(buttons) || buttons.length === 0) {
+			buttons = [...Parts.DefaultButtons[tier]];
+		}
+
+		if (tier === 'copper') buttons = buttons.map(b => b === 'ark' ? arcKey : b);
+		if (!buttons.includes(arcKey)) buttons.push(arcKey);
+
+		buttons = buttons.filter((item, index) => buttons.indexOf(item) === index); // remove duplicates
+		buttons.sort((a, b) => a - b);
+
+		return buttons;
 	},
 
 
