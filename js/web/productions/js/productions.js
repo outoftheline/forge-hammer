@@ -2746,7 +2746,7 @@ let Productions = {
 		let h = [];
 		
 		let withAllies = Productions.efficiencySettings.showallies;
-		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData),withAllies));
+		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData)));
 		Productions.setChainsAndSets(Productions.BuildingsAll);
 
 		// grab special buildings
@@ -3198,6 +3198,11 @@ let Productions = {
 	},
 
 
+	ratingIncludesAllies: () => {
+		return Productions.efficiencySettings?.showallies ?? true;
+	},
+
+
 	getRatingValueForType: (building, type) => {
 		if (type === "units" || type === "units-next")
 			return Productions.getRatingUnits(building, type === "units-next");
@@ -3211,6 +3216,7 @@ let Productions = {
 			let bsum = 0;
 			for (const boost of building.boosts) {
 				if (boost.isMultiplier) continue;
+				if (boost.fromAlly && !Productions.ratingIncludesAllies()) continue;
 
 				let feature = type.split('-')[1];
 				if (feature !== boost.feature) continue;
@@ -3228,17 +3234,15 @@ let Productions = {
 		}
 		else if (type === "forge_points_production" || type === "goods_production") {
 			if (building.boosts === undefined) return 0;
+			let bsum = 0;
 			for (const boost of building.boosts) {
+				if (boost.fromAlly && !Productions.ratingIncludesAllies()) continue;
 				if (boost.needsLink && building.setBuilding !== undefined) {
 					if (boost.requiredLinks > (building.setBuilding.uniqueAdjacentCount || 0)) continue;
 				}
-				if (boost.type[0] === 'forge_points_production' && type === 'forge_points_production')  {
-					return boost.value;
-				}
-				if (boost.type[0] === 'goods_production' && type === 'goods_production')  {
-					return boost.value;
-				}
+				if (boost.type[0] === type) bsum += boost.value;
 			}
+			return bsum;
 		}
 		else if (type === "strategy_points" || type === "medals" || type === "premium" || type === "money" || type === "supplies" || type === "clan_goods")
 			return Productions.getBuildingProductionByCategory(false, building, type).amount

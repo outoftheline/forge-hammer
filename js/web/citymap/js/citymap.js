@@ -1984,7 +1984,7 @@ let CityBuildings = {
 	},
 
 	
-	setBuildingBoosts(metaData, data, era, withAlly=true) {
+	setBuildingBoosts(metaData, data, era) {
 		let eraName = (era === 'AllAge' ? 'BronzeAge' : era) // for some reason Watchtower Level 2 (example) has an era list even though the boost is the same everywhere. thx inno
 		let boosts = []
 		let isSet = this.setSetBuilding(metaData)
@@ -2088,18 +2088,18 @@ let CityBuildings = {
 				})
 			}
 		}
-		if (withAlly) {
-			let allyStats = FH.Main.Allies.getProd(data.id||0)
-			if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
-				(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
-					let boost = {
-						feature: abilityBoost.targetedFeature,
-						type: Boosts.Mapper[abilityBoost.type] || [abilityBoost.type],
-						value: abilityBoost.value,
-					};
-					boosts.push(boost)
-				})
-			}
+		let allyStats = (FH.ActiveMap !== 'OtherPlayer' ? FH.Main.Allies.getProd(data.id||0) : null);
+		if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
+			(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
+				if (!abilityBoost) return;
+				let boost = {
+					feature: abilityBoost.targetedFeature,
+					type: Boosts.Mapper[abilityBoost.type] || [abilityBoost.type],
+					value: abilityBoost.value,
+					fromAlly: true,
+				};
+				boosts.push(boost);
+			});
 		}
 		
 		if (boosts.length > 0)
@@ -3228,7 +3228,7 @@ let CityBuildings = {
 	},
 
 
-	createBuildings(data=Object.values(FH.Main.CityMapData),withAllies=false) {	
+	createBuildings(data=Object.values(FH.Main.CityMapData)) {
 		if (FH.ActiveMap === 'OtherPlayer') {
 			data = Object.values(CityMap.OtherPlayer.mapData);
 		}
@@ -3237,7 +3237,7 @@ let CityBuildings = {
 			if (FH.ActiveMap === 'OtherPlayer' && building.eraName !== undefined) continue
 			let metaData = FH.Main.CityEntities[building.cityentity_id];
 			let era = Technologies.getEraName(building.cityentity_id, building.level);
-			let newCityEntity = CityBuildings.createBuilding(metaData, era, building, withAllies);
+			let newCityEntity = CityBuildings.createBuilding(metaData, era, building);
 
 			if (FH.ActiveMap === 'OtherPlayer') 
 				CityMap.OtherPlayer.mapData[building.id] = newCityEntity
@@ -3249,7 +3249,7 @@ let CityBuildings = {
 	},
 
 
-	createBuilding(metaData, era=FH.CurrentEra, data={}, withAlly=false) {	
+	createBuilding(metaData, era=FH.CurrentEra, data={}) {
 		if (typeof(metaData)=="string") {
 			metaData=FH.Main.CityEntities[metaData];
 		}
@@ -3276,7 +3276,7 @@ let CityBuildings = {
 			happiness: this.setHappiness(metaData, data, era),
 			needsStreet: this.needsStreet(metaData),
 			
-			boosts: this.setBuildingBoosts(metaData, data, era, withAlly),
+			boosts: this.setBuildingBoosts(metaData, data, era),
 			production: this.setAllProductions(metaData, data, era),
 			rating: null,
 
@@ -3299,7 +3299,7 @@ let CityBuildings = {
 		entity.rating = Productions.rateBuilding(entity);
 		
 		//if (entity.type !== "street")
-		//	console.log('entity ', entity.name, entity, data, metaData);
+		//	console.log(entity.name, entity, data, metaData);
 		return entity;
 	},
 };
