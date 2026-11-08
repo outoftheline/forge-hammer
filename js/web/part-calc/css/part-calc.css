@@ -230,14 +230,25 @@
 	border-top: 2px solid transparent;
 }
 
-#OwnPartBox .gbTier-silver table.foe-table {
-	border-top: 2px solid var(--silver);
+#OwnPartBox .gbTier-gold h1::after {
+	content: "";
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	background: url(../../x_img/gold_tier.png) left center no-repeat;
+	background-size: contain;
+	margin-left: 4px;
+	position: relative;
+	top: 2px;
 }
 #OwnPartBox .gbTier-gold table.foe-table, #goldTierValues {
 	border-top: 2px solid var(--golden);
 }
 #goldTierValues {
 	border-bottom: 2px solid var(--golden);
+	background: url('../../x_img/gold_tier.png') left center no-repeat, url('../../x_img/gold_tier.png') right center no-repeat;
+	background-size: 24px auto;
+	margin: 3px 0;
 }
 #OwnPartBox .new-row {
 	display: flex;
@@ -257,11 +268,6 @@
 #gbCosts tr th span.blueprint {
 	background: url(../../x_img/blueprint.png) center no-repeat;
 	background-size: 85%;
-}
-
-#gbCosts.gbTier-silver tr th span.blueprint {
-	background: url(../../x_img/blueprint_silver.png) center no-repeat;
-	background-size: contain;
 }
 
 #gbCosts.gbTier-gold tr th span.blueprint {
