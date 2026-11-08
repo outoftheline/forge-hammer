@@ -719,13 +719,17 @@ window.PlannerApp = window.PlannerApp || {};
             if (lvl.provided_happiness) add(acc, 'happiness', lvl.provided_happiness);
         }
 
-        const bonusList = [];
-        const primary = cityEntry?.bonus || lvl?.bonus || null;
-        if (primary) bonusList.push(primary);
-        for (const b of cityEntry?.bonuses || []) bonusList.push(b);
+        let bonusList;
+        if (cityEntry?.bonuses?.length) bonusList = cityEntry.bonuses;
+        else {
+            const primary = cityEntry?.bonus || lvl?.bonus || null;
+            bonusList = primary ? [primary] : [];
+        }
 
         for (const bonus of bonusList) {
             if (!bonus || !bonus.value) continue;
+            if (bonus.bonusCategory?.value === 'productionBonus') continue;
+            if (bonus.isBonusMultiplier === true) continue;
 
             const flat = GB_FLAT_BONUS_TO_METRIC[bonus.type];
             if (flat === 'population') addPopulation(acc, bonus.value);
