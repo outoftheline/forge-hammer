@@ -149,6 +149,9 @@
 #stats .tabs ul li.shards a span {
 	background-image: url(../../x_img/shards.png);
 }
+#stats .tabs ul li.autoAid a span {
+	background-image: url(../../x_img/aid_goods.png);
+}
 
 #LowStock .options {
 	border: 3px solid transparent;

@@ -68,12 +68,14 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 FH.proxy.addHandler('RewardService', 'collectRewardSet', async (data, postData) => {
 	let rewardIncidentSource = data.responseData.context;
 	if (rewardIncidentSource!='guild_raids' && rewardIncidentSource.indexOf('guild_raids')>=0) rewardIncidentSource='guild_raidsP'; //QI-Pass detection
-	if (rewardIncidentSource.indexOf('event')<0 && !["guild_raids","guild_raidsP"].includes(rewardIncidentSource)) return; //exclude Main city collection "collect all", "aid_all"
+	if (rewardIncidentSource.indexOf('event')<0 && !["guild_raids","guild_raidsP","autoAid"].includes(rewardIncidentSource)) return; //exclude Main city collection "collect all"
 	let rewards = data.responseData.reward.rewards;
     await IndexDB.getDB();
 	
 	for (let reward of rewards) {
-		
+		// skip coins from auto aid
+		if (rewardIncidentSource == 'autoAid' && (reward.subType == 'money' || reward.id?.startsWith('resource#money'))) continue;
+
 		//QI reward splitting
 		let n = 1
 		if (rewardIncidentSource == 'guild_raids') {
@@ -658,6 +660,7 @@ let Stats = {
 				'pvp_arena', //PvP Arena
 				'spoils_of_war', // Himeji Castle
 				'diplomatic_gifts', //Space Carrier
+				'autoAid', // Anything from aiding
 				'shards', //Flying Island
 			].map(it => Stats.RenderTab({
 				name: FH.t('Boxes.Stats.Rewards.Source.' + it),
