@@ -2623,7 +2623,7 @@ let CityBuildings = {
 						}
 						if (currentProduct.goods) { // great buildings
 							if (data.type === "greatbuilding") {
-								if (currentProduct.name === "clan_goods") {
+								if (currentProduct.name === "clan_goods" || currentProduct.name === "clan_goods_extended") {
 									let resources = {}
 									currentProduct.goods.forEach(good => {
 										resources[good.good_id] = good.value
