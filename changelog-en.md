@@ -3,6 +3,7 @@
 ## Version 1.10.5
 ### Update
 - Productions: Observatory gold boost is now calculated
+- Stats: Added any GB extras from auto(!) aiding. Coins aren't included to prevent cluttered data.
 
 ### Bugfixes
 - Stats: Himeji and Space Carrier stats are back

@@ -3,6 +3,7 @@
 ## Version 1.10.5
 ### Update
 - Produktionen: Observatorium Gold Boost wird jetzt berechnet
+- Statistiken: Daten vom Nachbarschaftshelfer werden jetzt gesammelt - der Einfachheit halber werden Münzen nicht einbezogen
 
 ### Bugfixes
 - Statistiken: Himeji und Frachter Daten werden wieder erfasst
