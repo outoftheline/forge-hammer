@@ -24,7 +24,7 @@
 * Structure of "statsRewards" db
 * {
 *   date: Date,
-*   type: 'battlegrounds_conquest' | 'guildExpedition' | 'spoilsOfWar' | 'diplomaticGifts',
+*   type: 'battlegrounds_conquest' | 'guildExpedition' | 'spoils_of_war' | 'diplomatic_gifts',
 *   amount: number,
 *   reward: string, // eg. resource#strategy_points#10
 * }

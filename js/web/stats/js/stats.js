@@ -657,7 +657,7 @@ let Stats = {
 				'guild_raids', //Quantum Incursion
 				'pvp_arena', //PvP Arena
 				'spoils_of_war', // Himeji Castle
-				'diplomaticGifts', //Space Carrier
+				'diplomatic_gifts', //Space Carrier
 				'shards', //Flying Island
 			].map(it => Stats.RenderTab({
 				name: FH.t('Boxes.Stats.Rewards.Source.' + it),

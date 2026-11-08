@@ -122,7 +122,7 @@
 #stats .tabs ul li.statsGBGPlayers a span {
 	background-image: url(../../x_img/gbg.png);
 }
-#stats .tabs ul li.diplomaticGifts a span {
+#stats .tabs ul li.diplomatic_gifts a span {
 	background-image: url(../../x_img/diplomatic_gifts.png);
 }
 #stats .tabs ul li.spoils_of_war a span {
