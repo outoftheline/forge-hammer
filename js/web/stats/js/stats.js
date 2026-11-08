@@ -22,7 +22,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 	if (!Array.isArray(r)) {
 		return;
 	}
-	var [rewards, rewardIncidentSource] = r; // pair, 1st is reward list, second source of incident, e.g spoilsOfWar
+	var [rewards, rewardIncidentSource] = r; // pair, 1st is reward list, second source of incident, e.g spoils_of_war
     await IndexDB.getDB();
 	
 	if (rewardIncidentSource == "event_pass") {
@@ -656,7 +656,7 @@ let Stats = {
 				'guildExpedition', // Temple of Relics
 				'guild_raids', //Quantum Incursion
 				'pvp_arena', //PvP Arena
-				'spoilsOfWar', // Himeji Castle
+				'spoils_of_war', // Himeji Castle
 				'diplomaticGifts', //Space Carrier
 				'shards', //Flying Island
 			].map(it => Stats.RenderTab({
