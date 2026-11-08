@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.10.5
+### Update
+- Produktionen: Observatorium Gold Boost wird jetzt berechnet
+
+### Bugfixes
+- Statistiken: Himeji und Frachter Daten werden wieder erfasst
+- Boosts: Die Boosts der Verbündeten wurden nicht mehr erfasst
+- LG Rechner: Gold-Boni in den Einstellungen konnten leer sein
+- Stadtplaner: Anpassungen ans LG Update
+
+---
+
 ## Version 1.10.4
 ### Bugfix
 - LG Rechner: Boost-Buttons Zuordnung verbessert

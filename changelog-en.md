@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 1.10.5
+### Update
+- Productions: Observatory gold boost is now calculated
+
+### Bugfixes
+- Stats: Himeji and Space Carrier stats are back
+- Boosts: Ally boosts weren't calculated anymore
+- GB Calculator: Gold Tier settings could be empty
+- Planner: GB Update adjustments
+
+---
+
 ## Version 1.10.4
 ### Bugfix
 - GB Calculator boost buttons could get stuck or try to work with the wrong tier
