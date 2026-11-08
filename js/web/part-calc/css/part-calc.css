@@ -102,6 +102,22 @@
 	margin: 0 0 3px;
 }
 
+#OwnPartBox .btn-set-arc.btn-active {
+	position: relative;
+}
+
+#OwnPartBox .btn-set-arc.btn-active::after, #OwnPartBox .btn-set-arc.btn-active::before {
+	content: " ";
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: calc(50% - 6px);
+	pointer-events: none;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 3px solid var(--btn-border-active-color);
+}
+
 #OwnPartBox .gbLevels .btn {
 	padding: 2px 3px;
 	margin: -3px 0;

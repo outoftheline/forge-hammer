@@ -52,7 +52,7 @@
 	--btn-bg-onclick: linear-gradient(to bottom, #eeb141, #cc5413);
 	--btn-bg-green: linear-gradient(to bottom, #359e2b, #176517);
     --btn-border: 1px solid #0a232c;
-    --btn-border-active-color: #133853;
+    --btn-border-active-color: #0a232c;
 	--btn-green-color: #dde9ca;
 	--text-btn-disabled: #999;
 	--text-btn: #0f0e0e;
