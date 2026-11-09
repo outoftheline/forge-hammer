@@ -388,33 +388,101 @@
 #PowerLevelingBox {
 	top: 30%;
 	left: 100px;
-	max-width: 700px;
+	max-width: 900px;
 }
 
 #PowerLevelingBox #PowerLevelingBoxBody {
-	overflow-x: hidden;
+	overflow-x: auto;
 	overflow-y: auto;
-	max-height: 500px;
 	user-select: text;
 }
+
+#PowerLevelingBoxOwnPartSum img { height: 30px; }
 
 #PowerLevelingBox #PowerLevelingBoxBody .foe-table td, #PowerLevelingBox #PowerLevelingBoxBody .foe-table th {
 	text-align: center;
 }
 
-#PowerLevelingBox #PowerLevelingBoxBody .foe-table td:first-child, #PowerLevelingBox #PowerLevelingBoxBody .foe-table td:nth-child(6) {
+#PowerLevelingBox #PowerLevelingBoxBody .foe-table td:first-child, #PowerLevelingBox #PowerLevelingBoxBody .foe-table td.last-spot {
 	border-right: 1px solid var(--text-dark);
 }
+
+#PowerLevelingBox .pl-arc-buttons {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 4px 16px;
+	margin-bottom: 4px;
+}
+
+#PowerLevelingBox .pl-arc-row {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+#PowerLevelingBox .pl-arc-label img {
+	max-height: 40px;
+}
+
+#PowerLevelingBox .unlock-sum {
+	margin-top: 4px;
+	display: flex;
+	gap: 3px;
+}
+#PowerLevelingBoxUnlockSum { 
+	display: inline-flex;
+	gap: 3px;
+}
+
+#PowerLevelingBox .unlock-cost {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	white-space: nowrap;
+	margin: 0 3px;
+}
+
+#PowerLevelingBox #PowerLevelingBoxBody .foe-table td.pl-unlock-tooltip {
+	cursor: help;
+	text-decoration: underline dotted;
+}
+
+.pl-unlock-tt {
+	text-align: left;
+}
+
+.pl-unlock-tt .pl-unlock-line {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+	margin-top: 2px;
+}
+
+.unlock-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	background: center / contain no-repeat;
+}
+
+.unlock-icon.game-icon img {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+}
+
+.unlock-icon.Goods { background-image: url(../../x_img/goods.png); }
+.unlock-icon.Medals { background-image: url(../../x_img/medal.png); }
+.unlock-icon.CopperBlueprints { background-image: url(../../x_img/blueprint.png); }
+.unlock-icon.GoldBlueprints { background-image: url(../../x_img/blueprint_gold.png); }
 
 #PowerLevelingBox #PowerLevelingBoxBody .foe-table td.bright, strong.bright {
 	color: var(--text-highlight);
 	font-weight: bold;
 }
-
-#PowerLevelingBox #PowerLevelingBoxBody .success {
-	color: var(--success);
-}
-
 
 #calcReminder {
 	top: 20px;

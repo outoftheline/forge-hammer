@@ -570,18 +570,16 @@ let Info = {
      * LG wurde gelevelt
      */
     OtherPlayerService_newEventgreat_building_contribution: (d) => {
-        let newFP = -1;
-        if (d['rank'] >= 6) 
-            newFP = 0;
-        else {
-            let Entity = Object.values(FH.Main.CityEntities).find(obj => (obj['name'] === d['great_building_name']));
-                EntityID = Entity['id'],
-                EraName = EraName = GreatBuildings.GetEraName(EntityID),
-                Era = Technologies.Eras[EraName],
-                P1 = GreatBuildings.Rewards[Era][d['level']-1],
-                FPRewards = GreatBuildings.GetMaezen(P1, FH.Main.ArkBonus);
+        let newFP = -1,
+            Entity = Object.values(FH.Main.CityEntities).find(obj => (obj['name'] === d['great_building_name'])),
+            EntityID = Entity?.['id'],
+            Level = d['level'] - 1;
 
-                newFP = FPRewards[d['rank'] - 1];
+        if (EntityID && GreatBuildings.Levels[EntityID]?.FPCosts[Level]) {
+            newFP = GreatBuildings.GetLevelMaezen(EntityID, Level, FH.Main.ArkBonus)[d['rank'] - 1] || 0;
+        }
+        else if (d['rank'] >= 6) {
+            newFP = 0;
         }
 
         let PlayerLink = FH.Main.GetPlayerLink(d['other_player']['player_id'], d['other_player']['name']);

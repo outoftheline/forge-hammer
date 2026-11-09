@@ -557,12 +557,11 @@ let Investment = {
 
 	UpdateData: async (LGData, FullSync) => {
 
-		let arc = 1 + (FH.Main.ArkBonus / 100);
+		let arcBoni = [FH.Main.ArkBonus, Boosts.Sums.contribution_boost_gold || 0];
 		let allGB = await IndexDB.db.investhistory.where('id').above(0).keys();
 		let UpdatedList = false;
 		let playerSyncGbKeys = null;
-		let arcLevelCheck = JSON.parse(FH.Storage.getItem('InvestmentArcBonus'));
-		let forceFullUpdate = !arcLevelCheck || arcLevelCheck != FH.Main.ArkBonus ? true : false;
+		let forceFullUpdate = FH.Storage.getItem('InvestmentArcBonus') !== JSON.stringify(arcBoni);
 
 		for (let i in LGData)
 		{
@@ -601,6 +600,10 @@ let Investment = {
 				let GbhasUpdate = false;
 				let arrfphistory = [];
 				let isHidden = 0;
+				let isGold = LGData[i]['currentTier']
+					? LGData[i]['currentTier']['value'] === 'gold'
+					: GreatBuildings.IsGoldTier(LGData[i]['city_entity_id'], GBLevel);
+				let arc = 1 + (arcBoni[isGold ? 1 : 0] / 100);
 
 				if (undefined !== LGData[i]['reward']) {
 					Medals = FH.Main.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
@@ -659,7 +662,15 @@ let Investment = {
 					playerSyncGbKeys = Investment.remove_key_from_array(playerSyncGbKeys, CurrentGB.id);
 				}
 
-				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || forceFullUpdate))
+				let isOutdated = CurrentGB !== undefined && (
+					CurrentGB['profit'] !== Profit ||
+					CurrentGB['medals'] !== Medals ||
+					CurrentGB['blueprints'] !== Blueprints ||
+					CurrentGB['currentFp'] !== CurrentFP ||
+					CurrentGB['rank'] !== Rank
+				);
+
+				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || forceFullUpdate || isOutdated))
 				{
 					GbhasUpdate=true;
 					
@@ -721,7 +732,7 @@ let Investment = {
 			let InvestmentSettings = JSON.parse(FH.Storage.getItem('InvestmentSettings') || '{}');
 			InvestmentSettings['lastupdate'] = FH.Main.getCurrentDate();
 			FH.Storage.setItem('InvestmentSettings', JSON.stringify(InvestmentSettings));
-			FH.Storage.setItem('InvestmentArcBonus', FH.Main.ArkBonus);
+			FH.Storage.setItem('InvestmentArcBonus', JSON.stringify(arcBoni));
 		}
 	},
 

@@ -88,8 +88,12 @@ let Parts = {
 	RemainingOwnPart: null,
 
 	PowerLevelingStartLevel: null,
-	PowerLevelingEndLevel: 999999,
+	PowerLevelingEndLevel: 300,
 	PowerLevelingData: null,
+	PowerLevelingKey: null,
+	PowerLevelingExcludedGBs: ['X_StellarAgeDiscovery_Landmark1'],
+	UnlockCostTypes: ['Goods', 'Coins', 'Supplies', 'Medals', 'CopperBlueprints', 'GoldBlueprints'],
+	UnlockCostFactors: { Goods: 5, CopperBlueprints: 9, GoldBlueprints: 9 },
 
 	PlaceAvailables: [],
 	CopyString: null,
@@ -260,8 +264,8 @@ let Parts = {
 
 			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
-				Parts.PowerLevelingStartLevel = Parts.Level;
-				Parts.PowerLevelingEndLevel = 999999;
+				Parts.PowerLevelingStartLevel = FH.Main.CurrentGB.Entity.max_level ?? Parts.Level;
+				Parts.PowerLevelingEndLevel = 300;
 				Parts.ShowPowerLeveling(false);
 			});
 
@@ -496,7 +500,7 @@ let Parts = {
 			Parts.IsPreviousLevel = false;
 			Parts.IsNextLevel = true;
 			Parts.Level = NextLevel;
-			Total = GreatBuildings.GetBruttoCosts(EntityID, NextLevel);
+			Total = GreatBuildings.Levels[EntityID].FPCosts[NextLevel];
 		}
 		else {
 			Parts.IsNextLevel = false;
@@ -687,10 +691,8 @@ let Parts = {
 			}
 		}
 		else {
-			let P1 = GreatBuildings.Rewards[Era][Parts.Level];
-
 			Parts.Maezens = Array(Parts.MaezenSlots).fill(0);
-			FPRewards = GreatBuildings.GetMaezen(P1, Parts.ArcPercents)
+			FPRewards = GreatBuildings.GetLevelMaezen(FH.Main.CurrentGB.Entity.cityentity_id, Parts.Level, Parts.ArcPercents);
 			MedalRewards = Array(Parts.MaezenSlots).fill(0);
 			BPRewards = Array(Parts.MaezenSlots).fill(0);
 		}
@@ -798,7 +800,7 @@ let Parts = {
 		}
 
 		let Tier = FH.Main.CurrentGB.Entity.tier;
-		let haslevelingData = FH.Main.CurrentGB.Entity.bonuses.length === 0 ? '' : 'disabled'; // disables some buttons
+		let haslevelingData = Parts.CanPowerLevel(FH.Main.CurrentGB.Entity.cityentity_id) ? '' : 'disabled'; 
 
 		h.push(`<div id="gbCosts" class="gbTier-${Tier}">`);
 
@@ -824,7 +826,7 @@ let Parts = {
 
 				h.push(Parts.Level + ' &rarr; ' + (parseInt(Parts.Level) + 1));
 
-				if (GreatBuildings.Rewards[Era] && GreatBuildings.Rewards[Era][Parts.Level + 1]) 
+				if (GreatBuildings.Levels[FH.Main.CurrentGB.Entity.cityentity_id]?.FPCosts[Parts.Level + 1]) 
 					h.push(` <button class="btn btn-set-level ${(haslevelingData)}" data-value="${(Parts.Level + 1)}">&#9205;</button>`);
 			}
 			h.push('</div>');
@@ -842,24 +844,7 @@ let Parts = {
 
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
-		let investmentSteps = Tier === 'gold' ? [10, 20, Boosts.Sums.contribution_boost_gold] : [80, 90, 100, Boosts.Sums.contribution_boost],
-			customButtons = Tier === 'gold' ? FH.Storage.getItem('CustomPartCalcGoldButtons') : FH.Storage.getItem('CustomPartCalcButtons');
-
-		// custom buttons available
-		if(customButtons) {
-			investmentSteps = [];
-			let bonuses = Parts.GetButtonValues(customButtons, Tier === 'gold' ? 'gold' : 'copper');
-
-			bonuses.forEach(bonus => {
-				if(bonus === 'contribution_boost_gold' || bonus === 'contribution_boost' || bonus === 'ark') 
-					investmentSteps.push(Parts.GetArcBoost());
-				else 
-					investmentSteps.push(bonus);
-			});
-		}
-
-		investmentSteps = investmentSteps.filter((item, index) => investmentSteps.indexOf(item) === index);
-		investmentSteps.sort((a, b) => a - b);
+		let investmentSteps = Parts.GetArcSteps(Tier === 'gold' ? 'gold' : 'copper');
 		investmentSteps.forEach(bonus => {
 			h.push(`<button class="btn btn-mid btn-set-arc${(Parts.ArcPercents[0] === bonus ? ' btn-active' : '')}" data-value="${bonus}">${bonus}%</button>`);
 		});
@@ -1082,7 +1067,13 @@ let Parts = {
 		$('#OwnPartBoxBody').html(h.join(''));
 
 		if ($('#PowerLevelingBox').length > 0 && !Parts.IsPreviousLevel) {
-			Parts.CalcBodyPowerLeveling();
+			if (Parts.CanPowerLevel(FH.Main.CurrentGB.Entity.cityentity_id)) {
+				// the calculator refreshes on every contribution and button click, the table only has to when its inputs change
+				if (Parts.GetPowerLevelingKey() !== Parts.PowerLevelingKey) Parts.CalcBodyPowerLeveling();
+			}
+			else if (Parts.PowerLevelingExcludedGBs.includes(FH.Main.CurrentGB.Entity.cityentity_id)) {
+				FH.HTML.CloseOpenBox('PowerLevelingBox');
+			}
 		}
 	},
 
@@ -1253,8 +1244,35 @@ let Parts = {
 	},
 
 
-	GetArcBoost: () => {
-		return FH.Main.CurrentGB.Entity?.tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
+	CanPowerLevel: (EntityID) => {
+		return !!GreatBuildings.Levels[EntityID] && !Parts.PowerLevelingExcludedGBs.includes(EntityID);
+	},
+
+
+	GetArcBoost: (Tier = FH.Main.CurrentGB.Entity?.tier) => {
+		return Tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
+	},
+
+
+	GetArcSteps: (Tier) => {
+		let Stored = FH.Storage.getItem(Tier === 'gold' ? 'CustomPartCalcGoldButtons' : 'CustomPartCalcButtons'),
+			Steps = Parts.GetButtonValues(Stored, Tier).map(Bonus =>
+				(Bonus === 'contribution_boost_gold' || Bonus === 'contribution_boost' || Bonus === 'ark') ? Parts.GetArcBoost(Tier) : Bonus);
+
+		Steps = Steps.filter((Item, Index) => Steps.indexOf(Item) === Index);
+		return Steps.sort((a, b) => a - b);
+	},
+
+
+	GetPowerLevelingBoost: (Tier) => {
+		let Saved = FH.Storage.getItem('PowerLevelingArc_' + Tier);
+		if (Saved === null) Saved = Tier === 'gold' ? 'own' : '90';
+		return Saved === 'own' ? Parts.GetArcBoost(Tier) : (parseFloat(Saved) || 0);
+	},
+
+
+	SetPowerLevelingBoost: (Tier, Bonus) => {
+		FH.Storage.setItem('PowerLevelingArc_' + Tier, Bonus === Parts.GetArcBoost(Tier) ? 'own' : String(Bonus));
 	},
 
 
@@ -1380,14 +1398,27 @@ let Parts = {
 				'auto_close': true,
 				'dragdrop': true,
 				'minimize': true,
+				'resize': true,
+				// tooltips are bound to the document the box lives in => rebind when it moves
+				'popout': {
+					onPopout: () => Parts.InitPowerLevelingTooltips(),
+					onDock: () => Parts.InitPowerLevelingTooltips(),
+				},
 			    active_maps:"main",
 			});
 
 			const box = $('#PowerLevelingBox');
 
+			box.on('click', '.btn-pl-arc', function () {
+				let Bonus = parseFloat($(this).data('value'));
+				if (isNaN(Bonus)) Bonus = 0;
+				Parts.SetPowerLevelingBoost($(this).data('tier'), Bonus);
+				Parts.CalcBodyPowerLeveling();
+			});
+
 			// Events on the `startLevel` input field
 			box.on('blur', '#startLevel', function () {
-				Parts.PowerLevelingStartLevel = parseFloat($('#startLevel').val());
+				Parts.PowerLevelingStartLevel = parseFloat($(this).val());
 				Parts.UpdateTableBodyPowerLeveling();
 			});
 			box.on('keydown', '#startLevel', function (e) {
@@ -1409,7 +1440,7 @@ let Parts = {
 
 			// Events on the `endLevel` input field
 			box.on('blur', '#endLevel', function () {
-				Parts.PowerLevelingEndLevel = parseFloat($('#endLevel').val());
+				Parts.PowerLevelingEndLevel = parseFloat($(this).val());
 				Parts.UpdateTableBodyPowerLeveling();
 				//Parts.CalcBodyPowerLeveling();
 			});
@@ -1434,7 +1465,7 @@ let Parts = {
 			box.on('click', '.button-powerlevel-copy', function () {
 				let gb_level = parseInt($(this).parent().find(".hidden-text").html());
 
-				let CopyParts = Parts.GetCopyStringEx(Places=[true, true, true, true, true], Maezens=Parts.PowerLevelingData.Places[gb_level], Level=gb_level, OwnPart=Parts.PowerLevelingData.EigenNettos[gb_level], PlaceAll=true, PlaceAuto=false, PlaceAutoUnsafe=false, DangerPlaces=[0, 0, 0, 0, 0], LeveltLG=[false, false, false, false, false]);
+				let CopyParts = Parts.GetCopyStringEx(Places=Array(Parts.PowerLevelingData.Places[gb_level].length).fill(true), Maezens=Parts.PowerLevelingData.Places[gb_level], Level=gb_level, OwnPart=Parts.PowerLevelingData.EigenNettos[gb_level], PlaceAll=true, PlaceAuto=false, PlaceAutoUnsafe=false, DangerPlaces=[0, 0, 0, 0, 0], LeveltLG=[false, false, false, false, false]);
 				FH.helper.str.copyToClipboardLegacy(CopyParts);
 			});
 		}
@@ -1450,10 +1481,9 @@ let Parts = {
 	CalcBodyPowerLevelingData: () => {
 		let EntityID = FH.Main.CurrentGB.Entity['cityentity_id'],
 			CityEntity = FH.Main.CityEntities[EntityID],
-			EraName = GreatBuildings.GetEraName(EntityID),
-			Era = Technologies.Eras[EraName],
+			LevelData = GreatBuildings.Levels[EntityID],
 			StartLevel = Parts.PowerLevelingStartLevel,
-			EndLevel = (GreatBuildings.Rewards[Era] ? Math.min(Parts.PowerLevelingEndLevel, GreatBuildings.Rewards[Era].length) : 0);
+			EndLevel = (LevelData ? Math.min(Parts.PowerLevelingEndLevel, LevelData.FPCosts.length) : 0);
 
 		// Limit minimum value for the power leveling range
 		StartLevel = StartLevel < 0 ? 0 : StartLevel;
@@ -1469,33 +1499,25 @@ let Parts = {
 			DoubleCollections = [],
 			EigenNettos = [];
 
-		let OwnPartSum = 0;
+		let OwnPartSum = 0,
+			BoostCopper = Parts.GetPowerLevelingBoost('copper'),
+			BoostGold = Parts.GetPowerLevelingBoost('gold'),
+			FPGreatBuilding = LevelData.FPProductions ? undefined : GreatBuildings.GreatBuildingsData.find(obj => (obj.ID === EntityID && obj.FPProductions));
 
 		for (let i = StartLevel; i < EndLevel; i++) {
 			// How many FPs are needed in total to level the GB
-			if (i < 10) {
-				Totals[i] = CityEntity['strategy_points_for_upgrade'][i];
-			}
-			else {
-				Totals[i] = Math.ceil(CityEntity['strategy_points_for_upgrade'][9] * Math.pow(1.025, i - 9));
-			}
+			Totals[i] = LevelData.FPCosts[i];
 
-			// How many FPs are needed for each spot.
-			// For non-current levels, calculate the FPs for each spot...
-			if (i != Parts.Level) {
-				Places[i] = GreatBuildings.GetMaezen(GreatBuildings.Rewards[Era][i], Parts.ArcPercents)
+			// How many FPs are needed for each spot (also for the current level, so the calculator boost has no effect)
+			let Arc = GreatBuildings.IsGoldTier(EntityID, i) ? BoostGold : BoostCopper;
+			Places[i] = GreatBuildings.GetLevelMaezen(EntityID, i, Arc);
+			EigenBruttos[i] = Places[i].reduce((Rest, Place) => Rest - Place, Totals[i]);
 
-				EigenBruttos[i] = Totals[i] - Places[i][0] - Places[i][1] - Places[i][2] - Places[i][3] - Places[i][4]
+			if (LevelData.FPProductions) {
+				HasDoubleCollection = true;
+				DoubleCollections[i] = LevelData.FPProductions[i];
 			}
-			// ...and for the current, it's already calculated
-			else {
-				Places[i] = Parts.CurrentMaezens;
-				
-				EigenBruttos[i] = Parts.RemainingOwnPart;
-			}
-			
-			let FPGreatBuilding = GreatBuildings.GreatBuildingsData.find(obj => (obj.ID === EntityID && obj.FPProductions));
-			if (FPGreatBuilding && !['X_FutureEra_Landmark1','X_AllAge_Expedition'].includes(EntityID)) { //FP produzierende LGs ohne Arche
+			else if (FPGreatBuilding && !['X_FutureEra_Landmark1','X_AllAge_Expedition'].includes(EntityID)) { //FP produzierende LGs ohne Arche
 				HasDoubleCollection = true;
 				if (i < FPGreatBuilding.FPProductions.length) {
 					DoubleCollections[i] = FPGreatBuilding.FPProductions[i];
@@ -1513,8 +1535,34 @@ let Parts = {
 			OwnPartSum += EigenNettos[i];
 		}
 
+		let UnlockCosts = [],
+			UnlockSums = {},
+			HasUnlockCosts = !!LevelData.UnlockCosts;
+
+		if (HasUnlockCosts) {
+			for (let i = StartLevel; i < EndLevel; i++) {
+				UnlockCosts[i] = [];
+				for (let Type of Parts.UnlockCostTypes) {
+					let Base = LevelData.UnlockCosts[Type]?.[i] || 0;
+					if (!Base) continue;
+					let Amount = Base * (Parts.UnlockCostFactors[Type] || 1);
+					UnlockCosts[i].push({ Type, Base, Amount });
+					UnlockSums[Type] = UnlockSums[Type] || { Base: 0, Amount: 0 };
+					UnlockSums[Type].Base += Base;
+					UnlockSums[Type].Amount += Amount;
+				}
+			}
+		}
+
 		return {
 			HasDoubleCollection,
+			HasGoldLevels: LevelData.FPCosts.length > 200,
+			BoostCopper,
+			BoostGold,
+			HasUnlockCosts,
+			UnlockCosts,
+			UnlockSums,
+			SpotCount: (LevelData.FPCosts.length > 200 && EndLevel > 100) ? 7 : 5,
 			Places,
 			CityEntity,
 			OwnPartSum,
@@ -1530,24 +1578,28 @@ let Parts = {
 	CalcTableBodyPowerLeveling: (h) => {
 		const {
 			HasDoubleCollection,
+			SpotCount,
 			Places,
 			StartLevel,
 			EndLevel,
 			EigenBruttos,
 			DoubleCollections,
-			EigenNettos
+			EigenNettos,
+			HasUnlockCosts,
+			UnlockCosts
 		} = Parts.PowerLevelingData;
-
-
 
 		for (let i = StartLevel; i < EndLevel; i++) {
 			h.push('<tr>');
-			h.push('<td class="bright" style="white-space:nowrap">' + i + ' → ' + (i + 1) + '</td>');
-			h.push('<td><span class="hidden-text"> - #1 (</span>' + FH.HTML.Format(Places[i][0]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td class="text-light"><span class="hidden-text"> - #2 (</span>' + FH.HTML.Format(Places[i][1]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td><span class="hidden-text"> - #3 (</span>' + FH.HTML.Format(Places[i][2]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td class="text-light"><span class="hidden-text"> - #4 (</span>' + FH.HTML.Format(Places[i][3]) + '<span class="hidden-text">)</span></td>');
-			h.push('<td><span class="hidden-text"> - #5 (</span>' + FH.HTML.Format(Places[i][4]) + '<span class="hidden-text">)</span></td>');
+			// Unlock costs of the level as html tooltip on the level cell
+			let UnlockTT = HasUnlockCosts && UnlockCosts[i]?.length ? Parts.GetUnlockTooltipHTML(UnlockCosts[i]) : '';
+			h.push('<td class="bright' + (UnlockTT ? ' pl-unlock-tooltip' : '') + '" style="white-space:nowrap"' + (UnlockTT ? ' data-original-title="' + FH.HTML.Tooltip(UnlockTT) + '"' : '') + '>' + i + ' → ' + (i + 1) + '</td>');
+			for (let s = 0; s < SpotCount; s++) {
+				let Classes = [s % 2 === 1 ? 'text-light' : '', s === SpotCount - 1 ? 'last-spot' : ''].join(' ').trim();
+				h.push('<td class="' + Classes + '">');
+				if (Places[i][s] !== undefined) h.push('<span class="hidden-text"> - #' + (s + 1) + ' (</span>' + FH.HTML.Format(Places[i][s]) + '<span class="hidden-text">)</span>');
+				h.push('</td>');
+			}
 			if (HasDoubleCollection) {
 				h.push('<td class="success no-select"><strong>' + FH.HTML.Format(EigenBruttos[i]) + '</strong></td>');
 				h.push('<td class="no-select">' + FH.HTML.Format(FH.Main.round(DoubleCollections[i])) + '</td>');
@@ -1561,9 +1613,9 @@ let Parts = {
 
 	UpdateTableBodyPowerLeveling: () => {
 		const tableBody = document.getElementById('PowerLevelingBoxTableBody');
-		if (tableBody) {
+		// nothing changed (e.g. Enter followed by blur) => keep the table
+		if (tableBody && Parts.GetPowerLevelingKey() !== Parts.PowerLevelingKey) {
 			Parts.PowerLevelingData = Parts.CalcBodyPowerLevelingData();
-			/** @type {string[]} */
 			const h = [];
 			
 			Parts.CalcTableBodyPowerLeveling(h);
@@ -1571,57 +1623,65 @@ let Parts = {
 			tableBody.innerHTML = h.join('');
 
 			// Startlevel
-			const startLevel = /** @type {FH.HTML.nputElement} */(document.getElementById('startLevel'));
+			const startLevel = (document.getElementById('startLevel'));
 			if (startLevel.value != '' + Parts.PowerLevelingData.StartLevel) {
 				startLevel.value = '' + Parts.PowerLevelingData.StartLevel;
 			}
 			Parts.PowerLevelingStartLevel = Parts.PowerLevelingData.StartLevel;
 
 			// EndLevel
-			const endLevel = /** @type {FH.HTML.nputElement} */(document.getElementById('endLevel'));
+			const endLevel = (document.getElementById('endLevel'));
 			if (endLevel.value != '' + Parts.PowerLevelingData.EndLevel) {
 				endLevel.value = '' + Parts.PowerLevelingData.EndLevel;
 			}
 			Parts.PowerLevelingEndLevel = Parts.PowerLevelingData.EndLevel;
 
-			const ownPartSum = /** @type {FH.HTML.lement} */(document.getElementById('PowerLevelingBoxOwnPartSum'));
+			const ownPartSum = (document.getElementById('PowerLevelingBoxOwnPartSum'));
 			ownPartSum.innerText = FH.HTML.Format(FH.Main.round(Parts.PowerLevelingData.OwnPartSum));
+
+			// Spot count (5/7) and unlock cost sums depend on the range => refresh head and sums too
+			const tableHead = document.getElementById('PowerLevelingBoxTableHead');
+			if (tableHead) {
+				const th = [];
+				Parts.CalcTableHeadPowerLeveling(th);
+				tableHead.innerHTML = th.join('');
+			}
+
+			const unlockSum = document.getElementById('PowerLevelingBoxUnlockSum');
+			if (unlockSum) {
+				unlockSum.innerHTML = Parts.GetUnlockSumHTML(Parts.PowerLevelingData.UnlockSums);
+			}
+
+			// the delegated tooltip on the tbody stays bound, only remove one that belonged to a replaced row
+			FH.HTML.clearTooltips();
+			Parts.PowerLevelingKey = Parts.GetPowerLevelingKey();
 		}
 	},
 
 
-	CalcBodyPowerLeveling: () => {
-		Parts.PowerLevelingData = Parts.CalcBodyPowerLevelingData();
+	/** Everything the power leveling table depends on. The calculator boosts and the live contributions are not part of it. */
+	GetPowerLevelingKey: () => {
+		return [
+			FH.Main.CurrentGB?.Entity?.cityentity_id,
+			Parts.PowerLevelingStartLevel,
+			Parts.PowerLevelingEndLevel,
+			Parts.GetPowerLevelingBoost('copper'),
+			Parts.GetPowerLevelingBoost('gold')
+		].join('|');
+	},
 
+
+	CalcTableHeadPowerLeveling: (h) => {
 		const {
 			HasDoubleCollection,
-			CityEntity,
-			OwnPartSum,
-			StartLevel,
-			EndLevel,
+			SpotCount
 		} = Parts.PowerLevelingData;
 
-		let h = [];
-		h.push('<div class="dark-bg" style="margin-bottom:3px;padding: 5px;">');
-		h.push('<h1 class="text-center">' + CityEntity['name'] + '</h1>')
-
-		h.push('<div class="d-flex justify-content-center">');
-		h.push('<div style="margin: 5px 10px 0 0;">' + FH.t('Boxes.PowerLeveling.StartLevel') + ': <input type="number" id="startLevel" step="1" min=0" max="1000" value="' + StartLevel + '"></div>');
-		h.push('<div style="margin: 5px 10px 0 0;">' + FH.t('Boxes.PowerLeveling.EndLevel') + ': <input type="number" id="endLevel" step="1" min=10" max="1000" value="' + EndLevel + '"></div>');
-		h.push('<div>' + FH.t('Boxes.PowerLeveling.OwnPartSum') +': <strong class="info" id="PowerLevelingBoxOwnPartSum">'+ FH.HTML.Format(FH.Main.round(OwnPartSum)) + '</strong></div>')
-		h.push('</div>');
-		h.push('</div>');
-
-		h.push('<table class="foe-table">');
-
-		h.push('<thead class="sticky">');
 		h.push('<tr>');
 		h.push('<th>' + FH.t('Boxes.PowerLeveling.Level') + '</th>');
-		h.push('<th>' + FH.t('Boxes.PowerLeveling.P1') + '</th>');
-		h.push('<th>' + FH.t('Boxes.PowerLeveling.P2') + '</th>');
-		h.push('<th>' + FH.t('Boxes.PowerLeveling.P3') + '</th>');
-		h.push('<th>' + FH.t('Boxes.PowerLeveling.P4') + '</th>');
-		h.push('<th>' + FH.t('Boxes.PowerLeveling.P5') + '</th>');
+		for (let s = 1; s <= SpotCount; s++) {
+			h.push('<th' + (s === SpotCount ? ' class="last-spot"' : '') + '>' + FH.t('Boxes.PowerLeveling.P' + s) + '</th>');
+		}
 		if (HasDoubleCollection) {
 			h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.OwnPartBrutto') + '</th>');
 			h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.DoubleCollection') + '</th>');
@@ -1629,6 +1689,107 @@ let Parts = {
 		h.push('<th class="no-select">' + FH.t('Boxes.PowerLeveling.OwnPartNetto') + '</th>');
 		h.push('<th></th>');
 		h.push('</tr>');
+	},
+
+
+	GetUnlockCostIcon: (Type) => {
+		if (Type === 'Coins') return '<span class="unlock-icon game-icon">' + srcLinks.icons('money') + '</span>';
+		if (Type === 'Supplies') return '<span class="unlock-icon game-icon">' + srcLinks.icons('supplies') + '</span>';
+		return '<span class="unlock-icon ' + Type + '"></span>';
+	},
+
+
+	GetUnlockTooltipHTML: (Costs) => {
+		let t = ['<div class="pl-unlock-tt"><strong>' + FH.t('Boxes.PowerLeveling.UnlockCosts') + '</strong>'];
+		for (let Cost of Costs) {
+			// goods: per good, blueprints: sets => stored value; everything else: total
+			let Amount = FH.HTML.Format(Cost.Type in Parts.UnlockCostFactors ? Cost.Base : Cost.Amount);
+			t.push('<div class="pl-unlock-line">' + Parts.GetUnlockCostIcon(Cost.Type) + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.UnlockTT.' + Cost.Type), { amount: Amount }) + '</div>');
+		}
+		t.push('</div>');
+		return t.join('');
+	},
+
+
+	InitPowerLevelingTooltips: () => {
+		// one delegated tooltip on the tbody instead of one per row: survives body updates (innerHTML),
+		// only has to be rebound when the tbody is rebuilt or the box moves to/from a pop-out window
+		FH.HTML.clearTooltips();
+		let $body = $('#PowerLevelingBoxTableBody');
+		if (!$body.length) return;
+		if ($body.data('tooltip')) $body.tooltip('destroy');
+		$body.tooltip({selector: '[data-original-title]', html: true, container: FH.HTML.tooltipHost($body)});
+	},
+
+
+	GetUnlockCostsHTML: (Costs) => {
+		if (!Costs || !Costs.length) return '-';
+		return Costs.map(Cost => {
+			let Amount = FH.HTML.Format(Cost.Amount),
+				Title = FH.t('Boxes.PowerLeveling.Unlock.' + Cost.Type) + ': ' + FH.HTML.Format(Cost.Amount);
+
+			if (Cost.Type === 'Goods') {
+				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.GoodsTT'), { amount: FH.HTML.Format(Cost.Base) }) + ')';
+			}
+			else if (Cost.Type === 'CopperBlueprints' || Cost.Type === 'GoldBlueprints') {
+				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.SetsTT'), { sets: FH.HTML.Format(Cost.Base) }) + ')';
+			}
+
+			return '<span class="unlock-cost" title="' + Title + '">' + Parts.GetUnlockCostIcon(Cost.Type) + Amount + '</span>';
+		}).join(' ');
+	},
+
+
+	/** Sums of the unlock costs over the selected range, in the order of UnlockCostTypes */
+	GetUnlockSumHTML: (Sums) => {
+		let Costs = Parts.UnlockCostTypes.filter(Type => Sums[Type]).map(Type => ({ Type, Base: Sums[Type].Base, Amount: Sums[Type].Amount }));
+		return Parts.GetUnlockCostsHTML(Costs);
+	},
+
+
+	CalcBodyPowerLeveling: () => {
+		Parts.PowerLevelingData = Parts.CalcBodyPowerLevelingData();
+
+		const {
+			HasUnlockCosts,
+			UnlockSums,
+			CityEntity,
+			OwnPartSum,
+			StartLevel,
+			EndLevel,
+			HasGoldLevels,
+			BoostCopper,
+			BoostGold,
+		} = Parts.PowerLevelingData;
+
+		let h = [];
+		h.push('<div class="dark-bg p5">');
+		h.push('<h1 class="text-center bigger my-5">' + CityEntity['name'] + '</h1>')
+		h.push('<div class="flex justify-content-center" style="gap:15px">');
+		h.push('<div>' + FH.t('Boxes.PowerLeveling.StartLevel') + ': <input type="number" id="startLevel" step="1" min=0" max="1000" value="' + StartLevel + '"></div>');
+		h.push('<div>' + FH.t('Boxes.PowerLeveling.EndLevel') + ': <input type="number" id="endLevel" step="1" min=10" max="1000" value="' + EndLevel + '"></div>');
+		h.push('<div>' + FH.t('Boxes.PowerLeveling.OwnPartSum') +': <strong id="PowerLevelingBoxOwnPartSum">'+ FH.HTML.Format(FH.Main.round(OwnPartSum)) + `<img src="${srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_forgepoints.png`,true)}" /></strong></div>`)
+		h.push('</div>');
+		
+		h.push('<div class="pl-arc-buttons">');
+		for (let Tier of HasGoldLevels ? ['copper', 'gold'] : ['copper']) {
+			let Active = Tier === 'gold' ? BoostGold : BoostCopper;
+			h.push('<div class="pl-arc-row gbTier-' + Tier + '"><span class="pl-arc-label"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost${Tier === 'gold' ? '_gold' : ''}.png`,true)+'" /></span><span class="btn-group">');
+			for (let Bonus of Parts.GetArcSteps(Tier)) {
+				h.push('<button class="btn btn-mid btn-pl-arc' + (Bonus === Active ? ' btn-active' : '') + '" data-tier="' + Tier + '" data-value="' + Bonus + '">' + Bonus + '%</button>');
+			}
+			h.push('</span></div>');
+		}
+		h.push('</div>');
+		if (HasUnlockCosts) {
+			h.push('<div class="flex center unlock-sum"><b>' + FH.t('Boxes.PowerLeveling.UnlockCostsSum') + ':</b> <span id="PowerLevelingBoxUnlockSum">' + Parts.GetUnlockSumHTML(UnlockSums) + '</span></div>');
+		}
+		h.push('</div>');
+
+		h.push('<table class="foe-table">');
+
+		h.push('<thead class="sticky" id="PowerLevelingBoxTableHead">');
+		Parts.CalcTableHeadPowerLeveling(h);
 		h.push('</thead>');
 
 		h.push('<tbody id="PowerLevelingBoxTableBody">');
@@ -1638,6 +1799,8 @@ let Parts = {
 		h.push('</table>');
 
 		$('#PowerLevelingBoxBody').html(h.join(''));
+		Parts.InitPowerLevelingTooltips();
+		Parts.PowerLevelingKey = Parts.GetPowerLevelingKey();
 	},
 
 

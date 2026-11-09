@@ -22,6 +22,7 @@ h1 {
 
 h2 { font-size: 110%; }
 h3 { font-size: 100%; }
+h1.bigger { font-size: 1.1rem; }
 
 /* Chrome, Opera */
 input[type=number]::-webkit-inner-spin-button,
