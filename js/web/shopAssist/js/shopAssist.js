@@ -139,6 +139,7 @@ let shopAssist = {
 						<input type="checkbox" id="shopAssistFav" class="clickable"><label for="shopAssistFav" class="clickable">&nbsp;${FH.t("Boxes.ShopAssist.onlyFavourites")}</label>
 						<input type="checkbox" id="shopAssistUnlock" class="clickable"><label for="shopAssistUnlock" class="clickable">&nbsp;${FH.t("Boxes.ShopAssist.onlyUnlocked")}</label>
 						<input type="text" id="shopAssistSearch" placeholder="${FH.t('General.Search')}">
+						<button id="shopAssistRateBuildings" class="btn btn-slim" data-original-title="${FH.t('Boxes.ShopAssist.RateBuildingsDesc')}">${FH.t('Boxes.ShopAssist.RateBuildings')}</button>
 					</th>
 					<th colspan=3>
 						${resources}
@@ -396,6 +397,9 @@ let shopAssist = {
 				}
             });
 		});
+		$("#shopAssistRateBuildings").off().on("click",function(){
+			Productions.addAdditionalBuildings(shopAssist.getAllBuildingIds());
+		});
 		$(".shopFavourite").on("click",function(e){
 			let id = e.currentTarget.dataset.id;
 			if (!shopAssist.favourites?.[shopAssist.storeId]) shopAssist.favourites[shopAssist.storeId] = {}
@@ -465,28 +469,39 @@ let shopAssist = {
 
 	getBuildingIds: (reward) => {
 		let Ids = [];
-		getFromUpgrade = (id)=>{
-			let steps = (FH.Main.BuildingUpgrades || Kits.upgradeItems)[id].upgradeSteps;
-			return steps[steps.length-1]?.buildingIds;
+		if (!reward) return Ids;
+		let getFromUpgrade = (id)=>{
+			let steps = (FH.Main.BuildingUpgrades || Kits.upgradeItems)?.[id]?.upgradeSteps || [];
+			return steps[steps.length-1]?.buildingIds || [];
 		}
 		if (reward.type == "building") {
 			Ids.push(reward.subType);
 		} else if (reward.subType == "fragment") {
-			Ids = Array(...Ids,...shopAssist.getBuildingIds(reward.assembledReward));
+			Ids.push(...shopAssist.getBuildingIds(reward.assembledReward));
 		} else if (reward.subType == "selection_kit") {
-			for (let option of FH.Main.SelectionKits[reward.id].options) {
+			for (let option of FH.Main.SelectionKits?.[reward.id]?.options || []) {
 				if (option.item.__class__ == "BuildingItemPayload") Ids.push(option.item.cityEntityId)
-				if (option.item.__class__ == "UpgradeKitPayload") Ids.push(getFromUpgrade(option.item.upgradeItemId))
+				if (option.item.__class__ == "UpgradeKitPayload") Ids.push(...getFromUpgrade(option.item.upgradeItemId))
 			}
 		} else if (reward.subType == "upgrade_kit") {
-			Ids = Array(...Ids,...getFromUpgrade(reward.id));
+			Ids.push(...getFromUpgrade(reward.id));
 		} else if (reward.type == "chest") {
-			for (let rew of reward.possible_rewards) {
-				Ids = Array(...Ids,...shopAssist.getBuildingIds(rew.reward));
+			for (let rew of reward.possible_rewards || []) {
+				Ids.push(...shopAssist.getBuildingIds(rew.reward));
 			}
 		}
 		Ids = Array.from(new Set(Ids));
 		return Ids
+	},
+
+	// all buildings obtainable in the current shop (directly or via kits), excluding sold out offers
+	getAllBuildingIds: () => {
+		let Ids = [];
+		for (let slot of shopAssist.slots || []) {
+			if (slot.purchaseLimit?.maxPurchases && !slot.purchaseLimit.remainingPurchases) continue;
+			Ids.push(...shopAssist.getBuildingIds(slot.reward));
+		}
+		return Array.from(new Set(Ids));
 	},
 
 	TT: async (e) => {

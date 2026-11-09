@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.11.0
+### Update
+- Shop Assistant: New button to add all buildings of the shop (including upgrade and selection kits) to the Building Efficiency Rating
+
+---
+
 ## Version 1.10.5
 ### Update
 - Productions: Observatory gold boost is now calculated

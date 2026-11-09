@@ -2359,6 +2359,41 @@ let Productions = {
 
 	AdditionalSpecialBuildings:null,
 
+	// grab special buildings that can be added to the rating
+	createAdditionalBuildings: () => {
+		if (Productions.AdditionalSpecialBuildings) return;
+		let spB = Object.values(FH.Main.CityEntities).filter(x=> (x.is_special && !["O_","U_","V_","H_","Y_"].includes(x.id.substring(0,2))) || x.id.substring(0,11) === "W_MultiAge_")
+		Productions.AdditionalSpecialBuildings = {}
+		for (let x of spB) {
+			Productions.AdditionalSpecialBuildings[x.id] = {id:x.id,name:x.name,selected:false,filter:x.id+";"+x.name}
+		}
+	},
+
+
+	addAdditionalBuildings: async (buildingIds = []) => {
+		if (FH.ActiveMap === 'OtherPlayer') return;
+		Productions.createAdditionalBuildings();
+
+		for (let id of buildingIds) {
+			let meta = FH.Main.CityEntities[id];
+			if (!meta) continue;
+			if (!Productions.AdditionalSpecialBuildings[id])
+				Productions.AdditionalSpecialBuildings[id] = {id:meta.id,name:meta.name,selected:false,filter:meta.id+";"+meta.name}
+			Productions.AdditionalSpecialBuildings[id].selected = true;
+		}
+
+		// additional buildings are not listed in the inventory tab
+		if (Productions.RatingBuildingTab === 'inventory') Productions.RatingBuildingTab = 'everything';
+		Productions.RatingCurrentTab = 'Results';
+
+		if ($('#ProductionsRating').length === 0) {
+			await Productions.ShowRating();
+		} else {
+			FH.helper.preloader.show('#ProductionsRating');
+			await Productions.CalcRatingBody();
+		}
+	},
+
 	
 	efficiencyTT: (e) => {
 		let type=e?.currentTarget?.dataset?.type
@@ -2397,6 +2432,7 @@ let Productions = {
 		$('#ProductionsRatingBody').off('click', '#ProductionsRatingSettings input[type=checkbox]');
 		$('#ProductionsRatingBody .overlay .results').off('click', 'li');
 		$('#ProductionsRatingBody .overlay .selectMetaBuildings').off('click');
+		$('#ProductionsRatingBody .overlay .clearMetaBuildings').off('click');
 
 		Productions.AdvancedFilter.bind();
 
@@ -2581,6 +2617,12 @@ let Productions = {
 			Productions.AdditionalSpecialBuildings[id].selected =!Productions.AdditionalSpecialBuildings[id].selected
 			e.target.classList.toggle("selected")
 		})
+		$('#ProductionsRatingBody .overlay .clearMetaBuildings').on("click",()=>{
+			for (let building of Object.values(Productions.AdditionalSpecialBuildings || {})) {
+				building.selected = false;
+			}
+			$('#ProductionsRatingBody .overlay .results li').removeClass("selected");
+		})
 		$('#ProductionsRatingBody .overlay .selectMetaBuildings').on("click",(e)=>{
 			let li = $('#ProductionsRatingBody .overlay .results li');
 			for (let item of li) {
@@ -2749,14 +2791,7 @@ let Productions = {
 		Productions.BuildingsAll = Object.values(CityBuildings.createBuildings(Object.values(FH.Main.CityMapData)));
 		Productions.setChainsAndSets(Productions.BuildingsAll);
 
-		// grab special buildings
-		if (!Productions.AdditionalSpecialBuildings) {
-			let spB = Object.values(FH.Main.CityEntities).filter(x=> (x.is_special && !["O_","U_","V_","H_","Y_"].includes(x.id.substring(0,2))) || x.id.substring(0,11) === "W_MultiAge_")
-			Productions.AdditionalSpecialBuildings = {}
-			for (x of spB) {
-				Productions.AdditionalSpecialBuildings[x.id] = {id:x.id,name:x.name,selected:false,filter:x.id+";"+x.name}
-			}
-		}
+		Productions.createAdditionalBuildings();
 		let InventoryBuildings = Productions.InventoryBuildings = Kits.BuildingsFromInventory();
 		if (FH.ActiveMap === 'OtherPlayer')
 			InventoryBuildings = [];
@@ -3048,6 +3083,7 @@ let Productions = {
 						h.push('<ul class="results foe-table"></ul>')
 						h.push('<div class="btns">')
 						h.push('<a class="btn selectMetaBuildings">'+FH.t('Boxes.ProductionsRating.ToggleBuildingSelection')+'</a>')
+						h.push('<a class="btn clearMetaBuildings">'+FH.t('Boxes.ProductionsRating.ClearBuildingSelection')+'</a>')
 						h.push('<a class="btn closeMetaBuilding btn-green">'+FH.t('Boxes.ProductionsRating.AddBuildings')+'</a>')
 						h.push('</div>')
 					h.push('</div>')

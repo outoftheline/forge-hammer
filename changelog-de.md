@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.11.0
+### Update
+- Shop Assistent: Neuer Button, der alle Gebäude des Shops (inkl. Upgrade- und Auswahl-Kits) zur Gebäude Effizienz hinzufügt
+
+---
+
 ## Version 1.10.5
 ### Update
 - Produktionen: Observatorium Gold Boost wird jetzt berechnet
