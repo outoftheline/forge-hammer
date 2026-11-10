@@ -91,7 +91,7 @@ let Parts = {
 	PowerLevelingEndLevel: 300,
 	PowerLevelingData: null,
 	PowerLevelingKey: null,
-	PowerLevelingExcludedGBs: ['X_StellarAgeDiscovery_Landmark1'],
+	PowerLevelingExcludedGBs: [],
 	UnlockCostTypes: ['Goods', 'Coins', 'Supplies', 'Medals', 'CopperBlueprints', 'GoldBlueprints'],
 	UnlockCostFactors: { Goods: 5, CopperBlueprints: 9, GoldBlueprints: 9 },
 
