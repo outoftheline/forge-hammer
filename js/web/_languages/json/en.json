@@ -172,6 +172,8 @@
   "Boxes.Calculator.Done": "done",
   "Boxes.Calculator.ForderBonusPerConversation": "Save donation factor per Conversation",
   "Boxes.Calculator.FP": "FP",
+  "Boxes.Calculator.AddFavorite": "Mark as favorite (always uses your own contribution boost)",
+  "Boxes.Calculator.RemoveFavorite": "Remove from favorites",
   "Boxes.Calculator.FriendlyInvestment": "Investing at:",
   "Boxes.Calculator.GBList": "GB List",
   "Boxes.Calculator.LevelWarning": "Warning! Leveling this GB!",

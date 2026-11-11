@@ -146,6 +146,8 @@ let Parts = {
 	CopyPlaces: [false, false, false, false, false],
 	allowCopyPlace: false,
 	UseOwnBoost: false,
+	LastFavorite: false,
+	FavoriteBoostKey: null,
 	allowCopyPlaceSetting: true,
 
 	Show: (view = '') => {
@@ -218,8 +220,12 @@ let Parts = {
 				});
 
 				Parts.ArcPercents = ArcPercents;
+				if (Parts.IsCurrentFavorite()) {
+					Parts.FavoriteBoostKey = Parts.GetFavoriteBoostKey();
+					return Parts.CalcBody(Parts.Level);
+				}
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(ArcPercents));
-				Parts.UseOwnBoost = ArcPercents.every(x => x === Parts.GetArcBoost());
+				Parts.UseOwnBoost = ArcPercents.every(x => x === Parts.GetContributionBoost());
 				FH.Storage.setItem(Parts.GetConversationStorageKey() + '_OwnBoost', Parts.UseOwnBoost);
 
 				Parts.CalcBody(Parts.Level);
@@ -248,8 +254,13 @@ let Parts = {
 					$('.arc-percent-input').eq(i).val(ArkBonus);
 				}
 
+				if (Parts.IsCurrentFavorite()) {
+					Parts.FavoriteBoostKey = Parts.GetFavoriteBoostKey();
+					return Parts.CalcBody(Parts.Level);
+				}
+
 				FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
-				Parts.UseOwnBoost = (ArkBonus === Parts.GetArcBoost());
+				Parts.UseOwnBoost = (ArkBonus === Parts.GetContributionBoost());
 				FH.Storage.setItem(Parts.GetConversationStorageKey() + '_OwnBoost', Parts.UseOwnBoost);
 
 				Parts.CalcBody(Parts.Level);
@@ -433,20 +444,41 @@ let Parts = {
 				Parts.CalcBackgroundBody();
 			});
 
+			$('#OwnPartBox').on('click', '.set-favorite', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				$('.tooltip').remove();
+				Parts.ToggleFavorite($(this).data('player-id'));
+				Parts.FavoriteBoostKey = null;
+				Calculator.FavoriteBonus = null;
+				if ($('#gbCalc').length) Calculator.Show();
+				else Parts.CalcBody(Parts.Level);
+			});
+
 			$('#OwnPartBox').on('click', '.btn-toggle-arc', function () {
 				Calculator.ForderBonus = parseFloat($(this).data('value'));
 				$('#costFactor').val(Calculator.ForderBonus);
+				if (Parts.IsCurrentFavorite()) {
+					// favorites: keep the manual value only for this GB, don't save it
+					Calculator.FavoriteBonus = { Key: Parts.GetFavoriteBoostKey(), Value: Calculator.ForderBonus };
+					return Calculator.Show();
+				}
 				let StorageKey = Calculator.GetForderBonusStorageKey();
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
-				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
+				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetContributionBoost());
 				Calculator.Show();
 			});
 
 			$('#OwnPartBox').on('blur', '#costFactor', function () {
 				Calculator.ForderBonus = parseFloat($('#costFactor').val());
+				if (Parts.IsCurrentFavorite()) {
+					// favorites: keep the manual value only for this GB, don't save it
+					Calculator.FavoriteBonus = { Key: Parts.GetFavoriteBoostKey(), Value: Calculator.ForderBonus };
+					return Calculator.Show();
+				}
 				let StorageKey = Calculator.GetForderBonusStorageKey();
 				FH.Storage.setItem(StorageKey, Calculator.ForderBonus);
-				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetArcBoost());
+				FH.Storage.setItem(StorageKey + '_OwnBoost', Calculator.ForderBonus === Parts.GetContributionBoost());
 				Calculator.Show();
 			});
 
@@ -509,12 +541,20 @@ let Parts = {
 		}
 
 		Parts.ArcPerConversation = (FH.Storage.getItem('OwnPartArcPerConversation') === 'true');
-		if (Parts.FirstCycle || FH.Main.CurrentGB.Entity.tier !== Parts.LastArcTier || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
+		let IsFavorite = Parts.IsFavorite(PlayerID);
+		if (Parts.FirstCycle || FH.Main.CurrentGB.Entity.tier !== Parts.LastArcTier || IsFavorite !== Parts.LastFavorite || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
 			Parts.GetConversationBonus();
 		}
+		Parts.LastFavorite = IsFavorite;
 
-		let PersonalBoost = Parts.GetArcBoost();
-		if (Parts.UseOwnBoost && Parts.ArcPercents.some(x => x !== PersonalBoost)) {
+		let PersonalBoost = Parts.GetContributionBoost();
+		if (IsFavorite) {
+			if (Parts.FavoriteBoostKey !== Parts.GetFavoriteBoostKey()) {
+				Parts.FavoriteBoostKey = null;
+				Parts.ArcPercents = Parts.ArcPercents.map(() => PersonalBoost);
+			}
+		}
+		else if (Parts.UseOwnBoost && Parts.ArcPercents.some(x => x !== PersonalBoost)) {
 			Parts.ArcPercents = Parts.ArcPercents.map(() => PersonalBoost);
 			FH.Storage.setItem(Parts.GetConversationStorageKey(), JSON.stringify(Parts.ArcPercents));
 		}
@@ -833,8 +873,7 @@ let Parts = {
 
 			if (PlayerName) {
 				h.push(`<span class="player-name ${PlayerID === FH.Player.ID ? 'isSelf' : ''}">
-				<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span> ${FH.Main.GetPlayerLink(PlayerID, PlayerName)}`);
-
+				<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span> ${FH.Main.GetPlayerLink(PlayerID, PlayerName)} ${Parts.GetFavoriteButton(PlayerID)}`);
 				if (FH.Players.Dict[PlayerID].ClanName !== undefined) {
 					h.push(`<br> <span class="text-smaller">${FH.Main.GetGuildLink(FH.Players.Dict[PlayerID].ClanId, FH.Players.Dict[PlayerID].ClanName)}</span>`);
 				}
@@ -844,7 +883,7 @@ let Parts = {
 
 		h.push('<span class="btn-group">');
 		// different arc bonus-buttons
-		let investmentSteps = Parts.GetArcSteps(Tier === 'gold' ? 'gold' : 'copper');
+		let investmentSteps = Parts.GetContributionFactors(Tier === 'gold' ? 'gold' : 'copper');
 		investmentSteps.forEach(bonus => {
 			h.push(`<button class="btn btn-mid btn-set-arc${(Parts.ArcPercents[0] === bonus ? ' btn-active' : '')}" data-value="${bonus}">${bonus}%</button>`);
 		});
@@ -1248,16 +1287,43 @@ let Parts = {
 		return !!GreatBuildings.Levels[EntityID] && !Parts.PowerLevelingExcludedGBs.includes(EntityID);
 	},
 
+	GetFavorites: () => {
+		let Saved = JSON.parse(FH.Storage.getItem('CalculatorFavoritePlayers'));
+		return Array.isArray(Saved) ? Saved : [];
+	},
 
-	GetArcBoost: (Tier = FH.Main.CurrentGB.Entity?.tier) => {
+	IsFavorite: (PlayerID) => {
+		PlayerID = parseInt(PlayerID);
+		return PlayerID !== FH.Player.ID && Parts.GetFavorites().includes(PlayerID);
+	},
+
+	IsCurrentFavorite: () => Parts.IsFavorite(FH.Main.CurrentGB.Entity?.player_id),
+
+	GetFavoriteBoostKey: () => FH.Main.CurrentGB.Entity?.player_id + '_' + FH.Main.CurrentGB.Entity?.id,
+
+	ToggleFavorite: (PlayerID) => {
+		PlayerID = parseInt(PlayerID);
+		let Favorites = Parts.GetFavorites();
+		if (Favorites.includes(PlayerID)) Favorites = Favorites.filter(x => x !== PlayerID);
+		else Favorites.push(PlayerID);
+		FH.Storage.setItem('CalculatorFavoritePlayers', JSON.stringify(Favorites));
+	},
+
+	GetFavoriteButton: (PlayerID) => {
+		if (parseInt(PlayerID) === FH.Player.ID) return '';
+		let IsFavorite = Parts.IsFavorite(PlayerID);
+		return `<span class="set-favorite game-cursor${IsFavorite ? ' active' : ''}" data-player-id="${PlayerID}" title="${FH.t(IsFavorite ? 'Boxes.Calculator.RemoveFavorite' : 'Boxes.Calculator.AddFavorite')}">${IsFavorite ? '★' : '☆'}</span>`;
+	},
+
+	GetContributionBoost: (Tier = FH.Main.CurrentGB.Entity?.tier) => {
 		return Tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
 	},
 
 
-	GetArcSteps: (Tier) => {
+	GetContributionFactors: (Tier) => {
 		let Stored = FH.Storage.getItem(Tier === 'gold' ? 'CustomPartCalcGoldButtons' : 'CustomPartCalcButtons'),
 			Steps = Parts.GetButtonValues(Stored, Tier).map(Bonus =>
-				(Bonus === 'contribution_boost_gold' || Bonus === 'contribution_boost' || Bonus === 'ark') ? Parts.GetArcBoost(Tier) : Bonus);
+				(Bonus === 'contribution_boost_gold' || Bonus === 'contribution_boost' || Bonus === 'ark') ? Parts.GetContributionBoost(Tier) : Bonus);
 
 		Steps = Steps.filter((Item, Index) => Steps.indexOf(Item) === Index);
 		return Steps.sort((a, b) => a - b);
@@ -1267,12 +1333,12 @@ let Parts = {
 	GetPowerLevelingBoost: (Tier) => {
 		let Saved = FH.Storage.getItem('PowerLevelingArc_' + Tier);
 		if (Saved === null) Saved = Tier === 'gold' ? 'own' : '90';
-		return Saved === 'own' ? Parts.GetArcBoost(Tier) : (parseFloat(Saved) || 0);
+		return Saved === 'own' ? Parts.GetContributionBoost(Tier) : (parseFloat(Saved) || 0);
 	},
 
 
 	SetPowerLevelingBoost: (Tier, Bonus) => {
-		FH.Storage.setItem('PowerLevelingArc_' + Tier, Bonus === Parts.GetArcBoost(Tier) ? 'own' : String(Bonus));
+		FH.Storage.setItem('PowerLevelingArc_' + Tier, Bonus === Parts.GetContributionBoost(Tier) ? 'own' : String(Bonus));
 	},
 
 
@@ -1775,7 +1841,7 @@ let Parts = {
 		for (let Tier of HasGoldLevels ? ['copper', 'gold'] : ['copper']) {
 			let Active = Tier === 'gold' ? BoostGold : BoostCopper;
 			h.push('<div class="pl-arc-row gbTier-' + Tier + '"><span class="pl-arc-label"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost${Tier === 'gold' ? '_gold' : ''}.png`,true)+'" /></span><span class="btn-group">');
-			for (let Bonus of Parts.GetArcSteps(Tier)) {
+			for (let Bonus of Parts.GetContributionFactors(Tier)) {
 				h.push('<button class="btn btn-mid btn-pl-arc' + (Bonus === Active ? ' btn-active' : '') + '" data-tier="' + Tier + '" data-value="' + Bonus + '">' + Bonus + '%</button>');
 			}
 			h.push('</span></div>');

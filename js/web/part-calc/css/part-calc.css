@@ -542,3 +542,14 @@
 #OwnPartBox.closed .player-name.isSelf {
 	display: block;
 }
+#OwnPartBox .header .player-name .set-favorite {
+	opacity: .4;
+	margin-left: 3px;
+}
+#OwnPartBox .header .player-name .set-favorite:hover {
+	opacity: 1;
+}
+#OwnPartBox .header .player-name .set-favorite.active {
+	color: var(--text-highlight);
+	opacity: 1;
+}

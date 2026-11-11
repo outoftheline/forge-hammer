@@ -11,6 +11,7 @@ let Calculator = {
     PlayInfoSound: false,
 	LastRecurringQuests: undefined,
 	ForderBonusPerConversation: true,
+	FavoriteBonus: null,
 	AutoOpen: FH.Storage.getItem('CalcAutoOpen') || false,
 	OwnPartClose: false,
 	DefaultButtons: { copper: [80, 90, 100, 'contribution_boost'], gold: [10, 20, 'contribution_boost_gold']},
@@ -79,10 +80,12 @@ let Calculator = {
 			Calculator.ForderBonus = 85;
 		}
 
-		if (UseOwnBoost) Calculator.ForderBonus = Parts.GetArcBoost();
-
 		let PlayerID = FH.Main.CurrentGB.Entity.player_id,
+			IsFavorite = Parts.IsFavorite(PlayerID),
             h = [];
+
+		if (IsFavorite && Calculator.FavoriteBonus?.Key === Parts.GetFavoriteBoostKey()) Calculator.ForderBonus = Calculator.FavoriteBonus.Value;
+		else if (UseOwnBoost || IsFavorite) Calculator.ForderBonus = Parts.GetContributionBoost();
 
         // If the player has changed, then reset BuildingName/PlayerName
 		if (PlayerID !== Calculator.LastPlayerID) {
@@ -113,7 +116,7 @@ let Calculator = {
 			if (Calculator.PlayerName) {
 				h.push(`<span class="player-name">
 					<span class="activity activity_${FH.Players.Dict[PlayerID]['Activity']}"></span>
-					${FH.Main.GetPlayerLink(PlayerID, Calculator.PlayerName)}`);
+					${FH.Main.GetPlayerLink(PlayerID, Calculator.PlayerName)} ${Parts.GetFavoriteButton(PlayerID)}`);
 
 				if (Calculator.ClanName) {
 					h.push(`<br> <span class="text-smaller">${FH.Main.GetGuildLink(Calculator.ClanId, Calculator.ClanName)}</span>`);
@@ -132,7 +135,7 @@ let Calculator = {
 
 			bonuses.forEach(bonus => {
 				if (bonus === 'ark' || bonus === 'contribution_boost' || bonus === 'contribution_boost_gold') 
-					investmentSteps.push(Parts.GetArcBoost());
+					investmentSteps.push(Parts.GetContributionBoost());
 				else 
 					investmentSteps.push(bonus);
 			})
@@ -143,7 +146,7 @@ let Calculator = {
 			investmentSteps = investmentSteps.filter((item, index) => investmentSteps.indexOf(item) === index); //Remove duplicates
 			investmentSteps.sort((a, b) => a - b);
 			investmentSteps.forEach(bonus => {
-				h.push(`<button class="btn btn-mid btn-toggle-arc ${(bonus === Calculator.ForderBonus ? 'btn-active' : '')}${(bonus === Parts.GetArcBoost() ? ' arkBonus' : '')}" data-value="${bonus}">${bonus}%</button>`);
+				h.push(`<button class="btn btn-mid btn-toggle-arc ${(bonus === Calculator.ForderBonus ? 'btn-active' : '')}${(bonus === Parts.GetContributionBoost() ? ' arkBonus' : '')}" data-value="${bonus}">${bonus}%</button>`);
 			});
 		
 		h.push(`<span data-original-title="${FH.t('Boxes.Calculator.FriendlyInvestment')} x%">  <input type="number" id="costFactor" step="0.1" min="12" max="200" value="${Calculator.ForderBonus}"></span>`);
@@ -204,7 +207,7 @@ let Calculator = {
 		}
 
 		let bestRate = 999999,
-			arcMultiplier = 1 + (Parts.GetArcBoost() / 100),
+			arcMultiplier = 1 + (Parts.GetContributionBoost() / 100),
 			donorArcMultiplier = 1 + (Calculator.ForderBonus / 100);
 
 		let selfRankIndex,
@@ -400,10 +403,10 @@ let Calculator = {
 			}
 
 			if (donorProfit >= 0) {
-				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetArcBoost()), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
+				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfit'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetContributionBoost()), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'profit': donorProfit })]
 			}
 			else {
-				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetArcBoost()), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
+				profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLoss'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetContributionBoost()), 'bruttoreward': rank.fpGrossReward, 'safe': rank.safeRankCost, 'costs': rank.donorFpReward, 'loss': 0 - donorProfit })]
 			}
 
 			if (rank.donorState === Calculator.RankState.SELF) {
@@ -434,10 +437,10 @@ let Calculator = {
 				}
 
 				if (donorProfit > 0) {
-					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetArcBoost()), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
+					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTProfitSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetContributionBoost()), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'profit': donorProfit })]
 				}
 				else {
-					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetArcBoost()), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
+					profitTooltip = [FH.helper.str.Replacer(FH.t('Boxes.Calculator.TTLossSelf'), { 'nettoreward': rank.fpNetReward, 'arcfactor': (100 + Parts.GetContributionBoost()), 'bruttoreward': rank.fpGrossReward, 'paid': rank.contribution, 'loss': 0 - donorProfit })]
 				}
 
 				profitClass = 'info';
@@ -537,8 +540,8 @@ let Calculator = {
 					<td><b>${entry.rank}</b></td>
 					<td><b>${FH.HTML.Format(entry.forge_points)}</b></td>
 					<td><b class=" ${paidFairly ? '' : 'error'}">${entry.forge_points - fpToPayWithSelectedBonus}</b></td>
-					<td>${FH.HTML.Format(FH.Main.round(entry.reward?.blueprints ? FH.Main.round(entry.reward?.blueprints * (Parts.GetArcBoost() + 100)) / 100 : 0))}</td>
-					<td><small>${FH.HTML.Format(FH.Main.round(entry.reward?.resources?.medals ? FH.Main.round(entry.reward.resources.medals * (Parts.GetArcBoost() + 100)) / 100 : 0))}</small></td>
+					<td>${FH.HTML.Format(FH.Main.round(entry.reward?.blueprints ? FH.Main.round(entry.reward?.blueprints * (Parts.GetContributionBoost() + 100)) / 100 : 0))}</td>
+					<td><small>${FH.HTML.Format(FH.Main.round(entry.reward?.resources?.medals ? FH.Main.round(entry.reward.resources.medals * (Parts.GetContributionBoost() + 100)) / 100 : 0))}</small></td>
 				</tr>`;
 			}
 			output += `</tbody>`;

@@ -171,6 +171,8 @@
   "Boxes.Calculator.Done": "abgeschlossen",
   "Boxes.Calculator.ForderBonusPerConversation": "Förderfaktor pro Unterhaltung speichern",
   "Boxes.Calculator.FP": "FP",
+  "Boxes.Calculator.AddFavorite": "Als Favorit markieren (nutzt immer deinen eigenen Mäzen-Bonus)",
+  "Boxes.Calculator.RemoveFavorite": "Aus Favoriten entfernen",
   "Boxes.Calculator.FriendlyInvestment": "Fördern mit:",
   "Boxes.Calculator.GBList": "LG Liste",
   "Boxes.Calculator.LevelWarning": "ACHTUNG! Levelt das Bauwerk!",
