@@ -706,11 +706,7 @@ let Parts = {
 						if (MedalRewards[Place] === undefined) MedalRewards[Place] = 0;
 
 						// Blueprints
-						let BlueprintCount = (FH.Main.CurrentGB.Rankings[i]['reward']['blueprints'] !== undefined ? parseInt(FH.Main.CurrentGB.Rankings[i]['reward']['blueprints']) : 0);
-						if (FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards?.length > 1) {
-							let last = FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards.length - 1;
-							BlueprintCount = FH.Main.CurrentGB.Rankings[i].reward.blueprintRewards[last].amount;
-						}
+						let BlueprintCount = Parts.GetBlueprintReward(FH.Main.CurrentGB.Rankings[i]['reward']);
 						BPRewards[Place] = FH.Main.round(BlueprintCount * arcs[Place]);
 						if (BPRewards[Place] === undefined) BPRewards[Place] = 0;
 					}
@@ -1317,6 +1313,12 @@ let Parts = {
 
 	GetContributionBoost: (Tier = FH.Main.CurrentGB.Entity?.tier) => {
 		return Tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
+	},
+
+
+	GetBlueprintReward: (Reward, Tier = FH.Main.CurrentGB.Entity?.tier) => {
+		if (Tier === 'gold') return Reward?.blueprintRewards?.find(BP => BP.tier?.value === 'gold')?.amount || 0;
+		return parseInt(Reward?.blueprints) || 0;
 	},
 
 

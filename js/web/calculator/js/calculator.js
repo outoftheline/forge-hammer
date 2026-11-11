@@ -260,14 +260,8 @@ let Calculator = {
 			if (entry.reward.strategy_point_amount !== undefined)
 				rank.fpNetReward = FH.Main.round(entry.reward.strategy_point_amount);
 
-			if (entry.reward.blueprints !== undefined) {
-				rank.bpReward = FH.Main.round(entry.reward.blueprints);
-				if (entry.reward.blueprintRewards.length > 1) {
-					let last = entry.reward.blueprintRewards.length - 1;
-					rank.bpReward = entry.reward.blueprintRewards[last].amount;
-					rank.bpTier = entry.reward.blueprintRewards[last].tier.value;
-				}
-			}
+			rank.bpReward = Parts.GetBlueprintReward(entry.reward);
+			rank.bpTier = FH.Main.CurrentGB.Entity?.tier === 'gold' ? 'gold' : 'copper';
 
 			if (entry.reward.resources?.medals !== undefined)
 				rank.medalReward = FH.Main.round(entry.reward.resources.medals);
@@ -540,7 +534,7 @@ let Calculator = {
 					<td><b>${entry.rank}</b></td>
 					<td><b>${FH.HTML.Format(entry.forge_points)}</b></td>
 					<td><b class=" ${paidFairly ? '' : 'error'}">${entry.forge_points - fpToPayWithSelectedBonus}</b></td>
-					<td>${FH.HTML.Format(FH.Main.round(entry.reward?.blueprints ? FH.Main.round(entry.reward?.blueprints * (Parts.GetContributionBoost() + 100)) / 100 : 0))}</td>
+					<td>${FH.HTML.Format(FH.Main.round(FH.Main.round(Parts.GetBlueprintReward(entry.reward) * (Parts.GetContributionBoost() + 100)) / 100))}</td>
 					<td><small>${FH.HTML.Format(FH.Main.round(entry.reward?.resources?.medals ? FH.Main.round(entry.reward.resources.medals * (Parts.GetContributionBoost() + 100)) / 100 : 0))}</small></td>
 				</tr>`;
 			}
