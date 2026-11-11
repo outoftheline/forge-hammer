@@ -1,23 +1,21 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
 // LG Investitionen
 FH.proxy.addHandler('GreatBuildingsService', (data) => {
 
-	if(typeof data['requestMethod'] === 'undefined') 
-	{
+	if(typeof data['requestMethod'] === 'undefined') {
 		return;
 	}
 
-	if (data['requestMethod'] !== 'getContributions')
-	{
+	if (data['requestMethod'] !== 'getContributions') {
 		Investment.RequestBlockTime = +FH.Main.getCurrentDate();
 	}
 
-	if (data['requestMethod'] === 'getContributions')
-	{
+	if (data['requestMethod'] === 'getContributions') {
 		if(!data['responseData'] ){
 			return;
 		}
@@ -285,8 +283,7 @@ let Investment = {
 			let lastInvestmentIncreaseDate = null;
 			let history = {};
 
-			if (contribution['fphistory'] !== '[]')
-			{
+			if (contribution['fphistory'] !== '[]') {
 				hasFpHistoryClass = 'fphistory ';
 				history = JSON.parse(contribution['fphistory'] || false);
 				for (let i in history) {
@@ -310,8 +307,13 @@ let Investment = {
 
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
-			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">` +
-				`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['playerName'])}"><img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}</td>`);
+			let isFriend = FH.Players.Dict[contribution.playerId].IsFriend ? ' friend' : '';
+			let isGuildmate = FH.Players.Dict[contribution.playerId].IsGuildMember ? ' inGuild' : '';
+
+			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">
+				<td class="case-sensitive${isFriend}${isGuildmate}" data-text="${FH.helper.str.cleanup(contribution['playerName'])}">
+				<img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}
+				</td>`);
 			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
@@ -327,15 +329,13 @@ let Investment = {
 
 			h.push(`<td class="is-number progress" data-number="${progressWidth}"><div class="progbar" style="width: ${progressWidth}%"></div> ${contribution['current_progress']} / ${contribution['max_progress']}`);
 
-			if (DiffText !== 0)
-			{
+			if (DiffText !== 0) {
 				h.push(`<div class="diff ${DiffClass}">${DiffText}</div></td>`);
 			}
 
 			h.push(`</td>`);
 
-			if (showRestFp)
-			{
+			if (showRestFp) {
 				h.push(`<td class="is-number text-center" data-number="${restFp}">${restFp}</td>`);
 			}
 
@@ -343,13 +343,11 @@ let Investment = {
 			h.push(`<td class="is-number text-center gbinvestment" data-number="${contribution['currentFp']}">${contribution['currentFp']}</td>`);
 			h.push(`<td class="is-number text-center gbprofit" data-number="${RealProfit}"><b class="${RealProfitClass}">${RealProfit}</b></td>`);
 			
-			if(showMedals)
-			{
+			if(showMedals) {
 				h.push(`<td class="is-number text-center gbmedals" data-number="${Medals}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${FH.HTML.Format(Medals)}</b></td>`);
 			}
 			
-			if(showBlueprints)
-			{
+			if(showBlueprints) {
 				h.push(`<td class="is-number text-center gbblueprints" data-number="${Blueprints}"><b class="${RealProfitClass === 'error' ? 'success' : RealProfitClass}">${FH.HTML.Format(Blueprints)}</b></td>`);
 			}
 
@@ -358,8 +356,7 @@ let Investment = {
 
 		h.push('</tbody></table>');
 
-		if (lastupdate)
-		{
+		if (lastupdate) {
 			let uptodateClass = 'uptodate';
 
 			let date = moment(lastupdate).unix();
@@ -368,8 +365,7 @@ let Investment = {
 			let updrequTitle = FH.t('Boxes.Investment.UpToDate');
 
 			// set notification class if last update ist older then 30 minutes
-			if(datediff >= 1800)
-			{
+			if(datediff >= 1800) {
 				uptodateClass='updaterequired';
 				updrequTitle = FH.t('Boxes.Investment.UpdateRequired');
 			}
@@ -377,20 +373,18 @@ let Investment = {
 			h.push(`<div class="last-update-message invest-tooltip" title="${updrequTitle}"><span class="icon ${uptodateClass}"></span> <span class="${uptodateClass}">${moment(lastupdate).format(FH.t('DateTime'))}</span></div>`);
 		}
 
-		$('#history-wrapper').html(h.join('')).promise().done(function(){
+		$('#history-wrapper').html(h.join('')).promise().done(function() {
 
 			$('#InvestmentTable').tableSorter();
 
 			$('#InvestmentTable tbody tr').on('click', function () {
 
-				if ($(this).next("tr.detailview").length)
-				{
+				if ($(this).next("tr.detailview").length) {
 					$(this).next("tr.detailview").remove();
 					$(this).removeClass('open');
 				}
 				else {
-					if (typeof ($(this).attr("data-detail")) !== 'undefined' && $(this).attr("data-detail") !== '{}')
-					{
+					if (typeof ($(this).attr("data-detail")) !== 'undefined' && $(this).attr("data-detail") !== '{}') {
 						$(this).addClass('open');
 						let id = $(this).attr("id");
 						let detail = JSON.parse($(this).attr("data-detail"));
@@ -563,10 +557,8 @@ let Investment = {
 		let playerSyncGbKeys = null;
 		let forceFullUpdate = FH.Storage.getItem('InvestmentArcBonus') !== JSON.stringify(arcBoni);
 
-		for (let i in LGData)
-		{
-			if (LGData.hasOwnProperty(i))
-			{
+		for (let i in LGData) {
+			if (LGData.hasOwnProperty(i)) {
 				let PlayerID = LGData[i]['player']['player_id'];
 				if (PlayerID === FH.Player.ID) continue;
 				// if update started from Player GB Overview
@@ -631,8 +623,7 @@ let Investment = {
 				}
 
 				// LG gefunden mit investierten FP => Wert bekannt
-				if (CurrentGB !== undefined && CurrentGB['current_progress'] < CurrentProgress)
-				{
+				if (CurrentGB !== undefined && CurrentGB['current_progress'] < CurrentProgress) {
 					GbhasUpdate = true;
 					increase = CurrentProgress - CurrentGB['current_progress'];
 
@@ -652,13 +643,11 @@ let Investment = {
 					arrfphistory.push(data);
 				}
 
-				if (CurrentGB !== undefined && FullSync)
-				{
+				if (CurrentGB !== undefined && FullSync) {
 					allGB = Investment.remove_key_from_array(allGB, CurrentGB.id);
 				}
 
-				if (CurrentGB !== undefined && !FullSync && playerSyncGbKeys !== null)
-				{
+				if (CurrentGB !== undefined && !FullSync && playerSyncGbKeys !== null) {
 					playerSyncGbKeys = Investment.remove_key_from_array(playerSyncGbKeys, CurrentGB.id);
 				}
 
@@ -670,23 +659,19 @@ let Investment = {
 					CurrentGB['rank'] !== Rank
 				);
 
-				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || forceFullUpdate || isOutdated))
-				{
+				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || forceFullUpdate || isOutdated)) {
 					GbhasUpdate=true;
 					
-					if(!arrfphistory.length)
-					{
+					if(!arrfphistory.length) {
 						arrfphistory = JSON.parse(CurrentGB['fphistory']);
 					}
 					
-					if(CurrentGB['ishidden'] !== undefined) 
-					{
+					if(CurrentGB['ishidden'] !== undefined) {
 						isHidden = CurrentGB['ishidden'];
 					}
 				}
 
-				if (CurrentGB === undefined || GbhasUpdate)
-				{
+				if (CurrentGB === undefined || GbhasUpdate) {
 					UpdatedList = true;
 					await Investment.RefreshInvestmentDB({
 						playerId: PlayerID,
@@ -711,8 +696,7 @@ let Investment = {
 		}
 
 		// Delete leveled GBs in FullSync from GB Overview
-		if (FullSync && allGB.length >= 1)
-		{
+		if (FullSync && allGB.length >= 1) {
 			UpdatedList=true;
 			await IndexDB.db.investhistory.where('id').anyOf(allGB).delete();
 		}

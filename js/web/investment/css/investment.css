@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -14,14 +15,12 @@
 	overflow: auto;
 }
 
-/* Keep the tab bar pinned while the tab content scrolls */
 #Investment #InvestmentBody .investment-tabs > ul.horizontal {
 	position: sticky;
 	top: 0;
 	z-index: 210;
 }
 
-/* Column headers stick just below the sticky tab bar */
 #Investment #InvestmentBody .investment-tabs thead.sticky {
 	top: 37px;
 }
@@ -73,6 +72,15 @@
 
 #InvestmentBody table tbody tr.fphistory {
 	position: relative;
+}
+#InvestmentBody table tbody td.inGuild, #InvestmentBody table tbody td.friend {
+	background-position: center right 10px;
+    background-image: url('../../x_img/friendmarker.png');
+	background-repeat: no-repeat;
+    background-size: 14px 13px;
+}
+#InvestmentBody table tbody td.inGuild {
+    background-image: url('../../x_img/guildmarker.png');
 }
 
 #InvestmentBody table tbody tr.fphistory td:last-child {
