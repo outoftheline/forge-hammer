@@ -1020,6 +1020,8 @@
   "Boxes.OwnpartCalculator.OptionsDescending": "Descending",
   "Boxes.OwnpartCalculator.OptionsFP": "FP",
   "Boxes.OwnpartCalculator.OptionsGB": "Building",
+  "Boxes.OwnpartCalculator.OptionsGoldTier": "Gold tier",
+  "Boxes.OwnpartCalculator.OptionsGoldTierMarker": "Marker",
   "Boxes.OwnpartCalculator.OptionsLevel": "Level",
   "Boxes.OwnpartCalculator.OptionsLevelUp": "Level up",
   "Boxes.OwnpartCalculator.OptionsOwnPart": "Owners FP",

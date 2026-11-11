@@ -1017,6 +1017,8 @@
   "Boxes.OwnpartCalculator.OptionsDescending": "Absteigend",
   "Boxes.OwnpartCalculator.OptionsFP": "Forge Punkte",
   "Boxes.OwnpartCalculator.OptionsGB": "Name Bauwerk",
+  "Boxes.OwnpartCalculator.OptionsGoldTier": "Goldstufe",
+  "Boxes.OwnpartCalculator.OptionsGoldTierMarker": "Markierung",
   "Boxes.OwnpartCalculator.OptionsLevel": "Level",
   "Boxes.OwnpartCalculator.OptionsLevelUp": "Bitte leveln",
   "Boxes.OwnpartCalculator.OptionsOwnPart": "Eigene FP",

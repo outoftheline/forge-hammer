@@ -134,11 +134,15 @@ let Parts = {
 		includeLevel: false,
 		includeLevelString: false,
 		includeDanger: false,
+		includeGoldTier: false,
 		includeOwnPart: false,
 		descending: true,
 		dangerPrefix: '!!!',
 		dangerSuffix: '',
+		goldTierMarker: '🟡',
 	},
+
+	DangerThreshold: 5,
 
 	CopyModeAll: false,
 	CopyModeAuto: true,
@@ -374,6 +378,11 @@ let Parts = {
 				if (OptionsName) {
 					let StorageKey;
 
+					if (OptionsName === 'goldtier') {
+						Parts.CopySettings.includeGoldTier = !Parts.CopySettings.includeGoldTier;
+						StorageKey = Parts.GetStorageKey('CopyIncludeGoldTier', (Parts.CopyFormatPerGB ? FH.Main.CurrentGB.Entity['cityentity_id'] : null));
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.includeGoldTier);
+					}
 					if (OptionsName === 'danger') {
 						Parts.CopySettings.includeDanger = !Parts.CopySettings.includeDanger;
 						StorageKey = Parts.GetStorageKey('CopyIncludeDanger', (Parts.CopyFormatPerGB ? FH.Main.CurrentGB.Entity['cityentity_id'] : null));
@@ -438,6 +447,11 @@ let Parts = {
 						Parts.CopySettings.dangerSuffix = $(this).val();
 						StorageKey = Parts.GetStorageKey('CopyDangerSuffix', (Parts.CopyFormatPerGB ? FH.Main.CurrentGB.Entity['cityentity_id'] : null));
 						FH.Storage.setItem(StorageKey, Parts.CopySettings.dangerSuffix);
+					}
+					else if (OptionsName === 'goldtier-marker') {
+						Parts.CopySettings.goldTierMarker = $(this).val().trim();
+						StorageKey = Parts.GetStorageKey('CopyGoldTierMarker', (Parts.CopyFormatPerGB ? FH.Main.CurrentGB.Entity['cityentity_id'] : null));
+						FH.Storage.setItem(StorageKey, Parts.CopySettings.goldTierMarker);
 					}
 				}
 
@@ -571,6 +585,12 @@ let Parts = {
 
 			Parts.CopyFormatPerGB = (FH.Storage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true');
 			if (!Parts.CopyFormatPerGB) {
+				let SavedCopyIncludeGoldTier = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeGoldTier', null));
+				if (SavedCopyIncludeGoldTier !== null) Parts.CopySettings.includeGoldTier = (SavedCopyIncludeGoldTier === 'true');
+
+				let SavedCopyGoldTierMarker = FH.Storage.getItem(Parts.GetStorageKey('CopyGoldTierMarker', null));
+				if (SavedCopyGoldTierMarker !== null) Parts.CopySettings.goldTierMarker = SavedCopyGoldTierMarker;
+
 				let SavedCopyIncludeDanger = FH.Storage.getItem(Parts.GetStorageKey('CopyIncludeDanger', null));
 				if (SavedCopyIncludeDanger !== null) Parts.CopySettings.includeDanger = (SavedCopyIncludeDanger === 'true');
 
@@ -962,7 +982,7 @@ let Parts = {
 				if (Parts.LeveltLG[i]) {
 					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.levelt")}</strong></td>`);
 				}
-				else if (Parts.DangerPlaces[i] > Parts.MaezenSlots) {
+				else if (Parts.DangerPlaces[i] > Parts.DangerThreshold) {
 					h.push(`<td class="text-center"><strong class="error">${FH.t("Boxes.OwnpartCalculator.danger")} (${FH.HTML.Format(Parts.DangerPlaces[i])}FP)</strong></td>`);
 				}
 				else {
@@ -1158,6 +1178,8 @@ let Parts = {
 			let gbID = FH.Main.CurrentGB.Entity['cityentity_id'];
 			let ls = key => FH.Storage.getItem(Parts.GetStorageKey(key, gbID));
 
+			Parts.CopySettings.includeGoldTier = (ls('CopyIncludeGoldTier') ?? 'false') === 'true';
+			Parts.CopySettings.goldTierMarker = ls('CopyGoldTierMarker') ?? '🟡';
 			Parts.CopySettings.includeDanger = (ls('CopyIncludeDanger') ?? 'false') === 'true';
 			Parts.CopySettings.includePlayer = (ls('CopyIncludePlayer') ?? 'true') === 'true';
 			Parts.CopySettings.includeGB = (ls('CopyIncludeGB') ?? 'true') === 'true';
@@ -1219,10 +1241,16 @@ let Parts = {
 			'<label class="form-check-label game-cursor" for="options-levelup"><input type="checkbox" class="form-check-input" id="options-levelup" data-options="levelup" ' + (Parts.CopySettings.includeLevelString ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsLevelUp') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="options-ownpart"><input type="checkbox" class="form-check-input" id="options-ownpart" data-options="ownpart" ' + (Parts.CopySettings.includeOwnPart ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsOwnPart') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="options-prep"><input type="checkbox" class="form-check-input" id="options-prep" data-options="prep" ' + (Parts.CopyPreP ? 'checked' : '') + '> <span>P(xx)</span></label>' +
+			'<label class="form-check-label game-cursor" for="options-goldtier"><input type="checkbox" class="form-check-input" id="options-goldtier" data-options="goldtier" ' + (Parts.CopySettings.includeGoldTier ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsGoldTier') + '</span></label>' +
 			'<label class="form-check-label game-cursor" for="options-danger"><input type="checkbox" class="form-check-input" id="options-danger" data-options="danger" ' + (Parts.CopySettings.includeDanger ? 'checked' : '') + '> <span>' + FH.t('Boxes.OwnpartCalculator.OptionsDanger') + '</span></label>' +
 			'</div>';
 
 		h.push(Options)
+
+		if (Parts.CopySettings.includeGoldTier) {
+			h.push('<strong>' + FH.t('Boxes.OwnpartCalculator.OptionsGoldTier') + '</strong>' +
+				'<div><span>' + FH.t('Boxes.OwnpartCalculator.OptionsGoldTierMarker') + ':</span><input type="text" class="form-text-input" id="options-goldtier-marker" data-options="goldtier-marker" value="' + FH.HTML.escapeHtml(Parts.CopySettings.goldTierMarker) + '"></div>');
+		}
 
 		if (Parts.CopySettings.includeDanger) {
 			let DangerOptions = '<strong>' + FH.t('Boxes.OwnpartCalculator.OptionsDanger') + '</strong>' +
@@ -1372,16 +1400,18 @@ let Parts = {
 
 
 	GetCopyString: () => {
-		return Parts.GetCopyStringEx(Places=Parts.CopyPlaces, Maezens=Parts.Maezens, Level=Parts.Level, OwnPart=Parts.RemainingOwnPart, PlaceAll=Parts.CopyModeAll, PlaceAuto=Parts.CopyModeAuto, PlaceAutoUnsafe=Parts.CopyModeAutoUnsafe, DangerPlaces=Parts.DangerPlaces, LeveltLG=Parts.LeveltLG)
+		return Parts.GetCopyStringEx(Parts.CopyPlaces, Parts.Maezens, Parts.Level, Parts.RemainingOwnPart, Parts.CopyModeAll, Parts.CopyModeAuto, Parts.CopyModeAutoUnsafe, Parts.DangerPlaces, Parts.LeveltLG, FH.Main.CurrentGB.Entity?.tier, Parts.MaezenSlots);
 	},
 
 
-	GetCopyStringEx: (Places, Maezens, Level, OwnPart, PlaceAll, PlaceAuto, PlaceAutoUnsafe, DangerPlaces, LeveltLG) => {	
+	GetCopyStringEx: (Places, Maezens, Level, OwnPart, PlaceAll, PlaceAuto, PlaceAutoUnsafe, DangerPlaces, LeveltLG, Tier, Slots = Parts.MaezenSlots) => {
 		let Ret = [];
 
-		if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerPrefix !== '' && (DangerPlaces.find(e => e > Parts.MaezenSlots) || LeveltLG.find(e => e))) Ret.push(Parts.CopySettings.dangerPrefix);
+		if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerPrefix !== '' && (DangerPlaces.find(e => e > Parts.DangerThreshold) || LeveltLG.find(e => e))) Ret.push(Parts.CopySettings.dangerPrefix);
 
 		if (Parts.CopySettings.includePlayer) Ret.push(Parts.CopyPlayerName);
+
+		if (Parts.CopySettings.includeGoldTier && Tier === 'gold' && Parts.CopySettings.goldTierMarker) Ret.push(Parts.CopySettings.goldTierMarker);
 
 		if (Parts.CopySettings.includeGB) Ret.push(Parts.CopyBuildingName);
 
@@ -1390,13 +1420,13 @@ let Parts = {
 		if (Parts.CopySettings.includeLevel) Ret.push(Level + '→' + (Level + 1));
 
 		let NoPlacesSelected = true;
-		for (let i = 0; i < Parts.MaezenSlots; i++) {
+		for (let i = 0; i < Slots; i++) {
 			if (Places[i]) NoPlacesSelected = false;
 		}
 
 		if (!NoPlacesSelected) {
-			for (let i = 0; i < Parts.MaezenSlots; i++) {
-				let Place = (Parts.CopySettings.descending ? Parts.MaezenSlots - i - 1 : i);
+			for (let i = 0; i < Slots; i++) {
+				let Place = (Parts.CopySettings.descending ? Slots - i - 1 : i);
 
 				if (!Places[Place]) continue;
 				if (PlaceAll && Maezens[Place] === 0) continue;
@@ -1408,7 +1438,7 @@ let Parts = {
 					Ret.push((Parts.CopyPreP ? 'P' : '') + (Place + 1));
 				}
 
-				if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerSuffix !== '' && (DangerPlaces[Place] > Parts.MaezenSlots || LeveltLG[Place])) Ret.push(Parts.CopySettings.dangerSuffix);
+				if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerSuffix !== '' && (DangerPlaces[Place] > Parts.DangerThreshold || LeveltLG[Place])) Ret.push(Parts.CopySettings.dangerSuffix);
 			}
 		}
 		else if (PlaceAuto) {
@@ -1533,7 +1563,11 @@ let Parts = {
 			box.on('click', '.button-powerlevel-copy', function () {
 				let gb_level = parseInt($(this).parent().find(".hidden-text").html());
 
-				let CopyParts = Parts.GetCopyStringEx(Places=Array(Parts.PowerLevelingData.Places[gb_level].length).fill(true), Maezens=Parts.PowerLevelingData.Places[gb_level], Level=gb_level, OwnPart=Parts.PowerLevelingData.EigenNettos[gb_level], PlaceAll=true, PlaceAuto=false, PlaceAutoUnsafe=false, DangerPlaces=[0, 0, 0, 0, 0], LeveltLG=[false, false, false, false, false]);
+				let RowPlaces = Parts.PowerLevelingData.Places[gb_level],
+					Slots = RowPlaces.length,
+					Tier = GreatBuildings.IsGoldTier(FH.Main.CurrentGB.Entity.cityentity_id, gb_level) ? 'gold' : 'copper';
+
+				let CopyParts = Parts.GetCopyStringEx(Array(Slots).fill(true), RowPlaces, gb_level, Parts.PowerLevelingData.EigenNettos[gb_level], true, false, false, Array(Slots).fill(0), Array(Slots).fill(false), Tier, Slots);
 				FH.helper.str.copyToClipboardLegacy(CopyParts);
 			});
 		}
