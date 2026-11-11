@@ -176,24 +176,12 @@ let Market = {
         let h = [];
 
         // Filters
-        h.push('<div class="dark-bg" style="margin-bottom: 3px;">');
-        h.push('<div style="float:right" class="text-right p5"><span class="btn" onclick="MarketOffers.Show(false)">'+FH.t('Boxes.MarketOffers.Title')+'</span><br>');
-        h.push('<span class="btn my-5" onclick="MarketOffers.ShowEvents(false)">'+FH.t('Boxes.MarketOffers.Events') +'</span></div>');
-        h.push('<table class="filters">');
-        h.push('<thead class="sticky">');
-        h.push('<tr>');
-        h.push('<th colspan="2"></td>');
-        h.push('<th class="text-left">' + FH.t('Boxes.Market.TradePartner') + '</th>');
-        h.push('<th class="text-left">' + FH.t('Boxes.Market.TradeForGoods') + '</th>');
-        h.push('<th class="text-left">' + FH.t('Boxes.Market.Rating') + '</th>');
-        h.push('</tr>');
-        h.push('</thead>');
-
-        h.push('<tr>');
-        h.push('<td>' + FH.t('Boxes.Market.Offer') + '</td>');
-
-        h.push('<td>');
-
+        h.push(`<div class="dark-bg" style="margin-bottom: 3px;">`);
+        h.push(`<div style="float:right" class="text-right p5"><span class="btn" onclick="MarketOffers.Show(false)">${FH.t('Boxes.MarketOffers.Title')}</span><br>`);
+        h.push(`<span class="btn my-5" onclick="MarketOffers.ShowEvents(false)">${FH.t('Boxes.MarketOffers.Events')}</span></div>`);
+        h.push(`<div class="filters">
+            <div class="flex gap5 start">`);
+        h.push(`<b>${FH.t('General.Goods')}</b><div>${FH.t('Boxes.Market.Offer')}`);
 		let ID = 0;
 		h.push(`<div class="custom-select-wrapper">
 					<div class="custom-select">
@@ -206,15 +194,13 @@ let Market = {
 								${FH.t('Boxes.Market.AllGoods')}
 							</span>`);
 
-							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++)
-                            {
+							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++) {
                                 if (FH.Goods.List.length < 5 * (era + 1)) break; // Era does not exist yet
 								ID += 1;
 
 								h.push(`<span class="custom-option era${(Market.Offer === ID ? ' selected' : '')}" data-value="${ID}">${FH.t('Eras.' + (era + Technologies.Eras.BronzeAge))}</span>`);
 
-								for (let i = 0; i < 5; i++)
-								{
+								for (let i = 0; i < 5; i++) {
 									ID += 1;
 									h.push(`<span class="custom-option${(Market.Offer === ID ? ' selected' : '')}" data-value="${ID}">${FH.Goods.List[5*era + i]['name']}</span>`);
 								}
@@ -222,19 +208,9 @@ let Market = {
 
 		h.push(			`</div>
 					</div>
-				</div>`);
+				</div></div>`);
 
-        h.push('</td>');
-
-        h.push('<td><label class="game-cursor"><input class="tradepartnerneighbor game-cursor" ' + (Market.TradePartnerNeighbor ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradePartnerNeighbor') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradeforhigher game-cursor" ' + (Market.TradeForHigher ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeForHigher') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradeadvantage game-cursor" ' + (Market.TradeAdvantage ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeAdvantage') + '</label></td>');
-        h.push('</tr>');
-
-        h.push('<tr>');
-        h.push(`<td>${FH.t('Boxes.Market.Need')}</td>`);
-
-        h.push('<td>');
+                h.push(`<div>${FH.t('Boxes.Market.Need')}`);
 
 		ID = 0;
 		h.push(`<div class="custom-select-wrapper">
@@ -248,8 +224,7 @@ let Market = {
 								${FH.t('Boxes.Market.AllGoods')}
 							</span>`);
 
-							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++)
-                            {
+							for (let era = 0; era < Technologies.Eras.NextEra - Technologies.Eras.BronzeAge; era++) {
                                 if (FH.Goods.List.length < 5 * (era + 1)) break; // Era does not exist yet
 
 								ID += 1;
@@ -268,58 +243,55 @@ let Market = {
 
 		h.push(			`</div>
 					</div>
-				</div>`);
-        h.push('</td>');
+				</div></div>`);
 
-        h.push('<td><label class="game-cursor"><input class="tradepartnerguild game-cursor" ' + (Market.TradePartnerGuild ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradePartnerGuild') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradeforequal game-cursor" ' + (Market.TradeForEqual ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeForEqual') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradefairstock game-cursor" ' + (Market.TradeFairStock ? 'checked' : '') + ' type="checkbox" title="' + FH.HTML.Tooltip(FH.t('Boxes.Market.TradeFairStockTT')) + '">' + FH.t('Boxes.Market.TradeFairStock') + '</label></td>');
-        h.push('</tr>');
+        
+        h.push(`<label class="game-cursor" for="minquantity">${FH.t('Boxes.Market.MinQuantity')}<br/><input type="number" id="minquantity" step="1" min="0" max="1000000" value="${Market.MinQuantity}"></label>
+        </div>`);
 
-        h.push('<tr>');
-        h.push('<td><label class="game-cursor" for="minquantity">' + FH.t('Boxes.Market.MinQuantity') + '</label></td>');
-        h.push('<td title="' + FH.HTML.Tooltip(FH.t('Boxes.Market.TTMinQuantity')) + '"><input type="number" id="minquantity" step="1" min="0" max="1000000" value="' + Market.MinQuantity + '"></td>');
-        h.push('<td><label class="game-cursor"><input class="tradepartnerfriend game-cursor" ' + (Market.TradePartnerFriend ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradePartnerFriend') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradeforlower game-cursor" ' + (Market.TradeForLower ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeForLower') + '</label></td>');
-        h.push('<td><label class="game-cursor"><input class="tradefair game-cursor" ' + (Market.TradeFair ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeFair') + '</label></td>');
-        h.push('</tr>');
+        h.push(`<div class="flex gap5 start p2">
+            <b>${FH.t('Boxes.Market.TradeForGoods')}</b>
+            <label class="game-cursor"><input class="tradeforhigher game-cursor" ${Market.TradeForHigher ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeForHigher')}</label>`);
+            h.push(`<label class="game-cursor"><input class="tradeforequal game-cursor" ${Market.TradeForEqual ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeForEqual')}</label>`);
+            h.push(`<label class="game-cursor"><input class="tradeforlower game-cursor" ${Market.TradeForLower ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeForLower')}</label>
+        </div>`);
 
-        h.push('<tr>');
-        h.push('<td><label class="game-cursor" for="maxresults">' + FH.t('Boxes.Market.MaxResults') + '</label></td>');
-        h.push('<td><input type="number" id="maxresults" step="1" min="1" max="1000000" value="' + Market.MaxResults + '"></td>');
-        h.push('<td><label class="game-cursor"><input class="showownoffers game-cursor" ' + (Market.ShowOwnOffers ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.ShowOwnOffers') + '</label></td>');
-        h.push('<td></td>');
-        h.push('<td><label class="game-cursor"><input class="tradedisadvantage game-cursor" ' + (Market.TradeDisadvantage ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.TradeDisadvantage') + '</label></td>');
-        h.push('</tr>');
+        h.push(`<div class="flex gap5 start p2">
+            <b>${FH.t('Boxes.Market.TradePartner')}</b>`);
+            h.push(`<label class="game-cursor"><input class="tradepartnerneighbor game-cursor" ${Market.TradePartnerNeighbor ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradePartnerNeighbor')}</label>`);
+            h.push(`<label class="game-cursor"><input class="tradepartnerguild game-cursor" ${Market.TradePartnerGuild ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradePartnerGuild')}</label>`);
+            h.push(`<label class="game-cursor"><input class="tradepartnerfriend game-cursor" ${Market.TradePartnerFriend ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradePartnerFriend')}</label>`);
+            h.push(`<label class="game-cursor"><input class="showownoffers game-cursor" ${Market.ShowOwnOffers ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.ShowOwnOffers')}</label>
+        </div>`);
 
-        h.push('<tr>');
-        h.push('<td colspan="2"><label class="game-cursor"><input class="onlyaffordable game-cursor" ' + (Market.OnlyAffordable ? 'checked' : '') + ' type="checkbox">' + FH.t('Boxes.Market.OnlyAffordable') + '</label></td>');
-        h.push('<td></td>');
-        h.push('<td></td>');
-        h.push('<td></td>');
-        h.push('</tr>');
+        h.push(`<div class="flex gap5 start bbd p2">
+            <b>${FH.t('Boxes.Market.Rating')}</b>
+            <label class="game-cursor"><input class="tradeadvantage game-cursor" ${Market.TradeAdvantage ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeAdvantage')}</label>
+            <label class="game-cursor"><input class="tradefairstock game-cursor" ${Market.TradeFairStock ? 'checked' : ''} type="checkbox" title="${FH.HTML.Tooltip(FH.t('Boxes.Market.TradeFairStockTT'))}">${FH.t('Boxes.Market.TradeFairStock')}</label>
+            <label class="game-cursor"><input class="tradefair game-cursor" ${Market.TradeFair ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeFair')}</label>
+            <label class="game-cursor"><input class="tradedisadvantage game-cursor" ${Market.TradeDisadvantage ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.TradeDisadvantage')}</label>
+        </div>`);
 
-        h.push('</table>');
-        h.push('</div>');
+        h.push(`<div class="flex gap5 start p2"><label class="game-cursor"><input class="onlyaffordable game-cursor" ${Market.OnlyAffordable ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.OnlyAffordable')}</label>
+        <label class="game-cursor" for="maxresults"><input type="number" id="maxresults" step="1" min="1" max="1000000" value="${Market.MaxResults}"> ${FH.t('Boxes.Market.MaxResults')}</label>
+        </div></div>`);
 
         // Table
-        h.push('<table class="foe-table exportable">');
-
-        h.push('<thead class="sticky">');
-        h.push('<tr>');
-        h.push('<th data-export2="Offered goods" data-export3="Offered amount" colspan="3">' + FH.t('Boxes.Market.OfferColumn') + '</th>');
-        h.push('<th data-export2="Requested goods" data-export3="Requested amount" colspan="3">' + FH.t('Boxes.Market.NeedColumn') + '</th>');
-        h.push('<th data-export="Rate">' + FH.t('Boxes.Market.RateColumn') + '</th>');
-        h.push('<th data-export="Player">' + FH.t('Boxes.Market.PlayerColumn') + '</th>');
-        h.push('<th>' + FH.t('Boxes.Market.PageColumn') + '</th>');
-        h.push('</tr>');
-        h.push('</thead>');
+        h.push(`<table class="foe-table exportable">
+            <thead class="sticky">
+            <tr>
+            <th data-export2="Offered goods" data-export3="Offered amount" colspan="3">${FH.t('Boxes.Market.OfferColumn')}</th>
+            <th data-export2="Requested goods" data-export3="Requested amount" colspan="3">${FH.t('Boxes.Market.NeedColumn')}</th>
+            <th data-export="Rate">${FH.t('Boxes.Market.RateColumn')}</th>
+            <th data-export="Player">${FH.t('Boxes.Market.PlayerColumn')}</th>
+            <th>${FH.t('Boxes.Market.PageColumn')}</th>
+            </tr>
+        </thead>`);
 
         let Counter = 0;
         let Pos = 0,
             OwnPos = 0;
-        for (let i = 0; i < Market.Trades.length; i++)
-        {
+        for (let i = 0; i < Market.Trades.length; i++) {
             if (Counter >= Market.MaxResults) break;
 
             let Trade = Market.Trades[i];
@@ -332,17 +304,17 @@ let Market = {
                     NeedTT = FH.helper.str.Replacer(FH.t('Boxes.Market.NeedTT'), { 'era': FH.t('Eras.' + NeedEra), 'stock': FH.HTML.Format(FH.RessourceStock[NeedGoodID]) }),
                     CurrentPos = (Trade['merchant']['is_self'] ? OwnPos : Pos);
 
-                h.push('<tr>');
-                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[OfferGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + FH.Goods.Data[OfferGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(OfferTT) + '">' + Trade['offer']['value'] + '</strong></td>');
-                h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + FH.Goods.Data[NeedGoodID]['id'] +'"></span></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + FH.Goods.Data[NeedGoodID]['name'] + '</strong></td>');
-                h.push('<td><strong class="td-tooltip" title="' + FH.HTML.Tooltip(NeedTT) + '">' + Trade['need']['value'] + '</strong></td>');
-                h.push('<td class="text-center">' + FH.HTML.Format(FH.Main.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100) + '</td>');
-                h.push('<td>' + Trade['merchant']['name'] + '</td>');
-                h.push('<td class="text-center">' + (Math.floor(CurrentPos / 10 + 1)) + '-' + (CurrentPos % 10 + 1) + '</td>');
-                h.push('</tr>');
+                h.push(`<tr>
+                    <td class="goods-image"><span class="goods-sprite sprite-35 ${FH.Goods.Data[OfferGoodID]['id']}"></span></td>
+                    <td><span class="td-tooltip" title="${FH.HTML.Tooltip(OfferTT)}">${FH.Goods.Data[OfferGoodID]['name']}</span></td>
+                    <td class="text-right"><strong class="td-tooltip" title="${FH.HTML.Tooltip(OfferTT)}">${Trade['offer']['value']}</strong></td>
+                    <td class="goods-image"><span class="goods-sprite sprite-35 ${FH.Goods.Data[NeedGoodID]['id']}"></span></td>
+                    <td><span class="td-tooltip" title="${FH.HTML.Tooltip(NeedTT)}">${FH.Goods.Data[NeedGoodID]['name']}</span></td>
+                    <td class="text-right"><strong class="td-tooltip" title="${FH.HTML.Tooltip(NeedTT)}">${Trade['need']['value']}</strong></td>
+                    <td class="text-center">${FH.HTML.Format(FH.Main.round(Trade['offer']['value'] / Trade['need']['value'] * 100) / 100)}</td>
+                    <td>${Trade['merchant']['name']}</td>
+                    <td class="text-center">${Math.floor(CurrentPos / 10 + 1)}-${CurrentPos % 10 + 1}</td>
+                </tr>`);
 
                 Counter += 1;
             }
@@ -355,7 +327,7 @@ let Market = {
             }
         }
 
-        h.push('</table>');
+        h.push(`</table>`);
 
 		$('#MarketBody').html(h.join('')).promise().done(function(){
             FH.HTML.Dropdown();

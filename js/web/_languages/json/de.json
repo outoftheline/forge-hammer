@@ -861,7 +861,7 @@
   "Boxes.Market.TradeFairStock": "Fair (bei niedrigerem Lagerbestand)",
   "Boxes.Market.TradeFairStockTT": "Dies schließt alle fairen Geschäfte ein, bei denen das angebotene Gut einen niedrigeren Bestand als das angeforderte Gut hat.",
   "Boxes.Market.TradeForEqual": "Gleiches",
-  "Boxes.Market.TradeForGoods": "Zeitalter (Angebot)",
+  "Boxes.Market.TradeForGoods": "Angebots-ZA",
   "Boxes.Market.TradeForHigher": "Höheres",
   "Boxes.Market.TradeForLower": "Geringeres",
   "Boxes.Market.TradePartner": "Handelspartner",

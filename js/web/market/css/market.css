@@ -25,7 +25,7 @@
     vertical-align: middle;
 }
 
-#Market #MarketBody td span.custom-option.era {
+#Market #MarketBody span.custom-option.era {
 	font-weight: bold;
 	font-size: 0.9rem;
 }
@@ -34,8 +34,8 @@
 	padding-left: 20px;
 }
 
-#Market #MarketBody .filters th {
-    text-align: center;
+#Market #MarketBody .filters b {
+    width: 120px;
 }
 
 #Market #MarketBody .filters select {
@@ -45,6 +45,7 @@
 #Market #MarketBody td.goods-image { 
 	padding: 0;
 	background-color: var(--black-50);
+	width: 1%;
 }
 
 #Market #MarketBody .sprite-35 {

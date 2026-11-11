@@ -668,8 +668,10 @@ p { margin: 0 0 10px 0; }
 	flex-wrap: wrap;
 }
 .flex.between { justify-content: space-between; }
+.flex.start { justify-content: start; }
 .flex.itemscenter { align-items: center; }
 .flex.gap { gap: 2px; }
+.flex.gap5 { gap: 5px; }
 
 .text-smaller { font-size: 90% }
 .text-smaller2 { font-size: 85% }
