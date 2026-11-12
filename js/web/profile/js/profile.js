@@ -546,9 +546,11 @@ const Profile = {
 			return;
 		}
 
+        let player = Profile.otherPlayer.other_player;
+
 		FH.HTML.Box({
 			id: 'OtherPlayerProfile',
-			title: FH.Player.Name,
+			title: player.name,
 			auto_close: true,
 			dragdrop: true,
             class: 'playerprofile other'
@@ -556,151 +558,120 @@ const Profile = {
         FH.HTML.AddCssFile('profile');
 
         let content = [];
-        let n = (Profile.otherPlayer.other_player.is_guild_member === undefined && Profile.otherPlayer.other_player.is_friend === undefined);
-        CityMap.OtherPlayer.eraName = Profile.otherPlayer.other_player.era;
+        let n = (player.is_guild_member === undefined && player.is_friend === undefined);
+        CityMap.OtherPlayer.eraName = player.era;
         let buildings = Object.values(CityBuildings.createBuildings(Object.values(CityMap.OtherPlayer.mapData)));
-        let boosts = {
-            "critical_hit_chance": 0,
-            "forge_points_production": 0,
-            "goods_production": 0,
-            "guild_goods_production": 0,
-        };
-
-        content.push('<div class="centerInfo otherPlayer">');
-        content.push('<div class="basicInfo pad">');
-        content.push('<img src="'+srcLinks.GetPortrait(Profile.otherPlayer.other_player.avatar)+'" />');
-        content.push('<div>');
-        content.push(`<b><a href="${FH.Main.GetPlayerLinkURL(Profile.otherPlayer.other_player.player_id)}" target="_blank">${Profile.otherPlayer.other_player.name}</a></b><br>`);
-        content.push('<span>'+FH.t('Eras.'+Technologies.Eras[CityMap.OtherPlayer.eraName])+'</span><br>');
-        content.push('<span class="ranking">'+FH.HTML.Format(parseInt(Profile.otherPlayer.other_player.score))+'</span>');
-        content.push('</div>');
-        content.push('</div>');
-
-        for (let building of buildings) {
-            if (building.type === "street") continue;
-            // gather boosts from efficiency ratings
-            for (let [boost, value] of Object.entries(building.rating)) {
-                if (boost.includes('-tile')) continue;
-                // forge_points_production and goods_production are also gathered from building.boosts below — skip here to avoid double-counting
-                if (boost === 'forge_points_production' || boost === 'goods_production') continue;
-                if (boosts[boost] === undefined)
-                    boosts[boost] = value;
-                else
-                    boosts[boost] += value;
-            }
-            if (building.boosts === undefined) continue;
-            // gather other boosts
-            for (let boost of building.boosts) {
-                if (boost.type[0] === "critical_hit_chance")
-                    boosts.critical_hit_chance += boost.value;
-                if (boost.type[0] === "forge_points_production")
-                    boosts.forge_points_production += boost.value;
-                if (boost.type[0] === "goods_production")
-                    boosts.goods_production += boost.value;
-                if (boost.type[0] === "guild_goods_production")
-                    boosts.guild_goods_production += boost.value;
-            }
-        }
+        let boosts = Profile.getOtherPlayerValues(buildings);
         if (n) {
-            boosts['att_boost_defender'] = Math.random() * 30000 + 300;
-            boosts['def_boost_defender'] = Math.random() * 32000 + 300;
+            boosts.att_boost_defender = Math.random() * 30000 + 300;
+            boosts.def_boost_defender = Math.random() * 32000 + 300;
+        }
+        const format = (value) => FH.HTML.Format(parseInt(value || 0));
+        const percentage = (value) => Math.round(value * 100) / 100;
+        const img = (path) => `<img src="${srcLinks.get(path, true)}" />`;
+        const hidden = (cls) => n ? `class="${cls} blur" data-original-title="${FH.t('Boxes.PlayerProfile.OtherPlayerNotAvailable')}"` : `class="${cls}"`;
+
+        content.push(`<div class="centerInfo otherPlayer">
+            <div class="basicInfo pad">
+                <img src="${srcLinks.GetPortrait(player.avatar)}" />
+                <div>
+                <b><a href="${FH.Main.GetPlayerLinkURL(player.player_id)}" target="_blank">${player.name}</a></b><br>
+                <span>${FH.t('Eras.' + Technologies.Eras[CityMap.OtherPlayer.eraName])}</span><br>
+                <span class="ranking">${format(player.score)}</span>`);
+            if (boosts.contribution_boost > 0 || boosts.contribution_boost_gold > 0) {
+                content.push(`<div>`);
+                if (boosts.contribution_boost > 0)
+                    content.push(`<span class="arc">${img('/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost.png')} ${percentage(boosts.contribution_boost)}%</span>`);
+                if (boosts.contribution_boost_gold > 0)
+                    content.push(`<span class="arc gold">${img('/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost_gold.png')} ${percentage(boosts.contribution_boost_gold)}%</span>`);
+                content.push(`</div>`);
+            }
+            content.push(`</div>
+            </div>
+            
+        <div class="dailyProd pad text-center">`);
+        let fpSum = boosts.strategy_points * (1 + boosts.forge_points_production/100);
+        let fpBoost = boosts.forge_points_production > 0 ? `<span class="boost"> ${percentage(boosts.forge_points_production)}% </span>` : ``;
+        content.push(`<span>${img('/shared/icons/strategy_points.png')}${format(fpSum)}</span> ${fpBoost}`);
+
+        let units = boosts.units + boosts['units-next'];
+        if (units > 0) {
+			content.push(`<span>${img('/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png')}${format(units)}</span><br>`);
         }
 
-        content.push('<div class="dailyProd pad text-center">');
-        let fpSum = boosts.strategy_points;
-        let fpBoost = '';
-        if (boosts.forge_points_production > 0) {
-            fpBoost = '<span class="boost"> '+boosts.forge_points_production + '% </span>';
-            fpSum += (boosts.forge_points_production*boosts.strategy_points/100);
-        }
-        content.push('<span><img src="' + srcLinks.get(`/shared/icons/strategy_points.png`,true)+'" />' + FH.HTML.Format(parseInt(fpSum)) + '</span> '+fpBoost);
-        
-        if (boosts.units > 0) {
-			content.push('<span><img src="' + srcLinks.get(`/shared/gui/pvp_arena/hud/pvp_arena_icon_army.png`,true)+'" />'+FH.HTML.Format(parseInt(boosts.units))+'</span><br>');
-        }
-
-        content.push('<div class="goods">');
-        let currentGoodsSum = boosts['goods-current'];
-        let prevGoodsSum = boosts['goods-previous'];
-        let nextGoodsSum = boosts['goods-next'];
-        let goodsBoost = '';
-        if (boosts.goods_production > 0) {
-            goodsBoost = '<span class="boost"> '+boosts.goods_production + '% </span>';
-            currentGoodsSum += (boosts.goods_production*currentGoodsSum/100);
-            prevGoodsSum += (boosts.goods_production*prevGoodsSum/100);
-            nextGoodsSum += (boosts.goods_production*nextGoodsSum/100);
-        }
+        content.push(`<div class="goods">`);
+        let goodsFactor = 1 + boosts.goods_production/100;
+        let goodsBoost = boosts.goods_production > 0 ? `<span class="boost"> ${percentage(boosts.goods_production)}% </span>` : ``;
         if (boosts['goods-previous'])
-            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(prevGoodsSum)) || 0) + '</span> ');
+            content.push(`<span>${img('/city/gui/great_building_bonus_icons/great_building_bonus_previous_era_good_production.png')}${format(boosts['goods-previous']*goodsFactor)}</span> `);
         if (boosts['goods-current'])
-            content.push('<span><img src="' + srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(currentGoodsSum)) || 0) + '</span> ');
-        if (boosts['goods-next'] !== 0)
-            content.push('<span><img src="' + srcLinks.get(`/shared/icons/next_age_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(nextGoodsSum)) || 0) + '</span> ');
-        content.push(goodsBoost);
+            content.push(`<span>${img('/city/gui/great_building_bonus_icons/great_building_bonus_goods.png')}${format(boosts['goods-current']*goodsFactor)}</span> `);
+        if (boosts['goods-next'])
+            content.push(`<span>${img('/shared/icons/next_age_goods.png')}${format(boosts['goods-next']*goodsFactor)}</span> `);
+        if (boosts['goods-previous'] || boosts['goods-current'] || boosts['goods-next'])
+            content.push(goodsBoost);
 
-        let guildGoodsSum = boosts.clan_goods;
-        let guildGoodsBoost = '';
-        if (boosts.guild_goods_production > 0) {
-            guildGoodsBoost = '<span class="boost"> '+boosts.guild_goods_production + '% </span>';
-            guildGoodsSum += (guildGoodsSum*boosts.guild_goods_production/100);
-        }
+        let guildGoodsSum = boosts.clan_goods * (1 + boosts.guild_goods_production/100);
+        let guildGoodsBoost = boosts.guild_goods_production > 0 ? `<span class="boost"> ${percentage(boosts.guild_goods_production)}% </span>` : ``;
         if (guildGoodsSum)
-            content.push('<span><img src="' + srcLinks.get(`/shared/icons/icon_great_building_bonus_guild_goods.png`,true)+'" />' + FH.HTML.Format(parseInt(parseInt(guildGoodsSum)) || 0) + '</span> '+guildGoodsBoost);
-        content.push('</div>');
-        content.push('</div>');
+            content.push(`<span>${img('/shared/icons/icon_great_building_bonus_guild_goods.png')}${format(guildGoodsSum)}</span> ${guildGoodsBoost}`);
+        content.push(`</div>
+        </div>`);
 
 
-        content.push('<div class="battleBoosts pad text-center">');
-        content.push('<table><tr class="general">'
-            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-all']))+'</span> </td>'
-            +`<td></td><td><span class="dAtt ${n?'blur" data-original-title="'+FH.t('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}">`+FH.HTML.Format(parseInt(n?boosts['att_boost_defender']:boosts['att_boost_defender-all']))+'</span>'
-            +`<span class="dDef ${n?'blur" data-original-title="'+FH.t('Boxes.PlayerProfile.OtherPlayerNotAvailable')+'"':'"'}>`+FH.HTML.Format(parseInt(n?boosts['def_boost_defender']:boosts['def_boost_defender-all']))+'</span> </td></tr>');
-        content.push('<tr>'
-            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-battleground']+boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-battleground']+boosts['def_boost_attacker-all']))+'</span> </td>'
-            +'<td><span class="gbg"></span></td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-battleground']+boosts['att_boost_defender-all']))+'</span>'
-            +'<span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-battleground']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
-        content.push('<tr>'
-            +'<td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-guild_expedition']+boosts['att_boost_attacker-all']))+'</span>'
-            +'<span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-guild_expedition']+boosts['def_boost_attacker-all']))+'</span> </td>'
-            +'<td><span class="ge"></span> </td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-guild_expedition']+boosts['att_boost_defender-all']))+'</span>'
-            +'<span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-guild_expedition']+boosts['def_boost_defender-all']))+'</span> </td></tr>');
-        if (boosts['att_boost_attacker-guild_raids'] > 0 || boosts['def_boost_attacker-guild_raids'] > 0 || boosts['att_boost_defender-guild_raids'] > 0 || boosts['def_boost_defender-guild_raids'] > 0)
-            content.push('<tr><td><span class="aAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_attacker-guild_raids']))+'</span><span class="aDef">'+FH.HTML.Format(parseInt(boosts['def_boost_attacker-guild_raids']))+'</span> </td><td><span class="qi"></span></td><td><span class="dAtt">'+FH.HTML.Format(parseInt(boosts['att_boost_defender-guild_raids']))+'</span><span class="dDef">'+FH.HTML.Format(parseInt(boosts['def_boost_defender-guild_raids']))+'</span> </td></tr>');
-        content.push('</tr></table>');
-        
+        content.push(`<div class="battleBoosts pad text-center">
+            <table><tr class="general">
+            <td><span class="aAtt">${format(boosts.att_boost_attacker)}</span><span class="aDef">${format(boosts.def_boost_attacker)}</span> </td>
+            <td></td>
+            <td><span ${hidden('dAtt')}>${format(boosts.att_boost_defender)}</span><span ${hidden('dDef')}>${format(boosts.def_boost_defender)}</span> </td>
+            </tr>`);
+        for (let [feature, icon] of [['battleground','gbg'],['guild_expedition','ge']]) {
+            content.push(`<tr>
+                <td><span class="aAtt">${format(boosts[`${feature}-att_boost_attacker`])}</span><span class="aDef">${format(boosts[`${feature}-def_boost_attacker`])}</span> </td>
+                <td><span class="${icon}"></span></td>
+                <td><span class="dAtt">${format(boosts[`${feature}-att_boost_defender`])}</span><span class="dDef">${format(boosts[`${feature}-def_boost_defender`])}</span> </td>
+                </tr>`);
+        }
+        if (boosts['guild_raids-att_boost_attacker'] > 0 || boosts['guild_raids-def_boost_attacker'] > 0 || boosts['guild_raids-att_boost_defender'] > 0 || boosts['guild_raids-def_boost_defender'] > 0) {
+            content.push(`<tr>
+                <td><span class="aAtt">${format(boosts['guild_raids-att_boost_attacker'])}</span><span class="aDef">${format(boosts['guild_raids-def_boost_attacker'])}</span> </td>
+                <td><span class="qi"></span></td>
+                <td><span class="dAtt">${format(boosts['guild_raids-att_boost_defender'])}</span><span class="dDef">${format(boosts['guild_raids-def_boost_defender'])}</span> </td>
+                </tr>`);
+        }
+        content.push(`</table>`);
+
         if (boosts.critical_hit_chance > 0)
-            content.push('<span class="crit"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_critical_hit_chance.png`,true)+'" /> '+Math.round(boosts.critical_hit_chance*100)/100+'%</span>');
-        content.push('</div>');
+            content.push(`<span class="crit">${img('/city/gui/great_building_bonus_icons/great_building_bonus_critical_hit_chance.png')} ${percentage(boosts.critical_hit_chance)}%</span>`);
 
-        content.push('<div class="disclaimer clickable removable pad text-center">'+FH.t('Boxes.PlayerProfile.OtherPlayerDisclaimer')+'<br><b>'+FH.t('Boxes.PlayerProfile.OtherPlayerTroubleshooting')+'</b></div>');
+        content.push(`</div>
+        <div class="disclaimer clickable removable pad text-center">${FH.t('Boxes.PlayerProfile.OtherPlayerDisclaimer')}</div>
 
-        content.push('<div class="qiBoosts pad text-center">');
+        <div class="qiBoosts pad text-center">`);
             if (boosts.guild_raids_coins_production + boosts.guild_raids_coins_start !== 0) {
-                content.push('<span class="qicoins">');
+                content.push(`<span class="qicoins">`);
                 if (boosts.guild_raids_coins_production !== 0)
-                    content.push(FH.HTML.Format(parseInt(boosts.guild_raids_coins_production)) + '% ');
+                    content.push(`${format(boosts.guild_raids_coins_production)}% `);
                 if (boosts.guild_raids_coins_start !== 0)
-                    content.push('+' + FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_coins_start),true,'en-EN'));
-                content.push('</span> ');
+                    content.push(`+${FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_coins_start), true, 'en-EN')}`);
+                content.push(`</span> `);
             }
             if (boosts.guild_raids_supplies_production + boosts.guild_raids_supplies_start !== 0) {
-                content.push('<span class="qisupplies">');
+                content.push(`<span class="qisupplies">`);
                 if (boosts.guild_raids_supplies_production !== 0)
-                    content.push(FH.HTML.Format(parseInt(boosts.guild_raids_supplies_production)) + '% ');
+                    content.push(`${format(boosts.guild_raids_supplies_production)}% `);
                 if (boosts.guild_raids_supplies_start !== 0)
-                    content.push('+' + FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_supplies_start),true,'en-EN'));
-                content.push('</span> ');
+                    content.push(`+${FH.HTML.FormatNumberShort(parseInt(boosts.guild_raids_supplies_start), true, 'en-EN')}`);
+                content.push(`</span> `);
             }
             if (boosts.guild_raids_action_points_collection !== 0)
-                content.push('<span class="qiactions">' + FH.HTML.Format(parseInt(boosts.guild_raids_action_points_collection)) + '</span> ');
+                content.push(`<span class="qiactions">${format(boosts.guild_raids_action_points_collection)}</span> `);
             if (boosts.guild_raids_goods_start)
-                content.push('<span class="qigoods_start">+' + FH.HTML.Format(parseInt(boosts.guild_raids_goods_start)) + '</span> ');
+                content.push(`<span class="qigoods_start">+${format(boosts.guild_raids_goods_start)}</span> `);
             if (boosts.guild_raids_units_start)
-                content.push('<span class="qiunits_start">+' + FH.HTML.Format(parseInt(boosts.guild_raids_units_start || 0)) + '</span> ');
-            content.push('</div>');
-        content.push('</div>');
+                content.push(`<span class="qiunits_start">+${format(boosts.guild_raids_units_start)}</span> `);
+            content.push(`</div>
+        </div>`);
 
         $('#OtherPlayerProfileBody').html(content.join('')).promise().done(function() {
             $('#OtherPlayerProfile').on('click', '.removable', function () {
@@ -710,6 +681,49 @@ const Profile = {
             $('#OtherPlayerProfile [data-original-title]').tooltip();
         });
 	},
+
+
+    getOtherPlayerValues: (buildings) => {
+        const productionTypes = ['strategy_points', 'clan_goods', 'units', 'units-next', 'goods-previous', 'goods-current', 'goods-next'];
+        const battleTypes = ['att_boost_attacker', 'def_boost_attacker', 'att_boost_defender', 'def_boost_defender'];
+        let sums = {}, multipliers = {}, values = {};
+
+        const add = (obj, key, value) => { 
+            obj[key] = (obj[key] || 0) + (value || 0); 
+        };
+
+        for (let building of buildings) {
+            if (building.type === "street") continue;
+
+            for (let type of productionTypes)
+                add(values, type, Productions.getRatingValueForType(building, type));
+
+            for (let boost of (building.boosts || [])) {
+                if (boost.needsLink && building.setBuilding !== undefined && boost.requiredLinks > (building.setBuilding.uniqueAdjacentCount || 0)) continue;
+                for (let type of boost.type) {
+                    let key = Boosts.getFeatureType({ type: type, feature: boost.feature });
+                    add(boost.isMultiplier ? multipliers : sums, key, boost.value);
+                }
+            }
+        }
+
+        let keys = new Set([...Object.keys(sums), ...Object.keys(multipliers), ...Object.keys(Boosts.Sums)]);
+        for (let type of battleTypes) {
+            keys.add(type);
+            for (let feature of ['battleground', 'guild_expedition', 'guild_raids'])
+                keys.add(`${feature}-${type}`);
+        }
+        for (let key of keys) {
+            let base = key.match(/^(?:battleground|guild_expedition)-(.+)$/)?.[1];
+            let sum = (sums[key] || 0) + (base ? (sums[base] || 0) : 0);
+            let multiplier = (multipliers[key] || 0) + (base ? (multipliers[base] || 0) : 0);
+            values[key] = sum * (1 + multiplier / 100);
+        }
+        for (let type of productionTypes)
+            values[type] = values[type] || 0;
+
+        return values;
+    },
 
 
 	formatDurationDays(days, locale="en-US", unitDisplay='long', style='long', type='conjunction') {

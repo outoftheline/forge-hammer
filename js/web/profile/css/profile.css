@@ -745,7 +745,7 @@
     font-size: 95%;
 }
 
-#OtherPlayerProfile .basicInfo img {
+#OtherPlayerProfile .basicInfo > img {
     width: 60px;
     margin-right: 0.25rem;
     transform: scaleX(-1);
