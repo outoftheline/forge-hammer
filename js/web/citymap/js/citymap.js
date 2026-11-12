@@ -2052,7 +2052,7 @@ let CityBuildings = {
 					})
 				}
 			}
-			else if (metaData.id.includes("CastleSystem")) {
+			else if (metaData.id.includes("CastleSystem") && !this.isOtherPlayerEntity(data)) {
 				for (let castleBoost of (Boosts?.CastleSystem || [])) {
 					let boost = {
 						feature: "all",
@@ -2088,7 +2088,7 @@ let CityBuildings = {
 				})
 			}
 		}
-		let allyStats = (FH.ActiveMap !== 'OtherPlayer' ? FH.Main.Allies.getProd(data.id||0) : null);
+		let allyStats = (!this.isOtherPlayerEntity(data) ? FH.Main.Allies.getProd(data.id||0) : null);
 		if (allyStats?.currentLevel?.boosts||allyStats?.boosts) {
 			(allyStats?.currentLevel?.boosts||allyStats?.boosts||[]).forEach(abilityBoost => {
 				if (!abilityBoost) return;
@@ -2146,7 +2146,7 @@ let CityBuildings = {
 		let state = this.setState(data)
 		
 		if (state === "producing") {
-			if (data.cityentity_id.includes("CastleSystem")) {
+			if (data.cityentity_id.includes("CastleSystem") && !this.isOtherPlayerEntity(data)) {
 				return { at: Castle.Chest.dailyRewardCollectionAvailableAt, in: Castle.Chest.dailyRewardCollectionAvailableAt - parseInt(Date.now()/1000) }
 			}
 			return { at: data?.state?.next_state_transition_at, in: data?.state?.next_state_transition_in }
@@ -2332,7 +2332,7 @@ let CityBuildings = {
 					productions = this.setCurrentProductions(data, metaData, era)
 				}
 			}
-			if (metaData.type === "main_building") { // add emissary production to town hall
+			if (metaData.type === "main_building" && !this.isOtherPlayerEntity(data)) {
 				FH.Main.EmissaryService?.forEach(emissary => {
 					let resource = {
 						type: (emissary.bonus.type !== "unit" ? "resources" : emissary.bonus.type),
@@ -2352,7 +2352,7 @@ let CityBuildings = {
 					}
 				})
 			}
-			if (metaData.id.includes("CastleSystem")) { // add castle system stuff
+			if (metaData.id.includes("CastleSystem") && !this.isOtherPlayerEntity(data)) { // add castle system stuff (level is only known for the own city)
 				let currentLevel = Castle.curLevel
 				era = FH.CurrentEra 
 				if (Castle.Levels[(currentLevel-1)] !== undefined)
@@ -3035,6 +3035,12 @@ let CityBuildings = {
 		return FH.Main.CityBuildingsData[id];
 	},
 
+
+	isOtherPlayerEntity(data) {
+		if (data?.player_id && FH.Player?.ID) return data.player_id != FH.Player.ID;
+		return FH.ActiveMap === 'OtherPlayer';
+	},
+
 	
 	_coordIndex: null,
 	getBuildingByCoords(x, y) {
@@ -3261,7 +3267,7 @@ let CityBuildings = {
 			allyRoom: metaData.components?.AllAge?.ally?.rooms[0]?.allyType || null,
 			name: metaData.name,
 			type: this.setType(metaData),
-			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? FH.CurrentEra : era),
+			eraName: ((data.cityentity_id||metaData.id).includes("CastleSystem") ? (this.isOtherPlayerEntity(data) ? (CityMap.OtherPlayer.eraName || era) : FH.CurrentEra) : era),
 			isSpecial: this.isSpecialBuilding(metaData),
 			isLimited: this.isLimitedBuilding(metaData),
 			isInInventory: false,
