@@ -314,7 +314,7 @@ let Investment = {
 				<td class="case-sensitive${isFriend}${isGuildmate}" data-text="${FH.helper.str.cleanup(contribution['playerName'])}">
 				<img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}
 				</td>`);
-			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + contribution['level'] + ')</td>');
+			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + (contribution['level']||0) + ')</td>');
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
 			if (showEntryDate) {
