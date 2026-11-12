@@ -1,8 +1,18 @@
 # Changelog
 
 ## Version 1.11.0
-### Update
+### New
+- GB Calculator: You can add a player as favorite so that you always use your own contribution boost per default
 - Shop Assistant: New button to add all buildings of the shop (including upgrade and selection kits) to the Building Efficiency Rating
+
+### Update
+- GB Data: Investments and Infobox should now show the correct amounts of FP again, also power leveling is back, but renamed to "level costs" and the unlock costs are added, thx Banana!
+- Profile: Other player data is now calculated differently and not dependend on your own efficiency settings anymore
+- GB Investments: Added icons for friends and guild mates
+- Market: Slightly changed the user interface
+
+### Bugfixes
+- Boosts: One of the new boosts was missing
 
 ---
 

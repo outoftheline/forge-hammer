@@ -1,9 +1,21 @@
 # Changelog
 
 ## Version 1.11.0
-### Update
+### Neu
+- LG Rechner: Markiere einen Spieler als Favoriten, um immer deinen eigenen Bonus als Berechnungsgrundlage zu nutzen
 - Shop Assistent: Neuer Button, der alle Gebäude des Shops (inkl. Upgrade- und Auswahl-Kits) zur Gebäude Effizienz hinzufügt
 
+### Update
+- LG Rechner: Man kann Gold-LG beim Kopieren jetzt markieren lassen
+- LG Daten: Investitionen und Infobox nutzen jetzt die neuen Daten, außerdem ist "Powerleveln" zurück mit mehr Daten und heißt jetzt "Levelkosten", Danke an Banana
+- Profile von anderen Spielern werden nun anders berechnet und benötigen keine Änderungen der Effizienzeinstellungen mehr
+- LG Investitionen: Symbole für Freunde und Gildenmitglieder hinzugefügt
+- Markt: Kleiner Facelift
+
+### Bugfixes
+- Boosts: Einer der neuen Multiplikatoren hat noch gefehlt
+
+---
 ---
 
 ## Version 1.10.5
