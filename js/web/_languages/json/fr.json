@@ -438,6 +438,7 @@
   "Boxes.FPCollector.collectReward": "Récompense",
   "Boxes.FPCollector.dailyChallenges": "Défi du jour",
   "Boxes.FPCollector.diplomatic_gifts": "Transporteur spatial - Cadeau diplomatique",
+  "Boxes.FPCollector.diplomaticGifts": "Transporteur spatial - Cadeau diplomatique",
   "Boxes.FPCollector.double_collection": "Galaxie Bleue (2x)",
   "Boxes.FPCollector.event": "Événement",
   "Boxes.FPCollector.event_mystery_item": "Boîte surprise d'événement",
@@ -470,6 +471,7 @@
   "Boxes.FPCollector.shards": "Île volante - Éclats",
   "Boxes.FPCollector.soccer_cup_event": "Événement de la coupe de football",
   "Boxes.FPCollector.spoils_of_war": "Château d'Himeji (Butins de guerre)",
+  "Boxes.FPCollector.spoilsOfWar": "Château d'Himeji (Butins de guerre)",
   "Boxes.FPCollector.spring_event": "Événement de printemps",
   "Boxes.FPCollector.st_patricks_event": "Événement de la St-Patrick",
   "Boxes.FPCollector.st_patricks_event_task_reward": "Tâches de l'Event de la St-Patrick",
@@ -1402,7 +1404,7 @@
   "Boxes.OwnpartCalculator.PowerLeveling": "Niveaux",
   "Boxes.OwnpartCalculator.Preview": "Aperçu",
   "Boxes.OwnpartCalculator.Step": "Niveau",
-  "Boxes.OwnpartCalculator.Title": "Calcul de PF pour mes GMs",
+  "Boxes.OwnpartCalculator.Title": "Calcul de PF pour GMs",
   "Boxes.OwnpartCalculator.Trust": "Confiance",
   "Boxes.PlayerProfile.BattleBoosts": "Boost de bataille",
   "Boxes.PlayerProfile.DailyProduction": "Production journalière",
@@ -1430,8 +1432,80 @@
   "Boxes.PowerLeveling.P3": "P3",
   "Boxes.PowerLeveling.P4": "P4",
   "Boxes.PowerLeveling.P5": "P5",
+  "Boxes.PowerLeveling.P6": {
+    "s": "P6",
+    "r": "P6"
+  },
+  "Boxes.PowerLeveling.P7": {
+    "s": "P7",
+    "r": "P7"
+  },
   "Boxes.PowerLeveling.StartLevel": "Début du niveau",
   "Boxes.PowerLeveling.Title": "Niveaux GM",
+  "Boxes.PowerLeveling.Unlock.Coins": {
+    "s": "Pièces",
+    "r": "Coins"
+  },
+  "Boxes.PowerLeveling.Unlock.CopperBlueprints": {
+    "s": "Plans",
+    "r": "Blueprints"
+  },
+  "Boxes.PowerLeveling.Unlock.GoldBlueprints": {
+    "s": "plans Or",
+    "r": "Gold blueprints"
+  },
+  "Boxes.PowerLeveling.Unlock.Goods": {
+    "s": "Ressources",
+    "r": "Goods"
+  },
+  "Boxes.PowerLeveling.Unlock.GoodsTT": {
+    "s": "5 ressources de l'ère × __amount__ de chaque",
+    "r": "5 goods of the era × __amount__ each"
+  },
+  "Boxes.PowerLeveling.Unlock.Medals": {
+    "s": "Médailles",
+    "r": "Medals"
+  },
+  "Boxes.PowerLeveling.Unlock.SetsTT": {
+    "s": "__sets__ sets × 9 pièces",
+    "r": "__sets__ sets × 9 pieces"
+  },
+  "Boxes.PowerLeveling.Unlock.Supplies": {
+    "s": "marchandises",
+    "r": "Supplies"
+  },
+  "Boxes.PowerLeveling.UnlockCosts": {
+    "s": "Coût débloquage",
+    "r": "Unlock costs"
+  },
+  "Boxes.PowerLeveling.UnlockCostsSum": {
+    "s": "Somme coût déstockage",
+    "r": "Unlock costs sum"
+  },
+  "Boxes.PowerLeveling.UnlockTT.Coins": {
+    "s": "__amount__ pièces",
+    "r": "__amount__ coins"
+  },
+  "Boxes.PowerLeveling.UnlockTT.CopperBlueprints": {
+    "s": "__amount__x cuivre",
+    "r": "__amount__x copper"
+  },
+  "Boxes.PowerLeveling.UnlockTT.GoldBlueprints": {
+    "s": "__amount__x Or",
+    "r": "__amount__x gold"
+  },
+  "Boxes.PowerLeveling.UnlockTT.Goods": {
+    "s": "5x __amount__",
+    "r": "5x __amount__"
+  },
+  "Boxes.PowerLeveling.UnlockTT.Medals": {
+    "s": "__amount__ médailles",
+    "r": "__amount__ medals"
+  },
+  "Boxes.PowerLeveling.UnlockTT.Supplies": {
+    "s": "__amount__ marchandises",
+    "r": "__amount__ supplies"
+  },
   "Boxes.Productions.AllyRarity.common": "commune",
   "Boxes.Productions.AllyRarity.epic": "épique",
   "Boxes.Productions.AllyRarity.legendary": "légendaire",
@@ -1527,6 +1601,10 @@
   },
   "Boxes.ProductionsRating.Best": "Meilleur",
   "Boxes.ProductionsRating.BuildingName": "Bâtiment",
+  "Boxes.ProductionsRating.ClearBuildingSelection": {
+    "s": "effacer la sélection",
+    "r": "Clear selection"
+  },
   "Boxes.ProductionsRating.ColumnFilter": {
     "s": "Filtre",
     "r": "Filter"
@@ -1696,6 +1774,14 @@
   "Boxes.ShopAssist.Missing": "Manquant",
   "Boxes.ShopAssist.onlyFavourites": "Seulement les favoris",
   "Boxes.ShopAssist.onlyUnlocked": "Seulement débloqués",
+  "Boxes.ShopAssist.RateBuildings": {
+    "s": "Efficacité des bâtiments",
+    "r": "Building Efficiency"
+  },
+  "Boxes.ShopAssist.RateBuildingsDesc": {
+    "s": "Ajouter tous les bâtiments disponibles dans cette boutique (y compris ceux issus des kits d'amélioration et de sélection) à l'indice d'efficacité des bâtiments",
+    "r": "Add all buildings available in this shop (incl. buildings from upgrade and selection kits) to the Building Efficiency Rating"
+  },
   "Boxes.ShopAssist.Shop": "Boutique d'objet",
   "Boxes.ShopAssist.Single": "À l'unité",
   "Boxes.ShopAssist.Title": "Assistant Boutique",
@@ -1731,23 +1817,35 @@
   "Boxes.Stats.Era": "Ère",
   "Boxes.Stats.FilterRewards": "Filtres des récompenses",
   "Boxes.Stats.Rewards.Source.__event": "Événements",
+  "Boxes.Stats.Rewards.Source.autoAid": {
+    "s": "Récompenses Auto-Aide provenant des GB",
+    "r": "Auto-Aid rewards from GBs"
+  },
   "Boxes.Stats.Rewards.Source.battlegrounds_conquest": "Ch. de bataille",
   "Boxes.Stats.Rewards.Source.diplomatic_gifts": "Transporteur",
+  "Boxes.Stats.Rewards.Source.diplomaticGifts": "Transporteur",
   "Boxes.Stats.Rewards.Source.guild_raids": "Incursions Quantiques",
   "Boxes.Stats.Rewards.Source.guildExpedition": "Exp. de guilde",
   "Boxes.Stats.Rewards.Source.hidden_reward": "Incidents",
   "Boxes.Stats.Rewards.Source.pvp_arena": "Arène JcJ",
   "Boxes.Stats.Rewards.Source.shards": "Île volante",
   "Boxes.Stats.Rewards.Source.spoils_of_war": "Himeji",
+  "Boxes.Stats.Rewards.Source.spoilsOfWar": "Himeji",
   "Boxes.Stats.Rewards.SourceTitle.__event": "Récompenses des événements spéciaux ou saisonniers",
+  "Boxes.Stats.Rewards.SourceTitle.autoAid": {
+    "s": "Auto-Aide : récompenses de la Chambre des graines ou de la Tour de trêve (à l'exception des pièces)",
+    "r": "Auto-Aid: Seed Vault or Truce Tower Rewards (excluding any coins)"
+  },
   "Boxes.Stats.Rewards.SourceTitle.battlegrounds_conquest": "Récompenses des Champs de Bataille de guilde",
   "Boxes.Stats.Rewards.SourceTitle.diplomatic_gifts": "Cadeaux diplomatiques (Transporteur spatial)",
+  "Boxes.Stats.Rewards.SourceTitle.diplomaticGifts": "Cadeaux diplomatiques (Transporteur spatial)",
   "Boxes.Stats.Rewards.SourceTitle.guild_raids": "Récompenses des Incursions Quantiques",
   "Boxes.Stats.Rewards.SourceTitle.guildExpedition": "Récompenses des reliques de l'expédition de guilde (Temple des reliques)",
   "Boxes.Stats.Rewards.SourceTitle.hidden_reward": "Récompenses d'incidents",
   "Boxes.Stats.Rewards.SourceTitle.pvp_arena": "Récompenses Arène JcJ",
   "Boxes.Stats.Rewards.SourceTitle.shards": "Éclats mystérieux (Île volante)",
   "Boxes.Stats.Rewards.SourceTitle.spoils_of_war": "Butins de guerre (Château d'Himeji)",
+  "Boxes.Stats.Rewards.SourceTitle.spoilsOfWar": "Butins de guerre (Château d'Himeji)",
   "Boxes.Stats.SourceTitle.statsGBGPlayers": "Scores des joueurs en Champ de Bataille de guilde",
   "Boxes.Stats.SourceTitle.statsRewards": "Répartition de vos récompenses : reliques sur les expéditions de guilde (Temple des reliques), butins de guerre (Château d'Himeji), cadeaux diplomatiques (Transporteur Spatial) et sur le Champ de Bataille de guilde",
   "Boxes.Stats.SourceTitle.statsTreasureClanD": "Evolution de la trésorerie de guilde par jour",
