@@ -31,7 +31,7 @@ let Market = {
     Trades: [],
     Offer: 0,
     Need: 0,
-    MinQuantity: 1,
+    MinQuantity: 10,
     MaxResults: 100,
     OnlyAffordable: false,
 
