@@ -75,6 +75,7 @@ let Boosts = {
         'defender_attack_boost': ['att_boost_defender'],
         'attacker_defense_boost': ['def_boost_attacker'],
         'attack_boost': ['att_boost_attacker'],
+        'defense_boost': ['def_boost_defender'],
     },
     Sums: {
         'contribution_boost': 0,
