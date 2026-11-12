@@ -54,13 +54,44 @@ let Market = {
 
     ScrollPositions: [],
 
+    FilterKeys: ['Offer', 'Need', 'OfferSelect', 'NeedSelect', 'MinQuantity', 'MaxResults', 'OnlyAffordable',
+        'TradePartnerNeighbor', 'TradePartnerGuild', 'TradePartnerFriend', 'ShowOwnOffers',
+        'TradeForHigher', 'TradeForEqual', 'TradeForLower',
+        'TradeAdvantage', 'TradeFairStock', 'TradeFair', 'TradeDisadvantage'],
+
+    LoadFilters: () => {
+        let saved = JSON.parse(FH.Storage.getItem('MarketFilters') || '{}');
+        if (!saved || typeof saved !== 'object') return;
+
+        for (let key of Market.FilterKeys) {
+            if (!(key in saved)) continue;
+            let value = saved[key];
+            let current = Market[key];
+
+            if (current !== null && typeof value !== typeof current) continue;
+            if (typeof value === 'number' && !isFinite(value)) continue;
+
+            Market[key] = value;
+        }
+    },
+
+
+    SaveFilters: () => {
+        let data = {};
+        for (let key of Market.FilterKeys) {
+            data[key] = Market[key];
+        }
+        FH.Storage.setItem('MarketFilters', JSON.stringify(data));
+    },
+
 
 	/**
 	 * Create a div-box for the DOM + Eventlistener
 	 */
     Show: (event = true)=> {
-        if ($('#Market').length === 0)
-        {
+        if ($('#Market').length === 0) {
+            Market.LoadFilters();
+
             FH.HTML.Box({
                 id: 'Market',
                 title: FH.t('Boxes.Market.Title'),
@@ -71,11 +102,9 @@ let Market = {
                 settings: Market.ShowSettingsButton
             });
 
-            // add css to DOM
             FH.HTML.AddCssFile('market');
 
-
-            $('#Market').on('click', '.custom-option', function(){
+            $('#Market').on('click', '.custom-option', function() {
                 let func = $(this).closest('.custom-options').data('function');
 
                 Market.ScrollPositions[func] = $(this).closest('.custom-options').scrollTop();
@@ -173,6 +202,8 @@ let Market = {
 	 * Main function for all the data
 	 */
     CalcBody: () => {
+        Market.SaveFilters();
+
         let h = [];
 
         // Filters
