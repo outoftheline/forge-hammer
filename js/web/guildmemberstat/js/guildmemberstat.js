@@ -381,13 +381,20 @@ let GuildMemberStat = {
 
 				if (entity[i].state && entity[i]['state']['current_product']) {
 					let currentProducts = entity[i]['state']['current_product']['products'] || [entity[i]['state']['current_product']];
-					let clanGoods = currentProducts.find(product => product['name'] === 'clan_goods' && product['goods']);
-					if (!clanGoods)
+					let clanGoods = currentProducts.filter(product => (product['name'] === 'clan_goods' || product['name'] === 'clan_goods_extended') && product['goods']);
+					if (!clanGoods.length)
 						continue;
 
-					let totalgoods = clanGoods['goods'].map(good => good.value).reduce((sum, good) => good + sum, 0);
+					let goodsById = {};
+					for (let product of clanGoods) {
+						for (let good of product['goods']) {
+							goodsById[good.good_id] = (goodsById[good.good_id] || 0) + good.value;
+						}
+					}
+					let goods = Object.entries(goodsById).map(([good_id, value]) => ({ good_id: good_id, value: value })).sort(function (a, b) { return a.good_id.localeCompare(b.good_id) });
+					let totalgoods = goods.reduce((sum, good) => sum + good.value, 0);
 
-					GuildGoodsBuildings.push({ gbid: GBTempID, entity_id: EntityID, name: CityEntity['name'], resources: { totalgoods: totalgoods, goods: clanGoods['goods'].sort(function (a, b) { return a.good_id.localeCompare(b.good_id) }) }, level: entity[i]['level'], era: Member.era });
+					GuildGoodsBuildings.push({ gbid: GBTempID, entity_id: EntityID, name: CityEntity['name'], resources: { totalgoods: totalgoods, goods: goods }, level: entity[i]['level'], era: Member.era });
 				}
 			}
 		}
@@ -1839,19 +1846,18 @@ let GuildMemberStat = {
 		ErasGuildGoods = ErasGuildGoods.reduce(function (res, obj) {
 
 			if (obj.era !== undefined && obj.resources !== undefined && obj.resources.goods !== undefined && obj.resources.goods !== null) {
-				let eraId = Technologies.Eras[obj['era']];
+				obj.resources.goods.forEach(good => {
+					let GoodData = FH.Goods.Data[good.good_id];
+					let eraId = Technologies.Eras[GoodData?.era] ?? Technologies.Eras[obj['era']];
 
-				if (!(eraId in res)) {
-					res[eraId] = {};
-					obj.resources.goods.forEach(good => {
-						res[eraId][good.good_id] = { good: good.good_id, name: FH.Goods.Data[good.good_id].name, value: good.value };
-					});
-				}
-				else {
-					obj.resources.goods.forEach(good => {
-						res[eraId][good.good_id].value += good.value;
-					});
-				}
+					if (!(eraId in res))
+						res[eraId] = {};
+
+					if (!(good.good_id in res[eraId]))
+						res[eraId][good.good_id] = { good: good.good_id, name: GoodData?.name ?? good.good_id, value: 0 };
+
+					res[eraId][good.good_id].value += good.value;
+				});
 			}
 			return res;
 
