@@ -806,11 +806,11 @@ button, .btn, .content input {
     background-color: #ffffff14;
 }
 
-.stat-icon[data-icon*=def_boost_attacker], .stat-icon[data-icon*=def_boost_defender] {
+.stat-icon[data-icon*=att_boost_defender], .stat-icon[data-icon*=def_boost_defender] {
     background-color: #2a3cdd;
 }
 
-.stat-icon[data-icon*=att_boost_attacker], .stat-icon[data-icon*=att_boost_defender] {
+.stat-icon[data-icon*=att_boost_attacker], .stat-icon[data-icon*=def_boost_attacker] {
     background-color: #ce2727;
 }
 

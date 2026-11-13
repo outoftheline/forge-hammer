@@ -25,8 +25,8 @@ window.PlannerApp = window.PlannerApp || {};
     // --- metric definitions -------------------------------------------------
     const BOOST_TYPES = [
         ['att_boost_attacker', 'General.AttAttacker', 'Red Attack'],
-        ['def_boost_attacker', 'General.DefAttacker', 'Red Defense'],
-        ['att_boost_defender', 'General.AttDefender', 'Blue Attack'],
+        ['def_boost_attacker', 'General.AttDefender', 'Red Defense'],
+        ['att_boost_defender', 'General.DefAttacker', 'Blue Attack'],
         ['def_boost_defender', 'General.DefDefender', 'Blue Defense']
     ];
 
@@ -64,7 +64,7 @@ window.PlannerApp = window.PlannerApp || {};
         { key: 'population_provided', group: 'population', icon: 'population', t: 'General.PopulationProvided', fallback: 'Total population' },
         { key: 'population_required', group: 'population', icon: 'population', t: 'General.PopulationRequired', fallback: 'Required population' },
         { key: 'population_net', group: 'population', icon: 'population', t: 'General.PopulationNet', fallback: 'Available population' },
-        { key: 'happiness', group: 'population', icon: 'happiness', t: 'Productions.Happiness', fallback: 'Happiness' },
+        { key: 'happiness', group: 'population', icon: 'happiness', t: 'Boxes.Productions.Happiness', fallback: 'Happiness' },
 
         { key: 'coins', group: 'production', icon: 'money', t: 'General.Coins', fallback: 'Coins' },
         { key: 'supplies', group: 'production', icon: 'supplies', t: 'General.Supplies', fallback: 'Supplies' },
@@ -201,7 +201,11 @@ window.PlannerApp = window.PlannerApp || {};
             'att_boost_attacker', 'def_boost_attacker',
             'att_boost_defender', 'def_boost_defender'
         ],
-        money_boost: ['coin_production']
+        money_boost: ['coin_production'],
+        defender_attack_boost: ['att_boost_defender'],
+        attacker_defense_boost: ['def_boost_attacker'],
+        attack_boost: ['att_boost_attacker'],
+        defense_boost: ['def_boost_defender']
     };
 
     function isIgnoredBoost(type) {
