@@ -1194,21 +1194,6 @@ let GreatBuildings = {
     },
 
 
-    /**
-     * Exact .5 ties the formula in GetLevelRewards cannot resolve (the game rounds them inconsistently).
-     * Key: EntityID, then level index, then spot index (all 0-based).
-     */
-    RewardTies: {
-        'X_SpaceAgeJupiterMoon_Landmark1': { 122: { 1: 1849 } },
-        'X_SpaceAgeSpaceHub_Landmark2': { 69: { 4: 57 } },
-        'X_SpaceAgeTitan_Landmark1': { 92: { 2: 618 } },
-    },
-
-
-    /**
-     * True when leveling from the given current level uses the gold tier (7 spots, contribution_boost_gold).
-     * That is every GB that goes to level 500, from level 100 on.
-     */
     IsGoldTier: (EntityID, Level) => {
         return GreatBuildings.Levels[EntityID]?.FPCosts.length > 200 && Level >= 100;
     },
@@ -1216,28 +1201,23 @@ let GreatBuildings = {
 
     /**
      * Base FP of every spot for reaching level Index + 1, before any Arc or Contribution boost.
-     * Every spot gets FPCosts[Index] * M / k! (k = spot number), where M depends on the level band and,
-     * above level 100, on whether the GB goes to level 200 or 500. Odd results below 5 are rounded up to even.
-     * 500 level GBs have 7 spots above level 100, all others 5.
+     * All spots together get Share % of FPCosts[Index] (depending on the level band), split by the
+     * weights n!/k! (k = spot number, n = spot count). Odd results below 5 are rounded up to even.
+     * Keep the game's order of operations (cost * Share / 100 * (Weight / Sum)): exact .5 ties
+     * round like the game in this order
      */
     GetLevelRewards: (EntityID, Index) => {
         let Costs = GreatBuildings.Levels[EntityID].FPCosts,
             Level = Index + 1,
-            M;
+            Share = Level < 10 ? 25 : Level < 40 ? 30 : Level < 70 ? 40 : Level <= 100 ? 25
+                : Level <= 200 ? 15 : Level <= 300 ? 10 : Level <= 400 ? 7 : 5,
+            Weights = GreatBuildings.IsGoldTier(EntityID, Index)
+                ? [5040, 2520, 840, 210, 42, 7, 1]
+                : [120, 60, 20, 5, 1],
+            Sum = Weights.reduce((s, w) => s + w, 0);
 
-        if (Level < 10) M = 15 / 103;
-        else if (Level < 40) M = 18 / 103;
-        else if (Level < 70) M = 24 / 103;
-        else if (Level <= 100) M = 15 / 103;
-        else if (Costs.length <= 200) M = 9 / 103;
-        else M = 63 / 2165 * (Level <= 200 ? 3 : Level <= 300 ? 2 : Level <= 400 ? 1.4 : 1);
-
-        let Ties = GreatBuildings.RewardTies[EntityID]?.[Index],
-            Divisors = GreatBuildings.IsGoldTier(EntityID, Index) ? [1, 2, 6, 24, 120, 720, 5040] : [1, 2, 6, 24, 120];
-
-        return Divisors.map((Divisor, i) => {
-            if (Ties?.[i] !== undefined) return Ties[i];
-            let Reward = Math.round(Costs[Index] * M / Divisor);
+        return Weights.map(w => {
+            let Reward = Math.round(Costs[Index] * Share / 100 * (w / Sum));
             return (Reward === 1 || Reward === 3) ? Reward + 1 : Reward;
         });
     },
