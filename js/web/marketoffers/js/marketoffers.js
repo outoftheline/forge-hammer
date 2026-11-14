@@ -143,7 +143,7 @@ let MarketOffers = {
                 NeedSum = NeedSums[GoodID];
 
             h.push('<tr>');
-            h.push('<td class="is-number" data-number="' + i + '">' + FH.t('Eras.' + Era) + '</td>');
+            h.push('<td class="is-number" data-number="' + i + '">' + FH.t('Eras.' + Era + '.short') + '</td>');
             h.push('<td class="goods-image"><span class="goods-sprite sprite-35 ' + GoodID + '"></span></td>');
             h.push('<td data-text="' + FH.helper.str.cleanup(CurrentGood['name']) + '"><strong>' + CurrentGood['name'] + '</strong></td>');
             h.push('<td class="is-number" data-number="' + Inventory + '">' + FH.HTML.Format(Inventory) + '</td>');

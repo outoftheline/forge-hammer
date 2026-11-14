@@ -24,7 +24,6 @@
     position: relative;
     font-size: 85%;
     vertical-align: middle;
-    text-align: center;
 }
 
 #MarketOffers #MarketOffersBody td button {
@@ -39,10 +38,6 @@
 
 #MarketOffers #MarketOffersBody td span.custom-option:not(.era) {
     padding-left: 20px;
-}
-
-#MarketOffers #MarketOffersBody th {
-    text-align: center;
 }
 
 #MarketOffers #MarketOffersBody .filters select {
