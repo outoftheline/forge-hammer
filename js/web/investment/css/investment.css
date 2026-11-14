@@ -69,7 +69,17 @@
 	color: var(--white);
 	position: relative;
 }
-
+#InvestmentBody .gold td:nth-child(2) span::after {
+	content: "";
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	background: url(../../x_img/gold_tier.png) left center no-repeat;
+	background-size: contain;
+	margin-left: 4px;
+	position: relative;
+	top: 2px;
+}
 #InvestmentBody table tbody tr.fphistory {
 	position: relative;
 }

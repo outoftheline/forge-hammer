@@ -1195,6 +1195,7 @@ let GreatBuildings = {
 
 
     IsGoldTier: (EntityID, Level) => {
+        if (typeof EntityID !== "string") return false;
         return GreatBuildings.Levels[EntityID]?.FPCosts.length > 200 && Level >= 100;
     },
 

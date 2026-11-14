@@ -23,8 +23,7 @@ FH.proxy.addHandler('GreatBuildingsService', (data) => {
 		Investment.Data = data['responseData'];
 
 		Investment.UpdateData(Investment.Data, true).then((e) => {
-		if (Settings.GetSetting('ShowInvestments') && (+FH.Main.getCurrentDate() - Investment.RequestBlockTime) > 2000)
-			{
+		if (Settings.GetSetting('ShowInvestments') && (+FH.Main.getCurrentDate() - Investment.RequestBlockTime) > 2000) {
 				Investment.BuildBox(true);
 			}
 		});
@@ -148,10 +147,8 @@ let Investment = {
 		if (AllInvestments === undefined)
 			return;
 
-		for (let i in AllInvestments)
-		{
-			if(AllInvestments.hasOwnProperty(i))
-			{
+		for (let i in AllInvestments) {
+			if(AllInvestments.hasOwnProperty(i)) {
 				let ishidden = (typeof AllInvestments[i].ishidden != 'undefined') ? AllInvestments[i].ishidden : 0,
 					isNotSafe = AllInvestments[i].currentFp < AllInvestments[i].max_progress - AllInvestments[i].current_progress,
 					removeUnsafe = !!(isNotSafe && removeUnsafeCalc);
@@ -214,20 +211,17 @@ let Investment = {
 			'<th class="case-sensitive" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Building') + '</th>' +
 			'<th class="is-number text-center no-sort" data-type="invest-group"></th>');
 
-		if (showEntryDate)
-		{
+		if (showEntryDate) {
 			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.EntryTimeDesc')) + '">' + FH.t('Boxes.Investment.Overview.EntryTime') + '</th>');
 		}
 
-		if (showInvestmentIncreaseDate)
-		{
+		if (showInvestmentIncreaseDate) {
 			h.push('<th class="is-number invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.DateOfIncreaseDesc')) + '">' + FH.t('Boxes.Investment.Overview.DateOfIncrease') + '</th>');
 		}
 
 		h.push('<th class="is-number" data-type="invest-group">' + FH.t('Boxes.Investment.Overview.Progress') + '</th>');
 
-		if (showRestFp)
-		{
+		if (showRestFp) {
 			h.push('<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.RestFPDesc')) + '">' + FH.t('Boxes.Investment.Overview.RestFP') + '</th>');
 		}
 
@@ -235,13 +229,11 @@ let Investment = {
 			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.InvestedDesc')) + '">' + FH.t('Boxes.Investment.Overview.Invested') + '</th>' +
 			'<th class="is-number text-center invest-tooltip" data-type="invest-group" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.ProfitDesc')) + '" >' + FH.t('Boxes.Investment.Overview.Profit') + '</th>');
 		
-		if(showMedals)
-		{
+		if(showMedals) {
 			h.push('<th class="is-number text-center" data-type="invest-group"><span class="medal" title="' + FH.HTML.Tooltip(FH.t('General.Medals')) + '"></span></th>');
 		}
 		
-		if(showBlueprints)
-		{
+		if(showBlueprints) {
 			h.push('<th class="is-number text-center" data-type="invest-group"><span class="blueprints" title="' + FH.HTML.Tooltip(FH.t('Boxes.Investment.Overview.Blueprints')) + '"></span></th>');
 		}
 		
@@ -254,15 +246,13 @@ let Investment = {
 
 		let data = CurrentGB;
 
-		for (let x = 0; x < data.length; x++)
-		{
+		for (let x = 0; x < data.length; x++) {
 			const contribution = data[x];
 			let Profit = contribution['profit'];
 			let RealProfit = Profit - contribution['currentFp'];
 			let RealProfitClass = contribution['currentFp'] >= contribution['max_progress'] - contribution['current_progress'] ? 'success' : 'error';
 
-			if (contribution['currentFp'] < contribution['max_progress'] - contribution['current_progress'])
-			{
+			if (contribution['currentFp'] < contribution['max_progress'] - contribution['current_progress']) {
 				RealProfitClass = 'warning';
 			}
 			else if(RealProfit < 0){
@@ -309,12 +299,14 @@ let Investment = {
 
 			let isFriend = FH.Players.Dict[contribution.playerId].IsFriend ? ' friend' : '';
 			let isGuildmate = FH.Players.Dict[contribution.playerId].IsGuildMember ? ' inGuild' : '';
+			let isGold = GreatBuildings.IsGoldTier(contribution.city_entity_id, (parseInt(contribution.level)||0)) ? ' gold' : '';
 
-			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}">
+			console.log(contribution);
+			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}${isGold}">
 				<td class="case-sensitive${isFriend}${isGuildmate}" data-text="${FH.helper.str.cleanup(contribution['playerName'])}">
 				<img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}
 				</td>`);
-			h.push('<td class="case-sensitive" data-text="' + FH.helper.str.cleanup(contribution['gbname']) + '">' + contribution['gbname'] + ' (' + (contribution['level']||0) + ')</td>');
+			h.push(`<td class="case-sensitive" data-text="${FH.helper.str.cleanup(contribution['gbname'])}"><span>${contribution['gbname']} (${(contribution['level']||0)})</span></td>`);
 			h.push(`<td class="is-number text-center invest-tooltip" data-number="${isHidden}" title="${FH.t('Boxes.Investment.Overview.HideGB')}"><span class="hideicon ishidden-${isHidden?'on':'off'}"></span></td>`);
 			
 			if (showEntryDate) {
@@ -517,6 +509,7 @@ let Investment = {
 				playerName: Investment['playerName'],
 				Avatar: Investment['Avatar'],
 				entity_id: Investment['entity_id'],
+				city_entity_id: Investment['city_entity_id'],
 				gbname: Investment['gbname'],
 				level: Investment['level'],
 				rank: Investment['rank'],
@@ -535,6 +528,7 @@ let Investment = {
 		else {
 			await IndexDB.db.investhistory.update(CurrentInvest.id, {
 				currentFp: Investment['currentFp'],
+				city_entity_id: Investment['city_entity_id'],
 				gbname: Investment['gbname'],
 				current_progress: Investment['current_progress'],
 				profit: Investment['profit'],
@@ -578,6 +572,7 @@ let Investment = {
 				let PlayerName = LGData[i]['player']['name'],
 					Avatar = LGData[i]['player']['avatar'],
 					EntityID = LGData[i]['entity_id'],
+					GBEntityID = LGData[i].city_entity_id,
 					GBName = LGData[i]['name'],
 					GBLevel = LGData[i]['level'],
 					CurrentFP = LGData[i]['forge_points'],
@@ -659,7 +654,7 @@ let Investment = {
 					CurrentGB['rank'] !== Rank
 				);
 
-				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || forceFullUpdate || isOutdated)) {
+				if(CurrentGB !== undefined && (CurrentGB['ishidden'] === undefined || CurrentGB['medals'] === undefined || CurrentGB['city_entity_id'] === undefined || forceFullUpdate || isOutdated)) {
 					GbhasUpdate=true;
 					
 					if(!arrfphistory.length) {
@@ -678,6 +673,7 @@ let Investment = {
 						playerName: PlayerName,
 						Avatar: Avatar,
 						entity_id: EntityID,
+						city_entity_id: GBEntityID,
 						gbname: GBName,
 						level: GBLevel,
 						rank: Rank,
