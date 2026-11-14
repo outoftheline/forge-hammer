@@ -899,6 +899,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	FH.proxy.addHandler('ConversationService', 'sendMessage', (data, postData) => {
+		if (data.responseData.sender.player_id !== FH.Player.ID) return;
+		
 		Calculator.ConversationContentNew = data.responseData.text;
 		Calculator.ConversationContentBeforeSend = Calculator.ConversationContent;
 		Calculator.ReadyToOpen = true;
