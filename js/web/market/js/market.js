@@ -207,9 +207,9 @@ let Market = {
         let h = [];
 
         // Filters
-        h.push(`<div class="dark-bg" style="margin-bottom: 3px;">`);
-        h.push(`<div style="float:right" class="text-right p5"><span class="btn" onclick="MarketOffers.Show(false)">${FH.t('Boxes.MarketOffers.Title')}</span><br>`);
-        h.push(`<span class="btn my-5" onclick="MarketOffers.ShowEvents(false)">${FH.t('Boxes.MarketOffers.Events')}</span></div>`);
+        h.push(`<div class="dark-bg p5" style="margin-bottom: 3px;">`);
+        h.push(`<div style="float:right" class="text-right p5"><span class="btn btn-mid" onclick="MarketOffers.Show(false)">${FH.t('Boxes.MarketOffers.Title')}</span><br>`);
+        h.push(`<span class="btn btn-mid my-5" onclick="MarketOffers.ShowEvents(false)">${FH.t('Boxes.MarketOffers.Events')}</span></div>`);
         h.push(`<div class="filters">
             <div class="flex gap5 start">`);
         h.push(`<b>${FH.t('General.Goods')}</b><div>${FH.t('Boxes.Market.Offer')}`);
