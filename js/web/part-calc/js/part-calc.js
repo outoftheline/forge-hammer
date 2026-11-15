@@ -279,7 +279,7 @@ let Parts = {
 
 			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
-				Parts.PowerLevelingStartLevel = FH.Main.CurrentGB.Entity.max_level ?? Parts.Level;
+				Parts.PowerLevelingStartLevel = Parts.Level;
 				Parts.PowerLevelingEndLevel = 300;
 				Parts.ShowPowerLeveling(false);
 			});
@@ -1022,10 +1022,12 @@ let Parts = {
 		// any contribution over last place
 		if (MaezenRest > 0) {
 			h.push('<tr>');
-			h.push('<td class="text-smaller">#6' + (Parts.Maezens.length > 6 ? ('-' + Parts.Maezens.length) : '') + '</td>');
+			h.push('<td class="text-smaller">6' + (Parts.Maezens.length > 6 ? ('-' + Parts.Maezens.length) : '') + '</td>');
 			h.push('<td class="text-center">-</td>');
 			h.push('<td class="text-center"><strong class="info">' + FH.HTML.Format(MaezenRest) + '</strong></td>');
-			if (!minView) h.push('<td colspan="4"></td>');
+			let restColspan = 0 + (printsEnabled ? 1 : 0) + (medalsEnabled ? 1 : 0) + (!minView ? 2 : 0);
+			if (restColspan > 0)
+				h.push('<td colspan="' + restColspan + '"></td>');
 			h.push('</tr>');
 		}
 
