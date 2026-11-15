@@ -1,4 +1,4 @@
-﻿{
+{
   "_Language": "English",
   "Boxes.Alerts.Form.Antiques.Auction": "Auction",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Auction Cool-down",
@@ -69,6 +69,8 @@
   "Boxes.AllyList.Building": "Building",
   "Boxes.AllyList.Level": "Level",
   "Boxes.AllyList.Title": "Allies Overview",
+  "Boxes.AllyList.HideFragments": "Show fragments", 
+  "Boxes.AllyList.ShowFragments": "Hide Fragments",
   "Boxes.AuctionSettings.Add": "Add",
   "Boxes.AuctionSettings.Bid": "Bid",
   "Boxes.AuctionSettings.Factor": "Factor",
