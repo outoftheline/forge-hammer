@@ -1029,7 +1029,8 @@ let GExAttempts = {
 		if (showWarning) {
 			if ($('#hammerBar #gexWarning').length === 0) {
 				await FH.ExistenceConfirmed(`$('#hammerBar')`);
-				$('#hammerBar').append(`<div id="gexWarning" class="barItem warning" title="${FH.HTML.Tooltip(FH.t('Boxes.GexStat.NotFinishedWarning'))}"><img src="${FH.extUrl}js/web/x_img/ge.png" /></div>`);
+				if ($('#hammerBar #gexWarning').length === 0) 
+					$('#hammerBar').append(`<div id="gexWarning" class="barItem warning" title="${FH.HTML.Tooltip(FH.t('Boxes.GexStat.NotFinishedWarning'))}"><img src="${FH.extUrl}js/web/x_img/ge.png" /></div>`);
 			}
 			$('#gexWarning').show();
 		}
