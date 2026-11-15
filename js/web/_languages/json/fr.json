@@ -177,6 +177,10 @@
   "Boxes.BoostList.open": "Origine Boost",
   "Boxes.BoostList.Title": "liste des boost",
   "Boxes.Calculator.ActiveRecurringQuest": "Quête récurrente active :",
+  "Boxes.Calculator.AddFavorite": {
+    "s": "Ajouter aux favoris (utilise systématiquement votre bonus de contribution)",
+    "r": "Mark as favorite (always uses your own contribution boost)"
+  },
   "Boxes.Calculator.ArkBonus": "Votre bonus d'arche",
   "Boxes.Calculator.AvailableFP": "PF disponibles",
   "Boxes.Calculator.BPs": "Plans",
@@ -197,6 +201,10 @@
   "Boxes.Calculator.OwnPartClose": "Fermer la Calculatrice interne quand cette fenêtre s'ouvre automatiquement",
   "Boxes.Calculator.PlayInfoSound": "Jouer un son quand les places peuvent être pris en toute sécurité",
   "Boxes.Calculator.Profit": "Gain",
+  "Boxes.Calculator.RemoveFavorite": {
+    "s": "Enlever des favoris",
+    "r": "Remove from favorites"
+  },
   "Boxes.Calculator.Settings.newValue": "Nouvelle valeur",
   "Boxes.Calculator.Settings.Save": "Enregistrer",
   "Boxes.Calculator.Step": "Niveau ",
@@ -1389,6 +1397,14 @@
   "Boxes.OwnpartCalculator.OptionsDescending": "Descendant",
   "Boxes.OwnpartCalculator.OptionsFP": "PF",
   "Boxes.OwnpartCalculator.OptionsGB": "Monument",
+  "Boxes.OwnpartCalculator.OptionsGoldTier": {
+    "s": "Niveau Or",
+    "r": "Gold tier"
+  },
+  "Boxes.OwnpartCalculator.OptionsGoldTierMarker": {
+    "s": "marqueur",
+    "r": "Marker"
+  },
   "Boxes.OwnpartCalculator.OptionsLevel": "Niveau",
   "Boxes.OwnpartCalculator.OptionsLevelUp": "Monter de niveau",
   "Boxes.OwnpartCalculator.OptionsOwnPart": "PF Propriétaire",
@@ -1404,7 +1420,7 @@
   "Boxes.OwnpartCalculator.PowerLeveling": "Niveaux",
   "Boxes.OwnpartCalculator.Preview": "Aperçu",
   "Boxes.OwnpartCalculator.Step": "Niveau",
-  "Boxes.OwnpartCalculator.Title": "Calcul de PF pour GMs",
+  "Boxes.OwnpartCalculator.Title": "Calcul de PF pour mes GMs",
   "Boxes.OwnpartCalculator.Trust": "Confiance",
   "Boxes.PlayerProfile.BattleBoosts": "Boost de bataille",
   "Boxes.PlayerProfile.DailyProduction": "Production journalière",
@@ -2131,6 +2147,10 @@
     "r": "Details"
   },
   "General.Disclaimer": "Clause de non-responsabilité",
+  "General.Dismiss": {
+    "s": "Ignorer",
+    "r": "Dismiss"
+  },
   "General.Efficiency": {
     "s": "Efficience",
     "r": "Efficiency"
@@ -2741,9 +2761,85 @@
     "s": "Stocker les bâtiments",
     "r": "Store buildings"
   },
+  "XPlan.Compare.After": {
+    "s": "Après",
+    "r": "After"
+  },
   "XPlan.Compare.Axes": {
     "s": "Changer les axes",
     "r": "Change Axes"
+  },
+  "XPlan.Compare.Before": {
+    "s": "Avant",
+    "r": "Before"
+  },
+  "XPlan.Compare.Boost.coin_production": {
+    "s": "Boost Pièces",
+    "r": "Coin boost"
+  },
+  "XPlan.Compare.Boost.contribution_boost": {
+    "s": "Boost de contribution",
+    "r": "Contribution boost"
+  },
+  "XPlan.Compare.Boost.contribution_boost_gold": {
+    "s": "Boost de contribution (Or)",
+    "r": "Contribution boost (gold)"
+  },
+  "XPlan.Compare.Boost.forge_points_production": {
+    "s": "Boost Points Forges",
+    "r": "Forge Points boost"
+  },
+  "XPlan.Compare.Boost.goods_production": {
+    "s": "Boost Ressources",
+    "r": "Goods boost"
+  },
+  "XPlan.Compare.Boost.guild_goods_production": {
+    "s": "Boost Ressources de guilde",
+    "r": "Guild goods boost"
+  },
+  "XPlan.Compare.Boost.guild_raids_action_points_capacity": {
+    "s": "Capacité de Points Action IQ",
+    "r": "QI action point capacity"
+  },
+  "XPlan.Compare.Boost.guild_raids_action_points_collection": {
+    "s": "Action IQ",
+    "r": "QI action points"
+  },
+  "XPlan.Compare.Boost.guild_raids_coins_production": {
+    "s": "Boost Pièces IQ",
+    "r": "QI coin boost"
+  },
+  "XPlan.Compare.Boost.guild_raids_coins_start": {
+    "s": "Début Pièces IQ",
+    "r": "QI start coins"
+  },
+  "XPlan.Compare.Boost.guild_raids_goods_start": {
+    "s": "Début Ressources IQ",
+    "r": "QI start goods"
+  },
+  "XPlan.Compare.Boost.guild_raids_supplies_production": {
+    "s": "Boost marchandises IQ",
+    "r": "QI supply boost"
+  },
+  "XPlan.Compare.Boost.guild_raids_supplies_start": {
+    "s": "Début marchandises IQ",
+    "r": "QI start supplies"
+  },
+  "XPlan.Compare.Boost.guild_raids_units_start": {
+    "s": "Début Unités IQ",
+    "r": "QI start units"
+  },
+  "XPlan.Compare.Boost.medal_production": {
+    "s": "Boost Médailles",
+    "r": "Medal boost"
+  },
+  "XPlan.Compare.Boost.special_goods_production": {
+    "s": "Boost ressources spéciales",
+    "r": "Special goods boost"
+  },
+  "XPlan.Compare.Boost.supply_production": {
+    "s": "Boost marchandises",
+    "r": "Supply boost"
   },
   "XPlan.Compare.BuildingsAdded": {
     "s": "Nouveau Bâtiment",
@@ -2773,6 +2869,10 @@
     "s": "Base",
     "r": "Base"
   },
+  "XPlan.Compare.GroupBoosts": {
+    "s": "Autres Boost",
+    "r": "Other boosts"
+  },
   "XPlan.Compare.GroupItems": {
     "s": "Items &amp; fragments (per 24h)",
     "r": "Items & fragments (per 24h)"
@@ -2780,6 +2880,18 @@
   "XPlan.Compare.Metrics": {
     "s": "Tous les métriques",
     "r": "All Metrics"
+  },
+  "XPlan.Compare.NoChanges": {
+    "s": "Pas de changement",
+    "r": "No changes"
+  },
+  "XPlan.Compare.NoData": {
+    "s": "Aucune donnée comparable n'est disponible.",
+    "r": "No comparable data available."
+  },
+  "XPlan.Compare.NoMatches": {
+    "s": "Aucun indicateur ne correspond au filtre.",
+    "r": "No metrics match the filter."
   },
   "XPlan.Compare.Title": {
     "s": "Statistique Avant et après ",
@@ -2821,6 +2933,78 @@
     "s": "Trouvez les batiments",
     "r": "Find buildings"
   },
+  "XPlan.Info.Population": {
+    "s": "Population",
+    "r": "Population"
+  },
+  "XPlan.Issues.DroppedText": {
+    "s": "No data is stored for these buildings, so they could not be restored. Open your city in the game to refresh the building data, then reload the planner.",
+    "r": "No data is stored for these buildings, so they could not be restored. Open your city in the game to refresh the building data, then reload the planner."
+  },
+  "XPlan.Issues.DroppedTitle": {
+    "s": "Bâtiments non pris en compte",
+    "r": "Buildings left out"
+  },
+  "XPlan.Issues.MetaDbText": {
+    "s": "Le planificateur n'a pas pu ouvrir la base de données des bâtiments. Ouvrez votre ville dans le jeu au moins une fois pour que l'extension puisse la synchroniser, puis relancez le planificateur.",
+    "r": "The planner could not open the building database. Open your city in the game once so the extension can sync it, then reload the planner."
+  },
+  "XPlan.Issues.MetaDbTitle": {
+    "s": "Base de données de construction indisponible",
+    "r": "Building database unavailable"
+  },
+  "XPlan.Issues.MetaEmptyText": {
+    "s": "L'extension n'a encore enregistré aucune donnée relative aux bâtiments. Ouvrez votre ville dans le jeu une fois, puis rechargez le planificateur.",
+    "r": "The extension has not stored any building data yet. Open your city in the game once, then reload the planner."
+  },
+  "XPlan.Issues.MetaEmptyTitle": {
+    "s": "Aucune donnée relative au bâtiment n'est enregistrée",
+    "r": "No building data stored"
+  },
+  "XPlan.Issues.MetaNoRegionText": {
+    "s": "Ce plan n'indique pas de quel monde il provient ; par conséquent, toutes les données de construction enregistrées sont utilisées.",
+    "r": "This plan does not record which world it came from, so all stored building data is being used."
+  },
+  "XPlan.Issues.MetaNoRegionTitle": {
+    "s": "Monde inconnu",
+    "r": "World unknown"
+  },
+  "XPlan.Issues.MetaParseText": {
+    "s": "Certaines entrées relatives aux bâtiments enregistrées n'ont pas pu être lues et ont donc été ignorées.",
+    "r": "Some stored building entries could not be read and were skipped."
+  },
+  "XPlan.Issues.MetaParseTitle": {
+    "s": "Données relatives aux bâtiments endommagés",
+    "r": "Damaged building data"
+  },
+  "XPlan.Issues.MetaRegionText": {
+    "s": "Aucune donnée relative aux bâtiments n'est enregistrée pour ce monde ; c'est pourquoi les données provenant d'autres mondes sont utilisées.",
+    "r": "No building data is stored for this world, so data from other worlds is being used."
+  },
+  "XPlan.Issues.MetaRegionTitle": {
+    "s": "Des données sur les bâtiments venues d'un autre monde",
+    "r": "Building data from another world"
+  },
+  "XPlan.Issues.MetaRegionUsed": {
+    "s": "Utilisation : {0}",
+    "r": "Using: {0}"
+  },
+  "XPlan.Issues.MetaRegionWanted": {
+    "s": "Ce plan : {0}",
+    "r": "This plan: {0}"
+  },
+  "XPlan.Issues.MissingBuildingsText": {
+    "s": "Aucune donnée n'étant enregistrée pour ces bâtiments, ils n'ont pas été pris en compte dans le plan. Ouvrez votre ville dans le jeu pour actualiser les données relatives aux bâtiments, puis rechargez le planificateur.",
+    "r": "No data is stored for these buildings, so they were left out of the plan. Open your city in the game to refresh the building data, then reload the planner."
+  },
+  "XPlan.Issues.MissingBuildingsTitle": {
+    "s": "Les bâtiments n'ont pas pu être affichés",
+    "r": "Buildings could not be shown"
+  },
+  "XPlan.Issues.More": {
+    "s": "+{0}",
+    "r": "+{0}"
+  },
   "XPlan.KoFi.Title": {
     "s": "Supportez nous sur Ko-Fi",
     "r": "Support us on Ko-Fi"
@@ -2829,9 +3013,45 @@
     "s": "Langue",
     "r": "Language"
   },
+  "XPlan.Loading.Buildings": {
+    "s": "Placer des bâtiments…",
+    "r": "Placing buildings…"
+  },
+  "XPlan.Loading.City": {
+    "s": "Chargement de votre ville…",
+    "r": "Loading your city…"
+  },
   "XPlan.Loading.Failed": {
     "s": "Impossible de charger les données",
     "r": "Could not load data"
+  },
+  "XPlan.Loading.GameData": {
+    "s": "En attente des données sur les villes issues du jeu…",
+    "r": "Waiting for city data from the game…"
+  },
+  "XPlan.Loading.Import": {
+    "s": "Importation en cours…",
+    "r": "Importing plan…"
+  },
+  "XPlan.Loading.LastPlan": {
+    "s": "Je cherche un plan enregistré…",
+    "r": "Looking for a saved plan…"
+  },
+  "XPlan.Loading.Metadata": {
+    "s": "Chargement des données du bâtiment…",
+    "r": "Loading building data…"
+  },
+  "XPlan.Loading.Plan": {
+    "s": "Chargement du plan enregistré…",
+    "r": "Loading saved plan…"
+  },
+  "XPlan.Loading.RepairMeta": {
+    "s": "Recherche des données manquantes concernant les bâtiments…",
+    "r": "Looking up missing building data…"
+  },
+  "XPlan.Loading.Startup": {
+    "s": "Lancer le planificateur ...",
+    "r": "Starting the planner…"
   },
   "XPlan.Modal.DiscardAndContinue": {
     "s": "Effacer et continuer",

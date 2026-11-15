@@ -935,7 +935,7 @@ let Investment = {
 				FH.HTML.AddCssFile('investment'); // icon can show before the box is ever opened
 
 				let $bar = $('<div id="gb-change-bar" />')
-					.attr({ class: 'game-cursor barItem MapActivityHide ActiveOnmain', title: FH.t('Boxes.GreatBuildingsProgress.SubTitle') })
+					.attr({ class: 'game-cursor barItem MapActivityHide ActiveOnmain clickable', title: FH.t('Boxes.GreatBuildingsProgress.SubTitle') })
 					.append('<img />')
 					.append('<span class="gb-change-total"></span>')
 					.on('click', () => Investment.BuildBox(true, 'mygbs'));

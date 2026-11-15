@@ -1225,6 +1225,9 @@ hammerBar */
 #hammerBar .barItem img {
 	max-height: 25px;
 }
+#hammerBar .barItem.clickable:hover {
+	filter: brightness(1.2);
+}
 #hammerBar .barItem.active, #hammerBar .barItem .active {
 	color: var(--golden);
 }
