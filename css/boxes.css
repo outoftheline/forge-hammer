@@ -2741,7 +2741,22 @@ tr.sorter-header.sort2 th.ascending:before, tr.sorter-header.sort2 th.descending
 	font-size: 90%;
 }
 
+.ally-portrait {
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 6px;
+    border-radius: 3px;
+}
 
+.ally-portrait-tt img {
+    max-width: 220px;
+    height: auto;
+    display: block;
+    margin: 5px auto;
+}
 
 #GBGActionLogCount {
 	position: absolute;
