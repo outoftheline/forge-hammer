@@ -305,7 +305,7 @@ let Market = {
 
         h.push(`<div class="flex gap5 start p2"><label class="game-cursor"><input class="onlyaffordable game-cursor" ${Market.OnlyAffordable ? 'checked' : ''} type="checkbox">${FH.t('Boxes.Market.OnlyAffordable')}</label>
         <label class="game-cursor" for="maxresults"><input type="number" id="maxresults" step="1" min="1" max="1000000" value="${Market.MaxResults}"> ${FH.t('Boxes.Market.MaxResults')}</label>
-        </div></div>`);
+        </div></div></div>`);
 
         // Table
         h.push(`<table class="foe-table exportable">
