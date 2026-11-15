@@ -1725,6 +1725,7 @@ let Main = {
 		names:null,
 		buildingBoostSums:[],
 		rarityOrder: [],
+		HideFragments: FH.Storage.getItem('AllyListHideFragments') === 'true',																			 
 
 		getAllies:(allies)=>{
 			Main.Allies.allyList = Object.assign({}, ...allies.map(a=>({[a.id]:a})));
@@ -1842,8 +1843,39 @@ let Main = {
 
 
 		toggleFragmentedAllies:()=>{
-			$('#AllyListTable .fragmented').toggle();
-		},
+            Main.Allies.HideFragments = !Main.Allies.HideFragments;
+
+            FH.Storage.setItem(
+           'AllyListHideFragments',
+            Main.Allies.HideFragments ? 'true' : 'false'
+         );
+
+            Main.Allies.updateAllyList();
+        },
+
+         portrait: (allyId) => {
+             if (!allyId) return '';
+
+             return `<img
+                 class="ally-portrait helperTT"
+                 data-ally="${allyId}"
+                 data-callback_tt="portraitTT"
+                 src="${srcLinks.get(`/historical_allies/portraits/historical_allies_portrait_ally_${allyId}.png`, true)}"
+                 alt=""
+              >`;
+        },
+
+          portraitTT: (e) => {
+              let allyId = e?.currentTarget?.dataset?.ally;
+                if (!allyId) return '';
+
+              let name = Main.Allies.meta?.[allyId]?.name;	  
+
+              return `<div class="ally-portrait-tt">
+                  ${name ? `<h2>${name}</h2>` : ''}
+                  <img src="${srcLinks.get(`/historical_allies/allies_large/historical_allies_big_${allyId}.png`, true)}" alt="">
+            </div>`;
+        },
 
 		updateAllyList:()=>{
 			Main.Allies.buildingBoostSums=[]
@@ -1881,6 +1913,7 @@ let Main = {
 					}
 				} else {
 					rooms[0+"#" + unassigned] = {
+						allyId: x.allyId || "",
 						allyRarity: x.rarity?.value || "",
 						allyLevel: x.level || null,												
 						allyBoosts: Main.Allies.getAllyBoosts(x.allyId, x.level, x.rarity.value||"") || null,
@@ -1896,6 +1929,7 @@ let Main = {
 						buildingMeta:b.metaID,
 						roomRarity: r.rarity?.value || Object.keys(Main.Allies.rarities).join("#"),
 						allyRarity: r.ally?.rarity?.value || "",
+						allyId: r.ally?.allyId || "",
 						allyLevel: r.ally?.level || null,												
 						allyBoosts: Main.Allies.getAllyBoosts(r.ally?.allyId, r.ally?.level, r.ally?.rarity?.value||"") || null,
 						allyName: Main.Allies.meta[r.ally?.allyId]?.name || "",
@@ -1908,6 +1942,7 @@ let Main = {
 					fragmentsAmount: x.inStock,
 					fragmentsNeeded: x.item.reward.requiredAmount,
 					allyRarity: x.item.reward.assembledReward.rarity?.value || "",
+					allyId: x.item.reward.assembledReward.subType || "",
 					allyLevel: x.item.reward.assembledReward.level || null,												
 					allyBoosts: Main.Allies.getAllyBoosts(x.item.reward.assembledReward.subType, x.item.reward.assembledReward.level, x.item.reward.assembledReward.rarity?.value||"") || null,
 					allyName: x.item.reward.assembledReward.name,
@@ -1921,6 +1956,13 @@ let Main = {
 					html+=`<option value="${r.id.value}">${r.name}</option>`
 				}
 			html+=`</select>
+        <button
+            id="toggleAllyFragments"
+            class="btn btn-default"
+            style="margin-left:8px"
+            onclick="FH.Main.Allies.toggleFragmentedAllies()">
+            ${Main.Allies.HideFragments ? FH.t('Boxes.AllyList.HideFragments'): FH.t('Boxes.AllyList.ShowFragments')}
+        </button>
 				</div>`
 				// <span onclick="FH.Main.Allies.toggleFragmentedAllies()">${srcLinks.icons("icon_tooltip_fragment")}</span>
 			html+=`<table id="AllyListTable" class="foe-table">`
@@ -1939,6 +1981,9 @@ let Main = {
 			let sortedRooms = Object.entries(rooms).sort((a,b) => sortRank(a[1]) - sortRank(b[1]));
 				
 			for (let [roomId,r] of sortedRooms) {
+				if (Main.Allies.HideFragments && r.fragmentsAmount) {
+       continue;
+     }
 				let buildingId=roomId.split("#")[0]
 				let rarities=r.roomRarity?.split("#")||[]
 				rarities.push(r.allyRarity)
@@ -1947,6 +1992,7 @@ let Main = {
 				html+=`<tr class="allyRoomRow ${rarities.join(" ")} ${r.fragmentsAmount?"fragmented":""}">
 						   	<td style="white-space:nowrap">
 								${Main.Allies.rarityStars(r.allyRarity)}
+								${Main.Allies.portrait(r.allyId)}
 								${r.allyName || ""}${r.fragmentsAmount?srcLinks.icons("icon_tooltip_fragment") + r.fragmentsAmount+"/"+r.fragmentsNeeded:""}
 							</td>
 						   	<td data-number="${(r.allyLevel || 0)}">${r.allyLevel || ""}</td>`;
