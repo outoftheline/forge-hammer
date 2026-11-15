@@ -1228,6 +1228,9 @@ hammerBar */
 #hammerBar .barItem.active, #hammerBar .barItem .active {
 	color: var(--golden);
 }
+#hammerBar .barItem.warning {
+	background: linear-gradient(var(--table-bg-error), var(--table-bg-error)), linear-gradient(var(--game-bg-dark), var(--game-bg-dark));
+}
 
 #hammerBar div.fp-storage,
 #hammerBar div.buyable-fp {
@@ -1260,27 +1263,14 @@ hammerBar */
 	border: 1px solid var(--game-border-bar);
 }
 
-#hammerBar.guild_raids {
-	margin-left: 461px;
-}
-#hammerBar.cultural_outpost {
-	margin-left: 311px;
-}
 #hammerBar.gg, #hammerBar.stellar_city .fpContainer, #hammerBar.guild_raids .fpContainer, #hammerBar.gex .buyable-fp, #hammerBar.reconstruction .fpContainer, #hammerBar.main .fpbar, #hammerBar.cultural_outpost .fpContainer, #hammerBar.cultural_outpost .fpbar {
 	display: none;
 }
-#hammerBar.gex {
-	margin-left: 354px;
-}
-#hammerBar.guild_raids {
-	margin-left: 440px;
-}
-#hammerBar.stellar_city {
-	margin-left: 298px;
-}
-#hammerBar.reconstruction {
-	margin-left: 0;
-}
+#hammerBar.gex { margin-left: 354px; }
+#hammerBar.cultural_outpost { margin-left: 311px; }
+#hammerBar.guild_raids { margin-left: 440px; }
+#hammerBar.stellar_city { margin-left: 298px; }
+#hammerBar.reconstruction { margin-left: 0; }
 
 #hammerBar .fpbar {
 	height: 16px;

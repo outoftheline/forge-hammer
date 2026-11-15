@@ -995,16 +995,46 @@ let GExAttempts = {
 	},
 	deactivationTimer:null,
 	activationTimer:null,
+	warningTimer:null,
 	last:null,
 
-	refreshGUI:()=>{
+	refreshGUI: async () => {
 		//hidenumber when GE completed, not running or out of attempts
 		if (GExAttempts.state.GEprogress === 159 || GExAttempts.count === 0 || !GExAttempts.state.active) {
 			$('#gex-attempt-count').hide();
 		}
-		//setnumber when GE running
 		else {
 			$('#gex-attempt-count').text(GExAttempts.count).attr('data-number',GExAttempts.count).show();
+		}
+
+		//show warning during the last 24h before GE end
+		if (GExAttempts.warningTimer) {
+			clearTimeout(GExAttempts.warningTimer)
+			GExAttempts.warningTimer = null;
+		}
+		let showWarning = false;
+		if (GExAttempts.state.GEprogress !== 159 && GExAttempts.count !== 0 && GExAttempts.state.active && GExAttempts.state.deactivationTime) {
+			let timeLeft = GExAttempts.state.deactivationTime - FH.GameTime.get()
+			if (timeLeft <= 86400) {
+				showWarning = timeLeft > 0
+			}
+			else {
+				//re-check when the last 24h start
+				GExAttempts.warningTimer = setTimeout(() => {
+					GExAttempts.warningTimer = null;
+					GExAttempts.refreshGUI();
+				}, (timeLeft - 86400) * 1000)
+			}
+		}
+		if (showWarning) {
+			if ($('#hammerBar #gexWarning').length === 0) {
+				await FH.ExistenceConfirmed(`$('#hammerBar')`);
+				$('#hammerBar').append(`<div id="gexWarning" class="barItem warning" title="${FH.HTML.Tooltip(FH.t('Boxes.GexStat.NotFinishedWarning'))}"><img src="${FH.extUrl}js/web/x_img/ge.png" /></div>`);
+			}
+			$('#gexWarning').show();
+		}
+		else {
+			$('#gexWarning').hide();
 		}
 
 		//set timer for GE deactivation if deactivation time known
@@ -1031,7 +1061,6 @@ let GExAttempts = {
 				GExAttempts.refreshGUI()
 			}, (GExAttempts.state.activationTime-FH.GameTime.get()) * 1000);
 		}
-
 	},
 
 	setCount:(n)=>{

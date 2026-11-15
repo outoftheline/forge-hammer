@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 1.11.1
+### Update
+- Guild Expedition: A warning icon appears in the last 24 hours if you haven't finished it yet
+- Market: Your filters are now saved
+- Level costs start from the current level of the GB again
+
+### Bugfixes
+- Planner: Fixed boost mapping
+- GB Calculator: Reworked the reward calculation
+- GB List: Could open when other players sent you a message
+
+---
+
 ## Version 1.11.0
 ### New
 - GB Calculator: You can add a player as favorite so that you always use your own contribution boost per default

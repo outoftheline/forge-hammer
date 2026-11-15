@@ -1,5 +1,19 @@
 # Changelog
 
+## Version 1.11.1
+### Update
+- Gilden-Expeditionen: In den letzten 24 Stunden erscheint nun oben in der Leiste ein Warnsymbol, wenn du noch nicht fertig bist
+- Markt: Filter werden jetzt gespeichert
+- Levelkosten starten wieder beim aktuellen Level des LGs
+
+### Bugfixes
+- Stadtplaner: Fehlende Übersetzungen ergänzt, Kampfboost-Zuordnung behoben
+- LG Rechner: Berechnung der Belohnungen überarbeitet
+- LG Liste: Konnte sich manchmal verselbstständigen
+- LG Investitionen: LGs auf Level 0 zeigten kein Level an
+
+---
+
 ## Version 1.11.0
 ### Neu
 - LG Rechner: Markiere einen Spieler als Favoriten, um immer deinen eigenen Bonus als Berechnungsgrundlage zu nutzen

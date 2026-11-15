@@ -529,6 +529,7 @@
   "Boxes.GexStat.Member": "Members",
   "Boxes.GexStat.MemberParticipation": "Member participation",
   "Boxes.GexStat.Never": "never",
+  "Boxes.GexStat.NotFinishedWarning": "You haven't finished Guild Expedition yet!",
   "Boxes.GexStat.Participant": "Participating",
   "Boxes.GexStat.ParticipationNoData": "No data available!<br>Please visit the guild expedition contribution page in the guild expedition overview to update the data.",
   "Boxes.GexStat.Player": "Player",
