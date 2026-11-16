@@ -596,7 +596,7 @@ table.foe-table.vertical-top td {
 }
 
 table.foe-table tr th, table.foe-table tr td, ul.foe-table li {
-	padding: 2px 5px;
+	padding: 3px 4px;
 }
 
 table.foe-table.slim tr th, table.foe-table.slim tr td, ul.foe-table.slim li {

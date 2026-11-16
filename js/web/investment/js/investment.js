@@ -594,7 +594,7 @@ let Investment = {
 
 				if (undefined !== LGData[i]['reward']) {
 					Medals = FH.Main.round(LGData[i]['reward']['resources'] !== undefined && LGData[i]['reward']['resources']['medals'] !== undefined ?  LGData[i]['reward']['resources']['medals'] * arc : 0);
-					Blueprints = FH.Main.round(LGData[i]['reward']['blueprints'] !== undefined ? LGData[i]['reward']['blueprints'] * arc : 0);
+					Blueprints = FH.Main.round(Parts.GetBlueprintReward(LGData[i]['reward'], isGold ? 'gold' : null) * arc);
 					CurrentErtrag = FH.Main.round(LGData[i]['reward']['strategy_point_amount'] !== undefined ? LGData[i]['reward']['strategy_point_amount'] * arc : 0);
 					Profit = CurrentErtrag;
 				}
