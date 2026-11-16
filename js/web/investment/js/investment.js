@@ -297,11 +297,11 @@ let Investment = {
 
 			hiddenClass=(showHiddenGb && isHidden) ? ' ishidden' : (isHidden) ? ' ishidden hide' : '';
 
-			let isFriend = FH.Players.Dict[contribution.playerId].IsFriend ? ' friend' : '';
-			let isGuildmate = FH.Players.Dict[contribution.playerId].IsGuildMember ? ' inGuild' : '';
+			let player = FH.Players.Dict[contribution.playerId];
+			let isFriend = player?.IsFriend ? ' friend' : '';
+			let isGuildmate = player?.IsGuildMember ? ' inGuild' : '';
 			let isGold = GreatBuildings.IsGoldTier(contribution.city_entity_id, (parseInt(contribution.level)||0)) ? ' gold' : '';
 
-			console.log(contribution);
 			h.push(`<tr id="invhist${x}" data-id="${contribution['id']}" data-max-progress="${contribution['max_progress']}" data-detail='${JSON.stringify(history)}' class="${hasFpHistoryClass}${newerClass}${hiddenClass}${isGold}">
 				<td class="case-sensitive${isFriend}${isGuildmate}" data-text="${FH.helper.str.cleanup(contribution['playerName'])}">
 				<img src="${srcLinks.GetPortrait(contribution['Avatar'])}" alt="${contribution['playerName']}"> ${FH.Main.GetPlayerLink(contribution['playerId'], contribution['playerName'])}
