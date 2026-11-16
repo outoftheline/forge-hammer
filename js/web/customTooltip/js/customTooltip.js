@@ -1113,6 +1113,7 @@ FH.proxy.addHandler('RewardService', 'collectReward', async (data, postData) => 
 Tooltips.init();
 Tooltips.addCallback("building", Tooltips.buildingTT);
 Tooltips.addCallback("QIActions", QIActions.TT);
+Tooltips.addCallback("portraitTT", (e) =>FH.Main.Allies.portraitTT(e));																	   
 FH.Tooltips = {
 	deactivate: Tooltips.deactivate,
 	activate: Tooltips.activate,

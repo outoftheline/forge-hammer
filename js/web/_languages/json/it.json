@@ -1,4 +1,4 @@
-﻿{
+{
   "_Language": "Italiano",
   "Boxes.Alerts.Form.Antiques.Auction": "Asta",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Tempo di attesa asta",
@@ -69,6 +69,8 @@
   "Boxes.AllyList.Building": "Edificio",
   "Boxes.AllyList.Level": "Livello",
   "Boxes.AllyList.Title": "Panoramica alleati",
+  "Boxes.AllyList.HideFragments": "Mostra frammenti",
+  "Boxes.AllyList.ShowFragments": "Nascondi frammenti",	
   "Boxes.AuctionSettings.Add": "Aggiungi",
   "Boxes.AuctionSettings.Bid": "Offerta",
   "Boxes.AuctionSettings.Factor": "Fattore",
