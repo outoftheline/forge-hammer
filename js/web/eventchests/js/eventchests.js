@@ -120,8 +120,8 @@ let EventPresents = {
         let h = [];
 
         // change when needed!
-        const currencyName1 = 'arthur_event_token_common';
-        const currencyName2 = 'arthur_event_token_rare';
+        const currencyName1 = 'winter_event_token_common';
+        const currencyName2 = 'winter_event_token_rare';
 
         h.push('<table class="foe-table">');
         for (let present of EventPresents.Presents) {

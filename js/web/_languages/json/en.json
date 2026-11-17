@@ -1,4 +1,4 @@
-{
+﻿{
   "_Language": "English",
   "Boxes.Alerts.Form.Antiques.Auction": "Auction",
   "Boxes.Alerts.Form.Antiques.Cooldown": "Auction Cool-down",
@@ -582,7 +582,7 @@
   "Boxes.GreatBuildings.TTRewardPerDay": "Optional: How many FP rewards do you get per day? This information is used to calculate profitability for further Arc levels. To get a suggestion go to: Town Hall &gt; News &gt; Event History and scroll through all pages",
   "Boxes.GreatBuildingsProgress.ContributorsSince": "Contributor changes since __date__",
   "Boxes.GreatBuildingsProgress.DeltaFP": "FP added",
-  "Boxes.GreatBuildingsProgress.Donators": "Donators",
+  "Boxes.GreatBuildingsProgress.Donators": "Donors",
   "Boxes.GreatBuildingsProgress.FirstVisit": "first load",
   "Boxes.GreatBuildingsProgress.MyFP": "My FP",
   "Boxes.GreatBuildingsProgress.NewFP": "Current FP",
