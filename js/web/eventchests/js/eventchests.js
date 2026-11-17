@@ -96,6 +96,21 @@ FH.proxy.addHandler('PresentGameService', 'useBooster', (data, postData) => {
 let EventPresents = {
     Presents: null,
 
+    // pinned rewards (see GetKey), persisted in localStorage
+    Pinned: JSON.parse(localStorage.getItem('FHEventPresentsPinned') || '[]'),
+
+    // key = id + name, to tell apart rewards that share the same id (e.g. "Show Two" vs "Double Payout")
+    GetKey: (present) => present.reward.id + '|' + present.reward.name,
+
+    IsPinned: (present) => EventPresents.Pinned.includes(EventPresents.GetKey(present)),
+
+    TogglePin: (key) => {
+        let i = EventPresents.Pinned.indexOf(key);
+        if (i === -1) EventPresents.Pinned.push(key);
+        else EventPresents.Pinned.splice(i, 1);
+        localStorage.setItem('FHEventPresentsPinned', JSON.stringify(EventPresents.Pinned));
+    },
+
     Show: () => {
         if ($('#eventpresents').length === 0) {
             FH.HTML.Box({
@@ -124,12 +139,17 @@ let EventPresents = {
         const currencyName2 = 'winter_event_token_rare';
 
         h.push('<table class="foe-table">');
-        for (let present of EventPresents.Presents) {
+        // sort a copy for rendering; the original array must stay unsorted (indexed by presentId)
+        const sorted = [...EventPresents.Presents].sort((a, b) => EventPresents.IsPinned(b) - EventPresents.IsPinned(a));
+        for (let present of sorted) {
             let icon;
+            let asset;
             let frag = "";
 
             if (present.status.value !== "used") {
-                h.push(`<tr class="${present.status.value}">`);
+                const pinned = EventPresents.IsPinned(present);
+                h.push(`<tr class="${present.status.value}${pinned ? ' pinned' : ''}">`);
+                h.push(`<td class="pin" data-key="${EventPresents.GetKey(present).replace(/"/g, '&quot;')}">${pinned ? '&#9733;' : '&#9734;'}</td>`);
 
                 if(present.reward.type === "unit") {
                     asset = present.reward.subType
@@ -173,6 +193,12 @@ let EventPresents = {
         h.push('</table>');
 
         $('#eventpresentsBody').html(h.join(''));
+
+        // delegated handler on the container (its content is re-rendered on every update)
+        $('#eventpresentsBody').off('click.pin').on('click.pin', '.pin', function () {
+            EventPresents.TogglePin($(this).attr('data-key'));
+            EventPresents.BuildBox();
+        });
     }
 }
 

@@ -24,6 +24,13 @@
     height: auto;
 }
 
+#eventpresents .pinned {
+    background: var(--table-bg-highlight);
+}
+#eventpresents .pinned .pin {
+    color: var(--text-highlight);
+}
+
 #eventpresentsBody {
     overflow: auto;
 }
