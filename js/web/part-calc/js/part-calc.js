@@ -1276,9 +1276,9 @@ let Parts = {
 		h.push(cb);
 		h.push('</section>')
 		h.push('<div class="btn-outer text-center" style="margin-top: 10px">');
-		h.push('<span class="btn button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span> ');
+		h.push('<span class="btn btn-mid button-own">' + FH.t('Boxes.OwnpartCalculator.CopyValues') + '</span> ');
 		if (FH.Main.CurrentGB.Entity['player_id'] === FH.Player.ID) 
-			h.push('<span class="btn button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>'); 
+			h.push('<span class="btn btn-mid button-save-own">' + FH.t('Boxes.OwnpartCalculator.Note') + '</span>'); 
 		h.push('</div>');
 
 		$OwnPartBox.append( $('<div class="OwnPartBoxBackgroundBody settingsbox-wrapper" />').append(h.join('')) );

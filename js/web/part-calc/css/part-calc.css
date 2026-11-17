@@ -505,7 +505,7 @@
     text-decoration: line-through;
 }
 
-#OwnPartBox.closed .btn-group, #OwnPartBox.closed .level-switch,.closed .dark-bg, #OwnPartBox.closed .dark-bg:hover, #OwnPartBox.closed .activity, #OwnPartBox.closed svg, #OwnPartBox.closed .player-portrait, #OwnPartBox.closed .lg-not-possible {
+#OwnPartBox.closed .header .btn-group, #OwnPartBox.closed .level-switch,.closed .dark-bg, #OwnPartBox.closed .dark-bg:hover, #OwnPartBox.closed .activity, #OwnPartBox.closed svg, #OwnPartBox.closed .player-portrait, #OwnPartBox.closed .lg-not-possible {
 	display: none;
 }
 #OwnPartBox.closed #OwnPartTable, .closed .gbLevels, .closed .text-smaller, #OwnPartBox.closed .title, #OwnPartBox.closed #costTableFordern {
