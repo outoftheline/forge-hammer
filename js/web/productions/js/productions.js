@@ -2359,6 +2359,168 @@ let Productions = {
 
 	AdditionalSpecialBuildings:null,
 
+	EraComparisons: [],
+	getComparableEras: () => {
+		let maxEra = Technologies.getMaxEra();
+		return Object.entries(Technologies.Eras)
+			.filter(([name, id]) => id >= Technologies.Eras.BronzeAge && id <= maxEra && name !== 'NextEra')
+			.sort((a, b) => a[1] - b[1])
+			.map(([name]) => name);
+	},
+
+
+	// pretends the player is in the given era when the building is created
+	createEraComparisonBuilding: (entityId, eraName) => {
+		if (!FH.Main.CityEntities?.[entityId]) return undefined;
+
+		let building = CityBuildings.createBuilding(entityId, eraName);
+		if (building.autoUpgrade) return undefined;
+		building.ratingEra = eraName;
+		building.rating = Productions.rateBuilding(building);
+		return building;
+	},
+
+
+	ratingValueCells: (building, combinedRatingTypes, randomUnits) => {
+		let h = [];
+		for (const type of combinedRatingTypes) {
+			let firstType = type;
+			let secondType = null;
+			if (type.includes('att_def_')) {
+				firstType = type.replace('def_','');
+				secondType = type.replace('att_','');
+			}
+
+			// normal boosts
+			if (secondType === null) {
+				// units of wrong eras are crossed out and not rated
+				let wrongValue = building.rating[firstType+'-wrong'] || 0;
+				let wrongTile = building.rating[firstType+'-wrong-tile'] || 0;
+				const withWrong = (value, wrong) => {
+					if (!wrong) return FH.HTML.Format(value);
+					let crossed = `<span class="linethrough">${FH.HTML.Format(wrong)}</span>`;
+					return value ? `${FH.HTML.Format(value)} ${crossed}` : crossed;
+				};
+
+				let tooltip = '';
+				if (firstType === "units")
+					tooltip = `data-original-title="${randomUnits}"`;
+				else if (building.ratingEra) {
+					let eraName = Productions.getGoodsEraName(firstType, building.ratingEra);
+					if (eraName) tooltip = `data-original-title="${eraName}"`;
+				}
+
+				h.push(`<td class="text-right${firstType==="units" ? " units":""} buildingvalue" data-number="${Math.round(parseFloat(building.rating[firstType]))}" ${tooltip}>${withWrong(building.rating[firstType], wrongValue)}</td>`);
+
+				let roundingFactor = building.rating[firstType+'-tile'] > 100 || building.rating[firstType+'-tile'] < -100 ? 1 : 100;
+				let tileValue = Math.round(building.rating[firstType+'-tile'] * roundingFactor) / roundingFactor;
+				let wrongTileValue = Math.round(wrongTile * roundingFactor) / roundingFactor;
+				h.push(`<td class="text-right${firstType==="units" ? " units":""} tilevalue" data-number="${tileValue}" ${tooltip}>${withWrong(tileValue, wrongTileValue)}</td>`);
+			}
+			// combined attack boosts
+			else {
+				let firstValue = Math.round(building.rating[firstType]);
+				let secondValue = Math.round(building.rating[secondType]);
+				let combinedValue = (firstValue + secondValue);
+
+				h.push(`<td class="text-right buildingvalue" data-number="${combinedValue}">
+					${FH.HTML.Format(building.rating[firstType]+building.rating[secondType])}
+				</td>`);
+
+				let tileValue = Math.round((building.rating[firstType+'-tile'] + building.rating[secondType+'-tile']) * 10) / 10;
+
+				h.push(`<td class="text-right tilevalue" data-number="${tileValue}">${FH.HTML.Format(tileValue)}</td>`);
+			}
+		}
+		return h.join('');
+	},
+
+
+	getGoodsEraName: (type, eraName) => {
+		let offset = {'goods-previous': -1, 'goods-current': 0, 'goods-next': 1}[type];
+		if (offset === undefined) return null;
+
+		let name = Technologies.InnoEraNames[Technologies.InnoEras[eraName] + offset];
+		return name ? FH.t('Eras.' + Technologies.Eras[name]) : null;
+	},
+
+
+	RatingSort: null,
+	getRatingSortKey: (th) => {
+		return (th.attr('data-export') || '') + '|' + (th.hasClass('tilevalue') ? 'tile' : '');
+	},
+
+	saveRatingSort: () => {
+		let th = $('#ProductionsRatingBody .sorter-header th.ascending, #ProductionsRatingBody .sorter-header th.descending').first();
+		if (!th.length) return;
+
+		Productions.RatingSort = {
+			key: Productions.getRatingSortKey(th),
+			direction: th.hasClass('ascending') ? 'ascending' : 'descending'
+		};
+	},
+
+	applyRatingSort: () => {
+		let sort = Productions.RatingSort;
+		if (!sort) return;
+
+		// looked up by key, bc columns may have changed
+		let th = $('#ProductionsRatingBody .sorter-header th').filter((i, el) => Productions.getRatingSortKey($(el)) === sort.key).first();
+
+		if (!th.length || th.hasClass('no-sort') || th.hasClass(sort.direction)) return;
+
+		th.trigger('click');
+		if (!th.hasClass(sort.direction)) th.trigger('click');
+	},
+
+
+	reattachEraComparisons: () => {
+		let $tbody = $('#ProductionsRatingBody tbody.ratinglist');
+		let groups = {};
+
+		$tbody.children('tr.era-comparison').each(function () {
+			let parent = this.dataset.parentRidx;
+			if (!groups[parent]) groups[parent] = [];
+			groups[parent].push(this);
+		});
+
+		for (const [parent, rows] of Object.entries(groups)) {
+			rows.sort((a, b) => a.dataset.ridx - b.dataset.ridx); // rendered in era order
+			let $parent = $tbody.children(`tr[data-ridx="${parent}"]`);
+			if ($parent.length) $parent.after(rows);
+		}
+	},
+
+
+	eraComparisonRow: (building, comparison, combinedRatingTypes, tabClasses, rowIndex, buildingSize, parentIndex) => {
+		let h = [];
+		let [randomItems, randomUnits] = Productions.showBuildingItems(false, comparison);
+		let baseScore = Math.round(building.rating.totalScore * 100);
+		let score = Math.round(comparison.rating.totalScore * 100);
+		let diff = score - baseScore;
+		let eraId = Technologies.Eras[comparison.ratingEra];
+
+		h.push(`<tr data-ridx="${rowIndex}" data-parent-ridx="${parentIndex}" class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.isInInventory?'inventory-building ':''}additional era-comparison">`);
+
+		// sort value = score of the normal row, shown value = score in the chosen era
+		h.push(`<td data-number="${building.rating.totalScore * 100}" class="wsnw text-center score-cell">`);
+		h.push(`<span>${score}</span> <small class="score-diff ${diff > 0 ? 'pos' : (diff < 0 ? 'neg' : '')}">${diff > 0 ? '+' : ''}${diff}</small>`);
+		h.push(`</td>`);
+
+		h.push(`<td exportvalue="${comparison.name} (${FH.t('Eras.' + eraId + '.short')})" data-text="${FH.helper.str.cleanup(building.name)}" data-size="${buildingSize}"><div class="flex-between"><div>`);
+		h.push(`<span data-meta_id="${comparison.entityId}" data-eff="${comparison.rating.totalScore * 100}" data-era="${comparison.ratingEra}" data-base_eff="${building.rating.totalScore * 100}" data-base_era="${building.eraName === 'AllAge' ? '' : building.eraName}" data-callback_tt="eraComparison" class="helperTT">${FH.t('Eras.' + eraId)}</span>`);
+		h.push(`</div></div></td>`);
+
+		h.push(`<td></td><td></td>`); // amount + inventory
+
+		h.push(Productions.ratingValueCells(comparison, combinedRatingTypes, randomUnits));
+
+		h.push(`<td class="no-sort items">${randomItems}</td>`);
+		h.push(`<td class="no-sort era-compare-cell"><span class="btn btn-slim btn-delete icon remove-era-comparison" data-meta_id="${comparison.entityId}" data-era="${comparison.ratingEra}"></span></td>`);
+		h.push(`</tr>`);
+		return h.join('');
+	},
+
 	// grab special buildings that can be added to the rating
 	createAdditionalBuildings: () => {
 		if (Productions.AdditionalSpecialBuildings) return;
@@ -2580,6 +2742,55 @@ let Productions = {
 			},500)
 		})
 
+		// era comparison
+		const $ratingBody = $('#ProductionsRatingBody');
+		$ratingBody.off('click.eraCompare');
+
+		$ratingBody.on('click.eraCompare', '.compare-eras', function (e) {
+			e.stopPropagation();
+			let $cell = $(this).closest('td');
+			let isOpen = $cell.find('.chooseEra').length > 0;
+
+			$ratingBody.find('.chooseEra').remove();
+			if (isOpen) return;
+
+			let entityId = $(this).attr('data-meta_id');
+			let alreadyCompared = Productions.EraComparisons.filter(x => x.entityId === entityId).map(x => x.era);
+			let items = Productions.getComparableEras().map(eraName =>
+				`<span data-era="${eraName}" class="custom-option${alreadyCompared.includes(eraName) ? ' selected' : ''}">${FH.t('Eras.' + Technologies.Eras[eraName])}</span>`
+			).join('');
+
+			$cell.append(`<span class="custom-select dd-open chooseEra" data-meta_id="${entityId}"><span class="custom-options">${items}</span></span>`);
+		});
+
+		$ratingBody.on('click.eraCompare', '.chooseEra .custom-option', async function (e) {
+			e.stopPropagation();
+			let entityId = $(this).closest('.chooseEra').attr('data-meta_id');
+			let eraName = $(this).attr('data-era');
+			$ratingBody.find('.chooseEra').remove();
+
+			if (!entityId || !eraName) return;
+
+			Productions.EraComparisons.push({ entityId: entityId, era: eraName });
+			FH.helper.preloader.show('#ProductionsRating');
+			await Productions.CalcRatingBody();
+		});
+
+		$ratingBody.on('click.eraCompare', '.remove-era-comparison', async function (e) {
+			e.stopPropagation();
+			let entityId = $(this).attr('data-meta_id');
+			let eraName = $(this).attr('data-era');
+			Productions.EraComparisons = Productions.EraComparisons.filter(x => !(x.entityId === entityId && x.era === eraName));
+			FH.helper.preloader.show('#ProductionsRating');
+			await Productions.CalcRatingBody();
+		});
+
+		// close the era list when clicking anywhere else
+		$ratingBody.on('click.eraCompare', function (e) {
+			if ($(e.target).closest('.chooseEra').length === 0)
+				$ratingBody.find('.chooseEra').remove();
+		});
+
 		if (Productions.efficiencySettings.tilevalues !== $('#tilevalues').is(':checked')) $('#tilevalues').trigger("click")
 		if (Productions.efficiencySettings.showitems !== $('#showitems').is(':checked')) $('#showitems').trigger("click")
 		if (Productions.efficiencySettings.showhighlighted !== $('#showhighlighted').is(':checked')) $('#showhighlighted').trigger("click")
@@ -2722,6 +2933,10 @@ let Productions = {
 
 		$('.sortable-table').tableSorter();
 
+		// keep era comparisons below the building
+		$('#ProductionsRatingBody .sortable-table').on('click', 'tr.sorter-header th', () => Productions.reattachEraComparisons());
+		Productions.applyRatingSort();
+
 		$('.reset-button').on('click', function () {
 			if (window.confirm(FH.t('Boxes.ProductionsRating.ConfirmReset'))) {
 				Productions.Rating.resetActivePreset();
@@ -2772,6 +2987,9 @@ let Productions = {
 
 
 	CalcRatingBody: async (era = '') => {
+		// remember the sort of the current table, it is applied again after rendering
+		Productions.saveRatingSort();
+
 		if (Productions.RatingCurrentTab === 'Settings') {
 			Productions.CalcRatingSettingsOnly(era);
 			return;
@@ -2835,6 +3053,17 @@ let Productions = {
 		let selectedAdditionals = Object.values(Productions.AdditionalSpecialBuildings).filter(x=>x.selected).map(x=>x.id);
 
 		Productions.ratedBuildings = ratedBuildings = Productions.rateBuildings(uniqueBuildings,false,era).concat(Productions.rateBuildings(selectedAdditionals,true,era));
+
+		// era comparisons, grouped by the building they belong to
+		let eraComparisons = {};
+		for (const comparison of Productions.EraComparisons) {
+			let comparisonBuilding = Productions.createEraComparisonBuilding(comparison.entityId, comparison.era);
+			if (!comparisonBuilding) continue;
+			if (!eraComparisons[comparison.entityId]) eraComparisons[comparison.entityId] = [];
+			eraComparisons[comparison.entityId].push(comparisonBuilding);
+		}
+		for (const list of Object.values(eraComparisons))
+			list.sort((a, b) => Technologies.Eras[a.ratingEra] - Technologies.Eras[b.ratingEra]);
 
 		if (Productions.RatingCurrentTab === 'Results') {
 			FH.helper.preloader.show('#ProductionsRating');
@@ -2940,6 +3169,7 @@ let Productions = {
 			}
 
 			h.push('<th data-type="ratinglist" data-export="Items" class="no-sort items">Items</th>');
+			h.push('<th data-type="ratinglist" class="no-sort">x</th>');
 			h.push('</tr>');
 
 			h.push('</thead>');
@@ -3020,75 +3250,43 @@ let Productions = {
 				}
 				h.push('</td>')
 
-				for (const type of combinedRatingTypes) {
-					let firstType = type;
-					let secondType = null;
-					if (type.includes('att_def_')) {
-						firstType = type.replace('def_','');
-						secondType = type.replace('att_','');
-					}
+				h.push(Productions.ratingValueCells(building, combinedRatingTypes, randomUnits));
 
-					// normal boosts
-					if (secondType === null) {
-						h.push(`<td class="text-right${firstType==="units" ? " units":""} buildingvalue" data-number="${Math.round(parseFloat(building.rating[firstType]))}" ${firstType==="units" ? `data-original-title="${randomUnits}"`:""}>`)
-						h.push(FH.HTML.Format(building.rating[firstType]))
-						h.push('</td>')
-
-						let roundingFactor = building.rating[firstType+'-tile'] > 100 || building.rating[firstType+'-tile'] < -100 ? 1 : 100
-						let tileValue = Math.round(building.rating[firstType+'-tile'] * roundingFactor) / roundingFactor
-						h.push(`<td class="text-right${firstType==="units" ? " units":""} tilevalue" data-number="${tileValue}" ${firstType==="units" ? `data-original-title="${randomUnits}"`:""}>`)
-						h.push(FH.HTML.Format(tileValue))
-						h.push('</td>')
-					}
-					// combined attack boosts
-					else {
-						// Calculate combined value for building value
-						let firstValue = Math.round(building.rating[firstType]);
-						let secondValue = Math.round(building.rating[secondType]);
-						let combinedValue = (firstValue + secondValue);
-
-						h.push(`<td class="text-right buildingvalue" data-number="${combinedValue}">`)
-						h.push(FH.HTML.Format(building.rating[firstType]+building.rating[secondType]))
-						h.push('</td>')
-
-						// Calculate combined value for tile value - simplified to avoid precision errors
-						let firstTileValue = building.rating[firstType+'-tile'];
-						let secondTileValue = building.rating[secondType+'-tile'];
-
-						// Apply appropriate rounding based on value size
-						let roundFirstTile = firstTileValue > 100 || firstTileValue < -100 ?
-							Math.round(firstTileValue) : Math.round(firstTileValue * 100) / 100;
-
-						let roundSecondTile = secondTileValue > 100 || secondTileValue < -100 ?
-							Math.round(secondTileValue) : Math.round(secondTileValue * 100) / 100;
-
-						let tileValue = Math.round((roundFirstTile + roundSecondTile) * 10) / 10;
-
-						h.push(`<td class="text-right tilevalue" data-number="${tileValue}">`)
-						h.push(FH.HTML.Format(tileValue))
-						h.push('</td>')
-					}
-				}
-
-				h.push('<td class="no-sort items">'+randomItems+'</td>')
+				h.push('<td class="no-sort items">'+randomItems+'</td>');
+				// no era comparison possible
+				if (building.autoUpgrade || building.type === 'main_building' || building.type === 'greatbuilding')
+					h.push(`<td class="no-sort era-compare-cell"></td>`);
+				else
+					h.push(`<td class="no-sort era-compare-cell"><span class="btn btn-slim compare-eras" data-meta_id="${building.entityId}"><img src="${srcLinks.get('/shared/icons/reward_icons/reward_icon_one_down_kit.png', true)}" /></span></td>`);
 				h.push('</tr>')
+
+				// era comparisons are placed directly below their building (never created for auto upgrading buildings)
+				for (const comparison of (eraComparisons[building.entityId] || [])) {
+					let comparisonIndex = Productions.RatingRows.length;
+					Productions.RatingRows.push({
+						rating: comparison.rating,
+						length: comparison.size.length,
+						width: comparison.size.width
+					});
+					h.push(Productions.eraComparisonRow(building, comparison, combinedRatingTypes, tabClasses, comparisonIndex, buildingSize, rowIndex));
+				}
 			}
 
 			h.push('</tbody>');
 			h.push('<tfoot><tr class="highlighted-explained"><td colspan="'+(colNumber+3)+'">'+FH.t('Boxes.ProductionsRating.HighlightsExplained')+'</td></tr></tfoot>');
 			h.push('</table>');
-				h.push('<div class="overlay"><a class="window-close closeMetaBuilding"></a>')
-					h.push('<div class="content">')
-						h.push('<input id="findMetaBuilding" placeholder="'+FH.t('Boxes.ProductionsRating.FindSpecialBuilding')+': _gbg" value="">')
-						h.push('<ul class="results foe-table"></ul>')
-						h.push('<div class="btns">')
-						h.push('<a class="btn selectMetaBuildings">'+FH.t('Boxes.ProductionsRating.ToggleBuildingSelection')+'</a>')
-						h.push('<a class="btn clearMetaBuildings">'+FH.t('Boxes.ProductionsRating.ClearBuildingSelection')+'</a>')
-						h.push('<a class="btn closeMetaBuilding btn-green">'+FH.t('Boxes.ProductionsRating.AddBuildings')+'</a>')
-						h.push('</div>')
-					h.push('</div>')
-				h.push('</div>')
-			h.push('</div>');
+				h.push(`<div class="overlay"><a class="window-close closeMetaBuilding"></a>
+						<div class="content">
+							<input id="findMetaBuilding" placeholder="${FH.t('Boxes.ProductionsRating.FindSpecialBuilding')}: _gbg" value="">
+							<ul class="results foe-table"></ul>
+							<div class="btns">
+								<a class="btn selectMetaBuildings">${FH.t('Boxes.ProductionsRating.ToggleBuildingSelection')}</a>
+								<a class="btn clearMetaBuildings">${FH.t('Boxes.ProductionsRating.ClearBuildingSelection')}</a>
+								<a class="btn closeMetaBuilding btn-green">${FH.t('Boxes.ProductionsRating.AddBuildings')}</a>
+							</div>
+						</div>
+					</div>
+				</div>`);
 		}
 		else {
 			h.push('Something went wrong');
@@ -3193,12 +3391,15 @@ let Productions = {
 		size += ((building.size.width === 1 || building.size.length === 1) ? building.needsStreet * 0.5 : building.needsStreet);
 
 		let score = {totalScore:0};
+		let units = null; // split once, used by "units" and "units-next"
 
 		for (const type of Object.keys(Productions.Rating.Data)) {
 			if (Productions.Rating.Data[type].active) {
 				let desiredValuePerTile = parseFloat(Productions.Rating.Data[type].perTile) || 0;
 				if (desiredValuePerTile !== null && !isNaN(desiredValuePerTile)) {
-					let typeValue = Productions.getRatingValueForType(building, type) || 0; // production amount
+					let isUnits = type === 'units' || type === 'units-next';
+					if (isUnits && !units) units = Productions.splitRatingUnits(building);
+					let typeValue = Productions.getRatingValueForType(building, type, units) || 0; // production amount
 					let valuePerTile = typeValue / size;
 
 					if (valuePerTile !== 0 && desiredValuePerTile !== 0)  
@@ -3206,6 +3407,13 @@ let Productions = {
 
 					score[type] = ( Math.round( typeValue * 100 ) / 100 ) || 0;
 					score[type+'-tile'] = valuePerTile || 0;
+
+					// units of different eras are not part of the score
+					if (isUnits) {
+						let wrongValue = units.wrong[type] || 0;
+						score[type+'-wrong'] = ( Math.round( wrongValue * 100 ) / 100 ) || 0;
+						score[type+'-wrong-tile'] = (wrongValue / size) || 0;
+					}
 				}
 			}
 		}
@@ -3219,18 +3427,44 @@ let Productions = {
 
 	isNextEraUnit: (building, unitName) => {
 		if (!String(unitName).includes('next')) return false;
-		let eraName = (building.eraName === 'AllAge' || !building.eraName) ? FH.CurrentEra : building.eraName;
+		let eraName = (building.eraName === 'AllAge' || !building.eraName) ? (building.ratingEra || FH.CurrentEra) : building.eraName;
 		return Technologies.Eras[eraName] < Technologies.getMaxEra();
 	},
 
 
-	getRatingUnits: (building, next = false) => {
-		let units = Productions.getBuildingProductionByCategory(false, building, 'units').units;
-		let sum = 0;
+	/**
+	 * Splits the units of a building into the rating columns, matched against the player's own era
+	 * (also for era comparisons): units of the player's era count as "units", units of the next era as "units-next".
+	 * Units of any other era stay in their original column, but do not count ("wrong").
+	 * Rogues and era independent units (era 0) always count.
+	 * @param {object} building
+	 * @returns {{units: number, 'units-next': number, wrong: {units: number, 'units-next': number}}}
+	 */
+	splitRatingUnits: (building) => {
+		let units = Productions.getBuildingProductionByCategory(false, building, 'units').units || [];
+		let playerEra = Technologies.Eras[Productions.getPlayerEra()];
+		let result = {'units': 0, 'units-next': 0, wrong: {'units': 0, 'units-next': 0}};
+
 		for (const u of units) {
-			if (!!u.next === next) sum += (u.amount || 0) + (u.random || 0);
+			let amount = (u.amount || 0) + (u.random || 0);
+			let originalColumn = u.next ? 'units-next' : 'units';
+
+			if (!u.era || u.type === 'rogue')
+				result[originalColumn] += amount;
+			else if (u.era === playerEra)
+				result['units'] += amount;
+			else if (u.era === playerEra + 1)
+				result['units-next'] += amount;
+			else
+				result.wrong[originalColumn] += amount;
 		}
-		return sum;
+		return result;
+	},
+
+
+	// era of the city shown: the other player's when visiting, otherwise the own
+	getPlayerEra: () => {
+		return FH.ActiveMap === "OtherPlayer" ? CityMap.OtherPlayer.eraName : FH.CurrentEra;
 	},
 
 
@@ -3239,9 +3473,14 @@ let Productions = {
 	},
 
 
-	getRatingValueForType: (building, type) => {
+	/**
+	 * @param {object} building
+	 * @param {string} type rating type
+	 * @param {object} [units] result of splitRatingUnits, if already available
+	 */
+	getRatingValueForType: (building, type, units = null) => {
 		if (type === "units" || type === "units-next")
-			return Productions.getRatingUnits(building, type === "units-next");
+			return (units || Productions.splitRatingUnits(building))[type];
 		else if (type === "happiness")
 			return building.happiness;
 		else if (type === "population")
@@ -3285,7 +3524,8 @@ let Productions = {
 
 		else if (type.includes("goods") && !type.includes("guild_raids_")) {
 			let allGoods = CityBuildings.getBuildingGoodsByEra(false, building);
-			let era = (FH.ActiveMap === "OtherPlayer" ? CityMap.OtherPlayer.eraName : FH.CurrentEra)
+			// era comparisons match goods against the chosen era instead of the city's era
+			let era = building.ratingEra || Productions.getPlayerEra()
 
 			if (allGoods !== undefined) {
 				let prevEra = Technologies.InnoEras[era]-1;
@@ -3785,3 +4025,15 @@ FH.proxy.addCustomHandler('InventoryUpdated',()=>{
 });
 
 FH.Tooltips.addCallback('Efficiency', Productions.efficiencyTT);
+
+// era comparison row: building in its own era next to the building in the compared era
+FH.Tooltips.addCallback('eraComparison', (e) => {
+	let data = e?.currentTarget?.dataset;
+	if (!data?.meta_id) return;
+	let baseEra = data.base_era || Productions.getPlayerEra();
+	let label = (era) => FH.t('Eras.' + Technologies.Eras[era]);
+	return FH.Tooltips.BuildingsSideBySide([
+		{id: data.meta_id, era: baseEra, eff: Number(data.base_eff), label: label(baseEra)},
+		{id: data.meta_id, era: data.era, eff: Number(data.eff), label: label(data.era)}
+	]);
+});

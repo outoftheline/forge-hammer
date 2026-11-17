@@ -1534,7 +1534,7 @@ a:hover, input[type="radio"], .clickable {
 	font-family: inherit;
 	font-size: 0.8rem;
 	line-height: 18px;
-	padding: 2px 5px;
+	padding: 2px 3px;
 	border-radius: 2px;
 	box-sizing: border-box;
 }

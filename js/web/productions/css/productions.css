@@ -27,7 +27,7 @@
 	overflow-y: auto;
 	height: calc(100% - 39px);
 }
-#Productions strong.success, #Productions span.success {
+#Productions strong.success, #Productions span.success, #ProductionsRatingBody tr.era-comparison .score-diff.pos {
 	color: var(--success);
 }
 #Productions .show-entity {
@@ -356,7 +356,7 @@
 	color: var(--text-medium);
 	font-weight: bold;
 }
-#ProductionsRatingBody .advanced-filter .af-remove:hover {
+#ProductionsRatingBody .advanced-filter .af-remove:hover, #ProductionsRatingBody tr.era-comparison .score-diff.neg {
 	color: var(--danger-red);
 }
 #ProductionsRatingBody .advanced-filter .af-type-select {
@@ -686,14 +686,15 @@ input[id*="ProdPerTile"] {
 	padding: 1px 5px;
 	border-radius: 7px;
 }
-/* per-building score modifier */
+
+
 #ProductionsRatingBody .score-value {
 	padding: 0 10px;
 }
 #ProductionsRatingBody .score-cell:hover .score-value {
 	padding: 0;
 }
-#ProductionsRatingBody td.score-cell.has-modifier .score-value {
+#ProductionsRatingBody .score-cell.has-modifier .score-value {
 	text-decoration: underline dotted;
 }
 #ProductionsRatingBody .score-value.pos::after, #ProductionsRatingBody .score-value.neg::after {
@@ -719,10 +720,8 @@ input[id*="ProdPerTile"] {
 	font-weight: normal;
 	padding: 1px 4px;
 }
-/* score modifiers management box */
+
 #ScoreModifiersBody {
-	/* no top padding: it's the scroll container, and top padding leaves a gap
-	   above the sticky table header that scrolled rows show through */
 	padding: 0 8px 8px;
 	overflow-y: auto;
 }
@@ -851,13 +850,8 @@ input[id*="ProdPerTile"] {
 	margin-top: 5px;
 }
 
-#BoostList {
-	height: 400px;
-}
-
-#BoostListBody {
-	overflow: auto;
-}
+#BoostList { height: 400px; }
+#BoostListBody { overflow: auto; }
 
 #buildingsize {
 	width: 45px;
@@ -947,4 +941,46 @@ input[id*="ProdPerTile"] {
 
 .popup-body #HelperWarning {
 	display: none !important;
+}
+
+#ProductionsRatingBody td.era-compare-cell {
+	position: relative;
+	text-align: center;
+}
+#ProductionsRatingBody .compare-eras img, #ProductionsRatingBody .remove-era-comparison.btn-delete {
+	height: 16px;
+	width: 16px;
+	min-height: auto;
+	vertical-align: middle;
+}
+/* era list: the shared custom-select dropdown (as in the advanced filter), opened to the left of the button */
+#ProductionsRatingBody .chooseEra {
+	position: absolute;
+	top: 0;
+	right: 100%;
+	text-align: left;
+	text-shadow: none;
+}
+#ProductionsRatingBody .chooseEra .custom-options {
+	top: 0;
+	left: auto;
+	right: 0;
+	width: 11rem;
+	max-height: 260px;
+	z-index: 2200;
+	box-shadow: 0 1px 3px var(--black-50);
+}
+#ProductionsRatingBody .chooseEra .custom-option.selected {
+	pointer-events: none;
+}
+#ProductionsRatingBody tr.era-comparison td {
+	font-style: italic;
+	background: var(--table-bg-darker);
+}
+#ProductionsRatingBody .era-comparison td:nth-child(2) > div {
+	margin-left: 25px;
+}
+#ProductionsRatingBody .linethrough {
+	text-decoration: line-through;
+	opacity: 0.6;
 }
