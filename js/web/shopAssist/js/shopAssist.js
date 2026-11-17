@@ -506,70 +506,10 @@ let shopAssist = {
 
 	TT: async (e) => {
 		let buildingIds=e?.currentTarget?.dataset?.ids.split(",")
-        if (!buildingIds) return
+		if (!buildingIds) return
 
-        let eff = Object.assign({},...Productions.rateBuildings(buildingIds,true,FH.CurrentEra)?.map(x=>({[x.entityId]:Math.round(100 * x.rating?.totalScore||0)})))
-		let meta = Object.assign({},...buildingIds.map(x=>({[x]:FH.Main.CityEntities[x]})))
-
-		let upgrades = Object.assign({},...buildingIds.map(x=>{
-			return{[x]:Kits.UpgradeSpan(x)}
-		}))
-        
-        let h = `<div class="buildingTT">
-				<table class="foe-table">`
-		let head = ``
-		let body = ``
-		
-		let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-		let limit = Math.floor(vw/330)
-
-		for (let b of buildingIds) {		
-			if (buildingIds.length<=limit) {
-				head +=`
-					<td class="ShopAssistTT">
-						<h2>
-							<span>${meta[b].name}  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</span>
-							${upgrades[b]}
-						</h2>
-					</td>`
-				body += `
-					<td class="ShopAssistTT">
-						${await FH.Tooltips.BuildingData(meta[b],FH.CurrentEra,null, eff)}
-        				<table class="HXBuilding">
-							<tr>
-								<th>
-										${FH.t("Boxes.Tooltip.Building.size+time")}
-								</th>
-							</tr>
-							<tr>
-								<td>
-									${await FH.Tooltips.SizeTimeRoadData(meta[b])}
-								</td>
-							</tr>
-						</table>
-					</td>`
-			} else {
-				head +=`<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${meta[b].name}</td><td>  ${eff[b] ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff[b]})`:''}</td><td>${upgrades[b]}</td></tr>`
-			}
-		}
-		if (buildingIds.length<=limit) {
-			h+=`<tr>`+head+`</tr>`
-			h+=`<tr>`+body+`</tr>`
-		} else {
-			h+=head
-		}
-		h+=`</table></div>`
-
-        setTimeout(()=>{
-            $(".handleOverflow").each((index,e)=>{
-                let w= ((e.scrollWidth - e.parentNode.clientWidth) || 0)
-                if (w<0)
-                    e.style["animation-name"]="unset"
-                else 
-                    e.style.width = w + "px";
-            })
-        },100)
-        return h
+		let eff = Object.assign({},...Productions.rateBuildings(buildingIds,true,FH.CurrentEra)?.map(x=>({[x.entityId]:Math.round(100 * x.rating?.totalScore||0)})))
+		return FH.Tooltips.BuildingsSideBySide(buildingIds.map(id => ({id: id, era: FH.CurrentEra, eff: eff[id]})))
 	},
 	
 	allTT: async (e) => {

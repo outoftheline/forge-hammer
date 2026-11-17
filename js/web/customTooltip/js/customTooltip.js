@@ -239,6 +239,61 @@ let Tooltips = {
         },100)
         return h
     },
+
+    // compare building stats (for era or upgrade comparison)
+    BuildingsSideBySide: async (entries) => {
+        if (!entries?.length) return
+
+        let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+        let limit = Math.floor(vw/330)
+        let head = ``
+        let body = ``
+
+        for (let entry of entries) {
+            let meta = FH.Main.CityEntities[entry.id]
+            if (!meta) continue
+            let era = entry.era || FH.CurrentEra
+            let eff = entry.eff ? Math.round(entry.eff) : null
+            let effText = eff ? `(${FH.t("Boxes.Kits.Efficiency")}: ${eff})` : ''
+            let name = meta.name + (entry.label ? ` - ${entry.label}` : '')
+            let upgrades = Kits.UpgradeSpan(entry.id)
+
+            if (entries.length <= limit) {
+                head += `
+                    <td class="buildingTTcolumn">
+                        <h2>
+                            <span>${name}  ${effText}</span>
+                            ${upgrades}
+                        </h2>
+                    </td>`
+                body += `
+                    <td class="buildingTTcolumn">
+                        ${await Tooltips.BuildingData(meta, era, null, eff)}
+                        <table class="HXBuilding">
+                            <tr><th>${FH.t("Boxes.Tooltip.Building.size+time")}</th></tr>
+                            <tr><td>${await Tooltips.SizeTimeRoadData(meta)}</td></tr>
+                        </table>
+                    </td>`
+            } else {
+                head += `<tr style="text-wrap-mode:nowrap"><td><span style="font-weight:600">${name}</span></td><td>  ${effText}</td><td>${upgrades}</td></tr>`
+            }
+        }
+
+        let h = `<div class="buildingTT"><table class="foe-table">`
+        h += entries.length <= limit ? `<tr>${head}</tr><tr>${body}</tr>` : head
+        h += `</table></div>`
+
+        setTimeout(()=>{
+            $(".handleOverflow").each((index,e)=>{
+                let w= ((e.scrollWidth - e.parentNode.clientWidth) || 0)
+                if (w<0)
+                    e.style["animation-name"]="unset"
+                else
+                    e.style.width = w + "px";
+            })
+        },100)
+        return h
+    },
     genericEval: (rew) => {
         let [x1,amount,name] = rew.name.match(/^([+\-]?\d*)x? (.*)$/)||["",1,rew.name]
         amount = Number(amount)
@@ -1123,6 +1178,7 @@ FH.Tooltips = {
 	containerFor: Tooltips.containerFor,
 	BuildingData: Tooltips.BuildingData,
 	SizeTimeRoadData: Tooltips.SizeTimeRoadData,
+	BuildingsSideBySide: Tooltips.BuildingsSideBySide,
 	addCallback: Tooltips.addCallback
 };
 FH.QIActions = {setCapacity: QIActions.setCapacity};
