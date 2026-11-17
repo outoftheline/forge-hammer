@@ -1260,18 +1260,19 @@ let GreatBuildings = {
 
 
     HandleEventPage: (Events) => {
+        if (!GreatBuildings.GreatBuildingEntityCache) {
+            if (!FH.Main.CityEntities) return;
+            GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
+        }
+
         for (let i = 0; i < Events.length; i++) {
             let Event = Events[i];
             let ID = Event['id'];
 
-            if (GreatBuildings.EventDict[ID]) continue; //Event schon behandelt
+            if (GreatBuildings.EventDict[ID]) continue;
             GreatBuildings.EventDict[ID] = Event;
 
             if (Event['type'] !== 'great_building_contribution') continue;
-
-            if (!GreatBuildings.GreatBuildingEntityCache && Object.values(FH.Main.CityEntities) !== undefined) {
-                GreatBuildings.GreatBuildingEntityCache = Object.values(FH.Main.CityEntities).filter(obj => (obj['strategy_points_for_upgrade'] !== undefined));
-            }
 
             let Entity = GreatBuildings.GreatBuildingEntityCache.find(obj => (obj['name'] === Event['great_building_name']))
             if (!Entity) continue;
