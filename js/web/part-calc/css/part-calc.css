@@ -443,9 +443,11 @@
 	margin: 0 3px;
 }
 
-#PowerLevelingBox #PowerLevelingBoxBody .foe-table td.pl-unlock-tooltip {
+#PowerLevelingBox .foe-table td.pl-unlock-tooltip,
+#PowerLevelingBox .foe-table .pl-cumulative-tooltip {
 	cursor: help;
 	text-decoration: underline dotted;
+	text-underline-offset: 2px;
 }
 
 .pl-unlock-tt {

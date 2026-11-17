@@ -284,7 +284,7 @@ select option {
     position: absolute;
     top: 5px;
     display: flex;
-    gap: 3px;
+    gap: 7px;
 }
 
 #map .buttons.left {

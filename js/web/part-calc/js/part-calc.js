@@ -1693,7 +1693,10 @@ let Parts = {
 			UnlockCosts
 		} = Parts.PowerLevelingData;
 
+		let OwnPartCumulative = 0;
+
 		for (let i = StartLevel; i < EndLevel; i++) {
+			OwnPartCumulative += EigenNettos[i];
 			h.push('<tr>');
 			// Unlock costs of the level as html tooltip on the level cell
 			let UnlockTT = HasUnlockCosts && UnlockCosts[i]?.length ? Parts.GetUnlockTooltipHTML(UnlockCosts[i]) : '';
@@ -1708,7 +1711,8 @@ let Parts = {
 				h.push('<td class="success no-select"><strong>' + FH.HTML.Format(EigenBruttos[i]) + '</strong></td>');
 				h.push('<td class="no-select">' + FH.HTML.Format(FH.Main.round(DoubleCollections[i])) + '</td>');
 			}
-			h.push('<td><strong class="info no-select">' + FH.HTML.Format(FH.Main.round(EigenNettos[i])) + '</strong></td>');
+			let CumulativeTT = StartLevel+' → '+ (i + 1) +': '+ FH.HTML.Format(FH.Main.round(OwnPartCumulative));
+			h.push(`<td><strong class="info no-select pl-cumulative-tooltip" data-original-title="${CumulativeTT}">${FH.HTML.Format(FH.Main.round(EigenNettos[i]))}</strong></td>`);
 			h.push('<td><span class="hidden-text">' + i + '</span><span class="btn btn-slim button-powerlevel-copy">' + FH.t('Boxes.PowerLeveling.CopyValues') + '</span></td>');
 			h.push('</tr>');
 		}
