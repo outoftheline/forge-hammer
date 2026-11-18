@@ -97,11 +97,18 @@
 #OwnPartBox .header .player-name.isSelf {
 	display: none;
 }
+#OwnPartBox .header .btn { 
+	line-height: 19px;
+}
 
 #OwnPartBox .gbLevels {
 	margin: 0 0 3px;
 }
 
+.btn.arkBonus {
+	font-weight: bold;
+	font-size: 105%;
+}
 #OwnPartBox .btn-set-arc.btn-active, #OwnPartBox .btn-toggle-arc.btn-active {
 	position: relative;
 }

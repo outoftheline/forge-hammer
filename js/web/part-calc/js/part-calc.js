@@ -901,7 +901,7 @@ let Parts = {
 		// different arc bonus-buttons
 		let investmentSteps = Parts.GetContributionFactors(Tier === 'gold' ? 'gold' : 'copper');
 		investmentSteps.forEach(bonus => {
-			h.push(`<button class="btn btn-mid btn-set-arc${(Parts.ArcPercents[0] === bonus ? ' btn-active' : '')}" data-value="${bonus}">${bonus}%</button>`);
+			h.push(`<button class="btn btn-mid btn-set-arc${(Parts.ArcPercents[0] === bonus ? ' btn-active' : '')}${(bonus === Parts.GetContributionBoost(Tier) ? ' arkBonus' : '')}" data-value="${bonus}">${bonus}%</button>`);
 		});
 
 		h.push('</span>');
@@ -1884,7 +1884,7 @@ let Parts = {
 			let Active = Tier === 'gold' ? BoostGold : BoostCopper;
 			h.push('<div class="pl-arc-row gbTier-' + Tier + '"><span class="pl-arc-label"><img src="'+srcLinks.get(`/city/gui/great_building_bonus_icons/great_building_bonus_contribution_boost${Tier === 'gold' ? '_gold' : ''}.png`,true)+'" /></span><span class="btn-group">');
 			for (let Bonus of Parts.GetContributionFactors(Tier)) {
-				h.push('<button class="btn btn-mid btn-pl-arc' + (Bonus === Active ? ' btn-active' : '') + '" data-tier="' + Tier + '" data-value="' + Bonus + '">' + Bonus + '%</button>');
+				h.push('<button class="btn btn-mid btn-pl-arc' + (Bonus === Active ? ' btn-active' : '') + (Bonus === Parts.GetContributionBoost(Tier) ? ' arkBonus' : '') + '" data-tier="' + Tier + '" data-value="' + Bonus + '">' + Bonus + '%</button>');
 			}
 			h.push('</span></div>');
 		}
