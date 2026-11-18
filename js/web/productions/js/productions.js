@@ -363,6 +363,8 @@ let Productions = {
 		Ops: ['gt','lt','eq'], 
 		OpSymbols: {gt:'>', lt:'<', eq:'='},
 		Sizes: ['length','width'],
+		Traits: ['noStreet','ally','fspDisabled'],
+		TraitStates: ['', 'yes', 'no'],
 
 		getDefaultState: () => ({
 			open: false,
@@ -371,6 +373,7 @@ let Productions = {
 				length: {op:'', value:''},
 				width:  {op:'', value:''}
 			},
+			traits: {noStreet:'', ally:'', fspDisabled:''},
 			criteria: []
 		}),
 
@@ -388,6 +391,9 @@ let Productions = {
 				state.size[dim].op = AF.Ops.includes(size.op) ? size.op : '';
 				state.size[dim].value = (size.value === null || size.value === undefined) ? '' : String(size.value);
 			}
+
+			for (let trait of AF.Traits)
+				state.traits[trait] = AF.TraitStates.includes(stored.traits?.[trait]) ? stored.traits[trait] : '';
 
 			if (Array.isArray(stored.criteria)) {
 				for (let criterion of stored.criteria) {
@@ -441,6 +447,49 @@ let Productions = {
 					active.push({dim: dim, op: state.size[dim].op, target: target});
 			}
 			return active;
+		},
+
+		getSelectedTraits: () => {
+			const AF = Productions.AdvancedFilter;
+			let traits = AF.load().traits;
+			return AF.Traits.filter(trait => traits[trait] !== '').map(trait => ({trait: trait, want: traits[trait] === 'yes'}));
+		},
+
+		rowData: (building) => ({
+			rating: building.rating,
+			length: building.size.length,
+			width: building.size.width,
+			noStreet: !building.needsStreet,
+			ally: !!building.allyRoom,
+			fspDisabled: !!building.isInstantFinishDisabled
+		}),
+
+		traitInfo: () => ({
+			noStreet:    {title: FH.t('Boxes.CityMap.roadless'),      icon: `<img src="${srcLinks.get('/shared/gui/buffbar/buffbar_icon_buff_unconnected.png', true)}" />`},
+			ally:        {title: FH.t('Boxes.Tooltip.Building.allyRooms'),   icon: srcLinks.icons('historical_allies_slot_tooltip_icon_empty')},
+			fspDisabled: {title: FH.t('Boxes.Tooltip.Building.fspDisabled'), icon: `<img src="${srcLinks.get('/shared/icons/icon_fsp_disabled.png', true)}" />`}
+		}),
+
+		traitTitle: (trait, state) => {
+			let stateText = FH.t('Boxes.ProductionsRating.AdvancedTrait' + (state === 'yes' ? 'Yes' : (state === 'no' ? 'No' : 'Off')));
+			return `${Productions.AdvancedFilter.traitInfo()[trait].title}: ${stateText}`;
+		},
+
+		traitToggle: (trait) => {
+			const AF = Productions.AdvancedFilter;
+			let state = AF.load().traits[trait];
+			return `<a class="af-trait game-cursor" data-trait="${trait}" data-state="${state}" data-original-title="${AF.traitTitle(trait, state)}">${AF.traitInfo()[trait].icon}</a>`;
+		},
+
+		setTrait: ($toggle, value) => {
+			const AF = Productions.AdvancedFilter;
+			let trait = $toggle.data('trait');
+			if (!AF.Traits.includes(trait)) return;
+			AF.load().traits[trait] = value;
+			AF.save();
+			$toggle.attr('data-state', value).attr('data-original-title', AF.traitTitle(trait, value));
+			if ($toggle.is(':hover')) $toggle.tooltip('show');
+			AF.apply();
 		},
 
 
@@ -531,6 +580,10 @@ let Productions = {
 						<input type="number" class="af-size-value" data-dim="width" min="1" step="1" value="${state.size.width.value}">
 					</span>
 				</div>
+				<div class="af-group af-traits flex gap">
+					<span class="af-group-title">${FH.t('Boxes.ProductionsRating.AdvancedTraits')}</span>
+					${AF.Traits.map(trait => AF.traitToggle(trait)).join('')}
+				</div>
 				<div class="af-group af-values flex gap">
 					<span class="af-group-title">${FH.t('Boxes.ProductionsRating.AdvancedValues')}</span>
 					<span class="custom-select af-type-select">
@@ -562,6 +615,10 @@ let Productions = {
 			$panel.find('.af-match').val(state.match);
 			$panel.find('.af-dim-op').each(function () { $(this).val(state.size[$(this).data('dim')].op); });
 			$panel.find('.af-size-value').each(function () { $(this).val(state.size[$(this).data('dim')].value); });
+			$panel.find('.af-trait').each(function () {
+				let trait = $(this).data('trait');
+				$(this).attr('data-state', state.traits[trait]).attr('data-original-title', AF.traitTitle(trait, state.traits[trait]));
+			});
 			$panel.toggleClass('open', !!state.open);
 
 			let $tooltips = $panel.find('[data-original-title]');
@@ -576,8 +633,10 @@ let Productions = {
 			let rows = Productions.RatingRows || [];
 			let sizes = AF.getSelectedSizes();
 			let criteria = AF.getSelectedFilters();
+			let traits = AF.getSelectedTraits();
 			let matchAny = AF.load().match === 'any';
-			let isActive = (sizes.length + criteria.length) > 0;
+			let activeCount = sizes.length + traits.length + criteria.length;
+			let isActive = activeCount > 0;
 
 			$('#ProductionsRatingBody .ratinglist tr').each(function () {
 				let row = rows[parseInt(this.dataset.ridx, 10)];
@@ -589,6 +648,8 @@ let Productions = {
 						matched = false;
 						break;
 					}
+					if (matched)
+						matched = traits.every(t => row[t.trait] === t.want);
 					if (matched && criteria.length > 0) {
 						matched = matchAny
 							? criteria.some(criterion => AF.test(AF.value(row, criterion.type), criterion.op, criterion.target))
@@ -600,7 +661,7 @@ let Productions = {
 			});
 
 			$('#efficiencyAdvancedToggle').toggleClass('active', isActive)
-				.find('.af-badge').text(isActive ? (sizes.length + criteria.length) : '');
+				.find('.af-badge').text(isActive ? activeCount : '');
 		},
 
 
@@ -669,6 +730,18 @@ let Productions = {
 				AF.load().size[$(this).data('dim')].value = $(this).val();
 				AF.save();
 				AF.apply();
+			});
+
+			$body.on('click.advfilter', '.af-trait', function (e) {
+				e.preventDefault();
+				let current = AF.load().traits[$(this).data('trait')] || '';
+				let next = AF.TraitStates[(AF.TraitStates.indexOf(current) + 1) % AF.TraitStates.length];
+				AF.setTrait($(this), next);
+			});
+
+			$body.on('contextmenu.advfilter', '.af-trait', function (e) {
+				e.preventDefault();
+				AF.setTrait($(this), '');
 			});
 
 			$body.on('click.advfilter', '.af-reset', function () {
@@ -3169,7 +3242,7 @@ let Productions = {
 			}
 
 			h.push('<th data-type="ratinglist" data-export="Items" class="no-sort items">Items</th>');
-			h.push('<th data-type="ratinglist" class="no-sort">x</th>');
+			h.push('<th data-type="ratinglist" class="no-sort"></th>');
 			h.push('</tr>');
 
 			h.push('</thead>');
@@ -3199,11 +3272,7 @@ let Productions = {
 
 				// snapshot the rating once + remember the footprint for the advanced filter
 				let rowIndex = Productions.RatingRows.length;
-				Productions.RatingRows.push({
-					rating: building.rating,
-					length: building.size.length,
-					width: building.size.width
-				});
+				Productions.RatingRows.push(Productions.AdvancedFilter.rowData(building));
 
 				[randomItems,randomUnits] = Productions.showBuildingItems(false, building)
 				h.push(`<tr data-ridx="${rowIndex}" class="${tabClasses.join(' ')} ${building.type==='greatbuilding'?'gb ':''}${building.isLimited?'limited ':''}${building.highlight?'additional bg-blue ':''}${building.isInInventory?'inventory-building ':''}">`)
@@ -3263,11 +3332,7 @@ let Productions = {
 				// era comparisons are placed directly below their building (never created for auto upgrading buildings)
 				for (const comparison of (eraComparisons[building.entityId] || [])) {
 					let comparisonIndex = Productions.RatingRows.length;
-					Productions.RatingRows.push({
-						rating: comparison.rating,
-						length: comparison.size.length,
-						width: comparison.size.width
-					});
+					Productions.RatingRows.push(Productions.AdvancedFilter.rowData(comparison));
 					h.push(Productions.eraComparisonRow(building, comparison, combinedRatingTypes, tabClasses, comparisonIndex, buildingSize, rowIndex));
 				}
 			}

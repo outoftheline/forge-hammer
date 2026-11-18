@@ -317,6 +317,54 @@
 	align-items: center;
 	gap: 3px;
 }
+
+#ProductionsRatingBody .advanced-filter .af-trait {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	padding: 1px;
+	border-radius: 3px;
+	user-select: none;
+}
+#ProductionsRatingBody .advanced-filter .af-trait img {
+	height: 20px;
+	width: auto;
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state=""] img {
+	filter: grayscale(1);
+	opacity: 0.5;
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state=""]:hover img {
+	opacity: 0.8;
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="yes"] {
+	background: var(--table-bg-success);
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="no"] {
+	background: var(--table-bg-error);
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="yes"]::after,
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="no"]::after {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	width: 11px;
+	height: 11px;
+	border-radius: 50%;
+	font-size: 8px;
+	line-height: 11px;
+	text-align: center;
+	color: var(--white);
+	pointer-events: none;
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="yes"]::after {
+	content: '✓';
+	background: var(--success);
+}
+#ProductionsRatingBody .advanced-filter .af-trait[data-state="no"]::after {
+	content: '✕';
+	background: var(--danger-red);
+}
 #ProductionsRatingBody .advanced-filter .af-size-value {
 	width: 25px;
 }
