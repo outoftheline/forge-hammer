@@ -2015,12 +2015,12 @@ let Main = {
 				
 				// gather sums of all boosts
 				if (buildingId!=0 && r.allyBoosts !== null) {
-					for (let boost of r.allyBoosts) {
-						let bBoost = Main.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.targetedFeature);
+					for (let boost of Main.Allies.boostsArray(r.allyBoosts)) {
+						let bBoost = Main.Allies.buildingBoostSums.find(x => x.type === boost.type && x.targetedFeature === boost.feature);
 						if (bBoost)
 							bBoost.value += boost.value;
 						else
-							Main.Allies.buildingBoostSums.push(structuredClone(boost));
+							Main.Allies.buildingBoostSums.push({type: boost.type, targetedFeature: boost.feature, value: boost.value});
 					}
 				}
 			}
