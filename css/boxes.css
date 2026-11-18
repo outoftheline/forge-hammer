@@ -47,7 +47,7 @@ a[target="_blank"]:hover, a.link:hover {
 
 a[target="_blank"] svg {
 	fill: var(--info-blue);
-	width: 12px;
+	width: 10px;
 	height: 10px;
 }
 
