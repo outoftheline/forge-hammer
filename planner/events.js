@@ -386,6 +386,11 @@ window.PlannerApp = window.PlannerApp || {};
         if (state.placingBuilding) return;
         if (e.altKey || e.ctrlKey) return;
 
+        if (state.expansionMode) {
+            app.handleExpansionClick(app.getCanvasPointElem(e));
+            return;
+        }
+
         if (state.streetPlacement.active) {
             const point = app.getCanvasPointElem(e);
             const tile = app.worldToTile(point.x, point.y);
@@ -431,6 +436,11 @@ window.PlannerApp = window.PlannerApp || {};
 
     function handleCanvasMouseMove(e) {
         state.lastMouseElem = app.getCanvasPointElem(e);
+
+        if (state.expansionMode) {
+            app.handleExpansionHover(state.lastMouseElem);
+            return;
+        }
 
         if (state.streetPlacement.active) {
             const currentTile = app.worldToTile(state.lastMouseElem.x, state.lastMouseElem.y);
@@ -618,6 +628,7 @@ window.PlannerApp = window.PlannerApp || {};
             cancelStreetPlacement();
             return;
         }
+        if (state.expansionMode) app.setExpansionMode(false);
         state.placingBuilding = null;
         state.dragCopy = null;
         state.streetPlacement.active = true;
@@ -698,7 +709,7 @@ window.PlannerApp = window.PlannerApp || {};
 
             if (e.altKey) mode = 'pan';
             else if (e.ctrlKey) mode = 'select';
-            else if (state.eraMode) mode = 'pan'; // no moving in era mode
+            else if (state.eraMode || state.expansionMode) mode = 'pan'; // no moving in era / expansion mode
             else {
                 const p = app.getCanvasPointElem(e);
 
@@ -1131,6 +1142,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         bindModalCloseHandlers();
         if (app.bindEraEvents) app.bindEraEvents();
+        if (app.bindExpansionEvents) app.bindExpansionEvents();
 
         dom.informationBtn.addEventListener('click', () => {
             openModal(document.querySelector('#information'));
@@ -1412,6 +1424,11 @@ window.PlannerApp = window.PlannerApp || {};
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
 
+            if (state.expansionMode) {
+                app.setExpansionMode(false);
+                return;
+            }
+
             if (state.streetPlacement.active) {
                 cancelStreetPlacement();
                 return;
@@ -1500,5 +1517,6 @@ window.PlannerApp = window.PlannerApp || {};
 
     app.bindEvents = bindEvents;
     app.renderStreetSizeOptions = renderStreetSizeOptions;
+    app.cancelStreetPlacement = cancelStreetPlacement;
     app.clearSelection = clearSelection;
 })(window.PlannerApp);

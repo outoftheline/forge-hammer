@@ -386,11 +386,13 @@ window.PlannerApp = window.PlannerApp || {};
         const { cityData, playerId } = sanitizeCityData(data.CityMapData || {});
         state.cityData = cityData;
         state.mapData = data.UnlockedAreas;
+        state.blockedAreas = app.normalizeBlockedAreas(data.BlockedAreas);
         state.currentEra = data.currentEra || null;
 
         state.originalData = {
             cityData: state.cityData,
             mapData: data.UnlockedAreas,
+            blockedAreas: state.blockedAreas,
             currentEra: data.currentEra || null
         };
 
@@ -536,11 +538,16 @@ window.PlannerApp = window.PlannerApp || {};
         ];
     }
 
+    function getPlannedAreasForSave() {
+        return app.getPlannedAreas().map(a => ({ x: a.x, y: a.y }));
+    }
+
     async function createNewPlanRecord(world, planName, playerId, playerName, boostData, mapData) {
         const data = await callBackground({
             type: 'Planner.newPlan',
             world, planName, playerId, playerName, boostData, mapData,
-            originalData: state.originalData || null
+            originalData: state.originalData || null,
+            areas: getPlannedAreasForSave()
         });
         if (data && data.planId !== undefined) {
             state.planId = data.planId;
@@ -567,7 +574,8 @@ window.PlannerApp = window.PlannerApp || {};
                     await callBackground({
                         type: 'Planner.updatePlan',
                         planId: state.planId,
-                        world, planName, playerId, playerName, boostData, mapData
+                        world, planName, playerId, playerName, boostData, mapData,
+                        areas: getPlannedAreasForSave()
                     });
                 } catch (e) {
                     if (e && /not found/i.test(e.message || '')) {
@@ -638,8 +646,15 @@ window.PlannerApp = window.PlannerApp || {};
         state.region = plan.world;
         state.cityData = sanitizeCityData((originalData && originalData.cityData) || {}).cityData;
         state.mapData = (originalData && originalData.mapData) || [];
+        state.blockedAreas = app.normalizeBlockedAreas(originalData && originalData.blockedAreas);
         state.currentEra = (originalData && originalData.currentEra) || null;
         state.originalData = originalData || { cityData: state.cityData, mapData: state.mapData, currentEra: state.currentEra };
+
+        let plannedAreas = [];
+        try { plannedAreas = plan.areasJSON ? JSON.parse(plan.areasJSON) : []; } catch (e) { plannedAreas = []; }
+        if (Array.isArray(plannedAreas) && plannedAreas.length) {
+            state.mapData = app.withPlannedAreas(plannedAreas);
+        }
 
         const entries = buildingRowsToEntries(rows);
         // buildingsFromEntries() reports whatever is still unknown after this.
@@ -728,6 +743,7 @@ window.PlannerApp = window.PlannerApp || {};
             region: state.region,
             cityData: state.cityData,
             mapData: state.mapData,
+            blockedAreas: state.blockedAreas,
             currentEra: state.currentEra,
             mapBuildings: state.mapBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era, custom: !!b.custom })),
             storedBuildings: state.storedBuildings.map(b => ({ metaId: b.meta.id, x: b.data.x, y: b.data.y, era: b.data.era, custom: !!b.custom })),
@@ -755,11 +771,13 @@ window.PlannerApp = window.PlannerApp || {};
         state.region = saved.region;
         state.cityData = sanitizeCityData(saved.cityData || {}).cityData;
         state.mapData = saved.mapData || [];
+        state.blockedAreas = app.normalizeBlockedAreas(saved.blockedAreas);
         state.currentEra = saved.currentEra || null;
 
         state.originalData = {
             cityData: state.cityData,
-            mapData: state.mapData,
+            mapData: state.mapData.filter(a => a && !a.planned),
+            blockedAreas: state.blockedAreas,
             currentEra: state.currentEra
         };
 
@@ -904,7 +922,9 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.cityData = JSON.parse(JSON.stringify(state.originalData.cityData || {}));
         state.mapData = JSON.parse(JSON.stringify(state.originalData.mapData || []));
+        state.blockedAreas = app.normalizeBlockedAreas(state.originalData.blockedAreas);
         state.currentEra = state.originalData.currentEra || null;
+        if (app.setExpansionMode) app.setExpansionMode(false);
     }
 
     function clearSavedLayout() {
@@ -1017,6 +1037,7 @@ window.PlannerApp = window.PlannerApp || {};
                 era: b.data.era,
                 custom: !!b.custom
             })),
+            plannedAreas: app.getPlannedAreas().map(a => ({ x: a.x, y: a.y })),
             rotated: !!state.rotated
         };
     }
@@ -1056,6 +1077,7 @@ window.PlannerApp = window.PlannerApp || {};
 
     function applySnapshot(snapshot) {
         state.rotated = !!snapshot.rotated;
+        if (Array.isArray(snapshot.plannedAreas)) state.mapData = app.withPlannedAreas(snapshot.plannedAreas);
 
         state.mapBuildings = buildingsFromEntries(snapshot.mapBuildings);
         state.storedBuildings = buildingsFromEntries(snapshot.storedBuildings);

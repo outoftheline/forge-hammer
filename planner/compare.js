@@ -915,15 +915,16 @@ window.PlannerApp = window.PlannerApp || {};
 
     // --- aggregation --------------------------------------------------------
 
-    function totalUnlockedTiles() {
+    function totalUnlockedTiles(includePlanned) {
         let total = 0;
         for (const exp of state.mapData || []) {
+            if (exp.planned && !includePlanned) continue;
             total += (exp.width || 0) * (exp.length || 0);
         }
         return total;
     }
 
-    function summarise(entities) {
+    function summarise(entities, includePlanned) {
         const acc = makeAcc();
 
         let buildingTiles = 0;
@@ -960,7 +961,7 @@ window.PlannerApp = window.PlannerApp || {};
             collectSetBonuses(acc, entity, countAdjacentSetMembers(entity, entities));
         }
 
-        const total = totalUnlockedTiles();
+        const total = totalUnlockedTiles(includePlanned);
         acc.tiles_total = total;
         acc.tiles_buildings = buildingTiles;
         acc.tiles_streets = streetTiles;
@@ -1040,8 +1041,8 @@ window.PlannerApp = window.PlannerApp || {};
         const afterEntities = entitiesFromMapBuildings(cityEntryIndex);
 
         return {
-            before: summarise(beforeEntities),
-            after: summarise(afterEntities),
+            before: summarise(beforeEntities, false),
+            after: summarise(afterEntities, true),
             buildings: diffBuildings(beforeEntities, afterEntities),
             eras: diffEras(beforeEntities, afterEntities)
         };

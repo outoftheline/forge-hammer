@@ -36,6 +36,8 @@ window.PlannerApp.dom = {
     currentStreetAmountEl: document.querySelector('#currentStreetAmount'),
     placeStreetBtn: document.querySelector('#placeStreet'),
     streetSizeGroup: document.querySelector('#streetSizeGroup'),
+    placeExpansionBtn: document.querySelector('#placeExpansion'),
+    plannedExpansionCount: document.querySelector('#plannedExpansionCount'),
     populationEl: document.querySelector('#populationStat .pop-stat'),
     infoEl: document.querySelector('#map .info'),
 

@@ -51,6 +51,12 @@ window.PlannerApp = window.PlannerApp || {};
                 if (bottom > maxY) maxY = bottom;
             }
         }
+        // include possible expansions so their faded tiles are visible
+        if (app.hasExpansionData && app.hasExpansionData()) {
+            const grid = app.getExpansionGridSize();
+            maxX = Math.max(maxX, grid.width * SIZE);
+            maxY = Math.max(maxY, grid.height * SIZE);
+        }
         return { width: maxX, height: maxY };
     }
 
@@ -99,14 +105,17 @@ window.PlannerApp = window.PlannerApp || {};
 
         state.gridCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+        if (app.drawExpansionCandidates) app.drawExpansionCandidates(state.gridCtx);
+
         if (state.mapData) {
             for (const exp of state.mapData) drawExpansion(exp, state.gridCtx);
         }
     }
 
     function drawExpansion(expansion, context) {
-        context.fillStyle = '#fffead';
-        context.strokeStyle = '#cbca4a';
+        // planned expansions get a green tint to tell them apart from unlocked ones
+        context.fillStyle = expansion.planned ? '#dff5c8' : '#fffead';
+        context.strokeStyle = expansion.planned ? '#9fcf72' : '#cbca4a';
         context.lineWidth = 0.5;
 
         for (let a = 0; a < expansion.length; a++) {
@@ -121,7 +130,7 @@ window.PlannerApp = window.PlannerApp || {};
             }
         }
 
-        context.strokeStyle = '#8c8a19';
+        context.strokeStyle = expansion.planned ? '#4f8a1f' : '#8c8a19';
         context.strokeRect((expansion.x || 0) * SIZE, (expansion.y || 0) * SIZE, expansion.width * SIZE, expansion.length * SIZE);
     }
 
@@ -241,6 +250,7 @@ window.PlannerApp = window.PlannerApp || {};
 
         drawSelectionRect(ctx);
         drawStreetPreview(ctx);
+        if (app.drawExpansionOverlay) app.drawExpansionOverlay(ctx);
     }
 
     function calculatePopulation() {
@@ -268,6 +278,7 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         updateSelectionInfo();
+        if (app.updateExpansionUi) app.updateExpansionUi();
     }
 
     function getEraLabel(era) {

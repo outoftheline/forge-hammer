@@ -1591,10 +1591,12 @@ let CityMap = {
 				data.currentEra		= CityMap.OtherPlayer.eraName;
 				data.CityMapData 	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.mapDataRaw);
 				data.UnlockedAreas	= CityMap.removeDoubleUnderscoreKeys(CityMap.OtherPlayer.unlockedAreas);
+				data.BlockedAreas	= CityMap.removeDoubleUnderscoreKeys(CityMap.Main.blockedAreas);
 				break;
 			default:
 				data.CityMapData   = CityMap.removeDoubleUnderscoreKeys(FH.Main.CityMapData);
 				data.UnlockedAreas = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.unlockedAreas);
+				data.BlockedAreas  = CityMap.removeDoubleUnderscoreKeys(CityMap.Main.blockedAreas);
 				break;
 		}
 

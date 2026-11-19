@@ -480,7 +480,7 @@ plannerDB.version(1).stores({
 				throw new Error('Planner.removePlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
-		newPlan: async (world,planName,playerId,playerName,boostData,mapData,originalData) => {
+		newPlan: async (world,planName,playerId,playerName,boostData,mapData,originalData,areas) => {
 			try {
 				const plan = {
 					world: world,
@@ -489,6 +489,7 @@ plannerDB.version(1).stores({
 					playerName: playerName,
 					boostJSON: JSON.stringify(boostData),
 					originalJSON: JSON.stringify(originalData || null), // used to revert everything
+					areasJSON: JSON.stringify(Array.isArray(areas) ? areas : []), // expansions added in the planner
 					date: Math.floor(Date.now() / 1000)
 				};
 				await plannerDB.open();
@@ -520,7 +521,7 @@ plannerDB.version(1).stores({
 				throw new Error('Planner.newPlan failed: '+(e && e.message ? e.message : e));
 			}
 		},
-		updatePlan: async (planId,world,planName,playerId,playerName,boostData,mapData) => {
+		updatePlan: async (planId,world,planName,playerId,playerName,boostData,mapData,areas) => {
 			try {
 				await plannerDB.open();
 				const existing = await plannerDB.plans.get(planId);
@@ -533,6 +534,7 @@ plannerDB.version(1).stores({
 					playerId: playerId || existing.playerId,
 					playerName: playerName || existing.playerName,
 					boostJSON: boostData ? JSON.stringify(boostData) : existing.boostJSON,
+					areasJSON: Array.isArray(areas) ? JSON.stringify(areas) : existing.areasJSON,
 					date: Math.floor(Date.now() / 1000)
 				};
 				await plannerDB.plans.put(updatedPlan,planId);
@@ -877,7 +879,7 @@ plannerDB.version(1).stores({
 					return APIerror('Planner.newPlan: Parameters {world}, {planName}, {playerId}, {playerName}, {boostData} and {mapData} expected!');
 				}
 				try {
-					const planId = await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData,request.originalData);
+					const planId = await Planner.newPlan(request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData,request.originalData,request.areas);
 					const plans = await Planner.getPlanList();
 					return APIsuccess({ planId, plans });
 				} catch (e) {
@@ -890,7 +892,7 @@ plannerDB.version(1).stores({
 					return APIerror('Planner.updatePlan: Parameters {planId} and at least one of {world}, {planName}, {playerId}, {playerName}, {boostData} or {mapData} expected!');
 				}
 				try {
-					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData);
+					await Planner.updatePlan(request.planId,request.world,request.planName,request.playerId,request.playerName,request.boostData,request.mapData,request.areas);
 					const plans = await Planner.getPlanList();
 					return APIsuccess(plans);
 				} catch (e) {
