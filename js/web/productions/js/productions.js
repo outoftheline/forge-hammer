@@ -2454,56 +2454,33 @@ let Productions = {
 	},
 
 
-	ratingValueCells: (building, combinedRatingTypes, randomUnits) => {
+	ratingValueCells: (building, ratingTypes, randomUnits) => {
 		let h = [];
-		for (const type of combinedRatingTypes) {
-			let firstType = type;
-			let secondType = null;
-			if (type.includes('att_def_')) {
-				firstType = type.replace('def_','');
-				secondType = type.replace('att_','');
+		const withWrong = (value, wrong) => {
+			if (!wrong) return FH.HTML.Format(value);
+			let crossed = `<span class="linethrough">${FH.HTML.Format(wrong)}</span>`;
+			return value ? `${FH.HTML.Format(value)} ${crossed}` : crossed;
+		};
+
+		for (const type of ratingTypes) {
+			// units of wrong eras are crossed out and not rated
+			let wrongValue = building.rating[type+'-wrong'] || 0;
+			let wrongTile = building.rating[type+'-wrong-tile'] || 0;
+
+			let tooltip = '';
+			if (type === "units")
+				tooltip = `data-original-title="${randomUnits}"`;
+			else if (building.ratingEra) {
+				let eraName = Productions.getGoodsEraName(type, building.ratingEra);
+				if (eraName) tooltip = `data-original-title="${eraName}"`;
 			}
 
-			// normal boosts
-			if (secondType === null) {
-				// units of wrong eras are crossed out and not rated
-				let wrongValue = building.rating[firstType+'-wrong'] || 0;
-				let wrongTile = building.rating[firstType+'-wrong-tile'] || 0;
-				const withWrong = (value, wrong) => {
-					if (!wrong) return FH.HTML.Format(value);
-					let crossed = `<span class="linethrough">${FH.HTML.Format(wrong)}</span>`;
-					return value ? `${FH.HTML.Format(value)} ${crossed}` : crossed;
-				};
+			h.push(`<td class="text-right${type==="units" ? " units":""} buildingvalue" data-number="${Math.round(parseFloat(building.rating[type]))}" ${tooltip}>${withWrong(building.rating[type], wrongValue)}</td>`);
 
-				let tooltip = '';
-				if (firstType === "units")
-					tooltip = `data-original-title="${randomUnits}"`;
-				else if (building.ratingEra) {
-					let eraName = Productions.getGoodsEraName(firstType, building.ratingEra);
-					if (eraName) tooltip = `data-original-title="${eraName}"`;
-				}
-
-				h.push(`<td class="text-right${firstType==="units" ? " units":""} buildingvalue" data-number="${Math.round(parseFloat(building.rating[firstType]))}" ${tooltip}>${withWrong(building.rating[firstType], wrongValue)}</td>`);
-
-				let roundingFactor = building.rating[firstType+'-tile'] > 100 || building.rating[firstType+'-tile'] < -100 ? 1 : 100;
-				let tileValue = Math.round(building.rating[firstType+'-tile'] * roundingFactor) / roundingFactor;
-				let wrongTileValue = Math.round(wrongTile * roundingFactor) / roundingFactor;
-				h.push(`<td class="text-right${firstType==="units" ? " units":""} tilevalue" data-number="${tileValue}" ${tooltip}>${withWrong(tileValue, wrongTileValue)}</td>`);
-			}
-			// combined attack boosts
-			else {
-				let firstValue = Math.round(building.rating[firstType]);
-				let secondValue = Math.round(building.rating[secondType]);
-				let combinedValue = (firstValue + secondValue);
-
-				h.push(`<td class="text-right buildingvalue" data-number="${combinedValue}">
-					${FH.HTML.Format(building.rating[firstType]+building.rating[secondType])}
-				</td>`);
-
-				let tileValue = Math.round((building.rating[firstType+'-tile'] + building.rating[secondType+'-tile']) * 10) / 10;
-
-				h.push(`<td class="text-right tilevalue" data-number="${tileValue}">${FH.HTML.Format(tileValue)}</td>`);
-			}
+			let roundingFactor = building.rating[type+'-tile'] > 100 || building.rating[type+'-tile'] < -100 ? 1 : 100;
+			let tileValue = Math.round(building.rating[type+'-tile'] * roundingFactor) / roundingFactor;
+			let wrongTileValue = Math.round(wrongTile * roundingFactor) / roundingFactor;
+			h.push(`<td class="text-right${type==="units" ? " units":""} tilevalue" data-number="${tileValue}" ${tooltip}>${withWrong(tileValue, wrongTileValue)}</td>`);
 		}
 		return h.join('');
 	},
@@ -2565,7 +2542,7 @@ let Productions = {
 	},
 
 
-	eraComparisonRow: (building, comparison, combinedRatingTypes, tabClasses, rowIndex, buildingSize, parentIndex) => {
+	eraComparisonRow: (building, comparison, ratingTypes, tabClasses, rowIndex, buildingSize, parentIndex) => {
 		let h = [];
 		let [randomItems, randomUnits] = Productions.showBuildingItems(false, comparison);
 		let baseScore = Math.round(building.rating.totalScore * 100);
@@ -2586,7 +2563,7 @@ let Productions = {
 
 		h.push(`<td></td><td></td>`); // amount + inventory
 
-		h.push(Productions.ratingValueCells(comparison, combinedRatingTypes, randomUnits));
+		h.push(Productions.ratingValueCells(comparison, ratingTypes, randomUnits));
 
 		h.push(`<td class="no-sort items">${randomItems}</td>`);
 		h.push(`<td class="no-sort era-compare-cell"><span class="btn btn-slim btn-delete icon remove-era-comparison" data-meta_id="${comparison.entityId}" data-era="${comparison.ratingEra}"></span></td>`);
@@ -3147,30 +3124,7 @@ let Productions = {
 				return 0
 			});
 
-			// combine attack and defend boosts if both are active
-			let combinedRatingTypes = [];
-			for (const type of Productions.Rating.Types) {
-				// skip inactive ones
-				if (!Productions.Rating.Data[type]?.active) continue;
-
-				if (!type.includes('att_') && !type.includes('def_')) {
-					combinedRatingTypes.push(type);
-					continue;
-				}
-				// combine att & def into one - list always starts with att_
-				if (type.includes('att_') || type.includes('def_')) {
-					let coreType = type.replace('att_','').replace('def_','');
-					let combinedType = 'att_def_'+coreType;
-					let twinType = type.includes('att_') ? 'def_'+coreType : 'att_'+coreType;
-
-					if (combinedRatingTypes.find(x => x.includes(combinedType))) continue;
-
-					if (Productions.Rating.Data[twinType]?.active) 
-						combinedRatingTypes.push(combinedType);
-					else 
-						combinedRatingTypes.push(type);
-				}
-			}
+			let ratingTypes = Productions.Rating.Types.filter(type => Productions.Rating.Data[type]?.active);
 
 			let colNumber = Object.values(Productions.Rating.Data).filter(x=>x.active).length;
 
@@ -3217,28 +3171,11 @@ let Productions = {
 				`);
 			h.push('<th data-type="ratinglist" class="is-number" data-export="#"></th><th class="no-sort inventory-buildings text-center"><img alt="" data-original-title="'+FH.t('Boxes.ProductionsRating.InventoryTooltip')+'" class="game-cursor" src="' + FH.extUrl + 'js/web/x_img/inventory.png" /></th>');
 
-			for (const type of combinedRatingTypes) {
-				let firstType = type;
-				let secondType = null;
-				let divider = 1;
-				if (type.includes('att_def_')) {
-					firstType = type.replace('def_','');
-					secondType = type.replace('att_','');
-					divider = 2;
-				}
-				h.push(`<th data-type="ratinglist" style="width:1%" data-export="${Productions.GetTypeName(firstType)}" class="is-number text-center buildingvalue" data-original-title="${Productions.GetTypeName(firstType)}`+
-					(secondType !== null ? `, ${Productions.GetTypeName(secondType)}: ${Productions.Rating.Data[firstType].perTile} + ${Productions.Rating.Data[secondType]?.perTile} / 2"` : '"')+
-					`><span class="resicon ${firstType}"` + (secondType === null ? ' style="margin-bottom:0"' : '') + `></span>`+ (secondType === null ? '<br>' : '') +
-					(secondType !== null ? '<span class="resicon ' + secondType + '"></span><i>': '')+
-					((Productions.Rating.Data[firstType].perTile + (Productions.Rating.Data[secondType]?.perTile || 0) || 0) /divider)+
-					'</i></th>');
-
-				h.push(`<th data-type="ratinglist" style="width:1%" data-export="${Productions.GetTypeName(firstType)}" class="is-number text-center tilevalue" data-original-title="${Productions.GetTypeName(firstType)}`+
-					(secondType !== null ? `, ${Productions.GetTypeName(secondType)}: ${Productions.Rating.Data[firstType].perTile} + ${Productions.Rating.Data[secondType]?.perTile} / 2"` : '"')+
-					`><span class="resicon ${firstType}"></span>`+
-					(secondType !== null ? '<span class="resicon ' + secondType + '"></span><i>': '')+
-					((Productions.Rating.Data[firstType].perTile + (Productions.Rating.Data[secondType]?.perTile || 0) || 0) /divider)+
-					'</i></th>');
+			for (const type of ratingTypes) {
+				let typeName = Productions.GetTypeName(type);
+				let perTile = Productions.Rating.Data[type].perTile || 0;
+				h.push(`<th data-type="ratinglist" style="width:1%" data-export="${typeName}" class="is-number text-center buildingvalue" data-original-title="${typeName}"><span class="resicon ${type}" style="margin-bottom:0"></span><br>${perTile}</th>`);
+				h.push(`<th data-type="ratinglist" style="width:1%" data-export="${typeName}" class="is-number text-center tilevalue" data-original-title="${typeName}"><span class="resicon ${type}"></span>${perTile}</th>`);
 			}
 
 			h.push('<th data-type="ratinglist" data-export="Items" class="no-sort items">Items</th>');
@@ -3319,7 +3256,7 @@ let Productions = {
 				}
 				h.push('</td>')
 
-				h.push(Productions.ratingValueCells(building, combinedRatingTypes, randomUnits));
+				h.push(Productions.ratingValueCells(building, ratingTypes, randomUnits));
 
 				h.push('<td class="no-sort items">'+randomItems+'</td>');
 				// no era comparison possible
@@ -3333,7 +3270,7 @@ let Productions = {
 				for (const comparison of (eraComparisons[building.entityId] || [])) {
 					let comparisonIndex = Productions.RatingRows.length;
 					Productions.RatingRows.push(Productions.AdvancedFilter.rowData(comparison));
-					h.push(Productions.eraComparisonRow(building, comparison, combinedRatingTypes, tabClasses, comparisonIndex, buildingSize, rowIndex));
+					h.push(Productions.eraComparisonRow(building, comparison, ratingTypes, tabClasses, comparisonIndex, buildingSize, rowIndex));
 				}
 			}
 
