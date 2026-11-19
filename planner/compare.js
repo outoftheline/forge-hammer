@@ -1260,9 +1260,9 @@ window.PlannerApp = window.PlannerApp || {};
         }
 
         el.innerHTML = entries.map(entry =>
-            '<li class="' + entry.type + '">' +
-                '<span class="amount">' + entry.count + '</span>' +
-                '<span class="name">' + entry.name + '</span>,' +
+            '<li class="' + app.escapeHtml(entry.type) + '">' +
+                '<span class="amount">' + app.escapeHtml(entry.count) + '</span>' +
+                '<span class="name">' + app.escapeHtml(entry.name) + '</span>,' +
                 ' <span>' + entry.height + 'x' + entry.width + '</span>' +
             '</li>'
         ).join('');
@@ -1417,11 +1417,11 @@ window.PlannerApp = window.PlannerApp || {};
         }
         const label = era => app.getEraLabel ? app.getEraLabel(era) : era;
         el.innerHTML = entries.map(e =>
-            '<li class="' + e.type + ' era-' + e.direction + '">' +
-                '<span class="amount">' + e.count + '</span>' +
-                '<span class="name">' + e.name + '</span> ' +
+            '<li class="' + app.escapeHtml(e.type) + ' era-' + app.escapeHtml(e.direction) + '">' +
+                '<span class="amount">' + app.escapeHtml(e.count) + '</span>' +
+                '<span class="name">' + app.escapeHtml(e.name) + '</span> ' +
                 '<span class="era-change">' + (e.direction === 'up' ? '▲ ' : '▼ ') +
-                    label(e.from) + ' → ' + label(e.to) + '</span>' +
+                    app.escapeHtml(label(e.from)) + ' → ' + app.escapeHtml(label(e.to)) + '</span>' +
             '</li>'
         ).join('');
     }    

@@ -1046,7 +1046,7 @@ let GuildFights = {
 
 			b.push('<td class="tdmin">' + (parseInt(i) + 1) + '.</td>');
 			b.push('<td class="tdmin"><img src="' + srcLinks.GetPortrait(playerNew['avatar']) + '" alt=""></td>');
-			b.push('<td>' + playerNew['name'] + '</td>');
+			b.push('<td>' + FH.HTML.escapeHtml(playerNew['name']) + '</td>');
 			b.push('<td class="text-center">');
 			b.push(playerNew['negotiationsWon'] + negotaionAddOn);
 			b.push('</td>');

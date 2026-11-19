@@ -40,7 +40,7 @@ let Notes = {
 		let items = entries.map(entry => {
 			let excerptLines = entry.lines
 				.filter(b => b.type === 'text' && b.value.trim())
-				.map(b => $('<div>').html(FH.HTML.escapeHtml(b.value)).text().trim())
+				.map(b => b.value.trim())
 				.join(' ');
 			let excerpt = excerptLines.length > 150 ? excerptLines.slice(0, 150) + '\u2026' : excerptLines;
 
@@ -52,7 +52,7 @@ let Notes = {
 
 			return `<li class="p5 bbd clickable" data-time="${entry.time}">
 				<h2 class="flex between"><span>${FH.HTML.escapeHtml(entry.title)}</span> ${checkSummary}</h2>
-				<span>${excerpt}</span>
+				<span>${FH.HTML.escapeHtml(excerpt)}</span>
 			</li>`;
 		}).join('');
 

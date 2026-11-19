@@ -1072,11 +1072,12 @@ window.PlannerApp = window.PlannerApp || {};
 
         const html = plans.map(plan => {
             const dateStr = plan.date ? new Date(plan.date * 1000).toLocaleString() : '';
-            const name = plan.name || unnamed;
-            const meta = [plan.world, plan.playerName, dateStr].filter(Boolean).join(' · ');
+            const esc = app.escapeHtml;
+            const name = esc(plan.name || unnamed);
+            const meta = esc([plan.world, plan.playerName, dateStr].filter(Boolean).join(' · '));
 
             return (
-                '<li data-plan-id="' + plan.id + '">' +
+                '<li data-plan-id="' + esc(plan.id) + '">' +
                     '<span class="plan-info">' +
                         '<span class="plan-name">' + name + '</span>' +
                         '<span class="plan-meta">' + meta + '</span>' +

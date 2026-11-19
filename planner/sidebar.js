@@ -102,10 +102,11 @@ window.PlannerApp = window.PlannerApp || {};
     function showStoredLi(item, activeId) {
         const noStreet = item.noStreet ? ' nostreet' : '';
         const isActive = (activeId && item.id === activeId ? ' active' : '');
-        const name = (item.custom ? '* ' : '') + item.name;
+        const esc = app.escapeHtml;
+        const name = esc((item.custom ? '* ' : '') + item.name);
 
         return (
-            '<li data-id="' + item.id + '" class="' + item.type + noStreet + isActive + '">' +
+            '<li data-id="' + esc(item.id) + '" class="' + esc(item.type) + noStreet + isActive + '">' +
                 '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
                 '<span class="name">' + name + '</span>' +
                 ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
@@ -114,12 +115,13 @@ window.PlannerApp = window.PlannerApp || {};
     }
 
     function showDeletedLi(item) {
-        const name = (item.custom ? '* ' : '') + item.name;
+        const esc = app.escapeHtml;
+        const name = esc((item.custom ? '* ' : '') + item.name);
         const restoreHint = app.t('XPlan.Sidebar.ClickToRestore', 'Click to restore');
         const restoreLabel = app.t('XPlan.Sidebar.Restore', 'Restore');
 
         return (
-            '<li data-id="' + item.id + '" class="deleted ' + item.type + '" title="' + restoreHint + '">' +
+            '<li data-id="' + esc(item.id) + '" class="deleted ' + esc(item.type) + '" title="' + restoreHint + '">' +
                 '<span class="amount">' + (item.amount > 1 ? item.amount : '') + '</span>' +
                 '<span class="name">' + name + '</span>' +
                 ' <span class="height">' + item.height + '</span>x<span class="width">' + item.width + '</span>' +
@@ -192,8 +194,8 @@ window.PlannerApp = window.PlannerApp || {};
             const dims = app.getMetaSize(meta);
             const typeClass = meta.type || '';
             return (
-                '<li data-meta-id="' + meta.id + '" class="' + typeClass + '">' +
-                    '<span class="name">' + meta.name + '</span>' +
+                '<li data-meta-id="' + app.escapeHtml(meta.id) + '" class="' + app.escapeHtml(typeClass) + '">' +
+                    '<span class="name">' + app.escapeHtml(meta.name) + '</span>' +
                     '<span class="dims">' + dims.height + 'x' + dims.width + '</span>' +
                 '</li>'
             );

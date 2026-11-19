@@ -2,6 +2,18 @@
 
 window.PlannerApp = window.PlannerApp || {};
 
+/**
+ * escapes a value for safe use in HTML text and attribute values
+ * @param {any} text
+ * @returns {string}
+ */
+window.PlannerApp.escapeHtml = (text) => String(text ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
 window.PlannerApp.dom = {
     submitWindow: document.querySelector('#submitWindow'),
     submitError: document.querySelector('#submitWindow .error'),

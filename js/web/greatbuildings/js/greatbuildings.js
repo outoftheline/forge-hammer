@@ -678,7 +678,7 @@ let GreatBuildings = {
         h.push('<div class="text-center dark-bg header">');
         h.push('<strong class="title">' + FH.t('Boxes.GreatBuildings.SuggestionTitle') + '</strong><br>');
         if (FH.LastMapPlayerID !== FH.Player.ID) {
-            h.push('<strong class="player-name"><span>' + FH.Players.Dict[FH.LastMapPlayerID]['PlayerName'] + '</span></strong>');
+            h.push('<strong class="player-name"><span>' + FH.HTML.escapeHtml(FH.Players.Dict[FH.LastMapPlayerID]['PlayerName']) + '</span></strong>');
         }
         h.push('<br><strong>')
         h.push(FH.t('Boxes.GreatBuildings.ArcBonus') + ' ');

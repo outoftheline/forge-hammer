@@ -387,7 +387,7 @@ let Info = {
 
         if (d['text'] !== '') {
             // normale Nachricht
-            message = d['text'].replace(/(\r\n|\n|\r)/gm, '<br>');
+            message = FH.HTML.escapeHtml(d['text']).replace(/(\r\n|\n|\r)/gm, '<br>');
         }
         else if (d['attachment']) {
             if (d['attachment']['type'] === 'great_building') {
@@ -430,7 +430,7 @@ let Info = {
             return {
                 class: 'msg',
                 type: FH.t('Boxes.Infobox.FilterMessage'),
-                msg: (d.sender?.name||'') + '<div class="content">'+message+'</div>',
+                msg: FH.HTML.escapeHtml(d.sender?.name||'') + '<div class="content">'+message+'</div>',
                 img: 'msg',
                 data: d.conversationId
             };
@@ -496,7 +496,7 @@ let Info = {
                     provinceName: prov['name'],
                     attackerColor: tc,
                     attackerShadow: ts,
-                    attackerName: p['clan']['name'],
+                    attackerName: FH.HTML.escapeHtml(p['clan']['name']),
                     untilOccupied: moment.unix(data.lockedUntil).format('HH:mm:ss')
                 }),
                 img: 'gbg-lock'
@@ -529,7 +529,7 @@ let Info = {
                 let tc = colors['highlight'], sc = color['highlight'],
                     ts = colors['shadow'], ss = color['shadow'];
 
-                t += '<span style="color:' + tc + ';text-shadow: 0 1px 1px ' + ts + '">' + p['clan']['name'] + '</span>'
+                t += '<span style="color:' + tc + ';text-shadow: 0 1px 1px ' + ts + '">' + FH.HTML.escapeHtml(p['clan']['name']) + '</span>'
                   + ' ⚔ <span style="color:' + sc + ';text-shadow: 0 1px 1px ' + ss + '">' + provLabel + '</span>'
                   + ' (<strong>' + d['progress'] + '</strong>/<strong>' + d['maxProgress'] + '</strong>)<br>';
             }
@@ -537,7 +537,7 @@ let Info = {
                 let tc = colors['highlight'],
                     ts = colors['shadow'];
 
-                t += '<span style="color:' + tc + ';text-shadow: 0 1px 1px ' + ts + '">' + p['clan']['name'] + '</span>'
+                t += '<span style="color:' + tc + ';text-shadow: 0 1px 1px ' + ts + '">' + FH.HTML.escapeHtml(p['clan']['name']) + '</span>'
                   + ' ⚔ ' + provLabel + ' (<strong>' + d['progress'] + '</strong>/<strong>' + d['maxProgress'] + '</strong>)<br>';
 
             }

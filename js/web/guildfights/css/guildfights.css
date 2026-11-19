@@ -221,6 +221,7 @@
 
 #LiveGuildFightingBody .focus .province-color {
 	outline: 1px solid var(--white);
+	box-shadow: inset 0 0 1px var(--black-65);
 }
 #LiveGuildFightingBody .ignore .province-color {
 	background-image: linear-gradient(-45deg, #0000 46%, var(--white) 46%, var(--white) 54%, #0000 54%);

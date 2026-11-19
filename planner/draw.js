@@ -314,7 +314,7 @@ window.PlannerApp = window.PlannerApp || {};
         dom.infoEl.innerHTML = rows.map(([label, value, negative]) =>
             '<div class="info-row' + (negative ? ' negative' : '') + '">' +
                 (label ? '<span class="info-label">' + label + '</span>' : '') +
-                '<span class="info-value">' + value + '</span>' +
+                '<span class="info-value">' + app.escapeHtml(value) + '</span>' +
             '</div>'
         ).join('');
     }
