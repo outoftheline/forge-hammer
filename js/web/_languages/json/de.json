@@ -175,6 +175,8 @@
   "Boxes.Calculator.RemoveFavorite": "Aus Favoriten entfernen",
   "Boxes.Calculator.FriendlyInvestment": "Fördern mit:",
   "Boxes.Calculator.GBList": "LG Liste",
+  "Boxes.Calculator.GBListAutoClose": "Zusammen mit dem LG Rechner schließen",
+  "Boxes.Calculator.GBListThreshold": "Automatisch öffnen ab so vielen geänderten Einträgen:",
   "Boxes.Calculator.LevelWarning": "ACHTUNG! Levelt das Bauwerk!",
   "Boxes.Calculator.LGNotConnected": "Das Legendäre Bauwerk ist nicht mit einer Straße verbunden.",
   "Boxes.Calculator.LGNotOpen": "Die nächste Stufe des Legendären Bauwerks ist derzeit noch nicht freigeschaltet.",

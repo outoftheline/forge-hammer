@@ -178,6 +178,8 @@
   "Boxes.Calculator.RemoveFavorite": "Remove from favorites",
   "Boxes.Calculator.FriendlyInvestment": "Investing at:",
   "Boxes.Calculator.GBList": "GB List",
+  "Boxes.Calculator.GBListAutoClose": "Close together with the GB Calculator",
+  "Boxes.Calculator.GBListThreshold": "Open automatically when there are this many changed lines:",
   "Boxes.Calculator.LevelWarning": "Warning! Leveling this GB!",
   "Boxes.Calculator.LGNotConnected": "This GB is not connected to a road.",
   "Boxes.Calculator.LGNotOpen": "This GB's next level is currently LOCKED.",

@@ -236,8 +236,11 @@ let Parts = {
 			});
 
 			$(`<span class="window-showToPay${Calculator.ReadyToOpen ? '' : ' inactive'}"></span>`).
-				on('click', ()=>{Calculator.showToPay(true)}).
+				on('click', ()=>{Calculator.showToPay(true, true)}).
 				prependTo("#OwnPartBoxButtons");
+
+			// close the GB list with the calculator
+			$('#OwnPartBox').on('click', '#OwnPartBoxclose', Calculator.CloseToPayWithCalculator);
 
 			// Exts
 			for (let i = 0; i < GreatBuildings.GreatBuildingsData.length; i++) {
@@ -506,6 +509,7 @@ let Parts = {
 		else {
 			FH.HTML.CloseOpenBox('OwnPartBox');
 			FH.HTML.CloseOpenBox('PowerLevelingBox');
+			Calculator.CloseToPayWithCalculator();
 		}
 	},
 

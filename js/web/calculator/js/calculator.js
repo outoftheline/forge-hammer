@@ -722,8 +722,9 @@ let Calculator = {
 
 	/** GB List */
 
-	showToPay: (ReadyToOpen = Calculator.ReadyToOpen) => {
-		
+	// manual ignores the message threshold
+	showToPay: (ReadyToOpen = Calculator.ReadyToOpen, manual = false) => {
+
 		if (!Settings.GetSetting('CalcGBReminder')) return;
 		if (!Calculator.ConversationContentBeforeSend || !Calculator.ConversationContentNew) return;
 		if (!ReadyToOpen) return;
@@ -763,9 +764,15 @@ let Calculator = {
 				output.push(`<div class="gbEntry clickable" data-line="${escapedLine}">${highlight ? `${info} <b>${highlight}</b>` : info}</div>`);
 			}
 		}
-		if (output.length === 1) return;
+		let isOpen = $('#calcReminder').length > 0;
 
-		if ($('#calcReminder').length > 0)
+		if (output.length === 0) {
+			if (isOpen) $('#calcReminder').remove();
+			return;
+		}
+		if (!isOpen && !manual && output.length < Calculator.GetToPayThreshold()) return;
+
+		if (isOpen)
 			$('#calcReminder .content').html(output.join('\n'));
 		else {
 			FH.HTML.Box({
@@ -784,22 +791,43 @@ let Calculator = {
 		});
 	},
 
+	// minimum number of entries to open the list automatically (default 2)
+	GetToPayThreshold: () => {
+		let v = parseInt(FH.Storage.getItem('CalcGBReminderThreshold'));
+		return (isNaN(v) || v < 1) ? 2 : v;
+	},
+
+	GetToPayAutoClose: () => {
+		return JSON.parse(FH.Storage.getItem('CalcGBReminderAutoClose') || 'false') === true;
+	},
+
+	CloseToPayWithCalculator: () => {
+		if (!Calculator.GetToPayAutoClose()) return;
+		FH.HTML.CloseOpenBox('calcReminder');
+	},
+
 	showToPaySettings: () => {
 		let autoOpen = Settings.GetSetting('CalcGBReminder');
+		let autoClose = Calculator.GetToPayAutoClose();
+		let threshold = Calculator.GetToPayThreshold();
 
 		let h = [];
 		h.push(`<p><label><input id="CalcGBReminderAutoOpen" type="checkbox" ${(autoOpen === true) ? ' checked="checked"' : ''} />${FH.t('Boxes.Settings.Autostart')}</label></p>`);
+		h.push(`<p><label><input id="CalcGBReminderAutoClose" type="checkbox" ${autoClose ? ' checked="checked"' : ''} />${FH.t('Boxes.Calculator.GBListAutoClose')}</label></p>`);
+		h.push(`<p><label>${FH.t('Boxes.Calculator.GBListThreshold')} <input id="CalcGBReminderThreshold" type="number" min="1" step="1" value="${threshold}" style="width:50px" /></label></p>`);
 		h.push(`<p><button class="btn btn-green" onclick="Calculator.SaveToPaySettings()" id="save-calcreminder-settings" class="btn saveSettings">${FH.t('Boxes.Settings.Save')}</button></p>`);
 
 		$('#calcReminderSettingsBox').html(h.join(''));
 	},
 
 	SaveToPaySettings: () => {
-		let value = false;
-		if ($("#CalcGBReminderAutoOpen").is(':checked'))
-			value = true;
-		FH.Storage.setItem('CalcGBReminder', value);
-		
+		FH.Storage.setItem('CalcGBReminder', $("#CalcGBReminderAutoOpen").is(':checked'));
+		FH.Storage.setItem('CalcGBReminderAutoClose', $("#CalcGBReminderAutoClose").is(':checked'));
+
+		let threshold = parseInt($('#CalcGBReminderThreshold').val());
+		if (isNaN(threshold) || threshold < 1) threshold = 2;
+		FH.Storage.setItem('CalcGBReminderThreshold', threshold);
+
 		$(`#calcReminderSettingsBox`).remove();
 	},
 };
