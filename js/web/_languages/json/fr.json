@@ -70,7 +70,15 @@
   "Boxes.AllyList.Ally": "Allié",
   "Boxes.AllyList.Boosts": "bonus",
   "Boxes.AllyList.Building": "Bâtiment",
+  "Boxes.AllyList.HideFragments": {
+    "s": "Montrer les fragments",
+    "r": "Show fragments"
+  },
   "Boxes.AllyList.Level": "Niveau",
+  "Boxes.AllyList.ShowFragments": {
+    "s": "Cacher les fragments",
+    "r": "Hide Fragments"
+  },
   "Boxes.AllyList.Title": "Aperçu des Alliés",
   "Boxes.AuctionSettings.Add": "Ajouter",
   "Boxes.AuctionSettings.Bid": "Offre",
@@ -775,6 +783,10 @@
   "Boxes.GexStat.Member": "membre",
   "Boxes.GexStat.MemberParticipation": "Participation du membre",
   "Boxes.GexStat.Never": "jamais",
+  "Boxes.GexStat.NotFinishedWarning": {
+    "s": "Tu n'as pas encore fini l'EG !",
+    "r": "You haven't finished Guild Expedition yet!"
+  },
   "Boxes.GexStat.Participant": "Participant",
   "Boxes.GexStat.ParticipationNoData": "Aucune donnée disponible <br>Merci de visiter la page des contributions à l'expédition de guilde pour mettre à jour les données.",
   "Boxes.GexStat.Player": "Joueur",
