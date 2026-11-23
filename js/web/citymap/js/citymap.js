@@ -68,8 +68,7 @@ let CityMap = {
 		areaOccupied: 0,
 		areaAvailable: 0,
 		buildingAreas: [],
-		buildingTypes: [],
-		hasCollectableBuildings: false
+		buildingTypes: []
 	},
 	mode: 'normal',
 	ratingValues: [],
@@ -1096,7 +1095,6 @@ let CityMap = {
 			let isCollectable = '';
 			if (building.state.name == "collectable") {
 				isCollectable = ' collectable';
-				CityMap.metrics.hasCollectableBuildings = true;
 			}
 			let rating = (building.rating?.totalScore*100 <= (rating10) ? ' rating10' : 
 						(building.rating?.totalScore*100 <= (rating20) ? ' rating20' :	
@@ -1367,9 +1365,7 @@ let CityMap = {
 
 		if (FH.ActiveMap !== 'OtherPlayer') {
 			areaStats.push(`<li class="clickable"><label for="highlightNotPolivatedBuildings"><input type="checkbox" id="highlightNotPolivatedBuildings" onclick="CityMap.highlightNotPolivatedBuildings()"> ${FH.t('Boxes.CityMap.HighlightNotPolivatedBuildings')}</label></li>`);
-
-			if (CityMap.metrics.hasCollectableBuildings)
-				areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${FH.t('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
+			areaStats.push(`<li class="clickable"><label for="highlightCollectableBuildings"><input type="checkbox" id="highlightCollectableBuildings" onclick="CityMap.highlightCollectableBuildings()"> ${FH.t('Boxes.CityMap.HighlightCollectableBuildings')}</label></li>`);
 		}
 
 		areaStats.push(`<li class="clickable"><label for="highlight-old-buildings"><input type="checkbox" id="highlight-old-buildings" onclick="CityMap.highlightOldBuildings()"> ${FH.t('Boxes.CityMap.HighlightOldBuildings')}</label></li>`);
