@@ -57,7 +57,7 @@ let GexStat = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GexStat_${playerID}`;
+		const DBName = `ForgeHammerDB_GexStat_${playerID}`;
 
 		GexStat.db = new Dexie(DBName);
 
@@ -68,6 +68,8 @@ let GexStat = {
 		GexStat.db.version(2).stores({
 			participation: '&gexweek'
 		});
+
+		LegacyDB.attach(GexStat.db);
 
 		GexStat.db.open();
 	},

@@ -312,6 +312,12 @@ let DBExport = {
     },
 
 
+    GetLiveDB: (name) => {
+        const dbs = [IndexDB.db, EventHandler.db, GBGActionLog.db, GexStat.db, GuildMemberStat.db, GuildFights.db, QiProgress.db, Notes.db, StrategyPoints.db];
+        return dbs.find(db => db && db.name === name);
+    },
+
+
     ImportDexieDB: async (blob, World) => {
 
         let DexieDB = new Dexie();
@@ -343,6 +349,20 @@ let DBExport = {
                 return 0;
             }
 
+            // old FoeHelperDB_* backups
+            const targetName = LegacyDB.newName(dbName);
+            const liveDB = DBExport.GetLiveDB(targetName);
+            const tooNew = liveDB && importMeta.data.databaseVersion > liveDB.verno;
+
+            if (targetName !== dbName || tooNew) {
+                const json = JSON.parse(await blob.text());
+                json.data.databaseName = targetName;
+                // a higher version than our code declares would make opening the db fail
+                if (tooNew) json.data.databaseVersion = liveDB.verno;
+                blob = new Blob([JSON.stringify(json)], { type: 'application/json' });
+                dbName = targetName;
+            }
+
             // Import File
             let importDB = await new Dexie(dbName);
 
@@ -355,8 +375,7 @@ let DBExport = {
             $("#debex_import_wrapper").append(`<p class="success">${dbName} <span class="icon success"></span></p>`);
             return 1;
         }
-        catch (error)
-        {
+        catch (error) {
             $("#debex_import_wrapper").append(`<p class="error">${dbName} <span class="icon error">X</span><span class="errmsg">${FH.t('Boxes.DBExport.ImportFileError')}</span></p>`);
             console.error('' + error);
             return 0;
@@ -366,7 +385,12 @@ let DBExport = {
 
     GetDBInfo: async () => {
 
-        DBExport.allDB = await Dexie.getDatabaseNames();
+        const names = await Dexie.getDatabaseNames();
+        // only show FoeHelperDB_* dbs when a copy of them doesn't exist
+        DBExport.allDB = names.filter(name => {
+            const target = LegacyDB.newName(name);
+            return target === name || !names.includes(target);
+        });
         let DBInfo = [];
 
         await Promise.all(

@@ -17,7 +17,7 @@ let GBGActionLog = {
     TabsContent: [],
     loadedTabs: {}, // tab id -> true once built (lazy per-tab loading; only the active tab loads on open)
     db: null, // Indexed database
-	dbLoadedFl: new Promise(resolve => window.addEventListener('foe-helper#gbgDBloaded', resolve, {capture: false, once: true, passive: true})),
+	dbLoadedFl: new Promise(resolve => window.addEventListener('forgehammer#gbgDBloaded', resolve, {capture: false, once: true, passive: true})),
 
 	// User settings
 	settingKeys: {
@@ -110,7 +110,7 @@ let GBGActionLog = {
 	* @returns {Promise<void>}
 	*/
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GBG_${playerID}`;
+		const DBName = `ForgeHammerDB_GBG_${playerID}`;
 
 		GBGActionLog.db = new Dexie(DBName);
 
@@ -124,8 +124,10 @@ let GBGActionLog = {
 			ActionLogBatch: '++id,mapId,logDate,firstLogTime,lastLogTime,logCount,totalReturned'
 		});
 
+		LegacyDB.attach(GBGActionLog.db);
+
 		GBGActionLog.db.open();
-		window.dispatchEvent(new CustomEvent('foe-helper#gbgDBloaded'))
+		window.dispatchEvent(new CustomEvent('forgehammer#gbgDBloaded'))
 	},
 
     /**

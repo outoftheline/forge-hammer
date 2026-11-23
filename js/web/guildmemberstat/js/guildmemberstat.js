@@ -165,7 +165,7 @@ let GuildMemberStat = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_GuildMemberStat_${playerID}`;
+		const DBName = `ForgeHammerDB_GuildMemberStat_${playerID}`;
 
 		GuildMemberStat.db = new Dexie(DBName);
 
@@ -186,6 +186,8 @@ let GuildMemberStat = {
 			warning: 'player_id',
 			forum: 'player_id'
 		});
+
+		LegacyDB.attach(GuildMemberStat.db);
 
 		GuildMemberStat.db.open();
 	},

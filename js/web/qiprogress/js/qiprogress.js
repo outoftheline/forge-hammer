@@ -61,7 +61,7 @@ let QiProgress = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_Qi_${playerID}`;
+		const DBName = `ForgeHammerDB_Qi_${playerID}`;
 
 		QiProgress.db = new Dexie(DBName);
 
@@ -69,6 +69,8 @@ let QiProgress = {
 			snapshots: '&[player_id+qiround+time],[qiround+player_id], [date+player_id], qiround',
 			history: '&qiround'
 		});
+
+		LegacyDB.attach(QiProgress.db);
 
 		QiProgress.db.open();
 	},

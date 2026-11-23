@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 FoE-Helper team - All Rights Reserved
+ * Copyright (C) 2026 Forge Hammer
  * Licensed under AGPL - see LICENSE.md for details.
  */
 
@@ -58,6 +59,267 @@
 * }
 */
 
+/**
+ * One-time, best-effort copy from the legacy "FoeHelperDB_*" databases into "ForgeHammerDB_*" ones
+ * FoE Helper can upgrade the legacy dbs at any time, so they are read with native IndexedDB
+ */
+let LegacyDB = {
+    OpenTimeout: 10 * 1000,
+    ChunkSize: 2000,
+    MaxAttempts: 3, // failed attempts before a copy is given up
+    SpaceMargin: 50 * 1024 * 1024, // free space wanted on top of the estimated size
+
+    running: {}, // legacy db name => copied rows
+    noSpace: [], // labels of dbs not copied, not enough free space
+    quotaHit: [], // labels of dbs partially copied, the disk ran out of space
+
+    // names of our db for a legacy db, for imports of old backups
+    newName: (name) => name
+        .replace(/^FoeHelperDB_GuildFights_/, 'ForgeHammer_GBG_')
+        .replace(/^FoeHelperDB_/, 'ForgeHammerDB_'),
+
+    /**
+     * Register the copy on a Dexie db before it is opened. Runs in db.on('ready') -> all other queries wait until it is finished
+     */
+    attach: (db, options = {}) => {
+        const legacyName = options.legacyName || db.name.replace(/^ForgeHammerDB_/, 'FoeHelperDB_');
+        const skip = [...(options.skip || []), ...(options.clearLegacy || [])];
+        const flagKey = `LegacyCopyPending_${db.name}`; // value: number of failed attempts
+
+        // don't reset the failed attempts on every load
+        if (options.force && !FH.Storage.getItem(flagKey)) FH.Storage.setItem(flagKey, '0');
+
+        // only fires when the db is created
+        db.on('populate', () => FH.Storage.setItem(flagKey, '0'));
+
+        const finish = () => {
+            FH.Storage.removeItem(flagKey);
+            if (options.onDone) options.onDone();
+        };
+
+        const failed = () => {
+            const attempts = (parseInt(FH.Storage.getItem(flagKey)) || 0) + 1;
+            if (attempts < LegacyDB.MaxAttempts) return FH.Storage.setItem(flagKey, String(attempts));
+
+            console.warn(`Forge Hammer: copying "${legacyName}" given up after ${attempts} failed attempts`);
+            finish();
+        };
+
+        db.on('ready', () => {
+            if (!FH.Storage.getItem(flagKey)) return;
+
+            return LegacyDB.copy(db, legacyName, skip, options.clearLegacy || [])
+                .then(result => {
+                    if (result === 'nospace') return; // not counted, the user can free up space
+                    if (result === 'retry') return failed();
+                    finish(); // done, or quota: partially copied, not retried
+                })
+                .catch(e => {
+                    console.warn(`Forge Hammer: copying "${legacyName}" failed`, e);
+                    failed();
+                })
+                .finally(() => LegacyDB.progress(legacyName, null));
+        });
+    },
+
+    /**
+     * @returns {Promise<'done'|'retry'|'nospace'|'quota'>}
+     *  done: finished or nothing to copy; retry: old db couldn't be opened;
+     *  nospace: not started, too little free space; quota: stopped, the disk ran out of space
+     */
+    copy: async (db, legacyName, skip, clearLegacy) => {
+        const oldDB = await LegacyDB.openNative(legacyName);
+        if (oldDB === null) return 'done';
+        if (oldDB === undefined) return 'retry';
+
+        try {
+            // first, so the freed space counts for the space check
+            for (const name of clearLegacy) {
+                if (!oldDB.objectStoreNames.contains(name)) continue;
+                await LegacyDB.clearStore(oldDB, name)
+                    .catch(e => console.warn(`Forge Hammer: could not clear "${legacyName}.${name}"`, e));
+            }
+
+            if (!await LegacyDB.hasSpace()) {
+                console.warn(`Forge Hammer: "${legacyName}" not copied, not enough free disk space`);
+                LegacyDB.noSpace.push(LegacyDB.label(legacyName));
+                return 'nospace';
+            }
+
+            LegacyDB.progress(legacyName, 0);
+
+            for (const table of db.tables) {
+                if (skip.includes(table.name) || !oldDB.objectStoreNames.contains(table.name)) continue;
+
+                // skip broken tables, so it can't fail the whole copy
+                await LegacyDB.copyTable(oldDB, table, legacyName).catch(e => {
+                    if (LegacyDB.isQuota(e)) throw e;
+                    console.warn(`Forge Hammer: "${legacyName}.${table.name}" skipped, copying failed`, e);
+                });
+            }
+        } catch (e) {
+            if (!LegacyDB.isQuota(e)) throw e;
+            console.warn(`Forge Hammer: copying "${legacyName}" stopped, the disk ran out of space`, e);
+            LegacyDB.quotaHit.push(LegacyDB.label(legacyName));
+            return 'quota';
+        } finally {
+            oldDB.close();
+        }
+
+        return 'done';
+    },
+
+    copyTable: async (oldDB, table, legacyName) => {
+        // all tables have inbound keys, so the old table must use the same key path
+        const oldKeyPath = JSON.stringify(oldDB.transaction(table.name).objectStore(table.name).keyPath);
+        const newKeyPath = JSON.stringify(table.schema.primKey.keyPath);
+        if (oldKeyPath !== newKeyPath) {
+            console.warn(`Forge Hammer: "${legacyName}.${table.name}" skipped, primary key differs (${oldKeyPath} vs ${newKeyPath})`);
+            return;
+        }
+
+        let range = null;
+        while (true) {
+            const {keys, values} = await LegacyDB.readChunk(oldDB, table.name, range);
+            if (!keys.length) return;
+
+            try {
+                await Dexie.vip(() => table.bulkPut(values));
+            } catch (e) {
+                // BulkError: only some rows failed, the rest is stored
+                if (e?.name !== 'BulkError' || LegacyDB.isQuota(e)) throw e;
+                console.warn(`Forge Hammer: ${e.failures?.length} row(s) of "${legacyName}.${table.name}" not copied`, e);
+            }
+            LegacyDB.progress(legacyName, keys.length);
+
+            if (keys.length < LegacyDB.ChunkSize) return;
+            range = IDBKeyRange.lowerBound(keys[keys.length - 1], true);
+        }
+    },
+
+    // databases size can't be read, so the whole usage of the origin is the upper limit
+    hasSpace: async () => {
+        const {usage, quota} = await navigator.storage?.estimate?.().catch(() => null) || {};
+        return !quota || quota - usage >= usage + LegacyDB.SpaceMargin;
+    },
+
+    /**
+     * Opens a db at its current version
+     * @returns {Promise<IDBDatabase|null|undefined>} null if it does not exist, undefined on error/timeout
+     */
+    openNative: (name) => new Promise(resolve => {
+        let done = false;
+        const finish = (val) => {
+            if (done) return val?.close();
+            done = true;
+            resolve(val);
+        };
+
+        setTimeout(() => finish(undefined), LegacyDB.OpenTimeout);
+
+        const request = indexedDB.open(name);
+        let notExisting = false;
+        request.onupgradeneeded = (e) => {
+            // only happens if the db does not exist => don't create it
+            notExisting = true;
+            e.target.transaction.abort();
+        };
+        request.onsuccess = (e) => {
+            const oldDB = e.target.result;
+            oldDB.onversionchange = () => oldDB.close();
+            finish(oldDB);
+        };
+        request.onerror = (e) => {
+            e.preventDefault();
+            finish(notExisting ? null : undefined);
+        };
+    }),
+
+    clearStore: (oldDB, storeName) => new Promise((resolve, reject) => {
+        const tx = oldDB.transaction(storeName, 'readwrite');
+        tx.objectStore(storeName).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = tx.onabort = () => reject(tx.error);
+    }),
+
+    // Dexie wraps the native error (AbortError, BulkError)
+    isQuota: (e) => [e, e?.inner, ...(e?.failures || [])].some(x => x?.name === 'QuotaExceededError'),
+
+    readChunk: (oldDB, storeName, range) => new Promise((resolve, reject) => {
+        const tx = oldDB.transaction(storeName);
+        const store = tx.objectStore(storeName);
+        const result = {keys: [], values: []};
+
+        store.getAllKeys(range, LegacyDB.ChunkSize).onsuccess = (e) => result.keys = e.target.result;
+        store.getAll(range, LegacyDB.ChunkSize).onsuccess = (e) => result.values = e.target.result;
+
+        tx.oncomplete = () => resolve(result);
+        tx.onerror = tx.onabort = () => reject(tx.error);
+    }),
+
+    // FoeHelperDB_Events_123 => Events, FoeHelperDB_123 => Stats
+    label: (legacyName) => legacyName.replace(/^FoeHelperDB_/, '').replace(/_?\d+$/, '') || 'Stats',
+
+    /**
+     * Update the overlay
+     * @param {string} legacyName
+     * @param {number|null} added rows copied since the last call, 0 when a copy starts, null when it has finished
+     */
+    progress: (legacyName, added) => {
+        if (added === null) delete LegacyDB.running[legacyName];
+        else LegacyDB.running[legacyName] = (LegacyDB.running[legacyName] || 0) + added;
+
+        const running = Object.entries(LegacyDB.running);
+        const hasNotices = LegacyDB.noSpace.length || LegacyDB.quotaHit.length;
+        let overlay = document.getElementById('LegacyCopyOverlay');
+
+        if (!running.length && !hasNotices) return overlay?.remove();
+        if (!overlay && (added === 0 || !running.length)) overlay = LegacyDB.createOverlay();
+        if (!overlay) return; // closed by the user
+
+        if (running.length) {
+            overlay.querySelector('.tables').replaceChildren(...running.map(([name, count]) => {
+                const li = document.createElement('li');
+                li.textContent = `${LegacyDB.label(name)}: ${FH.helper.str.Replacer(FH.t('DBCreationWarning.LegacyCopyEntries'), {count: count.toLocaleString()})}`;
+                return li;
+            }));
+            return;
+        }
+
+        const messages = [];
+        if (LegacyDB.noSpace.length) messages.push(FH.helper.str.Replacer(FH.t('DBCreationWarning.LegacyCopyNoSpace'), {dbs: LegacyDB.noSpace.join(', ')}));
+        if (LegacyDB.quotaHit.length) messages.push(FH.helper.str.Replacer(FH.t('DBCreationWarning.LegacyCopyQuota'), {dbs: LegacyDB.quotaHit.join(', ')}));
+        LegacyDB.noSpace = [];
+        LegacyDB.quotaHit = [];
+
+        overlay.querySelector('h2').textContent = 'Forge Hammer: ' + FH.t('DBCreationWarning.LegacyCopyIncompleteTitle');
+        overlay.querySelector('.explanation').textContent = messages.join(' ');
+        overlay.querySelector('.tables').replaceChildren();
+        overlay.querySelector('.loader')?.remove();
+    },
+
+    createOverlay: () => {
+        const overlay = document.createElement('div');
+        overlay.id = 'LegacyCopyOverlay';
+        overlay.style.cssText = 'position:fixed;bottom:0;right:0;min-width:300px;max-width:450px;width:50%;padding:0 1rem 1rem 0;background-color:#000000cc;color:#eee;z-index:9999999999;display:flex;align-items:center;justify-content:center;font-size:0.95rem;text-align:center;flex-direction:column;box-shadow:0 0 50px 50px #000c';
+        overlay.innerHTML = `
+            <div style="width:100%;text-align:right;padding-bottom:0.5rem;"><span class="close" style="cursor:pointer"></span></div>
+            <h2></h2>
+            <p class="explanation"></p>
+            <ul class="tables" style="list-style:none;padding:0;margin:0.5rem 0;"></ul>
+            <div class="loader" style="position:relative;height:75px;width:100%;"><div class="loading-data" style="height:0;background:unset;top:30px;"><span class="loadericon" style="zoom:0.5"></span></div></div>`;
+
+        const close = overlay.querySelector('.close');
+        close.textContent = FH.t('DBCreationWarning.CloseOverlay') + ' ⨯';
+        close.addEventListener('click', () => overlay.remove());
+        overlay.querySelector('h2').textContent = 'Forge Hammer: ' + FH.t('DBCreationWarning.LegacyCopyTitle');
+        overlay.querySelector('.explanation').textContent = FH.t('DBCreationWarning.LegacyCopyExplanation');
+
+        (document.body || document.documentElement).appendChild(overlay);
+        return overlay;
+    },
+};
+
 let IndexDB = {
     db: null,
 
@@ -75,26 +337,35 @@ let IndexDB = {
     },
 
 
-    Init: async (playerId) => {
-        const primaryDBName = 'FoeHelperDB_' + playerId; //Create different IndexDBs if two players are sharing the same PC playing on the same world
-        const isNewDB = !await Dexie.exists(primaryDBName);
+    Init: async (playerId, attempt = 0) => {
+        const primaryDBName = 'ForgeHammerDB_' + playerId; //Create different IndexDBs if two players are sharing the same PC playing on the same world
+
+        // ask not to evict our data on low disk space (Chrome decides without a prompt)
+        if (attempt === 0 && navigator.storage?.persist) {
+            navigator.storage.persisted()
+                .then(persisted => persisted || navigator.storage.persist())
+                .catch(() => {});
+        }
 
         const db = IndexDB.db = new Dexie(primaryDBName);
         IndexDB._applyIndexSchema(db);
-        db.open().catch((e) => {
-            //console.error(e);
-            setTimeout(() => {
-                IndexDB.Init(playerId);
-            }, 100);
+        // skip: cleared by the GarbageCollector anyway
+        // buildingMeta: built anew, emptied in the legacy db to free space (FoE Helper rebuilds it when needed)
+        LegacyDB.attach(db, {
+            skip: ['players', 'pvpActions', 'greatbuildings'],
+            clearLegacy: ['buildingMeta']
         });
 
         try {
-            if (isNewDB) {
-                await IndexDB.mergeDatabases(playerId);
-            }
+            await db.open();
         } catch (e) {
-            console.error(e);
+            console.error('Forge Hammer: opening ' + primaryDBName + ' failed', e);
+            if (attempt < 5) {
+                setTimeout(() => IndexDB.Init(playerId, attempt + 1), 1000);
+            }
+            return;
         }
+
         window._dbPromiseResolver(db);
 
         setTimeout(() => {
@@ -143,153 +414,6 @@ let IndexDB = {
             buildingMeta: 'id, hash, json',
         });
     },
-
-    /**
-     * Database migration util function. Should be called once
-     */
-    mergeDatabases: async (playerId) => {
-        // Skip if main db is not empty
-        if (await IndexDB.db.players.count()) { return; }
-        clearLog();
-
-        //log('Looks like your db is empty, trying to populate db using old databases');
-
-        let betaDB = null;
-        let masterDB = null;
-        let statsDB = null;
-
-        // DB from beta
-        const betaDBName = 'FoeHelper_' + playerId;
-        if (await Dexie.exists(betaDBName)) {
-            betaDB = new Dexie(betaDBName);
-            
-            betaDB.version(1).stores({
-                players: 'id,date',
-                actions: '++id,playerId,date,type',
-                greatbuildings: '++id,playerId,name,&[playerId+name],level,currentFp,bestRateNettoFp,bestRateCosts,date',
-           });
-
-            betaDB.version(2).stores({
-                players: 'id,date',
-                actions: '++id,playerId,date,type',
-                greatbuildings: '++id,playerId,name,&[playerId+name],level,currentFp,bestRateNettoFp,bestRateCosts,date',
-                investhistory: '++id,playerId,entity_id,&[playerId+entity_id],name,level,max_progress,current_progress,profit,currentFp,fphistory,date'
-            });
-
-            betaDB.open();
-            if (!(await betaDB.players.count())) {
-                betaDB = null;
-            }
-        }
-
-        // Database from master
-        const masterDBName = 'PlayerDB';
-        if (await Dexie.exists(masterDBName)) {
-            masterDB = new Dexie(masterDBName);
-            masterDB.version(7).stores({
-                players: 'id,date',
-                actions: '++id,playerId,date,type'
-            });
-            masterDB.version(6).stores({
-                players: 'id',
-                actions: '++id,playerId,date,type'
-            });
-            masterDB.open();
-            if (!(await masterDB.players.count())) {
-                masterDB = null;
-            }
-        }
-
-        // Stats db, beta
-        const statsDBName = 'StatsDb';
-        if (await Dexie.exists(statsDBName)) {
-            statsDB = new Dexie(statsDBName);
-            statsDB.version(4).stores({
-                // battleground
-                gbgPlayers: 'date', // battleground
-                playerCache: 'id, date', // Cache of players for using in gbgPlayers
-                // rewards
-                rewards: 'date', // Collected rewards by Himeji, etc
-                rewardTypes: 'id', // Human readable cache info about rewards
-                // units
-                unitsDaily: 'date',
-                units: 'date',
-                // treasure player
-                treasurePlayer: 'date',
-                treasurePlayerDaily: 'date',
-                // treasure clan
-                treasureClan: 'date, clanId',
-                treasureClanDaily: 'date, clanId',
-            });
-            statsDB.open();
-            if (!(await  statsDB.treasurePlayer.count())) {
-                statsDB = null;
-            }
-        }
-
-        if (betaDB) {
-            //log(`Found DB "${betaDBName}"`)
-            await cloneTables(betaDB, {
-                players: 'players',
-                pvpActions: 'actions',
-                greatbuildings: 'greatbuildings'
-            });
-        } else if (masterDB) {
-            //log(`Found DB "${masterDBName}"`)
-            await cloneTables(masterDB, {
-                players: 'players',
-                pvpActions: 'actions',
-            });
-        }
-        if (statsDB) {
-            log(`Found DB "${statsDBName}"`)
-            await cloneTables(statsDB, {
-                statsGBGPlayers: 'gbgPlayers',
-                statsGBGPlayerCache: 'playerCache',
-                statsRewards: 'rewards',
-                statsRewardTypes: 'rewardTypes',
-                statsUnitsD: 'unitsDaily',
-                statsUnitsH: 'units',
-                statsTreasurePlayerH: 'treasurePlayer',
-                statsTreasurePlayerD: 'treasurePlayerDaily',
-                statsTreasureClanH: 'treasureClan',
-                statsTreasureClanD: 'treasureClanDaily',
-            });
-        }
-
-
-
-        // log('Deleting old databases');
-        await Dexie.delete(betaDBName);
-        await Dexie.delete(masterDBName);
-        await Dexie.delete(statsDBName);
-        //log('Done.');
-
-        // Copy tables.
-        // Basicly this is not transaction safe to bulkAdd, but we can ignore it because
-        // `await getDb()` is used before insert or update.
-        async function cloneTables(source, tables) {
-            const destTables = Object.keys(tables);
-            for (let destTable of destTables) {
-                const sourceTable = tables[destTable];
-                log(`  Copy ${sourceTable} => ${destTable}...`);
-                await IndexDB.db[destTable].clear();
-                await IndexDB.db[destTable].bulkAdd(await source[sourceTable].toArray());
-            }
-        }
-
-        function clearLog() {
-            FH.Storage.setItem('FH_IndexDBLastMigraion', '');
-        }
-
-        function log(text) {
-            //console.log('mergeDatabases: ' + text);
-            let logTxt = FH.Storage.getItem('FH_IndexDBLastMigraion') || '';
-            logTxt += text + '\n';
-            FH.Storage.setItem('FH_IndexDBLastMigraion', logTxt);
-        }
-    },
-
 
     /**
      * Util function for making backup of db easier

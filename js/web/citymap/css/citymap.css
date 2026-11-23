@@ -198,13 +198,12 @@
 .outpost #sidebar .allBuildings td div.building {
 	background: #6b7529;
 	width: 50px;
-	margin: -3px 0;
+	margin: -4px 0;
 	display: inline-flex;
 	vertical-align: middle;
 	text-align: center;
-	height: 31px;
+	height: 32px;
 	border-bottom: 1px solid #50581b;
-	border-top: 1px solid #818d2f;
 }
 
 .outpost #map-container, .outpost #city-map-menu {

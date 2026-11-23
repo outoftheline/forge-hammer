@@ -53,7 +53,7 @@ let StrategyPoints = {
 	 * @returns {Promise<void>}
 	 */
 	checkForDB: async (playerID)=> {
-		const FP_DBName = `FoeHelperDB_FPCollector_${playerID}`;
+		const FP_DBName = `ForgeHammerDB_FPCollector_${playerID}`;
 
 		StrategyPoints.db = new Dexie(FP_DBName);
 
@@ -63,6 +63,8 @@ let StrategyPoints = {
 		StrategyPoints.db.version(2).stores({
 			ForgePointsStats: '++id,counter,event,notes,amount,date'
 		});
+
+		LegacyDB.attach(StrategyPoints.db);
 
 		StrategyPoints.db.open();
 	},

@@ -78,7 +78,7 @@ let EventHandler = {
 	* @returns {Promise<void>}
 	*/
 	checkForDB: async (playerID) => {
-		const DBName = `FoeHelperDB_Events_${playerID}`;
+		const DBName = `ForgeHammerDB_Events_${playerID}`;
 
 		EventHandler.db = new Dexie(DBName);
 
@@ -88,6 +88,8 @@ let EventHandler = {
 		EventHandler.db.version(1).stores({
 			Events: 'eventid,date,eventtype,playerid,entityid,isneighbor,isguildmember,isfriend'
 		});
+
+		LegacyDB.attach(EventHandler.db);
 
 		EventHandler.db.open();
 		window.dispatchEvent(new CustomEvent('forgehammer#eventDBloaded'))
