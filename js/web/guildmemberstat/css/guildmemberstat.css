@@ -101,7 +101,7 @@
 	background-image: url('../../x_img/qi.png');
 	background-size: contain;
 }
-[id*=GuildMember] .summary span.goods::before {
+#GuildMemberStatBody tr th span.goods, [id*=GuildMember] .summary span.goods::before {
 	background-image: url('../../x_img/guildGoods.png');
 	background-size: contain;
 }
