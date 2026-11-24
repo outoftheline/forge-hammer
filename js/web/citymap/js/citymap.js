@@ -1522,7 +1522,7 @@ let CityMap = {
 		for (let building of buildings) {
 			let alertButton = '';
 			if (type === 'limited' && FH.ActiveMap !== 'OtherPlayer' && building.state.decayTime > moment().unix()) {
-				let isActive = existingAlertKeys.has(building.name + '|' + building.state.decayTime * 1000) ? ' deletealertbutton' : '';
+				let isActive = existingAlerts.has(building.name + '|' + building.state.decayTime * 1000) ? ' deletealertbutton' : '';
 				alertButton = `<span class="btn btn-slim limitedAlert${isActive} alertbutton" onclick="CityMap.toggleLimitedAlert(this, ${building.id})"></span>`;
 			}
 			output.push(`<li class="flex between" onmouseenter="CityMap.hoverHighlightBuilding(${building.id}, true)" onmouseleave="CityMap.hoverHighlightBuilding(${building.id}, false)">
