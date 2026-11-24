@@ -1512,10 +1512,10 @@ let CityMap = {
 		
 		let output = [];
 
-		let existingAlerts= new Set();
+		let existingAlerts = new Set();
 		if (type === 'limited' && FH.ActiveMap !== 'OtherPlayer') {
-			let existingAlerts = await FH.Alerts.getAll();
-			existingAlerts = new Set((existingAlerts || []).map(a => a.data.title + '|' + a.data.expires));
+			let alerts = await FH.Alerts.getAll();
+			existingAlerts = new Set((alerts || []).map(a => a.data.title + '|' + a.data.expires));
 		}
 
 		output.push(`<ul class="foe-table text-smaller">`);
@@ -1563,12 +1563,13 @@ let CityMap = {
 		let title = building.name;
 		let expires = building.state.decayTime * 1000;
 
-		if (btn.hasClass('btn-active')) {
-			let alerts = await FH.Alerts.getAll();
-			(alerts || [])
-				.filter(a => a.data.title === title && a.data.expires === expires)
-				.forEach(a => FH.Alerts.delete(a.id));
-			btn.removeClass('btn-active');
+		// always check the stored alerts, so a stale button state can never create duplicates
+		let existing = ((await FH.Alerts.getAll()) || [])
+			.filter(a => a.data.title === title && a.data.expires === expires);
+
+		if (existing.length > 0) {
+			await Promise.all(existing.map(a => FH.Alerts.delete(a.id)));
+			btn.removeClass('deletealertbutton');
 			return;
 		}
 
@@ -1579,7 +1580,7 @@ let CityMap = {
 			repeat: -1,
 			persistent: true,
 		});
-		btn.addClass('btn-active');
+		btn.addClass('deletealertbutton');
 	},
 
 

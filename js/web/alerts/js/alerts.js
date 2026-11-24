@@ -412,11 +412,10 @@ let Alerts = function(){
 			const timestamp = Date.now()-1000;
 			try {
 				await tmp.data.refresh();
-				// TODO modify this to enable the display of alerts which expired while offline
-				// one option ^ is to modify refresh
 				const alerts = await tmp.extAlerts.getAll();
 				for (let alert of alerts) {
-					if (alert.data.expires < timestamp) {
+					// keep expired alerts which never fired
+					if (alert.data.expires < timestamp && alert.triggered) {
 						tmp.extAlerts.delete(alert.id);
 					}
 				}

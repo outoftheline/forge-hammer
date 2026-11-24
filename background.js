@@ -271,16 +271,11 @@ plannerDB.version(1).stores({
 			);
 		}
 
-		// Alarm triggered => show Notification
-		browser.alarms.onAlarm.addListener(async (alarm) => {
-			if (!alarm.name.startsWith(prefix)) return;
-
-			const alertId = Number.parseInt(alarm.name.substring(prefix.length));
-			if (!Number.isInteger(alertId) || alertId > Number.MAX_SAFE_INTEGER || alertId < 0) return;
-
+		// marks the alert as triggered and shows its notification - but only once
+		async function fireAlert(alertId) {
 			const alertData = await db.transaction('rw', db.alerts, async () => {
-				const alertData = await Alerts.get(alertId);
-				if (alertData == null) return null;
+				const alertData = await getAlert(alertId);
+				if (alertData == null || alertData.delete || alertData.triggered) return null;
 				alertData.triggered = true;
 				await db.alerts.put(alertData);
 				return alertData;
@@ -288,6 +283,44 @@ plannerDB.version(1).stores({
 			if (alertData == null) return;
 
 			triggerAlert(alertData);
+		}
+
+		// recreate missing alarms and fire alerts which were missed in the meantime.
+		async function resyncAlarms() {
+			// missed alerts older than 7 days are dropped instead of shown
+			const maxMissedAge = 7 * 24 * 60 * 60 * 1000;
+			try {
+				const alerts = await getAllAlerts(null);
+				const alarms = await browser.alarms.getAll();
+				const alarmNames = new Set((alarms || []).map(a => a.name));
+				const now = Date.now();
+
+				for (const alert of alerts) {
+					if (alert.delete || alert.triggered) continue;
+					const name = prefix + alert.id;
+					if (alarmNames.has(name)) continue;
+
+					if (alert.data.expires > now) {
+						browser.alarms.create(name, { when: alert.data.expires });
+					} else if (now - alert.data.expires <= maxMissedAge) {
+						await fireAlert(alert.id);
+					} else if (alert.data.repeat <= -1) {
+						await db.alerts.update(alert.id, { triggered: true });
+					}
+				}
+			} catch (e) {
+				console.error('Alerts: resync of alarms failed', e);
+			}
+		}
+
+		// alarm triggered - show notification
+		browser.alarms.onAlarm.addListener(async (alarm) => {
+			if (!alarm.name.startsWith(prefix)) return;
+
+			const alertId = Number.parseInt(alarm.name.substring(prefix.length));
+			if (!Number.isInteger(alertId) || alertId > Number.MAX_SAFE_INTEGER || alertId < 0) return;
+
+			await fireAlert(alertId);
 		});
 
 
@@ -335,6 +368,9 @@ plannerDB.version(1).stores({
 
 		// upon start cleanup alerts which didn't get removed properly.
 		//cleanupAlerts(); // deactivated - is triggered too often and deletes correct/active alarms (it seems the background.js is unloaded/reloaded regularly and this is triggered then unintentionally)
+
+		// runs every time the service worker starts - only adds missing alarms
+		resyncAlarms();
 				
 		return {
 			getValidData: getValidateAlertData,
