@@ -338,7 +338,62 @@ let Settings = {
 
 
 	ExportView: () => {
-		return `<p><button class="btn" onclick="DBExport.BuildBox()">${FH.t('Settings.ExportSettings.OpenImportExportTool')}</button></p>`;
+		// the FoE Helper databases of this world are filled in once the settings are in the DOM
+		setTimeout(Settings.FillLegacyData);
+		return `<p><button class="btn" onclick="DBExport.BuildBox()">${FH.t('Settings.ExportSettings.OpenImportExportTool')}</button></p>
+			<div id="LegacyDataList"></div>`;
+	},
+
+
+	FillLegacyData: async () => {
+		const $list = $('#LegacyDataList');
+		if (!$list.length) return;
+
+		// only show if there is FoE Helper data
+		const names = (await Dexie.getDatabaseNames()).filter(name => name.startsWith('FoeHelperDB_')).sort();
+		if (!names.length) return $list.empty();
+
+		const $button = $('<button class="btn btn-delete" />').text(FH.t('Settings.DeleteLegacyData.Button'));
+		$button.on('click', () => Settings.DeleteLegacyData(names));
+
+		$list.empty().append(
+			$('<h2 style="margin-top:1rem" />').text(FH.t('Settings.DeleteLegacyData.Title')),
+			$('<div class="desc" />').html(FH.t('Settings.DeleteLegacyData.Desc')),
+			$('<ul />').append(names.map(name => $('<li />').text(name))),
+			Settings.LegacyCopyPending() ? $('<p class="text-warning" />').text(FH.t('Settings.DeleteLegacyData.NotCopied')) : null,
+			$('<p />').append($button)
+		);
+	},
+
+
+	// a copy into the dbs hasn't finished yet
+	LegacyCopyPending: () => Object.keys(localStorage).some(key => key.startsWith('Hammer.LegacyCopyPending_')),
+
+
+	DeleteLegacyData: async (names) => {
+		let question = FH.t('Settings.DeleteLegacyData.Confirm');
+		if (Settings.LegacyCopyPending()) question += '\n\n' + FH.t('Settings.DeleteLegacyData.NotCopied');
+		if (!window.confirm(question)) return;
+
+		const deleted = await Promise.all(names.map(name => new Promise(resolve => {
+			const request = indexedDB.deleteDatabase(name);
+			request.onsuccess = () => resolve(true);
+			request.onerror = () => resolve(false);
+		})));
+
+		const failed = names.filter((name, i) => !deleted[i]);
+
+		FH.HTML.ShowToastMsg({
+			head: FH.t('Settings.DeleteLegacyData.Title'),
+			text: failed.length
+				? FH.helper.str.Replacer(FH.t('Settings.DeleteLegacyData.Failed'), {dbs: FH.HTML.escapeHtml(failed.join(', '))})
+				: FH.t('Settings.DeleteLegacyData.Done'),
+			type: failed.length ? 'error' : 'success',
+			hideAfter: 8000,
+			show: true // also with notifications turned off
+		});
+
+		Settings.FillLegacyData();
 	},
 
 

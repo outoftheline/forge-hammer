@@ -1,5 +1,26 @@
 # Changelog
 
+## Version 1.12.0
+### New
+- Gebäude Effizienz: Vergleiche Gebäudewerte aus anderen Zeitlatern von allen Gebäuden, die man downgraden kann
+- Stadtplaner: Man kann jetzt Erweiterungen platzieren
+- Daten-Migration: Es werden nun einmalig alle Daten vom FoE Helper kopiert, wenn es möglich ist, und dann werden nur noch eigene Daten gesammelt. Alte Datensätze können dann in den Einstellungen bei Daten Import/Export gelöscht werden. Damit wurde ein Problem behoben, das durch ein Update des Helfers entstanden ist.
+
+### Updated
+- Verbündete: Filter für Fragmente und UI Update - Danke an enricomg. Außerdem wurden die Summen am Ende der Liste gruppiert
+- gebäude-Effizienz: Neue Filter für Straßenanbindung, Verbündetenräume und SPA-deaktivert - außerdem: zusammengefasste Angriffsboosts sind jetzt Geschichte
+- LG Levelkosten: Tooltip bei den Netto-Kosten hinzugefügt, um die Summe der FP bis zu diesem Level anzuzeigen
+- Winter Event: Man kann jetzt Favoriten auf dem Brett markieren - danke an W0LFI
+- LG Rechner: Eigener Mäzen-Boost ist jetzt immer fett geschrieben
+- LG Liste hat jetzt eine Einstellung, mit der sie automatisch beim Schließen des Rechners zu geht, sowie eine Möglichkeit anzuzeigen ab wie vielen Einträgen sie aufploppt
+- Gildenmitglieder: Gildengüter in die Mitgliederliste aufgenommen
+- Man kann jetzt Benachrichtigungen für erhabene Gebäude einstellen (zu finden in der Stadtübersicht)
+
+### Bugfixes
+- LG Investitionen konnten leer sein
+
+---
+
 ## Version 1.11.1
 ### Update
 - Gilden-Expeditionen: In den letzten 24 Stunden erscheint nun oben in der Leiste ein Warnsymbol, wenn du noch nicht fertig bist

@@ -1,5 +1,26 @@
 # Changelog
 
+## Version 1.12.0
+### New
+- Building Efficiency: Compare stats from other eras for any building that can be downgraded
+- Planner: You can now add expansions!
+- Data migration: Forge Hammer now copies all data from the FoE Helper databases (if it can) and will work with its own databases from that point onwards. If you want to delete old duplicated Helper data, do so in the settings at Data Import/Export
+
+### Updated
+- Ally list: Fragment filter and UI update thanks to enricomg. While he was at it, I updated the sums at the bottom, so they are now categorized
+- Building Efficiency: Added filters for road requirements, ally rooms and FSP disabled - also: say goodbye to combined attack ratings
+- GB level costs: Added a tooltip to the own part net column to show the Forge Point costs up until that level
+- Winter Event: You can now set favorites in the Board Rewards list thanks to W0LFI
+- GB Calculator: Your own contribution bonus is now always written in bold text
+- GB List now has settings to auto-close it when closing the calculator and you can set the threshold of changed lines
+- Guild Member Overview: Added guild goods to the member list
+- You can now set notifications in the Ascended Buildings list (found in the City Overview)
+
+### Bugfixes
+- GB Investments could be empty
+
+---
+
 ## Version 1.11.1
 ### Update
 - Guild Expedition: A warning icon appears in the last 24 hours if you haven't finished it yet
