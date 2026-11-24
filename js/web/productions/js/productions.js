@@ -363,7 +363,7 @@ let Productions = {
 		Ops: ['gt','lt','eq'], 
 		OpSymbols: {gt:'>', lt:'<', eq:'='},
 		Sizes: ['length','width'],
-		Traits: ['noStreet','ally','fspDisabled'],
+		Traits: ['needsStreet','ally','fspDisabled'],
 		TraitStates: ['', 'yes', 'no'],
 
 		getDefaultState: () => ({
@@ -373,7 +373,7 @@ let Productions = {
 				length: {op:'', value:''},
 				width:  {op:'', value:''}
 			},
-			traits: {noStreet:'', ally:'', fspDisabled:''},
+			traits: {needsStreet:'', ally:'', fspDisabled:''},
 			criteria: []
 		}),
 
@@ -459,14 +459,14 @@ let Productions = {
 			rating: building.rating,
 			length: building.size.length,
 			width: building.size.width,
-			noStreet: !building.needsStreet,
+			needsStreet: !!building.needsStreet,
 			ally: !!building.allyRoom,
 			fspDisabled: !!building.isInstantFinishDisabled
 		}),
 
 		traitInfo: () => ({
-			noStreet:    {title: FH.t('Boxes.CityMap.roadless'),      icon: `<img src="${srcLinks.get('/shared/gui/buffbar/buffbar_icon_buff_unconnected.png', true)}" />`},
-			ally:        {title: FH.t('Boxes.Tooltip.Building.allyRooms'),   icon: srcLinks.icons('historical_allies_slot_tooltip_icon_empty')},
+			needsStreet: {title: FH.t('Boxes.Tooltip.Building.road'), icon: `<img src="${srcLinks.get('/shared/icons/road_required.png', true)}" />`},
+			ally:        {title: FH.t('Boxes.Tooltip.Building.allyRooms'), icon: srcLinks.icons('historical_allies_slot_tooltip_icon_empty')},
 			fspDisabled: {title: FH.t('Boxes.Tooltip.Building.fspDisabled'), icon: `<img src="${srcLinks.get('/shared/icons/icon_fsp_disabled.png', true)}" />`}
 		}),
 
