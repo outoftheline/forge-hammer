@@ -1511,18 +1511,26 @@ let CityMap = {
 		$('#citymapExtra .title').text(title);
 		
 		let output = [];
-		if (type === 'limited')
-			output.push(`<a class="link flex p5" href="#" onclick="Settings.OpenModuleDecayedBuildingSettings()">
-			<img class="smallIcon" src="${FH.extUrl}images/menu/settings.png" /> Manage Notifications</a>`);
+
+		let existingAlerts= new Set();
+		if (type === 'limited' && FH.ActiveMap !== 'OtherPlayer') {
+			let existingAlerts = await FH.Alerts.getAll();
+			existingAlerts = new Set((existingAlerts || []).map(a => a.data.title + '|' + a.data.expires));
+		}
 
 		output.push(`<ul class="foe-table text-smaller">`);
 		for (let building of buildings) {
+			let alertButton = '';
+			if (type === 'limited' && FH.ActiveMap !== 'OtherPlayer' && building.state.decayTime > moment().unix()) {
+				let isActive = existingAlertKeys.has(building.name + '|' + building.state.decayTime * 1000) ? ' deletealertbutton' : '';
+				alertButton = `<span class="btn btn-slim limitedAlert${isActive} alertbutton" onclick="CityMap.toggleLimitedAlert(this, ${building.id})"></span>`;
+			}
 			output.push(`<li class="flex between" onmouseenter="CityMap.hoverHighlightBuilding(${building.id}, true)" onmouseleave="CityMap.hoverHighlightBuilding(${building.id}, false)">
 				<span>
 					${building.name}
 				</span> 
 				${(type === 'limited') ? 
-					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()}</span>` : ``}`);
+					`<span class="text-right">${moment.unix(building.state.decayTime).fromNow()} ${alertButton}</span>` : ``}`);
 				if (type === 'acendable') {
 					let ascendedId = (await CityMap.AscendingBuildings)[building.entityId];
 					if (ascendedId && InventoryBuildings[ascendedId]) {
@@ -1538,6 +1546,40 @@ let CityMap = {
 		output.push(`</ul>`);
 
 		$('#citymapExtraBody').html(output.join(''));
+	},
+
+
+	/**
+	 * Creates (or removes, if already set) an alert for the moment a limited building decays.
+	 *
+	 * @param {HTMLElement} el - the clicked button
+	 * @param {number} buildingId - the city map id of the limited building
+	 */
+	toggleLimitedAlert: async (el, buildingId) => {
+		let building = FH.Main.CityBuildingsData[buildingId];
+		if (!building?.state?.decayTime) return;
+
+		let btn = $(el);
+		let title = building.name;
+		let expires = building.state.decayTime * 1000;
+
+		if (btn.hasClass('btn-active')) {
+			let alerts = await FH.Alerts.getAll();
+			(alerts || [])
+				.filter(a => a.data.title === title && a.data.expires === expires)
+				.forEach(a => FH.Alerts.delete(a.id));
+			btn.removeClass('btn-active');
+			return;
+		}
+
+		await FH.Alerts.add({
+			title: title,
+			body: FH.t('Boxes.CityMap.limited'),
+			expires: expires,
+			repeat: -1,
+			persistent: true,
+		});
+		btn.addClass('btn-active');
 	},
 
 

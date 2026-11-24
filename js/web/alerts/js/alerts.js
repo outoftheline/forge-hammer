@@ -799,7 +799,7 @@ let Alerts = function(){
 							<tr>
 								<th colspan="2">${labels.persistent}</th>
 								<th>${labels.expiration}</th>
-								<th><span title="${labels.repeat}" class="icon-repeat"></span></th>
+								<th class="tdmin"><span title="${labels.repeat}" class="icon-repeat"></span></th>
 								<th>&nbsp;</th>
 							 </tr>
 						</thead>
