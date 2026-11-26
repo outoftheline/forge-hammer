@@ -518,8 +518,7 @@ let Parts = {
 		await FH.StartUpDone;
 		if (FH.Main.CurrentGB.Entity.level === NextLevel) NextLevel = 0;
 
-		// check for gold tier
-		Parts.MaezenSlots = FH.Main.CurrentGB.Entity.tier === 'gold' ? 7 : 5;
+		Parts.MaezenSlots = (FH.Main.CurrentGB.Entity.tier === 'gold' || GreatBuildings.IsGoldTier(FH.Main.CurrentGB.Entity.cityentity_id, NextLevel || FH.Main.CurrentGB.Entity.level)) ? 7 : 5;
 		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
   		while (Parts.Exts.length < Parts.MaezenSlots) Parts.Exts.push(0);
 
@@ -1617,7 +1616,7 @@ let Parts = {
 			Totals[i] = LevelData.FPCosts[i];
 
 			// How many FPs are needed for each spot (also for the current level, so the calculator boost has no effect)
-			let Arc = GreatBuildings.IsGoldTier(EntityID, i) ? BoostGold : BoostCopper;
+			let Arc = (GreatBuildings.IsGoldTier(EntityID, i) && i > 100) ? BoostGold : BoostCopper;
 			Places[i] = GreatBuildings.GetLevelMaezen(EntityID, i, Arc);
 			EigenBruttos[i] = Places[i].reduce((Rest, Place) => Rest - Place, Totals[i]);
 
