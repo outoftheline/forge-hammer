@@ -1897,6 +1897,28 @@ a:hover, input[type="radio"], .clickable {
 	transform: rotate(-45deg);
 }
 
+.custom-select.dd-popup {
+	position: absolute;
+	top: 0;
+	right: 100%;
+	text-align: left;
+	text-shadow: none;
+}
+.custom-select.dd-popup .custom-options {
+	top: 0;
+	left: auto;
+	right: 0;
+	width: max-content;
+	min-width: 11rem;
+	max-height: 260px;
+	z-index: 2200;
+	box-shadow: 0 1px 3px var(--black-50);
+}
+.custom-select.dd-popup.dd-below {
+	top: 100%;
+	right: 0;
+}
+
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 .forgehammer-overlay {

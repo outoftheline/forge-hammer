@@ -20,15 +20,7 @@
 	width: 155px;
 }
 
-.discordForm #url-list {
-	padding: 0;
-	margin: 0;
-	list-style: none;
-	display: inline-block;
-	width: calc(100% - 170px);
-}
-
-.discordForm #url-list {
+.discordForm .selectablelist {
 	padding: 0;
 	margin: 0;
 	list-style: none;
@@ -36,14 +28,14 @@
 	width: calc(100% - 160px);
 }
 
-.discordForm #url-list li {
+.discordForm .selectablelist li {
 	padding: 0 2px;
 	margin: 0 3px;
 	display: inline-block;
 	border-radius: 2px;
 }
 
-.discordForm #url-list li.selected {
+.discordForm .selectablelist li.selected {
 	font-weight: bold;
 	color: var(--text-highlight);
 	background-color: var(--black-50);

@@ -292,6 +292,12 @@
     background-image: url('../../../../images/menu/discord.png'), var(--tabs-bg);
 }
 
+#LiveGuildFightingBody td .btn-group {
+	position: relative;
+}
+#LiveGuildFightingBody .custom-select.dd-popup .custom-options {
+	min-width: max-content;
+}
 
 
 /*************************************************************************************************************/

@@ -139,8 +139,7 @@ let GuildFights = {
 	serverOffset: JSON.parse(FH.Storage.getItem("GuildFights.serverOffset")||"null"),
 	discordWebhook: { 
 		url: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhook || "",
-		template: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplate || "",
-		bulkTemplate: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.discordWebhookTemplateBulk || "",
+		useTemplates: JSON.parse(FH.Storage.getItem("LiveFightSettings"))?.useTemplates || 0,
 	},
 	discordCache: null,
 
@@ -1362,7 +1361,7 @@ let GuildFights = {
 
 		h.push(`<div class="btn-group">
 			<button class="btn btn-slim copybutton all" onclick="GuildFights.CopyToClipBoard(event)">${FH.t('Boxes.GuildFights.SelectAll')}</button>
-			<button class="btn btn-slim dcbutton discord custom" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendSelectionCustom')}" style="display:none;"></button>
+			<button class="btn btn-slim dcbutton discord custom" onclick="GuildFights.ShowGBGTemplates(event)" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendSelectionCustom')}" style="display:none;"></button>
 			<button class="btn btn-slim dcbutton discord" onclick="GuildFights.PrepareForDiscord(event)" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendSelection')}" style="display:none;"></button>
 			<button class="btn btn-slim mapbutton" onclick="ProvinceMap.build()">${FH.t('Boxes.GuildFights.OpenMap')}</button>
 			</div>
@@ -1391,6 +1390,11 @@ let GuildFights = {
 			$('#nextup').on('click', 'tr', function () {
 				$(this).toggleClass('highlight-row');
 				GuildFights.ToggleCopyButton();
+			});
+			// close the discord template list when clicking anywhere else
+			$('#LiveGuildFightingBody').off('click.gbgTemplates').on('click.gbgTemplates', function (e) {
+				if ($(e.target).closest('.chooseTemplate').length === 0)
+					$('#LiveGuildFightingBody .chooseTemplate').remove();
 			});
 			// in BuildFightContent(), inside .promise().done(), alongside the existing delegated listeners:
 			$('#LiveGuildFightingBody .gbg-tabs').on('mouseenter', 'tr', function (e) {
@@ -1614,10 +1618,8 @@ let GuildFights = {
 
 				let discordButtons = '';
 				if (prov[x].owner !== own.clan.name && GuildFights.discordWebhook.url != '') {
-					if (GuildFights.discordWebhook.template != '') {
-						let tpl = Discord.WebHooks.find(x => x.name == GuildFights.discordWebhook.template);
-						if (tpl)
-							discordButtons += `<button class="btn btn-slim discord custom" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendCustom')}" onclick="Discord.sendGBGSectorCustom(${prov[x]['id']});"></button>`;
+					if (GuildFights.discordWebhook.useTemplates === 1) {
+						discordButtons += `<button class="btn btn-slim discord custom" data-original-title="${FH.t('Boxes.GuildFights.DiscordSendCustom')}" onclick="GuildFights.ShowGBGTemplates(event, ${prov[x]['id']});"></button>`;
 					}
 					discordButtons += `<button class="btn btn-slim discord" data-original-title="${FH.t('Boxes.GuildFights.DiscordSend')}" onclick="Discord.sendGBGSector(${prov[x]['id']});"></button>`;
 				}
@@ -1691,9 +1693,6 @@ let GuildFights = {
 	},
 
 
-	/**
-	 * Initatite the Litepicker object
-	 */
 	intiateDatePicker: async () => {
 		if (GuildFights.LogDatePicker) {
 			GuildFights.LogDatePicker.destroy();
@@ -1759,12 +1758,67 @@ let GuildFights = {
 			$('.copybutton').html(FH.t('Boxes.GuildFights.Copy'));
 			$('.copybutton').removeClass('all');
 			$('.dcbutton').show();
-			if (GuildFights.discordWebhook.bulkTemplate == "")
+			if (GuildFights.discordWebhook.useTemplates !== 1)
 				$('.dcbutton.custom').hide();
 		} else {
 			$('.copybutton').html(FH.t('Boxes.GuildFights.SelectAll'));
 			$('.copybutton').addClass('all');
 		}
+	},
+
+
+	/**
+	 * Opens the list of GBG Discord templates next to the clicked button.
+	 * With a provId the chosen template is sent for that province, without one for the current selection.
+	 */
+	ShowGBGTemplates: (e, provId = null) => {
+		e.stopPropagation();
+
+		let $parent = $(e.currentTarget).parent();
+		let isOpen = $parent.find('.chooseTemplate').length > 0;
+
+		$('#LiveGuildFightingBody .chooseTemplate').remove();
+		if (isOpen) return;
+
+		let templates = Discord.WebHooks
+			.map((tpl, idx) => ({ tpl, idx }))
+			.filter(x => x.tpl.type === 'template' && x.tpl.category === 'gbg');
+
+		if (templates.length === 0) {
+			FH.HTML.ShowToastMsg({
+				head: FH.t('Boxes.GuildFights.DiscordNoTemplates.Title'),
+				text: `${FH.t('Boxes.GuildFights.DiscordNoTemplates.Desc')} <span class="clickable" style="text-decoration:underline" onclick="Discord.BuildBox()">${FH.t('Boxes.Discord.Title')}</span>`,
+				type: 'info',
+				hideAfter: 6000,
+				show: true
+			});
+			return;
+		}
+
+		let items = templates.map(x =>
+			`<span class="custom-option" onclick="GuildFights.SendGBGTemplate(event, ${x.idx})">${FH.HTML.escapeHtml(x.tpl.name)}</span>`
+		).join('');
+
+		$parent.append(`<span class="custom-select dd-open dd-popup chooseTemplate${provId === null ? ' dd-below' : ''}" data-id="${provId ?? ''}"><span class="custom-options">${items}</span></span>`);
+	},
+
+
+	SendGBGTemplate: (e, idx) => {
+		e.stopPropagation();
+
+		let $list = $(e.currentTarget).closest('.chooseTemplate');
+		let provId = $list.attr('data-id');
+		$('#LiveGuildFightingBody .chooseTemplate').remove();
+
+		let tpl = Discord.WebHooks[idx];
+		if (!tpl) return;
+
+		if (provId === '' || provId === undefined) {
+			GuildFights.PrepareForDiscord(null, tpl.name);
+			return;
+		}
+
+		Discord.sendGBGSectorCustom(parseInt(provId), tpl.name);
 	},
 
 
@@ -1811,7 +1865,7 @@ let GuildFights = {
 
 
 
-	PrepareForDiscord: (e) => {
+	PrepareForDiscord: (e, template = null) => {
 		GuildFights.discordCache = [];
 		$('.timer.highlight-row').each(function () {
 			GuildFights.discordCache.push(GuildFights.MapData.map.provinces.find((mapItem) => mapItem.id == $(this).data('id')));
@@ -1821,8 +1875,8 @@ let GuildFights = {
 
 		if (GuildFights.discordCache.length > 0) {
 			
-			if (e.target.classList.contains('custom')) {
-				Discord.sendGBGSectorsCustom();
+			if (template) {
+				Discord.sendGBGSectorsCustom(template);
 				return;
 			}
 			Discord.sendGBGSectors();
@@ -2141,8 +2195,7 @@ let GuildFights = {
 		let showServerTime = LiveFightSettings?.showServerTime ?? 0;
 		let gbgAlertOffset = LiveFightSettings?.gbgAlertOffset ?? 30;
 		let discordWebhook = LiveFightSettings?.discordWebhook ?? '';
-		let discordWebhookTemplate = LiveFightSettings?.discordWebhookTemplate ?? '';
-		let discordWebhookTemplateBulk = LiveFightSettings?.discordWebhookTemplateBulk ?? '';
+		let discordUseTemplates = LiveFightSettings?.useTemplates ?? 0;
 		let autoOpen = LiveFightSettings?.autoOpen ?? 0;
 
 		c.push(`<p><input id="gbgautopen" name="gbgautopen" value="1" type="checkbox" ${(autoOpen === 1) ? ' checked="checked"' : ''} /> 
@@ -2192,22 +2245,8 @@ let GuildFights = {
 				}
 			c.push(`</select>`);
 			}
-			let templates = Discord.WebHooks.filter(x => x.type == "template");
-			if (Discord.WebHooksUrls.length !== 0 && templates.length != 0) {
-				c.push(`<select id="gbgWebhookTemplate" name="gbgWebhookTemplate">`);
-				c.push(`<option value="">${FH.t('Boxes.Discord.TitleNewTemplate')}</option>`);
-				for(let tpl of templates) {
-					c.push(`<option value="${tpl.name}" ${discordWebhookTemplate === tpl.name ? ' selected="selected"' : ''}>${tpl.name}</option>`);
-				}
-			c.push(`</select>`);}
-			if (Discord.WebHooksUrls.length !== 0 && templates.length != 0) {
-				c.push(`<select id="gbgWebhookTemplateBulk" name="gbgWebhookTemplateBulk">`);
-				c.push(`<option value="">${FH.t('Boxes.GuildFights.DiscordTemplateBulk')}</option>`);
-				for(let tpl of templates) {
-					c.push(`<option value="${tpl.name}" ${discordWebhookTemplateBulk === tpl.name ? ' selected="selected"' : ''}>${tpl.name}</option>`);
-				}
-			c.push(`</select>`);}
-			c.push(`</p>`);
+			c.push(`<p><input id="gbgUseTemplates" name="gbgUseTemplates" value="0" type="checkbox" ${(discordUseTemplates === 1) ? ' checked="checked"' : ''} /> 
+		<label for="gbgUseTemplates">${FH.t('Boxes.GuildFights.UseDiscordTemplates')}</label></p>`);
 		c.push(`<p><button onclick="GuildFights.SaveLiveFightSettings()" id="save-livefight-settings" class="btn saveSettings">${FH.t('Boxes.GuildFights.SaveSettings')}</button></p>`);
 
 		
@@ -2228,8 +2267,7 @@ let GuildFights = {
 		value.showServerTime = 0;
 		value.gbgAlertOffset = 30;
 		value.discordWebhook = '';
-		value.discordWebhookTemplate = '';
-		value.discordWebhookTemplateBulk = '';
+		value.useTemplates = 0;
 
 		if ($("#gbgautopen").is(':checked')) 
 			value.autoOpen = 1;
@@ -2256,8 +2294,9 @@ let GuildFights = {
 
 		value.gbgAlertOffset = $("#gbgalertoffset").val();
 		value.discordWebhook = $("#gbgWebhook").val();
-		value.discordWebhookTemplate = $("#gbgWebhookTemplate").val();
-		value.discordWebhookTemplateBulk = $("#gbgWebhookTemplateBulk").val();
+		
+		if ($("#gbgUseTemplates").is(':checked')) 
+			value.useTemplates = 1;
 				
 		GuildFights.autoOpen = value.autoOpen;
 		GuildFights.showGuildColumn = value.showGuildColumn;
@@ -2269,8 +2308,7 @@ let GuildFights = {
 		GuildFights.showServerTime = value.showServerTime;
 		GuildFights.gbgAlertOffset = value.gbgAlertOffset;
 		GuildFights.discordWebhook.url = value.discordWebhook;
-		GuildFights.discordWebhook.template = value.discordWebhookTemplate;
-		GuildFights.discordWebhook.bulkTemplate = value.discordWebhookTemplateBulk;
+		GuildFights.discordWebhook.useTemplates = value.useTemplates;
 		GuildFights.serverOffset = parseInt($("#serverOffset").val()) ?? null;
 
 		if (GuildFights.serverOffset != null)

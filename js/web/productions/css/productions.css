@@ -1001,23 +1001,6 @@ input[id*="ProdPerTile"] {
 	min-height: auto;
 	vertical-align: middle;
 }
-/* era list: the shared custom-select dropdown (as in the advanced filter), opened to the left of the button */
-#ProductionsRatingBody .chooseEra {
-	position: absolute;
-	top: 0;
-	right: 100%;
-	text-align: left;
-	text-shadow: none;
-}
-#ProductionsRatingBody .chooseEra .custom-options {
-	top: 0;
-	left: auto;
-	right: 0;
-	width: 11rem;
-	max-height: 260px;
-	z-index: 2200;
-	box-shadow: 0 1px 3px var(--black-50);
-}
 #ProductionsRatingBody .chooseEra .custom-option.selected {
 	pointer-events: none;
 }

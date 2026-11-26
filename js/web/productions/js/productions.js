@@ -2810,7 +2810,7 @@ let Productions = {
 				`<span data-era="${eraName}" class="custom-option${alreadyCompared.includes(eraName) ? ' selected' : ''}">${FH.t('Eras.' + Technologies.Eras[eraName])}</span>`
 			).join('');
 
-			$cell.append(`<span class="custom-select dd-open chooseEra" data-meta_id="${entityId}"><span class="custom-options">${items}</span></span>`);
+			$cell.append(`<span class="custom-select dd-open dd-popup chooseEra" data-meta_id="${entityId}"><span class="custom-options">${items}</span></span>`);
 		});
 
 		$ratingBody.on('click.eraCompare', '.chooseEra .custom-option', async function (e) {

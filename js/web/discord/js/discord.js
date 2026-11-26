@@ -13,9 +13,6 @@ let Discord = {
 	ActiveEntry: 0,
 
 
-	/**
-	 * Get active Webhooks
-	 */
 	init: ()=> {
 		let webhooks = JSON.parse(FH.Storage.getItem(Discord.StorageName));
 		if (webhooks) {
@@ -69,7 +66,7 @@ let Discord = {
 				if (d.type == 'template')
 					h.push(`<b>${d.name}</b> `);
 
-				h.push(`${d.message}
+				h.push(`<span class="text-smaller">${d.message}</span>
 				</span>
 					
 				<span style="white-space:nowrap;" class="text-right">
@@ -179,8 +176,8 @@ let Discord = {
 		h.push(`<div id="discord-entry-form" style="display:none;" class="dark-bg discordForm">
 			<h1 class="p5">${FH.t('Boxes.Discord.TitleNewEntry')}</h1>`);
 		h.push(`<form action="" onsubmit="return false;" autocomplete="off">
-			<b>${FH.t('Boxes.Discord.WebhookUrl')}</b>`);
-		h.push(`<ul id="url-list" class="clickable">`);
+			<b>${FH.t('Boxes.Discord.WebhookUrl')}</b>
+			<ul id="url-list" class="clickable selectablelist">`);
 		
 		if (Discord.WebHooksUrls.length === 0) {
 			h.push(`<li><em>${FH.t('Boxes.Discord.WebhookUrlNeeded')}</em></li>`);
@@ -196,10 +193,8 @@ let Discord = {
 
 			h.push(`<li data-url="${url['url']}" class="discord-url-item${isSelected ? ' selected' : ''}" onclick="Discord.SelectUrl(this)">${url['name']}</li>`);
 		}
-
 		h.push(`</ul>`);
 		h.push(`<input type="hidden" id="url" value="${data && data['url'] ? data['url'] : (Discord.WebHooksUrls.length === 1 ? Discord.WebHooksUrls[0]['url'] : '')}">`);
-
 
 		h.push(`<b>${FH.t('Boxes.Discord.Message')}</b>`);
 		h.push(`<textarea id="message" name="message" spellcheck="false">${data ? data['message'] : ':robot: **Test message**\nForge Hammer was here!'}</textarea>`);
@@ -232,13 +227,22 @@ let Discord = {
 			data = Discord.WebHooks[parseInt(i)];
 		}
 
-		let h = [];		
+		let h = [];
+		let currentCategory = data?.category || '';
 
 		h.push(`<div id="discord-template-form" style="display:none;" class="dark-bg discordForm">
 			<h1 class="p5">${FH.t('Boxes.Discord.TitleNewTemplate')}</h1>
 			<form action="" onsubmit="return false;" autocomplete="off">
 				<b>${FH.t('Boxes.Discord.Name')}</b>
 				<input id="discord-template-name" type="text" value="${data ? data['name'] : ''}" />
+
+				<b>${FH.t('Boxes.Discord.Category')}</b>
+				<ul id="category-list" class="clickable selectablelist">
+				<li data-category="gbg" class="discord-cat-item${currentCategory === 'gbg' ? ' selected' : ''}" onclick="Discord.SelectCategory(this)">${FH.t('Boxes.General.Guild_Battlegrounds.short')}</li>
+				<li data-category="qi" class="discord-cat-item${currentCategory === 'qi' ? ' selected' : ''}" onclick="Discord.SelectCategory(this)">${FH.t('Boxes.General.Quantum_Incursion.short')}</li>
+				<li data-category="gex" class="discord-cat-item${currentCategory === 'gex' ? ' selected' : ''}" onclick="Discord.SelectCategory(this)">${FH.t('Boxes.General.Guild_Expedition.short')}</li>
+				</ul>
+				<input type="hidden" id="discordcategory" value="${currentCategory}">
 
 				<b>${FH.t('Boxes.Discord.Message')}</b>
 				<textarea id="message" name="message" spellcheck="false">${data ? data['message'] : ':robot: #battletype **#name** <t:#time:R>'}</textarea>
@@ -273,7 +277,6 @@ let Discord = {
 			Discord.WebHooks.push(data);
 		}
 
-		// save & rebuild
 		Discord.SaveTheData();
 	},
 
@@ -283,6 +286,7 @@ let Discord = {
 		const data = {
 			message: $('#message').val(),
 			type: 'template',
+			category: $('#discordcategory').val(),
 			name: $('#discord-template-name').val()
 		};
 
@@ -470,6 +474,20 @@ let Discord = {
 	},
 
 
+	SelectCategory: (el)=> {
+		let wasSelected = $(el).hasClass('selected');
+		$('#category-list .discord-cat-item').removeClass('selected');
+
+		if (wasSelected) {
+			$('#discordcategory').val('');
+			return;
+		}
+
+		$(el).addClass('selected');
+		$('#discordcategory').val($(el).data('category'));
+	},
+
+
 	CloseOverlay: (id)=> {
 		$(`#${id}`).fadeToggle(function() {
 			$(this).remove();
@@ -544,9 +562,9 @@ let Discord = {
 		});
 	},
 
-	sendGBGSectorCustom: (id)=> {
+	sendGBGSectorCustom: (id, template)=> {
 		let sector = GuildFights.MapData.map.provinces.find(x => x.id === id);
-		let msg = Discord.createGBGCustomMessage(sector,GuildFights.discordWebhook.template);
+		let msg = Discord.createGBGCustomMessage(sector,template);
 
 		Discord.PrepareMessageForSend({
 			url: GuildFights.discordWebhook.url,
@@ -555,10 +573,10 @@ let Discord = {
 		});
 	},
 
-	sendGBGSectorsCustom: () => {
+	sendGBGSectorsCustom: (template) => {
 		let msg = "";
 		for (let sector of GuildFights.discordCache) {
-			msg += Discord.createGBGCustomMessage(sector,GuildFights.discordWebhook.bulkTemplate) + "\n";
+			msg += Discord.createGBGCustomMessage(sector,template) + "\n";
 		}
 
 		Discord.PrepareMessageForSend({
