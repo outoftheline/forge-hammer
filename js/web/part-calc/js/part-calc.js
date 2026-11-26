@@ -636,6 +636,7 @@ let Parts = {
 			Parts.LockExistingPlaces = true;
 			Parts.TrustExistingPlaces = false;
 			for (let i = 0; i < Parts.MaezenSlots; i++) Parts.Exts[i] = 0;
+			Parts.LockedMaezens = [];
 			Parts.CopySettings.includeLevelString = false;
 		}
 
@@ -661,6 +662,7 @@ let Parts = {
 			SelfPlace = -1; // own position, -1 if not in the top 5
 
 		Parts.PlaceAvailables = Array(Parts.MaezenSlots).fill(false); // Wird auf true gesetz, wenn auf einem Platz noch eine (nicht externe) Zahlung einzuzahlen ist (wird in Spalte Einzahlen angezeigt)
+		let LockedPlaces = Array(Parts.MaezenSlots).fill(false);
 		Parts.DangerPlaces = Array(Parts.MaezenSlots).fill(0);; // Feld mit Dangerinformationen. Wenn > 0, dann die gefährdeten FP
 		Parts.LeveltLG = Array(Parts.MaezenSlots).fill(false);
 		Parts.Maezens = [];
@@ -808,8 +810,9 @@ let Parts = {
 					Parts.DangerPlaces[i] -= Parts.Maezens[i] - Rest;
 				Parts.Maezens[i] = Rest;
 			}
-			// hier weiter mit besserem gehirn
-			if (i !== Parts.LockedMaezens.find(x => x == i)) 
+			if (Parts.LockedMaezens.includes(i))
+				LockedPlaces[i] = true;
+			else
 				Parts.PlaceAvailables[i] = true;
 			
 			MaezenTotal += Parts.Maezens[i];
@@ -968,7 +971,7 @@ let Parts = {
 			// other players contributions
 			let ownSpot = (SelfPlace === i && FH.Main.CurrentGB.Entity?.player_id !== FH.Player.ID);
 			h.push(`<tr ${ownSpot? `class="bg-blue"` : ``}>
-				<td ${Parts.PlaceAvailables[i] ? `class="notTaken" onClick="Parts.reRank(${i})"` : ''}><b>` + (i+1) + '</b></td>');
+				<td ${Parts.PlaceAvailables[i] ? `class="notTaken clickable" onClick="Parts.reRank(${i})"` : (LockedPlaces[i] ? `class="lockedPlace clickable" onClick="Parts.reRank(${i})"` : '')}><b>` + (i+1) + '</b></td>');
 
 			if (Parts.PlaceAvailables[i]) {
 				let copyvalue = Parts.Maezens[i];
@@ -1153,7 +1156,10 @@ let Parts = {
 	},
 
 	reRank: (n) => {
-		Parts.LockedMaezens.push(n);
+		if (Parts.LockedMaezens.includes(n))
+			Parts.LockedMaezens = Parts.LockedMaezens.filter(x => x !== n);
+		else
+			Parts.LockedMaezens.push(n);
 		Parts.CalcBody();
 	},
 

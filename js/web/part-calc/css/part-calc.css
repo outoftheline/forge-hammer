@@ -469,6 +469,16 @@
 	margin-top: 2px;
 }
 
+.lockedPlace b::after {
+	content: ' 🔒';
+	font-size: 80%;
+	display: inline;
+	opacity: 0.7;
+	filter: saturate(0.1);
+	position: relative;
+	bottom: 1px;
+}
+
 .unlock-icon {
 	display: inline-block;
 	width: 16px;
