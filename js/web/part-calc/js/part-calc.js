@@ -92,6 +92,8 @@ let Parts = {
 	PowerLevelingData: null,
 	PowerLevelingKey: null,
 	PowerLevelingEntityID: null,
+	PowerLevelingIsOwnGB: false,
+	PowerLevelingUnlockedLevel: null,
 	PowerLevelingExcludedGBs: [],
 	UnlockCostTypes: ['Goods', 'Coins', 'Supplies', 'Medals', 'CopperBlueprints', 'GoldBlueprints'],
 	UnlockCostFactors: { Goods: 5, CopperBlueprints: 9, GoldBlueprints: 9 },
@@ -284,6 +286,8 @@ let Parts = {
 			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
 				Parts.PowerLevelingEntityID = FH.Main.CurrentGB.Entity.cityentity_id;
+				Parts.PowerLevelingIsOwnGB = FH.Main.CurrentGB.Entity.player_id === FH.Player.ID;
+				Parts.PowerLevelingUnlockedLevel = Parts.PowerLevelingIsOwnGB ? (FH.Main.CityMapData[FH.Main.CurrentGB.Entity.id]?.max_level ?? null) : null;
 				Parts.PowerLevelingStartLevel = Parts.Level;
 				Parts.PowerLevelingEndLevel = 300;
 				Parts.ShowPowerLeveling(false);
@@ -1583,6 +1587,7 @@ let Parts = {
 				let $Row = $(this).closest('tr'),
 					$Next = $Row.next('.pl-unlock-row'),
 					Stock = FH.RessourceStock || {},
+					Compare = Parts.PowerLevelingIsOwnGB,
 					o = [];
 
 				if ($Next.length) {
@@ -1592,11 +1597,11 @@ let Parts = {
 				}
 
 				let gb_level = $(this).parent().data('level'),
-					{ EntityID, StartLevel } = Parts.PowerLevelingData,
-					{ UnlockSums } = Parts.CalcUnlockCosts(StartLevel, gb_level + 1, EntityID);
+					{ EntityID, UnlockStartLevel } = Parts.PowerLevelingData,
+					{ UnlockSums } = Parts.CalcUnlockCosts(UnlockStartLevel, gb_level + 1, EntityID);
 
 				o.push(`<tr class="pl-unlock-row dark-bg"><td colspan="${$Row.children().length}">
-					<div class="flex"><b>${FH.t('Boxes.PowerLeveling.UnlockCosts')} ${StartLevel} → ${(gb_level + 1)}:</b>`);
+					<div class="flex"><b>${FH.t('Boxes.PowerLeveling.UnlockCosts')} ${UnlockStartLevel} → ${(gb_level + 1)}:</b>`);
 					
 
 				for (let Type of Parts.UnlockCostTypes) {
@@ -1607,13 +1612,13 @@ let Parts = {
 						Title = FH.t('Boxes.PowerLeveling.Unlock.' + Type) + ': ' + FH.HTML.Format(Sum.Amount);
 
 					// bp: stock unknown, dont compare
-					o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Type), Title, Sum.Amount, StockKey ? (Stock[StockKey] || 0) : undefined, !!StockKey));
+					o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Type), Title, Sum.Amount, Compare && StockKey ? (Stock[StockKey] || 0) : undefined, !!StockKey));
 				}
 				o.push(`</div><div>`);
 
 				if (UnlockSums.Goods) {
 					for (let Good of Parts.GetEraGoods(EntityID)) {
-						o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Good.id), Good.name, UnlockSums.Goods.Base, Stock[Good.id] || 0));
+						o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Good.id), Good.name, UnlockSums.Goods.Base, Compare ? (Stock[Good.id] || 0) : undefined));
 					}
 				}
 				o.push('</div></td></tr>');
@@ -1690,6 +1695,7 @@ let Parts = {
 
 		return {
 			EntityID,
+			UnlockStartLevel: Parts.PowerLevelingUnlockedLevel ?? StartLevel,
 			HasDoubleCollection,
 			HasGoldLevels: LevelData.FPCosts.length > 200,
 			BoostCopper,
@@ -1737,6 +1743,7 @@ let Parts = {
 
 	CalcTableBodyPowerLeveling: (h) => {
 		const {
+			UnlockStartLevel,
 			HasDoubleCollection,
 			SpotCount,
 			Places,
@@ -1768,7 +1775,7 @@ let Parts = {
 			}
 			let CumulativeTT = StartLevel+' → '+ (i + 1) +': '+ FH.HTML.Format(FH.Main.round(OwnPartCumulative));
 			h.push(`<td><strong class="info no-select pl-cumulative-tooltip" data-original-title="${CumulativeTT}">${FH.HTML.Format(FH.Main.round(EigenNettos[i]))}</strong></td>
-			<td data-level="${i}"><span class="hidden-text">${i}</span><span class="btn btn-slim button-powerlevel-copy">${FH.t('Boxes.PowerLeveling.CopyValues')}</span>${HasUnlockCosts ? `<span class="btn btn-slim button-powerlevel-unlockcosts">${FH.t('Boxes.PowerLeveling.UnlockCosts')}</span>` : ''}</td>
+			<td data-level="${i}"><span class="hidden-text">${i}</span><span class="btn btn-slim button-powerlevel-copy">${FH.t('Boxes.PowerLeveling.CopyValues')}</span>${HasUnlockCosts && i >= UnlockStartLevel ? `<span class="btn btn-slim button-powerlevel-unlockcosts">${FH.t('Boxes.PowerLeveling.UnlockCosts')}</span>` : ''}</td>
 			</tr>`);
 		}
 	},
