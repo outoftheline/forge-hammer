@@ -53,7 +53,7 @@ let Calculator = {
 	},
 
 	GetForderBonusStorageKey: (PerConversation = true) => {
-		let Key = 'CalculatorForderBonus' + (FH.Main.CurrentGB.Entity?.tier === 'gold' ? '_gold' : '');
+		let Key = 'CalculatorForderBonus' + (FH.Main.CurrentGB.Tier === 'gold' ? '_gold' : '');
 		if (PerConversation && Calculator.ForderBonusPerConversation && FH.Main.OpenConversation) Key += '_' + FH.Main.OpenConversation.id;
 		return Key;
 	},
@@ -76,7 +76,7 @@ let Calculator = {
 		}
 		else {
 			// use defaults
-			UseOwnBoost = (FH.Main.CurrentGB.Entity?.tier === 'gold');
+			UseOwnBoost = (FH.Main.CurrentGB.Tier === 'gold');
 			Calculator.ForderBonus = 85;
 		}
 
@@ -106,7 +106,7 @@ let Calculator = {
 		let BuildingName = FH.Main.CityEntities[FH.Main.CurrentGB.Entity['cityentity_id']]['name'];
 		let Level = (FH.Main.CurrentGB.Entity.level || 0);
 		let MaxLevel = (FH.Main.CurrentGB.Entity.max_level || 0);
-		let Tier = FH.Main.CurrentGB.Entity.tier;
+		let Tier = FH.Main.CurrentGB.Tier;
 
 		h.push(`<div id="gbCalc" class="gbTier-${Tier}">
 				<div class="header text-center dark-bg p5">
@@ -261,7 +261,7 @@ let Calculator = {
 				rank.fpNetReward = FH.Main.round(entry.reward.strategy_point_amount);
 
 			rank.bpReward = Parts.GetBlueprintReward(entry.reward);
-			rank.bpTier = FH.Main.CurrentGB.Entity?.tier === 'gold' ? 'gold' : 'copper';
+			rank.bpTier = FH.Main.CurrentGB.Tier === 'gold' ? 'gold' : 'copper';
 
 			if (entry.reward.resources?.medals !== undefined)
 				rank.medalReward = FH.Main.round(entry.reward.resources.medals);

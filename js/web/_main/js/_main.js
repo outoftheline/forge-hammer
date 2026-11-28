@@ -732,6 +732,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 			Main.CurrentGB.isPreviousLevel = Level <= Main.CurrentGB.Entity.level;
 			Parts.IsPreviousLevel = Main.CurrentGB.isPreviousLevel;
+			Main.CurrentGB.FromLevel = Level - 1;
+
+			Main.CurrentGB.Tier = (Main.CurrentGB.Entity.tier === 'gold' && Main.CurrentGB.FromLevel > 100) ? 'gold' : 'copper';
 			
 			if (!Main.CurrentGB.isPreviousLevel) 
 				Parts.View = '';
@@ -968,7 +971,9 @@ let Main = {
 	CurrentGB: {
 		Entity: undefined,
 		Rankings: undefined,
-		isPreviousLevel: false
+		isPreviousLevel: false,
+		FromLevel: 0,
+		Tier: 'copper'
 	},
 
 	// all buildings of the player

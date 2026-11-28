@@ -524,7 +524,7 @@ let Parts = {
 		await FH.StartUpDone;
 		if (FH.Main.CurrentGB.Entity.level === NextLevel) NextLevel = 0;
 
-		Parts.MaezenSlots = (FH.Main.CurrentGB.Entity.tier === 'gold' || GreatBuildings.IsGoldTier(FH.Main.CurrentGB.Entity.cityentity_id, NextLevel || FH.Main.CurrentGB.Entity.level)) ? 7 : 5;
+		Parts.MaezenSlots = (FH.Main.CurrentGB.Tier === 'gold' || GreatBuildings.IsGoldTier(FH.Main.CurrentGB.Entity.cityentity_id, NextLevel || (Parts.IsPreviousLevel ? FH.Main.CurrentGB.FromLevel : FH.Main.CurrentGB.Entity.level))) ? 7 : 5;
 		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
   		while (Parts.Exts.length < Parts.MaezenSlots) Parts.Exts.push(0);
 
@@ -565,7 +565,7 @@ let Parts = {
 
 		Parts.ArcPerConversation = (FH.Storage.getItem('OwnPartArcPerConversation') === 'true');
 		let IsFavorite = Parts.IsFavorite(PlayerID);
-		if (Parts.FirstCycle || FH.Main.CurrentGB.Entity.tier !== Parts.LastArcTier || IsFavorite !== Parts.LastFavorite || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
+		if (Parts.FirstCycle || FH.Main.CurrentGB.Tier !== Parts.LastArcTier || IsFavorite !== Parts.LastFavorite || (Parts.ArcPerConversation && (FH.Main.OpenConversation?.id ?? null) !== Parts.LastArcConversationID)) {
 			Parts.GetConversationBonus();
 		}
 		Parts.LastFavorite = IsFavorite;
@@ -867,7 +867,7 @@ let Parts = {
 			h.push('<div class="lg-not-possible" data-text="'+FH.t('Boxes.Calculator.LGNotOpen')+'"></div>');
 		}
 
-		let Tier = FH.Main.CurrentGB.Entity.tier;
+		let Tier = FH.Main.CurrentGB.Tier;
 		let haslevelingData = Parts.CanPowerLevel(FH.Main.CurrentGB.Entity.cityentity_id) ? '' : 'disabled'; 
 
 		h.push(`<div id="gbCosts" class="gbTier-${Tier}">`);
@@ -1306,7 +1306,7 @@ let Parts = {
 
 
 	GetArcStorageKey: () => {
-		return Parts.GetStorageKey('ArcPercents', null) + (FH.Main.CurrentGB.Entity?.tier === 'gold' ? '_gold' : '');
+		return Parts.GetStorageKey('ArcPercents', null) + (FH.Main.CurrentGB.Tier === 'gold' ? '_gold' : '');
 	},
 
 
@@ -1349,12 +1349,12 @@ let Parts = {
 		return `<span class="set-favorite game-cursor${IsFavorite ? ' active' : ''}" data-player-id="${PlayerID}" title="${FH.t(IsFavorite ? 'Boxes.Calculator.RemoveFavorite' : 'Boxes.Calculator.AddFavorite')}">${IsFavorite ? '★' : '☆'}</span>`;
 	},
 
-	GetContributionBoost: (Tier = FH.Main.CurrentGB.Entity?.tier) => {
+	GetContributionBoost: (Tier = FH.Main.CurrentGB.Tier) => {
 		return Tier === 'gold' ? Boosts.Sums.contribution_boost_gold : Boosts.Sums.contribution_boost;
 	},
 
 
-	GetBlueprintReward: (Reward, Tier = FH.Main.CurrentGB.Entity?.tier) => {
+	GetBlueprintReward: (Reward, Tier = FH.Main.CurrentGB.Tier) => {
 		if (Tier === 'gold') return Reward?.blueprintRewards?.find(BP => BP.tier?.value === 'gold')?.amount || 0;
 		return parseInt(Reward?.blueprints) || 0;
 	},
@@ -1399,18 +1399,18 @@ let Parts = {
 		}
 		else {
 			// nothing saved for this tier yet: copper defaults to 90%, gold to the own gold boost
-			Parts.UseOwnBoost = (FH.Main.CurrentGB.Entity?.tier === 'gold');
+			Parts.UseOwnBoost = (FH.Main.CurrentGB.Tier === 'gold');
 			Parts.ArcPercents = [];
 		}
 		while (Parts.ArcPercents.length < Parts.MaezenSlots) Parts.ArcPercents.push(Parts.ArcPercents[0] ?? 90);
 
 		Parts.LastArcConversationID = FH.Main.OpenConversation?.id ?? null;
-		Parts.LastArcTier = FH.Main.CurrentGB.Entity?.tier;
+		Parts.LastArcTier = FH.Main.CurrentGB.Tier;
 	},
 
 
 	GetCopyString: () => {
-		return Parts.GetCopyStringEx(Parts.CopyPlaces, Parts.Maezens, Parts.Level, Parts.RemainingOwnPart, Parts.CopyModeAll, Parts.CopyModeAuto, Parts.CopyModeAutoUnsafe, Parts.DangerPlaces, Parts.LeveltLG, FH.Main.CurrentGB.Entity?.tier, Parts.MaezenSlots);
+		return Parts.GetCopyStringEx(Parts.CopyPlaces, Parts.Maezens, Parts.Level, Parts.RemainingOwnPart, Parts.CopyModeAll, Parts.CopyModeAuto, Parts.CopyModeAutoUnsafe, Parts.DangerPlaces, Parts.LeveltLG, FH.Main.CurrentGB.Tier, Parts.MaezenSlots);
 	},
 
 
@@ -2160,4 +2160,4 @@ let Parts = {
 			KeyboardEvents.paste(String(value));
 		}
 	}
-};
+}
