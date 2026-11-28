@@ -91,6 +91,7 @@ let Parts = {
 	PowerLevelingEndLevel: 300,
 	PowerLevelingData: null,
 	PowerLevelingKey: null,
+	PowerLevelingEntityID: null,
 	PowerLevelingExcludedGBs: [],
 	UnlockCostTypes: ['Goods', 'Coins', 'Supplies', 'Medals', 'CopperBlueprints', 'GoldBlueprints'],
 	UnlockCostFactors: { Goods: 5, CopperBlueprints: 9, GoldBlueprints: 9 },
@@ -282,6 +283,7 @@ let Parts = {
 
 			$('#OwnPartBox').on('click', '.button-powerleveling:not(.disabled)', function () {
 				// Reset power leveling range
+				Parts.PowerLevelingEntityID = FH.Main.CurrentGB.Entity.cityentity_id;
 				Parts.PowerLevelingStartLevel = Parts.Level;
 				Parts.PowerLevelingEndLevel = 300;
 				Parts.ShowPowerLeveling(false);
@@ -1129,14 +1131,8 @@ let Parts = {
 
 		$('#OwnPartBoxBody').html(h.join(''));
 
-		if ($('#PowerLevelingBox').length > 0 && !Parts.IsPreviousLevel) {
-			if (Parts.CanPowerLevel(FH.Main.CurrentGB.Entity.cityentity_id)) {
-				// the calculator refreshes on every contribution and button click, the table only has to when its inputs change
-				if (Parts.GetPowerLevelingKey() !== Parts.PowerLevelingKey) Parts.CalcBodyPowerLeveling();
-			}
-			else if (Parts.PowerLevelingExcludedGBs.includes(FH.Main.CurrentGB.Entity.cityentity_id)) {
-				FH.HTML.CloseOpenBox('PowerLevelingBox');
-			}
+		if ($('#PowerLevelingBox').length > 0 && Parts.GetPowerLevelingKey() !== Parts.PowerLevelingKey) {
+			Parts.CalcBodyPowerLeveling();
 		}
 	},
 
@@ -1171,19 +1167,13 @@ let Parts = {
 		let h = [],
 			$OwnPartBox = $('#OwnPartBox'),
 			EntityID = FH.Main.CurrentGB.Entity['cityentity_id'];
-		let SavedBuildingName = FH.Storage.getItem(Parts.GetStorageKey('CopyGBName', FH.Main.CurrentGB.Entity['cityentity_id']));
 		$OwnPartBox.find('.OwnPartBoxBackgroundBody').remove();
 
 		let isOpen = false;
 		if($('#OwnPartBox').hasClass('gbSettingsOpen')) 
 			isOpen = true;
 
-		if (SavedBuildingName !== null) {
-			Parts.CopyBuildingName = SavedBuildingName;
-		}
-		else {
-			Parts.CopyBuildingName = FH.Main.CityEntities[EntityID]['name'];
-		}
+		Parts.CopyBuildingName = Parts.GetCopyBuildingName(EntityID);
 
 		if (FH.Storage.getItem(Parts.GetStorageKey('CopyFormatPerGB', null)) === 'true') {
 			let gbID = FH.Main.CurrentGB.Entity['cityentity_id'];
@@ -1306,6 +1296,11 @@ let Parts = {
 	},
 
 
+	GetCopyBuildingName: (EntityID) => {
+		return FH.Storage.getItem(Parts.GetStorageKey('CopyGBName', EntityID)) ?? FH.Main.CityEntities[EntityID]['name'];
+	},
+
+
 	GetArcStorageKey: () => {
 		return Parts.GetStorageKey('ArcPercents', null) + (FH.Main.CurrentGB.Entity?.tier === 'gold' ? '_gold' : '');
 	},
@@ -1415,7 +1410,7 @@ let Parts = {
 	},
 
 
-	GetCopyStringEx: (Places, Maezens, Level, OwnPart, PlaceAll, PlaceAuto, PlaceAutoUnsafe, DangerPlaces, LeveltLG, Tier, Slots = Parts.MaezenSlots) => {
+	GetCopyStringEx: (Places, Maezens, Level, OwnPart, PlaceAll, PlaceAuto, PlaceAutoUnsafe, DangerPlaces, LeveltLG, Tier, Slots = Parts.MaezenSlots, BuildingName = Parts.CopyBuildingName) => {
 		let Ret = [];
 
 		if (Parts.CopySettings.includeDanger && Parts.CopySettings.dangerPrefix !== '' && (DangerPlaces.find(e => e > Parts.DangerThreshold) || LeveltLG.find(e => e))) Ret.push(Parts.CopySettings.dangerPrefix);
@@ -1424,7 +1419,7 @@ let Parts = {
 
 		if (Parts.CopySettings.includeGoldTier && Tier === 'gold' && Parts.CopySettings.goldTierMarker) Ret.push(Parts.CopySettings.goldTierMarker);
 
-		if (Parts.CopySettings.includeGB) Ret.push(Parts.CopyBuildingName);
+		if (Parts.CopySettings.includeGB) Ret.push(BuildingName);
 
 		if (Parts.CopySettings.includeLevelString) Ret.push(FH.t('Boxes.OwnpartCalculator.OptionsLevelUp'));
 
@@ -1572,27 +1567,70 @@ let Parts = {
 
 			// Event on the "Copy values" button in each row
 			box.on('click', '.button-powerlevel-copy', function () {
-				let gb_level = parseInt($(this).parent().find(".hidden-text").html());
+				let gb_level = $(this).parent().data('level');
 
-				let RowPlaces = Parts.PowerLevelingData.Places[gb_level],
+				let EntityID = Parts.PowerLevelingData.EntityID,
+					RowPlaces = Parts.PowerLevelingData.Places[gb_level],
 					Slots = RowPlaces.length,
-					Tier = GreatBuildings.IsGoldTier(FH.Main.CurrentGB.Entity.cityentity_id, gb_level) ? 'gold' : 'copper';
+					Tier = GreatBuildings.IsGoldTier(EntityID, gb_level) ? 'gold' : 'copper';
 
-				let CopyParts = Parts.GetCopyStringEx(Array(Slots).fill(true), RowPlaces, gb_level, Parts.PowerLevelingData.EigenNettos[gb_level], true, false, false, Array(Slots).fill(0), Array(Slots).fill(false), Tier, Slots);
+				let CopyParts = Parts.GetCopyStringEx(Array(Slots).fill(true), RowPlaces, gb_level, Parts.PowerLevelingData.EigenNettos[gb_level], true, false, false, Array(Slots).fill(0), Array(Slots).fill(false), Tier, Slots, Parts.GetCopyBuildingName(EntityID));
 				FH.helper.str.copyToClipboardLegacy(CopyParts);
+			});
+
+			// add row with unlock costs from start level to selected level
+			box.on('click', '.button-powerlevel-unlockcosts', function () {
+				let $Row = $(this).closest('tr'),
+					$Next = $Row.next('.pl-unlock-row'),
+					Stock = FH.RessourceStock || {},
+					o = [];
+
+				if ($Next.length) {
+					$Next.remove();
+					$(this).removeClass('btn-active');
+					return;
+				}
+
+				let gb_level = $(this).parent().data('level'),
+					{ EntityID, StartLevel } = Parts.PowerLevelingData,
+					{ UnlockSums } = Parts.CalcUnlockCosts(StartLevel, gb_level + 1, EntityID);
+
+				o.push(`<tr class="pl-unlock-row dark-bg"><td colspan="${$Row.children().length}">
+					<div class="flex"><b>${FH.t('Boxes.PowerLeveling.UnlockCosts')} ${StartLevel} → ${(gb_level + 1)}:</b>`);
+					
+
+				for (let Type of Parts.UnlockCostTypes) {
+					let Sum = UnlockSums[Type];
+					if (!Sum || Type === 'Goods') continue;
+
+					let StockKey = Parts.UnlockStockKeys[Type],
+						Title = FH.t('Boxes.PowerLeveling.Unlock.' + Type) + ': ' + FH.HTML.Format(Sum.Amount);
+
+					// bp: stock unknown, dont compare
+					o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Type), Title, Sum.Amount, StockKey ? (Stock[StockKey] || 0) : undefined, !!StockKey));
+				}
+				o.push(`</div><div>`);
+
+				if (UnlockSums.Goods) {
+					for (let Good of Parts.GetEraGoods(EntityID)) {
+						o.push(Parts.GetUnlockStockCostHTML(Parts.GetUnlockCostIcon(Good.id), Good.name, UnlockSums.Goods.Base, Stock[Good.id] || 0));
+					}
+				}
+				o.push('</div></td></tr>');
+				$(this).addClass('btn-active');
+				$Row.after(o.join(''));
 			});
 		}
 		else if (!event) {
 			FH.HTML.CloseOpenBox('PowerLevelingBox');
 			return;
 		}
-
 		Parts.CalcBodyPowerLeveling();
 	},
 
 
 	CalcBodyPowerLevelingData: () => {
-		let EntityID = FH.Main.CurrentGB.Entity['cityentity_id'],
+		let EntityID = Parts.PowerLevelingEntityID,
 			CityEntity = FH.Main.CityEntities[EntityID],
 			LevelData = GreatBuildings.Levels[EntityID],
 			StartLevel = Parts.PowerLevelingStartLevel,
@@ -1648,26 +1686,10 @@ let Parts = {
 			OwnPartSum += EigenNettos[i];
 		}
 
-		let UnlockCosts = [],
-			UnlockSums = {},
-			HasUnlockCosts = !!LevelData.UnlockCosts;
-
-		if (HasUnlockCosts) {
-			for (let i = StartLevel; i < EndLevel; i++) {
-				UnlockCosts[i] = [];
-				for (let Type of Parts.UnlockCostTypes) {
-					let Base = LevelData.UnlockCosts[Type]?.[i] || 0;
-					if (!Base) continue;
-					let Amount = Base * (Parts.UnlockCostFactors[Type] || 1);
-					UnlockCosts[i].push({ Type, Base, Amount });
-					UnlockSums[Type] = UnlockSums[Type] || { Base: 0, Amount: 0 };
-					UnlockSums[Type].Base += Base;
-					UnlockSums[Type].Amount += Amount;
-				}
-			}
-		}
+		const { HasUnlockCosts, UnlockCosts, UnlockSums } = Parts.CalcUnlockCosts(StartLevel, EndLevel, EntityID);
 
 		return {
+			EntityID,
 			HasDoubleCollection,
 			HasGoldLevels: LevelData.FPCosts.length > 200,
 			BoostCopper,
@@ -1685,6 +1707,31 @@ let Parts = {
 			DoubleCollections,
 			EigenNettos
 		};
+	},
+
+
+	CalcUnlockCosts: (StartLevel, EndLevel, EntityID) => {
+		let LevelData = GreatBuildings.Levels[EntityID],
+			UnlockCosts = [],
+			UnlockSums = {},
+			HasUnlockCosts = !!LevelData?.UnlockCosts;
+
+		if (HasUnlockCosts) {
+			for (let i = StartLevel; i < EndLevel; i++) {
+				UnlockCosts[i] = [];
+				for (let Type of Parts.UnlockCostTypes) {
+					let Base = LevelData.UnlockCosts[Type]?.[i] || 0;
+					if (!Base) continue;
+					let Amount = Base * (Parts.UnlockCostFactors[Type] || 1);
+					UnlockCosts[i].push({ Type, Base, Amount });
+					UnlockSums[Type] = UnlockSums[Type] || { Base: 0, Amount: 0 };
+					UnlockSums[Type].Base += Base;
+					UnlockSums[Type].Amount += Amount;
+				}
+			}
+		}
+
+		return { HasUnlockCosts, UnlockCosts, UnlockSums };
 	},
 
 
@@ -1707,7 +1754,6 @@ let Parts = {
 		for (let i = StartLevel; i < EndLevel; i++) {
 			OwnPartCumulative += EigenNettos[i];
 			h.push('<tr>');
-			// Unlock costs of the level as html tooltip on the level cell
 			let UnlockTT = HasUnlockCosts && UnlockCosts[i]?.length ? Parts.GetUnlockTooltipHTML(UnlockCosts[i]) : '';
 			h.push('<td class="bright' + (UnlockTT ? ' pl-unlock-tooltip' : '') + '" style="white-space:nowrap"' + (UnlockTT ? ' data-original-title="' + FH.HTML.Tooltip(UnlockTT) + '"' : '') + '>' + i + ' → ' + (i + 1) + '</td>');
 			for (let s = 0; s < SpotCount; s++) {
@@ -1721,9 +1767,9 @@ let Parts = {
 				h.push('<td class="no-select">' + FH.HTML.Format(FH.Main.round(DoubleCollections[i])) + '</td>');
 			}
 			let CumulativeTT = StartLevel+' → '+ (i + 1) +': '+ FH.HTML.Format(FH.Main.round(OwnPartCumulative));
-			h.push(`<td><strong class="info no-select pl-cumulative-tooltip" data-original-title="${CumulativeTT}">${FH.HTML.Format(FH.Main.round(EigenNettos[i]))}</strong></td>`);
-			h.push('<td><span class="hidden-text">' + i + '</span><span class="btn btn-slim button-powerlevel-copy">' + FH.t('Boxes.PowerLeveling.CopyValues') + '</span></td>');
-			h.push('</tr>');
+			h.push(`<td><strong class="info no-select pl-cumulative-tooltip" data-original-title="${CumulativeTT}">${FH.HTML.Format(FH.Main.round(EigenNettos[i]))}</strong></td>
+			<td data-level="${i}"><span class="hidden-text">${i}</span><span class="btn btn-slim button-powerlevel-copy">${FH.t('Boxes.PowerLeveling.CopyValues')}</span>${HasUnlockCosts ? `<span class="btn btn-slim button-powerlevel-unlockcosts">${FH.t('Boxes.PowerLeveling.UnlockCosts')}</span>` : ''}</td>
+			</tr>`);
 		}
 	},
 
@@ -1779,7 +1825,7 @@ let Parts = {
 	/** Everything the power leveling table depends on. The calculator boosts and the live contributions are not part of it. */
 	GetPowerLevelingKey: () => {
 		return [
-			FH.Main.CurrentGB?.Entity?.cityentity_id,
+			Parts.PowerLevelingEntityID,
 			Parts.PowerLevelingStartLevel,
 			Parts.PowerLevelingEndLevel,
 			Parts.GetPowerLevelingBoost('copper'),
@@ -1810,6 +1856,7 @@ let Parts = {
 
 
 	GetUnlockCostIcon: (Type) => {
+		if (FH.Goods.Data?.[Type]) return '<span class="unlock-icon game-icon">' + srcLinks.icons(Type) + '</span>';
 		if (Type === 'Coins') return '<span class="unlock-icon game-icon">' + srcLinks.icons('money') + '</span>';
 		if (Type === 'Supplies') return '<span class="unlock-icon game-icon">' + srcLinks.icons('supplies') + '</span>';
 		return '<span class="unlock-icon ' + Type + '"></span>';
@@ -1819,7 +1866,6 @@ let Parts = {
 	GetUnlockTooltipHTML: (Costs) => {
 		let t = ['<div class="pl-unlock-tt"><strong>' + FH.t('Boxes.PowerLeveling.UnlockCosts') + '</strong>'];
 		for (let Cost of Costs) {
-			// goods: per good, blueprints: sets => stored value; everything else: total
 			let Amount = FH.HTML.Format(Cost.Type in Parts.UnlockCostFactors ? Cost.Base : Cost.Amount);
 			t.push('<div class="pl-unlock-line">' + Parts.GetUnlockCostIcon(Cost.Type) + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.UnlockTT.' + Cost.Type), { amount: Amount }) + '</div>');
 		}
@@ -1829,8 +1875,6 @@ let Parts = {
 
 
 	InitPowerLevelingTooltips: () => {
-		// one delegated tooltip on the tbody instead of one per row: survives body updates (innerHTML),
-		// only has to be rebound when the tbody is rebuilt or the box moves to/from a pop-out window
 		FH.HTML.clearTooltips();
 		let $body = $('#PowerLevelingBoxTableBody');
 		if (!$body.length) return;
@@ -1839,28 +1883,41 @@ let Parts = {
 	},
 
 
-	GetUnlockCostsHTML: (Costs) => {
-		if (!Costs || !Costs.length) return '-';
-		return Costs.map(Cost => {
-			let Amount = FH.HTML.Format(Cost.Amount),
-				Title = FH.t('Boxes.PowerLeveling.Unlock.' + Cost.Type) + ': ' + FH.HTML.Format(Cost.Amount);
+	GetUnlockSumHTML: (Sums) => {
+		let Types = Parts.UnlockCostTypes.filter(Type => Sums[Type]);
+		if (!Types.length) return '-';
 
-			if (Cost.Type === 'Goods') {
-				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.GoodsTT'), { amount: FH.HTML.Format(Cost.Base) }) + ')';
+		return Types.map(Type => {
+			let { Base, Amount } = Sums[Type],
+				Title = FH.t('Boxes.PowerLeveling.Unlock.' + Type) + ': ' + FH.HTML.Format(Amount);
+
+			if (Type === 'Goods') {
+				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.GoodsTT'), { amount: FH.HTML.Format(Base) }) + ')';
 			}
-			else if (Cost.Type === 'CopperBlueprints' || Cost.Type === 'GoldBlueprints') {
-				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.SetsTT'), { sets: FH.HTML.Format(Cost.Base) }) + ')';
+			else if (Type === 'CopperBlueprints' || Type === 'GoldBlueprints') {
+				Title += ' (' + FH.helper.str.Replacer(FH.t('Boxes.PowerLeveling.Unlock.SetsTT'), { sets: FH.HTML.Format(Base) }) + ')';
 			}
 
-			return '<span class="unlock-cost" title="' + Title + '">' + Parts.GetUnlockCostIcon(Cost.Type) + Amount + '</span>';
+			return '<span class="unlock-cost" title="' + Title + '">' + Parts.GetUnlockCostIcon(Type) + FH.HTML.Format(Amount) + '</span>';
 		}).join(' ');
 	},
 
+	GetUnlockStockCostHTML: (IconHTML, Title, Need, Stock, ShortNumber = false) => {
+		let Missing = Stock === undefined ? 0 : Need - Stock,
+			NeedText = ShortNumber && Need > 1000000 ? FH.HTML.FormatNumberShort(Need) : FH.HTML.Format(Need),
+			Text = NeedText + (Missing > 0 ? '<span class="text-danger">(−' + FH.HTML.Format(Missing) + ')</span>' : '');
 
-	/** Sums of the unlock costs over the selected range, in the order of UnlockCostTypes */
-	GetUnlockSumHTML: (Sums) => {
-		let Costs = Parts.UnlockCostTypes.filter(Type => Sums[Type]).map(Type => ({ Type, Base: Sums[Type].Base, Amount: Sums[Type].Amount }));
-		return Parts.GetUnlockCostsHTML(Costs);
+		return '<span class="unlock-cost" title="' + Title + '">' + IconHTML + Text + '</span>';
+	},
+
+	UnlockStockKeys: { Coins: 'money', Supplies: 'supplies', Medals: 'medals' },
+
+
+	GetEraGoods: (EntityID) => {
+		let Era = GreatBuildings.GetEraName(EntityID);
+		return Object.values(FH.Goods.Data || {})
+			.filter(Good => Good.era === Era && Good.abilities?.goodsProduceable !== undefined)
+			.sort((a, b) => a.id.localeCompare(b.id));
 	},
 
 

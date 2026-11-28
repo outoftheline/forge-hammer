@@ -402,6 +402,12 @@
 	overflow-x: auto;
 	overflow-y: auto;
 	user-select: text;
+	contain: layout paint;
+	will-change: scroll-position;
+}
+
+#PowerLevelingBox #PowerLevelingBoxTableHead th {
+	background: var(--bg-darkest);
 }
 
 #PowerLevelingBoxOwnPartSum img { height: 30px; }
@@ -448,6 +454,11 @@
 	gap: 2px;
 	white-space: nowrap;
 	margin: 0 3px;
+}
+
+#PowerLevelingBox .foe-table tr.pl-unlock-row td {
+	text-align: center;
+	white-space: normal;
 }
 
 #PowerLevelingBox .foe-table td.pl-unlock-tooltip,
